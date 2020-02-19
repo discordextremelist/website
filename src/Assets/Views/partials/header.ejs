@@ -1,0 +1,53 @@
+<!doctype HTML>
+<html lang="en" dir="ltr">
+<head>
+    <title><%= title || "Page" %> - Discord Extreme List</title>
+
+    <link href="/img/logo.png" type="image/png" rel="shortcut-icon" />
+    <link href="/img/logo.png" type="image/png" rel="icon" />
+    <link href="/css/standard.css" type="text/css" media="screen, print" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" type="text/css" media="screen" rel="preload" as="style"  onload="this.onload=null;this.rel='stylesheet'" />
+    <link href="/fonts/fa/css/all.css" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <noscript>
+        <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" media="screen" rel="stylesheet" />
+        <link href="/fonts/fa/css/all.css" media="screen" rel="stylesheet" />     
+    </noscript>
+
+    <link rel="manifest" href="/manifest.json">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Discord Extreme List, Discord Bots, Discord Bot List, Discord Bots List, Discord, BotBlock, Bots, Bot Listings, Bot Lists, Bot List, BotBlock Bots, BotBlock Bot Lists, Bots for Discord, Discord Robots">
+    <meta name="robots" content="index,follow">
+    <meta name="distribution" content="global">
+    <meta name="rating" content="safe for kids">
+    <meta name="revisit-after" content="1 day">
+
+    <% if (pageType.bot == true) { %>
+    <% } else if (pageType.server == true) { %>
+    <% } else { %>
+        <meta name="theme-color" content="#2C2F33">
+        <meta name="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list! Providing small discord bots and small discord servers with an extreme chance!" %>">
+
+        <meta name="twitter:card" value="summary">
+        <meta name="twitter:site" content="@ExtremeList">
+        <meta name="twitter:title" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta name="twitter:description" content="<%= subtitle || "Discord's unbiased list, giving small bots and small servers a big chance!" %>">
+        <meta property="twitter:image" content="https://discordextremelist.xyz/img/logo.png">
+        <meta property="twitter:image:alt" content="DEL's Logo">
+
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" value="Discord Extreme List">
+        <meta property="og:title" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta property="og:url" content="https://discordextremelist.xyz">
+        <meta property="og:description" content="<%= subtitle || "Discord's unbiased list, giving small bots and small servers a big chance!" %>">
+        <meta property="og:image" content="https://discordextremelist.xyz/img/logo.png">
+        <meta property="og:image:alt" content="DEL's Logo">
+    <% } %>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Discord Extreme List">
+    <link rel="apple-touch-icon" href="/img/icon-192x192.png">
+
+</head>

@@ -1,0 +1,137 @@
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a href="/" class="navbar-item is-bolder is-size-5">Discord Extreme List</a>
+
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="navbar" class="navbar-menu">
+        <div class="navbar-start"> 
+
+            <a class="navbar-item" href="/">
+                <span class="icon iconalign">
+                    <i class="fad fa-house" aria-hidden="true"></i>
+                </span>
+                <span>Home</span>
+            </a>
+
+            <a class="navbar-item" href="/bots">
+                <span class="icon iconalign">
+                    <i class="fad fa-robot" aria-hidden="true"></i>
+                </span>
+                <span>Bots</span>
+            </a>
+
+            <a class="navbar-item" href="/servers">
+                <span class="icon iconalign">
+                    <i class="fad fa-server" aria-hidden="true"></i>
+                </span>
+                <span>Servers</span>
+            </a>
+
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    <span class="icon iconalign">
+                        <i class="fad fa-sitemap" aria-hidden="true"></i>
+                    </span>
+                    <span>More</span>
+                </a>
+
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="<%= discordServer %>">
+                        <span class="icon iconalign">
+                            <i class="fab fa-discord" aria-hidden="true"></i>
+                        </span>
+                        <span>Discord Server</span>
+                    </a>
+                    <a class="navbar-item" href="https://docs.discordextremelist.xyz/">
+                        <span class="icon iconalign">
+                            <i class="fad fa-books" aria-hidden="true"></i>
+                        </span>
+                        <span>Documentation</span>
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item" href="/terms">
+                        <span class="icon iconalign">
+                            <i class="fad fa-balance-scale" aria-hidden="true"></i>
+                        </span>
+                        <span>Terms of Service</span>
+                    </a>
+                    <a class="navbar-item">
+                        <span class="icon iconalign" href="/privacy">
+                            <i class="fad fa-user-secret" aria-hidden="true"></i>
+                        </span>
+                        <span>Privacy Policy</span>
+                    </a>
+                    <a class="navbar-item" href="/guidelines">
+                        <span class="icon iconalign">
+                            <i class="fad fa-book" aria-hidden="true"></i>
+                        </span>
+                        <span>Website Guidelines</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="navbar-end">
+            <% if (req.user) { %>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        <img style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>?size=256" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>">
+                        <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
+                    </a>
+
+                    <div class="navbar-dropdown is-right">
+                        <a class="navbar-item" href="/users/@me">
+                            <span class="icon iconalign">
+                                <i class="fad fa-user" aria-hidden="true"></i>
+                            </span>
+                            <span>Profile</span>
+                        </a>
+                        <a class="navbar-item" href="/users/preferences">
+                            <span class="icon iconalign">
+                                <i class="fad fa-swatchbook" aria-hidden="true"></i>
+                            </span>
+                            <span>Preferences</span>
+                        </a>
+                        <a class="navbar-item" href="/bots/submit">
+                            <span class="icon iconalign">
+                                <i class="fad fa-robot" aria-hidden="true"></i>
+                            </span>
+                            <span>Submit Bot</span>
+                        </a>
+                        <a class="navbar-item" href="/servers/submit">
+                            <span class="icon iconalign">
+                                <i class="fad fa-server" aria-hidden="true"></i>
+                            </span>
+                            <span>Submit Server</span>
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+            <div class="navbar-item">
+                <div class="buttons">
+                    <% if (req.user) { %>
+                        <a class="button is-danger" href="/logout">
+                            <span class="icon">
+                                <i class="fad fa-sign-out"></i>
+                            </span>
+                            <span>Logout</span>
+                        </a>
+                    <% } else { %>
+                        <a class="button is-blurple" href="/login">
+                            <span class="icon">
+                                <i class="fab fa-discord"></i>
+                            </span>
+                            <span>Login with Discord</span>
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

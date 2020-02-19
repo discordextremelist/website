@@ -1,0 +1,43 @@
+@charset "UTF-8";
+
+$primary: #0a0a0a;
+$primary-dark: #000000;
+$white: #ffffff;
+
+// This is not actually blurple, it is named blurple as during early development it was blurple
+$blurple: hsl(0, 0%, 98%);;
+
+$bg: #000000;
+
+// Standard Variables
+
+$danger: #cd0930;
+$success: #0dbf04;
+
+$text: $white;
+$text-strong: $white;
+$label-color: $white;
+$title-color: $white;
+$subtitle-color: #d8d8d8;
+$body-background-color: $bg;
+$family-sans-serif: "Lexend Deca", sans-serif;
+
+// Navbar
+
+$navbar-background-color: #0a0a0a;
+$navbar-item-hover-background-color: #000;
+$navbar-dropdown-background-color: #000;
+$navbar-dropdown-item-active-color: #000;
+$navbar-item-hover-color: $blurple;
+$navbar-item-color: $blurple;
+$navbar-burger-color: $blurple;
+$navbar-dropdown-arrow: $blurple;
+$navbar-divider-background-color: $blurple;
+$navbar-dropdown-border-top: 2px solid $blurple;
+$navbar-dropdown-item-hover-background-color: $blurple;
+
+$input-color: $blurple;
+$input-background-color: $primary;
+$input-border-color: $primary;
+$input-hover-border-color: $primary-dark;
+$input-border-colour: transparent;

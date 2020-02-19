@@ -1,0 +1,62 @@
+{
+    "short_name": "DEL",
+    "name": "Discord Extreme List",
+    "description": "Discord's unbiased list, giving small bots and servers a big chance!",
+    "icons": [
+        {
+            "src": "/img/logo.webp",
+            "type": "image/webp",
+            "sizes": "512x512"
+        },
+        {
+            "src": "/img/logo-192px.webp",
+            "type": "image/webp",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/img/logo-128px.webp",
+            "type": "image/webp",
+            "sizes": "128x128"
+        },
+        {
+            "src": "/img/logo-64px.webp",
+            "type": "image/webp",
+            "sizes": "64x64"
+        },
+        {
+            "src": "/img/logo-48px.webp",
+            "type": "image/webp",
+            "sizes": "48x48"
+        },
+        {
+            "src": "/img/logo.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        },
+        {
+            "src": "/img/logo-192px.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/img/logo-128px.png",
+            "type": "image/png",
+            "sizes": "128x128"
+        },
+        {
+            "src": "/img/logo-64px.png",
+            "type": "image/png",
+            "sizes": "64x64"
+        },
+        {
+            "src": "/img/logo-48px.png",
+            "type": "image/png",
+            "sizes": "48x48"
+        }
+    ],
+    "start_url": "/?source=pwa",
+    "background_color": "#000000",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#0a0a0a"
+}

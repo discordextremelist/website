@@ -1,0 +1,26 @@
+<div class="section">
+<p style="padding: 1.25rem;" class="has-text-centered has-background-black circular">
+    Response time <%= Date.now() - requestedAt%>ms
+    <br />
+    &copy; Copyright 2019-<%= new Date().getFullYear() %> Cairo Mitchell-Acason; All Rights Reserved.
+    <br />
+    <a href="<%= socialMedia.facebook %>" aria-label="DEL Facebook" target="_blank" rel="noopener" title="Facebook" class="icon has-text-link">
+        <i class="fab fa-facebook"></i>
+    </a>
+    <a href="<%= socialMedia.twitter %>" aria-label="DEL Twitter" target="_blank" rel="noopener" title="Twitter" class="icon has-text-info">
+        <i class="fab fa-twitter"></i>
+    </a>
+    <a href="<%= socialMedia.instagram %>" aria-label="DEL Instagram" target="_blank" rel="noopener" title="Instagram" class="icon has-text-magenta">
+        <i class="fab fa-instagram"></i>
+    </a>
+    <a href="<%= socialMedia.gitlab %>" aria-label="DEL GitLab" target="_blank" rel="noopener" title="GitLab" class="icon has-text-orange">
+        <i class="fab fa-gitlab"></i>
+    </a>
+</p>
+</div>
+</div>
+<script async="" type="text/javascript">document.addEventListener("DOMContentLoaded",function(){var t=Array.prototype.slice.call(document.querySelectorAll(".navbar-burger"),0);0<t.length&&t.forEach(function(e){e.addEventListener("click",function(){var t=document.getElementById(e.dataset.target);e.classList.toggle("is-active"),t.classList.toggle("is-active")})})})</script>
+<script type="text/javascript">(function(o){"use strict";var e=navigator.serviceWorker;if(!e)return this.UpUp=null,o;var i={"service-worker-url":"upup.sw.min.js","registration-options":{}},s=!1,n="font-weight: bold; color: #00f;";this.UpUp={start:function(t){this.addSettings(t),e.register(i["service-worker-url"],i["registration-options"]).then(function(t){s&&console.log("Service worker registration successful with scope: %c"+t.scope,n),(t.installing||e.controller||t.active).postMessage({action:"set-settings",settings:i})}).catch(function(t){s&&console.log("Service worker registration failed: %c"+t,n)})},addSettings:function(e){"string"==typeof(e=e||{})&&(e={content:e}),["content","content-url","assets","service-worker-url","cache-version"].forEach(function(t){e[t]!==o&&(i[t]=e[t])}),e.scope!==o&&(i["registration-options"].scope=e.scope)},debug:function(t){s=!(0<arguments.length)||!!t}}}).call(this);</script>
+<script type="text/javascript" defer>UpUp.start({"content-url":"offline.html",assets:["/css/standard.css", "/fonts/fa/css/all.css", "/fonts/offline-fonts.css","/fonts/fa/webfonts/fa-duotone-900.woff2"],"service-worker-url":"/upup.sw.min.js"});</script>
+</body>
+</html>

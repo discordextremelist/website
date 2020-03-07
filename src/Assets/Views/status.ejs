@@ -1,23 +1,24 @@
-<%- include("../../partials/header.ejs") %>
-<%- include("../../partials/nav.ejs") %>
+<%- include("./partials/header.ejs") %>
+<%- include("./partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
-      <div class="container has-text-centered">
-        <h1 class="title">
-            <span class="icon is-medium iconalign">
-                <% if (title === "Error") { %>
-                    <i class="fad fa-exclamation-square fa-1x"></i>
-                <% } else if (title === "Success") { %>
-                    <i class="fad fa-check-square fa-1x"></i>
-                <% } else if (title === "Information") { %>
-                    <i class="fad fa-info-square fa-1x"></i>
-                <% } else { %>
-                    <i class="fad fa-question-square fa-1x"></i>
-                <% } %>
-            </span>
-            <%= title %> (<%= status %>)
-        </h1>
-        <h2 class="subtitle"><%= subtitle %></h2>
+        <div class="container has-text-centered">
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <% if (type === "Error") { %>
+                        <i class="fad fa-exclamation-square fa-1x"></i>
+                    <% } else if (type === "Success") { %>
+                        <i class="fad fa-check-square fa-1x"></i>
+                    <% } else if (type === "Information") { %>
+                        <i class="fad fa-info-square fa-1x"></i>
+                    <% } else { %>
+                        <i class="fad fa-question-square fa-1x"></i>
+                    <% } %>
+                </span>
+                <br />
+                <span><%= title %> (<%= status %>)</span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
         </div>
     </div>
     </section>
@@ -25,4 +26,4 @@
         <div class="section">
             snake soon:tm:
         </div>    
-<%- include("../../partials/footer.ejs") %>
+<%- include("./partials/footer.ejs") %>

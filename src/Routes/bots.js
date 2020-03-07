@@ -1,52 +1,50 @@
 const express = require("express");
+const snek = require("snekfetch");
+const crypto = require("crypto");
+const marked = require("marked");
+const sanitizeHtml = require("sanitize-html");
 const router = express.Router();
 
+const settings = require("../../settings.json");
+const client = require("../Util/Services/discordBot.js");
 const variables = require("../Util/Function/variables.js");
 const permission = require("../Util/Function/permissions.js");
 const functions = require("../Util/Function/main.js");
 
 router.get("/submit", variables, permission.auth, async (req, res, next) => {
-    const libraries = await req.app.db.collection("libraries").find();
+    const libraries = await req.app.db.collection("libraries").find().sort({ name: 1 }).toArray();
 
     res.render("templates/bots/submit", { 
-        title: "Submit Bot", 
-        subtitle: "Submit your bot to the list", 
+        title: res.__("Submit Bot"), 
+        subtitle: res.__("Submit your bot to the list"), 
         libraries,
         req 
     });
 });
 
 router.post("/submit", variables, permission.auth, async (req, res, next) => {
-    const botExists = await req.app.db.collection("bots").find({ id: req.body.id });
-    if (botExists) return res.status(400).render("status", { 
-        title: "Error", 
-        status: 400, 
-        message: "This bot has already been added to the list", 
+    let error = false;
+    let errors = [];
+
+    const botExists = await req.app.db.collection("bots").findOne({ id: req.body.id });
+    if (botExists) return res.status(409).render("status", { 
+        title: res.__("Error"), 
+        subtitle: res.__("This bot has already been added to the list."),
+        status: 409, 
+        type: "Error",
         req 
     }); 
 
-    axios.get(`https://discordapp.com/api/users/${req.body.id}`, { headers: { "Authorization": `Bot ${settings.client.token}` } }).then(async(axRes) => {
+    snek.get(`https://discordapp.com/api/users/${req.body.id}`).set("Authorization", `Bot ${settings.client.token}`).then(async(snkRes) => {
         if (req.body.id.length > 32) {
-            return res.status(400).render("status", { 
-                title: "Error", 
-                status: 400, 
-                message: "The bot's id cannot be longer than 32 characters", 
-                req 
-            });
-        } else if (axRes.message === "Unknown User") {
-            return res.status(400).render("status", { 
-                title: "Error", 
-                status: 400, 
-                message: "There isn't a bot with this id", 
-                req 
-            });
-        } else if (!axRes.bot) {
-            return res.status(400).render("status", { 
-                title: "Error",
-                status: 400, 
-                message: "You cannot add users to the bot list", 
-                req 
-            });
+            error = true;
+            errors.push(res.__("The bot's id cannot be longer than 32 characters."));
+        } else if (snkRes.body.message === "Unknown User") {
+            error = true;
+            errors.push(res.__("There isn't a bot with this id."));
+        } else if (!snkRes.body.bot) {
+            error = true;
+            errors.push(res.__("You cannot add users to the bot list."));
         }
 
         let invite;
@@ -55,44 +53,43 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
             invite = `https://discordapp.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
         } else {
             if (typeof req.body.invite !== "string") {
-                return res.status(400).render("status", {
-                    title: "Error",
-                    status: 400,
-                    message: "You provided an invalid invite",
-                    req
-                });
+                error = true;
+                errors.push(res.__("You provided an invalid invite."));
             } else if (req.body.invite.length > 2000) {
-                return res.status(400).render("status", {
-                    title: "Error",
-                    status: 400,
-                    message: "The invite link you provided is too long",
-                    req
-                });
+                error = true;
+                errors.push(res.__("The invite link you provided is too long."));
             } else if (!/^https?:\/\//.test(req.body.invite)) {
-                return res.status(400).render("status", {
-                    title: "Error",
-                    status: 400,
-                    message: "The invite link must be a valid URL starting with http:// or https://",
-                    req
-                });
+                error = true;
+                errors.push(res.__("The invite link must be a valid URL starting with http:// or https://"));
             } else {
                 invite = req.body.invite
             }
         }
 
-        if (!req.body.longDescription || req.body.longDescription === '') return res.status(400).render("status", {
-            title: "Error",
-            status: 400,
-            message: "A long description is required",
-            req
-        });
+        if (!req.body.longDescription || req.body.longDescription === '') {
+            error = true;
+            errors.push(res.__("A long description is required."));
+        }
 
         let library;
-        const dbLibrary = await r.table("libraries").get(req.body.library).run();
+        const dbLibrary = await req.app.db.collection("libraries").findOne({ name: req.body.library });
         if (!dbLibrary) {
             library = "Other";
         } else {
             library = req.body.library;
+        }
+
+        if (error === true) { 
+            const libraries = await req.app.db.collection("libraries").find({ name: { $ne: library } }).sort({ name: 1 }).toArray();
+            return res.render("templates/bots/errorOnSubmit", { 
+                title: res.__("Submit Bot"), 
+                subtitle: res.__("Submit your bot to the list"),
+                bot: req.body,
+                libraries,
+                library,
+                req,
+                errors
+            }); 
         }
 
         let tags = [];
@@ -111,10 +108,10 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         } else {
             editors = [];
         }
-
+        
         req.app.db.collection("bots").insertOne({
             id: req.body.id,
-            name: axRes.username,
+            name: snkRes.body.username,
             prefix: req.body.prefix,
             library: library,
             tags: tags,
@@ -130,8 +127,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                 id: req.user.id
             },
             avatar: {
-                hash: axRes.avatar,
-                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${axRes.avatar}`
+                hash: snkRes.body.avatar,
+                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${snkRes.body.avatar}`
             },
             votes: {
                 positive: [],
@@ -148,18 +145,127 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                 approved: false,
                 verified: false,
                 pendingVerification: false,
-                siteBot: false
+                siteBot: false,
+                archived: false
             }
         });
 
-        r.table("archivedBots").get(req.body.id).delete().run();
-
-        client.channels.get(settings.logs.channels.webLog).send(`${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** added bot **${functions.escapeFormatting(axRes.username)} (${req.body.id}) | <@&${settings.roles.staff}>**\n<${settings.website.url}/bots/${req.body.id}>`);
+        client.channels.get(settings.logs.channels.webLog).send(`${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** added bot **${functions.escapeFormatting(snkRes.body.username)} (${req.body.id}) | <@&${settings.roles.staff}>**\n<${settings.website.url}/bots/${req.body.id}>`);
 
         functions.statusUpdate();
         res.redirect(`/bots/${req.body.id}`);
 
+    }).catch(async(snkRes) => {
+        if (req.body.id.length > 32) {
+            error = true;
+            errors.push(res.__("The bot's id cannot be longer than 32 characters."));
+        } else if (snkRes.body.message === "Unknown User") {
+            error = true;
+            errors.push(res.__("There isn't a bot with this id."));
+        } else if (!snkRes.body.bot) {
+            error = true;
+            errors.push(res.__("You cannot add users to the bot list."));
+        }
+
+        if (req.body.invite !== "") {
+            if (typeof req.body.invite !== "string") {
+                error = true;
+                errors.push(res.__("You provided an invalid invite."));
+            } else if (req.body.invite.length > 2000) {
+                error = true;
+                errors.push(res.__("The invite link you provided is too long."));
+            } else if (!/^https?:\/\//.test(req.body.invite)) {
+            } else {
+                invite = req.body.invite
+            }
+        }
+
+        if (!req.body.longDescription || req.body.longDescription === '') {
+            error = true;
+            errors.push(res.__("A long description is required."));
+        }
+
+        let library;
+        const dbLibrary = await req.app.db.collection("libraries").findOne({ name: req.body.library });
+        if (!dbLibrary) {
+            library = "Other";
+        } else {
+            library = req.body.library;
+        }
+
+        const libraries = await req.app.db.collection("libraries").find({ name: { $ne: library } }).sort({ name: 1 }).toArray();
+        return res.render("templates/bots/errorOnSubmit", { 
+            title: res.__("Submit Bot"), 
+            subtitle: res.__("Submit your bot to the list"),
+            bot: req.body,
+            libraries,
+            library,
+            req,
+            errors
+        }); 
     });
 });
+
+router.get("/:id", variables, async (req, res, next) => {
+    req.botPage = true;
+    let bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+
+    if (!bot) {
+        bot = await req.app.db.collection("bots").findOne({ links: { id: req.params.id } })
+        const vanity = await r.table("vanityUrls").get(req.params.id).run();
+
+        if (!bot) return res.status(404).render("status", {
+            title: res.__("Error"),
+            status: 404,
+            message: res.__("This bot is not in our database"),
+            type: "Error",
+            req: req
+        });
+    }
+
+    const botOwner = await req.app.db.collection("users").findOne({ id: bot.owner.id });
+    const guild = await client.guilds.get(settings.guild.main);
+    const member = await guild.member(bot.id);
+    let botStatus;
+
+    if (member) {
+        botStatus = member.presence.status;
+    } else {
+        botStatus = "???";
+    }
+
+    const dirty = await marked(bot.longDesc);
+    let clean;
+    if (bot.status.verified === true) {
+        clean = sanitizeHtml(dirty, {
+            allowedTags: [ "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "button", "p", "a", "ul", "ol",
+                "nl", "li", "b", "i", "img", "strong", "em", "strike", "code", "hr", "br", "div",
+                "table", "thead", "caption", "tbody", "tr", "th", "td", "pre", "iframe", "style", "script", "noscript", "link" ],
+            allowedAttributes: false,
+        });
+    } else {
+        clean = sanitizeHtml(dirty, {
+            allowedTags: [ "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "button", "p", "a", "ul", "ol",
+                "nl", "li", "b", "i", "img", "strong", "em", "strike", "code", "hr", "br", "div",
+                "table", "thead", "caption", "tbody", "tr", "th", "td", "pre", "iframe", "style", "link" ],
+            allowedAttributes: false,
+        });
+    }
+
+    res.render("templates/bots/view", {
+        title: bot.name,
+        subtitle: bot.shortDesc,
+        bot: bot,
+        longDesc: clean,
+        botOwner: botOwner,
+        botStatus: botStatus,
+        mainServer: settings.guild.main,
+        staffServer: settings.guild.staff,
+        webUrl: settings.website.url,
+        req: req,
+        votes: bot.votes.positive.length + -bot.votes.negative.length
+    });
+});
+
 
 module.exports = router;

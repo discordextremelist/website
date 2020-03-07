@@ -1,0 +1,278 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/nav.ejs") %>
+<style type="text/css">h1{font-size:48px}h2{font-size:40px}h3{font-size:32px}h4{font-size:24px}h5{font-size:20px}h6{font-size:16px}strong{color:#fff}code{background-color:#1f1f1f}pre{color:#ff3860;background-color:#1f1f1f}table th{color:#d2d2d2}a:hover{color:#1c5abd}.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{color:#fff;font-weight:inherit}table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all;-webkit-overflow-scrolling:touch}blockquote{background-color:transparent!important;}</style>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container">
+            <br />
+            <div class="columns">
+                <div class="column is-2">
+                    <img class="image is-rounded" src="<%= bot.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= bot.name %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');">
+                </div>
+                <div class="column is-10">
+                    <h1 class="is-size-1">
+                        <%= bot.name %>
+                    </h1>
+                    <h2 class="subtitle"><%= bot.shortDesc %></h2>
+                </div>
+            </div>
+            <% if (botStatus === "online") { %>
+                <span class="tag is-black has-text-success is-medium" title="<%= __("Online") %>"><%= __("Online") %></span>
+            <% } else if (botStatus === "idle") { %>
+                <span class="tag is-black has-text-warning is-medium" title="<%= __("Idle") %>"><%= __("Idle") %></span>
+            <% } else if (botStatus === "dnd") { %>
+                <span class="tag is-black has-text-danger is-medium" title="<%= __("Do not Disturb") %>"><%= __("Do not Disturb") %></span>
+            <% } else if (botStatus === "offline") { %>
+                <span class="tag is-black has-text-dark is-medium" title="<%= __("Offline") %>"><%= __("Offline") %></span>
+            <% } else { %>
+                <span class="tag is-black has-text-dark is-medium" title="???">???</span>
+            <% } %>
+            <br />
+            <br />
+            <div class="buttons is-centered">
+                <a href="/bots/<%= bot.id %>/upvote" class="button <% if (user && bot.votes.positive.includes(user.id)) { %>is-success<% } else { %>is-black<% } %>"><i class="fas fa-arrow-alt-up"></i></a>
+                <% if (votes > 0) { %>
+                    <span class="button is-black is-hovered has-text-success" title="Votes"><%= votes %></span>
+                <% } else if (votes === 0) { %>
+                    <span class="button is-black is-hovered has-text-dark" title="Votes"><%= votes %></span>
+                <% } else if (votes < 0) { %>
+                    <span class="button is-black is-hovered has-text-danger" title="Votes"><%= votes %></span>
+                <% } %>
+                <a href="/bots/<%= bot.id %>/downvote" class="button <% if (user && bot.votes.negative.includes(user.id)) { %>is-danger<% } else { %>is-black<% } %>"><i class="fas fa-arrow-alt-down"></i></a>
+            </div>
+            <% if (user) { %>
+                <div class="buttons is-centered">
+                <% if (bot.owner.id === user.id) { %>
+                    <button class="button is-black" onclick="copyToClipboard('<%= bot.token %>');">
+                        <span class="icon">
+                            <i class="fas fa-key"></i>
+                        </span>
+                        <span><%= __("Copy Token") %></span>
+                    </button>
+                    <button class="button is-black" onclick="copyToClipboard('https://api.discordextremelist.xyz/v1/bot/<%= bot.id %>/widget');">
+                        <span class="icon">
+                            <i class="fas fa-image"></i>
+                        </span>
+                        <span><%= __("Copy Widget Link") %></span>
+                    </button>
+                    <% if (bot.status.verified === false) { %>
+                        <% if (bot.serverCount >= 100) { %>
+                            <a href="/apply/verification" class="button is-black">
+                                <span class="icon">
+                                    <i class="fas fa-badge-check"></i>
+                                </span>
+                                <span><%= __("Apply for Verification") %></span>
+                            </a>
+                        <% } %>
+                    <% } %>
+                    <a href="/bots/<%= bot.id %>/edit" class="button is-black"><i class="fas fa-pencil"></i>&nbsp; Edit</a>
+                    <a href="" id="deleteModal" class="button is-black"><i class="fas fa-trash"></i>&nbsp; Delete</a>
+                <% } else if (bot.editors && bot.editors.includes(user.id)) { %>
+                    <button class="button is-black" onclick="copyToClipboard('https://api.discordextremelist.xyz/v1/bot/<%= bot.id %>/widget');"><i class="fas fa-image"></i>&nbsp; Copy Widget Link</button>
+                    <a href="/bots/<%= bot.id %>/edit" class="button is-black"><i class="fas fa-pencil"></i>&nbsp; Edit</a>
+                <% } %>
+                <% if (user.db.rank.mod) { %>
+                    <a href="" id="staffToolsModal" class="button is-black"><i class="fas fa-cogs"></i>&nbsp; Staff Management</a>
+                <% } %>
+                </div>
+            <% } %>
+            <div class="buttons is-centered">
+                <% if (bot.links.website) { %>
+                    <a target="_blank" rel="noopener" href="<%= bot.links.website %>" class="button is-link"><i class="fas fa-globe"></i>&nbsp; Website</a>
+                <% } %>
+                <a target="_blank" href="/bots/<%= bot.id %>/invite" class="button is-info"><i class="fas fa-plus"></i>&nbsp; Invite</a>
+                <% if (bot.links.donation) { %>
+                    <a target="_blank" rel="noopener" href="<%= bot.links.donation %>" class="button is-success"><i class="fas fa-dollar-sign"></i>&nbsp; Donate</a>
+                <% } %>
+                <% if (bot.links.repo) { %>
+                    <a target="_blank" rel="noopener" href="<%= bot.links.repo %>" class="button is-orange"><i class="fas fa-code-branch"></i>&nbsp; Git Repository</a>
+                <% } %>
+                <% if (bot.links.support) { %>
+                    <a target="_blank" rel="noopener" href="<%= bot.links.support %>" class="button is-red-dark"><i class="fas fa-heart"></i>&nbsp; Support Server</a>
+                <% } %>
+            </div>
+            <div class="field is-grouped is-grouped-centered is-grouped-multiline">
+                <div class="control">
+                    <div class="tags has-addons">
+                        <span class="tag is-dark">Prefix</span>
+                        <span class="tag is-link"><%= bot.prefix %></span>
+                    </div>
+                </div>
+                <div class="control">
+                    <div class="tags has-addons">
+                        <span class="tag is-dark">Library</span>
+                        <span class="tag is-info"><%= bot.library %></span>
+                    </div>
+                </div>
+                <div class="control">
+                    <div class="tags has-addons">
+                        <span class="tag is-dark">Servers</span>
+                        <span class="tag is-success"><% if (bot.serverCount !== 0) { %><%= bot.serverCount %><% } else { %>???<% } %></span>
+                    </div>
+                </div>
+                <div class="control">
+                    <div class="tags has-addons">
+                        <span class="tag is-dark">Invites</span>
+                        <span class="tag is-orange"><%= bot.inviteCount %></span>
+                    </div>
+                </div>
+                <div class="control">
+                    <div class="tags has-addons">
+                        <span class="tag is-dark">Owner</span>
+                        <span class="tag is-red-dark"><a class="has-text-white" href="/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a></span>
+                    </div>
+                </div>
+                <% if (bot.editors && bot.editors.length !== 0) { %>
+                    <div class="control">
+                        <div class="tags has-addons">
+                            <span class="tag is-dark">Editors</span>
+                            <span class="tag is-magenta">
+                                <% bot.editorsInfo.map((editors) => { %>
+                                    <% if (editors) { %>
+                                        <a class="has-text-white" href="/users/<%= editors.id %>"><%= editors.fullUsername %> &nbsp;</a>
+                                    <% } %>
+                                <% }) %>
+                            </span>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+        <% if (bot.tags && bot.tags.length > 0) { %>
+            <br />
+            <div class="field is-grouped is-grouped-centered is-grouped-multiline">
+                <% if (bot.tags.includes("Fun")) { %>
+                    <div class="control">
+                        <span class="tag is-link"><i class="fas fa-tag"></i>&nbsp; Fun</span>
+                    </div>
+                <% } %>
+                <% if (bot.tags.includes("Social")) { %>
+                    <div class="control">
+                        <span class="tag is-info"><i class="fas fa-tag"></i>&nbsp; Social</span>
+                    </div>
+                <% } %>
+                <% if (bot.tags.includes("Economy")) { %>
+                    <div class="control">
+                        <span class="tag is-success"><i class="fas fa-tag"></i>&nbsp; Economy</span>
+                    </div>
+                <% } %>
+                <% if (bot.tags.includes("Utility")) { %>
+                    <div class="control">
+                        <span class="tag is-orange"><i class="fas fa-tag"></i>&nbsp; Utility</span>
+                    </div>
+                <% } %>
+                <% if (bot.tags.includes("Moderation")) { %>
+                    <div class="control">
+                        <span class="tag is-red-dark"><i class="fas fa-tag"></i>&nbsp; Moderation</span>
+                    </div>
+                <% } %>
+                <% if (bot.tags.includes("Multipurpose")) { %>
+                    <div class="control">
+                        <span class="tag is-magenta"><i class="fas fa-tag"></i>&nbsp; Multipurpose</span>
+                    </div>
+                <% } %>
+                <% if (bot.tags.includes("Music")) { %>
+                    <div class="control">
+                        <span class="tag is-pink"><i class="fas fa-tag"></i>&nbsp; <%= __("Music") %></span>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+    <% if (user) { %>
+        <% if (user.db.rank.mod === true) { %>
+            <% if (bot.modNotes && bot.status.approved === false) { %>
+                <div class="container">
+                    <article class="message is-blurple">
+                        <div class="message-header">
+                            <p class="has-text-primary"><%= __("Mod Notes") %></p>
+                        </div>
+                        <div class="message-body has-background-black">
+                            <%= bot.modNotes %>
+                        </div>
+                    </article>
+                </div>
+                <br />
+            <% } %>
+        <% } %>
+    <% } %>
+</section>
+<div class="container" style="overflow: hidden;">
+    <div class="section content">
+        <br />
+        <%- longDesc %>
+    </div>
+</div>
+<div class="modal deleteModal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title has-text-danger"><%= __("Warning!") %></p>
+        </header>
+        <section class="modal-card-body has-text-red-dark">
+            <%= __("This action is irreversible, when you click Delete your bot's data will be immediately erased from our database with no way of restoring it.") %>
+        </section>
+        <footer class="modal-card-foot">
+            <div class="buttons">
+                <a class="button is-success" href="/bots/<%= bot.id %>/delete">
+                    <span class="icon">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                    <span><%= __("Delete") %></span>
+                </a>
+                <button class="button is-danger" id="close-modal">
+                    <span class="icon">
+                        <i class="fas fa-times-circle"></i>
+                    </span>
+                    <span><%= __("Cancel") %></span>
+                </button>
+            </div>
+        </footer>
+    </div>
+    <script type="text/javascript">document.querySelector("a#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+</div>
+<% if (user && user.db.rank.mod === true) { %>
+    <div class="modal staffModal">
+        <div class="modal-background" id="staffModalBg"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title has-text-danger">Staff Tools</p>
+            </header>
+            <section class="modal-card-body has-text-red-dark">
+                If you accidentally perform an action that is "abusive" or "inappropriate" please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.
+            </section>
+            <footer class="modal-card-foot">
+                <div class="buttons">
+                    <a class="button is-link" target="_blank" href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= staffServer %>"><i class="fas fa-vial"></i>&nbsp; Staff Server Invite</a> &nbsp;
+                    <a class="button is-info" target="_blank" href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= mainServer %>"><i class="fas fa-shield-alt"></i>&nbsp; Main Server Invite</a> &nbsp;
+                    <% if (user.db.rank.admin === true) { %>
+                        <% if (bot.status.approved === true) { %>
+                            <% if (bot.status.verified === false) { %>
+                                <a class="button is-blurple" href="/bots/<%= bot.id %>/verify"><i class="fas fa-badge-check"></i>&nbsp; Verify</a> &nbsp;
+                            <% } else { %>
+                                <a class="button is-blurple" href="/bots/<%= bot.id %>/unverify"><i class="fas fa-badge"></i>&nbsp; Unverify</a> &nbsp;
+                            <% } %>
+                        <% } else { %>
+                            <a class="button is-blurple" href="/bots/<%= bot.id %>/verify" disabled><i class="fas fa-badge-check"></i>&nbsp; Verify</a> &nbsp;
+                        <% } %>
+                    <% } %>
+                    <% if (bot.status.approved === true) { %>
+                        <a class="button is-danger" href="/bots/<%= bot.id %>/remove"><i class="fas fa-trash"></i>&nbsp; Remove</a> &nbsp;
+                    <% } else { %>
+                        <a class="button is-success" href="/bots/<%= bot.id %>/approve"><i class="fas fa-check"></i>&nbsp; Approve</a> &nbsp;
+                        <a class="button is-danger" href="/bots/<%= bot.id %>/decline"><i class="fas fa-minus"></i>&nbsp; Decline</a> &nbsp;
+                    <% } %>
+                    <button class="button is-black" id="staffModalClose"><i class="fas fa-door-open"></i>&nbsp; Exit</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script type="text/javascript">document.querySelector("a#staffToolsModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".staffModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector("div#staffModalBg").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#staffModalClose").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+<% } %>
+<% if (user && bot.owner.id === user.id) { %>
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <script type="text/javascript" src="/js/bulma-toast.min.js" async></script>
+    <script type="text/javascript">function copyToClipboard(t){const e=document.createElement("textarea");e.value=t,e.setAttribute("readonly",""),e.style={position:"absolute",left:"-9999px"},document.body.appendChild(e),e.select(),document.execCommand("copy"),document.body.removeChild(e),bulmaToast.toast({message:"Copied to clipboard",type:"is-blurple",position:"bottom-right",duration:2e3,opacity:.75,animate:{in:"fadeInRight",out:"fadeOutRight"}})}</script>
+<% } %>
+<link href="/css/standard.css" type="text/css" media="screen, print" rel="stylesheet" />
+<%- include("../../partials/footer.ejs") %>

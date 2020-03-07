@@ -19,13 +19,21 @@
     </section>
     <div class="container">
         <div class="section">
+            <article class="message is-danger">
+                <div class="message-body content has-background-primary">
+                    <ul style="margin-top: unset;">
+                        <%- errors.map(err => `<li>${err}</li>`).join('') %>
+                    </ul>
+                </div>
+            </article>
+
             <form method="POST">
                 <h3 class="is-size-3 has-text-blurple"><%= __("General Information") %></h3>
                 <br />
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot ID") %> <span class="has-text-danger">*</span></label>
                     <p class="control has-icons-left has-icons-right" required>
-                        <input class="input is-rounded" type="text" name="id" placeholder="568254611354419211">
+                        <input class="input is-rounded" type="text" name="id" value="<%= bot.id %>" placeholder="568254611354419211">
                         <span class="icon is-small is-left">
                             <i class="fas fa-hashtag"></i>
                         </span>
@@ -35,7 +43,7 @@
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Editors") %> <span class="has-text-magenta">(<%= __("Space-Separated") %>)</span></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" name="editors" placeholder="<%= __("awesomepersonsid coolpersonsid bestfriendsid") %>">
+                        <input class="input is-rounded" type="text" name="editors" value="<%= bot.editors %>" placeholder="<%= __("awesomepersonsid coolpersonsid bestfriendsid") %>">
                         <span class="icon is-small is-left">
                             <i class="fas fa-user"></i>
                         </span>
@@ -46,7 +54,7 @@
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Prefix") %> <span class="has-text-danger">*</span></label>
                     <p class="control has-icons-left has-icons-right" required>
-                        <input class="input is-rounded" type="text" name="prefix" placeholder="!">
+                        <input class="input is-rounded" type="text" value="<%= bot.prefix %>" name="prefix" placeholder="!">
                         <span class="icon is-small is-left">
                             <i class="fas fa-paper-plane"></i>
                         </span>
@@ -59,7 +67,8 @@
                         <div class="select is-rounded">
                             <select name="library" required>
                                 <option value="" disabled selected><%= __("Select") %></option>
-                                <%- libraries.map(lib =>`<option value="${lib.id}">${lib.name}</option>`) %>
+                                <option value="<%= library %>" selected><%= library %></option>
+                                <%- libraries.map(lib => `<option value="${lib.name}">${lib.name}</option>`) %>
                             </select>
                         </div>
                         <div class="icon is-small is-left">
@@ -70,31 +79,31 @@
                 <br />
                 <label class="label has-text-blurple"><%= __("Tags") %></label>
                 <div class="field">
-                    <input class="is-checkradio is-circle has-background-color is-link" type="checkbox" id="fun" name="fun">
+                    <input class="is-checkradio is-circle has-background-color is-link" type="checkbox" id="fun" name="fun" <% if (bot.tags && bot.tags.includes("Fun")) { %>checked="checked"<% } %>>
                     <label class="has-text-link" for="fun"><%= __("Fun") %></label>
                 </div>
                 <div class="field">
-                    <input class="is-checkradio is-circle has-background-color is-info" type="checkbox" id="social" name="social">
+                    <input class="is-checkradio is-circle has-background-color is-info" type="checkbox" id="social" name="social" <% if (bot.tags && bot.tags.includes("Social")) { %>checked="checked"<% } %>>
                     <label class="has-text-info" for="social"><%= __("Social") %></label>
                 </div>
                 <div class="field">
-                    <input class="is-checkradio is-circle has-background-color is-success" type="checkbox" id="economy" name="economy">
+                    <input class="is-checkradio is-circle has-background-color is-success" type="checkbox" id="economy" name="economy" <% if (bot.tags && bot.tags.includes("Economy")) { %>checked="checked"<% } %>>
                     <label class="has-text-success" for="economy"><%= __("Economy") %></label>
                 </div>
                 <div class="field">
-                    <input class="is-checkradio is-circle has-background-color is-orange" type="checkbox" id="utility" name="utility">
+                    <input class="is-checkradio is-circle has-background-color is-orange" type="checkbox" id="utility" name="utility" <% if (bot.tags && bot.tags.includes("Utility")) { %>checked="checked"<% } %>>
                     <label class="has-text-orange" for="utility"><%= __("Utility") %></label>
                 </div>
                 <div class="field">
-                    <input class="is-checkradio is-circle has-background-color is-danger" type="checkbox" id="moderation" name="moderation">
+                    <input class="is-checkradio is-circle has-background-color is-danger" type="checkbox" id="moderation" name="moderation" <% if (bot.tags && bot.tags.includes("Moderation")) { %>checked="checked"<% } %>>
                     <label class="has-text-danger" for="moderation"><%= __("Moderation") %></label>
                 </div>
                 <div class="field">
-                    <input class="is-checkradio is-circle has-background-color is-magenta" type="checkbox" id="multipurpose" name="multipurpose">
+                    <input class="is-checkradio is-circle has-background-color is-magenta" type="checkbox" id="multipurpose" name="multipurpose" <% if (bot.tags && bot.tags.includes("Multipurpose")) { %>checked="checked"<% } %>>
                     <label class="has-text-magenta" for="multipurpose"><%= __("Multipurpose") %></label>
                 </div>
                 <div class="field">
-                    <input class="is-checkradio is-circle has-background-color is-pink" type="checkbox" id="music" name="music">
+                    <input class="is-checkradio is-circle has-background-color is-pink" type="checkbox" id="music" name="music" <% if (bot.tags && bot.tags.includes("Music")) { %>checked="checked"<% } %>>
                     <label class="has-text-pink" for="music"><%= __("Music") %></label>
                 </div>
                 <br />
@@ -104,7 +113,7 @@
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Invite") %></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" name="invite" placeholder="<%= __("If this is left blank, we will automatically generate a permission-less invite.") %>">
+                        <input class="input is-rounded" type="text" name="invite" value="<%= bot.invite %>" placeholder="<%= __("If this is left blank, we will automatically generate a permission-less invite.") %>">
                         <span class="icon is-small is-left">
                             <i class="fas fa-link"></i>
                         </span>
@@ -114,7 +123,7 @@
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Website") %></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" name="website" placeholder="https://example.com">
+                        <input class="input is-rounded" type="text" name="website" value="<%= bot.website %>" placeholder="https://example.com">
                         <span class="icon is-small is-left">
                             <i class="fas fa-globe"></i>
                         </span>
@@ -124,7 +133,7 @@
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Donation Link") %></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" name="donationUrl" placeholder="https://example.com/givememoneyplsimbroke">
+                        <input class="input is-rounded" type="text" name="donationUrl" value="<%= bot.donationUrl %>" placeholder="https://example.com/givememoneyplsimbroke">
                         <span class="icon is-small is-left">
                             <i class="fas fa-dollar-sign"></i>
                         </span>
@@ -134,7 +143,7 @@
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Support Server") %></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" name="supportServer" placeholder="https://discord.gg/someawesumsupportservhor">
+                        <input class="input is-rounded" type="text" name="supportServer" value="<%= bot.supportServer %>" placeholder="https://discord.gg/someawesumsupportservhor">
                         <span class="icon is-small is-left">
                             <i class="fas fa-heart"></i>
                         </span>
@@ -144,7 +153,7 @@
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Git Repository") %></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" name="repo" placeholder="https://github.com/awsumpersunorpage/awsumrepo">
+                        <input class="input is-rounded" type="text" name="repo" value="<%= bot.repo %>" placeholder="https://github.com/awsumpersunorpage/awsumrepo">
                         <span class="icon is-small is-left">
                             <i class="fas fa-code-branch"></i>
                         </span>
@@ -157,7 +166,7 @@
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Short Description") %> <span class="has-text-danger">*</span></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" name="shortDescription" placeholder="<%= __("I'm an amazing bot that can do this and that and yeah kthx invite me") %>" required>
+                        <input class="input is-rounded" type="text" name="shortDescription" value="<%= bot.shortDescription %>" placeholder="<%= __("I'm an amazing bot that can do this and that and yeah kthx invite me") %>" required>
                         <span class="icon is-small is-left">
                             <i class="fas fa-comment-dots"></i>
                         </span>
@@ -166,18 +175,29 @@
                 <br />
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Long Description") %> (HTML & Markdown) <span class="has-text-danger">*</span></label>
-                    <textarea id="longDesc" name="longDescription"></textarea>
+                    <textarea id="longDesc" name="longDescription" value="<%= bot.longDescription %>"></textarea>
                 </div>
                 <br />
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Mod Notes") %></label>
-                    <textarea id="modNotes" value="<%= __("Something you want to inform the moderators testing your bot about.") %>" name="modNotes"></textarea>
+                    <textarea id="modNotes" value="<%= bot.modNotes %>" name="modNotes"></textarea>
+                    <p style="padding: 5px;" class="is-size-7 has-text-magenta"><%= __("Something you want to inform the moderators testing your bot about.") %></p>
                 </div>
                 <br />
                 <div class="field is-grouped">
-                    <div class="control">
-                        <button class="button is-success"><i class="fas fa-check-circle"></i>&nbsp; <%= __("Submit") %></button> &nbsp;
-                        <a class="button is-danger" href="/"><i class="fas fa-times-circle"></i>&nbsp; <%= __("Cancel") %></a>
+                    <div class="buttons">
+                        <button class="button is-success">
+                            <span class="icon">
+                              <i class="fas fa-check-circle"></i>
+                            </span>
+                            <span><%= __("Submit") %></span>
+                        </button>
+                        <a href="/" class="button is-danger">
+                            <span class="icon">
+                              <i class="fas fa-times-circle"></i>
+                            </span>
+                            <span><%= __("Cancel") %></span>
+                        </a>
                     </div>
                 </div>
             </form>    

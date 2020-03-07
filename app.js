@@ -47,6 +47,7 @@ new Promise((resolve, reject) => {
     const device = require("express-device");
     const compression = require("compression");
     const passport = require("passport");    
+    const i18n = require("i18n");
     
     app.set("view engine", "ejs");
 
@@ -57,6 +58,13 @@ new Promise((resolve, reject) => {
     app.use(compression())
     
     app.use(device.capture());
+
+    i18n.configure({
+        locales: ["en"],
+        directory: __dirname + "/src/Assets/Locale",
+        defaultLocale: "en",
+        cookie: "lang"
+    });
 
     app.use(session({ store: new redisStore({
             url: settings.db.redis,
@@ -69,7 +77,7 @@ new Promise((resolve, reject) => {
         saveUninitialized: true,
         cookie: {
             secure: false,
-            maxAge: 604800000
+            maxAge: 86400
         }
     }));  
 
@@ -80,6 +88,8 @@ new Promise((resolve, reject) => {
     
     app.use(passport.initialize());
     app.use(passport.session());
+
+    app.use(i18n.init);
 
     app.use("/", require("./src/Routes/index.js"));
     app.use("/", require("./src/Routes/authentication.js"));

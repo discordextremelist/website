@@ -8,7 +8,7 @@ Licensing information viewable in LICENSE.md
 
 ### Node.JS Framework
 
-You must have Node.JS v13.x.x installed, other versions have not been tested and may cause instability.
+You must ideally have Node.JS v13.x.x installed, other versions have not been tested and may cause instability.
 
 ### Python 3
 
@@ -22,18 +22,13 @@ nodemon is optional and allows you to use the `npm run dev` command which is ide
 
 PM2 is optional and allows you to use the `npm run pm2` command which is ideal if you wish to run DEL in production.
 
-### RethinkDB
+### MongoDB
 
-A rethinkdb instance is required - the database name must match the name configured in the settings.json file and the following tables MUST be created.
-
-1. users
-2. bots
-3. servers
-4. applications
+A MongoDB instance is required - it must match the configuration in the `settings.json` file.
 
 ### Redis
 
-Redis must be installed for authentication/sessions to work.
+Redis must be installed for authentication/sessions to work - it must match the configuration in the `settings.json` file.
 
 ## Setup
 

@@ -87,5 +87,10 @@
 	"Editors": "Editors",
 	"English": "English",
 	"Help Translate": "Help Translate",
-	"Language": "Language"
+	"Language": "Language",
+	"Set Vanity URL": "Set Vanity URL",
+	"Your Vanity URL cannot be changed once set, choose carefully!": "Your Vanity URL cannot be changed once set, choose carefully!",
+	"Example:": "Example:",
+	"Set": "Set",
+	"Login with Discord": "Login with Discord"
 }

@@ -1,10 +1,10 @@
-const bot = require("../Services/discordBot.js");
+const discord = require("../Services/discord.js");
 
 const statusUpdate = async () => {
     const count = await app.db.collection("bots").find().length;
 
     if (count > 1) {
-        bot.user.setPresence({
+        discord.bot.user.setPresence({
             status: "online",
             game: {
                 name: `${count} listed bots ($)`,
@@ -12,7 +12,7 @@ const statusUpdate = async () => {
             }
         });
     } else if (count === 1) {
-        bot.user.setPresence({
+        discord.bot.user.setPresence({
             status: "online",
             game: {
                 name: `${count} listed bot ($)`,
@@ -20,7 +20,7 @@ const statusUpdate = async () => {
             }
         });
     } else if (count === 0) {
-        bot.user.setPresence({
+        discord.bot.user.setPresence({
             status: "online",
             game: {
                 name: `No listed bots ($)`,
@@ -28,7 +28,7 @@ const statusUpdate = async () => {
             }
         });
     } else {
-        bot.user.setPresence({
+        discord.bot.user.setPresence({
             status: "online",
             game: {
                 name: `${count} listed bot(s) ($)`,

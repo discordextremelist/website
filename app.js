@@ -41,6 +41,8 @@ new Promise((resolve, reject) => {
         console.log("Redis error: ", err);
     });    
 
+    require("./src/Util/Services/featuring.js");
+
     const createError = require("http-errors");
     const cookieParser = require("cookie-parser");
     const logger = require("morgan");
@@ -67,7 +69,7 @@ new Promise((resolve, reject) => {
     });
 
     app.use(session({ store: new redisStore({
-            url: settings.db.redis,
+            url: settings.db.redis.logins,
             client: redisClient,
             ttl: 86400
         }),

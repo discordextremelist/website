@@ -5,14 +5,16 @@
  */
 
 const app = require("../app");
+const settings = require("../settings.json");
 const debug = require("debug")("del-v5:server");
 const fs = require("fs");
+const { exec } = require("child_process");
 
 /**
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || "3000");
+const port = normalizePort(settings.website.port.value || process.env.PORT || "3000");
 app.set("port", port);
 
 /**
@@ -66,7 +68,7 @@ function normalizePort(val) {
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error) {
+async function onError(error) {
   if (error.syscall !== "listen") {
     throw error;
   }
@@ -82,9 +84,15 @@ function onError(error) {
       process.exit(1);
       break;
     case "EADDRINUSE":
-      console.error(bind + " is already in use");
-      process.exit(1);
-      break;
+      if (settings.website.port.agressive === false) {
+        console.error(bind + " is already in use");
+        process.exit(1);
+        break;
+      } else {
+        exec(`fuser -k ${port}/tcp`)
+        console.error(bind + " is already in use, but I have killed the process using it for you.");
+        break;
+      }
     default:
       throw error;
   }

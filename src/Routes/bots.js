@@ -6,7 +6,7 @@ const sanitizeHtml = require("sanitize-html");
 const router = express.Router();
 
 const settings = require("../../settings.json");
-const client = require("../Util/Services/discordBot.js");
+const discord = require("../Util/Services/discord.js");
 const variables = require("../Util/Function/variables.js");
 const permission = require("../Util/Function/permissions.js");
 const functions = require("../Util/Function/main.js");
@@ -151,7 +151,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
             }
         });
 
-        client.channels.get(settings.logs.channels.webLog).send(`${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** added bot **${functions.escapeFormatting(snkRes.body.username)} (${req.body.id}) | <@&${settings.roles.staff}>**\n<${settings.website.url}/bots/${req.body.id}>`);
+        discord.bot.createMessage({ channelID: settings.channels.webLog, content: { content: `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** added bot **${functions.escapeFormatting(snkRes.body.username)} (${req.body.id}) | <@&${settings.roles.staff}>**\n<${settings.website.url}/bots/${req.body.id}>` } });
 
         functions.statusUpdate();
         res.redirect(`/bots/${req.body.id}`);
@@ -252,6 +252,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     let errors = [];
 
     const botExists = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    
     if (!botExists) return res.status(404).render("status", { 
         title: res.__("Error"), 
         subtitle: res.__("This bot does not exist."),
@@ -260,7 +261,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         req 
     }); 
 
-    if (botExists.owner.id !== req.user.id && !bot.editors.includes(req.user.id) && req.user.db.mod === false) return res.status(403).render("status", { 
+    const bot = botExists;
+    if (bot.owner.id !== req.user.id && !bot.editors.includes(req.user.id) && req.user.db.mod === false) return res.status(403).render("status", { 
         title: res.__("Error"), 
         subtitle: res.__("You do not have the required permission(s) to edit this bot."),
         status: 403, 
@@ -313,7 +315,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         const libraries = await req.app.db.collection("libraries").find({ name: { $ne: library } }).sort({ name: 1 }).toArray();
         return res.render("templates/bots/errorOnEdit", { 
             title: res.__("Edit Bot"), 
-            subtitle: res.__("Editing bot: ") + botExists.name,
+            subtitle: res.__("Editing bot: ") + bot.name,
             bot: req.body,
             libraries,
             library,
@@ -356,7 +358,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         });
     }).catch(_ => { return res.status(400).render("status", { title: res.__("Error"), subtitle: res.__("An error occurred when querying the Discord API."), status: 400, type: "Error", req }) });
 
-    client.channels.get(settings.logs.channels.webLog).send(`${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** edited bot **${functions.escapeFormatting(bot.name)} (${bot.id})**\n<${settings.website.url}/bots/${req.body.id}>`);
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** edited bot **${functions.escapeFormatting(bot.name)} (${bot.id})**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
     res.redirect(`/bots/${req.params.id}`);
 });
 
@@ -377,16 +379,16 @@ router.get("/:id", variables, async (req, res, next) => {
         });
     }
 
-    const botOwner = await req.app.db.collection("users").findOne({ id: bot.owner.id });
-    const guild = await client.guilds.get(settings.guild.main);
-    const member = await guild.member(bot.id);
-    let botStatus;
+    var member;
+    snek.get(`https://discordapp.com/api/guilds/${settings.guild.main}/members/${bot.id}`).set("Authorization", `Bot ${settings.client.token}`).then(snkRes => {
+        member = snkRes;
+    }).catch(snkRes => {
+        member = snkRes
+    });
 
-    if (member) {
-        botStatus = member.presence.status;
-    } else {
-        botStatus = "???";
-    }
+    const botOwner = await req.app.db.collection("users").findOne({ id: bot.owner.id });
+    
+    botStatus = await discord.getStatus(bot.id);
 
     const dirty = await marked(bot.longDesc);
     let clean;

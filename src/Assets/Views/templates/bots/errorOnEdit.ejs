@@ -1,5 +1,7 @@
 <%- include("../../partials/header.ejs") %>
 <link href="/css/form.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
@@ -27,7 +29,7 @@
                 </div>
             </article>
 
-            <form method="POST">
+            <form id="form" method="POST">
                 <h3 class="is-size-3 has-text-blurple"><%= __("General Information") %></h3>
                 <br />
                 <div class="field">
@@ -175,7 +177,8 @@
                 <br />
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Long Description") %> (HTML & Markdown) <span class="has-text-danger">*</span></label>
-                    <textarea id="longDesc" name="longDescription" value="<%= bot.longDescription %>"></textarea>
+                    <div onkeyup="monacoToField();" id="longDescEditor" style="width:800px;height:350px;border:1px solid grey"></div>
+                    <input hidden name="longDescription" id="longDesc" />
                 </div>
                 <br />
                 <div class="field">
@@ -201,5 +204,25 @@
                     </div>
                 </div>
             </form>    
-        </div>    
+        </div>
+        <script>var require = { paths: { "vs": "/packages/monaco-editor/min/vs" } };</script>
+        <script src="/packages/monaco-editor/min/vs/loader.js"></script>
+        <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+        <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
+        <script>
+            var longDescEditor = monaco.editor.create(document.getElementById("longDescEditor"), {
+                // value: [
+                //     'function x() {',
+                //     '\tconsole.log("Hello world!");',
+                //     '}'
+                // ].join('\n'),
+                value: "<%= bot.longDescription %>",
+                language: "markdown"
+            });
+            function monacoToField() {
+                var value = window.longDescEditor.getValue();
+                $("#longDesc").val(value);
+            }
+            monaco.editor.setTheme("vs-dark");
+        </script>    
 <%- include("../../partials/footer.ejs") %>

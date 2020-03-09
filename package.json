@@ -8,7 +8,8 @@
     "pm2": "pm2 start scripts/start --name 'DEL'",
     "dev": "nodemon scripts/start",
     "css-build": "node-sass --omit-source-map-url src/Assets/Sass/main.scss src/Assets/Public/css/standard.css --output-style compressed && node-sass --omit-source-map-url src/Assets/Sass/form.scss src/Assets/Public/css/form.css --output-style compressed && node-sass --omit-source-map-url src/Assets/Sass/all.scss src/Assets/Public/css/all.css --output-style compressed",
-    "css-watch": "npm run css-build -- --watch"
+    "css-watch": "npm run css-build -- --watch",
+    "editor-build": "cp -r ./node_modules/monaco-editor/ ./src/Assets/Public/packages/monaco-editor"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -42,6 +43,7 @@
     "bulma": "^0.8.0",
     "bulma-extensions": "^6.2.7",
     "compression": "^1.7.4",
+    "monaco-editor": "^0.20.0",
     "node-sass": "^4.13.1",
     "nodemon": "^2.0.2"
   }

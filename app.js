@@ -79,7 +79,7 @@ new Promise((resolve, reject) => {
         saveUninitialized: true,
         cookie: {
             secure: false,
-            maxAge: 86400
+            maxAge: 86400000
         }
     }));  
 

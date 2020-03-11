@@ -277,8 +277,7 @@
     </div>
 </section>
 <div class="container" style="overflow: hidden;">
-    <div class="section content">
-        <br />
+    <div class="section content" style="white-space: pre;">
         <%- longDesc %>
     </div>
 </div>
@@ -390,7 +389,7 @@
     <script type="text/javascript">document.querySelector("a#staffToolsModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".staffModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector("div#staffModalBg").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#staffModalClose").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
 <% } %>
 <% if (req.user && bot.owner.id === req.user.id) { %>
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" integrity="sha384-OHBBOqpYHNsIqQy8hL1U+8OXf9hH6QRxi0+EODezv82DfnZoV7qoHAZDwMwEJvSw" crossorigin="anonymous">
     <script type="text/javascript" src="/js/bulma-toast.min.js" async></script>
     <script type="text/javascript">function copyToClipboard(t){const e=document.createElement("textarea");e.value=t,e.setAttribute("readonly",""),e.style={position:"absolute",left:"-9999px"},document.body.appendChild(e),e.select(),document.execCommand("copy"),document.body.removeChild(e),bulmaToast.toast({message:"Copied to clipboard",type:"is-blurple",position:"bottom-right",duration:2e3,opacity:.75,animate:{in:"fadeInRight",out:"fadeOutRight"}})}</script>
 <% } %>

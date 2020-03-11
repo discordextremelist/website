@@ -1,5 +1,7 @@
 <%- include("../../partials/header.ejs") %>
 <link href="/css/form.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
@@ -175,11 +177,26 @@
                 </div>
                 <br />
                 <div class="field is-grouped">
-                    <div class="control">
-                        <button class="button is-success"><i class="fas fa-check-circle"></i>&nbsp; <%= __("Submit") %></button> &nbsp;
-                        <a class="button is-danger" href="/"><i class="fas fa-times-circle"></i>&nbsp; <%= __("Cancel") %></a>
+                    <div class="buttons">
+                        <button class="button is-success">
+                            <span class="icon">
+                              <i class="fas fa-check-circle"></i>
+                            </span>
+                            <span><%= __("Submit") %></span>
+                        </button>
+                        <a href="/" class="button is-danger">
+                            <span class="icon">
+                              <i class="fas fa-times-circle"></i>
+                            </span>
+                            <span><%= __("Cancel") %></span>
+                        </a>
                     </div>
                 </div>
             </form>    
         </div>    
+        <script type="text/javascript">var require={paths:{"vs":"/packages/monaco-editor/min/vs"}};</script>
+        <script src="/packages/monaco-editor/min/vs/loader.js"></script>
+        <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+        <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
+        <script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{language:"markdown"});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
 <%- include("../../partials/footer.ejs") %>

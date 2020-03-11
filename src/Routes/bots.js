@@ -3,8 +3,10 @@ const snek = require("snekfetch");
 const crypto = require("crypto");
 const marked = require("marked");
 const sanitizeHtml = require("sanitize-html");
+const Entities = require("html-entities").AllHtmlEntities;
+const entities = new Entities();
 const router = express.Router();
-
+ 
 const settings = require("../../settings.json");
 const discord = require("../Util/Services/discord.js");
 const variables = require("../Util/Function/variables.js");
@@ -243,7 +245,8 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
         libraries,
         bot: botExists,
         editors: botExists.editors ? botExists.editors.join(' ') : '',
-        req 
+        req,
+        longDesc: entities.decode(botExists.longDesc)
     });
 });
 

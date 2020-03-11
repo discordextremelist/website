@@ -191,24 +191,10 @@
                 </div>
             </form>    
         </div>    
-        <script>var require = { paths: { "vs": "/packages/monaco-editor/min/vs" } };</script>
+        <% console.log(longDesc) %>
+        <script type="text/javascript">var require={paths:{"vs":"/packages/monaco-editor/min/vs"}};</script>
         <script src="/packages/monaco-editor/min/vs/loader.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
-        <script>
-            var longDescEditor = monaco.editor.create(document.getElementById("longDescEditor"), {
-                // value: [
-                //     'function x() {',
-                //     '\tconsole.log("Hello world!");',
-                //     '}'
-                // ].join('\n'),
-                value: "<%= bot.longDesc %>",
-                language: "markdown"
-            });
-            function monacoToField() {
-                var value = window.longDescEditor.getValue();
-                $("#longDesc").val(value);
-            }
-            monaco.editor.setTheme("vs-dark");
-        </script>    
+        <script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{value:`<%= longDesc %>`,language:"markdown"});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
 <%- include("../../partials/footer.ejs") %>

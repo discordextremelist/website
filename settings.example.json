@@ -1,0 +1,78 @@
+{
+    "db": {
+        "mongo": "mongodb://localhost:27017",
+        "redis": {
+            "logins": "redis://127.0.0.1:6379/2",
+            "statuses": "redis://127.0.0.1:6379/3",
+            "featuring": "redis://127.0.0.1:6379/4"
+        }
+    },
+    "client": {
+        "id": "",
+        "token": "",
+        "secret": ""
+    },
+    "website": {
+        "secrets": {
+            "cookie": ""
+        },
+        "port": {
+            "value": 3000,
+            "agressive": true
+        },
+        "authScopes": ["identify"],
+        "url": "https://example.com",
+        "callback": "/login/callback"
+    },
+    "guild": {
+        "main": "",
+        "staff": ""
+    },
+    "channels": {
+        "webLog": ""
+    },
+    "roles": {
+        "unapprovedBot": "",
+        "bot": "",
+        "verifiedBot": "",
+        "serverOwner": "",
+        "developer": "",
+        "verifiedDeveloper": "",
+        "staff": "",
+        "mod": "",
+        "admin": "",
+        "everyoneping": "",
+        "staffServer": {
+          "mod": ""
+        }
+      },
+      "emoji": {
+        "snowflake": {
+          "cross": "",
+          "check": ""
+        },
+        "cross": "",
+        "check": "",
+        "verified": "",
+        "mod": "",
+        "admin": "",
+        "generalCmds": "",
+        "addBot": "",
+        "verificationApp": "",
+        "botDeleted": "",
+        "editBot": "",
+        "resubmitBot": "",
+        "unverifiedBot": "",
+        "verificationAppDenied": "",
+        "error": "",
+        "notification": "",
+        "warn": "",
+        "info": ""
+      },
+      "colours": {
+        "error": "#d00020",
+        "success": "#6aa940",
+        "warn": "#ffdd00",
+        "info": "#00b7ff"
+      }    
+}

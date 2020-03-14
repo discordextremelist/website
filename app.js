@@ -25,7 +25,6 @@ console.log("Mongo: Connection opening...");
 const { MongoClient } = require("mongodb");
 let client, db;
 new Promise((resolve, reject) => {
-    // mongodb://localhost:27017
     MongoClient.connect(settings.db.mongo, { useUnifiedTopology: true }, (error, mongo) => {
         if (error) return reject(error);
         client = mongo;

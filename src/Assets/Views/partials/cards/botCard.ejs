@@ -6,7 +6,7 @@
                     <img class="is-rounded lazyload" data-src="<%= bot.avatar.url %>.<%= imageFormat %>" alt="<%= bot.name %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load bot <%= bot.id %>\'s avatar/icon, using default instead.');">
                 </figure>
             </div>
-            <div class="media-content">
+            <div style="overflow: hidden;" class="media-content">
                 <div class="content">
                     <p>
                     <span class="is-size-4 title has-text-blurple is-mobile"><%= bot.name %>
@@ -48,13 +48,13 @@
                             <span><%= __("View Application") %></span>
                         </a>
                     <% } else { %>
-                        <a href="/bots/<%= bot.id %>" style="filter: drop-shadow(0px 1px 2px #7289da);" class="button is-primary has-text-blurple">
+                        <a href="/bots/<%= bot.id %>" class="button is-blurple is-outlined">
                             <span class="icon">
                               <i class="fas fa-eye"></i>
                             </span>
                             <span><%= __("View") %></span>
                         </a>
-                        <a href="/bots/<%= bot.id %>/invite" style="filter: drop-shadow(0px 1px 2px #7289da);" class="button is-primary has-text-blurple">
+                        <a href="/bots/<%= bot.id %>/invite" class="button is-blurple is-outlined">
                             <span class="icon">
                               <i class="fas fa-plus"></i>
                             </span>

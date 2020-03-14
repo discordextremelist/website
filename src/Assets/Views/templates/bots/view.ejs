@@ -17,7 +17,7 @@
                     <img class="image" title="<%= statusInfo %>" style="border-radius: 50%; animation: <%= botStatus %> 2s infinite !important;" src="<%= bot.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= bot.name %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');">
                 </div>
                 <div class="column is-10">
-                    <h1 class="is-size-1">
+                    <h1 id="botName" class="is-size-1">
                         <%= bot.name %>
                     </h1>
                     <h2 class="subtitle"><%= bot.shortDesc %></h2>
@@ -277,9 +277,11 @@
     </div>
 </section>
 <div class="container" style="overflow: hidden;">
-    <div class="section content" style="white-space: pre;">
-        <%- longDesc %>
-    </div>
+    <div id="content" class="section content" style="white-space: pre;"></div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
+    <script>
+        document.getElementById('content').innerHTML = marked(`<%- longDesc %>`);
+    </script> 
 </div>
 <div class="modal deleteModal">
     <div class="modal-background"></div>

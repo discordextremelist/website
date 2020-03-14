@@ -97,6 +97,8 @@ new Promise((resolve, reject) => {
     app.use("/", require("./src/Routes/authentication.js"));
     app.use("/bots", require("./src/Routes/bots.js"));
 
+    app.use("*", require("./src/Util/Function/variables.js"));
+
     app.use((req, res, next) => {
         next(createError(404));
     });
@@ -104,6 +106,20 @@ new Promise((resolve, reject) => {
     app.use((err, req, res, next) => {
         res.locals.message = err.message;
         res.locals.error = req.app.get("env") === "development" ? err : {};
+
+        if (err.message === "Not Found") return res.status(404).render("status", { 
+            title: res.__("Error"), 
+            subtitle: "This page does not exist.",
+            status: 404, 
+            type: "Error",
+            req: req,
+            pageType: {
+                home: false,
+                standard: true,
+                server: false,
+                bot: false
+            }
+        });
 
         res.status(err.status || 500);
         res.render("error");

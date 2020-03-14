@@ -168,12 +168,15 @@
                 <br />
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Long Description") %> (HTML & Markdown) <span class="has-text-danger">*</span></label>
-                    <textarea id="longDesc" name="longDescription"></textarea>
+                    <div onkeyup="monacoToField();" id="longDescEditor" style="width:800px;height:350px;border:1px solid grey"></div>
+                    <textarea hidden name="longDescription" id="longDesc" required></textarea>
                 </div>
                 <br />
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Bot Mod Notes") %></label>
-                    <textarea id="modNotes" value="<%= __("Something you want to inform the moderators testing your bot about.") %>" name="modNotes"></textarea>
+                    <div onkeyup="monacoToField();" id="modNotesEditor" style="width:800px;height:350px;border:1px solid grey"></div>
+                    <textarea hidden name="modNotes" id="modNotes"></textarea>
+                    <p style="padding: 5px;" class="is-size-7 has-text-magenta"><%= __("Something you want to inform the moderators testing your bot about.") %></p>
                 </div>
                 <br />
                 <div class="field is-grouped">
@@ -193,10 +196,10 @@
                     </div>
                 </div>
             </form>    
-        </div>    
+        </div>
         <script type="text/javascript">var require={paths:{"vs":"/packages/monaco-editor/min/vs"}};</script>
         <script src="/packages/monaco-editor/min/vs/loader.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
-        <script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{language:"markdown"});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
+        <script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{language:"markdown"});var modNotesEditor=monaco.editor.create(document.getElementById("modNotesEditor"));function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
 <%- include("../../partials/footer.ejs") %>

@@ -1,10 +1,10 @@
 const express = require("express");
 const snek = require("snekfetch");
 const crypto = require("crypto");
-const marked = require("marked");
-const sanitizeHtml = require("sanitize-html");
-const Entities = require("html-entities").AllHtmlEntities;
+const md = require("markdown-it")();
+const Entities = require('html-entities').XmlEntities;
 const entities = new Entities();
+const sanitizeHtml = require("sanitize-html");
 const router = express.Router();
  
 const settings = require("../../settings.json");
@@ -219,6 +219,69 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
     });
 });
 
+router.post("/:id/setvanity", variables, permission.auth, async (req, res, next) => {
+    const botExists = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    if (!botExists) return res.status(404).render("status", {
+        title: res.__("Error"),
+        subtitle: res.__("This bot does not exist."),
+        status: 404,
+        type: "Error",
+        req
+    });
+
+    if (botExists.owner.id !== req.user.id && req.user.db.assistant === false) return res.status(403).render("status", { 
+        title: res.__("Error"), 
+        subtitle: res.__("You do not have the required permission(s) to set/modify this bot's vanity url."),
+        status: 403, 
+        type: "Error",
+        req 
+    }); 
+
+    if (botExists.links.vanity && botExists.owner.id === req.user.id && req.user.db.assistant === false) {
+        return res.status(400).render("status", {
+            title: res.__("Error"),
+            subtitle: res.__("You do not have the required permission(s) to modify your bot's vanity url, please contact an Assistant or higher if you want to change your vanity url."),
+            status: 400,
+            type: "Error",
+            req
+        });
+    } else if (botExists.links.vanity && req.user.db.assistant === true) {
+        req.app.db.collection("bots").updateOne({ id: req.params.id }, 
+            { $set: {
+                links: {
+                    vanity: req.body.vanity
+                }
+            }
+        });
+
+        req.app.db.collection("audit").insertOne({
+            type: "MODIFY_VANITY",
+            executor: req.user.id,
+            target: req.params.id,
+            reason: ""
+        });
+
+        res.redirect(`/bots/${req.params.id}`);
+    } else if (!botExists.links.vanity) {
+        req.app.db.collection("bots").updateOne({ id: req.params.id }, 
+            { $set: {
+                links: {
+                    vanity: req.body.vanity
+                }
+            }
+        });
+
+        req.app.db.collection("audit").insertOne({
+            type: "SET_VANITY",
+            executor: req.user.id,
+            target: req.params.id,
+            reason: ""
+        });
+
+        res.redirect(`/bots/${req.params.id}`);
+    }
+})
+
 router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
     const botExists = await req.app.db.collection("bots").findOne({ id: req.params.id });
     if (!botExists) return res.status(404).render("status", { 
@@ -229,7 +292,7 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
         req 
     }); 
 
-    if (botExists.owner.id !== req.user.id && !bot.editors.includes(req.user.id) && req.user.db.mod === false) return res.status(403).render("status", { 
+    if (botExists.owner.id !== req.user.id && !bot.editors.includes(req.user.id) && req.user.db.assistant === false) return res.status(403).render("status", { 
         title: res.__("Error"), 
         subtitle: res.__("You do not have the required permission(s) to edit this bot."),
         status: 403, 
@@ -246,7 +309,7 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
         bot: botExists,
         editors: botExists.editors ? botExists.editors.join(' ') : '',
         req,
-        longDesc: entities.decode(botExists.longDesc)
+        longDesc: botExists.longDesc
     });
 });
 
@@ -370,13 +433,12 @@ router.get("/:id", variables, async (req, res, next) => {
     let bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
 
     if (!bot) {
-        bot = await req.app.db.collection("bots").findOne({ links: { id: req.params.id } })
-        const vanity = await r.table("vanityUrls").get(req.params.id).run();
+        bot = await req.app.db.collection("bots").findOne({ links: { id: req.params.id } });
 
         if (!bot) return res.status(404).render("status", {
             title: res.__("Error"),
             status: 404,
-            message: res.__("This bot is not in our database"),
+            subtitle: res.__("This bot is not in our database"),
             type: "Error",
             req: req
         });
@@ -393,7 +455,7 @@ router.get("/:id", variables, async (req, res, next) => {
     
     botStatus = await discord.getStatus(bot.id);
 
-    const dirty = await marked(bot.longDesc);
+    const dirty = entities.decode(md.render(bot.longDesc)); 
     let clean;
     if (bot.status.verified === true) {
         clean = sanitizeHtml(dirty, {

@@ -18,7 +18,12 @@
         <% if (botsData.length === 0) { %>
             <h2 class="is-size-3 backdrop">There are no approved bots</h2>
         <% } else { %>
-            <h2 class="is-size-3 backdrop">Featured Bots</h2>
+            <h2 class="is-size-3 has-text-centered has-text-blurple">
+                <span class="icon is-medium iconalign">
+                    <i class="fad fa-robot fa-1x"></i>
+                </span>
+                <span>Featured Bots</span>
+            </h2>
             <br />
             <div class="columns is-multiline is-centered">
                 <%- botChunk.map(chunk => `${chunk.map(bot => include("../partials/cards/botCard.ejs", { bot, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>

@@ -219,6 +219,19 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
     });
 });
 
+router.post("/preview_post", async (req, res, next) => {
+    const dirty = entities.decode(md.render(req.body.longDesc)); 
+
+    const clean = sanitizeHtml(dirty, {
+        allowedTags: [ "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "button", "p", "a", "ul", "ol",
+            "nl", "li", "b", "i", "img", "strong", "em", "strike", "code", "hr", "br", "div",
+            "table", "thead", "caption", "tbody", "tr", "th", "td", "pre", "iframe", "style", "link" ],
+        allowedAttributes: false,
+    });
+
+    res.status(200).json({ longDesc: clean });
+});
+
 router.post("/:id/setvanity", variables, permission.auth, async (req, res, next) => {
     const botExists = await req.app.db.collection("bots").findOne({ id: req.params.id });
     if (!botExists) return res.status(404).render("status", {
@@ -237,7 +250,7 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
         req 
     }); 
 
-    if (botExists.links.vanity && botExists.owner.id === req.user.id && req.user.db.assistant === false) {
+    if (botExists.vanityUrl && botExists.owner.id === req.user.id && req.user.db.assistant === false) {
         return res.status(400).render("status", {
             title: res.__("Error"),
             subtitle: res.__("You do not have the required permission(s) to modify your bot's vanity url, please contact an Assistant or higher if you want to change your vanity url."),
@@ -245,12 +258,10 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
             type: "Error",
             req
         });
-    } else if (botExists.links.vanity && req.user.db.assistant === true) {
+    } else if (botExists.vanityUrl && req.user.db.assistant === true) {
         req.app.db.collection("bots").updateOne({ id: req.params.id }, 
             { $set: {
-                links: {
-                    vanity: req.body.vanity
-                }
+                vanityUrl: req.body.vanity
             }
         });
 
@@ -258,16 +269,19 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
             type: "MODIFY_VANITY",
             executor: req.user.id,
             target: req.params.id,
-            reason: ""
+            date: Date.now(),
+            reason: req.body.reason || "None specified.",
+            details: {
+                old: botExists.vanityUrl,
+                new: req.body.vanity
+            }
         });
 
         res.redirect(`/bots/${req.params.id}`);
-    } else if (!botExists.links.vanity) {
+    } else if (!botExists.vanityUrl) {
         req.app.db.collection("bots").updateOne({ id: req.params.id }, 
             { $set: {
-                links: {
-                    vanity: req.body.vanity
-                }
+                vanityUrl: req.body.vanity
             }
         });
 
@@ -275,7 +289,12 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
             type: "SET_VANITY",
             executor: req.user.id,
             target: req.params.id,
-            reason: ""
+            date: Date.now(),
+            reason: req.body.reason || "None specified.",
+            details: {
+                old: "Not available.",
+                new: req.body.vanity
+            }
         });
 
         res.redirect(`/bots/${req.params.id}`);

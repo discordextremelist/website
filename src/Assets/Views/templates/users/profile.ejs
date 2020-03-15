@@ -1,0 +1,220 @@
+<%- include("../../partials/header.ejs"); %>
+<%- include("../../partials/nav.ejs"); %>
+<% if (userProfile.rank.verified === true || userProfile.rank.mod === true) { %>
+    <style style="text/css">
+        <%= userProfile.profile.css %>
+    </style>
+<% } %>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <br />
+        <div class="container">
+            <div class="columns">
+                <div class="column is-2">
+                    <% 
+                        let statusInfo;
+                        if (userStatus === "online") statusInfo = __("The user's status is currently Online.")
+                        if (userStatus === "idle") statusInfo = __("The user's status is currently Idle.")
+                        if (userStatus === "dnd") statusInfo = __("The user's status is currently Do not Disturb.")
+                        if (userStatus === "offline") statusInfo = __("The user's status is currently Offline.")
+                    %> 
+                    <img class="image" title="<%= statusInfo %>" style="border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');">
+                </div>
+                <div class="column is-10">
+                    <h1 class="is-size-1">
+                        <%= userProfile.fullUsername %>
+                        <% if (userProfileIsBanned === true || userProfile.rank.bugHunter === true || userProfile.rank.verified === true || userProfile.rank.mod === true || userProfile.rank.admin === true ) { %>
+                            <% if (userProfileIsBanned === true) { %>
+                                <img class="profileBadge" title="<%= __("Banned") %>" alt="<%= __("Banned") %>" src="/img/badges/banned.png">
+                            <% } %>
+                            <% if (userProfile.rank.bugHunter === true) { %>
+                                <img class="profileBadge" title="<%= __("Bug Hunter") %>" alt="<%= __("Bug Hunter") %>" src="/img/badges/bughunter.png">
+                            <% } %>
+                            <% if (userProfile.rank.verified === true) { %>
+                                <img class="profileBadge" title="<%= __("Verified Developer") %>" alt="<%= __("Verified Developer") %>" src="/img/badges/verified.png">
+                            <% } %>
+                            <% if (userProfile.rank.mod === true) { %>
+                                <img class="profileBadge" title="<%= __("Website Moderator") %>" alt="<%= __("Website Moderator") %>" src="/img/badges/mod.png">
+                            <% } %>
+                            <% if (userProfile.rank.assistant === true ) { %>
+                                <img class="profileBadge" title="<%= __("Website Assistant") %>" alt="<%= __("Website Assistant") %>" src="/img/badges/assistant.png">
+                            <% } %>
+                            <% if (userProfile.rank.admin === true ) { %>
+                                <img class="profileBadgeAdmin" title="<%= __("Website Administrator") %>" alt="<%= __("Website Administrator") %>" src="/img/badges/admin.png">
+                            <% } %>
+                        <% } %> 
+                    </h1>
+                    <h2 class="subtitle"><% if (userProfileIsBanned === false) { %><%= userProfile.profile.bio || __("I am a mysterious person.") %><% } else { %><% __("This user did something bad and they were banned!!") %><% } %></h2>
+                    <% if (userProfileIsBanned === false || user && user.db.rank.mod === true) { %>
+                        <% if (user && user.db.rank.mod === true || user && userProfile.id === user.id) { %>
+                            <div class="buttons">
+                                <% if (userProfile.id === user.id || user.rank.assistant === true) { %>
+                                    <a href="/users/profile/@me/edit" class="button is-dark">
+                                        <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
+                                        <span><%= __("Edit") %></span>
+                                    </a>
+                                <% } %>
+                                <% if (user.db.rank.mod) { %>
+                                    <div class="dropdown is-active">
+                                        <div class="dropdown-trigger">
+                                          <button class="button is-dark" aria-haspopup="true">
+                                            <span class="icon">
+                                                <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
+                                            </span>
+                                            <span><%= __("Staff Management") %></span>
+                                            <span class="icon is-small">
+                                              <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
+                                            </span>
+                                          </button>
+                                        </div>
+                                        <div class="dropdown-menu" role="menu">
+                                          <div class="dropdown-content">
+                                            <div class="dropdown-item">
+                                                <p class="has-text-danger">If you accidentally perform an action that is "abusive" or "inappropriate" please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.</p>
+                                            </div>
+                                            <hr class="dropdown-divider">
+                                            <a class="button is-red-dark" href="/users/<%= userProfile.id %>/ban">
+                                                <span class="icon"><i aria-hidden="true" class="fas fa-gavel"></i></span>
+                                                <span><%= __("Ban") %></span>
+                                            </a>
+                                            <% if (user.db.rank.assistant === true) { %>
+                                                <a class="button is-orange" href="/users/<%= userProfile.id %>/rank">
+                                                    <span class="icon"><i aria-hidden="true" class="fas fa-crown"></i></span>
+                                                    <span><%= __("Modify Rank") %></span>
+                                                </a>
+                                            <% } %>
+                                          </div>
+                                        </div>
+                                      </div>
+                                <% } %>
+                            </div>
+                        <% } %>
+                        <div class="buttons">
+                            <% if (userProfile.profile.links.website) { %>
+                                <a target="_blank" rel="noopener" href="<%= userProfile.profile.links.website %>" class="button is-link">
+                                    <span class="icon"><i aria-hidden="true" class="fas fa-globe"></i></span>
+                                    <span><%= __("Website") %></span>
+                                </a>
+                            <% } %>
+                            <% if (userProfile.profile.links.twitter) { %>
+                                <a target="_blank" rel="noopener" href="https://twitter.com/@<%= userProfile.profile.links.twitter %>" class="button is-info">
+                                    <span class="icon"><i aria-hidden="true" class="fab fa-twitter"></i></span>
+                                    <span><%= __("Twitter") %></span>
+                                </a>
+                            <% } %>
+                            <% if (userProfile.profile.links.instagram) { %>
+                                <a target="_blank" rel="noopener" href="https://instagram.com/<%= userProfile.profile.links.instagram %>" class="button is-magenta">
+                                    <span class="icon"><i aria-hidden="true" class="fab fa-instagram"></i></span>
+                                    <span><%= __("Instagram") %></span>
+                                </a>
+                            <% } %>
+                            <% if (userProfile.profile.links.snapchat) { %>
+                                <a target="_blank" rel="noopener" href="https://www.snapchat.com/add/<%= userProfile.profile.links.snapchat %>" class="button is-warning">
+                                    <span class="icon"><i aria-hidden="true" class="fab fa-snapchat-ghost"></i></span>
+                                    <span><%= __("Snapchat") %></span>
+                                </a>
+                            <% } %>
+                            <% if (userProfile.profile.links.gitlab) { %>
+                                <a target="_blank" rel="noopener" href="https://gitlab.com/<%= userProfile.profile.links.gitlab %>" class="button is-orange">
+                                    <span class="icon"><i aria-hidden="true" class="fab fa-gitlab"></i></span>
+                                    <span><%= __("GitLab") %></span>
+                                </a>
+                            <% } %>
+                            <% if (userProfile.profile.links.github) { %>
+                                <a target="_blank" rel="noopener" href="https://github.com/<%= userProfile.profile.links.github %>" class="button is-dark">
+                                    <span class="icon"><i aria-hidden="true" class="fab fa-github"></i></span>
+                                    <span><%= __("GitHub") %></span>
+                                </a>
+                            <% } %>
+                        </div>
+                        <div class="field is-grouped is-grouped-multiline">
+                            <div class="control">
+                                <div class="tags has-addons">
+                                    <span class="tag is-dark"><%= __("Snakes High Score") %></span>
+                                    <span class="tag is-dark"><%= userProfile.game.snakes.maxScore %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="section has-text-centered">
+            <% if (userProfileIsBanned && user && user.db.rank.mod === false) { %>
+                    <h2 class="is-size-4"><%= __("Unavailable") %></h2>
+            <% } else if (userProfileIsBanned && !user) { %>
+                    <h2 class="is-size-4"><%= __("Unavailable") %></h2>
+            <% } else { %>
+                    <% if (botsOwnerData.length === 0 && botsEditorData.length === 0) { %>
+                        <h2 class="is-size-3"><%= __("This user is not an editor or owner of any listed bots") %></h2>
+                    <% } else { %>
+                        <h2 class="is-size-3"><%= userProfile.name %><%= __("'s Bots") %></h2>
+                        <% if (botsOwnerData.length !== 0) { %>
+                            <br />
+                            <h3 class="is-size-4"><%= __("Owner") %></h3>
+                            <br />
+                            <div class="columns is-multiline is-centered">
+                                <%- botOwnerChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
+                            </div>
+                        <% } %>
+                        <% if (botsEditorData.length !== 0) { %>
+                            <br />
+                            <h3 class="is-size-4"><%= __("Editor") %></h3>
+                            <br />
+                            <div class="columns is-multiline is-centered">
+                                <%- botEditorChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
+                            </div>
+                        <% } %>
+                    <% } %>
+                    <br />
+                    <% if (serversOwnerData.length === 0) { %>
+                        <h2 class="is-size-3"><%= __("This user is not the owner of any listed servers") %></h2>
+                    <% } else { %>
+                        <h2 class="is-size-3"><%= userProfile.name %><%= __("'s Servers") %></h2>
+                        <br />
+                        <div class="columns is-multiline is-centered">
+                            <%- serverOwnerChunk.map(chunk => `${chunk.map(server => include("../../partials/cards/serverCard.ejs", { server })).join("")}`).join("") %>
+                        </div>
+                    <% } %>
+            <% } %>
+            <% if (user && user.id === userProfile.id) { %>
+                <% if (archivedBotsData.length > 0) { %>
+                    <br />
+                    <h2 class="is-size-4"><%= __("Archived Bots") %></h2>
+                    <br />
+                    <div class="columns is-multiline is-centered">
+                        <%- archivedBotsChunk.map(chunk => `${chunk.map(bot => include("../../partials/botCard.ejs", { bot, queue: false, archived: true, verificationApp: false })).join("")}`).join("") %>
+                    </div>
+                <% } %>
+            <% } %>
+    </div>
+</div>
+<% if (user && user.db.rank.mod === true) { %>
+    <div class="modal staffModal">
+        <div class="modal-background" id="staffModalBg"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title has-text-danger">Staff Tools</p>
+            </header>
+            <section class="modal-card-body has-text-red-dark">
+                </section>
+            <footer class="modal-card-foot">
+                <div class="buttons">
+                    
+                    <button class="button is-black" id="staffModalClose"><i aria-hidden="true" class="fas fa-door-open"></i>&nbsp; Exit</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script type="text/javascript">
+        const dropdown = document.querySelector(".dropdown");
+            dropdown.addEventListener("click", function(event) {
+            event.stopPropagation();
+            dropdown.classList.toggle("is-active");
+        });
+    </script>
+<% } %>
+<%- include("../../partials/footer.ejs") %>

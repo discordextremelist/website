@@ -2,6 +2,7 @@
 <%- include("./partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
+        <br />
         <div class="container has-text-centered">
             <h1 class="title">
                 <span class="icon is-medium iconalign">
@@ -12,7 +13,7 @@
                     <% } else if (type === "Information") { %>
                         <i class="fad fa-info-square has-text-info fa-1x"></i>
                     <% } else { %>
-                        <i class="fad fa-question-square has-text-magenta fa-1x"></i>
+                        <i class="fad fa-question-square has-text-default fa-1x"></i>
                     <% } %>
                 </span>
                 <br />
@@ -23,7 +24,204 @@
     </div>
     </section>
     <div class="container">
-        <div class="section">
-            snake soon:tm:
-        </div>    
+        <div style="text-align: center;" class="section">
+            <% if (req.device.type !== "phone" && req.device.type !== "tablet") { %>
+                <% if (!req.user || req.user.db.preferences.enableGames === true) { %>
+                    <div id="snake_game">
+                        <p class="is-size-5 has-text-warning">High Score: <%= req.user.db.game.snakes.maxScore %></p>
+                        <p class="is-size-5"><span class="">Score: </span><span id="score"></span></p>
+                        <br />
+                        <canvas class="snakeNormal" style="background-color: black;" width="400" height="400" id="game"></canvas>
+                        <script>
+                            window.addEventListener("keydown", function(e) {
+                                if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+                                    e.preventDefault();
+                                }
+                            }, false);
+        
+                            var xhr = new XMLHttpRequest();
+                            var url = "/users/profile/game/snakes";
+                            var score;
+                            var data;
+        
+                            var canvas = document.getElementById("game");
+                            var context = canvas.getContext("2d");
+                            var grid = 16;
+                            var count = 0;
+        
+                            var snake = {
+                                x: 160,
+                                y: 160,
+                                dx: grid,
+                                dy: 0,
+                                cells: [],
+                                maxCells: 4
+                            };
+        
+                            var apple = {
+                                x: 320,
+                                y: 320
+                            };
+        
+                            function getRandomInt(min, max) {
+                                return Math.floor(Math.random() * (max - min)) + min;
+                            }
+        
+                            function loop() {
+                                requestAnimationFrame(loop);
+                                if (++count < 4) {
+                                    return;
+                                }
+                                count = 0;
+                                context.clearRect(0,0,canvas.width,canvas.height);
+                                snake.x += snake.dx;
+                                snake.y += snake.dy;
+        
+                                if (snake.x < 0) {
+                                    snake.x = canvas.width - grid;
+                                }
+                                else if (snake.x >= canvas.width) {
+                                    snake.x = 0;
+                                }
+        
+                                if (snake.y < 0) {
+                                    snake.y = canvas.height - grid;
+                                }
+                                else if (snake.y >= canvas.height) {
+                                    snake.y = 0;
+                                }
+        
+                                snake.cells.unshift({x: snake.x, y: snake.y});
+        
+                                if (snake.cells.length > snake.maxCells) {
+                                    snake.cells.pop();
+                                }
+        
+                                context.fillStyle = "red";
+                                context.fillRect(apple.x, apple.y, grid-1, grid-1);
+        
+                                context.fillStyle = "green";
+                                snake.cells.forEach(function(cell, index) {
+        
+                                    context.fillRect(cell.x, cell.y, grid-1, grid-1);
+                                    if (cell.x === apple.x && cell.y === apple.y) {
+                                        snake.maxCells++;
+                                        document.getElementById("game").className = "snakePoint";
+                                        document.getElementById("score").innerHTML = `${snake.maxCells - 4}`;
+        
+                                        xhr.open("POST", url, true);
+                                        xhr.setRequestHeader("Content-Type", "application/json");
+                                        xhr.onreadystatechange = function() {
+                                            if (xhr.readyState === 4 && xhr.status === 200) {
+                                                const json = JSON.parse(xhr.responseText);
+                                                console.log(json);
+                                            }
+                                        };
+        
+                                        score = snake.maxCells - 4;
+                                        data = JSON.stringify({ "score": score });
+                                        xhr.send(data);
+        
+                                        apple.x = getRandomInt(0, 25) * grid;
+                                        apple.y = getRandomInt(0, 25) * grid;
+                                        setTimeout(() => {
+                                            document.getElementById("game").className = "snakeNormal";
+                                        }, 350);
+                                    }
+        
+                                    for (var i = index + 1; i < snake.cells.length; i++) {
+        
+                                        if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+                                            document.getElementById("game").className = "snakeDeath";
+                                            
+                                            snake.x = 160;
+                                            snake.y = 160;
+                                            snake.cells = [];
+                                            snake.maxCells = 4;
+                                            snake.dx = grid;
+                                            snake.dy = 0;
+                                            apple.x = getRandomInt(0, 25) * grid;
+                                            apple.y = getRandomInt(0, 25) * grid;
+        
+                                            document.getElementById("score").innerHTML = `${snake.maxCells - 4}`;
+                                            setTimeout(() => {
+                                                document.getElementById("game").className = "snakeNormal";
+                                            }, 350);
+                                        }
+                                    }
+                                });
+                            }
+                            document.addEventListener("keydown", function(e) {
+                                // left arrow key
+                                if (e.which === 37 && snake.dx === 0) {
+                                    snake.dx = -grid;
+                                    snake.dy = 0;
+                                }
+                                // up arrow key
+                                else if (e.which === 38 && snake.dy === 0) {
+                                    snake.dy = -grid;
+                                    snake.dx = 0;
+                                }
+                                // right arrow key
+                                else if (e.which === 39 && snake.dx === 0) {
+                                    snake.dx = grid;
+                                    snake.dy = 0;
+                                }
+                                // down arrow key
+                                else if (e.which === 40 && snake.dy === 0) {
+                                    snake.dy = grid;
+                                    snake.dx = 0;
+                                }
+                            });
+                            
+                            document.addEventListener("touchstart", function(e) {
+                                var touches = event.changedTouches;
+                                snake._touch_start = [touches[0].pageX, touches[0].pageY];
+                            });
+                            
+                            document.addEventListener("touchend", function(e) {
+                                var touches = event.changedTouches;
+                                var end_pos = [touches[0].pageX, touches[0].pageY];
+                                var dX = end_pos[0] - snake._touch_start[0],
+                                    dY = end_pos[1] - snake._touch_start[1],
+                                    c = Math.sqrt(dX*dX + dY*dY),
+                                    alpha = Math.acos(dX/c);
+                        
+                                if (alpha < Math.PI * 1/4) {
+                                    // right swipe
+                                    snake.dx = grid;
+                                    snake.dy = 0;
+                                } else if (alpha > Math.PI * 3/4) {
+                                    // left swipe
+                                    snake.dx = -grid;
+                                    snake.dy = 0;
+                                } else if (dY > 0) {
+                                    // down swipe
+                                    snake.dy = grid;
+                                    snake.dx = 0;
+                                } else {
+                                    // up swipe
+                                    snake.dy = -grid;
+                                    snake.dx = 0;
+                                } 
+                            });
+        
+                            document.addEventListener("DOMContentLoaded", () => {
+                                document.getElementById("score").innerHTML = `${snake.maxCells - 4}`;
+                            });
+        
+                            requestAnimationFrame(loop);
+                        </script>
+                    </div>
+                <% } else { %>
+                    <h2 class="is-size-4 backdrop">such emptiness..</h2>
+                <% } %>
+            <% } else { %>
+                <% if (user && user.db.preferences.experiments === true) { %>
+                    <a href="/snake" class="button is-blurple"><i class="fas fa-gamepad"></i>&nbsp; Play Snake</a>
+                <% } else { %>
+                    <p class="is-size-5 backdrop">no snake game for you mobile user</p>
+                <% } %>
+            <% } %>
+        </div>     
 <%- include("./partials/footer.ejs") %>

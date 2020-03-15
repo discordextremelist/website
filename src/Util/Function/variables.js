@@ -1,6 +1,6 @@
 const browser = require("browser-detect");
 
-const variables = (req, res, next) => {
+const variables = async(req, res, next) => {
     req.browser = browser(req.headers["user-agent"]);
     res.locals.browser = req.browser;
     res.locals.requestedAt = Date.now();
@@ -26,6 +26,11 @@ const variables = (req, res, next) => {
         res.locals.imageFormat = "webp";
     } else {
         res.locals.imageFormat = "png";
+    }
+
+    if (req.user) {
+        const user = await req.app.db.collection("users").findOne({ id: req.user.id });
+        req.user.db = user;
     }
 
     next();

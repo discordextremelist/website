@@ -1,22 +1,23 @@
 <%- include("../partials/header.ejs") %>
 <%- include("../partials/nav.ejs") %>
 <section class="hero is-black">
-      <div class="hero-body">
-          <div class="container has-text-centered">
-              <img class="backdrop" draggable=false alt="DEL Logo" style="padding: 5px;" src="/img/logo-128px.<%= imageFormat %>" type="image/<%= imageFormat %>">
-              <h1 class="title">
+    <div class="hero-body">
+        <br />
+        <div class="container has-text-centered">
+            <img class="backdrop" draggable=false alt="DEL Logo" style="padding: 5px;" src="/img/logo-128px.<%= imageFormat %>" type="image/<%= imageFormat %>">
+            <h1 class="title">
                 Discord Extreme List
-              </h1>
-              <h2 class="subtitle">
+            </h1>
+            <h2 class="subtitle">
                 <%= __("Discord's unbiased list, giving small bots and small servers a big chance!") %>
-              </h2>
-          </div>
-      </div>
-  </section>
-  <div class="container">
-      <div class="section">
+            </h2>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="section">
         <% if (botsData.length === 0) { %>
-            <h2 class="is-size-3 backdrop">There are no approved bots</h2>
+            <h2 class="is-size-3">There are no approved bots</h2>
         <% } else { %>
             <h2 class="is-size-3 has-text-centered has-text-blurple">
                 <span class="icon is-medium iconalign">
@@ -29,5 +30,22 @@
                 <%- botChunk.map(chunk => `${chunk.map(bot => include("../partials/cards/botCard.ejs", { bot, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
             </div>
         <% } %>
-  </div>    
+    </div>
+    <div class="section">
+        <% if (botsData.length === 0) { %>
+            <h2 class="is-size-3">There are no listed servers</h2>
+        <% } else { %>
+            <h2 class="is-size-3 has-text-centered has-text-blurple">
+                <span class="icon is-medium iconalign">
+                    <i class="fad fa-server fa-1x"></i>
+                </span>
+                <span>Featured Servers</span>
+            </h2>
+            <br />
+            <div class="columns is-multiline is-centered">
+                <%- serverChunk.map(chunk => `${chunk.map(server => include("../partials/cards/serverCard.ejs", { server })).join("")}`).join("") %>
+            </div>
+        <% } %>
+    </div>
+</div>    
 <%- include("../partials/footer.ejs") %>

@@ -8,6 +8,18 @@
     filter: drop-shadow(0px 1px 2px #7289da);
 }
 
+.snakeDeath {
+    filter: drop-shadow(0px 4px 5px #cd0930);
+}
+
+.snakePoint {
+    filter: drop-shadow(0px 4px 5px #0dbf04);
+}
+
+.snakeNormal {
+    filter: drop-shadow(0px 4px 5px #FFFFFF);
+}
+
 .circular {
     border-radius: 6px;
 }

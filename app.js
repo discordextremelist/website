@@ -81,20 +81,21 @@ new Promise((resolve, reject) => {
             maxAge: 86400000
         }
     }));  
+    
+    app.use(passport.initialize());
+    app.use(passport.session());
 
     app.use((req, res, next) => {
         res.locals.user = req.user;
         next();
     });
-    
-    app.use(passport.initialize());
-    app.use(passport.session());
 
     app.use(i18n.init);
 
     app.use("/", require("./src/Routes/index.js"));
     app.use("/", require("./src/Routes/authentication.js"));
     app.use("/bots", require("./src/Routes/bots.js"));
+    app.use("/users", require("./src/Routes/users.js"));
 
     app.use("*", require("./src/Util/Function/variables.js"));
 

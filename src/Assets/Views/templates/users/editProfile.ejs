@@ -1,0 +1,114 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/nav.ejs") %>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container" style="text-align: center;">
+            <br />
+            <i aria-hidden="true" class="fad fa-pen-square has-text-default"></i>
+            <h1 class="is-size-1"><%= __("Edit Profile") %></h1>
+            <% if (userProfile.id === user.id) { %>
+                <h2 class="subtitle"><%= __("Editing your profile") %></h2>
+            <% } else { %>
+                <h2 class="subtitle"><%= __("Editing profile:") %> <%= userProfile.fullUsername %></h2>
+            <% } %>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="section">
+        <form method="POST">
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("Bio") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input class="input is-rounded" type="text" name="bio" value="<%= userProfile.profile.bio %>" placeholder="<%= __("This is your bio, please don't put any links in here.") %>">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fas fa-comment-dots"></i>
+                    </span>
+                </p>
+            </div>
+            <br />
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("Website") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input class="input is-rounded" type="text" name="website" value="<%= userProfile.profile.links.website %>" placeholder="<%= __("If you have a website put its link in here.") %>">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fas fa-globe"></i>
+                    </span>
+                </p>
+            </div>
+            <br />
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("GitHub") %> <span class="has-text-red-dark">(<%= __("Username Only") %>)</span></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input class="input is-rounded" type="text" name="github" value="<%= userProfile.profile.links.github %>" placeholder="<%= __("Without an '@'.") %>">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fab fa-github"></i>
+                    </span>
+                </p>
+            </div>
+            <br />
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("GitLab") %> <span class="has-text-red-dark">(<%= __("Username Only") %>)</span></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input class="input is-rounded" type="text" name="gitlab" value="<%= userProfile.profile.links.gitlab %>" placeholder="<%= __("Without an '@'.") %>">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fab fa-gitlab"></i>
+                    </span>
+                </p>
+            </div>
+            <br />
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("Twitter") %> <span class="has-text-red-dark">(<%= __("Username Only") %>)</span></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input class="input is-rounded" type="text" name="twitter" value="<%= userProfile.profile.links.twitter %>" placeholder="<%= __("Without an '@'.") %>">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fab fa-twitter"></i>
+                    </span>
+                </p>
+            </div>
+            <br />
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("Instagram") %> <span class="has-text-red-dark">(<%= __("Username Only") %>)</span></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input class="input is-rounded" type="text" name="instagram" value="<%= userProfile.profile.links.instagram %>" placeholder="<%= __("Without an '@'.") %>">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fab fa-instagram"></i>
+                    </span>
+                </p>
+            </div>
+            <br />
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("Snapchat") %> <span class="has-text-red-dark">(<%= __("Username Only") %>)</span></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input class="input is-rounded" type="text" name="snapchat" value="<%= userProfile.profile.links.snapchat %>" placeholder="<%= __("Without an '@'.") %>">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fab fa-snapchat-ghost"></i>
+                    </span>
+                </p>
+            </div>
+            <br />
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("Custom Profile CSS") %> <span class="has-text-red-dark">(<%= __("Verified Users and Staff Only") %>)</span></label>
+                <% if (userProfile.rank.verified === true || userProfile.rank.mod === true) { %>
+                    <textarea id="profileCss" name="profileCss"><%= userProfile.profile.css %></textarea>
+                <% } else { %>
+                    <p class="has-text-danger"><%= __("You do not have the required permission(s) to use this textarea.") %></p>
+                <% } %>
+            </div>
+            <br />
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-success">
+                        <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
+                        <span><%= __("Save") %></span>
+                    </button>
+                    <a class="button is-danger" href="/users/<% if (userProfile.id === user.id) { %>@me<% } else { %><%= userProfile.id %><% } %>">
+                        <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>
+                        <span><%= __("Cancel") %></span>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<%- include("../../partials/footer.ejs") %>

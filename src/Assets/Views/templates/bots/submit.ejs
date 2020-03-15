@@ -5,10 +5,11 @@
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
-      <div class="container has-text-centered">
+        <br />
+        <div class="container has-text-centered">
             <h1 class="title">
                 <span class="icon is-medium iconalign">
-                    <i class="fad fa-plus-square fa-1x" aria-hidden="true"></i>
+                    <i aria-hidden="true" class="fad fa-plus-square has-text-default"></i>
                 </span>
                 <br />
                 <span><%= title %></span>
@@ -29,7 +30,7 @@
                     <p class="control has-icons-left has-icons-right" required>
                         <input class="input is-rounded" type="text" name="id" placeholder="568254611354419211">
                         <span class="icon is-small is-left">
-                            <i class="fas fa-hashtag"></i>
+                            <i aria-hidden="true" class="fas fa-hashtag"></i>
                         </span>
                     </p>
                 </div>
@@ -39,7 +40,7 @@
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" name="editors" placeholder="<%= __("awesomepersonsid coolpersonsid bestfriendsid") %>">
                         <span class="icon is-small is-left">
-                            <i class="fas fa-user"></i>
+                            <i aria-hidden="true" class="fas fa-user"></i>
                         </span>
                     </p>
                     <p style="padding: 5px;" class="is-size-7 has-text-danger"><%= __("You do not need to include your own ID.") %></p>
@@ -50,7 +51,7 @@
                     <p class="control has-icons-left has-icons-right" required>
                         <input class="input is-rounded" type="text" name="prefix" placeholder="!">
                         <span class="icon is-small is-left">
-                            <i class="fas fa-paper-plane"></i>
+                            <i aria-hidden="true" class="fas fa-paper-plane"></i>
                         </span>
                     </p>
                 </div>
@@ -65,7 +66,7 @@
                             </select>
                         </div>
                         <div class="icon is-small is-left">
-                            <i class="fas fa-book"></i>
+                            <i aria-hidden="true" class="fas fa-book"></i>
                         </div>
                     </div>
                 </div>
@@ -108,7 +109,7 @@
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" name="invite" placeholder="<%= __("If this is left blank, we will automatically generate a permission-less invite.") %>">
                         <span class="icon is-small is-left">
-                            <i class="fas fa-link"></i>
+                            <i aria-hidden="true" class="fas fa-link"></i>
                         </span>
                     </p>
                 </div>
@@ -118,7 +119,7 @@
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" name="website" placeholder="https://example.com">
                         <span class="icon is-small is-left">
-                            <i class="fas fa-globe"></i>
+                            <i aria-hidden="true" class="fas fa-globe"></i>
                         </span>
                     </p>
                 </div>
@@ -128,7 +129,7 @@
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" name="donationUrl" placeholder="https://example.com/givememoneyplsimbroke">
                         <span class="icon is-small is-left">
-                            <i class="fas fa-dollar-sign"></i>
+                            <i aria-hidden="true" class="fas fa-dollar-sign"></i>
                         </span>
                     </p>
                 </div>
@@ -138,7 +139,7 @@
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" name="supportServer" placeholder="https://discord.gg/someawesumsupportservhor">
                         <span class="icon is-small is-left">
-                            <i class="fas fa-heart"></i>
+                            <i aria-hidden="true" class="fas fa-heart"></i>
                         </span>
                     </p>
                 </div>
@@ -148,7 +149,7 @@
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" name="repo" placeholder="https://github.com/awsumpersunorpage/awsumrepo">
                         <span class="icon is-small is-left">
-                            <i class="fas fa-code-branch"></i>
+                            <i aria-hidden="true" class="fas fa-code-branch"></i>
                         </span>
                     </p>
                 </div>
@@ -161,7 +162,7 @@
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" name="shortDescription" placeholder="<%= __("I'm an amazing bot that can do this and that and yeah kthx invite me") %>" required>
                         <span class="icon is-small is-left">
-                            <i class="fas fa-comment-dots"></i>
+                            <i aria-hidden="true" class="fas fa-comment-dots"></i>
                         </span>
                     </p>
                 </div>
@@ -183,13 +184,13 @@
                     <div class="buttons">
                         <button class="button is-success">
                             <span class="icon">
-                              <i class="fas fa-check-circle"></i>
+                              <i aria-hidden="true" class="fas fa-check-circle"></i>
                             </span>
                             <span><%= __("Submit") %></span>
                         </button>
                         <a href="/" class="button is-danger">
                             <span class="icon">
-                              <i class="fas fa-times-circle"></i>
+                              <i aria-hidden="true" class="fas fa-times-circle"></i>
                             </span>
                             <span><%= __("Cancel") %></span>
                         </a>

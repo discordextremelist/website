@@ -27,7 +27,6 @@ async function updateFeaturedServers() {
 }
 
 cron.schedule("*/15 * * * *", async () => {
-    console.log("EXEC")
     await updateFeaturedBots();
     await updateFeaturedServers();
 });

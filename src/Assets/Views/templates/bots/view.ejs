@@ -24,7 +24,7 @@
                     <div class="buttons">
                         <a href="/bots/<%= bot.id %>/upvote" class="button <% if (req.user && bot.votes.positive.includes(req.user.id)) { %>is-success<% } else { %>is-dark<% } %>">
                             <span class="icon">
-                                <i class="fas fa-arrow-alt-up"></i>
+                                <i aria-hidden="true" class="fas fa-arrow-alt-up"></i>
                             </span>
                         </a>
                         <% if (votes > 0) { %>
@@ -36,7 +36,7 @@
                         <% } %>
                         <a href="/bots/<%= bot.id %>/downvote" class="button <% if (req.user && bot.votes.negative.includes(req.user.id)) { %>is-danger<% } else { %>is-dark<% } %>">
                             <span class="icon">
-                                <i class="fas fa-arrow-alt-down"></i>
+                                <i aria-hidden="true" class="fas fa-arrow-alt-down"></i>
                             </span>
                         </a>
                     </div>
@@ -45,13 +45,13 @@
                         <% if (bot.owner.id === req.user.id) { %>
                             <button class="button is-dark" onclick="copyToClipboard('<%= bot.token %>');">
                                 <span class="icon">
-                                    <i class="fas fa-key"></i>
+                                    <i aria-hidden="true" class="fas fa-key"></i>
                                 </span>
                                 <span><%= __("Copy Token") %></span>
                             </button>
                             <button class="button is-dark" onclick="copyToClipboard('https://api.discordextremelist.xyz/v1/bot/<%= bot.id %>/widget');">
                                 <span class="icon">
-                                    <i class="fas fa-image"></i>
+                                    <i aria-hidden="true" class="fas fa-image"></i>
                                 </span>
                                 <span><%= __("Copy Widget Link") %></span>
                             </button>
@@ -59,42 +59,42 @@
                                 <% if (bot.serverCount >= 100) { %>
                                     <a href="/apply/verification" class="button is-dark">
                                         <span class="icon">
-                                            <i class="fas fa-badge-check"></i>
+                                            <i aria-hidden="true" class="fas fa-badge-check"></i>
                                         </span>
                                         <span><%= __("Apply for Verification") %></span>
                                     </a>
                                 <% } %>
                             <% } %>
-                            <% if (bot.status.approved === false && bot.links.vanity !== "") { %>
+                            <% if (bot.status.approved === false && bot.vanityUrl !== "") { %>
                                 <a href="" id="setVanity" class="button is-dark">
                                     <span class="icon">
-                                        <i class="fas fa-link"></i>
+                                        <i aria-hidden="true" class="fas fa-link"></i>
                                     </span>
                                     <span><%= __("Set Vanity URL") %></span>
                                 </a>
                             <% } %>
                             <a href="/bots/<%= bot.id %>/edit" class="button is-dark">
                                 <span class="icon">
-                                    <i class="fas fa-pencil"></i>
+                                    <i aria-hidden="true" class="fas fa-pencil"></i>
                                 </span>
                                 <span><%= __("Edit") %></span>
                             </a>
                             <a href="" id="deleteModal" class="button is-dark">
                                 <span class="icon">
-                                    <i class="fas fa-trash"></i>
+                                    <i aria-hidden="true" class="fas fa-trash"></i>
                                 </span>
                                 <span><%= __("Delete") %></span>
                             </a>
                         <% } else if (bot.editors && bot.editors.includes(req.user.id)) { %>
                             <button class="button is-dark" onclick="copyToClipboard('https://api.discordextremelist.xyz/v1/bot/<%= bot.id %>/widget');">
                                 <span class="icon">
-                                    <i class="fas fa-image"></i>
+                                    <i aria-hidden="true" class="fas fa-image"></i>
                                 </span>
                                 <span><%= __("Copy Widget Link") %></span>
                             </button>
                             <a href="/bots/<%= bot.id %>/edit" class="button is-dark">
                                 <span class="icon">
-                                    <i class="fas fa-pencil"></i>
+                                    <i aria-hidden="true" class="fas fa-pencil"></i>
                                 </span>
                                 <span><%= __("Edit") %></span>
                             </a>
@@ -102,7 +102,7 @@
                         <% if (req.user.db.rank.mod) { %>
                             <a href="" id="staffToolsModal" class="button is-dark">
                                 <span class="icon">
-                                    <i class="fas fa-cogs"></i>
+                                    <i aria-hidden="true" class="fas fa-cogs"></i>
                                 </span>
                                 <span><%= __("Staff Management") %></span>
                         <% } %>
@@ -112,21 +112,21 @@
                         <% if (bot.links.website) { %>
                             <a target="_blank" rel="noopener" href="<%= bot.links.website %>" class="button is-link">
                                 <span class="icon">
-                                    <i class="fas fa-globe"></i>
+                                    <i aria-hidden="true" class="fas fa-globe"></i>
                                 </span>
                                 <span><%= __("Website") %></span>
                             </a>
                         <% } %>
                         <a target="_blank" href="/bots/<%= bot.id %>/invite" class="button is-info">
                             <span class="icon">
-                                <i class="fas fa-plus"></i>
+                                <i aria-hidden="true" class="fas fa-plus"></i>
                             </span>
                             <span><%= __("Invite") %></span>
                         </a>
                         <% if (bot.links.donation) { %>
                             <a target="_blank" rel="noopener" href="<%= bot.links.donation %>" class="button is-success">
                                 <span class="icon">
-                                    <i class="fas fa-dollar-sign"></i>
+                                    <i aria-hidden="true" class="fas fa-dollar-sign"></i>
                                 </span>
                                 <span><%= __("Donate") %></span>
                             </a>
@@ -134,7 +134,7 @@
                         <% if (bot.links.repo) { %>
                             <a target="_blank" rel="noopener" href="<%= bot.links.repo %>" class="button is-orange">
                                 <span class="icon">
-                                    <i class="fas fa-code-branch"></i>
+                                    <i aria-hidden="true" class="fas fa-code-branch"></i>
                                 </span>
                                 <span><%= __("Git Repository") %></span>
                             </a>
@@ -142,7 +142,7 @@
                         <% if (bot.links.support) { %>
                             <a target="_blank" rel="noopener" href="<%= bot.links.support %>" class="button is-danger">
                                 <span class="icon">
-                                    <i class="fas fa-heart"></i>
+                                    <i aria-hidden="true" class="fas fa-heart"></i>
                                 </span>
                                 <span><%= __("Support Server") %></span>
                             </a>
@@ -186,7 +186,7 @@
                                 <div class="control">
                                     <p class="tag is-link">
                                         <span class="icon">
-                                            <i class="fas fa-tag"></i>
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
                                         </span>
                                         <span><%= __("Fun") %></span>
                                     </p>
@@ -196,7 +196,7 @@
                                 <div class="control">
                                     <p class="tag is-info">
                                         <span class="icon">
-                                            <i class="fas fa-tag"></i>
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
                                         </span>
                                         <span><%= __("Social") %></span>
                                     </p>
@@ -206,7 +206,7 @@
                                 <div class="control">
                                     <p class="tag is-success">
                                         <span class="icon">
-                                            <i class="fas fa-tag"></i>
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
                                         </span>
                                         <span><%= __("Economy") %></span>
                                     </p>
@@ -216,7 +216,7 @@
                                 <div class="control">
                                     <p class="tag is-orange">
                                         <span class="icon">
-                                            <i class="fas fa-tag"></i>
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
                                         </span>
                                         <span><%= __("Utility") %></span>
                                     </p>
@@ -226,7 +226,7 @@
                                 <div class="control">
                                     <span class="tag is-danger">
                                         <span class="icon">
-                                            <i class="fas fa-tag"></i>
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
                                         </span>
                                         <span><%= __("Moderation") %></span>
                                     </span>
@@ -236,7 +236,7 @@
                                 <div class="control">
                                     <p class="tag is-magenta">
                                         <span class="icon">
-                                            <i class="fas fa-tag"></i>
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
                                         </span>
                                         <span><%= __("Multipurpose") %></span>
                                     </p>
@@ -246,7 +246,7 @@
                                 <div class="control">
                                     <p class="tag is-pink">
                                         <span class="icon">
-                                            <i class="fas fa-tag"></i>
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
                                         </span>
                                         <span><%= __("Music") %></span>
                                     </p>
@@ -296,13 +296,13 @@
             <div class="buttons">
                 <a class="button is-success" href="/bots/<%= bot.id %>/delete">
                     <span class="icon">
-                        <i class="fas fa-check-circle"></i>
+                        <i aria-hidden="true" class="fas fa-check-circle"></i>
                     </span>
                     <span><%= __("Delete") %></span>
                 </a>
                 <button class="button is-danger" id="close-modal">
                     <span class="icon">
-                        <i class="fas fa-times-circle"></i>
+                        <i aria-hidden="true" class="fas fa-times-circle"></i>
                     </span>
                     <span><%= __("Cancel") %></span>
                 </button>
@@ -326,7 +326,7 @@
                         <p class="control has-icons-left has-icons-right">
                             <input class="input is-rounded" type="text" name="vanity" placeholder="<%= __("Example:") %> <%= bot.name.toLowerCase() %>" required>
                             <span class="icon is-small is-left">
-                                <i class="fas fa-link"></i>
+                                <i aria-hidden="true" class="fas fa-link"></i>
                             </span>
                         </p>
                     </div>
@@ -336,13 +336,13 @@
                 <div class="buttons">
                     <button class="button is-success">
                         <span class="icon">
-                            <i class="fas fa-check-circle"></i>
+                            <i aria-hidden="true" class="fas fa-check-circle"></i>
                         </span>
                         <span><%= __("Set") %></span>
                     </button>
                     <button class="button is-danger" id="close-modal2">
                         <span class="icon">
-                            <i class="fas fa-times-circle"></i>
+                            <i aria-hidden="true" class="fas fa-times-circle"></i>
                         </span>
                         <span><%= __("Cancel") %></span>
                     </button>
@@ -364,26 +364,26 @@
             </section>
             <footer class="modal-card-foot">
                 <div class="buttons">
-                    <a class="button is-link" target="_blank" href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= staffServer %>"><i class="fas fa-vial"></i>&nbsp; Staff Server Invite</a> &nbsp;
-                    <a class="button is-info" target="_blank" href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= mainServer %>"><i class="fas fa-shield-alt"></i>&nbsp; Main Server Invite</a> &nbsp;
+                    <a class="button is-link" target="_blank" href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= staffServer %>"><i aria-hidden="true" class="fas fa-vial"></i>&nbsp; Staff Server Invite</a> &nbsp;
+                    <a class="button is-info" target="_blank" href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= mainServer %>"><i aria-hidden="true" class="fas fa-shield-alt"></i>&nbsp; Main Server Invite</a> &nbsp;
                     <% if (req.user.db.rank.admin === true) { %>
                         <% if (bot.status.approved === true) { %>
                             <% if (bot.status.verified === false) { %>
-                                <a class="button is-blurple" href="/bots/<%= bot.id %>/verify"><i class="fas fa-badge-check"></i>&nbsp; Verify</a> &nbsp;
+                                <a class="button is-blurple" href="/bots/<%= bot.id %>/verify"><i aria-hidden="true" class="fas fa-badge-check"></i>&nbsp; Verify</a> &nbsp;
                             <% } else { %>
-                                <a class="button is-blurple" href="/bots/<%= bot.id %>/unverify"><i class="fas fa-badge"></i>&nbsp; Unverify</a> &nbsp;
+                                <a class="button is-blurple" href="/bots/<%= bot.id %>/unverify"><i aria-hidden="true" class="fas fa-badge"></i>&nbsp; Unverify</a> &nbsp;
                             <% } %>
                         <% } else { %>
-                            <a class="button is-blurple" href="/bots/<%= bot.id %>/verify" disabled><i class="fas fa-badge-check"></i>&nbsp; Verify</a> &nbsp;
+                            <a class="button is-blurple" href="/bots/<%= bot.id %>/verify" disabled><i aria-hidden="true" class="fas fa-badge-check"></i>&nbsp; Verify</a> &nbsp;
                         <% } %>
                     <% } %>
                     <% if (bot.status.approved === true) { %>
-                        <a class="button is-danger" href="/bots/<%= bot.id %>/remove"><i class="fas fa-trash"></i>&nbsp; Remove</a> &nbsp;
+                        <a class="button is-danger" href="/bots/<%= bot.id %>/remove"><i aria-hidden="true" class="fas fa-trash"></i>&nbsp; Remove</a> &nbsp;
                     <% } else { %>
-                        <a class="button is-success" href="/bots/<%= bot.id %>/approve"><i class="fas fa-check"></i>&nbsp; Approve</a> &nbsp;
-                        <a class="button is-danger" href="/bots/<%= bot.id %>/decline"><i class="fas fa-minus"></i>&nbsp; Decline</a> &nbsp;
+                        <a class="button is-success" href="/bots/<%= bot.id %>/approve"><i aria-hidden="true" class="fas fa-check"></i>&nbsp; Approve</a> &nbsp;
+                        <a class="button is-danger" href="/bots/<%= bot.id %>/decline"><i aria-hidden="true" class="fas fa-minus"></i>&nbsp; Decline</a> &nbsp;
                     <% } %>
-                    <button class="button is-black" id="staffModalClose"><i class="fas fa-door-open"></i>&nbsp; Exit</button>
+                    <button class="button is-black" id="staffModalClose"><i aria-hidden="true" class="fas fa-door-open"></i>&nbsp; Exit</button>
                 </div>
             </footer>
         </div>

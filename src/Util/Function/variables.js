@@ -17,7 +17,7 @@ const variables = async(req, res, next) => {
         facebook: "https://facebook.com/DiscordExtremeList",
         twitter: "https://twitter.com/@ExtremeList",
         instagram: "https://www.instagram.com/discordextremelist/",
-        gitlab: "https://gitlab.com/discordextremelist"
+        gitlab: "https://gitlab.winterfox.tech/delly"
     }
 
     res.locals.discordServer = "https://discord.gg/WeCer3J";

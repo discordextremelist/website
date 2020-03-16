@@ -55,9 +55,9 @@
                                     </a>
                                 <% } %>
                                 <% if (user.db.rank.mod) { %>
-                                    <div class="dropdown is-active">
+                                    <div class="dropdown">
                                         <div class="dropdown-trigger">
-                                          <button class="button is-dark" aria-haspopup="true">
+                                          <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
                                             </span>
@@ -67,18 +67,18 @@
                                             </span>
                                           </button>
                                         </div>
-                                        <div class="dropdown-menu" role="menu">
+                                        <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                           <div class="dropdown-content">
                                             <div class="dropdown-item">
                                                 <p class="has-text-danger">If you accidentally perform an action that is "abusive" or "inappropriate" please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.</p>
                                             </div>
                                             <hr class="dropdown-divider">
-                                            <a class="button is-red-dark" href="/users/<%= userProfile.id %>/ban">
+                                            <a class="dropdown-item" href="/users/<%= userProfile.id %>/ban">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-gavel"></i></span>
                                                 <span><%= __("Ban") %></span>
                                             </a>
                                             <% if (user.db.rank.assistant === true) { %>
-                                                <a class="button is-orange" href="/users/<%= userProfile.id %>/rank">
+                                                <a class="dropdown-item" href="/users/<%= userProfile.id %>/rank">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-crown"></i></span>
                                                     <span><%= __("Modify Rank") %></span>
                                                 </a>
@@ -209,12 +209,6 @@
             </footer>
         </div>
     </div>
-    <script type="text/javascript">
-        const dropdown = document.querySelector(".dropdown");
-            dropdown.addEventListener("click", function(event) {
-            event.stopPropagation();
-            dropdown.classList.toggle("is-active");
-        });
-    </script>
+    <script type="text/javascript">const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>
 <% } %>
 <%- include("../../partials/footer.ejs") %>

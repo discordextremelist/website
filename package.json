@@ -10,7 +10,7 @@
     "css-build": "node-sass --omit-source-map-url src/Assets/Sass/main.scss src/Assets/Public/css/standard.css --output-style compressed && node-sass --omit-source-map-url src/Assets/Sass/form.scss src/Assets/Public/css/form.css --output-style compressed && node-sass --omit-source-map-url src/Assets/Sass/all.scss src/Assets/Public/css/all.css --output-style compressed",
     "css-watch": "npm run css-build -- --watch",
     "editor-build": "cp -r ./node_modules/monaco-editor/ ./src/Assets/Public/packages/monaco-editor",
-    "init": "node scripts/featuring"
+    "init": "node scripts/init"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

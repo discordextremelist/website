@@ -123,5 +123,17 @@
 	"DEL Instagram": "DEL Instagram",
 	"DEL GitLab": "DEL GitLab",
 	"This user does not exist in our website database": "This user does not exist in our website database",
-	"Play Snake": "Play Snake"
+	"Play Snake": "Play Snake",
+	"Edit your account preferences": "Edit your account preferences",
+	"This user is not an editor or owner of any listed bots": "This user is not an editor or owner of any listed bots",
+	"High Score:": "High Score:",
+	"Play the awesome snake game found on status pages!": "Play the awesome snake game found on status pages!",
+	"Discord's unbiased list, giving bots and servers of all sizes a big chance!": "Discord's unbiased list, giving bots and servers of all sizes a big chance!",
+	"Website Moderator": "Website Moderator",
+	"Website Assistant": "Website Assistant",
+	"Website Administrator": "Website Administrator",
+	"Staff Management": "Staff Management",
+	"Ban": "Ban",
+	"Modify Rank": "Modify Rank",
+	"no snake game for you mobile user": "no snake game for you mobile user"
 }

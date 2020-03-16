@@ -17,12 +17,12 @@ async function getFeaturedServers() {
 }
 
 async function updateFeaturedBots() {
-    const bots = await app.db.collection("bots").aggregate({ $filter: { status: { approved: true, siteBot: false, archived: false } }, $limit: 3 }).toArray();
+    const bots = await app.db.collection("bots").aggregate({ $filter: { status: { approved: true, siteBot: false, archived: false } }, $limit: 6 }).toArray();
     redisFeaturing.set("bots", JSON.stringify(bots));
 }
 
 async function updateFeaturedServers() {
-    const servers = await app.db.collection("servers").aggregate({ $limit: 3 }).toArray();
+    const servers = await app.db.collection("servers").aggregate({ $limit: 6 }).toArray();
     redisFeaturing.set("servers", JSON.stringify(servers));
 }
 

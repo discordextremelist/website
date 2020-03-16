@@ -3,10 +3,6 @@
 $primary: #0a0a0a;
 $primary-dark: #000000;
 $white: #ffffff;
-
-// This is not actually blurple, it is named blurple as during early development it was blurple
-$blurple: hsl(0, 0%, 98%);;
-
 $bg: #000000;
 
 // Standard Variables
@@ -27,16 +23,16 @@ $family-sans-serif: "Lexend Deca", sans-serif;
 $navbar-background-color: #0a0a0a;
 $navbar-item-hover-background-color: #000;
 $navbar-dropdown-background-color: #000;
-$navbar-dropdown-item-active-color: #000;
-$navbar-item-hover-color: $blurple;
-$navbar-item-color: $blurple;
-$navbar-burger-color: $blurple;
-$navbar-dropdown-arrow: $blurple;
-$navbar-divider-background-color: $blurple;
-$navbar-dropdown-border-top: 2px solid $blurple;
-$navbar-dropdown-item-hover-background-color: $blurple;
+$navbar-dropdown-item-hover-color: $white;
+$navbar-item-hover-color: $white;
+$navbar-item-color: $white;
+$navbar-burger-color: $white;
+$navbar-dropdown-arrow: $white;
+$navbar-divider-background-color: $white;
+$navbar-dropdown-border-top: 2px solid $white;
+$navbar-dropdown-item-hover-background-color: #131313;
 
-$input-color: $blurple;
+$input-color: $white;
 $input-background-color: $primary;
 $input-border-color: $primary;
 $input-hover-border-color: $primary-dark;
@@ -47,3 +43,7 @@ $modal-card-footer-background-color: $primary;
 $modal-card-body-background-color: $primary;
 $modal-card-head-border-bottom: 1px solid $danger;
 $modal-card-foot-border-top: 1px solid $danger;
+
+$dropdown-content-background-color: $primary;
+$dropdown-item-hover-color: $white;
+$dropdown-item-hover-background-color: #131313;

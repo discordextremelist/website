@@ -28,7 +28,7 @@
 
             <a class="navbar-item" href="/servers">
                 <span class="icon iconalign">
-                    <i class="fad fa-server" aria-hidden="true"></i>
+                    <i class="fad fa-comments-alt" aria-hidden="true"></i>
                 </span>
                 <span><%= __("Servers") %></span>
             </a>
@@ -122,7 +122,7 @@
                             </span>
                             <span><%= __("Profile") %></span>
                         </a>
-                        <a class="navbar-item" href="/users/preferences">
+                        <a class="navbar-item" href="/users/account/preferences">
                             <span class="icon iconalign">
                                 <i class="fad fa-swatchbook" aria-hidden="true"></i>
                             </span>
@@ -136,17 +136,19 @@
                         </a>
                         <a class="navbar-item" href="/servers/submit">
                             <span class="icon iconalign">
-                                <i class="fad fa-server" aria-hidden="true"></i>
+                                <i class="fad fa-comments-alt" aria-hidden="true"></i>
                             </span>
                             <span><%= __("Submit Server") %></span>
                         </a>
-                        <hr class="navbar-divider">
-                        <a class="navbar-item" href="/servers/submit">
-                            <span class="icon iconalign">
-                                <i class="fad fa-snake" aria-hidden="true"></i>
-                            </span>
-                            <span><%= __("Play Snake") %></span>
-                        </a>
+                        <% if (req.user.db.preferences.enableGames === true) { %>
+                            <hr class="navbar-divider">
+                            <a class="navbar-item" href="/users/game/snake">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-snake" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("Play Snake") %></span>
+                            </a>
+                        <% } %>
                     </div>
                 </div>
             <% } %>

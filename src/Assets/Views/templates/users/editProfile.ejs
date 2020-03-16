@@ -1,11 +1,19 @@
 <%- include("../../partials/header.ejs") %>
+<link href="/css/form.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-primary">
     <div class="hero-body">
-        <div class="container" style="text-align: center;">
+        <div class="container has-text-centered">
             <br />
-            <i aria-hidden="true" class="fad fa-pen-square has-text-default"></i>
-            <h1 class="is-size-1"><%= __("Edit Profile") %></h1>
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                        <i aria-hidden="true" class="fad fa-pen has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= __("Edit Profile") %></span>
+            </h1>
             <% if (userProfile.id === user.id) { %>
                 <h2 class="subtitle"><%= __("Editing your profile") %></h2>
             <% } else { %>
@@ -90,7 +98,8 @@
             <div class="field">
                 <label class="label has-text-blurple"><%= __("Custom Profile CSS") %> <span class="has-text-red-dark">(<%= __("Verified Users and Staff Only") %>)</span></label>
                 <% if (userProfile.rank.verified === true || userProfile.rank.mod === true) { %>
-                    <textarea id="profileCss" name="profileCss"><%= userProfile.profile.css %></textarea>
+                    <div onkeyup="monacoToField();" id="profileCssEditor" class="editorBackdrop" style="width:800px;height:350px;" value="<%= userProfile.profile.css %>"></div>
+                    <textarea hidden name="profileCss" id="profileCss"></textarea>
                 <% } else { %>
                     <p class="has-text-danger"><%= __("You do not have the required permission(s) to use this textarea.") %></p>
                 <% } %>
@@ -111,4 +120,9 @@
         </form>
     </div>
 </div>
+<script type="text/javascript">var require={paths:{"vs":"/packages/monaco-editor/min/vs"}};</script>
+<script src="/packages/monaco-editor/min/vs/loader.js"></script>
+<script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+<script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
+<script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("profileCssEditor"),{value:`<%= userProfile.profile.css %>`,language:"css"});function monacoToField(){var o=window.profileCssEditor.getValue();$("#profileCss").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
 <%- include("../../partials/footer.ejs") %>

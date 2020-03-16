@@ -112,3 +112,6 @@ dist
 # SSL & configuration files
 settings.json
 ssl/
+
+# Redis
+dump.rdb

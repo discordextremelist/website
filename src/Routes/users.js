@@ -338,6 +338,20 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
     res.redirect("/users/@me");
 });
 
+router.get("/game/snake", variables, permission.auth, async (req, res, next) => {
+    res.render("templates/users/snake", {
+        title: res.__("Play Snake"),
+        subtitle: res.__("Play the awesome snake game found on status pages!"),
+        req
+    });
+})
+
+router.get("/profile/game/snakes", variables, permission.auth, async (req, res, next) => {
+    const user = await req.app.db.collection("users").findOne({ id: req.user.id });
+
+    res.status(200).json({ error: false, status: 200, result: user.game.snakes.maxScore });
+});
+
 router.post("/profile/game/snakes", variables, permission.auth, async (req, res, next) => {
     if (req.body.score <= req.user.db.game.snakes.maxScore) return res.status(202).json({
         error: false,
@@ -382,7 +396,7 @@ router.post("/profile/game/snakes", variables, permission.auth, async (req, res,
         }
     });
 
-    res.status(200).json({ error: false, status: 200, message: "Updated high score" })
+    res.status(200).json({ error: false, status: 200, message: "Updated high score" });
 });
 
 router.get("/account/preferences", variables, permission.auth, async (req, res, next) => {

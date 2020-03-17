@@ -86,6 +86,14 @@ router.get("/:id/rank", variables, permission.auth, permission.assistant, async 
         type: "Error"
     });
 
+    if (targetUser.rank.admin === true || targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(401).render("status", {
+        title: req.__("Error"),
+        status: 404,
+        subtitle: req.__("You cannot modify the rank of someone with the same or higher rank as yours"),
+        req,
+        type: "Error"
+    });
+
     res.render("templates/users/staffActions/modifyRank", { title: res.__("Modify Rank"), subtitle: res.__("Modifiying rank of: ") + targetUser.fullUsername, user: req.user, req: req, targetUser: targetUser });
 });
 
@@ -96,6 +104,14 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         title: req.__("Error"),
         status: 404,
         subtitle: req.__("This user does not exist in our website database"),
+        req,
+        type: "Error"
+    });
+
+    if (targetUser.rank.admin === true || targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(401).render("status", {
+        title: req.__("Error"),
+        status: 404,
+        subtitle: req.__("You cannot modify the rank of someone with the same or higher rank as yours"),
         req,
         type: "Error"
     });
@@ -422,6 +438,7 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
         { $set: {
             preferences: {
                 customGlobalCss: req.body.customCss,
+                defaultColour: req.body.iconColour,
                 enableGames: gamePreferences,
                 experiments: experiments
             }
@@ -437,9 +454,9 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
         details: {
             old: {
                 preferences: {
-                    customGlobalCss: req.user.preferences.customCss,
-                    enableGames: req.user.preferences.enableGames,
-                    experiments: req.user.preferences.experiments
+                    customGlobalCss: req.user.db.preferences.customCss,
+                    enableGames: req.user.db.preferences.enableGames,
+                    experiments: req.user.db.preferences.experiments
                 }
             },
             new: {
@@ -448,6 +465,21 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
                     enableGames: gamePreferences,
                     experiments: experiments
                 }
+            }
+        }
+    });
+
+    res.redirect("/users/@me");
+});
+
+router.get("/account/preferences/reset", variables, permission.auth, (req, res, next) => {
+    req.app.db.collection("users").updateOne({ id: req.user.id }, 
+        { $set: {
+            preferences: {
+                customGlobalCss: "",
+                defaultColour: "#b114ff",
+                enableGames: true,
+                experiments: false
             }
         }
     });

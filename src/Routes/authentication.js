@@ -42,7 +42,6 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
             name: req.user.username,
             discrim: req.user.discriminator,
             fullUsername: req.user.username + "#" + req.user.discriminator,
-            email: req.user.email || "user_did_not_provide@example.com",
             locale: req.user.locale,
             avatar: {
                 hash: req.user.avatar,
@@ -50,6 +49,7 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
             },
             preferences: {
                 customGlobalCss: "",
+                defaultColour: "#b114ff",
                 enableGames: true,
                 experiments: false
             },
@@ -86,7 +86,6 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
                 name: req.user.username,
                 discrim: req.user.discriminator,
                 fullUsername: req.user.username + "#" + req.user.discriminator,
-                email: req.user.email || "user_did_not_provide@example.com",
                 locale: req.user.locale,
                 avatar: {
                     hash: req.user.avatar,

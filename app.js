@@ -61,9 +61,9 @@ new Promise((resolve, reject) => {
     app.use(device.capture());
 
     i18n.configure({
-        locales: ["en"],
+        locales: ["en-NZ"],
         directory: __dirname + "/src/Assets/Locale",
-        defaultLocale: "en",
+        defaultLocale: "en-NZ",
         cookie: "lang"
     });
 
@@ -96,6 +96,8 @@ new Promise((resolve, reject) => {
     app.use("/", require("./src/Routes/authentication.js"));
     app.use("/bots", require("./src/Routes/bots.js"));
     app.use("/users", require("./src/Routes/users.js"));
+    app.use("/amp", require("./src/Routes/amp.js"));
+    // idk just do what you want here lol because I honestly have no fucking clue as to what to put theref or amp ok thank you
 
     app.use("*", require("./src/Util/Function/variables.js"));
 

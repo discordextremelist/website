@@ -1,0 +1,69 @@
+<div class="column is-one-third">
+    <div class="box has-background-primary" style="overflow: hidden; height: 100%;">
+        <article class="media">
+            <div class="media-left">
+                <figure class="image is-64x64">
+                    <img class="is-rounded lazyload" data-src="<%= bot.avatar.url %>.<%= imageFormat %>" alt="<%= bot.name %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load bot <%= bot.id %>\'s avatar/icon, using default instead.');">
+                </figure>
+            </div>
+            <div style="overflow: hidden;" class="media-content">
+                <div class="content">
+                    <p>
+                    <span class="is-size-4 title has-text-blurple is-mobile"><%= bot.name %>
+                        <% if (bot.status.verified === true) { %>
+                            <img class="lazyload cardBadge" title="<%= __("Verified Bot") %>" alt="<%= __("Verified Bot") %>" data-src="/img/badges/verified.<%= imageFormat %>">
+                        <% } %>
+                        <% if (bot.status.siteBot === true) { %>
+                            <img class="lazyload cardBadge" title="<%= __("Site Bot - This bot is one of our official site bots and has been added for internal reasons.. It will not show up in search results, the homepage or the bot list page.") %>" alt="<%= __("Site Bot") %>" data-src="/img/badges/sitebot.<%= imageFormat %>">
+                        <% } %>
+                    </span>
+                        <br />
+                        <% 
+                            function truncateText(text, length) {
+                              if (text.length <= length) {
+                                return text;
+                              }
+                            
+                              return text.substr(0, length) + '\u2026'
+                            }
+                        %>
+                        <% desc = truncateText(bot.shortDesc, 64); %>
+                        <%= desc %>
+                    </p>
+                </div>
+                <div class="content-footer">
+                    <div class="buttons">
+                    <% if (bot.status.archived === true) { %>
+                        <a href="/bots/<%= bot.id %>/resubmit" class="button is-blurple">
+                            <span class="icon">
+                              <i class="fas fa-redo-alt"></i>
+                            </span>
+                            <span><%= __("Resubmit") %></span>
+                        </a>
+                    <% } else if (verificationApp === true) { %>
+                        <a href="/staff/apps/verification/<%= bot.id %>" class="button is-blurple">
+                            <span class="icon">
+                              <i class="fas fa-eye"></i>
+                            </span>
+                            <span><%= __("View Application") %></span>
+                        </a>
+                    <% } else { %>
+                        <a href="/bots/<%= bot.id %>" class="button is-blurple is-outlined">
+                            <span class="icon">
+                              <i class="fas fa-eye"></i>
+                            </span>
+                            <span><%= __("View") %></span>
+                        </a>
+                        <a href="/bots/<%= bot.id %>/invite" class="button is-blurple is-outlined">
+                            <span class="icon">
+                              <i class="fas fa-plus"></i>
+                            </span>
+                            <span><%= __("Invite") %></span>
+                        </a>
+                    <% } %>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>

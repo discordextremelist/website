@@ -170,7 +170,7 @@
             <br />
             <div class="field">
                 <label class="label has-text-blurple"><%= __("Bot Long Description") %> <span class="has-text-magenta">(HTML & Markdown)</span> <span class="has-text-danger">*</span></label>
-                <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:100%;height:350px;" value="<%= bot.longDescription %>"></div>
+                <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:100%;height:350px;"></div>
                 <textarea hidden name="longDescription" id="longDesc"></textarea>
             </div>
             <span id="botName" style="display: none;"><%= bot.name %></span>
@@ -198,5 +198,6 @@
 <script src="/packages/monaco-editor/min/vs/loader.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
+<script type="text/javascript">$("#longDesc").val("<%- bot.longDescription %>")</script>
 <script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{value:`<%- longDesc %>`,language:"markdown"});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
 <%- include("../../partials/footer.ejs") %>

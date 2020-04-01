@@ -89,17 +89,21 @@
                 <div class="navbar-dropdown">
                     <a class="navbar-item">
                         <span class="icon iconalign">
-                            <i class="twa twa-flag-united-kingdom" aria-hidden="true"></i>
+                            <i class="twa twa-flag-new-zealand" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("English") %> (English)</span>
-                        <% if (req.locale === "en") { %>
-                            <span title="Selected" class="icon has-text-success iconalign has-text-right">
+                        <span title="This is the source/default language of the website." class="icon has-text-info">
+                            <i class="fad fa-info-circle" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("English NZ") %> (English NZ)</span>
+                        <% if (req.locale === "en-NZ") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
+                        
                     </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item" target="_blank" rel="noopener" href="https://translate.zanata.org/iteration/view/delly/v5">
+                    <a class="navbar-item" target="_blank" rel="noopener" href="https://translate.discordextremelist.xyz/">
                         <span class="icon iconalign">
                             <i class="twa twa-white-flag" aria-hidden="true"></i>
                         </span>

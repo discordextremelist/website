@@ -79,21 +79,21 @@ router.get("/:id/rank", variables, permission.auth, permission.assistant, async 
     const targetUser = await req.app.db.collection("users").findOne({ id: req.params.id });
 
     if (!targetUser) return res.status(404).render("status", {
-        title: req.__("Error"),
+        title: res.__("Error"),
         status: 404,
-        subtitle: req.__("This user does not exist in our website database"),
+        subtitle: res.__("This user does not exist in our website database"),
         req,
         type: "Error"
     });
 
     if (targetUser.rank.admin === true || targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(401).render("status", {
-        title: req.__("Error"),
-        status: 404,
-        subtitle: req.__("You cannot modify the rank of someone with the same or higher rank as yours"),
+        title: res.__("Error"),
+        status: 401,
+        subtitle: res.__("You cannot modify the rank of someone with the same or higher rank as yours"),
         req,
         type: "Error"
     });
-
+    
     res.render("templates/users/staffActions/modifyRank", { title: res.__("Modify Rank"), subtitle: res.__("Modifiying rank of: ") + targetUser.fullUsername, user: req.user, req: req, targetUser: targetUser });
 });
 
@@ -101,17 +101,17 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
     const targetUser = await req.app.db.collection("users").findOne({ id: req.params.id });
 
     if (!targetUser) return res.status(404).render("status", {
-        title: req.__("Error"),
+        title: res.__("Error"),
         status: 404,
-        subtitle: req.__("This user does not exist in our website database"),
+        subtitle: res.__("This user does not exist in our website database"),
         req,
         type: "Error"
     });
 
-    if (targetUser.rank.admin === true || targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(401).render("status", {
-        title: req.__("Error"),
-        status: 404,
-        subtitle: req.__("You cannot modify the rank of someone with the same or higher rank as yours"),
+    if (targetUser.rank.admin === true || targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.render("status", {
+        title: res.__("Error"),
+        status: 401,
+        subtitle: res.__("You cannot modify the rank of someone with the same or higher rank as yours"),
         req,
         type: "Error"
     });

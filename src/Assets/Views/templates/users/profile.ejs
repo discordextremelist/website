@@ -22,25 +22,42 @@
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1">
-                        <%= userProfile.fullUsername %>
+                        <span><%= userProfile.fullUsername %></span>
                         <% if (userProfileIsBanned === true || userProfile.rank.bugHunter === true || userProfile.rank.verified === true || userProfile.rank.mod === true || userProfile.rank.admin === true ) { %>
                             <% if (userProfileIsBanned === true) { %>
-                                <img class="profileBadge" title="<%= __("Banned") %>" alt="<%= __("Banned") %>" src="/img/badges/banned.png">
-                            <% } %>
-                            <% if (userProfile.rank.bugHunter === true) { %>
-                                <img class="profileBadge" title="<%= __("Bug Hunter") %>" alt="<%= __("Bug Hunter") %>" src="/img/badges/bughunter.png">
+                                <span style="vertical-align: middle;" title="<%= __("Banned") %>" class="icon is-medium is-size-3 iconalign">
+                                    <i aria-hidden="true" class="fad fa-ban has-text-danger fa-1x"></i>
+                                </span>
                             <% } %>
                             <% if (userProfile.rank.verified === true) { %>
-                                <img class="profileBadge" title="<%= __("Verified Developer") %>" alt="<%= __("Verified Developer") %>" src="/img/badges/verified.png">
+                                <span style="vertical-align: middle;" title="<%= __("Verified Developer") %>" class="icon is-medium is-size-3 iconalign">
+                                    <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
+                                </span>
+                            <% } %>
+                            <% if (userProfile.rank.bugHunter === true || userProfile.rank.tester === true) { %>
+                                <span style="vertical-align: middle;" title="<%= __("Tester") %>" class="icon is-medium is-size-3 iconalign">
+                                    <i aria-hidden="true" class="fad fa-vial has-text-link fa-1x"></i>
+                                </span>
+                            <% } %>
+                            <% if (userProfile.rank.translator === true) { %>
+                                <span style="vertical-align: middle;" title="<%= __("Translator") %>" class="icon is-medium is-size-3 iconalign">
+                                    <i aria-hidden="true" class="fad fa-globe has-text-info fa-1x"></i>
+                                </span>
                             <% } %>
                             <% if (userProfile.rank.mod === true) { %>
-                                <img class="profileBadge" title="<%= __("Website Moderator") %>" alt="<%= __("Website Moderator") %>" src="/img/badges/mod.png">
+                                <span style="vertical-align: middle;" title="<%= __("Website Moderator") %>" class="icon is-medium is-size-3 iconalign">
+                                    <i aria-hidden="true" class="fad fa-hammer has-text-success fa-1x"></i>
+                                </span>
                             <% } %>
                             <% if (userProfile.rank.assistant === true ) { %>
-                                <img class="profileBadge" title="<%= __("Website Assistant") %>" alt="<%= __("Website Assistant") %>" src="/img/badges/assistant.png">
+                                <span style="vertical-align: middle;" title="<%= __("Website Assistant") %>" class="icon is-medium is-size-3 iconalign">
+                                    <i aria-hidden="true" class="fad fa-tools has-text-orange fa-1x"></i>
+                                </span>
                             <% } %>
                             <% if (userProfile.rank.admin === true ) { %>
-                                <img class="profileBadgeAdmin" title="<%= __("Website Administrator") %>" alt="<%= __("Website Administrator") %>" src="/img/badges/admin.png">
+                                <span style="vertical-align: middle;" title="<%= __("Website Administrator") %>" class="icon is-medium is-size-3 iconalign">
+                                    <i aria-hidden="true" class="fad fa-crown has-text-danger fa-1x"></i>
+                                </span>
                             <% } %>
                         <% } %> 
                     </h1>

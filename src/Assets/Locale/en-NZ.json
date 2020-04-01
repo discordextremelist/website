@@ -84,7 +84,7 @@
 	"Donate": "Donate",
 	"Git Repository": "Git Repository",
 	"Editors": "Editors",
-	"English": "English",
+	"English NZ": "English NZ",
 	"Help Translate": "Help Translate",
 	"Language": "Language",
 	"Set Vanity URL": "Set Vanity URL",
@@ -153,5 +153,7 @@
 	"Moderator": "Moderator",
 	"User": "User",
 	"Verify": "Verify",
-	"Bug Hunter": "Bug Hunter"
+	"You cannot modify the rank of someone with the same or higher rank as yours": "You cannot modify the rank of someone with the same or higher rank as yours",
+	"Banned": "Banned",
+	"Verified Developer": "Verified Developer"
 }

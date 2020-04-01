@@ -68,7 +68,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
             }
         }
 
-        if (!req.body.longDescription || req.body.longDescription === '') {
+        if (!req.body.longDescription) {
             error = true;
             errors.push(res.__("A long description is required."));
         }
@@ -138,7 +138,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                 negative: []
             },
             links: {
-                invite: req.body.invite,
+                invite: invite,
                 support: req.body.supportServer,
                 website: req.body.website,
                 donation: req.body.donationUrl,
@@ -178,12 +178,13 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                 error = true;
                 errors.push(res.__("The invite link you provided is too long."));
             } else if (!/^https?:\/\//.test(req.body.invite)) {
+                // todo - fix this
             } else {
                 invite = req.body.invite
             }
         }
 
-        if (!req.body.longDescription || req.body.longDescription === '') {
+        if (!req.body.longDescription) {
             error = true;
             errors.push(res.__("A long description is required."));
         }
@@ -374,7 +375,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         }
     }
 
-    if (!req.body.longDescription || req.body.longDescription === '') {
+    if (!req.body.longDescription) {
         error = true;
         errors.push(res.__("A long description is required."));
     }
@@ -433,7 +434,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
                     url: `https://cdn.discordapp.com/avatars/${req.body.id}/${snkRes.body.avatar}`
                 },
                 links: {
-                    invite: req.body.invite,
+                    invite: invite,
                     support: req.body.supportServer,
                     website: req.body.website,
                     donation: req.body.donationUrl,
@@ -714,7 +715,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
         }
     }
 
-    if (!req.body.longDescription || req.body.longDescription === '') {
+    if (!req.body.longDescription) {
         error = true;
         errors.push(res.__("A long description is required."));
     }
@@ -773,7 +774,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
                     url: `https://cdn.discordapp.com/avatars/${req.body.id}/${snkRes.body.avatar}`
                 },
                 links: {
-                    invite: req.body.invite,
+                    invite: invite,
                     support: req.body.supportServer,
                     website: req.body.website,
                     donation: req.body.donationUrl,

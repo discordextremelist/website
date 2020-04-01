@@ -2,8 +2,6 @@ const ioRedis = require("ioredis");
 const cron = require("node-cron");
 
 const settings = require("../../../settings.json");
-const functions = require("../Function/main.js");
-const app = require("../../../app.js");
 const discord = require("./discord.js");
 const redisBans = new ioRedis(settings.db.redis.bans);
 

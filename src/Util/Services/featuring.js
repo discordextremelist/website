@@ -1,8 +1,6 @@
 const ioRedis = require("ioredis");
-const cron = require("node-cron");
 
 const settings = require("../../../settings.json");
-const functions = require("../Function/main.js");
 const app = require("../../../app.js");
 const redisFeaturing = new ioRedis(settings.db.redis.featuring);
 
@@ -26,10 +24,10 @@ async function updateFeaturedServers() {
     redisFeaturing.set("servers", JSON.stringify(servers));
 }
 
-cron.schedule("*/15 * * * *", async () => {
+setInterval(async () => {
     await updateFeaturedBots();
     await updateFeaturedServers();
-});
+}, 900000);
 
 module.exports = {
     getFeaturedBots,

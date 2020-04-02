@@ -1,0 +1,135 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/nav.ejs") %>
+<style type="text/css">h1{font-size:48px}h2{font-size:40px}h3{font-size:32px}h4{font-size:24px}h5{font-size:20px}h6{font-size:16px}strong{color:#fff}code{background-color:#1f1f1f}pre{color:#ff3860;background-color:#1f1f1f}table th{color:#d2d2d2}a:hover{color:#1c5abd}.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{color:#fff;font-weight:inherit}table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all;-webkit-overflow-scrolling:touch}blockquote{background-color:transparent!important;}</style>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container">
+            <br />
+            <div class="columns">
+                <div class="column is-2">
+                    <img class="image" title="<%= server.name %>'s Icon'" style="border-radius: 50%;" src="<%= server.icon.url %>.<%= imageFormat %>?size=128" alt="<%= server.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');">
+                </div>
+                <div class="column is-10">
+                    <h1 class="is-size-1">
+                        <span id="serverName"><%= server.name %></span>
+                    </h1>
+                    <h2 class="subtitle"><%= server.shortDesc %></h2>
+                    <% if (req.user) { %>
+                        <div class="buttons">
+                            <% if (server.owner.id === req.user.id) { %>
+                                <a href="/servers/<%= server.id %>/edit" class="button is-dark">
+                                    <span class="icon">
+                                        <i aria-hidden="true" class="fas fa-pencil"></i>
+                                    </span>
+                                    <span><%= __("Edit") %></span>
+                                </a>
+                                <a href="" id="deleteModal" class="button is-dark">
+                                    <span class="icon">
+                                        <i aria-hidden="true" class="fas fa-trash"></i>
+                                    </span>
+                                    <span><%= __("Delete") %></span>
+                                </a>
+                            <% } %>
+                        </div>
+                        <% if (user.db.rank.mod && server.owner.id !== req.user.id) { %>
+                            <div class="dropdown">
+                                <div class="dropdown-trigger">
+                                    <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
+                                    <span class="icon">
+                                        <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
+                                    </span>
+                                    <span><%= __("Staff Management") %></span>
+                                    <span class="icon is-small">
+                                        <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
+                                    <div class="dropdown-content">
+                                        <div class="dropdown-item">
+                                            <p class="has-text-danger">If you accidentally perform an action that is "abusive" or "inappropriate" please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.</p>
+                                        </div>
+                                        <hr class="dropdown-divider">
+                                        <a class="dropdown-item" href="/servers/<%= server.id %>/edit">
+                                            <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
+                                            <span><%= __("Edit") %></span>
+                                        </a>
+                                        <a class="dropdown-item" href="/servers/<%= server.id %>/remove">
+                                            <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
+                                            <span><%= __("Remove") %></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %> 
+                    <% } %>
+                    <div class="buttons">
+                        <% if (server.links.website) { %>
+                            <a target="_blank" rel="noopener" href="<%= server.links.website %>" class="button is-link">
+                                <span class="icon">
+                                    <i aria-hidden="true" class="fas fa-globe"></i>
+                                </span>
+                                <span><%= __("Website") %></span>
+                            </a>
+                        <% } %>
+                        <a target="_blank" href="<%= server.links.invite %>" class="button is-info">
+                            <span class="icon">
+                                <i aria-hidden="true" class="fas fa-plus"></i>
+                            </span>
+                            <span><%= __("Invite") %></span>
+                        </a>
+                        <% if (server.links.donation) { %>
+                            <a target="_blank" rel="noopener" href="<%= server.links.donation %>" class="button is-success">
+                                <span class="icon">
+                                    <i aria-hidden="true" class="fas fa-dollar-sign"></i>
+                                </span>
+                                <span><%= __("Donate") %></span>
+                            </a>
+                        <% } %>
+                    </div>
+                    <div class="field is-grouped is-grouped-multiline">
+                        <div class="control">
+                            <div class="tags has-addons">
+                                <span class="tag is-dark"><%= __("Listing Owner") %></span>
+                                <span class="tag is-link"><a class="has-text-white" href="/users/<%= server.owner.id %>"><%= serverOwner.fullUsername %></a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> 
+<div class="container" style="overflow: hidden;">
+    <div id="content" class="section content" style="white-space: pre;"><%- longDesc || "A long description is unavailable as this server was added in v4." %></div>
+</div>
+<div class="modal deleteModal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title has-text-danger"><%= __("Warning!") %></p>
+        </header>
+        <section class="modal-card-body has-text-danger">
+            <%= __("This action is irreversible, when you click Delete your server's data will be immediately erased from our database with no way of restoring it.") %>
+        </section>
+        <footer class="modal-card-foot">
+            <div class="buttons">
+                <a class="button is-success" href="/servers/<%= server.id %>/delete">
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-check-circle"></i>
+                    </span>
+                    <span><%= __("Delete") %></span>
+                </a>
+                <button class="button is-danger" id="close-modal">
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-times-circle"></i>
+                    </span>
+                    <span><%= __("Cancel") %></span>
+                </button>
+            </div>
+        </footer>
+    </div>
+    <script type="text/javascript">document.querySelector("a#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+</div>
+<script type="text/javascript">const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>
+<%- include("../../partials/footer.ejs") %>

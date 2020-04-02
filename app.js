@@ -94,6 +94,7 @@ new Promise((resolve, reject) => {
     app.use("/", require("./src/Routes/index.js"));
     app.use("/", require("./src/Routes/authentication.js"));
     app.use("/bots", require("./src/Routes/bots.js"));
+    app.use("/servers", require("./src/Routes/servers.js"));
     app.use("/users", require("./src/Routes/users.js"));
     app.use("/amp", require("./src/Routes/amp.js"));
 

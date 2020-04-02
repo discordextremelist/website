@@ -15,4 +15,5 @@ UNVERIFY_BOT: When a staff member unverify's a bot.
 SUBMIT_BOT: When a user submits a bot.
 UPVOTE_BOT: When a user upvotes a bot.
 DOWNVOTE_BOT: When a user downvotes a bot.
+SUBMIT_SERVER: When a user a submits a server.
 ```

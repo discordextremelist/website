@@ -2,7 +2,6 @@ const Eris = require("eris-additions")(require("eris"));
 const ioRedis = require("ioredis");
 
 const settings = require("../../../settings.json");
-const functions = require("../Function/main.js");
 const redisStatus = new ioRedis(settings.db.redis.statuses);
 
 const bot = new Eris.Client(settings.client.token);
@@ -14,8 +13,42 @@ bot.on("ready", async () => {
         console.log("PM2: Ready signal sent");
     }
 
-    await functions.statusUpdate;
     await uploadStatuses();
+    setInterval(() => {
+        if (count > 1) {
+            discord.bot.editStatus({
+                status: "online",
+                game: {
+                    name: `${count} listed bots ($)`,
+                    type: "WATCHING"
+                }
+            });
+        } else if (count === 1) {
+            discord.bot.editStatus({
+                status: "online",
+                game: {
+                    name: `${count} listed bot ($)`,
+                    type: "WATCHING"
+                }
+            });
+        } else if (count === 0) {
+            discord.bot.editStatus({
+                status: "online",
+                game: {
+                    name: `No listed bots ($)`,
+                    type: "WATCHING"
+                }
+            });
+        } else {
+            discord.bot.editStatus({
+                status: "online",
+                game: {
+                    name: `${count} listed bot(s) ($)`,
+                    type: "WATCHING"
+                }
+            });
+        }
+    }, 900000);
 });
 
 bot.on("presenceUpdate", (other, oldPresence) => {
@@ -49,12 +82,12 @@ async function uploadStatuses() {
 
     const keys = Object.keys(statuses);
 
-    for (let i = 0; i < keys.length; i += 1000) {
+    for (let n = 0; n < keys.length; n += 1000) {
         const slicedStatuses = {};
-        const slicedKeys = keys.slice(i, i + 1000);
+        const slicedKeys = keys.slice(n, n + 1000);
 
-        for (let j = 0; j < slicedKeys.length; j++) {
-            slicedStatuses[slicedKeys[j]] = statuses[slicedKeys[j]];
+        for (let nn = 0; nn < slicedKeys.length; nn++) {
+            slicedStatuses[slicedKeys[nn]] = statuses[slicedKeys[nn]];
         }
 
         redisStatus.mset(slicedStatuses);

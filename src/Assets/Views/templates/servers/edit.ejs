@@ -1,0 +1,113 @@
+<%- include("../../partials/header.ejs") %>
+<link href="/css/form.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<%- include("../../partials/nav.ejs") %>
+<section class="hero is-black">
+    <div class="hero-body">
+        <br />
+        <div class="container has-text-centered">
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-pen has-text-default"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle">
+                <%= subtitle %>
+            </h2>
+        </div>
+    </div>
+    </section>
+    <div class="container">
+        <div class="section">
+            <form method="POST">
+                <h3 class="is-size-3 has-text-blurple"><%= __("General Information") %></h3>
+                <br />
+                <div class="field">
+                    <label class="label has-text-blurple"><%= __("Server ID") %> <span class="has-text-danger">(<%= __("Read-only") %>)</span></label>
+                    <p class="control has-icons-left has-icons-right" required>
+                        <input class="input is-rounded" type="text" value="<%= server.id %>" name="id" readonly>
+                        <span class="icon is-small is-left">
+                            <i aria-hidden="true" class="fas fa-hashtag"></i>
+                        </span>
+                    </p>
+                </div>
+                <br />
+                <br />
+                <h3 class="is-size-3 has-text-blurple"><%= __("Links") %></h3>
+                <br />
+                <div class="field">
+                    <label class="label has-text-blurple"><%= __("Server Invite") %></label>
+                    <p class="control has-icons-left has-icons-right">
+                        <input class="input is-rounded" type="text" value="<%= server.links.invite %>" name="invite" placeholder="<%= discordServer %>">
+                        <span class="icon is-small is-left">
+                            <i aria-hidden="true" class="fas fa-link"></i>
+                        </span>
+                    </p>
+                </div>
+                <br />
+                <div class="field">
+                    <label class="label has-text-blurple"><%= __("Server Website") %></label>
+                    <p class="control has-icons-left has-icons-right">
+                        <input class="input is-rounded" type="text" value="<%= server.links.website %>" name="website" placeholder="https://example.com">
+                        <span class="icon is-small is-left">
+                            <i aria-hidden="true" class="fas fa-globe"></i>
+                        </span>
+                    </p>
+                </div>
+                <br />
+                <div class="field">
+                    <label class="label has-text-blurple"><%= __("Server Donation Link") %></label>
+                    <p class="control has-icons-left has-icons-right">
+                        <input class="input is-rounded" type="text" value="<%= server.links.donation %>" name="donationUrl" placeholder="https://example.com/givememoneyplsimbroke">
+                        <span class="icon is-small is-left">
+                            <i aria-hidden="true" class="fas fa-dollar-sign"></i>
+                        </span>
+                    </p>
+                </div>
+                <br />
+                <br />
+                <h3 class="is-size-3 has-text-blurple"><%= __("Descriptions") %></h3>
+                <br />
+                <div class="field">
+                    <label class="label has-text-blurple"><%= __("Server Short Description") %> <span class="has-text-danger">*</span></label>
+                    <p class="control has-icons-left has-icons-right">
+                        <input class="input is-rounded" type="text" value="<%= server.shortDesc %>" name="shortDescription" placeholder="<%= __("This is an amazing server kthx now join") %>" required>
+                        <span class="icon is-small is-left">
+                            <i aria-hidden="true" class="fas fa-comment-dots"></i>
+                        </span>
+                    </p>
+                </div>
+                <br />
+                <div class="field">
+                    <label class="label has-text-blurple"><%= __("Server Long Description") %> (Basic HTML & Markdown) <span class="has-text-danger">*</span></label>
+                    <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:100%;height:350px;"></div>
+                    <textarea hidden name="longDescription" id="longDesc" required></textarea>
+                </div>
+                <br />
+                <div class="field is-grouped">
+                    <div class="buttons">
+                        <button onclick="monacoToField();" class="button is-success">
+                            <span class="icon">
+                              <i aria-hidden="true" class="fas fa-check-circle"></i>
+                            </span>
+                            <span><%= __("Submit") %></span>
+                        </button>
+                        <a href="/" class="button is-danger">
+                            <span class="icon">
+                              <i aria-hidden="true" class="fas fa-times-circle"></i>
+                            </span>
+                            <span><%= __("Cancel") %></span>
+                        </a>
+                    </div>
+                </div>
+            </form>    
+        </div>
+        <script type="text/javascript">var require={paths:{"vs":"/packages/monaco-editor/min/vs"}};</script>
+        <script src="/packages/monaco-editor/min/vs/loader.js"></script>
+        <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+        <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
+        <script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{value:`<%= server.longDesc %>`,language:"markdown"});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
+<%- include("../../partials/footer.ejs") %>

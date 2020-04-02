@@ -20,7 +20,7 @@
             "value": 3000,
             "agressive": true
         },
-        "authScopes": ["identify"],
+        "authScopes": ["identify", "guilds"],
         "url": "https://example.com",
         "callback": "/login/callback"
     },

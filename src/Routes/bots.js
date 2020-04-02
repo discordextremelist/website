@@ -2,7 +2,7 @@ const express = require("express");
 const snek = require("snekfetch");
 const crypto = require("crypto");
 const md = require("markdown-it")();
-const Entities = require('html-entities').XmlEntities;
+const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
 const sanitizeHtml = require("sanitize-html");
 const router = express.Router();
@@ -153,9 +153,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
             }
         });
 
-        discord.bot.createMessage({ channelID: settings.channels.webLog, content: { content: `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** added bot **${functions.escapeFormatting(snkRes.body.username)} (${req.body.id})\n<${settings.website.url}/bots/${req.body.id}>` } });
-
-        functions.statusUpdate();
+        discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** added bot **${functions.escapeFormatting(snkRes.body.username)} (${req.body.id})\n<${settings.website.url}/bots/${req.body.id}>`);
 
         req.app.db.collection("audit").insertOne({
             type: "SUBMIT_BOT",
@@ -781,7 +779,7 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
         req: req
     });
 
-    discord.bot.createMessage({ channelID: settings.channels.webLog, content: { content: `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** deleted bot **${functions.escapeFormatting(bot.name)} (${bot.id})**` } });
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** deleted bot **${functions.escapeFormatting(bot.name)} (${bot.id})**`);
 
     req.app.db.collection("bots").deleteOne({ id: req.params.id });
 
@@ -793,7 +791,6 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
         reason: "None specified."
     });
 
-    functions.statusUpdate()
     res.redirect("/users/@me");
 });
 
@@ -1233,7 +1230,6 @@ router.post("/:id/decline", variables, permission.auth, permission.mod, async (r
     });
 
     discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.cross} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\`\n**Reason:** \`${req.body.reason}\``);
-    functions.statusUpdate();
 
     const guild = await discord.bot.guilds.get(settings.guild.staff);
     const member = guild.members.get(req.body.id);
@@ -1310,7 +1306,6 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
     });
 
     discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\`\n**Reason:** \`${req.body.reason}\``);
-    functions.statusUpdate();
 
     const guild = await discord.bot.guilds.get(settings.guild.main);
     const member = guild.members.get(req.body.id);

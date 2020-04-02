@@ -34,15 +34,21 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Verify") %></label>
-                <input id="verificationSwitch" type="checkbox" name="verified" class="switch is-rounded is-gold" <% if (targetUser.rank.verified === true) { %>checked="checked"<% } %>>
-                <label for="verificationSwitch"></label>
+                <label class="label has-text-blurple"><%= __("Translator") %></label>
+                <input id="translatorSwitch" type="checkbox" name="translator" class="switch is-rounded is-info" <% if (targetUser.rank.translator === true) { %>checked="checked"<% } %>>
+                <label for="translatorSwitch"></label>
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Bug Hunter") %></label>
-                <input id="bugHunterSwitch" type="checkbox" name="bugHunter" class="switch is-rounded is-magenta" <% if (targetUser.rank.bugHunter === true) { %>checked="checked"<% } %>>
-                <label for="bugHunterSwitch"></label>
+                <label class="label has-text-blurple"><%= __("Tester") %></label>
+                <input id="testerSwitch" type="checkbox" name="tester" class="switch is-rounded is-link" <% if (targetUser.rank.tester === true) { %>checked="checked"<% } %>>
+                <label for="testerSwitch"></label>
+            </div>
+            <br />
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("Verify") %></label>
+                <input id="verificationSwitch" type="checkbox" name="verified" class="switch is-rounded is-magenta" <% if (targetUser.rank.verified === true) { %>checked="checked"<% } %>>
+                <label for="verificationSwitch"></label>
             </div>
             <br />
             <div class="field is-grouped">

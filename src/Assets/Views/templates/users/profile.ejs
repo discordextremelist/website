@@ -22,42 +22,43 @@
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1">
-                        <span><%= userProfile.fullUsername %></span>
+                        <span id="userName"><%= userProfile.fullUsername %></span>
                         <% if (userProfileIsBanned === true || userProfile.rank.bugHunter === true || userProfile.rank.verified === true || userProfile.rank.mod === true || userProfile.rank.admin === true ) { %>
                             <% if (userProfileIsBanned === true) { %>
                                 <span style="vertical-align: middle;" title="<%= __("Banned") %>" class="icon is-medium is-size-3 iconalign">
                                     <i aria-hidden="true" class="fad fa-ban has-text-danger fa-1x"></i>
                                 </span>
-                            <% } %>
-                            <% if (userProfile.rank.verified === true) { %>
-                                <span style="vertical-align: middle;" title="<%= __("Verified Developer") %>" class="icon is-medium is-size-3 iconalign">
-                                    <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
-                                </span>
-                            <% } %>
-                            <% if (userProfile.rank.bugHunter === true || userProfile.rank.tester === true) { %>
-                                <span style="vertical-align: middle;" title="<%= __("Tester") %>" class="icon is-medium is-size-3 iconalign">
-                                    <i aria-hidden="true" class="fad fa-vial has-text-link fa-1x"></i>
-                                </span>
-                            <% } %>
-                            <% if (userProfile.rank.translator === true) { %>
-                                <span style="vertical-align: middle;" title="<%= __("Translator") %>" class="icon is-medium is-size-3 iconalign">
-                                    <i aria-hidden="true" class="fad fa-globe has-text-info fa-1x"></i>
-                                </span>
-                            <% } %>
-                            <% if (userProfile.rank.mod === true) { %>
-                                <span style="vertical-align: middle;" title="<%= __("Website Moderator") %>" class="icon is-medium is-size-3 iconalign">
-                                    <i aria-hidden="true" class="fad fa-hammer has-text-success fa-1x"></i>
-                                </span>
-                            <% } %>
-                            <% if (userProfile.rank.assistant === true ) { %>
-                                <span style="vertical-align: middle;" title="<%= __("Website Assistant") %>" class="icon is-medium is-size-3 iconalign">
-                                    <i aria-hidden="true" class="fad fa-tools has-text-orange fa-1x"></i>
-                                </span>
-                            <% } %>
-                            <% if (userProfile.rank.admin === true ) { %>
-                                <span style="vertical-align: middle;" title="<%= __("Website Administrator") %>" class="icon is-medium is-size-3 iconalign">
-                                    <i aria-hidden="true" class="fad fa-crown has-text-danger fa-1x"></i>
-                                </span>
+                            <% } else { %>
+                                <% if (userProfile.rank.verified === true) { %>
+                                    <span style="vertical-align: middle;" title="<%= __("Verified Developer") %>" class="icon is-medium is-size-3 iconalign">
+                                        <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
+                                    </span>
+                                <% } %>
+                                <% if (userProfile.rank.bugHunter === true || userProfile.rank.tester === true) { %>
+                                    <span style="vertical-align: middle;" title="<%= __("Tester") %>" class="icon is-medium is-size-3 iconalign">
+                                        <i aria-hidden="true" class="fad fa-vial has-text-link fa-1x"></i>
+                                    </span>
+                                <% } %>
+                                <% if (userProfile.rank.translator === true) { %>
+                                    <span style="vertical-align: middle;" title="<%= __("Translator") %>" class="icon is-medium is-size-3 iconalign">
+                                        <i aria-hidden="true" class="fad fa-globe has-text-info fa-1x"></i>
+                                    </span>
+                                <% } %>
+                                <% if (userProfile.rank.mod === true) { %>
+                                    <span style="vertical-align: middle;" title="<%= __("Website Moderator") %>" class="icon is-medium is-size-3 iconalign">
+                                        <i aria-hidden="true" class="fad fa-hammer has-text-success fa-1x"></i>
+                                    </span>
+                                <% } %>
+                                <% if (userProfile.rank.assistant === true ) { %>
+                                    <span style="vertical-align: middle;" title="<%= __("Website Assistant") %>" class="icon is-medium is-size-3 iconalign">
+                                        <i aria-hidden="true" class="fad fa-tools has-text-orange fa-1x"></i>
+                                    </span>
+                                <% } %>
+                                <% if (userProfile.rank.admin === true ) { %>
+                                    <span style="vertical-align: middle;" title="<%= __("Website Administrator") %>" class="icon is-medium is-size-3 iconalign">
+                                        <i aria-hidden="true" class="fad fa-crown has-text-danger fa-1x"></i>
+                                    </span>
+                                <% } %>
                             <% } %>
                         <% } %> 
                     </h1>
@@ -203,29 +204,11 @@
                     <h2 class="is-size-4"><%= __("Archived Bots") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- archivedBotsChunk.map(chunk => `${chunk.map(bot => include("../../partials/botCard.ejs", { bot, queue: false, archived: true, verificationApp: false })).join("")}`).join("") %>
+                        <%- archivedBotsChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, archived: true, verificationApp: false })).join("")}`).join("") %>
                     </div>
                 <% } %>
             <% } %>
     </div>
 </div>
-<% if (user && user.db.rank.mod === true) { %>
-    <div class="modal staffModal">
-        <div class="modal-background" id="staffModalBg"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title has-text-danger">Staff Tools</p>
-            </header>
-            <section class="modal-card-body has-text-red-dark">
-                </section>
-            <footer class="modal-card-foot">
-                <div class="buttons">
-                    
-                    <button class="button is-black" id="staffModalClose"><i aria-hidden="true" class="fas fa-door-open"></i>&nbsp; Exit</button>
-                </div>
-            </footer>
-        </div>
-    </div>
-    <script type="text/javascript">const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>
-<% } %>
+<script type="text/javascript">const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>
 <%- include("../../partials/footer.ejs") %>

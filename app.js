@@ -23,11 +23,10 @@ app.get("*", (req, res, next) => {
 
 console.log("Mongo: Connection opening...");
 const { MongoClient } = require("mongodb");
-let client, db;
+let db;
 new Promise((resolve, reject) => {
     MongoClient.connect(settings.db.mongo, { useUnifiedTopology: true }, (error, mongo) => {
         if (error) return reject(error);
-        client = mongo;
         db = mongo.db("del");
         console.log("Mongo: Connection established! Released deadlock as a part of startup...");
         resolve();
@@ -37,7 +36,7 @@ new Promise((resolve, reject) => {
     app.db = db;
 
     redisClient.on("error", (err) => {
-        console.log("Redis error: ", err);
+        console.error("Redis error: ", err);
     });    
 
     require("./src/Util/Services/featuring.js");
@@ -97,7 +96,6 @@ new Promise((resolve, reject) => {
     app.use("/bots", require("./src/Routes/bots.js"));
     app.use("/users", require("./src/Routes/users.js"));
     app.use("/amp", require("./src/Routes/amp.js"));
-    // idk just do what you want here lol because I honestly have no fucking clue as to what to put theref or amp ok thank you
 
     app.use("*", require("./src/Util/Function/variables.js"));
 

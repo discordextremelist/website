@@ -8,9 +8,15 @@
         <br />
         <div class="container has-text-centered">
             <h1 class="title">
-                <span class="icon is-medium iconalign">
-                    <i aria-hidden="true" class="fad fa-pen has-text-default"></i>
-                </span>
+                <% if (resubmit === false) { %>
+                    <span class="icon is-medium iconalign">
+                        <i aria-hidden="true" class="fad fa-pen has-text-default"></i>
+                    </span>
+                <% } else { %>
+                    <span class="icon is-medium iconalign">
+                        <i aria-hidden="true" class="fad fa-redo-alt has-text-default"></i>
+                    </span>
+                <% } %>
                 <br />
                 <span><%= title %></span>
             </h1>

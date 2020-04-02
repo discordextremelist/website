@@ -8,9 +8,15 @@
         <br />
         <div class="container has-text-centered">
             <h1 class="title">
-                <span class="icon is-medium iconalign">
-                    <i aria-hidden="true" class="fad fa-pen has-text-default"></i>
-                </span>
+                <% if (resubmit === false) { %>
+                    <span class="icon is-medium iconalign">
+                        <i aria-hidden="true" class="fad fa-pen has-text-default"></i>
+                    </span>
+                <% } else { %>
+                    <span class="icon is-medium iconalign">
+                        <i aria-hidden="true" class="fad fa-redo-alt has-text-default"></i>
+                    </span>
+                <% } %>
                 <br />
                 <span><%= title %></span>
             </h1>
@@ -171,13 +177,13 @@
             <div class="field">
                 <label class="label has-text-blurple"><%= __("Bot Long Description") %> <span class="has-text-magenta">(HTML & Markdown)</span> <span class="has-text-danger">*</span></label>
                 <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:100%;height:350px;"></div>
-                <textarea hidden name="longDescription" id="longDesc"></textarea>
+                <textarea hidden name="longDescription" id="longDesc"><%= bot.longDescription %></textarea>
             </div>
             <span id="botName" style="display: none;"><%= bot.name %></span>
             <br />
             <div class="field is-grouped">
                 <div class="buttons">
-                    <button class="button is-success">
+                    <button onclick="monacoToField();" class="button is-success">
                         <span class="icon">
                             <i aria-hidden="true" class="fas fa-check-circle"></i>
                         </span>

@@ -86,9 +86,9 @@ router.get("/:id/rank", variables, permission.auth, permission.assistant, async 
         type: "Error"
     });
 
-    if (targetUser.rank.admin === true || targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(401).render("status", {
+    if (targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(403).render("status", {
         title: res.__("Error"),
-        status: 401,
+        status: 403,
         subtitle: res.__("You cannot modify the rank of someone with the same or higher rank as yours"),
         req,
         type: "Error"
@@ -108,21 +108,23 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         type: "Error"
     });
 
-    if (targetUser.rank.admin === true || targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.render("status", {
+    if (targetUser.rank.admin === true || targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(403).render("status", {
         title: res.__("Error"),
-        status: 401,
+        status: 403,
         subtitle: res.__("You cannot modify the rank of someone with the same or higher rank as yours"),
         req,
         type: "Error"
     });
 
     let verified = false;
-    let bugHunter = false; 
+    let tester = false; 
+    let translator = false; 
     let mod = false;
     let assistant = false;
     let admin = false;
 
-    if (req.body.bugHunter === "on") bugHunter = true;
+    if (req.body.tester === "on") tester = true;
+    if (req.body.translator === "on") translator = true;
     if (req.body.verified === "on") verified = true;
 
     if (req.body.rank === "mod") {
@@ -133,7 +135,7 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         return res.status(403).render("status", {
             title: res.__("Error"),
             status: 403,
-            message: res.__("You cannot set a rank that is the same or higher than your own rank"),
+            subtitle: res.__("You cannot set a rank that is the same or higher than your own rank"),
             req,
             type: "Error"
         });
@@ -141,7 +143,7 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         return res.status(403).render("status", {
             title: res.__("Error"),
             status: 403,
-            message: res.__("You cannot modify a user's rank if they have the same or a higher rank than you"),
+            subtitle: res.__("You cannot modify a user's rank if they have the same or a higher rank than you"),
             req,
             type: "Error"
         });

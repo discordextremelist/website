@@ -3,7 +3,6 @@ const ioRedis = require("ioredis");
 
 const settings = require("../../../settings.json");
 const functions = require("../Function/main.js");
-const featuring = require("./featuring.js");
 const redisStatus = new ioRedis(settings.db.redis.statuses);
 
 const bot = new Eris.Client(settings.client.token);
@@ -28,8 +27,10 @@ bot.on("guildMemberAdd", (guild, member) => {
 })
 
 bot.on("guildMemberRemove", (guild, member) => {
-    // note | not an ideal solution - please fix
-    redisStatus.set(member.id, "offline");
+    // todo - fix this, it's not an ideal solution
+    if (guild.id === settings.guild.main) {
+        redisStatus.set(member.id, "offline");
+    }
 })
 
 async function getStatus(id) {

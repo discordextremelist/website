@@ -1,5 +1,4 @@
 const ioRedis = require("ioredis");
-const cron = require("node-cron");
 
 const settings = require("../../../settings.json");
 const discord = require("./discord.js");
@@ -25,9 +24,9 @@ async function updateBanlist() {
     redisBans.set("bans", JSON.stringify(bans));
 }
 
-cron.schedule("*/15 * * * *", async () => {
+setInterval(async () => {
     await updateBanlist();
-});
+}, 900000);
 
 module.exports = {
     check,

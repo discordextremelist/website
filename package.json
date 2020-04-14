@@ -2,7 +2,7 @@
   "name": "del",
   "version": "5.0.0",
   "author": "Cairo Mitchell-Acason",
-  "private": true,
+  "license": "AGPL-3.0",
   "scripts": {
     "start": "node scripts/start",
     "pm2": "pm2 start scripts/start --name 'DEL'",

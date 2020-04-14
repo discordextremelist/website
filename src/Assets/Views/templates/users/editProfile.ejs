@@ -12,12 +12,12 @@
                     <i aria-hidden="true" class="fad fa-pen has-text-default fa-1x"></i>
                 </span>
                 <br />
-                <span><%= __("Edit Profile") %></span>
+                <span><%= title %></span>
             </h1>
             <% if (userProfile.id === user.id) { %>
                 <h2 class="subtitle"><%= __("Editing your profile") %></h2>
             <% } else { %>
-                <h2 class="subtitle"><%= __("Editing profile:") %> <%= userProfile.fullUsername %></h2>
+                <h2 class="subtitle"><%= __("Editing %s's profile", userProfile.fullUsername) %></h2>
             <% } %>
         </div>
     </div>
@@ -98,7 +98,7 @@
             <div class="field">
                 <label class="label has-text-blurple"><%= __("Custom Profile CSS") %> <span class="has-text-danger">(<%= __("Verified Users and Staff Only") %>)</span></label>
                 <% if (userProfile.rank.verified === true || userProfile.rank.mod === true) { %>
-                    <div onkeyup="monacoToField();" id="profileCssEditor" class="editorBackdrop" style="width:100%;height:350px;" value="<%= userProfile.profile.css %>"></div>
+                    <div onkeyup="monacoToField();" id="profileCssEditor" class="editorBackdrop" style="width:99%;height:350px;" value="<%= userProfile.profile.css %>"></div>
                     <textarea hidden name="profileCss" id="profileCss"></textarea>
                 <% } else { %>
                     <p class="has-text-danger"><%= __("You do not have the required permission(s) to use this textarea.") %></p>

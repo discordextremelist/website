@@ -1,0 +1,90 @@
+<%- include("../../partials/header.ejs") %>
+<link href="/css/all.css" type="text/css" media="screen, print" rel="stylesheet" />
+<style type="text/css">.stats{padding:15px;border-radius:5px;}p.heading.main{margin-top:5px}.stats-header{background-color:#000000bd !important;padding:3px;filter: drop-shadow(0px 0px 1px black)}</style>
+<%- include("../../partials/staffNav.ejs") %>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <br />
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-cogs has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="section">
+        <p>
+            <img style="border-radius: 50%; vertical-align: middle; height: 32px; width: auto; margin-left: 6px;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>" alt="<%= __("%s's Profile Picture", req.user.db.fullUsername) %>" onerror="this.onerror=null;this.src='/img/defaultavatar.<%= imageFormat %>';">
+            &nbsp;
+            <span style="vertical-align: middle;"><%= user.db.fullUsername %></span>
+            <span style="vertical-align: middle; color: #354146;">&nbsp;|&nbsp;</span>
+            <% if (user.db.rank.mod === true) { %>
+                <% if (req.user.db.rank.admin === false && req.user.db.rank.assistant === false) { %>
+                    <span style="vertical-align: middle;" title="<%= __("Website Moderator") %>" class="icon is-small iconalign">
+                        <i aria-hidden="true" class="fad fa-hammer has-text-success fa-1x"></i>
+                    </span>
+                    <span style="vertical-align: middle;" class="has-text-success">
+                        <%= __("Website Moderator") %>
+                    </span>
+                <% } else if (req.user.db.rank.admin === false && req.user.db.rank.assistant === false) { %>
+                    <span style="vertical-align: middle;" title="<%= __("Website Assistant") %>" class="icon is-small iconalign">
+                        <i aria-hidden="true" class="fad fa-tools has-text-orange fa-1x"></i>
+                    </span>
+                    <span style="vertical-align: middle;" class="has-text-orange">
+                        <%= __("Website Assistant") %>
+                    </span>
+                <% } else { %>
+                    <span style="vertical-align: middle;" title="<%= __("Website Administrator") %>" class="icon is-small iconalign">
+                        <i aria-hidden="true" class="fad fa-crown has-text-danger fa-1x"></i>
+                    </span>
+                    <span style="vertical-align: middle;" class="has-text-danger">
+                        <%= __("Website Administrator") %>
+                    </span>
+                <% } %>
+            <% } %>
+        </p>
+        <br />
+        <div class="stats has-background-primary">
+            <nav class="level stats-header">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading main">Website Statistics</p>
+                    </div>
+                </div>
+            </nav>
+            <nav class="level">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("Bot Count") %></p>
+                        <p class="title"><%= stats.botCount %></p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("Server Count") %></p>
+                        <p class="title"><%= stats.serverCount %></p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("User Count") %></p>
+                        <p class="title"><%= stats.userCount %></p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("Unapproved Bot Count") %></p>
+                        <p class="title"><%= stats.unapprovedBots %></p>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+<%- include("../../partials/footer.ejs") %>

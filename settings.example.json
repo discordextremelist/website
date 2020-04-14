@@ -4,7 +4,12 @@
         "redis": {
             "logins": "redis://127.0.0.1:6379/2",
             "statuses": "redis://127.0.0.1:6379/3",
-            "featuring": "redis://127.0.0.1:6379/4"
+            "featuring": "redis://127.0.0.1:6379/4",
+            "caching": {
+                "bots": "redis://127.0.0.1:6379/6",
+                "servers": "redis://127.0.0.1:6379/7",
+                "users": "redis://127.0.0.1:6379/8"
+            }
         }
     },
     "client": {
@@ -29,7 +34,8 @@
         "staff": ""
     },
     "channels": {
-        "webLog": ""
+        "webLog": "",
+        "default": ""
     },
     "roles": {
         "unapprovedBot": "",

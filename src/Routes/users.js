@@ -7,20 +7,25 @@ const banned = require("../Util/Services/banned.js");
 const variables = require("../Util/Function/variables.js");
 const permission = require("../Util/Function/permissions.js");
 
+const userCache = require("../Util/Services/userCaching.js");
+
 router.get("/:id", variables, async (req, res, next) => {
     if (req.params.id === "@me") {
         if (!req.user) return res.redirect("/login");
         req.params.id = req.user.id;
     }
 
-    const dbUser = await req.app.db.collection("users").findOne({ id: req.params.id });
-    if (!dbUser) return res.status(404).render("status", {
-        title: res.__("Error"),
-        status: 404,
-        subtitle: res.__("This user does not exist in our website database"),
-        req,
-        type: "Error"
-    });
+    let dbUser = await userCache.getUser(req.params.id);
+    if (!dbUser) {
+        dbUser = await req.app.db.collection("users").findOne({ id: req.params.id });
+        if (!dbUser) return res.status(404).render("status", {
+            title: res.__("Error"),
+            status: 404,
+            subtitle: res.__("This user does not exist in our website database"),
+            req,
+            type: "Error"
+        });
+    }
 
     const bots = await req.app.db.collection("bots").find().sort({ name: 1 }).toArray();
 
@@ -48,7 +53,7 @@ router.get("/:id", variables, async (req, res, next) => {
         const server = servers[n];
 
         if (req.params.id === server.owner.id) {
-            archivedBots.push(bot);
+            serversOwner.push(server);
         }
     }
 
@@ -58,7 +63,7 @@ router.get("/:id", variables, async (req, res, next) => {
     const serverOwnerChunk = chunk(serversOwner, 3);
 
     res.render("templates/users/profile", {
-        title: dbUser.fullUsername + res.__("'s Profile"),
+        title: res.__("%s's Profile", dbUser.fullUsername),
         subtitle: dbUser.profile.bio,
         userProfile: dbUser,
         req,
@@ -89,12 +94,12 @@ router.get("/:id/rank", variables, permission.auth, permission.assistant, async 
     if (targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(403).render("status", {
         title: res.__("Error"),
         status: 403,
-        subtitle: res.__("You cannot modify the rank of someone with the same or higher rank as yours"),
+        subtitle: res.__("You cannot modify a user's rank if they have the same or a higher rank than you"),
         req,
         type: "Error"
     });
     
-    res.render("templates/users/staffActions/modifyRank", { title: res.__("Modify Rank"), subtitle: res.__("Modifiying rank of: ") + targetUser.fullUsername, user: req.user, req: req, targetUser: targetUser });
+    res.render("templates/users/staffActions/modifyRank", { title: res.__("Modify Rank"), subtitle: res.__("Modifiying rank of %s", targetUser.fullUsername), user: req.user, req: req, targetUser: targetUser });
 });
 
 router.post("/:id/rank", variables, permission.auth, permission.assistant, async (req, res, next) => {
@@ -108,10 +113,10 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         type: "Error"
     });
 
-    if (targetUser.rank.admin === true || targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(403).render("status", {
+    if (targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(403).render("status", {
         title: res.__("Error"),
         status: 403,
-        subtitle: res.__("You cannot modify the rank of someone with the same or higher rank as yours"),
+        subtitle: res.__("You cannot modify a user's rank if they have the same or a higher rank than you"),
         req,
         type: "Error"
     });
@@ -131,19 +136,11 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         mod = true;
     }
 
-    if (req.user.db.rank === "assistant" && req.body.rank === "assistant" || req.body.rank === "admin") {
+    if (req.user.db.rank.admin === false && req.body.rank === "assistant" || req.user.db.rank.admin === false && req.body.rank === "admin") {
         return res.status(403).render("status", {
             title: res.__("Error"),
             status: 403,
             subtitle: res.__("You cannot set a rank that is the same or higher than your own rank"),
-            req,
-            type: "Error"
-        });
-    } else if (targetUser.rank === "assistant" || targetUser.rank === "admin") {
-        return res.status(403).render("status", {
-            title: res.__("Error"),
-            status: 403,
-            subtitle: res.__("You cannot modify a user's rank if they have the same or a higher rank than you"),
             req,
             type: "Error"
         });
@@ -158,6 +155,21 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         }
     }
 
+    req.app.db.collection("users").updateOne({ id: targetUser.id }, 
+        { $set: {
+            rank: {
+                admin: admin,
+                assistant: assistant,
+                mod: mod,
+                translator: translator,
+                tester: tester,
+                verified: verified
+            }
+        }
+    });
+
+    await userCache.updateUser(targetUser.id);
+
     req.app.db.collection("audit").insertOne({
         type: "MODIFY_RANK",
         executor: req.user.id,
@@ -170,7 +182,8 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
                     admin: targetUser.rank.admin,
                     assistant: targetUser.rank.assistant,
                     mod: targetUser.rank.mod,
-                    bugHunter: targetUser.rank.bugHunter,
+                    translator: targetUser.rank.translator,
+                    tester: targetUser.rank.tester,
                     verified: targetUser.rank.verified
                 }
             },
@@ -179,7 +192,8 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
                     admin: admin,
                     assistant: assistant,
                     mod: mod,
-                    bugHunter: bugHunter,
+                    translator: translator,
+                    tester: tester,
                     verified: verified
                 }
             }
@@ -187,62 +201,6 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
     });
 
     res.redirect(`/users/${targetUser.id}`);
-});
-
-router.get("/:id/ban", variables, permission.auth, permission.mod, async (req, res, next) => {
-    const targetUser = await req.app.db.collection("users").findOne({ id: req.params.id });
-
-    if (!targetUser) return res.status(404).render("status", {
-        title: res.__("Error"),
-        status: 404,
-        subtitle: res.__("This user does not exist in our website database"),
-        req,
-        type: "Error"
-    });
-
-    res.render("templates/users/staffActions/banUser", { title: "Ban User", user: req.user, req: req, targetUser: targetUser });
-});
-
-router.post("/:id/ban", variables, permission.auth, permission.mod, async (req, res, next) => {
-    const targetUser = await req.app.db.collection("users").findOne({ id: req.params.id });
-
-    if (!targetUser) return res.status(404).render("status", {
-        title: res.__("Error"),
-        status: 404,
-        subtitle: res.__("This user does not exist in our website database"),
-        req,
-        type: "Error"
-    });
-
-    const guild = await discord.bot.guilds.get(settings.guild.main);
-    guild.ban(targetUser.id, req.body.reason)
-        .then(() => {
-            discord.bot.channels.get(settings.channels.punishmentLog).send(`:hammer: | **${targetUser.fullUsername}** (\`${targetUser.id}\`) has been banned via the website.\n**Moderator:** ${req.user.db.fullUsername} (\`${req.user.db.id}\`)\n**Reason:** ${req.body.reason}\n**Expiry:** n/a`);
-            res.status(200).render("status", {
-                title: res.__("Success"),
-                status: 200,
-                subtitle: res.__("Successfully banned: ") + targetUser.fullUsername,
-                req,
-                type: "Success"
-            });
-
-            req.app.db.collection("audit").insertOne({
-                type: "BAN_USER",
-                executor: req.user.id,
-                target: targetUser.id,
-                date: Date.now(),
-                reason: req.body.reason
-            });
-        }).catch(e => {
-            console.error(e);
-            res.status(500).render("status", {
-                title: res.__("Error"),
-                status: 500,
-                subtitle: res.__("An error occurred and I was unable to ban: ") + targetUser.fullUsername,
-                req,
-                type: "Error"
-            });
-    });
 });
 
 router.get("/profile/:id", (req, res, next) => {
@@ -271,7 +229,7 @@ router.get("/profile/:id/edit", variables, permission.auth, async (req, res, nex
         type: "Error"
     });
 
-    res.render("templates/users/editProfile", { title: res.__("Edit Profile"), subtitle: res.__("Editing profile: ") + req.user.db.fullUsername, req, userProfile: userProfile });
+    res.render("templates/users/editProfile", { title: res.__("Edit Profile"), subtitle: res.__("Editing profile %s", req.user.db.fullUsername), req, userProfile: userProfile });
 });
 
 router.post("/profile/:id/edit", variables, permission.auth, async (req, res, next) => {
@@ -322,7 +280,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
     req.app.db.collection("audit").insertOne({
         type: "MODIFY_PROFILE",
         executor: req.user.id,
-        target: targetUser.id,
+        target: userProfile.id,
         date: Date.now(),
         reason: req.body.reason || "None specified.",
         details: {
@@ -436,11 +394,30 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
         experiments = false;
     }
 
+    function getForeground(inputColour) {
+        const colour = (inputColour.charAt(0) === '#') ? inputColour.substring(1, 7) : inputColour;
+        const R = parseInt(colour.substring(0, 2), 16); 
+        const G = parseInt(colour.substring(2, 4), 16); 
+        const B = parseInt(colour.substring(4, 6), 16); 
+        const uiColours = [R / 255, G / 255, B / 255];
+        const c = uiColours.map((col) => {
+            if (col <= 0.03928) {
+                return col / 12.92;
+            }
+            return Math.pow((col + 0.055) / 1.055, 2.4);
+        });
+        const L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
+        return (L > 0.179) ? "#000000" : "#FFFFFF";
+    }
+
+    const foreground = getForeground(req.body.iconColour);
+
     req.app.db.collection("users").updateOne({ id: req.user.id }, 
         { $set: {
             preferences: {
                 customGlobalCss: req.body.customCss,
                 defaultColour: req.body.iconColour,
+                defaultForegroundColour: foreground,
                 enableGames: gamePreferences,
                 experiments: experiments
             }
@@ -457,6 +434,8 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
             old: {
                 preferences: {
                     customGlobalCss: req.user.db.preferences.customCss,
+                    defaultColour: req.user.db.preferences.defaultColour,
+                    defaultForegroundColour: req.user.db.preferences.defaultForegroundColour,
                     enableGames: req.user.db.preferences.enableGames,
                     experiments: req.user.db.preferences.experiments
                 }
@@ -464,6 +443,8 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
             new: {
                 preferences: {
                     customGlobalCss: req.body.customCss,
+                    defaultColour: req.body.iconColour,
+                    defaultForegroundColour: foreground,
                     enableGames: gamePreferences,
                     experiments: experiments
                 }
@@ -480,6 +461,7 @@ router.get("/account/preferences/reset", variables, permission.auth, (req, res, 
             preferences: {
                 customGlobalCss: "",
                 defaultColour: "#b114ff",
+                defaultForegroundColour: "#ffffff",
                 enableGames: true,
                 experiments: false
             }

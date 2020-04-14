@@ -14,41 +14,41 @@ bot.on("ready", async () => {
     }
 
     await uploadStatuses();
-    setInterval(() => {
-        if (count > 1) {
-            discord.bot.editStatus({
-                status: "online",
-                game: {
-                    name: `${count} listed bots ($)`,
-                    type: "WATCHING"
-                }
-            });
-        } else if (count === 1) {
-            discord.bot.editStatus({
-                status: "online",
-                game: {
-                    name: `${count} listed bot ($)`,
-                    type: "WATCHING"
-                }
-            });
-        } else if (count === 0) {
-            discord.bot.editStatus({
-                status: "online",
-                game: {
-                    name: `No listed bots ($)`,
-                    type: "WATCHING"
-                }
-            });
-        } else {
-            discord.bot.editStatus({
-                status: "online",
-                game: {
-                    name: `${count} listed bot(s) ($)`,
-                    type: "WATCHING"
-                }
-            });
-        }
-    }, 900000);
+    // setInterval(() => {
+    //     if (count > 1) {
+    //         discord.bot.editStatus({
+    //             status: "online",
+    //             game: {
+    //                 name: `${count} listed bots ($)`,
+    //                 type: "WATCHING"
+    //             }
+    //         });
+    //     } else if (count === 1) {
+    //         discord.bot.editStatus({
+    //             status: "online",
+    //             game: {
+    //                 name: `${count} listed bot ($)`,
+    //                 type: "WATCHING"
+    //             }
+    //         });
+    //     } else if (count === 0) {
+    //         discord.bot.editStatus({
+    //             status: "online",
+    //             game: {
+    //                 name: `No listed bots ($)`,
+    //                 type: "WATCHING"
+    //             }
+    //         });
+    //     } else {
+    //         discord.bot.editStatus({
+    //             status: "online",
+    //             game: {
+    //                 name: `${count} listed bot(s) ($)`,
+    //                 type: "WATCHING"
+    //             }
+    //         });
+    //     }
+    // }, 900000);
 });
 
 bot.on("presenceUpdate", (other, oldPresence) => {
@@ -60,7 +60,6 @@ bot.on("guildMemberAdd", (guild, member) => {
 })
 
 bot.on("guildMemberRemove", (guild, member) => {
-    // todo - fix this, it's not an ideal solution
     if (guild.id === settings.guild.main) {
         redisStatus.set(member.id, "offline");
     }

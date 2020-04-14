@@ -1,0 +1,105 @@
+<%- include("../../partials/header.ejs") %>
+<script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://discordextremelist.xyz/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Bots",
+                "item": "https://discordextremelist.xyz/bots"
+            }
+        ]
+    }
+</script>
+<%- include("../../partials/nav.ejs") %>
+<% 
+    var buttons = "";
+    for (let n = 1; n < pages; n++) {
+        if (n === page) {
+            buttons += `<li><a href="/bots?page=${n}" class="pagination-link is-current" aria-label="Goto page ${n}">${n}</a></li>`;
+        } else {
+            buttons += `<li><a href="/bots?page=${n}" class="pagination-link "aria-label="Goto page ${n}">${n}</a></li>`;
+        }
+    }
+
+    let defaultColour = "#b114ff";
+    let foreground = "#ffffff";
+
+    if (req.user) {
+        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+    }
+%>
+<style type="text/css">.pagination-link.is-current{background-color:<%= defaultColour %>;border-color:transparent;color:<%= foreground %>}.pagination-link:hover,.pagination-next:hover,.pagination-previous:hover{background-color:<%= defaultColour %>;border-color:transparent;color:<%= foreground %>}</style>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <br />
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-robot has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
+        </div>
+    </div>
+</section>
+<div class="container is-fluid">
+    <div class="section is-fluid">
+        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+            <% if (page > 1) { %>
+                <a href="/bots?page=<%= page - 1 %>" class="pagination-previous button is-primary">
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-left"></i>
+                    </span>
+                    <span><%= __("Previous") %></span>
+                </a>
+            <% } else { %>
+                <a class="pagination-previous button is-primary" disabled>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-left"></i>
+                    </span>
+                    <span><%= __("Previous") %></span>
+                </a>
+            <% } %>
+            <% if (page < pages) { %>
+                <a href="/bots?page=<%= page + 1 %>" class="pagination-next button is-primary">
+                    <span><%= __("Next") %></span>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+            <% } else { %>
+                <a class="pagination-next button is-primary" disabled>
+                    <span><%= __("Next") %></span>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+            <% } %>
+            <ul class="pagination-list">
+                <%- buttons %>
+            </ul>
+        </nav>
+        <br />
+        <div class="columns is-multiline is-centered">
+            <% if (botsData.length === 0) { %>
+                <h2 class="is-size-3"><%= __("An error occurred whilst fetching bots.") %></h2>
+            <% } else { %>
+                <%- botChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, search: false, archived: false, verificationApp: false })).join("")}`).join("") %>
+            <% } %>
+        </div>
+
+    </div>
+</div>
+<%- include("../../partials/footer.ejs") %>

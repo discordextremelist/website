@@ -1,0 +1,180 @@
+<%- include("../partials/header.ejs") %>
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://discordextremelist.xyz/"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Search",
+            "item": "https://discordextremelist.xyz/search"
+        }
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "url": "https://discordextremelist.xyz/",
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://discordextremelist.xyz/search?q={search}",
+        "query-input": "required name=search"
+    }
+}
+</script>
+<%
+    let defaultColour = "#b114ff";
+    let foreground = "#ffffff";
+
+    if (req.user) {
+        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+    }
+%>
+<link href="/css/search.css" type="text/css" media="screen, print" rel="stylesheet" />
+<style type="text/css">.is-checkradio[type="checkbox"].is-default.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked+label::after,.is-checkradio[type="checkbox"].is-default:checked+label:after{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::after,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:after{border-color:<%= foreground %> !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked+label{color:<%= foreground %>;border-color:<%= defaultColour %> !important;background:<%= defaultColour %>}.is-checkradio[type="checkbox"].is-default.is-block:checked+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked+label:after{border-color:<%= foreground %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label{background:#5e78d5}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:before{border-color:#f2f2f2 !important}</style>
+<%- include("../partials/nav.ejs") %>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <br />
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-search has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
+            <br />
+            <p class="control has-icons-left has-icons-right">
+                <input class="input is-rounded is-dark" id="searchInput" placeholder="<%= __("Input a search phrase") %>" type="text">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-search"></i>
+                </span>
+            </p>
+            <br />
+            <div>
+                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="bots" name="bots" checked="checked">
+                <label class="has-text-default" for="bots"><%= __("Bots") %></label>
+                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="servers" name="servers" checked="checked">
+                <label class="has-text-default" for="servers"><%= __("Servers") %></label>
+                <% if (req.user && req.user.db.rank.mod) { %>
+                    <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="users" name="users">
+                    <label class="has-text-default" for="users"><%= __("Users") %></label>
+                <% } %>
+            </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container is-fluid">
+    <div class="section is-fluid" id="display">
+        <nav style="display: none;" class="pagination is-centered" role="navigation" aria-label="pagination">
+            <%
+                // !!!!! PLACEHOLDERS - PLEASE REMOVE !!!!!
+                page = 1;
+                pages = 1;
+                buttons = "";
+            %>
+            <% if (page > 1) { %>
+                <a href="/servers?page=<%= page - 1 %>" class="pagination-previous button is-primary">
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-left"></i>
+                    </span>
+                    <span><%= __("Previous") %></span>
+                </a>
+            <% } else { %>
+                <a class="pagination-previous button is-primary" disabled>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-left"></i>
+                    </span>
+                    <span><%= __("Previous") %></span>
+                </a>
+            <% } %>
+            <% if (page < pages) { %>
+                <a href="/servers?page=<%= page + 1 %>" class="pagination-next button is-primary">
+                    <span><%= __("Next") %></span>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+            <% } else { %>
+                <a class="pagination-next button is-primary" disabled>
+                    <span><%= __("Next") %></span>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+            <% } %>
+            <ul class="pagination-list">
+                <%- buttons %>
+            </ul>
+        </nav>
+        <button class="button is-transparent is-large is-fullwidth is-loading" style="display: none;" id="loader"><%= __("Loading") %></button>
+    </div>
+</div>
+<script>
+    (function () {
+        let searching = false;
+        async function search(query, only) {
+            return new Promise(resolve => {
+                const req = new XMLHttpRequest();
+                req.open("POST", `/search?q=${query}&only=${only.join(",")}`);
+                req.send(null);
+                req.onreadystatechange = () => {
+                    if (req.readyState === 4) {
+                        const results = [];
+                        if (!(req.status >= 200 && req.status < 300)) return;
+                        const res = JSON.parse(req.responseText);
+                        for (let i = 0; i < res.pages.length; i++) {
+                            for (const i of res.pages[i]) {
+                                const cur = { bots: [], servers: [], users: [] };
+                                const fake = document.createElement("div");
+                                fake.innerHTML = i;
+                                const child = fake.children[0];
+                                if (child.hasAttribute("is-bot-card")) cur.bots.push(fake.innerHTML);
+                                if (child.hasAttribute("is-server-card")) cur.servers.push(fake.innerHTML);
+                                if (child.hasAttribute("is-user-card")) cur.users.push(fake.innerHTML);
+                                c
+                            }
+                        }
+                    }
+                };
+            });
+        }
+        function toggleSearching() {
+            searching = !searching;
+            const elem = document.querySelector("button.button.is-transparent.is-large.is-fullwidth.is-loading#loader");
+            elem && elem.classList[searching ? "add" : "remove"]("is-loading");
+        }
+        const div = document.querySelector("div.section#display");
+        const input = document.querySelector("input.input.is-rounded.is-dark#searchInput");
+        if (input instanceof HTMLInputElement) {
+            input.onkeypress = async ({ keyCode, which, shift }) => {
+                if ((which || keyCode) === 13 && !shift && !input.value.match(/\s+/)) {
+                    if (input.value.match(/gay(\s+)?(men\s+)?.*/i)) window.location.href = "/users/302604426781261824";
+                    const a = document.querySelector("input[type='checkbox']#bots");
+                    const b = document.querySelector("input[type='checkbox']#servers");
+                    const c = document.querySelector("input[type='checkbox']#users");
+                    const only = !((a && a.checked) && (b && b.checked) && (c && c.checked)) && [
+                        a && a.checked && "bots",
+                        b && b.checked && "servers",
+                        c && c.checked && "users"
+                    ].filter(a=>!!a);
+                    await search(input.value, only || ["bots", "servers", "users"]);
+                }
+            }
+        }
+    })();
+</script>
+<%- include("../partials/footer.ejs") %>

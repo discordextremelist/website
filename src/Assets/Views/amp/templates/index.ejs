@@ -27,7 +27,7 @@
             </h2>
             <br />
             <div class="columns is-multiline is-centered">
-                <%- botChunk.map(chunk => `${chunk.map(bot => include("../partials/cards/botCard.ejs", { bot, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
+                <%- botChunk.map(chunk => `${chunk.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
             </div>
         <% } %>
     </div>
@@ -43,7 +43,7 @@
             </h2>
             <br />
             <div class="columns is-multiline is-centered">
-                <%- serverChunk.map(chunk => `${chunk.map(server => include("../partials/cards/serverCard.ejs", { server })).join("")}`).join("") %>
+                <%- serverChunk.map(chunk => `${chunk.map(server => include("../partials/cards/serverCard.ejs", { server, search: false })).join("")}`).join("") %>
             </div>
         <% } %>
     </div>

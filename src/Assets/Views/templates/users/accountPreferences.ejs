@@ -12,7 +12,7 @@
                     <i aria-hidden="true" class="fad fa-swatchbook has-text-default fa-1x"></i>
                 </span>
                 <br />
-                <span><%= __("Preferences") %></span>
+                <span><%= title %></span>
             </h1>
             <h2 class="subtitle"><%= subtitle %></h2>
         </div>
@@ -36,14 +36,14 @@
                     <label class="is-size-7 has-text-danger"><%= __("Enabling experiments may cause issues as you may be testing features that are theoretical or bug ridden, you will also be enrolled in any future beta testing programme(s).") %></label>
                 </div>
                 <br />
-                <label class="label has-text-blurple"><%= __("Default Icon Colour") %></label>
+                <label class="label has-text-blurple"><%= __("Default Element Colour") %></label>
                 <div class="field">
                     <input class="backdrop" name="iconColour" type="color" value="<%= req.user.db.preferences.defaultColour %>" style="width:30%; background-color: transparent; border-color: transparent;">
                 </div>
                 <br />    
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Custom Global CSS") %> <span class="has-text-danger">(<%= __("Danger Will Robinson, Danger!") %>)</span></label>
-                    <div onkeyup="monacoToField();" id="customCssEditor" class="editorBackdrop" style="width:100%;height:350px;" value="<%= req.user.db.preferences.customGlobalCss %>"></div>
+                    <div onkeyup="monacoToField();" id="customCssEditor" class="editorBackdrop" style="width:99%;height:350px;" value="<%= req.user.db.preferences.customGlobalCss %>"></div>
                     <textarea hidden name="customCss" id="customCss"></textarea>
                     <label class="is-size-7 has-text-magenta"><%= __("If you cannot access this page and need to reset your global css use the following command in our Discord server:") %> <span class="has-text-info">del,cssreset</span></label>
                 </div>

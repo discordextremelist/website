@@ -1,5 +1,5 @@
 const express = require("express");
-const snek = require("snekfetch");
+const fetch = require("node-fetch");
 const crypto = require("crypto");
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -12,6 +12,9 @@ const discord = require("../Util/Services/discord.js");
 const variables = require("../Util/Function/variables.js");
 const permission = require("../Util/Function/permissions.js");
 const functions = require("../Util/Function/main.js");
+
+const botCache = require("../Util/Services/botCaching.js");
+const userCache = require("../Util/Services/userCaching.js");
 
 router.get("/submit", variables, permission.auth, async (req, res, next) => {
     const libraries = await req.app.db.collection("libraries").find().sort({ name: 1 }).toArray();
@@ -37,14 +40,15 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         req 
     }); 
 
-    snek.get(`https://discordapp.com/api/users/${req.body.id}`).set("Authorization", `Bot ${settings.client.token}`).then(async(snkRes) => {
+    fetch(`https://discordapp.com/api/users/${req.body.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
+        fetchRes.jsonBody = await fetchRes.json();
         if (req.body.id.length > 32) {
             error = true;
             errors.push(res.__("The bot's id cannot be longer than 32 characters."));
-        } else if (snkRes.body.message === "Unknown User") {
+        } else if (fetchRes.jsonBody.message === "Unknown User") {
             error = true;
             errors.push(res.__("There isn't a bot with this id."));
-        } else if (!snkRes.body.bot) {
+        } else if (!fetchRes.jsonBody.bot) {
             error = true;
             errors.push(res.__("You cannot add users to the bot list."));
         }
@@ -114,13 +118,13 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         
         req.app.db.collection("bots").insertOne({
             id: req.body.id,
-            name: snkRes.body.username,
+            name: fetchRes.jsonBody.username,
             prefix: req.body.prefix,
             library: library,
             tags: tags,
             vanityUrl: "",
             serverCount: 0,
-            inviteCount: 0,
+            shardCount: 0,
             token: "DELAPI_" + crypto.randomBytes(16).toString("hex") + `-${req.body.id}`,
             shortDesc: req.body.shortDescription,
             longDesc: req.body.longDescription,
@@ -130,8 +134,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                 id: req.user.id
             },
             avatar: {
-                hash: snkRes.body.avatar,
-                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${snkRes.body.avatar}`
+                hash: fetchRes.jsonBody.avatar,
+                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
             },
             votes: {
                 positive: [],
@@ -144,6 +148,11 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                 donation: req.body.donationUrl,
                 repo: req.body.repo
             },
+            widgetbot: {
+                channel: req.body.widgetChannel,
+                options: req.body.widgetOptions,
+                server: req.body.widgetServer
+            },
             status: {
                 approved: false,
                 verified: false,
@@ -153,7 +162,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
             }
         });
 
-        discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** added bot **${functions.escapeFormatting(snkRes.body.username)} (${req.body.id})\n<${settings.website.url}/bots/${req.body.id}>`);
+        discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** added bot **${functions.escapeFormatting(fetchRes.jsonBody.username)} (${req.body.id})**\n<${settings.website.url}/bots/${req.body.id}>`);
 
         req.app.db.collection("audit").insertOne({
             type: "SUBMIT_BOT",
@@ -164,13 +173,13 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
             details: {
                 new: {
                     id: req.body.id,
-                    name: snkRes.body.username,
+                    name: fetchRes.jsonBody.username,
                     prefix: req.body.prefix,
                     library: library,
                     tags: tags,
                     vanityUrl: "",
                     serverCount: 0,
-                    inviteCount: 0,
+                    shardCount: 0,
                     token: "DELAPI_" + crypto.randomBytes(16).toString("hex") + `-${req.body.id}`,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
@@ -180,8 +189,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                         id: req.user.id
                     },
                     avatar: {
-                        hash: snkRes.body.avatar,
-                        url: `https://cdn.discordapp.com/avatars/${req.body.id}/${snkRes.body.avatar}`
+                        hash: fetchRes.jsonBody.avatar,
+                        url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
                     },
                     votes: {
                         positive: [],
@@ -193,6 +202,11 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                         website: req.body.website,
                         donation: req.body.donationUrl,
                         repo: req.body.repo
+                    },
+                    widgetbot: {
+                        channel: req.body.widgetChannel,
+                        options: req.body.widgetOptions,
+                        server: req.body.widgetServer
                     },
                     status: {
                         approved: false,
@@ -206,14 +220,14 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         });
 
         res.redirect(`/bots/${req.body.id}`);
-    }).catch(async(snkRes) => {
+    }).catch(async(fetchRes) => {
         if (req.body.id.length > 32) {
             error = true;
             errors.push(res.__("The bot's id cannot be longer than 32 characters."));
-        } else if (snkRes.body.message === "Unknown User") {
+        } else if (fetchRes.jsonBody.message === "Unknown User") {
             error = true;
             errors.push(res.__("There isn't a bot with this id."));
-        } else if (!snkRes.body.bot) {
+        } else if (!fetchRes.jsonBody.bot) {
             error = true;
             errors.push(res.__("You cannot add users to the bot list."));
         }
@@ -360,7 +374,7 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
         req 
     }); 
 
-    if (botExists.owner.id !== req.user.id && !bot.editors.includes(req.user.id) && req.user.db.assistant === false) return res.status(403).render("status", { 
+    if (botExists.owner.id !== req.user.id && !botExists.editors.includes(req.user.id) && req.user.db.assistant === false) return res.status(403).render("status", { 
         title: res.__("Error"), 
         subtitle: res.__("You do not have the required permission(s) to edit this bot."),
         status: 403, 
@@ -372,7 +386,7 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
     res.render("templates/bots/edit", { 
         title: res.__("Edit Bot"), 
-        subtitle: res.__("Editing bot: ") + botExists.name,
+        subtitle: res.__("Editing bot %s", botExists.name),
         libraries,
         bot: botExists,
         editors: botExists.editors ? botExists.editors.join(' ') : '',
@@ -450,7 +464,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         const libraries = await req.app.db.collection("libraries").find({ name: { $ne: library } }).sort({ name: 1 }).toArray();
         return res.render("templates/bots/errorOnEdit", { 
             title: res.__("Edit Bot"), 
-            subtitle: res.__("Editing bot: ") + bot.name,
+            subtitle: res.__("Editing bot %s", bot.name),
             bot: req.body,
             libraries,
             library,
@@ -469,10 +483,11 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         editors = [];
     }
 
-    snek.get(`https://discordapp.com/api/users/${req.params.id}`).set("Authorization", `Bot ${settings.client.token}`).then(async(snkRes) => {
+    fetch(`https://discordapp.com/api/users/${req.params.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
+        fetchRes.jsonBody = await fetchRes.json();
         req.app.db.collection("bots").updateOne({ id: req.params.id }, 
             { $set: {
-                name: snkRes.body.username,
+                name: fetchRes.jsonBody.username,
                 prefix: req.body.prefix,
                 library: library,
                 tags: tags,
@@ -480,8 +495,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
                 longDesc: req.body.longDescription,
                 editors: editors,
                 avatar: {
-                    hash: snkRes.body.avatar,
-                    url: `https://cdn.discordapp.com/avatars/${req.body.id}/${snkRes.body.avatar}`
+                    hash: fetchRes.jsonBody.avatar,
+                    url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
                 },
                 links: {
                     invite: invite,
@@ -489,6 +504,11 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
                     website: req.body.website,
                     donation: req.body.donationUrl,
                     repo: req.body.repo
+                },
+                widgetbot: {
+                    channel: req.body.widgetChannel,
+                    options: req.body.widgetOptions,
+                    server: req.body.widgetServer
                 }
             }
         });
@@ -518,10 +538,15 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
                         website: botExists.links.website,
                         donation: botExists.links.donation,
                         repo: botExists.links.repo
+                    },
+                    widgetbot: {
+                        channel: botExists.widgetbot.channel,
+                        options: botExists.widgetbot.options,
+                        server: botExists.widgetbot.server
                     }
                 },
                 new: {
-                    name: snkRes.body.username,
+                    name: fetchRes.jsonBody.username,
                     prefix: req.body.prefix,
                     library: library,
                     tags: tags,
@@ -529,8 +554,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
                     longDesc: req.body.longDescription,
                     editors: editors,
                     avatar: {
-                        hash: snkRes.body.avatar,
-                        url: `https://cdn.discordapp.com/avatars/${req.body.id}/${snkRes.body.avatar}`
+                        hash: fetchRes.jsonBody.avatar,
+                        url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
                     },
                     links: {
                         invite: invite,
@@ -538,6 +563,11 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
                         website: req.body.website,
                         donation: req.body.donationUrl,
                         repo: req.body.repo
+                    },
+                    widgetbot: {
+                        channel: req.body.widgetChannel,
+                        options: req.body.widgetOptions,
+                        server: req.body.widgetServer
                     }
                 }
             }
@@ -549,19 +579,25 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 });
 
 router.get("/:id", variables, async (req, res, next) => {
-    req.botPage = true;
-    let bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    res.locals.pageType = {
+        server: false,
+        bot: true
+    }
 
+    let bot = await botCache.getBot(req.params.id);
     if (!bot) {
-        bot = await req.app.db.collection("bots").findOne({ vanityUrl: req.params.id });
-
-        if (!bot) return res.status(404).render("status", {
-            title: res.__("Error"),
-            status: 404,
-            subtitle: res.__("This bot is not in our database"),
-            type: "Error",
-            req: req
-        });
+        bot = await req.app.db.collection("servers").findOne({ id: req.params.id });
+        if (!bot) {
+            bot = await req.app.db.collection("bots").findOne({ vanityUrl: req.params.id });
+            if (!bot) return res.status(404).render("status", {
+                title: res.__("Error"),
+                status: 404,
+                subtitle: res.__("This bot is not in our database"),
+                type: "Error",
+                req: req,
+                pageType: { server: false, bot: false }
+            });
+        }
     }
 
     if (bot.status.archived === true) return res.status(404).render("status", {
@@ -569,10 +605,14 @@ router.get("/:id", variables, async (req, res, next) => {
         status: 404,
         subtitle: res.__("This bot is not in our database"),
         type: "Error",
-        req: req
+        req: req,
+        pageType: { server: false, bot: false }
     });
 
-    const botOwner = await req.app.db.collection("users").findOne({ id: bot.owner.id });
+    let botOwner = await userCache.getUser(bot.owner.id);
+    if (!botOwner) {
+        botOwner = await req.app.db.collection("users").findOne({ id: bot.owner.id });
+    }
     
     botStatus = await discord.getStatus(bot.id);
 
@@ -649,7 +689,7 @@ router.get("/:id/upvote", variables, permission.auth, async (req, res, next) => 
         upVotes.push(req.user.id);
     }
 
-    req.app.db.collection("bots").updateOne({ id: bot.id }, 
+    await req.app.db.collection("bots").updateOne({ id: bot.id }, 
         { $set: {
             votes: {
                 positive: upVotes,
@@ -657,6 +697,8 @@ router.get("/:id/upvote", variables, permission.auth, async (req, res, next) => 
             }
         }
     });
+    
+    await botCache.updateBot(bot.id);
 
     req.app.db.collection("audit").insertOne({
         type: "UPVOTE_BOT",
@@ -702,6 +744,14 @@ router.get("/:id/downvote", variables, permission.auth, async (req, res, next) =
     let downVotes = bot.votes.negative;
 
     if (upVotes.includes(req.user.id) || downVotes.includes(req.user.id)) {
+        if (downVotes.includes(req.user.id)) {
+            let removeUser = downVotes.indexOf(req.user.id);
+            while (removeUser > -1) {
+                downVotes.splice(removeUser, 1);
+                removeUser = downVotes.indexOf(req.user.id);
+            }
+        }
+        
         if (upVotes.includes(req.user.id)) {
             let removeUser = upVotes.indexOf(req.user.id);
             while (removeUser > -1) {
@@ -711,18 +761,11 @@ router.get("/:id/downvote", variables, permission.auth, async (req, res, next) =
 
             downVotes.push(req.user.id);
         }
-        if (downVotes.includes(req.user.id)) {
-            let removeUser = downVotes.indexOf(req.user.id);
-            while (removeUser > -1) {
-                downVotes.splice(removeUser, 1);
-                removeUser = downVotes.indexOf(req.user.id);
-            }
-        }
     } else {
         downVotes.push(req.user.id);
     }
 
-    req.app.db.collection("bots").updateOne({ id: bot.id }, 
+    await req.app.db.collection("bots").updateOne({ id: bot.id }, 
         { $set: {
             votes: {
                 positive: upVotes,
@@ -730,6 +773,8 @@ router.get("/:id/downvote", variables, permission.auth, async (req, res, next) =
             }
         }
     });
+    
+    await botCache.updateBot(bot.id);
 
     req.app.db.collection("audit").insertOne({
         type: "DOWNVOTE_BOT",
@@ -824,7 +869,7 @@ router.get("/:id/resubmit", variables, permission.auth, async (req, res, next) =
 
     res.render("templates/bots/edit", { 
         title: res.__("Resubmit Bot"), 
-        subtitle: res.__("Resubmitting bot: ") + botExists.name,
+        subtitle: res.__("Resubmitting bot %s", botExists.name),
         libraries,
         bot: botExists,
         editors: botExists.editors ? botExists.editors.join(' ') : '',
@@ -902,7 +947,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
         const libraries = await req.app.db.collection("libraries").find({ name: { $ne: library } }).sort({ name: 1 }).toArray();
         return res.render("templates/bots/errorOnEdit", { 
             title: res.__("Resubmit Bot"), 
-            subtitle: res.__("Resubmitting bot: ") + bot.name,
+            subtitle: res.__("Resubmitting bot %s", bot.name),
             bot: req.body,
             libraries,
             library,
@@ -921,10 +966,11 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
         editors = [];
     }
 
-    snek.get(`https://discordapp.com/api/users/${req.params.id}`).set("Authorization", `Bot ${settings.client.token}`).then(async(snkRes) => {
+    fetch(`https://discordapp.com/api/users/${req.params.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
+        fetchRes.jsonBody = await fetchRes.json();
         req.app.db.collection("bots").updateOne({ id: req.params.id }, 
             { $set: {
-                name: snkRes.body.username,
+                name: fetchRes.jsonBody.username,
                 prefix: req.body.prefix,
                 library: library,
                 tags: tags,
@@ -932,8 +978,8 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
                 longDesc: req.body.longDescription,
                 editors: editors,
                 avatar: {
-                    hash: snkRes.body.avatar,
-                    url: `https://cdn.discordapp.com/avatars/${req.body.id}/${snkRes.body.avatar}`
+                    hash: fetchRes.jsonBody.avatar,
+                    url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
                 },
                 links: {
                     invite: invite,
@@ -972,12 +1018,17 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
                         donation: botExists.links.donation,
                         repo: botExists.links.repo
                     },
+                    widgetbot: {
+                        channel: botExists.widgetbot.channel,
+                        options: botExists.widgetbot.options,
+                        server: botExists.widgetbot.server
+                    },
                     status: {
                         archived: true
                     }
                 },
                 new: {
-                    name: snkRes.body.username,
+                    name: fetchRes.jsonBody.username,
                     prefix: req.body.prefix,
                     library: library,
                     tags: tags,
@@ -985,8 +1036,8 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
                     longDesc: req.body.longDescription,
                     editors: editors,
                     avatar: {
-                        hash: snkRes.body.avatar,
-                        url: `https://cdn.discordapp.com/avatars/${req.body.id}/${snkRes.body.avatar}`
+                        hash: fetchRes.jsonBody.avatar,
+                        url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
                     },
                     links: {
                         invite: invite,
@@ -994,6 +1045,11 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
                         website: req.body.website,
                         donation: req.body.donationUrl,
                         repo: req.body.repo
+                    },
+                    widgetbot: {
+                        channel: req.body.widgetChannel,
+                        options: req.body.widgetOptions,
+                        server: req.body.widgetServer
                     },
                     status: {
                         archived: false
@@ -1192,7 +1248,7 @@ router.get("/:id/decline", variables, permission.auth, permission.mod, async (re
 
     if (req.query.from && req.query.from === "queue") redirect = "/staff/queue";
 
-    res.render("templates/bots/staffActions/decline", { title: res.__("Decline Bot"), subtitle: res.__("Declining bot: ") + bot.name, redirect, decliningBot: bot, req });
+    res.render("templates/bots/staffActions/decline", { title: res.__("Decline Bot"), subtitle: res.__("Declining bot %s", bot.name), redirect, decliningBot: bot, req });
 });
 
 router.post("/:id/decline", variables, permission.auth, permission.mod, async (req, res, next) => {
@@ -1265,7 +1321,7 @@ router.get("/:id/remove", variables, permission.auth, permission.mod, async (req
 
     res.render("templates/bots/staffActions/remove", { 
         title: res.__("Remove Bot"), 
-        subtitle: res.__("Removing bot: ") + bot.name,
+        subtitle: res.__("Removing bot %s", bot.name),
         removingBot: bot, 
         req 
     });

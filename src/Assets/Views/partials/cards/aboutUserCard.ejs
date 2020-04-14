@@ -1,0 +1,62 @@
+<% 
+    let rank;
+    if (user.rank.admin) { 
+        rank = "admin";
+    } else if (user.rank.assistant) {
+        rank = "assistant";
+    } else if (user.rank.mod) { 
+        rank = "mod";
+    } 
+%>
+<div class="column is-one-third" is-user-card>
+    <div class="box has-background-contrib-<%= rank %>" style="overflow: hidden; height: 100%; vertical-align: middle;">
+        <article class="media">
+            <div class="media-left">
+                <figure class="image is-64x64">
+                    <img draggable="false" class="is-rounded lazyload" data-src="<%= user.avatar.url %>.<%= imageFormat %>" alt="<%= __("%s's Icon", user.fullUsername) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("Failed to load server %s's avatar/icon, using default instead.", user.id) %>');">
+                </figure>
+            </div>
+            <div style="overflow: hidden;" class="media-content">
+                <div class="content">
+                    <a href="/users/<%= user.id %>" class="has-text-white is-mobile">
+                        <span class="is-size-4"><%= user.fullUsername %></span>
+                        <br />
+                        <% if (user.rank.admin) { %>
+                            <span><%= __("Website Administrator") %></span>
+                        <% } else if (user.rank.assistant) { %> 
+                            <span><%= __("Website Assistant") %></span>
+                        <% } else if (user.rank.mod) { %>
+                            <span><%= __("Website Moderator") %></span>
+                        <% } %>
+                        </a>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>
+<style>
+    .has-background-contrib-admin {
+        background: linear-gradient(-35deg, rgba(205, 9, 48, 0.5) 20%, rgb(205, 9, 48) 130%); 
+        box-shadow: transparent 0px 2px 52px 0px;
+    }
+    .has-background-contrib-admin:hover {
+        box-shadow: rgba(205, 9, 48, 0.3) 0px 2px 52px 0px;
+    }
+    .has-background-contrib-assistant {
+        background: linear-gradient(-35deg, rgba(242, 68, 5, 0.5) 20%, rgb(242, 68, 5) 130%);
+        box-shadow: transparent 0px 2px 52px 0px;
+    }
+    .has-background-contrib-assistant:hover {
+        box-shadow: rgba(242, 68, 5, 0.30196078431372547) 0px 2px 52px 0px;
+    }
+    .has-background-contrib-mod {
+        background: linear-gradient(-35deg, rgba(13, 191, 4, 0.5) 20%, rgb(13, 191, 4) 130%); 
+        box-shadow: transparent 0px 2px 52px 0px;
+    }
+    .has-background-contrib-mod:hover {
+        box-shadow: rgba(13, 191, 4, 0.3) 0px 2px 52px 0px;
+    }
+    a.has-text-white:hover, a.has-text-white:focus {
+        color: #ffffff !important;
+    }
+</style>

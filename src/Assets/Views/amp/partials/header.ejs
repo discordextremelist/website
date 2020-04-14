@@ -34,7 +34,41 @@
     <meta name="revisit-after" content="1 day">
 
     <% if (pageType.bot == true) { %>
+        <meta name="theme-color" content="#2C2F33">
+        <meta name="description" content="<%= bot.shortDesc %>">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@ExtremeList">
+        <meta name="twitter:title" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta name="twitter:description" content="<%= bot.shortDesc %>">
+        <meta property="twitter:image" content="<%= bot.avatar.url %>.png">
+        <meta property="twitter:image:alt" content="DEL's Logo">
+
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="Discord Extreme List">
+        <meta property="og:title" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta property="og:url" content="https://discordextremelist.xyz">
+        <meta property="og:description" content="<%= bot.shortDesc %>">
+        <meta property="og:image" content="<%= bot.avatar.url %>.png">
+        <meta property="og:image:alt" content="DEL's Logo">
     <% } else if (pageType.server == true) { %>
+        <meta name="theme-color" content="#2C2F33">
+        <meta name="description" content="<%= server.shortDesc %>">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@ExtremeList">
+        <meta name="twitter:title" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta name="twitter:description" content="<%= server.shortDesc %>">
+        <meta property="twitter:image" content="<%= server.icon.url %>.png">
+        <meta property="twitter:image:alt" content="DEL's Logo">
+
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="Discord Extreme List">
+        <meta property="og:title" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta property="og:url" content="https://discordextremelist.xyz">
+        <meta property="og:description" content="<%= server.shortDesc %>">
+        <meta property="og:image" content="<%= server.icon.url %>.png">
+        <meta property="og:image:alt" content="DEL's Logo">
     <% } else { %>
         <meta name="theme-color" content="#2C2F33">
         <meta name="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list! Providing small discord bots and small discord servers with an extreme chance!" %>">

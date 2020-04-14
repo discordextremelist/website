@@ -11,6 +11,10 @@ const permission = require("../Util/Function/permissions.js");
 const functions = require("../Util/Function/main.js");
 const discord = require("../Util/Services/discord.js");
 
+const serverCache = require("../Util/Services/serverCaching.js");
+const userCache = require("../Util/Services/userCaching.js");
+const serverUpdate = require("../Util/Services/serverUpdate.js");
+
 router.get("/submit", variables, permission.auth, (req, res, next) => {
     res.render("templates/servers/submit", { 
         title: res.__("Submit Server"), 
@@ -23,7 +27,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
     let error = false;
     let errors = [];
 
-    const serverExists = await req.app.db.collection("a").findOne({ id: req.body.id });
+    const serverExists = await req.app.db.collection("servers").findOne({ id: req.body.id });
     if (serverExists) return res.status(409).render("status", { 
         title: res.__("Error"), 
         subtitle: res.__("This server has already been added to the list."),
@@ -129,18 +133,28 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
 });
 
 router.get("/:id", variables, async (req, res, next) => {
-    req.botPage = true;
-    const server = await req.app.db.collection("servers").findOne({ id: req.params.id });
+    res.locals.pageType = {
+        server: true,
+        bot: false
+    }
 
-    if (!server) return res.status(404).render("status", {
-        title: res.__("Error"),
-        status: 404,
-        subtitle: res.__("This server is not in our database"),
-        type: "Error",
-        req: req
-    });
+    let server = await serverCache.getServer(req.params.id);
+    if (!server) {
+        server = await req.app.db.collection("servers").findOne({ id: req.params.id });
+        if (!server) return res.status(404).render("status", {
+            title: res.__("Error"),
+            status: 404,
+            subtitle: res.__("This server is not in our database"),
+            type: "Error",
+            req: req,
+            pageType: { server: false, bot: false }
+        });
+    }
 
-    const serverOwner = await req.app.db.collection("users").findOne({ id: server.owner.id });
+    let serverOwner = await userCache.getUser(server.owner.id);
+    if (!serverOwner) {
+        serverOwner = await req.app.db.collection("users").findOne({ id: server.owner.id });
+    }
 
     const dirty = entities.decode(md.render(server.longDesc)); 
     let clean;
@@ -317,6 +331,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
             }
         }
     });
+    
+    await serverUpdate(req.params.id);
 
     res.redirect(`/servers/${req.body.id}`);
 });

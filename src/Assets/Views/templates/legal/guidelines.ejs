@@ -1,0 +1,99 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/nav.ejs") %>
+<section class="hero is-black">
+    <div class="hero-body">
+        <br />
+        <div class="container has-text-centered">
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-book has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
+        </div>
+    </div>
+    </section>
+    <div class="container">
+        <div class="section">
+            <h2 class="is-size-3 has-text-blurple"><%= __("Main Principle") %></h2>
+            <div class="content">
+                <ul>
+                    <li class="is-size-4"><%= __("Use common sense at all times.") %></li>
+                    <li class="is-size-6"><%= __("Email:") %> <a href="mailto:contact@discordextremelist.xyz">contact@discordextremelist.xyz</a></li>
+                    <li class="is-size-6"><%= __("Support:") %> <a target="_blank" rel="noopener" href="https://jira.discordextremelist.xyz/">jira.discordextremelist.xyz</a></li>
+                </ul>
+            </div>
+            <h2 class="is-size-3 has-text-blurple"><%= __("User Guidelines") %></h2>
+            <div class="content">
+                <ul>
+                    <li class="is-size-4"><%= __("Profile Guidelines") %>
+                        <ul class="is-size-6">
+                            <li><%= __("Your profile must not link to anything objectionable.") %></li>
+                            <li><%= __("Your bio must not contain anything objectionable or any links.") %></li>
+                            <li><%= __("Custom profile css must not interfere with the website normal functions or be used maliciously.") %></li>
+                        </ul>
+                    </li>
+                    <li class="is-size-4">Other Guidelines
+                        <ul class="is-size-6">
+                            <li><%= __("You are not permitted to do anything to circumvent any punishment added to your account, doing so will result in another punishment that may be worse or equal to your current one.") %></li>
+                            <li><%= __("You are not allowed to disclose any malicious bugs or issues to third parties unless clearly permitted.") %></li>
+                            <li><span class="is-size-6"><%= __("If you have found a malicious bug or issue please report it to us via our email listed above or our support system.") %></span></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <br />
+            <h2 class="is-size-3 has-text-blurple"><%= __("Bot Guidelines") %></h2>
+            <div class="content">
+                <ul>
+                    <li class="is-size-4"><%= __("Listing Guidelines") %>
+                        <ul class="is-size-6">
+                            <li><%= __("Your bot must not contain an inappropriate avatar.") %></li>
+                            <li><%= __("Your bot must not contain an inappropriate username.") %></li>
+                            <li><%= __("Your bot's short and long description must be related to your bot.") %></li>
+                            <li><%= __("You may use HTML and Markdown in your bot's long description, if your bot is Verified you will be able to use script tags.") %></li>
+                        </ul>
+                    </li>
+                    <li class="is-size-4"><%= __("Other Guidelines") %>
+                        <ul class="is-size-6">
+                            <li><%= __("Your bot must follow the Discord Terms of Service, Developer Terms of Service and Privacy Policy.") %></li>
+                            <li><%= __("Your bot must not respond to other bots or webhooks.") %></li>
+                            <li><%= __("Your bot must not go offline for a large period of time and it must be online all the time except for maintenance.") %></li>
+                            <li><%= __("Your bot must escape @everyone and @here mentions.") %></li>
+                            <li><%= __("Your bot must not automatically send direct messages such as:") %>
+                                <ul class="is-size-6">
+                                    <li><%= __("Welcome Messages,") %></li>
+                                    <li><%= __("Levelup Messages,") %></li>
+                                    <li><%= __("Advertisements,") %></li>
+                                    <li><%= __("Any other form of messages unless they are invoked by a command.") %></li>
+                                </ul>
+                            </li>
+                            <li><%= __("Your bot's primary purpose cannot be as a COVID-19 bot without reviewal from management (You may still submit it but it will go through harsher testing).") %></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <br />
+            <h2 class="is-size-3 has-text-blurple"><%= __("Server Guidelines") %></h2>
+            <div class="content">
+                <ul>
+                    <li class="is-size-4"><%= __("Listing Guidelines") %>
+                        <ul class="is-size-6">
+                            <li><%= __("Your server must not contain an inappropriate avatar.") %></li>
+                            <li><%= __("Your server must not contain an inappropriate username.") %></li>
+                            <li><%= __("Your server's short and long description must be related to your server.") %></li>
+                            <li><%= __("You may use Basic HTML and Markdown in your server's long description, Basic HTML is standard HTML without any styling or scripting abilities other than style attributes.") %></li>
+                        </ul>
+                    </li>
+                    <li class="is-size-4"><%= __("Other Guidelines") %>
+                        <ul class="is-size-6">
+                            <li><%= __("Your server must follow the Discord Terms of Service and actively enforce it.") %></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<%- include("../../partials/footer.ejs") %>

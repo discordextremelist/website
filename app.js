@@ -34,24 +34,29 @@ new Promise((resolve, reject) => {
 }).then(() => {
     dbReady = true;
     app.db = db;
-
+    // app.db.collection("users").insertOne({"avatar":{"hash":"0b8c551002ea532a231adb51eb09d516","url":"https://cdn.discordapp.com/avatars/489061310022156302/0b8c551002ea532a231adb51eb09d516"},"discrim":"6969","fullUsername":"LightningALT#6969","game":{"snake":{"maxScore":0},"snakes":{"maxScore":0}},"id":"489061310022156302","name":"LightningALT","profile":{"bio":"","css":"","links":{"github":"","gitlab":"","instagram":"","snapchat":"","twitter":"","website":""}},"rank":{"admin":false,"bugHunter":false,"mod":false,"verified":false}})
     redisClient.on("error", (err) => {
         console.error("Redis error: ", err);
     });    
 
     require("./src/Util/Services/featuring.js");
+    require("./src/Util/Services/botCaching.js");
+    require("./src/Util/Services/serverCaching.js");
+    require("./src/Util/Services/userCaching.js");
 
     const createError = require("http-errors");
     const cookieParser = require("cookie-parser");
     const logger = require("morgan");
     const device = require("express-device");
     const compression = require("compression");
-    const passport = require("passport");    
     const i18n = require("i18n");
+    const passport = require("passport");
     
     app.set("view engine", "ejs");
 
-    app.use(logger("dev"));
+    app.use(logger(":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\"", {
+        skip: r => r.url === "/profile/game/snakes"
+    }));
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
     app.use(cookieParser());
@@ -92,10 +97,12 @@ new Promise((resolve, reject) => {
     app.use(i18n.init);
 
     app.use("/", require("./src/Routes/index.js"));
+    app.use("/search", require("./src/Routes/search.js"));
     app.use("/", require("./src/Routes/authentication.js"));
     app.use("/bots", require("./src/Routes/bots.js"));
     app.use("/servers", require("./src/Routes/servers.js"));
     app.use("/users", require("./src/Routes/users.js"));
+    app.use("/staff", require("./src/Routes/staff.js"));
     app.use("/amp", require("./src/Routes/amp.js"));
 
     app.use("*", require("./src/Util/Function/variables.js"));

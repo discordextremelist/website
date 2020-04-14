@@ -1,6 +1,10 @@
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-        <a href="/" class="navbar-item is-bolder is-size-5">Discord Extreme List</a>
+        <% if (title !== "Home") { %>
+            <a class="navbar-item" href="/">
+                <img style="width: auto !important; height: 48px !important;" alt="<% __("Discord Extreme List's Logo") %>" src="/img/logo-128px.<%= imageFormat %>">
+            </a>
+        <% } %>
 
         <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar">
             <span aria-hidden="true"></span>
@@ -33,6 +37,20 @@
                 <span><%= __("Servers") %></span>
             </a>
 
+            <a class="navbar-item" href="/search">
+                <span class="icon iconalign">
+                    <i class="fad fa-search" aria-hidden="true"></i>
+                </span>
+                <span><%= __("Search") %></span>
+            </a>
+
+            <a class="navbar-item" href="/widgetbot">
+                <span class="icon iconalign">
+                    <i class="fad fa-comment-alt-lines" aria-hidden="true"></i>
+                </span>
+                <span><%= __("WidgetBot Chat") %></span>
+            </a>
+
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">
                     <span class="icon iconalign">
@@ -41,7 +59,7 @@
                     <span><%= __("More") %></span>
                 </a>
 
-                <div class="navbar-dropdown">
+                <div class="navbar-dropdown is-hidden-mobile">
                     <a class="navbar-item" href="<%= discordServer %>">
                         <span class="icon iconalign">
                             <i class="fab fa-discord" aria-hidden="true"></i>
@@ -54,6 +72,12 @@
                         </span>
                         <span><%= __("Documentation") %></span>
                     </a>
+                    <a class="navbar-item" href="/about">
+                        <span class="icon iconalign">
+                            <i class="fad fa-question" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("About") %></span>
+                    </a>
                     <hr class="navbar-divider">
                     <a class="navbar-item" href="/terms">
                         <span class="icon iconalign">
@@ -61,8 +85,8 @@
                         </span>
                         <span><%= __("Terms of Service") %></span>
                     </a>
-                    <a class="navbar-item">
-                        <span class="icon iconalign" href="/privacy">
+                    <a class="navbar-item" href="/privacy">
+                        <span class="icon iconalign">
                             <i class="fad fa-user-secret" aria-hidden="true"></i>
                         </span>
                         <span><%= __("Privacy Policy") %></span>
@@ -86,7 +110,7 @@
                     <span><%= __("Language") %></span>
                 </a>
 
-                <div class="navbar-dropdown">
+                <div class="navbar-dropdown is-hidden-mobile">
                     <a class="navbar-item">
                         <span class="icon iconalign">
                             <i class="twa twa-flag-new-zealand" aria-hidden="true"></i>
@@ -119,7 +143,7 @@
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
                     </a>
 
-                    <div class="navbar-dropdown is-right">
+                    <div class="navbar-dropdown is-hidden-mobile is-right">
                         <a class="navbar-item" href="/users/@me">
                             <span class="icon iconalign">
                                 <i class="fad fa-user" aria-hidden="true"></i>
@@ -132,6 +156,14 @@
                             </span>
                             <span><%= __("Preferences") %></span>
                         </a>
+                        <% if (req.user.db.rank.mod === true) { %>
+                            <a class="navbar-item" href="/staff">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-cogs" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("Staff Panel") %></span>
+                            </a>
+                        <% } %>
                         <a class="navbar-item" href="/bots/submit">
                             <span class="icon iconalign">
                                 <i class="fad fa-robot" aria-hidden="true"></i>
@@ -153,27 +185,44 @@
                                 <span><%= __("Play Snake") %></span>
                             </a>
                         <% } %>
+                        <% if (mobile) { %>
+                            <a class="navbar-item has-text-danger" href="/logout">
+                                <span class="icon">
+                                    <i class="fad fa-sign-out"></i>
+                                </span>
+                                <span><%= __("Logout") %></span>
+                            </a>
+                        <% } %>
                     </div>
                 </div>
             <% } %>
             <div class="navbar-item">
-                <div class="buttons">
-                    <% if (req.user) { %>
-                        <a class="button is-danger" href="/logout">
-                            <span class="icon">
-                                <i class="fad fa-sign-out"></i>
-                            </span>
-                            <span><%= __("Logout") %></span>
-                        </a>
-                    <% } else { %>
-                        <a class="button is-blurple" href="/login">
-                            <span class="icon">
-                                <i class="fab fa-discord"></i>
-                            </span>
-                            <span><%= __("Login with Discord") %></span>
-                        </a>
-                    <% } %>
-                </div>
+                <% if (!mobile) { %>
+                    <div class="buttons">
+                        <% if (req.user) { %>
+                            <a class="button is-danger" href="/logout">
+                                <span class="icon">
+                                    <i class="fad fa-sign-out"></i>
+                                </span>
+                                <span><%= __("Logout") %></span>
+                            </a>
+                        <% } else { %>
+                            <a class="button is-blurple" href="/login">
+                                <span class="icon">
+                                    <i class="fab fa-discord"></i>
+                                </span>
+                                <span><%= __("Login with Discord") %></span>
+                            </a>
+                        <% } %>
+                    </div>
+                <% } else if (!req.user) { %>
+                    <a class="has-text-blurple" href="/login">
+                        <span class="icon">
+                            <i class="fab fa-discord"></i>
+                        </span>
+                        <span><%= __("Login with Discord") %></span>
+                    </a>
+                <% } %>
             </div>
         </div>
     </div>

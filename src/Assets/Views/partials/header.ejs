@@ -8,18 +8,21 @@
     <link href="/img/logo.png" type="image/png" rel="shortcut-icon" />
     <link href="/img/logo.png" type="image/png" rel="icon" />
     <link href="/css/standard.css" type="text/css" media="screen, print" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" type="text/css" media="screen" rel="preload" as="style"  onload="this.onload=null;this.rel='stylesheet'" />
-    <link href="/fonts/fa/css/all.css" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <link href="/css/flags.css" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <style type="text/css">.has-text-default { color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>; } </style>
-    
-    <noscript>
+
+    <% if (usePreload === true) { %>
+        <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" type="text/css" media="screen" rel="preload" as="style"  onload="this.onload=null;this.rel='stylesheet'" />
+        <link href="/fonts/fa/css/all.css" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+        <link href="/css/flags.css" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" /> 
+    <% } else { %>  
         <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" media="screen" rel="stylesheet" />
         <link href="/fonts/fa/css/all.css" media="screen" rel="stylesheet" />     
-        <link href="/css/flags.css" media="screen" rel="stylesheet" />     
-    </noscript>
+        <link href="/css/flags.css" media="screen" rel="stylesheet" />  
+    <% } %>
 
     <link rel="manifest" href="/manifest.json">
+    <link rel="search" title="Search" href="/search" />
+    <link rel="preconnect" href="https://cdn.discordapp.com">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords" content="Discord Extreme List, Discord Bots, Discord Bot List, Discord Bots List, Discord, BotBlock, Bots, Bot Listings, Bot Lists, Bot List, BotBlock Bots, BotBlock Bot Lists, Bots for Discord, Discord Robots">
@@ -29,30 +32,83 @@
     <meta name="revisit-after" content="1 day">
 
     <% if (pageType.bot == true) { %>
+        <meta name="theme-color" content="#2C2F33">
+        <meta name="description" content="<%= bot.shortDesc %>">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@ExtremeList">
+        <meta name="twitter:creator" content="@ExtremeList">
+        <meta name="twitter:title" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta name="twitter:description" content="<%= bot.shortDesc %>">
+        <meta property="twitter:image" content="<%= bot.avatar.url %>.png">
+        <meta property="twitter:image:alt" content="DEL's Logo">
+
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="Discord Extreme List">
+        <meta property="og:title" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta property="og:url" content="https://discordextremelist.xyz">
+        <meta property="og:description" content="<%= bot.shortDesc %>">
+        <meta property="og:image" content="<%= bot.avatar.url %>.png">
+        <meta property="og:image:alt" content="DEL's Logo">
+
+        <meta itemprop="name" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta itemprop="description" content="<%= bot.shortDesc %>">
+        <meta itemprop="image" content="<%= bot.avatar.url %>.png">
     <% } else if (pageType.server == true) { %>
+        <meta name="theme-color" content="#2C2F33">
+        <meta name="description" content="<%= server.shortDesc %>">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="@ExtremeList">
+        <meta name="twitter:creator" content="@ExtremeList">
+        <meta name="twitter:title" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta name="twitter:description" content="<%= server.shortDesc %>">
+        <meta property="twitter:image" content="<%= server.icon.url %>.png">
+        <meta property="twitter:image:alt" content="DEL's Logo">
+
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="Discord Extreme List">
+        <meta property="og:title" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta property="og:url" content="https://discordextremelist.xyz">
+        <meta property="og:description" content="<%= server.shortDesc %>">
+        <meta property="og:image" content="<%= server.icon.url %>.png">
+        <meta property="og:image:alt" content="DEL's Logo">
+
+        <meta itemprop="name" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta itemprop="description" content="<%= server.shortDesc %>">
+        <meta itemprop="image" content="<%= server.icon.url %>.png">
     <% } else { %>
         <meta name="theme-color" content="#2C2F33">
         <meta name="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list! Providing small discord bots and small discord servers with an extreme chance!" %>">
 
-        <meta name="twitter:card" value="summary">
+        <meta name="twitter:card" content="summary">
         <meta name="twitter:site" content="@ExtremeList">
+        <meta name="twitter:creator" content="@ExtremeList">
         <meta name="twitter:title" content="<%= title || "Page" %> | Discord Extreme List">
         <meta name="twitter:description" content="<%= subtitle || "Discord's unbiased list, giving small bots and small servers a big chance!" %>">
         <meta property="twitter:image" content="https://discordextremelist.xyz/img/logo.png">
         <meta property="twitter:image:alt" content="DEL's Logo">
 
         <meta property="og:type" content="website">
-        <meta property="og:site_name" value="Discord Extreme List">
+        <meta property="og:site_name" content="Discord Extreme List">
         <meta property="og:title" content="<%= title || "Page" %> | Discord Extreme List">
         <meta property="og:url" content="https://discordextremelist.xyz">
         <meta property="og:description" content="<%= subtitle || "Discord's unbiased list, giving small bots and small servers a big chance!" %>">
         <meta property="og:image" content="https://discordextremelist.xyz/img/logo.png">
         <meta property="og:image:alt" content="DEL's Logo">
+
+        <meta itemprop="name" content="<%= title || "Page" %> | Discord Extreme List">
+        <meta itemprop="description" content="<%= subtitle || "Discord's unbiased list, giving small bots and small servers a big chance!" %>">
+        <meta itemprop="image" content="https://discordextremelist.xyz/img/logo.png">
     <% } %>
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="Discord Extreme List">
     <link rel="apple-touch-icon" href="/img/icon-192x192.png">
+
+    <meta name="msapplication-TileColor" content="#0a0a0a">
+    <meta name="msapplication-TileImage" content="/img/logo-144px.png">
+    <meta name="msapplication-config" content="/browserconfig.xml">
 
 </head>

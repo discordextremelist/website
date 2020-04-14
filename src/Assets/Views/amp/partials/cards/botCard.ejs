@@ -3,18 +3,23 @@
         <article class="media">
             <div class="media-left">
                 <figure class="image is-64x64">
-                    <img class="is-rounded lazyload" data-src="<%= bot.avatar.url %>.<%= imageFormat %>" alt="<%= bot.name %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load bot <%= bot.id %>\'s avatar/icon, using default instead.');">
+                    <img class="is-rounded lazyload" data-src="<%= bot.avatar.url %>.<%= imageFormat %>" alt="<%= __("%s's Avatar", bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("Failed to load bot %s's avatar/icon, using default instead.", bot.id) %>');">
                 </figure>
             </div>
             <div style="overflow: hidden;" class="media-content">
                 <div class="content">
                     <p>
-                    <span class="is-size-4 title has-text-blurple is-mobile"><%= bot.name %>
+                    <span class="is-size-4 title has-text-blurple is-mobile">
+                        <span><%= bot.name %></span>
                         <% if (bot.status.verified === true) { %>
-                            <img class="lazyload cardBadge" title="<%= __("Verified Bot") %>" alt="<%= __("Verified Bot") %>" data-src="/img/badges/verified.<%= imageFormat %>">
+                            <span style="vertical-align: middle;" title="<%= __("Verified Bot") %>" class="icon is-medium iconalign">
+                                <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
+                            </span>
                         <% } %>
-                        <% if (bot.status.siteBot === true) { %>
-                            <img class="lazyload cardBadge" title="<%= __("Site Bot - This bot is one of our official site bots and has been added for internal reasons.. It will not show up in search results, the homepage or the bot list page.") %>" alt="<%= __("Site Bot") %>" data-src="/img/badges/sitebot.<%= imageFormat %>">
+                        <% if (bot.status.siteBot === false) { %>
+                            <span style="vertical-align: middle;" title="<%= __("Site Bot - This bot is one of our official site bots and has been added for internal reasons.. It will not show up in search results, the homepage or the bot list page.") %>" class="icon is-medium iconalign">
+                                <i aria-hidden="true" class="fad fa-cogs has-text-grey-lighter fa-1x"></i>
+                            </span>
                         <% } %>
                     </span>
                         <br />

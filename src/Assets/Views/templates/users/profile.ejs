@@ -1,4 +1,30 @@
 <%- include("../../partials/header.ejs"); %>
+<script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://discordextremelist.xyz/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "User",
+                "item": "https://discordextremelist.xyz/users"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "<%= userProfile.fullUsername %>",
+                "item": "https://discordextremelist.xyz/users/<%= userProfile.id %>"
+            }
+        ]
+    }
+</script>
 <%- include("../../partials/nav.ejs"); %>
 <% if (userProfile.rank.verified === true || userProfile.rank.mod === true) { %>
     <style style="text/css">
@@ -62,11 +88,11 @@
                             <% } %>
                         <% } %> 
                     </h1>
-                    <h2 class="subtitle"><% if (userProfileIsBanned === false) { %><%= userProfile.profile.bio || __("I am a mysterious person.") %><% } else { %><% __("This user did something bad and they were banned!!") %><% } %></h2>
+                    <h2 class="subtitle"><% if (userProfileIsBanned === false) { %><%= userProfile.profile.bio || __("I am a mysterious person.") %><% } else { %><%= __("This user did something bad and they were banned!!") %><% } %></h2>
                     <% if (userProfileIsBanned === false || user && user.db.rank.mod === true) { %>
                         <% if (user && user.db.rank.mod === true || user && userProfile.id === user.id) { %>
                             <div class="buttons">
-                                <% if (userProfile.id === user.id || user.rank.assistant === true) { %>
+                                <% if (userProfile.id === user.id || user.db.rank.assistant === true) { %>
                                     <a href="/users/profile/@me/edit" class="button is-dark">
                                         <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
                                         <span><%= __("Edit") %></span>
@@ -91,10 +117,6 @@
                                                 <p class="has-text-danger">If you accidentally perform an action that is "abusive" or "inappropriate" please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.</p>
                                             </div>
                                             <hr class="dropdown-divider">
-                                            <a class="dropdown-item" href="/users/<%= userProfile.id %>/ban">
-                                                <span class="icon"><i aria-hidden="true" class="fas fa-gavel"></i></span>
-                                                <span><%= __("Ban") %></span>
-                                            </a>
                                             <% if (user.db.rank.assistant === true) { %>
                                                 <a class="dropdown-item" href="/users/<%= userProfile.id %>/rank">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-crown"></i></span>
@@ -169,13 +191,13 @@
                     <% if (botsOwnerData.length === 0 && botsEditorData.length === 0) { %>
                         <h2 class="is-size-3"><%= __("This user is not an editor or owner of any listed bots") %></h2>
                     <% } else { %>
-                        <h2 class="is-size-3"><%= userProfile.name %><%= __("'s Bots") %></h2>
+                        <h2 class="is-size-3"><%= __("%s's Bots", userProfile.name) %></h2>
                         <% if (botsOwnerData.length !== 0) { %>
                             <br />
                             <h3 class="is-size-4"><%= __("Owner") %></h3>
                             <br />
                             <div class="columns is-multiline is-centered">
-                                <%- botOwnerChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
+                                <%- botOwnerChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
                             </div>
                         <% } %>
                         <% if (botsEditorData.length !== 0) { %>
@@ -183,7 +205,7 @@
                             <h3 class="is-size-4"><%= __("Editor") %></h3>
                             <br />
                             <div class="columns is-multiline is-centered">
-                                <%- botEditorChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
+                                <%- botEditorChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
                             </div>
                         <% } %>
                     <% } %>
@@ -191,10 +213,10 @@
                     <% if (serversOwnerData.length === 0) { %>
                         <h2 class="is-size-3"><%= __("This user is not the owner of any listed servers") %></h2>
                     <% } else { %>
-                        <h2 class="is-size-3"><%= userProfile.name %><%= __("'s Servers") %></h2>
+                        <h2 class="is-size-3"><%= __("%s's Servers", userProfile.name) %></h2>
                         <br />
                         <div class="columns is-multiline is-centered">
-                            <%- serverOwnerChunk.map(chunk => `${chunk.map(server => include("../../partials/cards/serverCard.ejs", { server })).join("")}`).join("") %>
+                            <%- serverOwnerChunk.map(chunk => `${chunk.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false })).join("")}`).join("") %>
                         </div>
                     <% } %>
             <% } %>
@@ -204,7 +226,7 @@
                     <h2 class="is-size-4"><%= __("Archived Bots") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- archivedBotsChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, archived: true, verificationApp: false })).join("")}`).join("") %>
+                        <%- archivedBotsChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: true, verificationApp: false })).join("")}`).join("") %>
                     </div>
                 <% } %>
             <% } %>

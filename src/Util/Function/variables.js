@@ -49,9 +49,9 @@ const variables = async(req, res, next) => {
     }
 
     if (req.browser.name === "firefox" || req.browser.name === "opera" && req.browser.os === "Android" && req.browser.versionNumber < 46 || req.browser.name === "safari" && req.browser.versionNumber < 11.3 && req.get("User-Agent").toLowerCase().includes("kaios")) {
-        usePreload = true;
-    } else {
         usePreload = false;
+    } else {
+        usePreload = true;
     }
 
     if (req.headers.accept.includes("image/webp") === true) {

@@ -19,39 +19,27 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const ioRedis = require("ioredis");
-const cron = require("node-cron");
-
-const settings = require("../settings.json");
-const app = require("../app.js");
-const discord = require("../src/Util/Services/discord.js");
-
-const redisFeaturing = new ioRedis(settings.db.redis.featuring);
-const redisBans = new ioRedis(settings.db.redis.bans);
-
-async function updateFeaturedBots() {
-    const bots = await app.db.collection("bots").aggregate({ $filter: { status: { approved: true, siteBot: false, archived: false } }, $limit: 3 }).toArray();
-    redisFeaturing.set("bots", JSON.stringify(bots));
-}
-
-async function updateFeaturedServers() {
-    const servers = await app.db.collection("servers").aggregate({ $limit: 3 }).toArray();
-    redisFeaturing.set("servers", JSON.stringify(servers));
-}
-
-async function updateBanlist() {
-    const bans = await discord.bot.guilds.get(settings.guild.main).getBans();
-    console.log(bans)
-    redisBans.set("bans", JSON.stringify(bans));
-}
+const redisFeaturing = require("../src/Util/Services/featuring.js");
+const redisBans = require("../src/Util/Services/banned.js");
+const redisBotCache = require("../src/Util/Services/botCaching.js");
+const redisServerCache = require("../src/Util/Services/serverCaching.js");
+const redisUserCache = require("../src/Util/Services/userCaching.js");
 
 setTimeout(async () => {
-    console.log("Init: Updating featured bots.");
-    await updateFeaturedBots();
-    console.log("Init: Updating featured servers.");
-    await updateFeaturedServers();
-    console.log("Init: Updating banlist.");
-    await updateBanlist();
+    console.log("Init: Updating featured bots...");
+    await redisFeaturing.updateFeaturedBots();
+    console.log("Init: Updating featured servers...");
+    await redisFeaturing.updateFeaturedServers();
+    console.log("Init: Updating banlist...");
+    await redisBans.updateBanlist();
+    console.log("Init: Updating bot caches...")
+    await redisBotCache.uploadBots();
+    await redisBotCache.uploadAllBots();
+    console.log("Init: Updating server caches...")
+    await redisServerCache.uploadServers();
+    await redisServerCache.uploadAllServers();
+    console.log("Init: Updating the user cache...")
+    await redisUserCache.uploadUsers();
     console.log("Init: Exiting...");
     process.exit(0);
 }, 5000);

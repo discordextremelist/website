@@ -60,5 +60,5 @@ setInterval(async () => {
 }, 900000);
 
 module.exports = {
-    updateUser, getUser
+    uploadUsers, updateUser, getUser
 };

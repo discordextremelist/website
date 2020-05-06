@@ -15,7 +15,9 @@ We reccomend that you use Node.JS v12.x.x LTS.
 | v10 Active LTS      | 🔴 No Support      |
 | v12 Active LTS      | 🟢 Full Support    |
 | v13 Current         | 🟡 Partial Support |     
-| v14 Current         | 🔴 No Support      |      
+| v14 Current         | 🔴 No Support      |     
+
+Any version not listed is not supported.
 
 ### nodemon (Optional)
 

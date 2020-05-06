@@ -20,7 +20,7 @@
     <div class="section">
         <form method="POST">
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Rank") %></label>
+                <label class="label has-text-blurple"><%= __("Primary Rank") %></label>
                 <% if (req.user.db.rank.admin === true) { %>
                     <input class="is-checkradio is-circle has-background-color is-danger" id="admin" type="radio" value="admin" name="rank" <% if (targetUser.rank.mod === true && targetUser.rank.assistant === true && targetUser.rank.admin === true) { %>checked="checked"<% } %>>
                     <label for="admin" class="has-text-danger"><%= __("Admin") %></label>
@@ -46,9 +46,15 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Verify") %></label>
-                <input id="verificationSwitch" type="checkbox" name="verified" class="switch is-rounded is-magenta" <% if (targetUser.rank.verified === true) { %>checked="checked"<% } %>>
-                <label for="verificationSwitch"></label>
+                <label class="label has-text-blurple"><%= __("Verified") %></label>
+                <input id="verifySwitch" type="checkbox" name="verified" class="switch is-rounded is-magenta" <% if (targetUser.rank.verified === true) { %>checked="checked"<% } %>>
+                <label for="verifySwitch"></label>
+            </div>
+            <br />
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("COVID-19 Donator") %></label>
+                <input id="covidSwitch" type="checkbox" name="covid" class="switch is-rounded is-red" <% if (targetUser.rank.covid === true) { %>checked="checked"<% } %>>
+                <label for="covidSwitch"></label>
             </div>
             <br />
             <div class="field is-grouped">

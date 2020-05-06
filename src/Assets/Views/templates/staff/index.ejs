@@ -20,7 +20,7 @@
 <div class="container">
     <div class="section">
         <p>
-            <img style="border-radius: 50%; vertical-align: middle; height: 32px; width: auto; margin-left: 6px;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>" alt="<%= __("%s's Profile Picture", req.user.db.fullUsername) %>" onerror="this.onerror=null;this.src='/img/defaultavatar.<%= imageFormat %>';">
+            <img style="border-radius: 50%; vertical-align: middle; height: 32px; width: auto; margin-left: 6px;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>" alt="<%= __("%s's Profile Picture", req.user.db.fullUsername) %>" onerror="this.onerror=null;this.src='/img/defaultavatar.<%= imageFormat %>';" draggable="false">
             &nbsp;
             <span style="vertical-align: middle;"><%= user.db.fullUsername %></span>
             <span style="vertical-align: middle; color: #354146;">&nbsp;|&nbsp;</span>

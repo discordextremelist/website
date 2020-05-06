@@ -21,7 +21,7 @@ const express = require("express");
 const router = express.Router();
 
 const variables = require("../Util/Function/variables.js");
-const permission = require("../Util/Function/permissions"); 
+const permission = require("../Util/Function/permissions");
 
 router.get("/", variables, permission.mod, async (req, res) => {
     const bots = await req.app.db.collection("bots").find().toArray();

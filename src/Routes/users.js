@@ -142,7 +142,8 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
 
     let verified = false;
     let tester = false; 
-    let translator = false; 
+    let translator = false;
+    let covid = false; 
     let mod = false;
     let assistant = false;
     let admin = false;
@@ -150,10 +151,9 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
     if (req.body.tester === "on") tester = true;
     if (req.body.translator === "on") translator = true;
     if (req.body.verified === "on") verified = true;
+    if (req.body.covid === "on") covid = true;
 
-    if (req.body.rank === "mod") {
-        mod = true;
-    }
+    if (req.body.rank === "mod") mod = true;
 
     if (req.user.db.rank.admin === false && req.body.rank === "assistant" || req.user.db.rank.admin === false && req.body.rank === "admin") {
         return res.status(403).render("status", {
@@ -174,7 +174,7 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         }
     }
 
-    req.app.db.collection("users").updateOne({ id: targetUser.id }, 
+    await req.app.db.collection("users").updateOne({ id: targetUser.id }, 
         { $set: {
             rank: {
                 admin: admin,
@@ -182,14 +182,15 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
                 mod: mod,
                 translator: translator,
                 tester: tester,
-                verified: verified
+                verified: verified,
+                covid: covid
             }
         }
     });
 
     await userCache.updateUser(targetUser.id);
 
-    req.app.db.collection("audit").insertOne({
+    await req.app.db.collection("audit").insertOne({
         type: "MODIFY_RANK",
         executor: req.user.id,
         target: targetUser.id,
@@ -203,7 +204,8 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
                     mod: targetUser.rank.mod,
                     translator: targetUser.rank.translator,
                     tester: targetUser.rank.tester,
-                    verified: targetUser.rank.verified
+                    verified: targetUser.rank.verified,
+                    covid: targetUser.rank.covid
                 }
             },
             new: {
@@ -213,7 +215,8 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
                     mod: mod,
                     translator: translator,
                     tester: tester,
-                    verified: verified
+                    verified: verified,
+                    covid: covid
                 }
             }
         }
@@ -279,7 +282,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
         customCss = "";
     }
 
-    req.app.db.collection("users").updateOne({ id: req.user.id }, 
+    await req.app.db.collection("users").updateOne({ id: req.user.id }, 
         { $set: {
             profile: {
                 bio: req.body.bio,
@@ -296,7 +299,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
         }
     });
 
-    req.app.db.collection("audit").insertOne({
+    await req.app.db.collection("audit").insertOne({
         type: "MODIFY_PROFILE",
         executor: req.user.id,
         target: userProfile.id,
@@ -329,6 +332,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
             }
         }
     });
+    await userCache.updateUser(req.params.id);
 
     res.redirect("/users/@me");
 });
@@ -357,7 +361,7 @@ router.post("/profile/game/snakes", variables, permission.auth, async (req, res,
     const user = await req.app.db.collection("users").findOne({ id: req.user.id });
     const score = user.game.snakes.maxScore + 1;
     
-    req.app.db.collection("users").updateOne({ id: req.user.id }, 
+    await req.app.db.collection("users").updateOne({ id: req.user.id }, 
         { $set: {
             game: {
                 snakes: {
@@ -367,7 +371,7 @@ router.post("/profile/game/snakes", variables, permission.auth, async (req, res,
         }
     });
 
-    req.app.db.collection("audit").insertOne({
+    await req.app.db.collection("audit").insertOne({
         type: "GAME_HIGHSCORE_UPDATE",
         executor: req.user.id,
         target: req.user.id,
@@ -390,6 +394,8 @@ router.post("/profile/game/snakes", variables, permission.auth, async (req, res,
             }
         }
     });
+
+    await userCache.updateUser(req.user.id);
 
     res.status(200).json({ error: false, status: 200, message: "Updated high score" });
 });
@@ -431,7 +437,7 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
 
     const foreground = getForeground(req.body.iconColour);
 
-    req.app.db.collection("users").updateOne({ id: req.user.id }, 
+    await req.app.db.collection("users").updateOne({ id: req.user.id }, 
         { $set: {
             preferences: {
                 customGlobalCss: req.body.customCss,
@@ -443,7 +449,7 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
         }
     });
 
-    req.app.db.collection("audit").insertOne({
+    await req.app.db.collection("audit").insertOne({
         type: "MODIFY_PREFERENCES",
         executor: req.user.id,
         target: req.user.id,
@@ -471,11 +477,13 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
         }
     });
 
+    await userCache.updateUser(req.user.id);
+
     res.redirect("/users/@me");
 });
 
-router.get("/account/preferences/reset", variables, permission.auth, (req, res, next) => {
-    req.app.db.collection("users").updateOne({ id: req.user.id }, 
+router.get("/account/preferences/reset", variables, permission.auth, async (req, res, next) => {
+    await req.app.db.collection("users").updateOne({ id: req.user.id }, 
         { $set: {
             preferences: {
                 customGlobalCss: "",
@@ -486,6 +494,7 @@ router.get("/account/preferences/reset", variables, permission.auth, (req, res, 
             }
         }
     });
+    await userCache.updateUser(req.user.id);
 
     res.redirect("/users/@me");
 });

@@ -18,7 +18,7 @@
     <div class="hero-body">
         <br />
         <div class="container has-text-centered">
-            <img class="backdrop" draggable=false alt="DEL Logo" style="padding: 5px;" src="/img/logo-128px.<%= imageFormat %>" type="image/<%= imageFormat %>">
+            <img class="backdrop" draggable=false alt="DEL Logo" style="padding: 5px;" src="/img/logo-128px.<%= imageFormat %>" type="image/<%= imageFormat %>" draggable="false">
             <h1 class="title">
                 <%= __("Discord Extreme List") %>
             </h1>
@@ -30,23 +30,23 @@
 </section>
 <div class="container">
     <div class="section">
-        <% if (botsData.length === 0) { %>
+        <% if (bots.length === 0) { %>
             <h2 class="is-size-3"><%= __("There are no approved bots") %></h2>
         <% } else { %>
             <h2 class="is-size-3 has-text-centered has-text-blurple">
-                <span class="icon is-medium iconalign">
+                <span onclick="invokeSeizureMode();" class="icon is-medium iconalign">
                     <i class="fad fa-robot fa-1x"></i>
                 </span>
                 <span><%= __("Random Bots") %></span>
             </h2>
             <br />
             <div class="columns is-multiline is-centered">
-                <%- botChunk.map(chunk => `${chunk.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
+                <%- bots.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("") %>
             </div>
         <% } %>
     </div>
     <div class="section">
-        <% if (botsData.length === 0) { %>
+        <% if (servers.length === 0) { %>
             <h2 class="is-size-3"><%= __("There are no listed servers") %></h2>
         <% } else { %>
             <h2 class="is-size-3 has-text-centered has-text-blurple">
@@ -57,7 +57,7 @@
             </h2>
             <br />
             <div class="columns is-multiline is-centered">
-                <%- serverChunk.map(chunk => `${chunk.map(server => include("../partials/cards/serverCard.ejs", { server, search: false })).join("")}`).join("") %>
+                <%- servers.map(server => include("../partials/cards/serverCard.ejs", { server, search: false })).join("") %>
             </div>
         <% } %>
     </div>

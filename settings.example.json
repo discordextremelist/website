@@ -1,16 +1,7 @@
 {
     "db": {
         "mongo": "mongodb://localhost:27017",
-        "redis": {
-            "logins": "redis://127.0.0.1:6379/2",
-            "statuses": "redis://127.0.0.1:6379/3",
-            "featuring": "redis://127.0.0.1:6379/4",
-            "caching": {
-                "bots": "redis://127.0.0.1:6379/6",
-                "servers": "redis://127.0.0.1:6379/7",
-                "users": "redis://127.0.0.1:6379/8"
-            }
-        }
+        "redis": "redis://127.0.0.1:6379/1"
     },
     "client": {
         "id": "",
@@ -23,11 +14,12 @@
         },
         "port": {
             "value": 3000,
-            "agressive": true
+            "agressive": false
         },
-        "authScopes": ["identify", "guilds"],
+        "authScopes": ["identify", "guilds.join"],
         "url": "https://example.com",
-        "callback": "/login/callback"
+        "callback": "/login/callback",
+        "gaID": ""
     },
     "guild": {
         "main": "",
@@ -49,13 +41,13 @@
         "admin": "",
         "everyoneping": "",
         "staffServer": {
-          "mod": ""
+            "mod": ""
         }
       },
-      "emoji": {
+    "emoji": {
         "snowflake": {
-          "cross": "",
-          "check": ""
+            "cross": "",
+            "check": ""
         },
         "cross": "",
         "check": "",
@@ -74,11 +66,5 @@
         "notification": "",
         "warn": "",
         "info": ""
-      },
-      "colours": {
-        "error": "#d00020",
-        "success": "#6aa940",
-        "warn": "#ffdd00",
-        "info": "#00b7ff"
-      }    
+    } 
 }

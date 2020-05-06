@@ -18,16 +18,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const browser = require("browser-detect");
+const settings = require("../../../settings.json");
 const releaseInfo = require("../../../release-info.json");
 
 const variables = async(req, res, next) => {
     req.browser = browser(req.headers["user-agent"]);
     res.locals.browser = req.browser;
     res.locals.requestedAt = Date.now();
+    res.locals.gaID = settings.website.gaID;
     req.session.redirectTo = req.originalUrl;
     req.del = releaseInfo;
-    req.del.node = "node-us"; // will be updated in a bit:tm: (*cough* spoiler)
-    
+    req.del.node = "us-node"; // will be updated in a bit:tm: (*cough* spoiler)
+
     res.locals.pageType = {
         server: false,
         bot: false

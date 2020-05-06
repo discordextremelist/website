@@ -36,7 +36,7 @@ const botCache = require("../Util/Services/botCaching.js");
 const userCache = require("../Util/Services/userCaching.js");
 
 router.get("/submit", variables, permission.auth, async (req, res, next) => {
-    const libraries = await req.app.db.collection("libraries").find().sort({ name: 1 }).toArray();
+    const libraries = await req.app.db.collection("libraries").find().sort({ _id: 1 }).toArray();
 
     res.render("templates/bots/submit", { 
         title: res.__("Submit Bot"), 
@@ -59,7 +59,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         req 
     }); 
 
-    fetch(`https://discordapp.com/api/users/${req.body.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
+    fetch(`https://discord.com/api/v7/users/${req.body.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
         fetchRes.jsonBody = await fetchRes.json();
         if (req.body.id.length > 32) {
             error = true;
@@ -75,7 +75,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         let invite;
 
         if (req.body.invite === "") {
-            invite = `https://discordapp.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
+            invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
@@ -97,7 +97,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         }
 
         let library;
-        const dbLibrary = await req.app.db.collection("libraries").findOne({ name: req.body.library });
+        const dbLibrary = await req.app.db.collection("libraries").findOne({ _id: req.body.library });
         if (!dbLibrary) {
             library = "Other";
         } else {
@@ -135,7 +135,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
             editors = [];
         }
         
-        req.app.db.collection("bots").insertOne({
+        await req.app.db.collection("bots").insertOne({
             id: req.body.id,
             name: fetchRes.jsonBody.username,
             prefix: req.body.prefix,
@@ -175,15 +175,14 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
             status: {
                 approved: false,
                 verified: false,
-                pendingVerification: false,
                 siteBot: false,
                 archived: false
             }
         });
 
-        discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** added bot **${functions.escapeFormatting(fetchRes.jsonBody.username)} (${req.body.id})**\n<${settings.website.url}/bots/${req.body.id}>`);
+        discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** added bot **${functions.escapeFormatting(fetchRes.jsonBody.username)} \`(${req.body.id})\`**\n<${settings.website.url}/bots/${req.body.id}>`);
 
-        req.app.db.collection("audit").insertOne({
+        await req.app.db.collection("audit").insertOne({
             type: "SUBMIT_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -230,14 +229,13 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                     status: {
                         approved: false,
                         verified: false,
-                        pendingVerification: false,
                         siteBot: false,
                         archived: false
                     }
                 }
             }
         });
-
+        await botCache.updateBot(req.params.id);
         res.redirect(`/bots/${req.body.id}`);
     }).catch(async(fetchRes) => {
         if (req.body.id.length > 32) {
@@ -259,7 +257,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                 error = true;
                 errors.push(res.__("The invite link you provided is too long."));
             } else if (!/^https?:\/\//.test(req.body.invite)) {
-                // todo - fix this
+                error = true;
+                errors.push(res.__("Invite needs to be a valid URL."));
             } else {
                 invite = req.body.invite
             }
@@ -271,7 +270,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         }
 
         let library;
-        const dbLibrary = await req.app.db.collection("libraries").findOne({ name: req.body.library });
+        const dbLibrary = await req.app.db.collection("libraries").findOne({ _id: req.body.library });
         if (!dbLibrary) {
             library = "Other";
         } else {
@@ -341,13 +340,13 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
             req
         });
     } else if (botExists.vanityUrl && req.user.db.assistant === true) {
-        req.app.db.collection("bots").updateOne({ id: req.params.id }, 
+        await req.app.db.collection("bots").updateOne({ id: req.params.id }, 
             { $set: {
                 vanityUrl: req.body.vanity
             }
         });
 
-        req.app.db.collection("audit").insertOne({
+        await req.app.db.collection("audit").insertOne({
             type: "MODIFY_VANITY",
             executor: req.user.id,
             target: req.params.id,
@@ -358,16 +357,17 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
                 new: req.body.vanity
             }
         });
+        await botCache.updateBot(req.params.id);
 
         res.redirect(`/bots/${req.params.id}`);
     } else if (!botExists.vanityUrl) {
-        req.app.db.collection("bots").updateOne({ id: req.params.id }, 
+        await req.app.db.collection("bots").updateOne({ id: req.params.id }, 
             { $set: {
                 vanityUrl: req.body.vanity
             }
         });
 
-        req.app.db.collection("audit").insertOne({
+        await req.app.db.collection("audit").insertOne({
             type: "SET_VANITY",
             executor: req.user.id,
             target: req.params.id,
@@ -378,6 +378,7 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
                 new: req.body.vanity
             }
         });
+        await botCache.updateBot(req.params.id);
 
         res.redirect(`/bots/${req.params.id}`);
     }
@@ -401,7 +402,7 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
         req 
     }); 
 
-    const libraries = await req.app.db.collection("libraries").find({ name: { $ne: botExists.library } }).sort({ name: 1 }).toArray();
+    const libraries = await req.app.db.collection("libraries").find({ name: { $ne: botExists.library } }).sort({ _id: 1 }).toArray();
 
     res.render("templates/bots/edit", { 
         title: res.__("Edit Bot"), 
@@ -441,7 +442,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     let invite;
 
     if (req.body.invite === "") {
-        invite = `https://discordapp.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
+        invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
     } else {
         if (typeof req.body.invite !== "string") {
             error = true;
@@ -463,7 +464,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     }
 
     let library;
-    const dbLibrary = await req.app.db.collection("libraries").findOne({ name: req.body.library });
+    const dbLibrary = await req.app.db.collection("libraries").findOne({ _id: req.body.library });
     if (!dbLibrary) {
         library = "Other";
     } else {
@@ -502,9 +503,9 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         editors = [];
     }
 
-    fetch(`https://discordapp.com/api/users/${req.params.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
+    fetch(`https://discord.com/api/v7/users/${req.params.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
         fetchRes.jsonBody = await fetchRes.json();
-        req.app.db.collection("bots").updateOne({ id: req.params.id }, 
+        await req.app.db.collection("bots").updateOne({ id: req.params.id }, 
             { $set: {
                 name: fetchRes.jsonBody.username,
                 prefix: req.body.prefix,
@@ -532,7 +533,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
             }
         });
 
-        req.app.db.collection("audit").insertOne({
+        await req.app.db.collection("audit").insertOne({
             type: "EDIT_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -591,9 +592,10 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
                 }
             }
         });
+        await botCache.updateBot(req.params.id);
     }).catch(_ => { return res.status(400).render("status", { title: res.__("Error"), subtitle: res.__("An error occurred when querying the Discord API."), status: 400, type: "Error", req }) });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** edited bot **${functions.escapeFormatting(bot.name)} (${bot.id})**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** edited bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
     res.redirect(`/bots/${req.params.id}`);
 });
 
@@ -843,7 +845,7 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
         req: req
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** deleted bot **${functions.escapeFormatting(bot.name)} (${bot.id})**`);
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** deleted bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**`);
 
     req.app.db.collection("bots").deleteOne({ id: req.params.id });
 
@@ -884,7 +886,7 @@ router.get("/:id/resubmit", variables, permission.auth, async (req, res, next) =
         req 
     }); 
 
-    const libraries = await req.app.db.collection("libraries").find({ name: { $ne: botExists.library } }).sort({ name: 1 }).toArray();
+    const libraries = await req.app.db.collection("libraries").find({ name: { $ne: botExists.library } }).sort({ _id: 1 }).toArray();
 
     res.render("templates/bots/edit", { 
         title: res.__("Resubmit Bot"), 
@@ -924,7 +926,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
     let invite;
 
     if (req.body.invite === "") {
-        invite = `https://discordapp.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
+        invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
     } else {
         if (typeof req.body.invite !== "string") {
             error = true;
@@ -946,7 +948,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
     }
 
     let library;
-    const dbLibrary = await req.app.db.collection("libraries").findOne({ name: req.body.library });
+    const dbLibrary = await req.app.db.collection("libraries").findOne({ _id: req.body.library });
     if (!dbLibrary) {
         library = "Other";
     } else {
@@ -985,9 +987,9 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
         editors = [];
     }
 
-    fetch(`https://discordapp.com/api/users/${req.params.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
+    fetch(`https://discord.com/api/v7/users/${req.params.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
         fetchRes.jsonBody = await fetchRes.json();
-        req.app.db.collection("bots").updateOne({ id: req.params.id }, 
+        await req.app.db.collection("bots").updateOne({ id: req.params.id }, 
             { $set: {
                 name: fetchRes.jsonBody.username,
                 prefix: req.body.prefix,
@@ -1011,7 +1013,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
             }
         });
 
-        req.app.db.collection("audit").insertOne({
+        await req.app.db.collection("audit").insertOne({
             type: "RESUBMIT_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -1076,9 +1078,10 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
                 }
             }
         });
+        await botCache.updateBot(req.params.id);
     }).catch(_ => { return res.status(400).render("status", { title: res.__("Error"), subtitle: res.__("An error occurred when querying the Discord API."), status: 400, type: "Error", req }) });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.resubmitBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** resubmitted bot **${functions.escapeFormatting(bot.name)} (${bot.id})**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.resubmitBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** resubmitted bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
     res.redirect(`/bots/${req.params.id}`);
 });
 
@@ -1107,7 +1110,7 @@ router.get("/:id/approve", variables, permission.auth, permission.mod, async (re
         }
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.check} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** approved bot **${functions.escapeFormatting(bot.name)} (${bot.id})**\n<${settings.website.url}/bots/${bot.id}>`).catch(e => { console.error(e) } );
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.check} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** approved bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**\n<${settings.website.url}/bots/${bot.id}>`).catch(e => { console.error(e) } );
     
     const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
     if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.check} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\` has been approved!`).catch(e => { console.error(e) });
@@ -1175,17 +1178,22 @@ router.get("/:id/verify", variables, permission.auth, permission.assistant, asyn
             discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${member.id}> \`${member.id}\` the role **Verified Bot** upon being verified on the website.`);
         });
 
-    req.app.db.collection("bots").updateOne({ id: req.params.id }, 
+    await req.app.db.collection("bots").updateOne({ id: req.params.id }, 
         { $set: {
-            "rank.verified": true
+            "status.verified": true
         }
     });
 
-    req.app.db.collection("users").updateOne({ id: bot.owner.id }, 
+    await req.app.db.collection("users").updateOne({ id: bot.owner.id }, 
         { $set: {
-            "rank.verified": true
+            "status.verified": true
         }
     });
+
+    console.log(await req.app.db.collection("bots").findOne({ id: req.params.id }));
+    console.log(await req.app.db.collection("users").findOne({ id: bot.owner.id }));
+
+    await botCache.updateBot(req.params.id);
 
     req.app.db.collection("audit").insertOne({
         type: "VERIFY_BOT",
@@ -1195,7 +1203,7 @@ router.get("/:id/verify", variables, permission.auth, permission.assistant, asyn
         reason: "None specified."
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.verified} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** verified bot **${functions.escapeFormatting(bot.name)} (${bot.id})**\n<${settings.website.url}/bots/${req.params.id}>`).catch(e => { console.error(e) } );
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.verified} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** verified bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**\n<${settings.website.url}/bots/${req.params.id}>`).catch(e => { console.error(e) } );
     
     const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
     if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.verified} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\` was verified!`).catch(e => { console.error(e) });
@@ -1228,6 +1236,8 @@ router.get("/:id/unverify", variables, permission.auth, permission.assistant, as
         }
     });
 
+    await botCache.updateBot(req.params.id);
+
     req.app.db.collection("audit").insertOne({
         type: "UNVERIFY_BOT",
         executor: req.user.id,
@@ -1236,7 +1246,7 @@ router.get("/:id/unverify", variables, permission.auth, permission.assistant, as
         reason: "None specified."
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.unverifiedBot} **${functions.escapeFormatting(req.user.db.fullUsername)} (${req.user.id})** unverified bot **${functions.escapeFormatting(bot.name)} (${bot.id})**\n<${settings.website.url}/bots/${req.params.id}>`).catch(e => { console.error(e) } );
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.unverifiedBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** unverified bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**\n<${settings.website.url}/bots/${req.params.id}>`).catch(e => { console.error(e) } );
 
     const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
     if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.unverifiedBot} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\` has been unverified!?\n\n**For further information please contact a Website Administrator or Assistant.**`).catch(e => { console.error(e) });
@@ -1289,20 +1299,22 @@ router.post("/:id/decline", variables, permission.auth, permission.mod, async (r
         type: "Error"
     });
 
-    req.app.db.collection("bots").updateOne({ id: req.params.id }, 
+    await req.app.db.collection("bots").updateOne({ id: req.params.id }, 
         { $set: {
             vanityUrl: "",
             "status.archived": true
         }
     });
 
-    req.app.db.collection("audit").insertOne({
+    await req.app.db.collection("audit").insertOne({
         type: "DECLINE_BOT",
         executor: req.user.id,
         target: req.params.id,
         date: Date.now(),
         reason: req.body.reason || "None specified."
     });
+
+    await botCache.updateBot(req.params.id);
 
     discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.cross} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\`\n**Reason:** \`${req.body.reason}\``);
 
@@ -1365,20 +1377,21 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
         type: "Error"
     });
 
-    req.app.db.collection("bots").updateOne({ id: req.params.id }, 
+    await req.app.db.collection("bots").updateOne({ id: req.params.id }, 
         { $set: {
             vanityUrl: "",
             "status.archived": true
         }
     });
 
-    req.app.db.collection("audit").insertOne({
+    await req.app.db.collection("audit").insertOne({
         type: "REMOVE_BOT",
         executor: req.user.id,
         target: req.params.id,
         date: Date.now(),
         reason: req.body.reason || "None specified."
     });
+    await botCache.updateBot(req.params.id);
 
     discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\`\n**Reason:** \`${req.body.reason}\``);
 
@@ -1391,6 +1404,7 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
     
     const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
     if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.botDeleted} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\` has been removed!\n**Reason:** \`${req.body.reason}\``).catch(e => { console.error(e) });
+
 
     res.redirect("/staff/queue");
 });

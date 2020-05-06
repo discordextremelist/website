@@ -1,8 +1,8 @@
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <% if (title !== "Home") { %>
-            <a class="navbar-item" href="/">
-                <img style="width: auto !important; height: 48px !important;" alt="<% __("Discord Extreme List's Logo") %>" src="/img/logo-128px.<%= imageFormat %>">
+            <a class="navbar-item" href="/" aria-hidden="true">
+                <img style="width: auto !important; height: 48px !important;" alt="<% __("Discord Extreme List's Logo") %>" src="/img/logo-128px.<%= imageFormat %>" draggable="false">
             </a>
         <% } %>
 
@@ -37,6 +37,13 @@
                 <span><%= __("Servers") %></span>
             </a>
 
+            <a class="navbar-item" href="/servers">
+                <span class="icon iconalign">
+                    <i class="fad fa-copy" aria-hidden="true"></i>
+                </span>
+                <span><%= __("Templates") %></span>
+            </a>
+
             <a class="navbar-item" href="/search">
                 <span class="icon iconalign">
                     <i class="fad fa-search" aria-hidden="true"></i>
@@ -52,7 +59,7 @@
             </a>
 
             <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
+                <a class="navbar-link" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-sitemap" aria-hidden="true"></i>
                     </span>
@@ -60,38 +67,38 @@
                 </a>
 
                 <div class="navbar-dropdown is-hidden-mobile">
-                    <a class="navbar-item" href="<%= discordServer %>">
+                    <a class="navbar-item" href="<%= discordServer %>" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fab fa-discord" aria-hidden="true"></i>
                         </span>
                         <span><%= __("Discord Server") %></span>
                     </a>
-                    <a class="navbar-item" href="https://docs.discordextremelist.xyz/">
+                    <a class="navbar-item" href="https://docs.discordextremelist.xyz/" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-books" aria-hidden="true"></i>
                         </span>
                         <span><%= __("Documentation") %></span>
                     </a>
-                    <a class="navbar-item" href="/about">
+                    <a class="navbar-item" href="/about" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-question" aria-hidden="true"></i>
                         </span>
                         <span><%= __("About") %></span>
                     </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item" href="/terms">
+                    <a class="navbar-item" href="/terms" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-balance-scale" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Terms of Service") %></span>
+                        <span><%= __("Terms of Use") %></span>
                     </a>
-                    <a class="navbar-item" href="/privacy">
+                    <a class="navbar-item" href="/privacy" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-user-secret" aria-hidden="true"></i>
                         </span>
                         <span><%= __("Privacy Policy") %></span>
                     </a>
-                    <a class="navbar-item" href="/guidelines">
+                    <a class="navbar-item" href="/guidelines" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-book" aria-hidden="true"></i>
                         </span>
@@ -103,7 +110,7 @@
 
         <div class="navbar-end">
             <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
+                <a class="navbar-link" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-language" aria-hidden="true"></i>
                     </span>
@@ -111,7 +118,7 @@
                 </a>
 
                 <div class="navbar-dropdown is-hidden-mobile">
-                    <a class="navbar-item">
+                    <a class="navbar-item" tabindex="0">
                         <span class="icon iconalign">
                             <i class="twa twa-flag-new-zealand" aria-hidden="true"></i>
                         </span>
@@ -127,7 +134,7 @@
                         
                     </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item" target="_blank" rel="noopener" href="https://translate.discordextremelist.xyz/">
+                    <a class="navbar-item" target="_blank" rel="noopener" href="https://translate.discordextremelist.xyz/" tabindex="0">
                         <span class="icon iconalign">
                             <i class="twa twa-white-flag" aria-hidden="true"></i>
                         </span>
@@ -138,47 +145,53 @@
 
             <% if (req.user) { %>
                 <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        <img style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>?size=256" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>">
+                    <a class="navbar-link" tabindex="0">
+                        <img style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>?size=256" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>" draggable="false">
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
                     </a>
 
                     <div class="navbar-dropdown is-hidden-mobile is-right">
-                        <a class="navbar-item" href="/users/@me">
+                        <a class="navbar-item" href="/users/@me" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-user" aria-hidden="true"></i>
                             </span>
                             <span><%= __("Profile") %></span>
                         </a>
-                        <a class="navbar-item" href="/users/account/preferences">
+                        <a class="navbar-item" href="/users/account/preferences" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-swatchbook" aria-hidden="true"></i>
                             </span>
                             <span><%= __("Preferences") %></span>
                         </a>
                         <% if (req.user.db.rank.mod === true) { %>
-                            <a class="navbar-item" href="/staff">
+                            <a class="navbar-item" href="/staff" tabindex="0">
                                 <span class="icon iconalign">
                                     <i class="fad fa-cogs" aria-hidden="true"></i>
                                 </span>
                                 <span><%= __("Staff Panel") %></span>
                             </a>
                         <% } %>
-                        <a class="navbar-item" href="/bots/submit">
+                        <a class="navbar-item" href="/bots/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-robot" aria-hidden="true"></i>
                             </span>
                             <span><%= __("Submit Bot") %></span>
                         </a>
-                        <a class="navbar-item" href="/servers/submit">
+                        <a class="navbar-item" href="/servers/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-comments-alt" aria-hidden="true"></i>
                             </span>
                             <span><%= __("Submit Server") %></span>
                         </a>
+                        <a class="navbar-item" href="/templates/submit" tabindex="0">
+                            <span class="icon iconalign">
+                                <i class="fad fa-copy" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("Submit Template") %></span>
+                        </a>
                         <% if (req.user.db.preferences.enableGames === true) { %>
                             <hr class="navbar-divider">
-                            <a class="navbar-item" href="/users/game/snake">
+                            <a class="navbar-item" href="/users/game/snake" tabindex="0">
                                 <span class="icon iconalign">
                                     <i class="fad fa-snake" aria-hidden="true"></i>
                                 </span>
@@ -186,9 +199,9 @@
                             </a>
                         <% } %>
                         <% if (mobile) { %>
-                            <a class="navbar-item has-text-danger" href="/logout">
+                            <a class="navbar-item has-text-danger" href="/logout" tabindex="0">
                                 <span class="icon">
-                                    <i class="fad fa-sign-out"></i>
+                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
                                 </span>
                                 <span><%= __("Logout") %></span>
                             </a>
@@ -202,14 +215,14 @@
                         <% if (req.user) { %>
                             <a class="button is-danger" href="/logout">
                                 <span class="icon">
-                                    <i class="fad fa-sign-out"></i>
+                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
                                 </span>
                                 <span><%= __("Logout") %></span>
                             </a>
                         <% } else { %>
                             <a class="button is-blurple" href="/login">
                                 <span class="icon">
-                                    <i class="fab fa-discord"></i>
+                                    <i class="fab fa-discord" aria-hidden="true"></i>
                                 </span>
                                 <span><%= __("Login with Discord") %></span>
                             </a>
@@ -218,7 +231,7 @@
                 <% } else if (!req.user) { %>
                     <a class="has-text-blurple" href="/login">
                         <span class="icon">
-                            <i class="fab fa-discord"></i>
+                            <i class="fab fa-discord" aria-hidden="true"></i>
                         </span>
                         <span><%= __("Login with Discord") %></span>
                     </a>

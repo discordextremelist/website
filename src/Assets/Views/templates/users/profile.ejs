@@ -44,7 +44,7 @@
                         if (userStatus === "dnd") statusInfo = __("The user's status is currently Do not Disturb.")
                         if (userStatus === "offline") statusInfo = __("The user's status is currently Offline.")
                     %> 
-                    <img class="image" title="<%= statusInfo %>" style="border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');">
+                    <img class="image" title="<%= statusInfo %>" style="border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1">
@@ -55,12 +55,17 @@
                                     <i aria-hidden="true" class="fad fa-ban has-text-danger fa-1x"></i>
                                 </span>
                             <% } else { %>
+                                <% if (userProfile.rank.covid === true) { %>
+                                    <span style="vertical-align: middle;" title="<%= __("COVID-19 Donator") %>" class="icon is-medium is-size-3 iconalign">
+                                        <i aria-hidden="true" class="fad fa-heart has-text-red fa-1x"></i>
+                                    </span>
+                                <% } %>
                                 <% if (userProfile.rank.verified === true) { %>
                                     <span style="vertical-align: middle;" title="<%= __("Verified Developer") %>" class="icon is-medium is-size-3 iconalign">
                                         <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
                                     </span>
                                 <% } %>
-                                <% if (userProfile.rank.bugHunter === true || userProfile.rank.tester === true) { %>
+                                <% if (userProfile.rank.tester === true) { %>
                                     <span style="vertical-align: middle;" title="<%= __("Tester") %>" class="icon is-medium is-size-3 iconalign">
                                         <i aria-hidden="true" class="fad fa-vial has-text-link fa-1x"></i>
                                     </span>

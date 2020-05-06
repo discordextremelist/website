@@ -24,23 +24,13 @@ const discord = require("./discord.js");
 const redisBans = new ioRedis(settings.db.redis.bans);
 
 async function check(user) {
-    const rawBans = await redisBans.get("bans");
-    const bans = JSON.parse(rawBans);
-
-    let banned = false;
-    
-    for (var n = 0; n < bans.length; ++n) {
-        const ban = bans[n];
-        
-        if (ban.user.id === user) banned = true;
-    }
-
-    return banned;
+    const ban = await global.redis.hget("bans", user);
+    return ban !== null;
 }
 
 async function updateBanlist() {
-    const bans = discord.bot.guilds.get(settings.guild.main).getBans();
-    redisBans.set("bans", JSON.stringify(bans));
+    const bans = await discord.bot.guilds.get(settings.guild.main).getBans();
+    await global.redis.hmset("bans", ...bans.map(ban => [ban.user.id, true]));
 }
 
 setInterval(async () => {

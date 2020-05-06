@@ -49,7 +49,7 @@ router.post("/", vars, async (req, res) => {
     }
     const [users, bots, servers] = await Promise.all([
         isStaff ? await req.app.db.collection("users").find({}, { projection: { _id: 0, status: 0, preferences: 0, locale: 0, staffTracking: 0 } }).toArray() : [],
-        (only.length < 1 || only.includes("bots")) ? await req.app.db.collection("bots").find({}, { projection: { _id: 0, token: 0, modNotes: 0, votes: 0, "status.pendingVerification": 0 } }).toArray() : [],
+        (only.length < 1 || only.includes("bots")) ? await req.app.db.collection("bots").find({}, { projection: { _id: 0, token: 0, modNotes: 0, votes: 0 } }).toArray() : [],
         (only.length < 1 || only.includes("servers")) ? await req.app.db.collection("servers").find({}, { projection: { _id: 0 } }).toArray() : [],
     ]); // TODO: Redis cache this later for quicker search, or use elasticsearch. Current response time as of now ~2500ms!
     const imageFormat = res.locals.imageFormat;

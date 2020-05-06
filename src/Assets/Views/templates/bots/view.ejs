@@ -40,7 +40,7 @@
                         if (botStatus === "dnd") statusInfo = __("The bot's status is currently Do not Disturb.")
                         if (botStatus === "offline") statusInfo = __("The bot's status is currently Offline.")
                     %> 
-                    <img class="image" title="<%= statusInfo %>" style="<% if (mobile) { %>display: block; margin-left: auto; margin-right: auto;<% } %> border-radius: 50%; animation: <%= botStatus %> 2s infinite !important;" src="<%= bot.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= bot.name %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');">
+                    <img class="image" title="<%= statusInfo %>" style="<% if (mobile) { %>display: block; margin-left: auto; margin-right: auto;<% } %> border-radius: 50%; animation: <%= botStatus %> 2s infinite !important;" src="<%= bot.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= bot.name %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
                 </div>
             <div class="column is-10 <% if (mobile) { %>has-text-centered<% } %>">
                     <h1 class="is-size-1">
@@ -176,11 +176,11 @@
                                             <span class="icon"><i aria-hidden="true" class="fas fa-minus"></i></span>
                                             <span><%= __("Decline") %></span>
                                         </a>
-                                        <a class="dropdown-item" target="_blank" href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= staffServer %>">
+                                        <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= staffServer %>">
                                             <span class="icon"><i class="fas fa-vial"></i></span>
                                             <span><%= __("Staff Server Invite") %></span>
                                         </a>
-                                        <a class="dropdown-item" target="_blank" href="https://discordapp.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= mainServer %>">
+                                        <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= mainServer %>">
                                             <span class="icon"><i class="fas fa-shield-alt"></i></span>
                                             <span><%= __("Main Server Invite") %></span>
                                         </a>

@@ -44,13 +44,17 @@
         </div>
         <div class="section">
             <h3 class="is-size-3"><%= __("Staff") %></h3>
-            <div class="columns is-multiline is-centered">
-                <%- staffChunk.map(chunk => `${chunk.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("")}`).join("") %>
+            <div class="columns is-multiline">
+                <%- staff.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("") %>
             </div>
             <br />
             <h3 class="is-size-3"><%= __("Boosters") %></h3>
-            <div class="columns is-multiline is-centered">
-                <%- //boosterChunk.map(chunk => `${chunk.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("")}`).join("") %>
+            <div class="columns is-multiline">
+                <%- boosters.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("") %>
+            </div>
+            <h3 class="is-size-3"><%= __("Contributors") %></h3>
+            <div class="columns is-multiline">
+                <%- contributors.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("") %>
             </div>
         </div>
     </div>

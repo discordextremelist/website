@@ -30,28 +30,61 @@ const botCache = require("../Util/Services/botCaching.js");
 const serverCache = require("../Util/Services/serverCaching.js");
 const discord = require("../Util/Services/discord.js");
 
+const nickSorter = (a, b) => (a.nick || a.user.username).localeCompare((b.nick || b.user.username));
+function sortAll() {
+    let members = discord.bot.guilds.get(settings.guild.main).members;
+    if (!members) throw new Error("Fetching members failed!");
+    const staff = [], boosters = [], contributors = [];
+    for (const member of members.filter(m=>!m.user.bot)) {
+        if (
+            member.roles.includes(settings.roles.admin) ||
+            member.roles.includes(settings.roles.assistant) ||
+            member.roles.includes(settings.roles.mod)
+        ) {        
+            const admin = member.roles.includes(settings.roles.admin);
+            const assistant = member.roles.includes(settings.roles.assistant);
+            const mod = member.roles.includes(settings.roles.mod);
+            member.order = admin ? 3 : assistant ? 2 : mod ? 1 : 0;
+            member.rank = admin ? "admin" : assistant ? "assistant" : mod ? "mod" : null;
+            staff.push(member);
+        } else if (member.roles.includes(settings.roles.booster)) {
+            member.rank = "booster";
+            boosters.push(member);
+        } else if (
+            member.roles.includes(settings.roles.translators) ||
+            member.roles.includes(settings.roles.testers)
+        ) {
+            const translator = member.roles.includes(settings.roles.translators);
+            const tester = member.roles.includes(settings.roles.testers);
+            member.order = translator ? 1 : tester ? 2 : 0;
+            member.rank = translator ? "translator" : "tester";
+            contributors.push(member);
+        }
+    }
+    return {
+        staff: staff.sort(nickSorter).sort((a, b) => b.order - a.order),
+        boosters: boosters.sort(nickSorter),
+        contributors: contributors.sort(nickSorter).sort((a, b) => a.order - b.order)
+    };
+}
+
 router.get("/", variables, async (req, res) => {
     const bots = await featuring.getFeaturedBots();
-    const botChunk = chunk(bots, 3);
-
     const servers = await featuring.getFeaturedServers();
-    const serverChunk = chunk(servers, 3);
 
     res.render("templates/index", { 
         title: res.__("Home"), 
         subtitle: "", 
         req, 
-        botsData: bots,
-        botChunk,
-        serversData: servers,
-        serverChunk,
+        bots,
+        servers
     });
 });
 
 router.get("/bots", variables, async (req, res) => {
-    await botCache.uploadAllBots();
     const bots = await botCache.getAllBots();
-    const botChunk = chunk(bots, 3);
+    console.log(bots);
+    const botChunk = chunk(bots, 9);
 
     res.render("templates/bots/index", {
         title: res.__("Bots"),
@@ -66,7 +99,7 @@ router.get("/bots", variables, async (req, res) => {
 
 router.get("/servers", variables, async (req, res) => {
     const servers = await serverCache.getAllServers();
-    const serverChunk = chunk(servers, 3);
+    const serverChunk = chunk(servers, 9);
 
     res.render("templates/servers/index", {
         title: res.__("Servers"),
@@ -80,7 +113,7 @@ router.get("/servers", variables, async (req, res) => {
 });
 
 router.get("/terms", variables, (req, res) => {
-    res.render("templates/legal/terms", { title: res.__("Terms of Service"), subtitle: res.__("Our website's Terms of Service."), req });
+    res.render("templates/legal/terms", { title: res.__("Terms of Use"), subtitle: res.__("Our website's Terms of Use."), req });
 });
 
 router.get("/privacy", variables, (req, res) => {
@@ -102,27 +135,14 @@ router.get("/widgetbot", variables, (req, res) => {
 });
 
 router.get("/about", variables, async (req, res) => {
-    const staff = (await req.app.db.collection("users").find().toArray()).filter(({ rank }) => rank.mod);
-    const staffChunk = chunk(staff, 3);
-
-    function isBooster(member) {
-        // member.db = await req.app.db.collection("users").findOne({ id: member.id }) || null;
-        return member.premiumSince != undefined;
-    }
-
-    const boosters = await discord.bot.guilds.get(settings.guild.main).members.filter(isBooster);
-    const boosterChunk = chunk(boosters, 3);
-
-    console.log(boosters)
-
+    const { staff, boosters, contributors } = sortAll();
     res.render("templates/about", { 
         title: res.__("About"), 
         subtitle: res.__("Information about me and the amazing people who make me possible"), 
         req,
-        staffData: staff,
-        staffChunk//,
-        // boosterData: boosters,
-        // boosterChunk
+        staff,
+        boosters,
+        contributors
     });
 });
 

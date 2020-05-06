@@ -111,4 +111,13 @@
     <meta name="msapplication-TileImage" content="/img/logo-144px.png">
     <meta name="msapplication-config" content="/browserconfig.xml">
 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaID %>"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '<%= gaID %>');
+    </script>
 </head>

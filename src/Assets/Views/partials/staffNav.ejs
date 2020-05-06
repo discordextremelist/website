@@ -2,7 +2,7 @@
     <div class="navbar-brand">
         <% if (title !== "Home") { %>
             <a class="navbar-item" href="/">
-                <img style="width: auto !important; height: 48px !important;" alt="<% __("Discord Extreme List's Logo") %>" src="/img/logo-128px.<%= imageFormat %>">
+                <img style="width: auto !important; height: 48px !important;" alt="<% __("Discord Extreme List's Logo") %>" src="/img/logo-128px.<%= imageFormat %>" draggable="false">
             </a>
         <% } %>
 
@@ -76,7 +76,7 @@
                         <span class="icon iconalign">
                             <i class="fad fa-balance-scale" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Terms of Service") %></span>
+                        <span><%= __("Terms of Use") %></span>
                     </a>
                     <a class="navbar-item" href="/privacy">
                         <span class="icon iconalign">
@@ -120,7 +120,7 @@
             <% if (req.user) { %>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
-                        <img style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>?size=256" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>">
+                        <img style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>?size=256" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>" draggable="false">
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
                     </a>
 

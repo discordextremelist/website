@@ -3,7 +3,7 @@
         <article class="media">
             <div class="media-left">
                 <figure class="image is-64x64">
-                    <img class="is-rounded lazyload" data-src="<%= bot.avatar.url %>.<%= imageFormat %>" alt="<%= __("%s's Avatar", bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("Failed to load bot %s avatar/icon, using default instead.", bot.id) %>');">
+                    <img class="is-rounded lazyload" data-src="<%= bot.avatar.url %>.<%= imageFormat %>" alt="<%= __("%s's Avatar", bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("Failed to load bot %s avatar/icon, using default instead.", bot.id) %>');" draggable="false">
                 </figure>
             </div>
             <div style="overflow: hidden;" class="media-content">

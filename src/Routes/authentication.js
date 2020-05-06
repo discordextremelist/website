@@ -25,14 +25,13 @@ const passport = require("passport");
 const Strategy = require("passport-discord").Strategy;
 
 const settings = require("../../settings.json");
-const serverUpdate = require("../Util/Services/serverUpdate.js");
 
 passport.use(new Strategy ({
     clientID: settings.client.id,
     clientSecret: settings.client.secret,
     callbackURL: settings.website.url + settings.website.callback,
     scope: settings.website.authScopes,
-    authorizationURL: "https://discordapp.com/api/oauth2/authorize?prompt=none"
+    authorizationURL: "https://discord.com/oauth2/authorize?prompt=none"
 }, (accessToken, refreshToken, profile, done) => {
     process.nextTick(() => {
         return done(null, profile);
@@ -47,8 +46,8 @@ router.use(bodyParser.urlencoded({
     extended: true
 }));
 
-router.get("/dev/authinfo", (req, res, next) => {
-    res.json(req.user);
+router.get("/authentication_info", (req, res, next) => {
+    res.json(req.user.db);
 });
 
 router.get("/login", passport.authenticate("discord"));
@@ -57,7 +56,7 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
     const user = await req.app.db.collection("users").findOne({ id: req.user.id });
 
     if (!user) {
-        req.app.db.collection("users").insertOne({
+        await req.app.db.collection("users").insertOne({
             id: req.user.id,
             token: req.user.accessToken,
             name: req.user.username,
@@ -97,12 +96,22 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
                 assistant: false,
                 mod: false,
                 verified: false,
-                bugHunter: false
-            },
-            status: {
-                pendingStaff: false
+                tester: false,
+                translator: false,
+                covid: false
             },
             staffTracking: {
+                details: {
+                    away: {
+                        status: false,
+                        message: ""
+                    },
+                    standing: "Unmeasured",
+                    country: "",
+                    timezone: "",
+                    managementNotes: "",
+                    languages: []
+                },
                 lastLogin: undefined,
                 lastAccessed: {
                     time: undefined,
@@ -131,10 +140,6 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
                     "staffTracking.lastLogin": Date.now()
                 }
             });
-
-            for (let n = 0; n < req.user.guilds.length; n++) {
-                await serverUpdate(req.user.guilds[n].id, req.user.guilds, false);
-            }
         } else {
             await req.app.db.collection("users").updateOne({ id: req.user.id }, 
                 { $set: {
@@ -149,10 +154,6 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
                     }
                 }
             });
-
-            for (let n = 0; n < req.user.guilds.length; n++) {
-                await serverUpdate(req.user.guilds[n].id, req.user.guilds, false);
-            }
         }
     }
 

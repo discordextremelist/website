@@ -22,7 +22,7 @@ const serverCache = require("./serverCaching.js");
 const fetch = require("node-fetch");
 
 async function update(id, guildObject, queryDapi) {
-    if (queryDapi == undefined) queryDapi = true;
+    if (!queryDapi) queryDapi = true;
 
     const oldServer = await app.db.collection("servers").findOne({ id: id });
     if (!oldServer) return;
@@ -33,7 +33,7 @@ async function update(id, guildObject, queryDapi) {
     }
 
     if (queryDapi) {
-        fetch(`https://discordapp.com/api/v6/users/@me/guilds`, {
+        fetch(`https://discord.com/api/v7/users/@me/guilds`, {
             headers: {
                 Authorization: `Bearer ${owner.token}`
             }
@@ -41,7 +41,7 @@ async function update(id, guildObject, queryDapi) {
             fetchRes.jsonBody = await fetchRes.json();
             const newServer = fetchRes.jsonBody.find(getGuildFromArray);
             
-            app.db.collection("servers").updateOne({ id: id }, 
+            app.db.collection("servers").updateOne({ id }, 
                 { $set: {
                     name: newServer.name,
                     icon: {

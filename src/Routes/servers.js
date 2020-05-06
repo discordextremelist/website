@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const express = require("express");
+const fetch = require("node-fetch");
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
@@ -45,110 +46,177 @@ router.get("/submit", variables, permission.auth, (req, res, next) => {
 router.post("/submit", variables, permission.auth, async (req, res, next) => {
     let error = false;
     let errors = [];
+    
+    fetch(`https://discord.com/api/v7/invites/${req.body.invite}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
+        fetchRes.jsonBody = await fetchRes.json();
+        
+        if (fetchRes.jsonBody.code !== 10006) {
+            const serverExists = await req.app.db.collection("servers").findOne({ id: fetchRes.jsonBody.guild.id });
+            if (serverExists) return res.status(409).render("status", { 
+                title: res.__("Error"), 
+                subtitle: res.__("This server has already been added to the list."),
+                status: 409, 
+                type: "Error",
+                req 
+            }); 
 
-    const serverExists = await req.app.db.collection("servers").findOne({ id: req.body.id });
-    if (serverExists) return res.status(409).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("This server has already been added to the list."),
-        status: 409, 
-        type: "Error",
-        req 
-    }); 
-
-    function getGuildFromArray(guilds) {
-        return guilds.id === req.body.id;
-    }
-
-    const serverData = req.user.guilds.find(getGuildFromArray);
-
-    if (req.body.id.length > 32) {
-        error = true;
-        errors.push(res.__("The server's id cannot be longer than 32 characters."));
-    } else if (!serverData) {
-        error = true;
-        errors.push(res.__("You need to be in the server to add it to the server list."));
-    }
-
-    if (!req.body.invite) {
-        errors.push(res.__("You didn't provide a valid invite."));
-    } else {
-        if (typeof req.body.invite !== "string") {
+            if (!req.body.invite) {
+                errors.push(res.__("You didn't provide a valid invite."));
+            } else {
+                if (typeof req.body.invite !== "string") {
+                    error = true;
+                    errors.push(res.__("You provided an invalid invite."));
+                } else if (req.body.invite.length > 2000) {
+                    error = true;
+                    errors.push(res.__("The invite link you provided is too long."));
+                } else if (/^https?:\/\//.test(req.body.invite)) {
+                    error = true;
+                    errors.push(res.__("The invite code cannot be a URL."));
+                } else if (req.body.invite.includes("discord.gg")) {
+                    error = true;
+                    errors.push(res.__("The invite code cannot contain discord.gg."));
+                }
+            }
+        
+            if (!req.body.longDescription) {
+                error = true;
+                errors.push(res.__("A long description is required."));
+            }
+        } else {
             error = true;
             errors.push(res.__("You provided an invalid invite."));
-        } else if (req.body.invite.length > 2000) {
-            error = true;
-            errors.push(res.__("The invite link you provided is too long."));
-        } else if (!/^https?:\/\//.test(req.body.invite)) {
-            error = true;
-            errors.push(res.__("The invite link must be a valid URL starting with http:// or https://"));
         }
-    }
 
-    if (!req.body.longDescription) {
-        error = true;
-        errors.push(res.__("A long description is required."));
-    }
+        let tags = [];
+        if (req.body.gaming === "on") tags.push("Gaming");
+        if (req.body.music === "on") tags.push("Music");
+        if (req.body.mediaEntertain === "on") tags.push("Media & Entertainment");
+        if (req.body.createArts === "on") tags.push("Creative Arts");
+        if (req.body.sciTech === "on") tags.push("Science & Tech");
+        if (req.body.edu === "on") tags.push("Education");
+        if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+    
+        if (req.body.relIdentity === "on") tags.push("Relationships & Identity");
+        if (req.body.travelCuis === "on") tags.push("Travel & Food");
+        if (req.body.fitHealth === "on") tags.push("Fitness & Health");
+        if (req.body.finance === "on") tags.push("Finance");
+    
+        if (error === true) { 
+            return res.render("templates/servers/errorOnSubmit", { 
+                title: res.__("Submit Server"), 
+                subtitle: res.__("Submit your server to the list"),
+                server: req.body,
+                req,
+                tags,
+                errors
+            }); 
+        }
+        
+        await req.app.db.collection("servers").insertOne({
+            id: fetchRes.jsonBody.guild.id,
+            inviteCode: req.body.invite,
+            name: fetchRes.jsonBody.guild.name,
+            shortDesc: req.body.shortDescription,
+            longDesc: req.body.longDescription,
+            tags: tags,
+            owner: {
+                id: req.user.id,
+            },
+            icon: {
+                hash: fetchRes.jsonBody.guild.icon,
+                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+            },
+            links: {
+                invite: `https://discord.gg/${req.body.invite}`,
+                website: req.body.website,
+                donation: req.body.donationUrl
+            }
+        });
 
-    if (error === true) { 
+        await discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` added server **${functions.escapeFormatting(fetchRes.jsonBody.guild.name)}** \`(${fetchRes.jsonBody.guild.id})\`\n<${settings.website.url}/servers/${fetchRes.jsonBody.guild.id}>`);
+
+        await req.app.db.collection("audit").insertOne({
+            type: "SUBMIT_SERVER",
+            executor: req.user.id,
+            date: Date.now(),
+            reason: "None specified.",
+            details: {
+                new: {
+                    id: fetchRes.jsonBody.guild.id,
+                    inviteCode: req.body.invite,
+                    name: fetchRes.jsonBody.guild.name,
+                    shortDesc: req.body.shortDescription,
+                    longDesc: req.body.longDescription,
+                    tags: tags,
+                    owner: {
+                        id: req.user.id,
+                    },
+                    icon: {
+                        hash: fetchRes.jsonBody.guild.icon,
+                        url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                    },
+                    links: {
+                        invite: `https://discord.gg/${req.body.invite}`,
+                        website: req.body.website,
+                        donation: req.body.donationUrl
+                    }
+                }
+            }
+        });
+
+        await serverCache.updateServer(fetchRes.jsonBody.guild.id);
+
+        res.redirect(`/servers/${fetchRes.jsonBody.guild.id}`);
+    }).catch(async(fetchRes) => {
+        console.error(fetchRes);
+
+        if (!req.body.invite) {
+            error = true;
+            errors.push(res.__("You didn't provide a valid invite."));
+        } else {
+            if (typeof req.body.invite !== "string") {
+                error = true;
+                errors.push(res.__("You provided an invalid invite."));
+            } else if (req.body.invite.length > 2000) {
+                error = true;
+                errors.push(res.__("The invite link you provided is too long."));
+            } else if (/^https?:\/\//.test(req.body.invite)) {
+                error = true;
+                errors.push(res.__("The invite code cannot be a URL."));
+            } else if (req.body.invite.includes("discord.gg")) {
+                error = true;
+                errors.push(res.__("The invite code cannot contain discord.gg."));
+            }
+        }
+
+        if (!req.body.longDescription) {
+            error = true;
+            errors.push(res.__("A long description is required."));
+        }
+
+        let tags = [];
+        if (req.body.gaming === "on") tags.push("Gaming");
+        if (req.body.music === "on") tags.push("Music");
+        if (req.body.mediaEntertain === "on") tags.push("Media & Entertainment");
+        if (req.body.createArts === "on") tags.push("Creative Arts");
+        if (req.body.sciTech === "on") tags.push("Science & Tech");
+        if (req.body.edu === "on") tags.push("Education");
+        if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+
+        if (req.body.relIdentity === "on") tags.push("Relationships & Identity");
+        if (req.body.travelCuis === "on") tags.push("Travel & Food");
+        if (req.body.fitHealth === "on") tags.push("Fitness & Health");
+        if (req.body.finance === "on") tags.push("Finance");
+
         return res.render("templates/servers/errorOnSubmit", { 
             title: res.__("Submit Server"), 
             subtitle: res.__("Submit your server to the list"),
             server: req.body,
+            tags,
             req,
             errors
         }); 
-    }
-    
-    req.app.db.collection("servers").insertOne({
-        id: req.body.id,
-        name: serverData.name,
-        shortDesc: req.body.shortDescription,
-        longDesc: req.body.longDescription,
-        owner: {
-            id: req.user.id,
-        },
-        icon: {
-            hash: serverData.icon,
-            url: `https://cdn.discordapp.com/icons/${req.body.id}/${serverData.icon}`
-        },
-        links: {
-            invite: req.body.invite,
-            website: req.body.website,
-            donation: req.body.donationUrl
-        }
     });
-
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` added server **${functions.escapeFormatting(serverData.name)}** \`(${req.body.id})\`\n<${settings.website.url}/servers/${req.body.id}>`);
-
-    req.app.db.collection("audit").insertOne({
-        type: "SUBMIT_SERVER",
-        executor: req.user.id,
-        target: req.params.id,
-        date: Date.now(),
-        reason: "None specified.",
-        details: {
-            new: {
-                id: req.body.id,
-                name: serverData.name,
-                shortDesc: req.body.shortDescription,
-                longDesc: req.body.longDescription,
-                owner: {
-                    id: req.user.id,
-                },
-                icon: {
-                    hash: serverData.icon,
-                    url: `https://cdn.discordapp.com/icons/${req.body.id}/${serverData.icon}`
-                },
-                links: {
-                    invite: req.body.invite,
-                    website: req.body.website,
-                    donation: req.body.donationUrl
-                }
-            }
-        }
-    });
-
-    res.redirect(`/servers/${req.body.id}`);
 });
 
 router.get("/:id", variables, async (req, res, next) => {
@@ -181,7 +249,10 @@ router.get("/:id", variables, async (req, res, next) => {
         allowedTags: [ "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "button", "p", "a", "ul", "ol",
             "nl", "li", "b", "i", "img", "strong", "em", "strike", "code", "hr", "br", "div",
             "table", "thead", "caption", "tbody", "tr", "th", "td", "pre" ],
-        allowedAttributes: false,
+        allowedAttributes: {
+            "a": ["href", "target", "rel"],
+            "img": ["src"]
+        },
     });
 
     res.render("templates/servers/view", {
@@ -197,7 +268,7 @@ router.get("/:id", variables, async (req, res, next) => {
 
 router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
     const server = await req.app.db.collection("servers").findOne({ id: req.params.id });
-
+    
     if (!server) return res.status(404).render("status", {
         title: res.__("Error"),
         status: 404,
@@ -244,29 +315,22 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         req 
     }); 
 
-    function getGuildFromArray(guilds) {
-        return guilds.id === req.params.id;
-    }
-
-    const serverData = req.user.guilds.find(getGuildFromArray);
-
-    if (!serverData) {
-        error = true;
-        errors.push(res.__("You need to be in the server to edit it??"));
-    }
-
     if (!req.body.invite) {
+        error = true;
         errors.push(res.__("You didn't provide a valid invite."));
     } else {
         if (typeof req.body.invite !== "string") {
             error = true;
             errors.push(res.__("You provided an invalid invite."));
-        } else if (req.body.invite.length > 2000) {
+        } else if (req.body.invite.length > 32) {
             error = true;
-            errors.push(res.__("The invite link you provided is too long."));
-        } else if (!/^https?:\/\//.test(req.body.invite)) {
+            errors.push(res.__("The invite code you provided is too long."));
+        } else if (/^https?:\/\//.test(req.body.invite)) {
             error = true;
-            errors.push(res.__("The invite link must be a valid URL starting with http:// or https://"));
+            errors.push(res.__("The invite code cannot be a URL."));
+        } else if (req.body.invite.includes("discord.gg")) {
+            error = true;
+            errors.push(res.__("The invite code cannot contain discord.gg."));
         }
     }
 
@@ -275,85 +339,153 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         errors.push(res.__("A long description is required."));
     }
 
-    if (error === true) { 
+    let tags = [];
+    if (req.body.gaming === "on") tags.push("Gaming");
+    if (req.body.music === "on") tags.push("Music");
+    if (req.body.mediaEntertain === "on") tags.push("Media & Entertainment");
+    if (req.body.createArts === "on") tags.push("Creative Arts");
+    if (req.body.sciTech === "on") tags.push("Science & Tech");
+    if (req.body.edu === "on") tags.push("Education");
+    if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+
+    if (req.body.relIdentity === "on") tags.push("Relationships & Identity");
+    if (req.body.travelCuis === "on") tags.push("Travel & Food");
+    if (req.body.fitHealth === "on") tags.push("Fitness & Health");
+    if (req.body.finance === "on") tags.push("Finance");
+    
+    fetch(`https://discord.com/api/v6/invites/${req.body.invite}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
+        fetchRes.jsonBody = await fetchRes.json();
+        console.log(fetchRes.jsonBody) // this does return shit
+
+        if (fetchRes.jsonBody.guild.id !== server.id) {
+            error = true;
+            errors.push(res.__("The invite code used must be from the same server as the one used during submission!"))
+        }
+
+        if (error === true) { 
+            return res.render("templates/servers/errorOnEdit", { 
+                title: res.__("Edit Server"), 
+                subtitle: res.__("Editing server: " + server.name),
+                server: req.body,
+                req,
+                tags,
+                errors
+            }); 
+        }
+        
+        await req.app.db.collection("servers").updateOne({ id: req.params.id }, 
+            { $set: {
+                name: fetchRes.jsonBody.guild.name,
+                shortDesc: req.body.shortDescription,
+                longDesc: req.body.longDescription,
+                inviteCode: req.body.invite,
+                tags: tags,
+                icon: {
+                    hash: fetchRes.jsonBody.guild.icon,
+                    url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                },
+                links: {
+                    invite: `https://discord.gg/${req.body.invite}`,
+                    website: req.body.website,
+                    donation: req.body.donationUrl
+                }
+            }
+        });
+
+        discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` edited server **${functions.escapeFormatting(fetchRes.jsonBody.guild.name)}** \`(${fetchRes.jsonBody.guild.id})\`\n<${settings.website.url}/servers/${fetchRes.jsonBody.guild.id}>`);
+
+        await req.app.db.collection("audit").insertOne({
+            type: "EDIT_SERVER",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: "None specified.",
+            details: {
+                new: {
+                    name: fetchRes.jsonBody.guild.name,
+                    shortDesc: req.body.shortDescription,
+                    longDesc: req.body.longDescription,
+                    inviteCode: req.body.invite,
+                    tags: tags,
+                    icon: {
+                        hash: fetchRes.jsonBody.guild.icon,
+                        url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                    },
+                    links: {
+                        invite: `https://discord.gg/${req.body.invite}`,
+                        website: req.body.website,
+                        donation: req.body.donationUrl
+                    }
+                },
+                old: {
+                    name: server.name,
+                    shortDesc: server.shortDesc,
+                    longDesc: server.longDesc,
+                    inviteCode: server.inviteCode,
+                    tags: server.tags,
+                    icon: {
+                        hash: server.icon.hash,
+                        url: server.icon.url
+                    },
+                    links: {
+                        invite: server.links.invite,
+                        website: server.links.website,
+                        donation: server.links.donationUrl
+                    }
+                }
+            }
+        });
+        
+        await serverUpdate(req.params.id);
+
+        res.redirect(`/servers/${req.params.id}`);
+    }).catch(_ => {
+        error = true;
+        errors.push(res.__("An error occurred when querying the Discord API."));
+
         return res.render("templates/servers/errorOnEdit", { 
             title: res.__("Edit Server"), 
             subtitle: res.__("Editing server: " + server.name),
             server: req.body,
             req,
+            tags,
             errors
         }); 
-    }
-    
-    req.app.db.collection("servers").updateOne({ id: req.params.id }, 
-        { $set: {
-            name: serverData.name,
-            shortDesc: req.body.shortDescription,
-            longDesc: req.body.longDescription,
-            owner: {
-                id: req.user.id,
-            },
-            icon: {
-                hash: serverData.icon,
-                url: `https://cdn.discordapp.com/icons/${req.body.id}/${serverData.icon}`
-            },
-            links: {
-                invite: req.body.invite,
-                website: req.body.website,
-                donation: req.body.donationUrl
-            }
-        }
+    });
+});
+
+router.get("/:id/delete", variables, permission.auth, async (req, res, next) => {
+    const server = await req.app.db.collection("servers").findOne({ id: req.params.id });
+
+    if (!server) return res.status(404).render("status", {
+        title: res.__("Error"),
+        status: 404,
+        subtitle: res.__("This server is not in our database"),
+        type: "Error",
+        req: req
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` edited server **${functions.escapeFormatting(serverData.name)}** \`(${req.body.id})\`\n<${settings.website.url}/servers/${req.body.id}>`);
+    if (server.owner.id !== req.user.id) return res.status(403).render("status", { 
+        title: res.__("Error"), 
+        subtitle: res.__("You do not have the required permission(s) to delete this server."),
+        status: 403, 
+        type: "Error",
+        req 
+    }); 
+
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** deleted server **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**`);
+
+    req.app.db.collection("servers").deleteOne({ id: req.params.id });
 
     req.app.db.collection("audit").insertOne({
-        type: "EDIT_SERVER",
+        type: "DELETE_SERVER",
         executor: req.user.id,
         target: req.params.id,
         date: Date.now(),
-        reason: "None specified.",
-        details: {
-            new: {
-                name: serverData.name,
-                shortDesc: req.body.shortDescription,
-                longDesc: req.body.longDescription,
-                owner: {
-                    id: req.user.id,
-                },
-                icon: {
-                    hash: serverData.icon,
-                    url: `https://cdn.discordapp.com/icons/${req.body.id}/${serverData.icon}`
-                },
-                links: {
-                    invite: req.body.invite,
-                    website: req.body.website,
-                    donation: req.body.donationUrl
-                }
-            },
-            old: {
-                name: server.name,
-                shortDesc: server.shortDesc,
-                longDesc: server.longDesc,
-                owner: {
-                    id: server.owner.id,
-                },
-                icon: {
-                    hash: server.icon.hash,
-                    url: server.icon.url
-                },
-                links: {
-                    invite: server.links.invite,
-                    website: server.links.website,
-                    donation: server.links.donationUrl
-                }
-            }
-        }
+        reason: "None specified."
     });
-    
-    await serverUpdate(req.params.id);
 
-    res.redirect(`/servers/${req.body.id}`);
+    res.redirect("/users/@me");
 });
 
 module.exports = router;

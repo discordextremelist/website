@@ -8,7 +8,14 @@ Licensing information viewable in LICENSE.md
 
 ### Node.JS Framework
 
-You must ideally have Node.JS v13.x.x installed, other versions have not been tested and may cause instability.
+We reccomend that you use Node.JS v12.x.x LTS.
+
+| Node Version        | Supported          |
+| ------------------- | ------------------ |
+| v10 Active LTS      | 🔴 No Support      |
+| v12 Active LTS      | 🟢 Full Support    |
+| v13 Current         | 🟡 Partial Support |     
+| v14 Current         | 🔴 No Support      |      
 
 ### nodemon (Optional)
 
@@ -26,9 +33,12 @@ A MongoDB instance is required - it must match the configuration in the `setting
 
 Redis must be installed for authentication/sessions to work - it must match the configuration in the `settings.json` file.
 
-## Setup
+### NPM Packages
+Install all of the dependencies by running `npm i`
 
-Install all of the dependencies by running `npm run installdeps`
+## Configuration
+
+Please rename `settings.example.json` to `settings.json` and fill it out appropriately, you may also want to change the `variables.js` file located in `src/Util/Function`.
 
 ## Running DEL
 

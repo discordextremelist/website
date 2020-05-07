@@ -50,6 +50,18 @@
                                 <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
                             </span>
                         <% } %>
+
+                        <% if (bot.status.siteBot === true) { %>
+                            <span style="vertical-align: middle;" title="<%= __("Site Bot - This bot is one of our official site bots and has been added for internal reasons.. It will not show up in search results, the homepage or the bot list page.") %>" class="icon is-size-3 is-medium iconalign">
+                                <i aria-hidden="true" class="fad fa-cogs has-text-grey-lighter fa-1x"></i>
+                            </span>
+                        <% } %>
+
+                        <% if (bot.status.approved === false) { %>
+                            <span style="vertical-align: middle;" title="<%= __("Unapproved Bot") %>" class="icon is-medium is-size-3 iconalign">
+                                <i aria-hidden="true" class="fad fa-exclamation-triangle has-text-danger fa-1x"></i>
+                            </span>
+                        <% } %>
                     </h1>
                     <h2 class="subtitle"><%= bot.shortDesc %></h2>
                     <div class="buttons <% if (mobile) { %>is-centered<% } %>">

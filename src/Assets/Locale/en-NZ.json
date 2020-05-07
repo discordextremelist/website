@@ -305,5 +305,6 @@
 	"Submit Template": "Submit Template",
 	"An error occurred whilst fetching servers.": "An error occurred whilst fetching servers.",
 	"You provided an invalid invite.": "You provided an invalid invite.",
-	"This server is not in our database": "This server is not in our database"
+	"This server is not in our database": "This server is not in our database",
+	"Unapproved Bot": "Unapproved Bot"
 }

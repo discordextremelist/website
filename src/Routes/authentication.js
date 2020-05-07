@@ -112,15 +112,31 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
                     managementNotes: "",
                     languages: []
                 },
-                lastLogin: undefined,
+                lastLogin: 0,
                 lastAccessed: {
-                    time: undefined,
-                    page: undefined
+                    time: 0,
+                    page: ""
+                },
+                punishments: {
+                    strikes: [],
+                    warnings: []
                 },
                 handledBots: {
-                    total: undefined,
-                    approved: undefined,
-                    declined: undefined
+                    allTime: {
+                        total: 0,
+                        approved: 0,
+                        declined: 0
+                    },
+                    prevWeek: {
+                        total: 0,
+                        approved: 0,
+                        declined: 0
+                    },
+                    thisWeek: {
+                        total: 0,
+                        approved: 0,
+                        declined: 0
+                    }
                 }
             }
         })

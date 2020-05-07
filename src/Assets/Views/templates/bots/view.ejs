@@ -20,7 +20,7 @@
                 "@type": "ListItem",
                 "position": 2,
                 "name": "<%= bot.name %>",
-                "item": "https://discordextremelist.xyz/bots/<%= bot.id %>"
+                "item": "https://discordextremelist.xyz/bots/<%= bot._id %>"
             }
         ]
     }
@@ -65,7 +65,7 @@
                     </h1>
                     <h2 class="subtitle"><%= bot.shortDesc %></h2>
                     <div class="buttons <% if (mobile) { %>is-centered<% } %>">
-                        <a href="/bots/<%= bot.id %>/upvote" class="button <% if (req.user && bot.votes.positive.includes(req.user.id)) { %>is-success<% } else { %>is-dark<% } %>">
+                        <a href="/bots/<%= bot._id %>/upvote" class="button <% if (req.user && bot.votes.positive.includes(req.user._id)) { %>is-success<% } else { %>is-dark<% } %>">
                             <span class="icon">
                                 <i aria-hidden="true" class="fas fa-arrow-alt-up"></i>
                             </span>
@@ -77,7 +77,7 @@
                         <% } else if (votes < 0) { %>
                             <span class="button is-black is-hovered has-text-danger" title="<%= __("Votes") %>"><%= votes %></span>
                         <% } %>
-                        <a href="/bots/<%= bot.id %>/downvote" class="button <% if (req.user && bot.votes.negative.includes(req.user.id)) { %>is-danger<% } else { %>is-dark<% } %>">
+                        <a href="/bots/<%= bot._id %>/downvote" class="button <% if (req.user && bot.votes.negative.includes(req.user._id)) { %>is-danger<% } else { %>is-dark<% } %>">
                             <span class="icon">
                                 <i aria-hidden="true" class="fas fa-arrow-alt-down"></i>
                             </span>
@@ -85,14 +85,14 @@
                     </div>
                     <% if (req.user) { %>
                         <div class="buttons <% if (mobile) { %>is-centered<% } %>">
-                        <% if (bot.owner.id === req.user.id) { %>
+                        <% if (bot.owner._id === req.user._id) { %>
                             <button class="button is-dark" onclick="copyToClipboard('<%= bot.token %>');">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-key"></i>
                                 </span>
                                 <span><%= __("Copy Token") %></span>
                             </button>
-                            <button class="button is-dark" onclick="copyToClipboard('https://api.discordextremelist.xyz/v1/bot/<%= bot.id %>/widget');">
+                            <button class="button is-dark" onclick="copyToClipboard('https://api.discordextremelist.xyz/v1/bot/<%= bot._id %>/widget');">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-image"></i>
                                 </span>
@@ -116,7 +116,7 @@
                                     <span><%= __("Set Vanity URL") %></span>
                                 </a>
                             <% } %>
-                            <a href="/bots/<%= bot.id %>/edit" class="button is-dark">
+                            <a href="/bots/<%= bot._id %>/edit" class="button is-dark">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-pencil"></i>
                                 </span>
@@ -128,14 +128,14 @@
                                 </span>
                                 <span><%= __("Delete") %></span>
                             </a>
-                        <% } else if (bot.editors && bot.editors.includes(req.user.id)) { %>
-                            <button class="button is-dark" onclick="copyToClipboard('https://api.discordextremelist.xyz/v1/bot/<%= bot.id %>/widget');">
+                        <% } else if (bot.editors && bot.editors.includes(req.user._id)) { %>
+                            <button class="button is-dark" onclick="copyToClipboard('https://api.discordextremelist.xyz/v1/bot/<%= bot._id %>/widget');">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-image"></i>
                                 </span>
                                 <span><%= __("Copy Widget Link") %></span>
                             </button>
-                            <a href="/bots/<%= bot.id %>/edit" class="button is-dark">
+                            <a href="/bots/<%= bot._id %>/edit" class="button is-dark">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-pencil"></i>
                                 </span>
@@ -158,41 +158,41 @@
                                 <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                   <div class="dropdown-content">
                                     <div class="dropdown-item">
-                                        <p class="has-text-danger">If you accidentally perform an action that is "abusive" or "inappropriate" please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.</p>
+                                        <p class="has-text-danger"><%= __("If you accidentally perform an action that is abusive or inappropriate please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.") %></p>
                                     </div>
                                     <hr class="dropdown-divider">
                                     <% if (user.db.rank.assistant === true) { %>
                                         <% if (bot.status.verified === false) { %>
-                                            <a class="dropdown-item" href="/bots/<%= bot.id %>/verify">
+                                            <a class="dropdown-item" href="/bots/<%= bot._id %>/verify">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-badge-check"></i></span>
                                                 <span><%= __("Verify") %></span>
                                             </a>
                                         <% } else { %>
-                                            <a class="dropdown-item" href="/bots/<%= bot.id %>/unverify">
+                                            <a class="dropdown-item" href="/bots/<%= bot._id %>/unverify">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-badge"></i></span>
                                                 <span><%= __("Unverify") %></span>
                                             </a>
                                         <% } %>
                                     <% } %>
                                     <% if (bot.status.approved === true) { %>
-                                        <a class="dropdown-item" href="/bots/<%= bot.id %>/remove">
+                                        <a class="dropdown-item" href="/bots/<%= bot._id %>/remove">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                             <span><%= __("Remove") %></span>
                                         </a>
                                     <% } else { %>
-                                        <a class="dropdown-item" href="/bots/<%= bot.id %>/approve">
+                                        <a class="dropdown-item" href="/bots/<%= bot._id %>/approve">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-check"></i></span>
                                             <span><%= __("Approve") %></span>
                                         </a>
-                                        <a class="dropdown-item" href="/bots/<%= bot.id %>/decline">
+                                        <a class="dropdown-item" href="/bots/<%= bot._id %>/decline">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-minus"></i></span>
                                             <span><%= __("Decline") %></span>
                                         </a>
-                                        <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= staffServer %>">
+                                        <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot._id %>&scope=bot&guild_id=<%= staffServer %>">
                                             <span class="icon"><i class="fas fa-vial"></i></span>
                                             <span><%= __("Staff Server Invite") %></span>
                                         </a>
-                                        <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot.id %>&scope=bot&guild_id=<%= mainServer %>">
+                                        <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot._id %>&scope=bot&guild_id=<%= mainServer %>">
                                             <span class="icon"><i class="fas fa-shield-alt"></i></span>
                                             <span><%= __("Main Server Invite") %></span>
                                         </a>
@@ -212,7 +212,7 @@
                                 <span><%= __("Website") %></span>
                             </a>
                         <% } %>
-                        <a target="_blank" href="/bots/<%= bot.id %>/invite" class="button is-info">
+                        <a target="_blank" href="/bots/<%= bot._id %>/invite" class="button is-info">
                             <span class="icon">
                                 <i aria-hidden="true" class="fas fa-plus"></i>
                             </span>
@@ -271,7 +271,7 @@
                         <div class="control">
                             <div class="tags has-addons">
                                 <span class="tag is-dark"><%= __("Owner") %></span>
-                                <span class="tag is-danger"><a class="has-text-white" href="/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a></span>
+                                <span class="tag is-danger"><a class="has-text-white" href="/users/<%= bot.owner._id %>"><%= botOwner.fullUsername %></a></span>
                             </div>
                         </div>
                     </div>
@@ -389,7 +389,7 @@
         </section>
         <footer class="modal-card-foot">
             <div class="buttons">
-                <a class="button is-success" href="/bots/<%= bot.id %>/delete">
+                <a class="button is-success" href="/bots/<%= bot._id %>/delete">
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-check-circle"></i>
                     </span>
@@ -412,7 +412,7 @@
         <header class="modal-card-head">
             <p class="modal-card-title has-text-danger"><%= __("Set Vanity URL") %></p>
         </header>
-        <form action="/bots/<%= bot.id %>/setvanity" method="POST">
+        <form action="/bots/<%= bot._id %>/setvanity" method="POST">
             <section class="modal-card-body has-text-danger">
                 <%= __("Your Vanity URL cannot be changed once set, choose carefully!") %>
                 <div>
@@ -448,7 +448,7 @@
     <script type="text/javascript">document.querySelector("a#setVanity").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".setVanity");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal2").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
 </div>
 
-<% if (req.user && bot.owner.id === req.user.id || req.user && req.user.db.rank.mod === true) { %>
+<% if (req.user && bot.owner._id === req.user._id || req.user && req.user.db.rank.mod === true) { %>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" integrity="sha384-OHBBOqpYHNsIqQy8hL1U+8OXf9hH6QRxi0+EODezv82DfnZoV7qoHAZDwMwEJvSw" crossorigin="anonymous">
     <script type="text/javascript" src="/js/bulma-toast.min.js" async></script>
     <%

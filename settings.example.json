@@ -1,6 +1,9 @@
 {
     "db": {
-        "mongo": "mongodb://localhost:27017",
+        "mongo": {
+            "uri": "mongodb://localhost:27017",
+            "db": "del"
+        },
         "redis": "redis://127.0.0.1:6379/1"
     },
     "client": {

@@ -14,7 +14,7 @@
                 <br />
                 <span><%= title %></span>
             </h1>
-            <% if (userProfile.id === user.id) { %>
+            <% if (userProfile._id === user._id) { %>
                 <h2 class="subtitle"><%= __("Editing your profile") %></h2>
             <% } else { %>
                 <h2 class="subtitle"><%= __("Editing %s's profile", userProfile.fullUsername) %></h2>
@@ -111,7 +111,7 @@
                         <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
                         <span><%= __("Save") %></span>
                     </button>
-                    <a class="button is-danger" href="/users/<% if (userProfile.id === user.id) { %>@me<% } else { %><%= userProfile.id %><% } %>">
+                    <a class="button is-danger" href="/users/<% if (userProfile._id === user._id) { %>@me<% } else { %><%= userProfile._id %><% } %>">
                         <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>
                         <span><%= __("Cancel") %></span>
                     </a>

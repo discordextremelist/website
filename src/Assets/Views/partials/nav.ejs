@@ -37,7 +37,7 @@
                 <span><%= __("Servers") %></span>
             </a>
 
-            <a class="navbar-item" href="/servers">
+            <a class="navbar-item" href="/templates">
                 <span class="icon iconalign">
                     <i class="fad fa-copy" aria-hidden="true"></i>
                 </span>
@@ -119,26 +119,18 @@
 
                 <div class="navbar-dropdown is-hidden-mobile">
                     <a class="navbar-item" tabindex="0">
-                        <span class="icon iconalign">
-                            <i class="twa twa-flag-new-zealand" aria-hidden="true"></i>
-                        </span>
-                        <span title="This is the source/default language of the website." class="icon has-text-info">
-                            <i class="fad fa-info-circle" aria-hidden="true"></i>
-                        </span>
-                        <span><%= __("English NZ") %> (English NZ)</span>
                         <% if (req.locale === "en-NZ") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        
+                        <span class="twemojiParse"><%= __("🇳🇿 English NZ") %> (English NZ)</span>
                     </a>
                     <hr class="navbar-divider">
                     <a class="navbar-item" target="_blank" rel="noopener" href="https://translate.discordextremelist.xyz/" tabindex="0">
-                        <span class="icon iconalign">
-                            <i class="twa twa-white-flag" aria-hidden="true"></i>
+                        <span class="twemojiParse">
+                            <%= __("🏳️ Help Translate") %>
                         </span>
-                        <span><%= __("Help Translate") %></span>
                     </a>
                 </div>
             </div>
@@ -240,3 +232,4 @@
         </div>
     </div>
 </nav>
+<div id="siteContent">

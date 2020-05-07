@@ -48,11 +48,11 @@ const { MongoClient } = require("mongodb");
 let db;
 new Promise((resolve, reject) => {
     MongoClient.connect(
-        settings.db.mongo,
+        settings.db.mongo.uri,
         { useUnifiedTopology: true, useNewUrlParser: true }, // useNewUrlParser is set to true because sometimes MongoDB is a cunt - Ice, I love this comment - Cairo
         (error, mongo) => {
             if (error) return reject(error);
-            db = mongo.db("del");
+            db = mongo.db(settings.db.mongo.db);
             console.log("Mongo: Connection established! Released deadlock as a part of startup...");
             console.timeEnd("Mongo TTL");
             resolve();
@@ -67,13 +67,19 @@ new Promise((resolve, reject) => {
         const userCache = require("./src/Util/Services/userCaching.js");
         const featuredCache = require("./src/Util/Services/featuring.js");
         const templateCache = require("./src/Util/Services/templateCaching.js");
+        const banned = require("./src/Util/Services/banned.js");
+        const discord = require("./src/Util/Services/discord.js");
         global.redis = new (require("ioredis"))(settings.db.redis);
 
         console.time("Redis Cache");
         await userCache.uploadUsers();
+        await botCache.uploadBots();
+        await serverCache.uploadServers();
         await templateCache.uploadTemplates();
         await featuredCache.updateFeaturedBots();
         await featuredCache.updateFeaturedServers();
+        await banned.updateBanlist();
+        await discord.uploadStatuses();
         console.timeEnd("Redis Cache");
 
         const createError = require("http-errors");
@@ -136,6 +142,7 @@ new Promise((resolve, reject) => {
         app.use("/", require("./src/Routes/authentication.js"));
         app.use("/bots", require("./src/Routes/bots.js"));
         app.use("/servers", require("./src/Routes/servers.js"));
+        app.use("/templates", require("./src/Routes/templates.js"));
         app.use("/users", require("./src/Routes/users.js"));
         app.use("/staff", require("./src/Routes/staff.js"));
         app.use("/amp", require("./src/Routes/amp.js"));

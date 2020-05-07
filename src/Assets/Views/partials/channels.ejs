@@ -1,0 +1,30 @@
+<% if (channel.type === 2) { %>
+    <p>
+        <span class="icon">
+            <i class="fas fa-volume" aria-hidden="true"></i>
+        </span>
+        <span><%= channel.name %></span>
+    </p>
+<% } else if (channel.type === 5) { %>
+    <p>
+        <span class="icon">
+            <i class="fas fa-megaphone" aria-hidden="true"></i>
+        </span>
+        <span><%= channel.name %></span>
+    </p>
+<% } else if (channel.type === 0) { %>
+    <p>
+        <span class="icon">
+            <i class="fas fa-hashtag" aria-hidden="true"></i>
+        </span>
+        <span><%= channel.name %></span>
+    </p>
+<% } else if (channel.type === 4) { %>
+    <br />
+    <p>
+        <span class="icon">
+            <i class="fas fa-folder-tree" aria-hidden="true"></i>
+        </span>
+        <span class="is-size-5"><%= channel.name %></span>
+    </p>
+<% } %>

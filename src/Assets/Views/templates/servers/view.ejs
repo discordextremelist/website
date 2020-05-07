@@ -20,7 +20,7 @@
                 "@type": "ListItem",
                 "position": 2,
                 "name": "<%= server.name %>",
-                "item": "https://discordextremelist.xyz/servers/<%= server.id %>"
+                "item": "https://discordextremelist.xyz/servers/<%= server._id %>"
             }
         ]
     }
@@ -52,8 +52,8 @@
                     <h2 class="subtitle"><%= server.shortDesc %></h2>
                     <% if (req.user) { %>
                         <div class="buttons <% if (mobile) { %>is-centered<% } %>">
-                            <% if (server.owner.id === req.user.id) { %>
-                                <a href="/servers/<%= server.id %>/edit" class="button is-dark">
+                            <% if (server.owner._id === req.user._id) { %>
+                                <a href="/servers/<%= server._id %>/edit" class="button is-dark">
                                     <span class="icon">
                                         <i aria-hidden="true" class="fas fa-pencil"></i>
                                     </span>
@@ -67,7 +67,7 @@
                                 </a>
                             <% } %>
                         </div>
-                        <% if (user.db.rank.mod && server.owner.id !== req.user.id) { %>
+                        <% if (user.db.rank.mod && server.owner._id !== req.user._id) { %>
                             <div class="dropdown">
                                 <div class="dropdown-trigger">
                                     <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
@@ -83,14 +83,14 @@
                                 <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                     <div class="dropdown-content">
                                         <div class="dropdown-item">
-                                            <p class="has-text-danger">If you accidentally perform an action that is "abusive" or "inappropriate" please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.</p>
+                                            <p class="has-text-danger"><%= __("If you accidentally perform an action that is abusive or inappropriate please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.") %></p>
                                         </div>
                                         <hr class="dropdown-divider">
-                                        <a class="dropdown-item" href="/servers/<%= server.id %>/edit">
+                                        <a class="dropdown-item" href="/servers/<%= server._id %>/edit">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
                                             <span><%= __("Edit") %></span>
                                         </a>
-                                        <a class="dropdown-item" href="/servers/<%= server.id %>/remove">
+                                        <a class="dropdown-item" href="/servers/<%= server._id %>/remove">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                             <span><%= __("Remove") %></span>
                                         </a>
@@ -127,13 +127,13 @@
                         <div class="control">
                             <div class="tags has-addons">
                                 <span class="tag is-dark"><%= __("Listing Owner") %></span>
-                                <span class="tag is-link"><a class="has-text-white" href="/users/<%= server.owner.id %>"><%= serverOwner.fullUsername %></a></span>
+                                <span class="tag is-link"><a class="has-text-white" href="/users/<%= server.owner._id %>"><%= serverOwner.fullUsername %></a></span>
                             </div>
                         </div>
                     </div>
                     <% if (server.tags && server.tags.length > 0) { %>
                         <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
-                            <%- server.tags.map(tag => include("../../partials/serverTag.ejs", { tag })).join("") %>
+                            <%- server.tags.map(tag => include("../../partials/tag.ejs", { tag })).join("") %>
                         </div>
                     <% } %>
                 </div>
@@ -155,7 +155,7 @@
         </section>
         <footer class="modal-card-foot">
             <div class="buttons">
-                <a class="button is-success" href="/servers/<%= server.id %>/delete">
+                <a class="button is-success" href="/servers/<%= server._id %>/delete">
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-check-circle"></i>
                     </span>

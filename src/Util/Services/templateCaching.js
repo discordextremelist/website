@@ -31,9 +31,9 @@ async function getAllTemplates() {
 }
 
 async function updateTemplate(id) {
-    const data = await app.db.collection("templates").findOne({ id: id });
+    const data = await app.db.collection("templates").findOne({ _id: id });
     if (!data) return;
-    await global.redis.hmset(id, JSON.stringify(data));
+    await global.redis.hmset(prefix, id, JSON.stringify(data));
 }
 
 async function uploadTemplates() {

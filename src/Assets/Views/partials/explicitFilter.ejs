@@ -1,0 +1,7 @@
+<% if (template.explicitContent === 0) { %>
+    <p class="twemojiParse"><strong><%= __("Explicit Content Filter:") %></strong> ❌ <%= __("Disabled") %></p>
+<% } else if (template.explicitContent === 1) { %>
+    <p class="twemojiParse"><strong><%= __("Explicit Content Filter:") %></strong> 🔐 <%= __("Members without Roles") %></p>
+<% } else if (template.explicitContent === 2) { %>
+    <p class="twemojiParse"><strong><%= __("Explicit Content Filter:") %></strong> 🔒 <%= __("All Members") %></p>
+<% } %>

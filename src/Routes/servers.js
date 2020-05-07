@@ -33,7 +33,6 @@ const discord = require("../Util/Services/discord.js");
 
 const serverCache = require("../Util/Services/serverCaching.js");
 const userCache = require("../Util/Services/userCaching.js");
-const serverUpdate = require("../Util/Services/serverUpdate.js");
 
 router.get("/submit", variables, permission.auth, (req, res, next) => {
     res.render("templates/servers/submit", { 
@@ -59,24 +58,6 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                 type: "Error",
                 req 
             }); 
-
-            if (!req.body.invite) {
-                errors.push(res.__("You didn't provide a valid invite."));
-            } else {
-                if (typeof req.body.invite !== "string") {
-                    error = true;
-                    errors.push(res.__("You provided an invalid invite."));
-                } else if (req.body.invite.length > 2000) {
-                    error = true;
-                    errors.push(res.__("The invite link you provided is too long."));
-                } else if (/^https?:\/\//.test(req.body.invite)) {
-                    error = true;
-                    errors.push(res.__("The invite code cannot be a URL."));
-                } else if (req.body.invite.includes("discord.gg")) {
-                    error = true;
-                    errors.push(res.__("The invite code cannot contain discord.gg."));
-                }
-            }
         
             if (!req.body.longDescription) {
                 error = true;
@@ -142,7 +123,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
             reason: "None specified.",
             details: {
                 new: {
-                    id: fetchRes.jsonBody.guild.id,
+                    _id: fetchRes.jsonBody.guild.id,
                     inviteCode: req.body.invite,
                     name: fetchRes.jsonBody.guild.name,
                     shortDesc: req.body.shortDescription,
@@ -357,7 +338,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         fetchRes.jsonBody = await fetchRes.json();
         console.log(fetchRes.jsonBody) // this does return shit
 
-        if (fetchRes.jsonBody.guild.id !== server.id) {
+        if (fetchRes.jsonBody.guild.id !== server._id) {
             error = true;
             errors.push(res.__("The invite code used must be from the same server as the one used during submission!"))
         }
@@ -373,7 +354,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
             }); 
         }
         
-        await req.app.db.collection("servers").updateOne({ id: req.params.id }, 
+        await req.app.db.collection("servers").updateOne({ _id: req.params.id }, 
             { $set: {
                 name: fetchRes.jsonBody.guild.name,
                 shortDesc: req.body.shortDescription,
@@ -436,7 +417,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
             }
         });
         
-        await serverUpdate(req.params.id);
+        await serverCache.updateServer(req.params.id);
 
         res.redirect(`/servers/${req.params.id}`);
     }).catch(_ => {
@@ -473,9 +454,9 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
         req 
     }); 
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** deleted server **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**`);
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** deleted server **${functions.escapeFormatting(server.name)} \`(${server._id})\`**`);
 
-    req.app.db.collection("servers").deleteOne({ id: req.params.id });
+    req.app.db.collection("servers").deleteOne({ _id: req.params.id });
 
     req.app.db.collection("audit").insertOne({
         type: "DELETE_SERVER",

@@ -60,5 +60,5 @@ async function uploadStatuses() {
 bot.connect();
 
 module.exports = {
-    bot, getStatus
+    bot, getStatus, uploadStatuses
 };

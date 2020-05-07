@@ -20,7 +20,7 @@
                 "@type": "ListItem",
                 "position": 2,
                 "name": "<%= userProfile.fullUsername %>",
-                "item": "https://discordextremelist.xyz/users/<%= userProfile.id %>"
+                "item": "https://discordextremelist.xyz/users/<%= userProfile._id %>"
             }
         ]
     }
@@ -95,9 +95,9 @@
                     </h1>
                     <h2 class="subtitle"><% if (userProfileIsBanned === false) { %><%= userProfile.profile.bio || __("I am a mysterious person.") %><% } else { %><%= __("This user did something bad and they were banned!!") %><% } %></h2>
                     <% if (userProfileIsBanned === false || user && user.db.rank.mod === true) { %>
-                        <% if (user && user.db.rank.mod === true || user && userProfile.id === user.id) { %>
+                        <% if (user && user.db.rank.mod === true || user && userProfile._id === user._id) { %>
                             <div class="buttons">
-                                <% if (userProfile.id === user.id || user.db.rank.assistant === true) { %>
+                                <% if (userProfile._id === user._id || user.db.rank.assistant === true) { %>
                                     <a href="/users/profile/@me/edit" class="button is-dark">
                                         <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
                                         <span><%= __("Edit") %></span>
@@ -119,11 +119,11 @@
                                         <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                           <div class="dropdown-content">
                                             <div class="dropdown-item">
-                                                <p class="has-text-danger">If you accidentally perform an action that is "abusive" or "inappropriate" please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.</p>
+                                                <p class="has-text-danger"><%= __("If you accidentally perform an action that is abusive or inappropriate please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
                                             <% if (user.db.rank.assistant === true) { %>
-                                                <a class="dropdown-item" href="/users/<%= userProfile.id %>/rank">
+                                                <a class="dropdown-item" href="/users/<%= userProfile._id %>/rank">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-crown"></i></span>
                                                     <span><%= __("Modify Rank") %></span>
                                                 </a>
@@ -225,7 +225,7 @@
                         </div>
                     <% } %>
             <% } %>
-            <% if (user && user.id === userProfile.id) { %>
+            <% if (user && user._id === userProfile._id) { %>
                 <% if (archivedBotsData.length > 0) { %>
                     <br />
                     <h2 class="is-size-4"><%= __("Archived Bots") %></h2>

@@ -88,7 +88,7 @@
                     <div class="select is-rounded">
                         <select name="library" required>
                             <option value="" disabled selected><%= __("Select") %></option>
-                            <%- libraries.map(lib =>`<option value="${lib.id}">${lib.name}</option>`) %>
+                            <%- libraries.map(lib =>`<option value="${lib._id}">${lib.name}</option>`) %>
                         </select>
                     </div>
                     <div class="icon is-small is-left">

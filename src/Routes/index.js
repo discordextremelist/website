@@ -28,6 +28,7 @@ const variables = require("../Util/Function/variables.js");
 const featuring = require("../Util/Services/featuring.js");
 const botCache = require("../Util/Services/botCaching.js");
 const serverCache = require("../Util/Services/serverCaching.js");
+const templateCache = require("../Util/Services/templateCaching.js");
 const discord = require("../Util/Services/discord.js");
 
 const nickSorter = (a, b) => (a.nick || a.user.username).localeCompare((b.nick || b.user.username));
@@ -112,12 +113,31 @@ router.get("/servers", variables, async (req, res) => {
     })
 });
 
+router.get("/templates", variables, async (req, res) => {
+    const templates = await templateCache.getAllTemplates();
+    const templateChunk = chunk(templates, 9);
+
+    res.render("templates/serverTemplates/index", {
+        title: res.__("Templates"),
+        subtitle: res.__("Our full list of templates"),
+        req,
+        templatesData: templates,
+        templateChunk,
+        page: (req.query.page) ? parseInt(req.query.page) : 1,
+        pages: Math.ceil(templates.length / 9)
+    })
+});
+
 router.get("/terms", variables, (req, res) => {
     res.render("templates/legal/terms", { title: res.__("Terms of Use"), subtitle: res.__("Our website's Terms of Use."), req });
 });
 
 router.get("/privacy", variables, (req, res) => {
     res.render("templates/legal/privacy", { title: res.__("Privacy Policy"), subtitle: res.__("Our website's Privacy Policy."), req });
+});
+
+router.get("/cookies", variables, (req, res) => {
+    res.render("templates/legal/cookies", { title: res.__("Cookie Policy"), subtitle: res.__("Our website's Cookie Policy."), req });
 });
 
 router.get("/guidelines", variables, (req, res) => {

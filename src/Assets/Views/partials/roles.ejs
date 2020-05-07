@@ -1,0 +1,11 @@
+<%
+    colour = role.color.toString(16);
+    if (role.color === 0) colour = "ffffff";
+    if (colour.length === 4) colour = "00" + colour;
+%>
+<p>
+    <span class="icon">
+        <i class="fas fa-circle is-size-7" style="color: #<%= colour; %>;" aria-hidden="true"></i>
+    </span>
+    <span><%= role.name %></span>
+</p>

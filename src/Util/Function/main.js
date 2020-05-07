@@ -23,6 +23,31 @@ const escapeFormatting = (text) => {
     return escaped;
 }
 
+function parseRegion(region) {
+    let parsedRegion = `🏴 ${region}`;
+
+    if (region === "us-west") parsedRegion = "🇺🇸 US West";
+    if (region === "us-east") parsedRegion = "🇺🇸 US East";
+    if (region === "us-central") parsedRegion = "🇺🇸 US Central";
+    if (region === "us-south") parsedRegion = "🇺🇸 US South";
+    if (region === "singapore") parsedRegion = "🇸🇬 Singapore";
+    if (region === "southafrica") parsedRegion = "🇿🇦 South Africa";
+    if (region === "sydney") parsedRegion = "🇦🇺 Sydney, AUS";
+    if (region === "europe") parsedRegion = "🇪🇺 Europe";
+    if (region === "hongkong") parsedRegion = "🇭🇰 Hong Kong";
+    if (region === "russia") parsedRegion = "🇷🇺 Russia";
+    if (region === "japan") parsedRegion = "🇯🇵 Japan";
+    if (region === "india") parsedRegion = "🇮🇳 India";
+    if (region === "dubai") parsedRegion = "🇦🇪 Dubai, UAE";
+    if (region === "amsterdam") parsedRegion = "🇳🇱 Amsterdam, NL";
+    if (region === "london") parsedRegion = "🏴󠁧󠁢󠁥󠁮󠁧󠁿 London, EN";
+    if (region === "frankfurt") parsedRegion = "🇩🇪 Frankfurt, DE";
+    if (region === "eu-central") parsedRegion = "🇪🇺 Central Europe";
+    if (region === "eu-west") parsedRegion = "🇪🇺 Western Europe";
+
+    return parsedRegion;
+}
+
 module.exports = {
-    escapeFormatting
+    escapeFormatting, parseRegion
 }

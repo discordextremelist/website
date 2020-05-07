@@ -17,11 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const ioRedis = require("ioredis");
-
 const settings = require("../../../settings.json");
 const discord = require("./discord.js");
-const redisBans = new ioRedis(settings.db.redis.bans);
 
 async function check(user) {
     const ban = await global.redis.hget("bans", user);

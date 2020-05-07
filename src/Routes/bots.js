@@ -190,7 +190,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
             reason: "None specified.",
             details: {
                 new: {
-                    id: req.body.id,
+                    _id: req.body.id,
                     name: fetchRes.jsonBody.username,
                     prefix: req.body.prefix,
                     library: library,
@@ -595,7 +595,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         await botCache.updateBot(req.params.id);
     }).catch(_ => { return res.status(400).render("status", { title: res.__("Error"), subtitle: res.__("An error occurred when querying the Discord API."), status: 400, type: "Error", req }) });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** edited bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** edited bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
     res.redirect(`/bots/${req.params.id}`);
 });
 
@@ -635,7 +635,7 @@ router.get("/:id", variables, async (req, res, next) => {
         botOwner = await req.app.db.collection("users").findOne({ _id: bot.owner.id });
     }
     
-    botStatus = await discord.getStatus(bot.id);
+    botStatus = await discord.getStatus(bot._id);
 
     const dirty = entities.decode(md.render(bot.longDesc)); 
     let clean;
@@ -710,7 +710,7 @@ router.get("/:id/upvote", variables, permission.auth, async (req, res, next) => 
         upVotes.push(req.user.id);
     }
 
-    await req.app.db.collection("bots").updateOne({ id: bot.id }, 
+    await req.app.db.collection("bots").updateOne({ id: bot._id }, 
         { $set: {
             votes: {
                 positive: upVotes,
@@ -719,7 +719,7 @@ router.get("/:id/upvote", variables, permission.auth, async (req, res, next) => 
         }
     });
     
-    await botCache.updateBot(bot.id);
+    await botCache.updateBot(bot._id);
 
     req.app.db.collection("audit").insertOne({
         type: "UPVOTE_BOT",
@@ -743,7 +743,7 @@ router.get("/:id/upvote", variables, permission.auth, async (req, res, next) => 
         }
     });
 
-    res.redirect(`/bots/${bot.id}`);
+    res.redirect(`/bots/${bot._id}`);
 });
 
 router.get("/:id/downvote", variables, permission.auth, async (req, res, next) => {
@@ -786,7 +786,7 @@ router.get("/:id/downvote", variables, permission.auth, async (req, res, next) =
         downVotes.push(req.user.id);
     }
 
-    await req.app.db.collection("bots").updateOne({ id: bot.id }, 
+    await req.app.db.collection("bots").updateOne({ id: bot._id }, 
         { $set: {
             votes: {
                 positive: upVotes,
@@ -795,7 +795,7 @@ router.get("/:id/downvote", variables, permission.auth, async (req, res, next) =
         }
     });
     
-    await botCache.updateBot(bot.id);
+    await botCache.updateBot(bot._id);
 
     req.app.db.collection("audit").insertOne({
         type: "DOWNVOTE_BOT",
@@ -819,7 +819,7 @@ router.get("/:id/downvote", variables, permission.auth, async (req, res, next) =
         }
     });
 
-    res.redirect(`/bots/${bot.id}`);
+    res.redirect(`/bots/${bot._id}`);
 });
 
 router.get("/:id/delete", variables, permission.auth, async (req, res, next) => {
@@ -845,7 +845,7 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
         req: req
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** deleted bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**`);
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** deleted bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**`);
 
     req.app.db.collection("bots").deleteOne({ id: req.params.id });
 
@@ -1081,7 +1081,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
         await botCache.updateBot(req.params.id);
     }).catch(_ => { return res.status(400).render("status", { title: res.__("Error"), subtitle: res.__("An error occurred when querying the Discord API."), status: 400, type: "Error", req }) });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.resubmitBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** resubmitted bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.resubmitBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** resubmitted bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
     res.redirect(`/bots/${req.params.id}`);
 });
 
@@ -1110,10 +1110,10 @@ router.get("/:id/approve", variables, permission.auth, permission.mod, async (re
         }
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.check} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** approved bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**\n<${settings.website.url}/bots/${bot.id}>`).catch(e => { console.error(e) } );
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.check} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** approved bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${bot._id}>`).catch(e => { console.error(e) } );
     
     const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.check} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\` has been approved!`).catch(e => { console.error(e) });
+    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.check} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\` has been approved!`).catch(e => { console.error(e) });
     
     const mainGuild = await discord.bot.guilds.get(settings.guild.main);
     const staffGuild = await discord.bot.guilds.get(settings.guild.staff);
@@ -1123,16 +1123,16 @@ router.get("/:id/approve", variables, permission.auth, permission.mod, async (re
             discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${bot.owner.id}> \`${bot.owner.id}\` the role **Bot Developer** upon one of their bots being approved.`);
         });
 
-    mainGuild.members.get(bot.id).addRole(settings.roles.bot, "Bot was approved on the website.")
+    mainGuild.members.get(bot._id).addRole(settings.roles.bot, "Bot was approved on the website.")
         .catch(e => {
             console.error(e);
-            discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${bot.id}> \`${bot.id}\` the role **Bot** upon being approved on the website.`);
+            discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${bot._id}> \`${bot._id}\` the role **Bot** upon being approved on the website.`);
         });
 
-    staffGuild.members.get(bot.id).kick("Bot was approved on the website.")
+    staffGuild.members.get(bot._id).kick("Bot was approved on the website.")
         .catch(e => {
             console.error(e);
-            discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed kicking <@${bot.id}> \`${bot.id}\` from the Staff Server on approval.`);
+            discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed kicking <@${bot._id}> \`${bot._id}\` from the Staff Server on approval.`);
         });
 
     req.app.db.collection("audit").insertOne({
@@ -1172,7 +1172,7 @@ router.get("/:id/verify", variables, permission.auth, permission.assistant, asyn
             discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${bot.owner.id}> \`${bot.owner.id}\` the role **Verified Developer** upon one of their bots being verified.`);
         });
 
-        mainGuild.members.get(bot.id).addRole(settings.roles.verifiedBot, "Bot was verified on the website.")
+        mainGuild.members.get(bot._id).addRole(settings.roles.verifiedBot, "Bot was verified on the website.")
         .catch(e => {
             console.error(e);
             discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${member.id}> \`${member.id}\` the role **Verified Bot** upon being verified on the website.`);
@@ -1203,10 +1203,10 @@ router.get("/:id/verify", variables, permission.auth, permission.assistant, asyn
         reason: "None specified."
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.verified} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** verified bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**\n<${settings.website.url}/bots/${req.params.id}>`).catch(e => { console.error(e) } );
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.verified} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** verified bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${req.params.id}>`).catch(e => { console.error(e) } );
     
     const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.verified} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\` was verified!`).catch(e => { console.error(e) });
+    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.verified} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\` was verified!`).catch(e => { console.error(e) });
 
     res.redirect(`/bots/${req.params.id}`);
 });
@@ -1246,10 +1246,10 @@ router.get("/:id/unverify", variables, permission.auth, permission.assistant, as
         reason: "None specified."
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.unverifiedBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** unverified bot **${functions.escapeFormatting(bot.name)} \`(${bot.id})\`**\n<${settings.website.url}/bots/${req.params.id}>`).catch(e => { console.error(e) } );
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.unverifiedBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** unverified bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${req.params.id}>`).catch(e => { console.error(e) } );
 
     const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.unverifiedBot} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\` has been unverified!?\n\n**For further information please contact a Website Administrator or Assistant.**`).catch(e => { console.error(e) });
+    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.unverifiedBot} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\` has been unverified!?\n\n**For further information please contact a Website Administrator or Assistant.**`).catch(e => { console.error(e) });
 
     res.redirect(`/bots/${req.params.id}`);
 });
@@ -1273,7 +1273,7 @@ router.get("/:id/decline", variables, permission.auth, permission.mod, async (re
         type: "Error"
     });
 
-    let redirect = `/bots/${bot.id}`;
+    let redirect = `/bots/${bot._id}`;
 
     if (req.query.from && req.query.from === "queue") redirect = "/staff/queue";
 
@@ -1316,7 +1316,7 @@ router.post("/:id/decline", variables, permission.auth, permission.mod, async (r
 
     await botCache.updateBot(req.params.id);
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.cross} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\`\n**Reason:** \`${req.body.reason}\``);
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.cross} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\`\n**Reason:** \`${req.body.reason}\``);
 
     const guild = await discord.bot.guilds.get(settings.guild.staff);
     const member = guild.members.get(req.body.id);
@@ -1326,7 +1326,7 @@ router.post("/:id/decline", variables, permission.auth, permission.mod, async (r
     }
 
     const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.cross} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\` has been declined.\n**Reason:** \`${req.body.reason}\``).catch(e => { console.error(e) });
+    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.cross} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\` has been declined.\n**Reason:** \`${req.body.reason}\``).catch(e => { console.error(e) });
 
     res.redirect("/staff/queue");
 });
@@ -1393,7 +1393,7 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
     });
     await botCache.updateBot(req.params.id);
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\`\n**Reason:** \`${req.body.reason}\``);
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\`\n**Reason:** \`${req.body.reason}\``);
 
     const guild = await discord.bot.guilds.get(settings.guild.main);
     const member = guild.members.get(req.body.id);
@@ -1403,7 +1403,7 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
     }
     
     const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.botDeleted} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot.id})\` has been removed!\n**Reason:** \`${req.body.reason}\``).catch(e => { console.error(e) });
+    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.botDeleted} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\` has been removed!\n**Reason:** \`${req.body.reason}\``).catch(e => { console.error(e) });
 
 
     res.redirect("/staff/queue");

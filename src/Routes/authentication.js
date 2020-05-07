@@ -53,11 +53,11 @@ router.get("/authentication_info", (req, res, next) => {
 router.get("/login", passport.authenticate("discord"));
 
 router.get("/login/callback", passport.authenticate("discord", { failureRedirect: "/login" }), async (req, res, next) => {
-    const user = await req.app.db.collection("users").findOne({ id: req.user.id });
+    const user = await req.app.db.collection("users").findOne({ _id: req.user.id });
 
     if (!user) {
         await req.app.db.collection("users").insertOne({
-            id: req.user.id,
+            _id: req.user.id,
             token: req.user.accessToken,
             name: req.user.username,
             discrim: req.user.discriminator,
@@ -126,7 +126,7 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
         })
     } else {
         if (user.rank.mod === true) {
-            await req.app.db.collection("users").updateOne({ id: req.user.id }, 
+            await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
                 { $set: {
                     token: req.user.accessToken,
                     name: req.user.username,
@@ -141,7 +141,7 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
                 }
             });
         } else {
-            await req.app.db.collection("users").updateOne({ id: req.user.id }, 
+            await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
                 { $set: {
                     token: req.user.accessToken,
                     name: req.user.username,

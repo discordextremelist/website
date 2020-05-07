@@ -40,7 +40,7 @@ router.post("/", vars, async (req, res) => {
     let isStaff = false;
     if (!!only && only.includes("users")) {
         if (req.user && req.user.id) {
-            const user = await req.app.db.collection("users").findOne({ id: req.user.id });
+            const user = await req.app.db.collection("users").findOne({ _id: req.user.id });
             if (!user.rank.mod) return res.status(403).json({ error: true, status: 403, message: "Forbidden" });
             isStaff = true;
         } else {

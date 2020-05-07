@@ -63,11 +63,11 @@ const variables = async(req, res, next) => {
     }
 
     if (req.user) {
-        const user = await req.app.db.collection("users").findOne({ id: req.user.id });
+        const user = await req.app.db.collection("users").findOne({ _id: req.user.id });
         req.user.db = user;
         
         if (req.user.db.rank.mod === true && req.url !== "/profile/game/snakes") {
-            req.app.db.collection("users").updateOne({ id: req.user.id }, 
+            req.app.db.collection("users").updateOne({ _id: req.user.id }, 
                 { $set: {
                     "staffTracking.lastAccessed.time": Date.now(),
                     "staffTracking.lastAccessed.page": req.originalUrl

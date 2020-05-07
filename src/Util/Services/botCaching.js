@@ -31,7 +31,7 @@ async function getAllBots() {
 }
 
 async function updateBot(id) {
-    const data = await app.db.collection("bots").findOne({ id: id });
+    const data = await app.db.collection("bots").findOne({ _id: id });
     if (!data) return;
     await global.redis.hmset(prefix, id, JSON.stringify(data));
 }

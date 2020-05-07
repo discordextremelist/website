@@ -24,9 +24,9 @@ const fetch = require("node-fetch");
 async function update(id, guildObject, queryDapi) {
     if (!queryDapi) queryDapi = true;
 
-    const oldServer = await app.db.collection("servers").findOne({ id: id });
+    const oldServer = await app.db.collection("servers").findOne({ _id: id });
     if (!oldServer) return;
-    const owner = await app.db.collection("users").findOne({ id: oldServer.owner.id });
+    const owner = await app.db.collection("users").findOne({ _id: oldServer.owner.id });
 
     function getGuildFromArray(guilds) {
         return guilds.id === oldServer.id;

@@ -36,7 +36,7 @@ router.get("/:id", variables, async (req, res, next) => {
 
     let dbUser = await userCache.getUser(req.params.id);
     if (!dbUser) {
-        dbUser = await req.app.db.collection("users").findOne({ id: req.params.id });
+        dbUser = await req.app.db.collection("users").findOne({ _id: req.params.id });
         if (!dbUser) return res.status(404).render("status", {
             title: res.__("Error"),
             status: 404,
@@ -100,7 +100,7 @@ router.get("/:id", variables, async (req, res, next) => {
 });
 
 router.get("/:id/rank", variables, permission.auth, permission.assistant, async (req, res, next) => {
-    const targetUser = await req.app.db.collection("users").findOne({ id: req.params.id });
+    const targetUser = await req.app.db.collection("users").findOne({ _id: req.params.id });
 
     if (!targetUser) return res.status(404).render("status", {
         title: res.__("Error"),
@@ -122,7 +122,7 @@ router.get("/:id/rank", variables, permission.auth, permission.assistant, async 
 });
 
 router.post("/:id/rank", variables, permission.auth, permission.assistant, async (req, res, next) => {
-    const targetUser = await req.app.db.collection("users").findOne({ id: req.params.id });
+    const targetUser = await req.app.db.collection("users").findOne({ _id: req.params.id });
 
     if (!targetUser) return res.status(404).render("status", {
         title: res.__("Error"),
@@ -174,7 +174,7 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         }
     }
 
-    await req.app.db.collection("users").updateOne({ id: targetUser.id }, 
+    await req.app.db.collection("users").updateOne({ _id: targetUser.id }, 
         { $set: {
             rank: {
                 admin: admin,
@@ -234,7 +234,7 @@ router.get("/profile/:id/edit", variables, permission.auth, async (req, res, nex
         req.params.id = req.user.id;
     }
 
-    const userProfile = await req.app.db.collection("users").findOne({ id: req.params.id });
+    const userProfile = await req.app.db.collection("users").findOne({ _id: req.params.id });
     if (!userProfile) return res.status(404).render("status", {
         title: res.__("Error"),
         status: 404,
@@ -259,7 +259,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
         req.params.id = req.user.id;
     }
 
-    const userProfile = await req.app.db.collection("users").findOne({ id: req.params.id });
+    const userProfile = await req.app.db.collection("users").findOne({ _id: req.params.id });
     if (!userProfile) return res.status(404).render("status", {
         title: res.__("Error"),
         status: 404,
@@ -282,7 +282,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
         customCss = "";
     }
 
-    await req.app.db.collection("users").updateOne({ id: req.user.id }, 
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
         { $set: {
             profile: {
                 bio: req.body.bio,
@@ -346,7 +346,7 @@ router.get("/game/snake", variables, permission.auth, async (req, res, next) => 
 })
 
 router.get("/profile/game/snakes", variables, permission.auth, async (req, res, next) => {
-    const user = await req.app.db.collection("users").findOne({ id: req.user.id });
+    const user = await req.app.db.collection("users").findOne({ _id: req.user.id });
 
     res.status(200).json({ error: false, status: 200, result: user.game.snakes.maxScore });
 });
@@ -358,10 +358,10 @@ router.post("/profile/game/snakes", variables, permission.auth, async (req, res,
         message: "Posted score is lower or equal to the user's current high score - no changes were made"
     });
 
-    const user = await req.app.db.collection("users").findOne({ id: req.user.id });
+    const user = await req.app.db.collection("users").findOne({ _id: req.user.id });
     const score = user.game.snakes.maxScore + 1;
     
-    await req.app.db.collection("users").updateOne({ id: req.user.id }, 
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
         { $set: {
             game: {
                 snakes: {
@@ -437,7 +437,7 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
 
     const foreground = getForeground(req.body.iconColour);
 
-    await req.app.db.collection("users").updateOne({ id: req.user.id }, 
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
         { $set: {
             preferences: {
                 customGlobalCss: req.body.customCss,
@@ -483,7 +483,7 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
 });
 
 router.get("/account/preferences/reset", variables, permission.auth, async (req, res, next) => {
-    await req.app.db.collection("users").updateOne({ id: req.user.id }, 
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
         { $set: {
             preferences: {
                 customGlobalCss: "",

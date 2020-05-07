@@ -51,7 +51,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         fetchRes.jsonBody = await fetchRes.json();
         
         if (fetchRes.jsonBody.code !== 10006) {
-            const serverExists = await req.app.db.collection("servers").findOne({ id: fetchRes.jsonBody.guild.id });
+            const serverExists = await req.app.db.collection("servers").findOne({ _id: fetchRes.jsonBody.guild.id });
             if (serverExists) return res.status(409).render("status", { 
                 title: res.__("Error"), 
                 subtitle: res.__("This server has already been added to the list."),
@@ -113,7 +113,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         }
         
         await req.app.db.collection("servers").insertOne({
-            id: fetchRes.jsonBody.guild.id,
+            _id: fetchRes.jsonBody.guild.id,
             inviteCode: req.body.invite,
             name: fetchRes.jsonBody.guild.name,
             shortDesc: req.body.shortDescription,
@@ -227,7 +227,7 @@ router.get("/:id", variables, async (req, res, next) => {
 
     let server = await serverCache.getServer(req.params.id);
     if (!server) {
-        server = await req.app.db.collection("servers").findOne({ id: req.params.id });
+        server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
         if (!server) return res.status(404).render("status", {
             title: res.__("Error"),
             status: 404,
@@ -240,7 +240,7 @@ router.get("/:id", variables, async (req, res, next) => {
 
     let serverOwner = await userCache.getUser(server.owner.id);
     if (!serverOwner) {
-        serverOwner = await req.app.db.collection("users").findOne({ id: server.owner.id });
+        serverOwner = await req.app.db.collection("users").findOne({ _id: server.owner.id });
     }
 
     const dirty = entities.decode(md.render(server.longDesc)); 
@@ -267,7 +267,7 @@ router.get("/:id", variables, async (req, res, next) => {
 });
 
 router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
-    const server = await req.app.db.collection("servers").findOne({ id: req.params.id });
+    const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
     
     if (!server) return res.status(404).render("status", {
         title: res.__("Error"),
@@ -297,7 +297,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     let error = false;
     let errors = [];
 
-    const server = await req.app.db.collection("servers").findOne({ id: req.params.id });
+    const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
 
     if (!server) return res.status(404).render("status", {
         title: res.__("Error"),
@@ -455,7 +455,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 });
 
 router.get("/:id/delete", variables, permission.auth, async (req, res, next) => {
-    const server = await req.app.db.collection("servers").findOne({ id: req.params.id });
+    const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
 
     if (!server) return res.status(404).render("status", {
         title: res.__("Error"),

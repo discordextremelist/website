@@ -34,7 +34,7 @@ async function getAllServers() {
 }
 
 async function updateServer(id) {
-    const data = await app.db.collection("servers").findOne({ id: id });
+    const data = await app.db.collection("servers").findOne({ _id: id });
     if (!data) return;
     await global.redis.hmset(prefix, id, JSON.stringify(data));
 }

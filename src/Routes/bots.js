@@ -50,7 +50,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
     let error = false;
     let errors = [];
 
-    const botExists = await req.app.db.collection("bots").findOne({ id: req.body.id });
+    const botExists = await req.app.db.collection("bots").findOne({ _id: req.body.id });
     if (botExists) return res.status(409).render("status", { 
         title: res.__("Error"), 
         subtitle: res.__("This bot has already been added to the list."),
@@ -136,7 +136,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         }
         
         await req.app.db.collection("bots").insertOne({
-            id: req.body.id,
+            _id: req.body.id,
             name: fetchRes.jsonBody.username,
             prefix: req.body.prefix,
             library: library,
@@ -314,7 +314,7 @@ router.post("/preview_post", async (req, res, next) => {
 });
 
 router.post("/:id/setvanity", variables, permission.auth, async (req, res, next) => {
-    const botExists = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const botExists = await req.app.db.collection("bots").findOne({ _id: req.params.id });
     if (!botExists) return res.status(404).render("status", {
         title: res.__("Error"),
         subtitle: res.__("This bot does not exist."),
@@ -385,7 +385,7 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
 })
 
 router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
-    const botExists = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const botExists = await req.app.db.collection("bots").findOne({ _id: req.params.id });
     if (!botExists) return res.status(404).render("status", { 
         title: res.__("Error"), 
         subtitle: res.__("This bot does not exist."),
@@ -420,7 +420,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     let error = false;
     let errors = [];
 
-    const botExists = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const botExists = await req.app.db.collection("bots").findOne({ _id: req.params.id });
     
     if (!botExists) return res.status(404).render("status", { 
         title: res.__("Error"), 
@@ -607,7 +607,7 @@ router.get("/:id", variables, async (req, res, next) => {
 
     let bot = await botCache.getBot(req.params.id);
     if (!bot) {
-        bot = await req.app.db.collection("servers").findOne({ id: req.params.id });
+        bot = await req.app.db.collection("servers").findOne({ _id: req.params.id });
         if (!bot) {
             bot = await req.app.db.collection("bots").findOne({ vanityUrl: req.params.id });
             if (!bot) return res.status(404).render("status", {
@@ -632,7 +632,7 @@ router.get("/:id", variables, async (req, res, next) => {
 
     let botOwner = await userCache.getUser(bot.owner.id);
     if (!botOwner) {
-        botOwner = await req.app.db.collection("users").findOne({ id: bot.owner.id });
+        botOwner = await req.app.db.collection("users").findOne({ _id: bot.owner.id });
     }
     
     botStatus = await discord.getStatus(bot.id);
@@ -671,7 +671,7 @@ router.get("/:id", variables, async (req, res, next) => {
 });
 
 router.get("/:id/upvote", variables, permission.auth, async (req, res, next) => {
-    let bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    let bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) {
         bot = await req.app.db.collection("bots").findOne({ vanityUrl: req.params.id });
@@ -747,7 +747,7 @@ router.get("/:id/upvote", variables, permission.auth, async (req, res, next) => 
 });
 
 router.get("/:id/downvote", variables, permission.auth, async (req, res, next) => {
-    let bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    let bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) {
         bot = await req.app.db.collection("bots").findOne({ vanityUrl: req.params.id });
@@ -823,7 +823,7 @@ router.get("/:id/downvote", variables, permission.auth, async (req, res, next) =
 });
 
 router.get("/:id/delete", variables, permission.auth, async (req, res, next) => {
-    let bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    let bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) {
         bot = await req.app.db.collection("bots").findOne({ vanityUrl: req.params.id });
@@ -861,7 +861,7 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
 });
 
 router.get("/:id/resubmit", variables, permission.auth, async (req, res, next) => {
-    const botExists = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const botExists = await req.app.db.collection("bots").findOne({ _id: req.params.id });
     if (!botExists) return res.status(404).render("status", { 
         title: res.__("Error"), 
         subtitle: res.__("This bot does not exist."),
@@ -904,7 +904,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
     let error = false;
     let errors = [];
 
-    const botExists = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const botExists = await req.app.db.collection("bots").findOne({ _id: req.params.id });
     
     if (!botExists) return res.status(404).render("status", { 
         title: res.__("Error"), 
@@ -1086,7 +1086,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
 });
 
 router.get("/:id/approve", variables, permission.auth, permission.mod, async (req, res, next) => {
-    const bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
         title: res.__("Error"),
@@ -1147,7 +1147,7 @@ router.get("/:id/approve", variables, permission.auth, permission.mod, async (re
 });
 
 router.get("/:id/verify", variables, permission.auth, permission.assistant, async (req, res, next) => {
-    const bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
         title: res.__("Error"),
@@ -1184,14 +1184,14 @@ router.get("/:id/verify", variables, permission.auth, permission.assistant, asyn
         }
     });
 
-    await req.app.db.collection("users").updateOne({ id: bot.owner.id }, 
+    await req.app.db.collection("users").updateOne({ _id: bot.owner.id }, 
         { $set: {
             "status.verified": true
         }
     });
 
-    console.log(await req.app.db.collection("bots").findOne({ id: req.params.id }));
-    console.log(await req.app.db.collection("users").findOne({ id: bot.owner.id }));
+    console.log(await req.app.db.collection("bots").findOne({ _id: req.params.id }));
+    console.log(await req.app.db.collection("users").findOne({ _id: bot.owner.id }));
 
     await botCache.updateBot(req.params.id);
 
@@ -1212,7 +1212,7 @@ router.get("/:id/verify", variables, permission.auth, permission.assistant, asyn
 });
 
 router.get("/:id/unverify", variables, permission.auth, permission.assistant, async (req, res, next) => {
-    const bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
         title: res.__("Error"),
@@ -1255,7 +1255,7 @@ router.get("/:id/unverify", variables, permission.auth, permission.assistant, as
 });
 
 router.get("/:id/decline", variables, permission.auth, permission.mod, async (req, res, next) => {
-    const bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
         title: res.__("Error"),
@@ -1281,7 +1281,7 @@ router.get("/:id/decline", variables, permission.auth, permission.mod, async (re
 });
 
 router.post("/:id/decline", variables, permission.auth, permission.mod, async (req, res, next) => {
-    const bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
         title: res.__("Error"),
@@ -1332,7 +1332,7 @@ router.post("/:id/decline", variables, permission.auth, permission.mod, async (r
 });
 
 router.get("/:id/remove", variables, permission.auth, permission.mod, async (req, res, next) => {
-    const bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
         title: res.__("Error"),
@@ -1359,7 +1359,7 @@ router.get("/:id/remove", variables, permission.auth, permission.mod, async (req
 });
 
 router.post("/:id/remove", variables, permission.auth, permission.mod, async (req, res, next) => {
-    const bot = await req.app.db.collection("bots").findOne({ id: req.params.id });
+    const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
         title: res.__("Error"),

@@ -29,7 +29,7 @@ async function getUser(id) {
 }
 
 async function updateUser(id) {
-    const data = await app.db.collection("users").findOne({ id: id });
+    const data = await app.db.collection("users").findOne({ _id: id });
     if (!data) return;
     await global.redis.hmset(prefix, id, JSON.stringify(data));
 }

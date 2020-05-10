@@ -198,5 +198,17 @@ img.emoji {
     width: 1em;
     margin: 0 .05em 0 .1em;
     vertical-align: -0.1em;
- }
-  
+}
+
+.navbar-item {
+    &.has-dropdown {
+        .navbar-dropdown {
+            display: none;
+        }
+        &.is-active {
+            .navbar-dropdown {
+                display: block;
+            }
+        }
+    }
+}

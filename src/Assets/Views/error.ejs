@@ -1,8 +1,8 @@
 <style>body{background-color:black;color:white;}</style>
-<h1 style="color: red;"><%= __("A critical error has occurred.") %></h1>
+<h1 style="color: red;"><%= __("page.error.critical") %></h1>
 <h2><%= message %></h2>
 <h3><%= error.status %></h3>
 <pre><%= error.stack %></pre>
 <br />
-<button onclick="window.location = '/';">Home</button>
-<button onclick="history.back();">Go Back</button>
+<button onclick="window.location = '/';"><%= __("common.home") %></button>
+<button onclick="history.back();"><%= __("common.goback") %></button>

@@ -37,7 +37,11 @@ router.get("/", variables, permission.mod, async (req, res) => {
             botCount: bots.length,
             serverCount: servers.length,
             userCount: users.length,
-            unapprovedBots: bots.filter(b => !b.status.approved).length
+            unapprovedBots: bots.filter(b => !b.status.approved).length,
+            strikes: req.user.db.staffTracking.punishments.strikes.length,
+            warnings: req.user.db.staffTracking.punishments.warnings.length,
+            standing: req.user.db.staffTracking.details.standing,
+            away: req.user.db.staffTracking.details.away.status ? res.__("Yes") : res.__("No")
         }
     });
 });

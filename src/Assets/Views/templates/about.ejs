@@ -37,22 +37,22 @@
     </section>
     <div class="container">
         <div class="section">
-            <h3 class="is-size-3"><%= __("History") %></h3>
+            <h3 class="is-size-3"><%= __("page.about.history") %></h3>
             <p>
-                <%= __("Discord Extreme List was founded on the 17th of November in 2018, by Cairo and Brands, multiple eras, or well versions of DEL went past, a couple server deletions, and a couple shutdowns, but here we are today.. DEL is currently owned by Cairo, Ice and Advaith.") %>
+                <%= __("page.about.backstory") %>
             </p>
         </div>
         <div class="section">
-            <h3 class="is-size-3"><%= __("Staff") %></h3>
+            <h3 class="is-size-3"><%= __("page.about.staff") %></h3>
             <div class="columns is-multiline">
                 <%- staff.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("") %>
             </div>
             <br />
-            <h3 class="is-size-3"><%= __("Boosters") %></h3>
+            <h3 class="is-size-3"><%= __("page.about.boosters") %></h3>
             <div class="columns is-multiline">
                 <%- boosters.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("") %>
             </div>
-            <h3 class="is-size-3"><%= __("Contributors") %></h3>
+            <h3 class="is-size-3"><%= __("page.about.contributors") %></h3>
             <div class="columns is-multiline">
                 <%- contributors.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("") %>
             </div>

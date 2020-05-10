@@ -1,5 +1,5 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/listing.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link href="/css/listing.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script type="application/ld+json">
     {
@@ -53,52 +53,52 @@
                     <h2 class="subtitle"><%= template.shortDesc %></h2>
                     <% if (req.user) { %>
                         <div class="buttons <% if (mobile) { %>is-centered<% } %>">
-                            <% if (template.owner._id === req.user._id) { %>
+                            <% if (template.owner.id === req.user.id) { %>
                                 <a href="/templates/<%= template._id %>/edit" class="button is-dark">
                                     <span class="icon">
                                         <i aria-hidden="true" class="fas fa-pencil"></i>
                                     </span>
-                                    <span><%= __("Edit") %></span>
+                                    <span><%= __("common.edit") %></span>
                                 </a>
                                 <a href="" id="deleteModal" class="button is-dark">
                                     <span class="icon">
                                         <i aria-hidden="true" class="fas fa-trash"></i>
                                     </span>
-                                    <span><%= __("Delete") %></span>
+                                    <span><%= __("common.delete") %></span>
                                 </a>
                             <% } %>
-                        </div>
-                        <% if (user.db.rank.mod && template.owner._id !== req.user._id) { %>
-                            <div class="dropdown">
-                                <div class="dropdown-trigger">
-                                    <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
-                                    <span class="icon">
-                                        <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
-                                    </span>
-                                    <span><%= __("Staff Management") %></span>
-                                    <span class="icon is-small">
-                                        <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
-                                    </span>
-                                    </button>
-                                </div>
-                                <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
-                                    <div class="dropdown-content">
-                                        <div class="dropdown-item">
-                                            <p class="has-text-danger"><%= __("If you accidentally perform an action that is abusive or inappropriate please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.") %></p>
+                            <% if (user.db.rank.mod && template.owner.id !== req.user.id) { %>
+                                <div class="dropdown">
+                                    <div class="dropdown-trigger">
+                                        <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
+                                            <span class="icon">
+                                                <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
+                                            </span>
+                                            <span><%= __("Staff Management") %></span>
+                                            <span class="icon is-small">
+                                                <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
+                                        <div class="dropdown-content">
+                                            <div class="dropdown-item">
+                                                <p class="has-text-danger"><%= __("If you accidentally perform an action that is abusive or inappropriate please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.") %></p>
+                                            </div>
+                                            <hr class="dropdown-divider">
+                                            <a class="dropdown-item" href="/templates/<%= template._id %>/edit">
+                                                <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
+                                                <span><%= __("common.edit") %></span>
+                                            </a>
+                                            <a class="dropdown-item" href="/templates/<%= template._id %>/remove">
+                                                <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
+                                                <span><%= __("common.staff.remove") %></span>
+                                            </a>
                                         </div>
-                                        <hr class="dropdown-divider">
-                                        <a class="dropdown-item" href="/templates/<%= template._id %>/edit">
-                                            <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
-                                            <span><%= __("Edit") %></span>
-                                        </a>
-                                        <a class="dropdown-item" href="/templates/<%= template._id %>/remove">
-                                            <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
-                                            <span><%= __("Remove") %></span>
-                                        </a>
                                     </div>
                                 </div>
-                            </div>
-                        <% } %> 
+                            <% } %> 
+                        </div>
                     <% } %>
                     <div class="buttons <% if (mobile) { %>is-centered<% } %>">
                         <a target="_blank" href="<%= template.links.template %>" class="button is-link">
@@ -112,7 +112,7 @@
                         <div class="control">
                             <div class="tags has-addons">
                                 <span class="tag is-dark"><%= __("Listing Owner") %></span>
-                                <span class="tag is-link"><a class="has-text-white" href="/users/<%= template.owner._id %>"><%= templateOwner.fullUsername %></a></span>
+                                <span class="tag is-link"><a class="has-text-white" href="/users/<%= template.owner.id %>"><%= templateOwner.fullUsername %></a></span>
                             </div>
                         </div>
                         <div class="control">
@@ -163,28 +163,34 @@
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
                             <h4 class="is-size-4"><%= __("Channels") %></h4>
-                            <div id="channelList">
-                                <%- template.channels.map(channel => include("../../partials/channels.ejs", { channel })).join("") %>
+                            <div id="collapsibleBody1">
+                                <div id="channelList">
+                                    <%- template.channels.map(channel => include("../../partials/channels.ejs", { channel })).join("") %>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
                             <h4 class="is-size-4"><%= __("Roles") %></h4>
-                            <div id="channelList">
-                                <%- template.roles.reverse().map(role => include("../../partials/roles.ejs", { role })).join("") %>
+                            <div id="collapsibleBody2">
+                                <div id="channelList">
+                                    <%- template.roles.reverse().map(role => include("../../partials/roles.ejs", { role })).join("") %>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
                             <h4 class="is-size-4"><%= __("Other Information") %></h4>
-                            <div id="otherInfo">
-                                <p class="twemojiParse"><strong><%= __("Region:") %></strong> <%= functions.parseRegion(template.region) %></p>
-                                <p><strong><%= __("AFK Timeout:") %></strong> <%= Math.floor(template.afkTimeout / 60) %>m</p>
-                                <%- include("../../partials/verificationLevel.ejs") %>
-                                <%- include("../../partials/msgNotifications.ejs") %>
-                                <%- include("../../partials/explicitFilter.ejs") %>
+                            <div id="collapsibleBody3">
+                                <div id="otherInfo">
+                                    <p><strong><%= __("Region:") %></strong> <%= functions.parseRegion(template.region) %></p>
+                                    <p><strong><%= __("AFK Timeout:") %></strong> <%= Math.floor(template.afkTimeout / 60) %>m</p>
+                                    <%- include("../../partials/verificationLevel.ejs") %>
+                                    <%- include("../../partials/msgNotifications.ejs") %>
+                                    <%- include("../../partials/explicitFilter.ejs") %>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -208,19 +214,25 @@
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-check-circle"></i>
                     </span>
-                    <span><%= __("Delete") %></span>
+                    <span><%= __("common.delete") %></span>
                 </a>
                 <button class="button is-danger" id="close-modal">
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-times-circle"></i>
                     </span>
-                    <span><%= __("Cancel") %></span>
+                    <span><%= __("common.cancel") %></span>
                 </button>
             </div>
         </footer>
     </div>
     <script type="text/javascript">document.querySelector("a#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
 </div>
+<% if (mobile) { %>
+    <style>#collapsibleBody1, #collapsibleBody2, #collapsibleBody3 { display: none }</style>
+    <script>
+        
+    </script>
+<% } %>
 <script type="text/javascript">const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>
 <script type="text/javascript">$(".tabs").each(function(index){var $tabParent=$(this);var $tabs=$tabParent.find("li");var $contents=$tabParent.next(".tabs-content").find(".tab-content");$tabs.click(function(){var curIndex=$(this).index();$tabs.removeClass("is-active");$tabs.eq(curIndex).addClass("is-active");$contents.removeClass("is-active");$contents.eq(curIndex).addClass("is-active")})});</script>
 <%- include("../../partials/footer.ejs") %>

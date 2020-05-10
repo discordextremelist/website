@@ -1,5 +1,5 @@
 <% if (template.defaultMessageNotifications === 0) { %>
-    <p class="twemojiParse"><strong><%= __("Notification Level:") %></strong> 🔔 <%= __("All Messages") %></p>
+    <p><strong><%= __("partials.msgNotifications") %></strong>  <%= __("partials.msgNotifications.0") %></p>
 <% } else if (template.defaultMessageNotifications === 1) { %>
-    <p class="twemojiParse"><strong><%= __("Notification Level:") %></strong> 🔕 <%= __("Only Mentions") %></p>
+    <p><strong><%= __("partials.msgNotifications") %></strong>  <%= __("partials.msgNotifications.1") %></p>
 <% } %>

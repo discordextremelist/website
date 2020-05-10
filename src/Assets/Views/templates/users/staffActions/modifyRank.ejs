@@ -1,5 +1,5 @@
 <%- include("../../../partials/header.ejs") %>
-<link href="/css/form.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
 <%- include("../../../partials/nav.ejs") %>
 <section class="hero is-primary">
     <div class="hero-body">
@@ -34,13 +34,13 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Translator") %></label>
+                <label class="label has-text-blurple"><%= __("common.rank.translator") %></label>
                 <input id="translatorSwitch" type="checkbox" name="translator" class="switch is-rounded is-info" <% if (targetUser.rank.translator === true) { %>checked="checked"<% } %>>
                 <label for="translatorSwitch"></label>
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Tester") %></label>
+                <label class="label has-text-blurple"><%= __("common.rank.tester") %></label>
                 <input id="testerSwitch" type="checkbox" name="tester" class="switch is-rounded is-link" <% if (targetUser.rank.tester === true) { %>checked="checked"<% } %>>
                 <label for="testerSwitch"></label>
             </div>
@@ -61,11 +61,11 @@
                 <div class="buttons">
                     <button class="button is-success">
                         <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
-                        <span><%= __("Set") %></span>
+                        <span><%= __("common.set") %></span>
                     </button>
                     <a class="button is-danger" href="/users/<%= targetUser._id %>">
                         <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>
-                        <span><%= __("Cancel") %></span>
+                        <span><%= __("common.cancel") %></span>
                     </a>
                 </div>
             </div>

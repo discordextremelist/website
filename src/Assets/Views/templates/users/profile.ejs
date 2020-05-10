@@ -66,27 +66,27 @@
                                     </span>
                                 <% } %>
                                 <% if (userProfile.rank.tester === true) { %>
-                                    <span style="vertical-align: middle;" title="<%= __("Tester") %>" class="icon is-medium is-size-3 iconalign">
+                                    <span style="vertical-align: middle;" title="<%= __("common.rank.tester") %>" class="icon is-medium is-size-3 iconalign">
                                         <i aria-hidden="true" class="fad fa-vial has-text-link fa-1x"></i>
                                     </span>
                                 <% } %>
                                 <% if (userProfile.rank.translator === true) { %>
-                                    <span style="vertical-align: middle;" title="<%= __("Translator") %>" class="icon is-medium is-size-3 iconalign">
+                                    <span style="vertical-align: middle;" title="<%= __("common.rank.translator") %>" class="icon is-medium is-size-3 iconalign">
                                         <i aria-hidden="true" class="fad fa-globe has-text-info fa-1x"></i>
                                     </span>
                                 <% } %>
                                 <% if (userProfile.rank.mod === true) { %>
-                                    <span style="vertical-align: middle;" title="<%= __("Website Moderator") %>" class="icon is-medium is-size-3 iconalign">
+                                    <span style="vertical-align: middle;" title="<%= __("common.rank.mod") %>" class="icon is-medium is-size-3 iconalign">
                                         <i aria-hidden="true" class="fad fa-hammer has-text-success fa-1x"></i>
                                     </span>
                                 <% } %>
                                 <% if (userProfile.rank.assistant === true ) { %>
-                                    <span style="vertical-align: middle;" title="<%= __("Website Assistant") %>" class="icon is-medium is-size-3 iconalign">
+                                    <span style="vertical-align: middle;" title="<%= __("common.rank.assistant") %>" class="icon is-medium is-size-3 iconalign">
                                         <i aria-hidden="true" class="fad fa-tools has-text-orange fa-1x"></i>
                                     </span>
                                 <% } %>
                                 <% if (userProfile.rank.admin === true ) { %>
-                                    <span style="vertical-align: middle;" title="<%= __("Website Administrator") %>" class="icon is-medium is-size-3 iconalign">
+                                    <span style="vertical-align: middle;" title="<%= __("common.rank.admin") %>" class="icon is-medium is-size-3 iconalign">
                                         <i aria-hidden="true" class="fad fa-crown has-text-danger fa-1x"></i>
                                     </span>
                                 <% } %>
@@ -95,15 +95,15 @@
                     </h1>
                     <h2 class="subtitle"><% if (userProfileIsBanned === false) { %><%= userProfile.profile.bio || __("I am a mysterious person.") %><% } else { %><%= __("This user did something bad and they were banned!!") %><% } %></h2>
                     <% if (userProfileIsBanned === false || user && user.db.rank.mod === true) { %>
-                        <% if (user && user.db.rank.mod === true || user && userProfile._id === user._id) { %>
+                        <% if (user && user.db.rank.mod === true || user && userProfile._id === user.id) { %>
                             <div class="buttons">
-                                <% if (userProfile._id === user._id || user.db.rank.assistant === true) { %>
+                                <% if (userProfile._id === user.id || user.db.rank.assistant === true) { %>
                                     <a href="/users/profile/@me/edit" class="button is-dark">
                                         <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
-                                        <span><%= __("Edit") %></span>
+                                        <span><%= __("common.edit") %></span>
                                     </a>
                                 <% } %>
-                                <% if (user.db.rank.mod) { %>
+                                <% if (user.db.rank.assistant) { %>
                                     <div class="dropdown">
                                         <div class="dropdown-trigger">
                                           <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
@@ -123,6 +123,12 @@
                                             </div>
                                             <hr class="dropdown-divider">
                                             <% if (user.db.rank.assistant === true) { %>
+                                                <% if (req.user.id !== userProfile._id) { %>
+                                                    <a class="dropdown-item" href="/users/profile/<%= userProfile._id %>/edit">
+                                                        <span class="icon"><i aria-hidden="true" class="fas fa-pen"></i></span>
+                                                        <span><%= __("common.edit") %></span>
+                                                    </a>
+                                                <% } %>
                                                 <a class="dropdown-item" href="/users/<%= userProfile._id %>/rank">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-crown"></i></span>
                                                     <span><%= __("Modify Rank") %></span>
@@ -138,7 +144,7 @@
                             <% if (userProfile.profile.links.website) { %>
                                 <a target="_blank" rel="noopener" href="<%= userProfile.profile.links.website %>" class="button is-link">
                                     <span class="icon"><i aria-hidden="true" class="fas fa-globe"></i></span>
-                                    <span><%= __("Website") %></span>
+                                    <span><%= __("common.website") %></span>
                                 </a>
                             <% } %>
                             <% if (userProfile.profile.links.twitter) { %>
@@ -225,7 +231,7 @@
                         </div>
                     <% } %>
             <% } %>
-            <% if (user && user._id === userProfile._id) { %>
+            <% if (user && user.id === userProfile._id) { %>
                 <% if (archivedBotsData.length > 0) { %>
                     <br />
                     <h2 class="is-size-4"><%= __("Archived Bots") %></h2>

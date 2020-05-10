@@ -41,8 +41,7 @@
     }
 %>
 <link href="/css/search.css" type="text/css" media="screen, print" rel="stylesheet" />
-<style type="text/css">.is-checkradio[type="checkbox"].is-default.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked+label::after,.is-checkradio[type="checkbox"].is-default:checked+label:after{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::after,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:after{border-color:<%= foreground %> !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked+label{color:<%= foreground %>;border-color:<%= defaultColour %> !important;background:<%= defaultColour %>}.is-checkradio[type="checkbox"].is-default.is-block:checked+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked+label:after{border-color:<%= foreground %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label{background:#5e78d5}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:before{border-color:#f2f2f2 !important}</style>
-<%- include("../partials/nav.ejs") %>
+<style type="text/css">.is-checkradio[type="checkbox"].is-default.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked+label::after,.is-checkradio[type="checkbox"].is-default:checked+label:after{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::after,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:after{border-color:<%= foreground %> !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked+label{color:<%= foreground %>;border-color:<%= defaultColour %> !important;background:<%= defaultColour %>}.is-checkradio[type="checkbox"].is-default.is-block:checked+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked+label:after{border-color:<%= foreground %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label{background:#5e78d5}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:before{border-color:#f2f2f2 !important}</style><%- include("../partials/nav.ejs") %>
 <section class="hero is-primary">
     <div class="hero-body">
         <div class="container has-text-centered">
@@ -57,7 +56,7 @@
             <h2 class="subtitle"><%= subtitle %></h2>
             <br />
             <p class="control has-icons-left has-icons-right">
-                <input class="input is-rounded is-dark" id="searchInput" placeholder="<%= __("Input a search phrase") %>" type="text">
+                <input class="input is-rounded is-dark" id="searchInput" placeholder="<%= __("page.search.input") %>" type="text">
                 <span class="icon is-small is-left">
                     <i class="fas fa-search"></i>
                 </span>
@@ -65,12 +64,12 @@
             <br />
             <div>
                 <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="bots" name="bots" checked="checked">
-                <label class="has-text-default" for="bots"><%= __("Bots") %></label>
+                <label class="has-text-default" for="bots"><%= __("common.bots") %></label>
                 <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="servers" name="servers" checked="checked">
-                <label class="has-text-default" for="servers"><%= __("Servers") %></label>
+                <label class="has-text-default" for="servers"><%= __("common.servers") %></label>
                 <% if (req.user && req.user.db.rank.mod) { %>
                     <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="users" name="users">
-                    <label class="has-text-default" for="users"><%= __("Users") %></label>
+                    <label class="has-text-default" for="users"><%= __("common.users") %></label>
                 <% } %>
             </div>
             </div>
@@ -91,26 +90,26 @@
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-arrow-left"></i>
                     </span>
-                    <span><%= __("Previous") %></span>
+                    <span><%= __("common.pagination.previous") %></span>
                 </a>
             <% } else { %>
                 <a class="pagination-previous button is-primary" disabled>
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-arrow-left"></i>
                     </span>
-                    <span><%= __("Previous") %></span>
+                    <span><%= __("common.pagination.previous") %></span>
                 </a>
             <% } %>
             <% if (page < pages) { %>
                 <a href="/servers?page=<%= page + 1 %>" class="pagination-next button is-primary">
-                    <span><%= __("Next") %></span>
+                    <span><%= __("common.pagination.next") %></span>
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-arrow-right"></i>
                     </span>
                 </a>
             <% } else { %>
                 <a class="pagination-next button is-primary" disabled>
-                    <span><%= __("Next") %></span>
+                    <span><%= __("common.pagination.next") %></span>
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-arrow-right"></i>
                     </span>

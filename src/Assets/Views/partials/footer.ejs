@@ -2,28 +2,65 @@
 </div>
 </div>
 <p style="padding: 1.25rem;" id="siteFooter" class="has-text-centered has-background-black">
-    &copy; Copyright 2019-<%= new Date().getFullYear() %> Cairo Mitchell-Acason, John P. Burke, Advaith Jagathesan; All Rights Reserved.
+    <%- __("common.footer.copyright", new Date().getFullYear()) %>
     <br />
-    <a href="<%= socialMedia.facebook %>" aria-label="<%= __("DEL Facebook") %>" target="_blank" rel="noopener" title="<%= __("Facebook") %></a>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-link">
+    <a href="<%= socialMedia.facebook %>" aria-label="<%= __("common.footer.social.facebook.del") %>" target="_blank" rel="noopener" title="<%= __("common.footer.social.facebook") %></a>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-link">
         <i class="fab fa-facebook fa-del-social" aria-hidden="true"></i>
     </a>
-    <a href="<%= socialMedia.twitter %>" aria-label="<%= __("DEL Twitter") %>" target="_blank" rel="noopener" title="<%= __("Twitter") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-info">
+    <a href="<%= socialMedia.twitter %>" aria-label="<%= __("common.footer.social.twitter.del") %>" target="_blank" rel="noopener" title="<%= __("common.footer.social.twitter") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-info">
         <i class="fab fa-twitter fa-del-social" aria-hidden="true"></i>
     </a>
-    <a href="<%= socialMedia.instagram %>" aria-label="<%= __("DEL Instagram") %>" target="_blank" rel="noopener" title="<%= __("Instagram") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-magenta">
+    <a href="<%= socialMedia.instagram %>" aria-label="<%= __("common.footer.social.instagram.del") %>" target="_blank" rel="noopener" title="<%= __("common.footer.social.instagram") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-magenta">
         <i class="fab fa-instagram fa-del-social" aria-hidden="true"></i>
     </a>
-    <a href="<%= socialMedia.github %>" aria-label="<%= __("DEL GitHub") %>" target="_blank" rel="noopener" title="<%= __("GitHub") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-white">
+    <a href="<%= socialMedia.github %>" aria-label="<%= __("common.footer.social.github.del") %>" target="_blank" rel="noopener" title="<%= __("common.footer.social.github") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-white">
         <i class="fab fa-github fa-del-social" aria-hidden="true"></i>
     </a>
 </p>
+<script type="text/javascript">
+    if(window.matchMedia("(min-width: 768px)").matches&&window.matchMedia("(max-width: 1445px)").matches){const widgetBot=document.getElementById("navWidgetBotXSupport");widgetBot.parentNode.removeChild(widgetBot);const about=document.getElementById("navAbout");about.insertAdjacentHTML("afterend",`<a class="navbar-item" href="/widgetbot" tabindex="0">
+            <span class="icon iconalign">
+                <i class="fad fa-comment-alt-lines" aria-hidden="true"></i>
+            </span>
+            <span><%= __("WidgetBot Chat") %></span>
+        </a>`);<% if (req.user && !mobile) { %>const buttons=document.getElementById("authButtons");buttons.parentNode.removeChild(buttons);const template=document.getElementById("navTemplate");const snake=document.getElementById("navSnake");if(!snake){template.insertAdjacentHTML("afterend",`<hr class="navbar-divider"><% if (ddosMode === true) { %>
+                    <a class="navbar-item has-text-danger" title="<%= __("common.notice.ddosMode") %>" disabled tabindex="0">
+                        <span class="icon">
+                            <i class="fad fa-sign-out" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("Logout") %></span>
+                    </a>
+                <% } else { %>
+                    <a class="navbar-item has-text-danger" href="/auth/logout" tabindex="0">
+                        <span class="icon">
+                            <i class="fad fa-sign-out" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("Logout") %></span>
+                    </a>
+                <% } %>`)}else{snake.insertAdjacentHTML("afterend",`<% if (ddosMode === true) { %>
+                    <a class="navbar-item has-text-danger" title="<%= __("common.notice.ddosMode") %>" disabled tabindex="0">
+                        <span class="icon">
+                            <i class="fad fa-sign-out" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("Logout") %></span>
+                    </a>
+                <% } else { %>
+                    <a class="navbar-item has-text-danger" href="/auth/logout" tabindex="0">
+                        <span class="icon">
+                            <i class="fad fa-sign-out" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("Logout") %></span>
+                    </a>
+                <% } %>`)}<% } %>}
+</script>
+<script preconnect src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@13.0.1/dist/lazyload.min.js" integrity="sha384-BdFi8Uk21cyYDep25gvW5ESyFb8Ci6MlQoo7FnYAbKt2FjRbNp24Jq6GNYlHANVW" crossorigin="anonymous"></script>
 <script type="text/javascript">(function(o){"use strict";var e=navigator.serviceWorker;if(!e)return this.UpUp=null,o;var i={"service-worker-url":"upup.sw.min.js","registration-options":{}},s=!1,n="font-weight: bold; color: #00f;";this.UpUp={start:function(t){this.addSettings(t),e.register(i["service-worker-url"],i["registration-options"]).then(function(t){s&&console.log("Service worker registration successful with scope: %c"+t.scope,n),(t.installing||e.controller||t.active).postMessage({action:"set-settings",settings:i})}).catch(function(t){s&&console.log("Service worker registration failed: %c"+t,n)})},addSettings:function(e){"string"==typeof(e=e||{})&&(e={content:e}),["content","content-url","assets","service-worker-url","cache-version"].forEach(function(t){e[t]!==o&&(i[t]=e[t])}),e.scope!==o&&(i["registration-options"].scope=e.scope)},debug:function(t){s=!(0<arguments.length)||!!t}}}).call(this);</script>
-<script type="text/javascript" async>document.querySelectorAll(".navbar-link").forEach(function(e){e.addEventListener("click",function(){e.nextElementSibling.classList.toggle("is-hidden-mobile")})});</script>
-<script preconnect src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@13.0.1/dist/lazyload.min.js"></script>
-<script type="text/javascript" async="true">document.addEventListener("DOMContentLoaded",function(){var t=Array.prototype.slice.call(document.querySelectorAll(".navbar-burger"),0);0<t.length&&t.forEach(function(e){e.addEventListener("click",function(){var t=document.getElementById(e.dataset.target);e.classList.toggle("is-active"),t.classList.toggle("is-active")})})});UpUp.start({"content-url":"offline.html",assets:["/css/standard.css", "/fonts/fa/css/all.css", "/fonts/offline-fonts.css","/fonts/fa/webfonts/fa-duotone-900.woff2"],"service-worker-url":"/upup.sw.min.js"});const lazyLoadInstance=new LazyLoad({elements_selector:".lazyload"});</script>
-<script type="text/javascript" async defer>console.log(`%cSTOP! DELLYTIME%c\n\nDEBUG INFORMATION:\n%cVersion: <%= req.del.version %>\nRelease Channel: <%= req.del.channel %>\nNode: <%= req.del.node %>\nResponse time: <%= Date.now() - requestedAt %>ms\n\nUser-Agent: ${navigator.userAgent}`,"color: red; font-size: xx-large; background-color: #000; padding: 10px; border-radius: 5px;","color: yellow; font-size: medium;","font-size: x-small;");</script>
+<script type="text/javascript">document.addEventListener("DOMContentLoaded",function(){var t=Array.prototype.slice.call(document.querySelectorAll(".navbar-burger"),0);0<t.length&&t.forEach(function(e){e.addEventListener("click",function(){var t=document.getElementById(e.dataset.target);e.classList.toggle("is-active"),t.classList.toggle("is-active")})})});UpUp.start({"content-url":"offline.html",assets:["/css/standard.css?v=<%= cssVersion %>", "/fonts/fa/css/all.css?v=<%= cssVersion %>", "/fonts/offline-fonts.css","/fonts/fa/webfonts/fa-duotone-900.woff2"],"service-worker-url":"/upup.sw.min.js"});const lazyLoadInstance=new LazyLoad({elements_selector:".lazyload"});</script>
+<script type="text/javascript">console.log(`%cSTOP! DELLYTIME%c\n\nDEBUG INFORMATION:\n%cVersion: <%= req.del.version %>\nRelease Channel: <%= req.del.channel %>\nNode: <%= req.del.node %>\nResponse time: <%= Date.now() - requestedAt %>ms\n\nUser-Agent: ${navigator.userAgent}`,"color: red; font-size: xx-large; background-color: #000; padding: 10px; border-radius: 5px;","color: yellow; font-size: medium;","font-size: x-small;");</script>
 <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" integrity="sha384-XfulzVp257jTD4j8TtghtZ75YaRE+O+F2brm/dAHuawJEvzeoco+4c0Q1bm5ha3M" crossorigin="anonymous"></script>
-<script type="text/javascript">for(let emoji of document.getElementsByClassName("twemojiParse")){twemoji.parse(emoji)}</script>
+<script type="text/javascript">twemoji.parse(document.body)</script>
 <% if (subtitle === "") { %><script type="text/javascript" async defer>let seizure=0;function invokeSeizureMode(){seizure+=1;if(seizure===3){seizureMode()}}function seizureMode(){const body=document.getElementsByTagName("body")[0];const hero=document.getElementsByClassName("hero")[0];let audio;if(Math.floor(Math.random()*10)+1>=10){audio=new Audio("/audio/nyan.mp3")}else{audio=new Audio("/audio/rick.mp3")}body.style.fontFamily="Comic Sans MS";document.getElementsByClassName("title")[0].innerText="Discord Seizure List:tm:!";document.getElementsByClassName("subtitle")[0].innerText="Discord's unbiased list, giving people seizures all across the world!";audio.play();setInterval(()=>{setTimeout(()=>{body.style.backgroundColor="#ff1493";hero.style.backgroundColor="#ffffff"},0);setTimeout(()=>{body.style.backgroundColor="#ffffff";hero.style.backgroundColor="#ff1493"},20)},100)}</script><% } %>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+<script type="text/javascript">$(".navbar-item.has-dropdown").click(function(e){if($(".navbar-burger").is(':visible')){$(this).toggleClass("is-active")}});$(".navbar-item > .navbar-link").click(function(e){if($(".navbar-burger").is(':visible')){e.preventDefault()}});$(window).resize(function(e){if(!$(".navbar-burger").is(':visible')&&$(".navbar-item.has-dropdown.is-active").length){$(".navbar-item.has-dropdown.is-active").removeClass('is-active')}});</script>
 </body>
 </html>

@@ -1,7 +1,6 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/form.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
 <link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-primary">
     <div class="hero-body">
@@ -36,7 +35,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Website") %></label>
+                <label class="label has-text-blurple"><%= __("common.website") %></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="website" value="<%= userProfile.profile.links.website %>" placeholder="<%= __("If you have a website put its link in here.") %>">
                     <span class="icon is-small is-left">
@@ -46,7 +45,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("GitHub") %> <span class="has-text-magenta">(<%= __("Username Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("GitHub") %> <span class="has-text-default">(<%= __("Username Only") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="github" value="<%= userProfile.profile.links.github %>" placeholder="<%= __("Without an '@'.") %>">
                     <span class="icon is-small is-left">
@@ -56,7 +55,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("GitLab") %> <span class="has-text-magenta">(<%= __("Username Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("GitLab") %> <span class="has-text-default">(<%= __("Username Only") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="gitlab" value="<%= userProfile.profile.links.gitlab %>" placeholder="<%= __("Without an '@'.") %>">
                     <span class="icon is-small is-left">
@@ -66,7 +65,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Twitter") %> <span class="has-text-magenta">(<%= __("Username Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("Twitter") %> <span class="has-text-default">(<%= __("Username Only") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="twitter" value="<%= userProfile.profile.links.twitter %>" placeholder="<%= __("Without an '@'.") %>">
                     <span class="icon is-small is-left">
@@ -76,7 +75,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Instagram") %> <span class="has-text-magenta">(<%= __("Username Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("Instagram") %> <span class="has-text-default">(<%= __("Username Only") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="instagram" value="<%= userProfile.profile.links.instagram %>" placeholder="<%= __("Without an '@'.") %>">
                     <span class="icon is-small is-left">
@@ -86,7 +85,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Snapchat") %> <span class="has-text-magenta">(<%= __("Username Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("Snapchat") %> <span class="has-text-default">(<%= __("Username Only") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="snapchat" value="<%= userProfile.profile.links.snapchat %>" placeholder="<%= __("Without an '@'.") %>">
                     <span class="icon is-small is-left">
@@ -96,7 +95,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Custom Profile CSS") %> <span class="has-text-danger">(<%= __("Verified Users and Staff Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("Custom Profile CSS") %> <span class="has-text-default">(<%= __("Verified Users and Staff Only") %>)</span></label>
                 <% if (userProfile.rank.verified === true || userProfile.rank.mod === true) { %>
                     <div onkeyup="monacoToField();" id="profileCssEditor" class="editorBackdrop" style="width:99%;height:350px;" value="<%= userProfile.profile.css %>"></div>
                     <textarea hidden name="profileCss" id="profileCss"></textarea>
@@ -113,7 +112,7 @@
                     </button>
                     <a class="button is-danger" href="/users/<% if (userProfile._id === user._id) { %>@me<% } else { %><%= userProfile._id %><% } %>">
                         <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>
-                        <span><%= __("Cancel") %></span>
+                        <span><%= __("common.cancel") %></span>
                     </a>
                 </div>
             </div>

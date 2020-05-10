@@ -21,7 +21,7 @@
         },
         "authScopes": ["identify", "guilds.join"],
         "url": "https://example.com",
-        "callback": "/login/callback",
+        "callback": "/auth/login/callback",
         "gaID": ""
     },
     "guild": {

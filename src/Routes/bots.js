@@ -340,6 +340,14 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
             req
         });
     } else if (botExists.vanityUrl && req.user.db.assistant === true) {
+        if (req.body.vanity.split(" ").length !== 1) return res.status(400).render("status", {
+            title: res.__("Error"),
+            subtitle: res.__("The bot's vanity url cannot be shorter or longer than one word."),
+            status: 400,
+            type: "Error",
+            req
+        });
+
         await req.app.db.collection("bots").updateOne({ id: req.params.id }, 
             { $set: {
                 vanityUrl: req.body.vanity
@@ -361,6 +369,14 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
 
         res.redirect(`/bots/${req.params.id}`);
     } else if (!botExists.vanityUrl) {
+        if (req.body.vanity.split(" ").length !== 1) return res.status(400).render("status", {
+            title: res.__("Error"),
+            subtitle: res.__("Your bot's vanity url cannot be shorter or longer than one word."),
+            status: 400,
+            type: "Error",
+            req
+        });
+
         await req.app.db.collection("bots").updateOne({ id: req.params.id }, 
             { $set: {
                 vanityUrl: req.body.vanity
@@ -1337,7 +1353,7 @@ router.get("/:id/remove", variables, permission.auth, permission.mod, async (req
     if (!bot) return res.status(404).render("status", {
         title: res.__("Error"),
         status: 404,
-        subtitle: res.__("You cannot decline a bot that doesn't exist"),
+        subtitle: res.__("You cannot remove a bot that doesn't exist"),
         req,
         type: "Error"
     });
@@ -1364,7 +1380,7 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
     if (!bot) return res.status(404).render("status", {
         title: res.__("Error"),
         status: 404,
-        subtitle: res.__("You cannot decline a bot that doesn't exist"),
+        subtitle: res.__("You cannot remove a bot that doesn't exist"),
         req,
         type: "Error"
     });

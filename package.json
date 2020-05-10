@@ -12,6 +12,7 @@
     "child_process": "^1.0.2",
     "chunk": "0.0.2",
     "color": "^3.1.2",
+    "connect-redis": "^4.0.4",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "ejs": "~2.6.1",

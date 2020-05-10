@@ -3,7 +3,7 @@
         <article class="media">
             <div class="media-left">
                 <figure class="image is-64x64">
-                    <img draggable="false" class="is-rounded lazyload" data-src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.<%= imageFormat %>" alt="<%= __("%s's Icon", user.fullUsername) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("Failed to load server %s's avatar/icon, using default instead.", user.id) %>');" draggable="false">
+                    <img draggable="false" class="is-rounded lazyload" data-src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.<%= imageFormat %>" alt="<%= __("common.img.profilePicture", user.fullUsername) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail", user.id) %>');" draggable="false">
                 </figure>
             </div>
             <div style="overflow: hidden;" class="media-content">
@@ -12,17 +12,17 @@
                         <span class="is-size-4"><%= user.username %>#<%= user.discriminator %></span>
                         <br />
                         <% if (user.rank === "admin") { %>
-                            <span><%= __("Website Administrator") %></span>
+                            <span><%= __("common.rank.admin") %></span>
                         <% } else if (user.rank === "assistant") { %> 
-                            <span><%= __("Website Assistant") %></span>
+                            <span><%= __("common.rank.assistant") %></span>
                         <% } else if (user.rank === "mod") { %>
-                            <span><%= __("Website Moderator") %></span>
+                            <span><%= __("common.rank.mod") %></span>
                         <% } else if (user.rank === "booster") { %>
-                            <span><%= __("Booster") %></span>
+                            <span><%= __("common.rank.booster") %></span>
                         <% } else if (user.rank === "translator") { %>
-                            <span><%= __("Translator") %></span>
+                            <span><%= __("common.rank.translator") %></span>
                         <% } else if (user.rank === "tester") { %>
-                            <span><%= __("Tester") %></span>
+                            <span><%= __("common.rank.tester") %></span>
                         <% } %>
                         </a>
                 </div>

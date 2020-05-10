@@ -2,7 +2,7 @@
     <div class="navbar-brand">
         <% if (title !== "Home") { %>
             <a class="navbar-item" href="/" aria-hidden="true">
-                <img style="width: auto !important; height: 48px !important;" alt="<% __("Discord Extreme List's Logo") %>" src="/img/logo-128px.<%= imageFormat %>" draggable="false">
+                <img style="width: auto !important; height: 48px !important;" alt="<% __("common.nav.logoAlt") %>" src="/img/logo-128px.<%= imageFormat %>" draggable="false">
             </a>
         <% } %>
 
@@ -20,213 +20,314 @@
                 <span class="icon iconalign">
                     <i class="fad fa-house" aria-hidden="true"></i>
                 </span>
-                <span><%= __("Home") %></span>
+                <span><%= __("common.home") %></span>
             </a>
 
             <a class="navbar-item" href="/bots">
                 <span class="icon iconalign">
                     <i class="fad fa-robot" aria-hidden="true"></i>
                 </span>
-                <span><%= __("Bots") %></span>
+                <span><%= __("common.bots") %></span>
             </a>
 
             <a class="navbar-item" href="/servers">
                 <span class="icon iconalign">
                     <i class="fad fa-comments-alt" aria-hidden="true"></i>
                 </span>
-                <span><%= __("Servers") %></span>
+                <span><%= __("common.servers") %></span>
             </a>
 
             <a class="navbar-item" href="/templates">
                 <span class="icon iconalign">
                     <i class="fad fa-copy" aria-hidden="true"></i>
                 </span>
-                <span><%= __("Templates") %></span>
+                <span><%= __("common.templates") %></span>
             </a>
 
             <a class="navbar-item" href="/search">
                 <span class="icon iconalign">
                     <i class="fad fa-search" aria-hidden="true"></i>
                 </span>
-                <span><%= __("Search") %></span>
+                <span><%= __("common.search") %></span>
             </a>
 
-            <a class="navbar-item" href="/widgetbot">
+            <a class="navbar-item" id="navWidgetBotXSupport" href="/widgetbot">
                 <span class="icon iconalign">
                     <i class="fad fa-comment-alt-lines" aria-hidden="true"></i>
                 </span>
-                <span><%= __("WidgetBot Chat") %></span>
+                <span><%= __("common.nav.widgetBot") %></span>
             </a>
 
-            <div class="navbar-item has-dropdown is-hoverable">
+            <div class="navbar-item has-dropdown is-hoverable is-hidden-mobile">
                 <a class="navbar-link" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-sitemap" aria-hidden="true"></i>
                     </span>
-                    <span><%= __("More") %></span>
+                    <span><%= __("common.nav.more") %></span>
                 </a>
 
-                <div class="navbar-dropdown is-hidden-mobile">
+                <div class="navbar-dropdown">
                     <a class="navbar-item" href="<%= discordServer %>" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fab fa-discord" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Discord Server") %></span>
+                        <span><%= __("common.nav.more.discord") %></span>
                     </a>
                     <a class="navbar-item" href="https://docs.discordextremelist.xyz/" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-books" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Documentation") %></span>
+                        <span><%= __("common.nav.more.docs") %></span>
                     </a>
-                    <a class="navbar-item" href="/about" tabindex="0">
+                    <a class="navbar-item" id="navAbout" href="/about" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-question" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("About") %></span>
+                        <span><%= __("common.nav.more.about") %></span>
                     </a>
                     <hr class="navbar-divider">
                     <a class="navbar-item" href="/terms" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-balance-scale" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Terms of Use") %></span>
+                        <span><%= __("common.nav.more.terms") %></span>
                     </a>
                     <a class="navbar-item" href="/privacy" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-user-secret" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Privacy Policy") %></span>
+                        <span><%= __("common.nav.more.privacy") %></span>
                     </a>
                     <a class="navbar-item" href="/guidelines" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-book" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Website Guidelines") %></span>
+                        <span><%= __("common.nav.more.guidelines") %></span>
                     </a>
                 </div>
             </div>
         </div>
 
         <div class="navbar-end">
-            <div class="navbar-item has-dropdown is-hoverable">
+            <div class="navbar-item has-dropdown is-hoverable is-hidden-mobile">
                 <a class="navbar-link" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-language" aria-hidden="true"></i>
                     </span>
-                    <span><%= __("Language") %></span>
+                    <span><%= __("common.nav.language") %></span>
                 </a>
 
-                <div class="navbar-dropdown is-hidden-mobile">
+                <div class="navbar-dropdown">
                     <a class="navbar-item" tabindex="0">
                         <% if (req.locale === "en-NZ") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span class="twemojiParse"><%= __("🇳🇿 English NZ") %> (English NZ)</span>
+                        <span><%= __("common.nav.language.en-NZ") %> (English NZ)</span>
+                    </a>
+                    <a class="navbar-item" tabindex="0">
+                        <% if (req.locale === "en-GB") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __("common.nav.language.en-GB") %> (English GB)</span>
+                    </a>
+                    <a class="navbar-item" tabindex="0">
+                        <% if (req.locale === "en-US") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __("common.nav.language.en-US") %> (English US)</span>
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item" tabindex="0">
+                        <% if (req.locale === "de") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __("common.nav.language.de") %> (Deutsch)</span>
+                    </a>
+                    <a class="navbar-item" tabindex="0">
+                        <% if (req.locale === "he") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __("common.nav.language.he") %> (עִבְרִית)</span>
+                    </a>
+                    <a class="navbar-item" tabindex="0">
+                        <% if (req.locale === "hu") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __("common.nav.language.hu") %> (magyar nyelv)</span>
+                    </a>
+                    <a class="navbar-item" tabindex="0">
+                        <% if (req.locale === "it") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __("common.nav.language.it") %> (italiano)</span>
+                    </a>
+                    <a class="navbar-item" tabindex="0">
+                        <% if (req.locale === "mi") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __("common.nav.language.mi") %> (Māori)</span>
+                    </a>
+                    <a class="navbar-item" tabindex="0">
+                        <% if (req.locale === "es-ES") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __("common.nav.language.es-ES") %> (español)</span>
                     </a>
                     <hr class="navbar-divider">
                     <a class="navbar-item" target="_blank" rel="noopener" href="https://translate.discordextremelist.xyz/" tabindex="0">
-                        <span class="twemojiParse">
-                            <%= __("🏳️ Help Translate") %>
+                        <span>
+                            <%= __("common.nav.language.helpUs") %>
                         </span>
                     </a>
                 </div>
             </div>
 
             <% if (req.user) { %>
-                <div class="navbar-item has-dropdown is-hoverable">
+                <div class="navbar-item has-dropdown is-hoverable is-hidden-mobile">
                     <a class="navbar-link" tabindex="0">
                         <img style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>?size=256" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>" draggable="false">
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
                     </a>
 
-                    <div class="navbar-dropdown is-hidden-mobile is-right">
+                    <div class="navbar-dropdown is-right">
                         <a class="navbar-item" href="/users/@me" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-user" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("Profile") %></span>
+                            <span><%= __("common.nav.me.profile") %></span>
                         </a>
                         <a class="navbar-item" href="/users/account/preferences" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-swatchbook" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("Preferences") %></span>
+                            <span><%= __("common.nav.me.preferences") %></span>
                         </a>
                         <% if (req.user.db.rank.mod === true) { %>
                             <a class="navbar-item" href="/staff" tabindex="0">
                                 <span class="icon iconalign">
                                     <i class="fad fa-cogs" aria-hidden="true"></i>
                                 </span>
-                                <span><%= __("Staff Panel") %></span>
+                                <span><%= __("common.nav.me.staffPanel") %></span>
                             </a>
                         <% } %>
                         <a class="navbar-item" href="/bots/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-robot" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("Submit Bot") %></span>
+                            <span><%= __("common.nav.me.submitBot") %></span>
                         </a>
                         <a class="navbar-item" href="/servers/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-comments-alt" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("Submit Server") %></span>
+                            <span><%= __("common.nav.me.submitServer") %></span>
                         </a>
-                        <a class="navbar-item" href="/templates/submit" tabindex="0">
+                        <a class="navbar-item" id="navTemplate" href="/templates/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-copy" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("Submit Template") %></span>
+                            <span><%= __("common.nav.me.submitTemplate") %></span>
                         </a>
                         <% if (req.user.db.preferences.enableGames === true) { %>
                             <hr class="navbar-divider">
-                            <a class="navbar-item" href="/users/game/snake" tabindex="0">
+                            <a class="navbar-item" id="navSnake" href="/users/game/snake" tabindex="0">
                                 <span class="icon iconalign">
                                     <i class="fad fa-snake" aria-hidden="true"></i>
                                 </span>
-                                <span><%= __("Play Snake") %></span>
+                                <span><%= __("common.nav.me.playSnake") %></span>
                             </a>
                         <% } %>
                         <% if (mobile) { %>
-                            <a class="navbar-item has-text-danger" href="/logout" tabindex="0">
-                                <span class="icon">
-                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
-                                </span>
-                                <span><%= __("Logout") %></span>
-                            </a>
+                            <% if (ddosMode === true) { %>
+                                <a class="navbar-item has-text-danger" title="<%= __("common.notice.ddosMode") %>" disabled tabindex="0">
+                                    <span class="icon">
+                                        <i class="fad fa-sign-out" aria-hidden="true"></i>
+                                    </span>
+                                    <span><%= __("common.logout") %></span>
+                                </a>
+                            <% } else { %>
+                                <a class="navbar-item has-text-danger" href="/auth/logout" tabindex="0">
+                                    <span class="icon">
+                                        <i class="fad fa-sign-out" aria-hidden="true"></i>
+                                    </span>
+                                    <span><%= __("common.logout") %></span>
+                                </a>
+                            <% } %>
                         <% } %>
                     </div>
                 </div>
             <% } %>
-            <div class="navbar-item">
+            <div class="navbar-item" id="authButtons">
                 <% if (!mobile) { %>
                     <div class="buttons">
                         <% if (req.user) { %>
-                            <a class="button is-danger" href="/logout">
-                                <span class="icon">
-                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
-                                </span>
-                                <span><%= __("Logout") %></span>
-                            </a>
+                            <% if (ddosMode === true) { %>
+                                <a class="button is-danger" title="<%= __("common.notice.ddosMode") %>" disabled>
+                                    <span class="icon">
+                                        <i class="fad fa-sign-out" aria-hidden="true"></i>
+                                    </span>
+                                    <span><%= __("common.logout") %></span>
+                                </a>
+                            <% } else { %>
+                                <a class="button is-danger" href="/auth/logout">
+                                    <span class="icon">
+                                        <i class="fad fa-sign-out" aria-hidden="true"></i>
+                                    </span>
+                                    <span><%= __("common.logout") %></span>
+                                </a>
+                            <% } %>
                         <% } else { %>
-                            <a class="button is-blurple" href="/login">
-                                <span class="icon">
-                                    <i class="fab fa-discord" aria-hidden="true"></i>
-                                </span>
-                                <span><%= __("Login with Discord") %></span>
-                            </a>
+                            <% if (ddosMode === true) { %>
+                                <a class="button is-blurple" title="<%= __("common.notice.ddosMode") %>" disabled>
+                                    <span class="icon">
+                                        <i class="fab fa-discord" aria-hidden="true"></i>
+                                    </span>
+                                    <span><%= __("common.login") %></span>
+                                </a>
+                            <% } else { %>
+                                <a class="button is-blurple" href="/auth/login">
+                                    <span class="icon">
+                                        <i class="fab fa-discord" aria-hidden="true"></i>
+                                    </span>
+                                    <span><%= __("common.login") %></span>
+                                </a>
+                            <% } %>
                         <% } %>
                     </div>
                 <% } else if (!req.user) { %>
-                    <a class="has-text-blurple" href="/login">
-                        <span class="icon">
-                            <i class="fab fa-discord" aria-hidden="true"></i>
-                        </span>
-                        <span><%= __("Login with Discord") %></span>
-                    </a>
+                    <% if (ddosMode === true) { %>
+                        <a class="has-text-blurple" title="<%= __("common.notice.ddosMode") %>" disabled>
+                            <span class="icon">
+                                <i class="fab fa-discord" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("common.login") %></span>
+                        </a>
+                    <% } else { %>
+                        <a class="has-text-blurple" href="/auth/login">
+                            <span class="icon">
+                                <i class="fab fa-discord" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("common.login") %></span>
+                        </a>
+                    <% } %>
                 <% } %>
             </div>
         </div>

@@ -36,8 +36,8 @@ async function addLib({
     links: { docs, repo }
 } = {
     name: "",
-    language = "",
-    links = { docs: "", repo:"" }
+    language: "",
+    links: { docs: "", repo:"" }
 }) {
     await app.db.collection("libraries").updateOne({ _id: name }, {
         language,

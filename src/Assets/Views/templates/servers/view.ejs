@@ -52,22 +52,22 @@
                     <h2 class="subtitle"><%= server.shortDesc %></h2>
                     <% if (req.user) { %>
                         <div class="buttons <% if (mobile) { %>is-centered<% } %>">
-                            <% if (server.owner._id === req.user._id) { %>
+                            <% if (server.owner.id === req.user.id) { %>
                                 <a href="/servers/<%= server._id %>/edit" class="button is-dark">
                                     <span class="icon">
                                         <i aria-hidden="true" class="fas fa-pencil"></i>
                                     </span>
-                                    <span><%= __("Edit") %></span>
+                                    <span><%= __("common.edit") %></span>
                                 </a>
                                 <a href="" id="deleteModal" class="button is-dark">
                                     <span class="icon">
                                         <i aria-hidden="true" class="fas fa-trash"></i>
                                     </span>
-                                    <span><%= __("Delete") %></span>
+                                    <span><%= __("common.delete") %></span>
                                 </a>
                             <% } %>
                         </div>
-                        <% if (user.db.rank.mod && server.owner._id !== req.user._id) { %>
+                        <% if (user.db.rank.mod && server.owner.id !== req.user.id) { %>
                             <div class="dropdown">
                                 <div class="dropdown-trigger">
                                     <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
@@ -88,11 +88,11 @@
                                         <hr class="dropdown-divider">
                                         <a class="dropdown-item" href="/servers/<%= server._id %>/edit">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
-                                            <span><%= __("Edit") %></span>
+                                            <span><%= __("common.edit") %></span>
                                         </a>
                                         <a class="dropdown-item" href="/servers/<%= server._id %>/remove">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
-                                            <span><%= __("Remove") %></span>
+                                            <span><%= __("common.staff.remove") %></span>
                                         </a>
                                     </div>
                                 </div>
@@ -105,7 +105,7 @@
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-globe"></i>
                                 </span>
-                                <span><%= __("Website") %></span>
+                                <span><%= __("common.website") %></span>
                             </a>
                         <% } %>
                         <a target="_blank" href="<%= server.links.invite %>" class="button is-info">
@@ -127,7 +127,7 @@
                         <div class="control">
                             <div class="tags has-addons">
                                 <span class="tag is-dark"><%= __("Listing Owner") %></span>
-                                <span class="tag is-link"><a class="has-text-white" href="/users/<%= server.owner._id %>"><%= serverOwner.fullUsername %></a></span>
+                                <span class="tag is-link"><a class="has-text-white" href="/users/<%= server.owner.id %>"><%= serverOwner.fullUsername %></a></span>
                             </div>
                         </div>
                     </div>
@@ -159,13 +159,13 @@
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-check-circle"></i>
                     </span>
-                    <span><%= __("Delete") %></span>
+                    <span><%= __("common.delete") %></span>
                 </a>
                 <button class="button is-danger" id="close-modal">
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-times-circle"></i>
                     </span>
-                    <span><%= __("Cancel") %></span>
+                    <span><%= __("common.cancel") %></span>
                 </button>
             </div>
         </footer>

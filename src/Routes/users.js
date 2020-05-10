@@ -30,7 +30,7 @@ const userCache = require("../Util/Services/userCaching.js");
 
 router.get("/:id", variables, async (req, res, next) => {
     if (req.params.id === "@me") {
-        if (!req.user) return res.redirect("/login");
+        if (!req.user) return res.redirect("/auth/login");
         req.params.id = req.user.id;
     }
 
@@ -243,7 +243,7 @@ router.get("/profile/:id/edit", variables, permission.auth, async (req, res, nex
         type: "Error"
     });
     
-    if (userProfile.id !== req.user.id && req.user.db.rank.assistant === false) return res.status(403).render("status", {
+    if (userProfile._id !== req.user.id && req.user.db.rank.assistant === false) return res.status(403).render("status", {
         title: res.__("Error"),
         status: 403,
         subtitle: res.__("You do not have the required permission(s) to edit this user's profile."),
@@ -267,7 +267,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
         req: req
     });
     
-    if (userProfile.id !== req.user.id && req.user.db.rank.assistant === false) return res.status(403).render("status", {
+    if (userProfile._id !== req.user.id && req.user.db.rank.assistant === false) return res.status(403).render("status", {
         title: res.__("Error"),
         status: 403,
         subtitle: res.__("You do not have the required permission(s) to edit this user's profile."),
@@ -302,7 +302,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
     await req.app.db.collection("audit").insertOne({
         type: "MODIFY_PROFILE",
         executor: req.user.id,
-        target: userProfile.id,
+        target: userProfile._id,
         date: Date.now(),
         reason: req.body.reason || "None specified.",
         details: {

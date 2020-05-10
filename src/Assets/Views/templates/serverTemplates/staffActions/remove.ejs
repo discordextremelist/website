@@ -1,0 +1,76 @@
+<%- include("../../../partials/header.ejs") %>
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<% - include("../../../partials/nav.ejs") %>
+<section class="hero is-black">
+    <div class="hero-body">
+        <br />
+        <div class="container has-text-centered">
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-trash has-text-default"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle">
+                <%= subtitle %>
+            </h2>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="section">
+        <form method="POST">
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("Reason") %> <span class="has-text-danger">*</span></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input class="input is-rounded" type="text" id="reason" name="reason" placeholder="<%= __("Input a custom reason as to why you are removing this bot or use a template reason below.") %>">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fas fa-comment-dots"></i>
+                    </span>
+                </p>
+            </div>
+            <br />
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("Premade Reasons") %></label>
+                <div class="buttons">
+                    <button type="button" onclick="isClone();" class="button is-dark">
+                        <span><%= __("Innapropriate Avatar or Name") %></span>
+                    </button>
+                    <button type="button" onclick="discordTosViolation();" class="button is-dark">
+                        <span><%= __("Discord ToS Violation") %></span>
+                    </button>
+                    <button type="button" onclick="tosViolation();" class="button is-dark">
+                        <span><%= __("DEL ToS Violation") %></span>
+                    </button>
+                </div>
+            </div>
+            <br />
+            <div class="field is-grouped">
+                <div class="buttons">
+                    <button class="button is-success">
+                        <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
+                        <span><%= __("common.submit") %></span>
+                    </button>
+                    <a class="button is-danger" href="/templates/<%= removingTemplate._id %>">
+                        <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>
+                        <span><%= __("common.cancel") %></span>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    function innapAvatarName() {
+        document.getElementById("reason").value = "This template contains an innapropriate avatar and/or name!";
+    }
+    function discordTosViolation() {
+        document.getElementById("reason").value = "Violating Discord's Terms of Use.";
+    }
+    function tosViolation() {
+        document.getElementById("reason").value = "Violating our Terms of Use.";
+    }
+</script>
+<%- include("../../../partials/footer.ejs") %>

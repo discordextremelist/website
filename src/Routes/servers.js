@@ -268,7 +268,7 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
     res.render("templates/servers/edit", { 
         title: res.__("Edit Server"), 
-        subtitle: res.__("Editing server: " + server.name), 
+        subtitle: res.__("Editing server %s", server.name), 
         req,
         server
     });
@@ -346,7 +346,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         if (error === true) { 
             return res.render("templates/servers/errorOnEdit", { 
                 title: res.__("Edit Server"), 
-                subtitle: res.__("Editing server: " + server.name),
+                subtitle: res.__("Editing server %s", server.name),
                 server: req.body,
                 req,
                 tags,
@@ -426,7 +426,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
         return res.render("templates/servers/errorOnEdit", { 
             title: res.__("Edit Server"), 
-            subtitle: res.__("Editing server: " + server.name),
+            subtitle: res.__("Editing server %s", server.name),
             server: req.body,
             req,
             tags,
@@ -467,6 +467,57 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
     });
 
     res.redirect("/users/@me");
+});
+
+router.get("/:id/remove", variables, permission.auth, permission.mod, async (req, res, next) => {
+    const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
+
+    if (!server) return res.status(404).render("status", {
+        title: res.__("Error"),
+        status: 404,
+        subtitle: res.__("You cannot remove a server that doesn't exist"),
+        req,
+        type: "Error"
+    });
+
+    res.render("templates/servers/staffActions/remove", { 
+        title: res.__("Remove Server"), 
+        subtitle: res.__("Removing server %s", server.name),
+        removingServer: server, 
+        req 
+    });
+});
+
+router.post("/:id/remove", variables, permission.auth, permission.mod, async (req, res, next) => {
+    const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
+
+    if (!server) return res.status(404).render("status", {
+        title: res.__("Error"),
+        status: 404,
+        subtitle: res.__("You cannot remove a server that doesn't exist"),
+        req,
+        type: "Error"
+    });
+
+    await req.app.db.collection("servers").deleteOne({ _id: req.params.id });
+
+    await req.app.db.collection("audit").insertOne({
+        type: "REMOVE_SERVER",
+        executor: req.user.id,
+        target: req.params.id,
+        date: Date.now(),
+        reason: req.body.reason || "None specified."
+    });
+    await serverCache.updateServer(req.params.id);
+
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` removed server **${functions.escapeFormatting(server.name)}** \`(${server._id})\`\n**Reason:** \`${req.body.reason}\``);
+
+    
+    const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
+    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.botDeleted} **|** Your server **${functions.escapeFormatting(server.name)}** \`(${server._id})\` has been removed!\n**Reason:** \`${req.body.reason}\``).catch(e => { console.error(e) });
+
+
+    res.redirect("/staff/queue");
 });
 
 module.exports = router;

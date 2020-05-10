@@ -7,15 +7,15 @@
 
     <link href="/img/logo.png" type="image/png" rel="shortcut-icon" />
     <link href="/img/logo.png" type="image/png" rel="icon" />
-    <link href="/css/standard.css" type="text/css" media="screen, print" rel="stylesheet" />
+    <link href="/css/standard.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
     <style type="text/css">.has-text-default { color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>; } </style>
 
     <% if (usePreload === true) { %>
         <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" type="text/css" media="screen" rel="preload" as="style"  onload="this.onload=null;this.rel='stylesheet'" />
-        <link href="/fonts/fa/css/all.css" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+        <link href="/fonts/fa/css/all.css?v=<%= cssVersion %>" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <% } else { %>  
         <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" media="screen" rel="stylesheet" />
-        <link href="/fonts/fa/css/all.css" media="screen" rel="stylesheet" />     
+        <link href="/fonts/fa/css/all.css?v=<%= cssVersion %>" media="screen" rel="stylesheet" />     
     <% } %>
 
     <link rel="manifest" href="/manifest.json">

@@ -20,11 +20,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 const browser = require("browser-detect");
 const settings = require("../../../settings.json");
 const releaseInfo = require("../../../release-info.json");
+const ddosMode = require("../Services/ddosMode.js");
 
 const variables = async(req, res, next) => {
     req.browser = browser(req.headers["user-agent"]);
     res.locals.browser = req.browser;
     res.locals.requestedAt = Date.now();
+    res.locals.cssVersion = releaseInfo.cssVersion;
+    res.locals.ddosMode = ddosMode.getDDOSMode().active;
     res.locals.gaID = settings.website.gaID;
     req.session.redirectTo = req.originalUrl;
     req.del = releaseInfo;

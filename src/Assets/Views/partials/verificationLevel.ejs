@@ -1,11 +1,11 @@
 <% if (template.verificationLevel === 0) { %>
-    <p class="twemojiParse"><strong><%= __("Verification Level:") %></strong> <span title="<%= __("Unrestricted") %>">⚪ <%= __("None") %></span></p>
+    <p><strong><%= __("partials.verificationLevel") %></strong> <span title="<%= __("partials.verificationLevel.0.title") %>"> <%= __("partials.verificationLevel.0.name") %></span></p>
 <% } else if (template.verificationLevel === 1) { %>
-    <p class="twemojiParse"><strong><%= __("Verification Level:") %></strong> <span title="<%= __("Must have a verified email on account") %>">🟢 <%= __("Low") %></span></p>
+    <p><strong><%= __("partials.verificationLevel") %></strong> <span title="<%= __("partials.verificationLevel.1.title") %>"> <%= __("partials.verificationLevel.1.name") %></span></p>
 <% } else if (template.verificationLevel === 2) { %>
-    <p class="twemojiParse"><strong><%= __("Verification Level:") %></strong> <span title="<%= __("Must be registered on Discord for longer than 5 minutes") %>">🟡 <%= __("Medium") %></span></p>
+    <p><strong><%= __("partials.verificationLevel") %></strong> <span title="<%= __("partials.verificationLevel.2.title) %>"> <%= __("partials.verificationLevel.2.name") %></span></p>
 <% } else if (template.verificationLevel === 3) { %>
-    <p class="twemojiParse"><strong><%= __("Verification Level:") %></strong> <span title="<%= __("(╯°□°）╯︵ ┻━┻ - Must be a member of the server for longer than 10 minutes") %>">🟠 <%= __("High") %></span></p>
+    <p><strong><%= __("partials.verificationLevel") %></strong> <span title="<%= __("partials.verificationLevel.3.title") %>"> <%= __("partials.verificationLevel.3.name") %></span></p>
 <% } else if (template.verificationLevel === 4) { %>
-    <p class="twemojiParse"><strong><%= __("Verification Level:") %></strong> <span title="<%= __("┻━┻ ミヽ(ಠ 益 ಠ)ﾉ彡 ┻━┻ - Must have a verified phone number") %>">🔴 <%= __("Very High") %></span></p>
+    <p><strong><%= __("partials.verificationLevel") %></strong> <span title="<%= __("partials.verificationLevel.4.title") %>"> <%= __("partials.verificationLevel.4.name") %></span></p>
 <% } %>

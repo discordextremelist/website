@@ -1,7 +1,6 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/form.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
 <link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-primary">
     <div class="hero-body">
@@ -58,9 +57,9 @@
                             <span class="icon"><i aria-hidden="true" class="fas fa-minus-circle"></i></span>
                             <span><%= __("Revert to Default Settings") %></span>
                         </a>
-                        <a class="button is-danger" href="/users/<%= req.user._id %>">
+                        <a class="button is-danger" href="/users/<%= req.user.id %>">
                             <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>
-                            <span><%= __("Cancel") %></span>
+                            <span><%= __("common.cancel") %></span>
                         </a>
                     </div>
                 </div>

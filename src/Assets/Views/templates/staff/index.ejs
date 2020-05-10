@@ -1,5 +1,5 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/all.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link href="/css/all.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
 <style type="text/css">.stats{padding:15px;border-radius:5px;}p.heading.main{margin-top:5px}.stats-header{background-color:#000000bd !important;padding:3px;filter: drop-shadow(0px 0px 1px black)}</style>
 <%- include("../../partials/staffNav.ejs") %>
 <section class="hero is-primary">
@@ -26,25 +26,25 @@
             <span style="vertical-align: middle; color: #354146;">&nbsp;|&nbsp;</span>
             <% if (user.db.rank.mod === true) { %>
                 <% if (req.user.db.rank.admin === false && req.user.db.rank.assistant === false) { %>
-                    <span style="vertical-align: middle;" title="<%= __("Website Moderator") %>" class="icon is-small iconalign">
+                    <span style="vertical-align: middle;" title="<%= __("common.rank.mod") %>" class="icon is-small iconalign">
                         <i aria-hidden="true" class="fad fa-hammer has-text-success fa-1x"></i>
                     </span>
                     <span style="vertical-align: middle;" class="has-text-success">
-                        <%= __("Website Moderator") %>
+                        <%= __("common.rank.mod") %>
                     </span>
                 <% } else if (req.user.db.rank.admin === false && req.user.db.rank.assistant === false) { %>
-                    <span style="vertical-align: middle;" title="<%= __("Website Assistant") %>" class="icon is-small iconalign">
+                    <span style="vertical-align: middle;" title="<%= __("common.rank.assistant") %>" class="icon is-small iconalign">
                         <i aria-hidden="true" class="fad fa-tools has-text-orange fa-1x"></i>
                     </span>
                     <span style="vertical-align: middle;" class="has-text-orange">
-                        <%= __("Website Assistant") %>
+                        <%= __("common.rank.assistant") %>
                     </span>
                 <% } else { %>
-                    <span style="vertical-align: middle;" title="<%= __("Website Administrator") %>" class="icon is-small iconalign">
+                    <span style="vertical-align: middle;" title="<%= __("common.rank.admin") %>" class="icon is-small iconalign">
                         <i aria-hidden="true" class="fad fa-crown has-text-danger fa-1x"></i>
                     </span>
                     <span style="vertical-align: middle;" class="has-text-danger">
-                        <%= __("Website Administrator") %>
+                        <%= __("common.rank.admin") %>
                     </span>
                 <% } %>
             <% } %>
@@ -54,33 +54,69 @@
             <nav class="level stats-header">
                 <div class="level-item has-text-centered">
                     <div>
-                        <p class="heading main">Website Statistics</p>
+                        <p class="heading main"><%= __("Website Statistics") %></p>
                     </div>
                 </div>
             </nav>
             <nav class="level">
-                <div class="level-item has-text-centered">
+                <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("Bot Count") %></p>
                         <p class="title"><%= stats.botCount %></p>
                     </div>
                 </div>
-                <div class="level-item has-text-centered">
+                <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("Server Count") %></p>
                         <p class="title"><%= stats.serverCount %></p>
                     </div>
                 </div>
-                <div class="level-item has-text-centered">
+                <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("User Count") %></p>
                         <p class="title"><%= stats.userCount %></p>
                     </div>
                 </div>
-                <div class="level-item has-text-centered">
+                <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("Unapproved Bot Count") %></p>
                         <p class="title"><%= stats.unapprovedBots %></p>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <br />
+        <div class="stats has-background-primary">
+            <nav class="level stats-header">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading main"><%= __("Your Overview") %></p>
+                    </div>
+                </div>
+            </nav>
+            <nav class="level">
+                <div class="level-item body-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("Your Standing") %></p>
+                        <p class="title"><%= stats.standing %></p>
+                    </div>
+                </div>
+                <div class="level-item body-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("Your Strikes") %></p>
+                        <p class="title"><%= stats.strikes %></p>
+                    </div>
+                </div>
+                <div class="level-item body-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("Your Warnings") %></p>
+                        <p class="title"><%= stats.warnings %></p>
+                    </div>
+                </div>
+                <div class="level-item body-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("On Leave") %></p>
+                        <p class="title"><%= stats.away %></p>
                     </div>
                 </div>
             </nav>

@@ -2,7 +2,7 @@
     <div class="navbar-brand">
         <% if (title !== "Home") { %>
             <a class="navbar-item" href="/">
-                <img style="width: auto !important; height: 48px !important;" alt="<% __("Discord Extreme List's Logo") %>" src="/img/logo-128px.<%= imageFormat %>" draggable="false">
+                <img style="width: auto !important; height: 48px !important;" alt="<% __("common.nav.logoAlt") %>" src="/img/logo-128px.<%= imageFormat %>" draggable="false">
             </a>
         <% } %>
 
@@ -20,28 +20,35 @@
                 <span class="icon iconalign">
                     <i class="fad fa-house" aria-hidden="true"></i>
                 </span>
-                <span><%= __("Home") %></span>
+                <span><%= __("common.home") %></span>
             </a>
 
             <a class="navbar-item" href="/bots">
                 <span class="icon iconalign">
                     <i class="fad fa-robot" aria-hidden="true"></i>
                 </span>
-                <span><%= __("Bots") %></span>
+                <span><%= __("common.bots") %></span>
             </a>
 
             <a class="navbar-item" href="/servers">
                 <span class="icon iconalign">
                     <i class="fad fa-comments-alt" aria-hidden="true"></i>
                 </span>
-                <span><%= __("Servers") %></span>
+                <span><%= __("common.servers") %></span>
+            </a>
+
+            <a class="navbar-item" href="/templates">
+                <span class="icon iconalign">
+                    <i class="fad fa-copy" aria-hidden="true"></i>
+                </span>
+                <span><%= __("common.templates") %></span>
             </a>
 
             <a class="navbar-item" href="/search">
                 <span class="icon iconalign">
                     <i class="fad fa-search" aria-hidden="true"></i>
                 </span>
-                <span><%= __("Search") %></span>
+                <span><%= __("common.search") %></span>
             </a>
 
             <div class="navbar-item has-dropdown is-hoverable">
@@ -49,7 +56,7 @@
                     <span class="icon iconalign">
                         <i class="fad fa-sitemap" aria-hidden="true"></i>
                     </span>
-                    <span><%= __("More") %></span>
+                    <span><%= __("common.nav.more") %></span>
                 </a>
 
                 <div class="navbar-dropdown is-hidden-mobile">
@@ -57,38 +64,38 @@
                         <span class="icon iconalign">
                             <i class="fab fa-discord" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Discord Server") %></span>
+                        <span><%= __("common.nav.more.discord") %></span>
                     </a>
                     <a class="navbar-item" href="https://docs.discordextremelist.xyz/">
                         <span class="icon iconalign">
                             <i class="fad fa-books" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Documentation") %></span>
+                        <span><%= __("common.nav.more.discord") %></span>
                     </a>
                     <a class="navbar-item" href="/about">
                         <span class="icon iconalign">
                             <i class="fad fa-question" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("About") %></span>
+                        <span><%= __("common.nav.more.about") %></span>
                     </a>
                     <hr class="navbar-divider">
                     <a class="navbar-item" href="/terms">
                         <span class="icon iconalign">
                             <i class="fad fa-balance-scale" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Terms of Use") %></span>
+                        <span><%= __("common.nav.more.terms") %></span>
                     </a>
                     <a class="navbar-item" href="/privacy">
                         <span class="icon iconalign">
                             <i class="fad fa-user-secret" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Privacy Policy") %></span>
+                        <span><%= __("common.nav.more.privacy") %></span>
                     </a>
                     <a class="navbar-item" href="/guidelines">
                         <span class="icon iconalign">
                             <i class="fad fa-book" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Website Guidelines") %></span>
+                        <span><%= __("common.nav.more.guidelines") %></span>
                     </a>
                 </div>
             </div>
@@ -100,7 +107,7 @@
                     <span class="icon iconalign">
                         <i class="fad fa-cogs" aria-hidden="true"></i>
                     </span>
-                    <span><%= __("Staff Panel") %></span>
+                    <span><%= __("common.nav.me.staffPanel") %></span>
                 </a>
 
                 <div class="navbar-dropdown is-hidden-mobile">
@@ -109,9 +116,9 @@
                             <i class="fad fa-house" aria-hidden="true"></i>
                         </span>
                         <% if (mobile) { %>
-                            <span><%= __("(Staff) Home") %></span>
+                            <span><%= __("common.nav.me.staffPanel.home.mobile") %></span>
                         <% } else { %>
-                            <span><%= __("Home") %></span>
+                            <span><%= __("common.nav.me.staffPanel.home.desktop") %></span>
                         <% } %>
                     </a>
                 </div>
@@ -129,25 +136,31 @@
                             <span class="icon iconalign">
                                 <i class="fad fa-user" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("Profile") %></span>
+                            <span><%= __("common.nav.me.profile") %></span>
                         </a>
                         <a class="navbar-item" href="/users/account/preferences">
                             <span class="icon iconalign">
                                 <i class="fad fa-swatchbook" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("Preferences") %></span>
+                            <span><%= __("common.nav.me.preferences") %></span>
                         </a>
                         <a class="navbar-item" href="/bots/submit">
                             <span class="icon iconalign">
                                 <i class="fad fa-robot" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("Submit Bot") %></span>
+                            <span><%= __("common.nav.me.submitBot") %></span>
                         </a>
                         <a class="navbar-item" href="/servers/submit">
                             <span class="icon iconalign">
                                 <i class="fad fa-comments-alt" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("Submit Server") %></span>
+                            <span><%= __("common.nav.me.submitServer") %></span>
+                        </a>
+                        <a class="navbar-item" href="/templates/submit" tabindex="0">
+                            <span class="icon iconalign">
+                                <i class="fad fa-copy" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("common.nav.me.submitTemplate") %></span>
                         </a>
                         <% if (req.user.db.preferences.enableGames === true) { %>
                             <hr class="navbar-divider">
@@ -155,7 +168,7 @@
                                 <span class="icon iconalign">
                                     <i class="fad fa-snake" aria-hidden="true"></i>
                                 </span>
-                                <span><%= __("Play Snake") %></span>
+                                <span><%= __("common.nav.me.playSnake") %></span>
                             </a>
                         <% } %>
                     </div>

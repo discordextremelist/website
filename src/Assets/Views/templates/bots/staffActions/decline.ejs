@@ -1,8 +1,7 @@
 <%- include("../../../partials/header.ejs") %>
-<link href="/css/form.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
 <link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<%- include("../../../partials/nav.ejs") %>
+<% - include("../../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
         <br />
@@ -24,7 +23,7 @@
     <div class="section">
         <form method="POST">
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Reason") %> <span class="has-text-danger">*</span></label>
+                <label class="label has-text-blurple"><%= __("common.reason") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" id="reason" name="reason" placeholder="<%= __("Input a custom reason as to why you are declining this bot or use a template reason below.") %>">
                     <span class="icon is-small is-left">
@@ -34,35 +33,35 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Premade Reasons") %></label>
+                <label class="label has-text-blurple"><%= __("page.remove.premadeReasons") %></label>
                 <div class="buttons">
                     <button type="button" onclick="isClone();" class="button is-dark">
-                        <span><%= __("Clone of [...]") %></span>
+                        <span><%= __("page.remove.premadeReasons.clone") %></span>
                     </button>
                     <button type="button" onclick="fixRefusal();" class="button is-dark">
-                        <span><%= __("Refusal to Fix Issues") %></span>
+                        <span><%= __("page.remove.premadeReasons.fixRefusal") %></span>
                     </button>
                     <button type="button" onclick="fixNoResponse();" class="button is-dark">
-                        <span><%= __("No Response") %></span>
+                        <span><%= __("page.remove.premadeReasons.fixNoResponse") %></span>
                     </button>
                     <button type="button" onclick="errOnInvite();" class="button is-dark">
-                        <span><%= __("Error whilst Inviting") %></span>
+                        <span><%= __("page.remove.premadeReasons.errorWhilstInviting") %></span>
                     </button>
                     <button type="button" onclick="tokenLeak();" class="button is-dark">
-                        <span><%= __("Token Leaked") %></span>
+                        <span><%= __("page.remove.premadeReasons.tokenLeak") %></span>
                     </button>
                     <button type="button" onclick="massDM();" class="button is-dark">
-                        <span><%= __("Mass DM") %></span>
+                        <span><%= __("page.remove.premadeReasons.massDM") %></span>
                     </button>
                     <button type="button" onclick="discordTosViolation();" class="button is-dark">
-                        <span><%= __("Discord ToS Violation") %></span>
+                        <span><%= __("page.remove.premadeReasons.discord.tos") %></span>
                     </button>
                     <button type="button" onclick="tosViolation();" class="button is-dark">
-                        <span><%= __("DEL ToS Violation") %></span>
+                        <span><%= __("page.remove.premadeReasons.del.tos") %></span>
                     </button>
                     <% if (req.user.db.rank.admin === true) { %>
                         <button type="button" onclick="shitBot();" class="button is-dark">
-                            <span><%= __("Shit Bot") %></span>
+                            <span><%= __("page.remove.premadeReasons.shitBot") %></span>
                         </button>
                     <% } %> 
                 </div>
@@ -72,11 +71,11 @@
                 <div class="buttons">
                     <button class="button is-success">
                         <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
-                        <span><%= __("Submit") %></span>
+                        <span><%= __("common.submit") %></span>
                     </button>
                     <a class="button is-danger" href="<%= redirect %>">
                         <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>
-                        <span><%= __("Cancel") %></span>
+                        <span><%= __("common.cancel") %></span>
                     </a>
                 </div>
             </div>

@@ -286,7 +286,7 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
     res.render("templates/serverTemplates/edit", { 
         title: res.__("Edit Template"), 
-        subtitle: res.__("Editing template: " + template.name), 
+        subtitle: res.__("Editing template %s", template.name), 
         req,
         template
     });
@@ -360,8 +360,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
         if (error === true) { 
             return res.render("templates/serverTemplates/errorOnEdit", { 
-                title: res.__("Edit Server"), 
-                subtitle: res.__("Editing server: " + server.name),
+                title: res.__("Edit Template"), 
+                subtitle: res.__("Editing template %s", server.name),
                 template: req.body,
                 req,
                 tags,
@@ -473,7 +473,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
         return res.render("templates/serverTemplates/errorOnEdit", { 
             title: res.__("Edit Template"), 
-            subtitle: res.__("Editing template: " + template.name),
+            subtitle: res.__("Editing template %s", template.name),
             template: req.body,
             req,
             tags,
@@ -514,6 +514,138 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
     });
 
     res.redirect("/users/@me");
+});
+
+router.get("/:id/remove", variables, permission.auth, permission.mod, async (req, res, next) => {
+    const template = await req.app.db.collection("templates").findOne({ _id: req.params.id });
+
+    if (!template) return res.status(404).render("status", {
+        title: res.__("Error"),
+        status: 404,
+        subtitle: res.__("You cannot remove a template that doesn't exist"),
+        req,
+        type: "Error"
+    });
+
+    res.render("templates/serverTemplates/staffActions/remove", { 
+        title: res.__("Remove Template"), 
+        subtitle: res.__("Removing template %s", server.name),
+        removingTemplate: template, 
+        req 
+    });
+});
+
+router.post("/:id/remove", variables, permission.auth, permission.mod, async (req, res, next) => {
+    const template = await req.app.db.collection("templates").findOne({ _id: req.params.id });
+
+    if (!template) return res.status(404).render("status", {
+        title: res.__("Error"),
+        status: 404,
+        subtitle: res.__("You cannot remove a template that doesn't exist"),
+        req,
+        type: "Error"
+    });
+
+    await req.app.db.collection("templates").deleteOne({ _id: req.params.id });
+
+    await req.app.db.collection("audit").insertOne({
+        type: "REMOVE_TEMPLATE",
+        executor: req.user.id,
+        target: req.params.id,
+        date: Date.now(),
+        reason: req.body.reason || "None specified."
+    });
+    await templateCache.updateTemplate(req.params.id);
+
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` removed template **${functions.escapeFormatting(template.name)}** \`(${template._id})\`\n**Reason:** \`${req.body.reason}\``);
+
+    
+    const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
+    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.botDeleted} **|** Your template **${functions.escapeFormatting(template.name)}** \`(${template._id})\` has been removed!\n**Reason:** \`${req.body.reason}\``).catch(e => { console.error(e) });
+
+
+    res.redirect("/staff/queue");
+});
+
+router.post("/:id/sync", variables, permission.auth, permission.mod, async (req, res, next) => {
+    const template = await req.app.db.collection("templates").findOne({ _id: req.params.id });
+
+    if (!template) return res.status(404).render("status", {
+        title: res.__("Error"),
+        status: 404,
+        subtitle: res.__("You cannot sync a template that doesn't exist"),
+        req,
+        type: "Error"
+    });
+
+    fetch(`https://discord.com/api/guilds/templates/${req.body.code}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
+        fetchRes.jsonBody = await fetchRes.json();
+        
+        await req.app.db.collection("templates").updateOne({ _id: req.params.id }, 
+            { $set: {
+                name: fetchRes.jsonBody.name,
+                region: fetchRes.jsonBody.serialized_source_guild.region,
+                locale: fetchRes.jsonBody.serialized_source_guild.preferred_locale,
+                afkTimeout: fetchRes.jsonBody.serialized_source_guild.afk_timeout,
+                verificationLevel: fetchRes.jsonBody.serialized_source_guild.verification_level,
+                defaultMessageNotifications: fetchRes.jsonBody.serialized_source_guild.default_message_notifications,
+                explicitContent: fetchRes.jsonBody.serialized_source_guild.explicit_content_filter,
+                roles: fetchRes.jsonBody.serialized_source_guild.roles,
+                channels: fetchRes.jsonBody.serialized_source_guild.channels,
+                usageCount: fetchRes.jsonBody.usage_count,
+                icon: {
+                    hash: fetchRes.jsonBody.serialized_source_guild.icon_hash,
+                    url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.source_guild_id}/${fetchRes.jsonBody.serialized_source_guild.icon_hash}`
+                }
+            }
+        });
+
+        await req.app.db.collection("audit").insertOne({
+            type: "SYNC_TEMPLATE",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: "None specified.",
+            details: {
+                new: {
+                    name: fetchRes.jsonBody.name,
+                    region: fetchRes.jsonBody.serialized_source_guild.region,
+                    locale: fetchRes.jsonBody.serialized_source_guild.preferred_locale,
+                    afkTimeout: fetchRes.jsonBody.serialized_source_guild.afk_timeout,
+                    verificationLevel: fetchRes.jsonBody.serialized_source_guild.verification_level,
+                    defaultMessageNotifications: fetchRes.jsonBody.serialized_source_guild.default_message_notifications,
+                    explicitContent: fetchRes.jsonBody.serialized_source_guild.explicit_content_filter,
+                    roles: fetchRes.jsonBody.serialized_source_guild.roles,
+                    channels: fetchRes.jsonBody.serialized_source_guild.channels,
+                    usageCount: fetchRes.jsonBody.usage_count,
+                },
+                old: {
+                    name: template.name,
+                    region: template.region,
+                    locale: template.locale,
+                    afkTimeout: template.afkTimeout,
+                    verificationLevel: template.verificationLevel,
+                    defaultMessageNotifications: template.defaultMessageNotifications,
+                    explicitContent: template.explicitContent,
+                    roles: template.roles,
+                    channels: template.chanmels,
+                    usageCount: template.usageCount
+                }
+            }
+        });
+        
+        await templateCache.updateTemplate(req.params.id);
+    }).catch(_ => { 
+        return res.status(404).render("status", {
+            title: res.__("Error"),
+            status: 404,
+            subtitle: res.__("An error occurred when querying the Discord API."),
+            req,
+            type: "Error"
+        });
+    });
+
+    res.redirect(`/templates/${req.params.id}`);
 });
 
 module.exports = router;

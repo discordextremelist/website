@@ -14,5 +14,12 @@ UNVERIFY_BOT: When a staff member unverify's a bot.
 SUBMIT_BOT: When a user submits a bot.
 UPVOTE_BOT: When a user upvotes a bot.
 DOWNVOTE_BOT: When a user downvotes a bot.
-SUBMIT_SERVER: When a user a submits a server.
+SUBMIT_SERVER: When a user submits a server.
+EDIT_SERVER: When a user edits a server.
+DELETE_SERVER: When a user deletes a server.
+REMOVE_SERVER: When a staff member removes a server.
+SUBMIT_TEMPLATE: When a user submits a template.
+EDIT_TEMPLATE: When a user edits a template.
+DELETE_TEMPLATE: When a user deletes a template.
+REMOVE_TEMPLATE: When a staff member removes a template.
 ```

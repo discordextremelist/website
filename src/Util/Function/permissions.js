@@ -21,7 +21,7 @@ const auth = (req, res, next) => {
     if (req.user) { 
         next();
     } else {
-        res.redirect("/login");
+        res.redirect("/auth/login");
     }
 }
 
@@ -38,44 +38,50 @@ const member = (req, res, next) => {
 }
 
 const mod = (req, res, next) => {
-    if (req.user.db.rank.mod === true) {
-        next();
-    } else {
-        return res.status(403).render("status", {
-            title: res.__("Error"),
-            status: 403,
-            subtitle: res.__("You need to be a Website Moderator to access this endpoint"),
-            req,
-            type: "Error"
-        });
-    }
+    if (req.user) {
+        if (req.user.db.rank.mod === true) {
+            next();
+        } else {
+            return res.status(403).render("status", {
+                title: res.__("Error"),
+                status: 403,
+                subtitle: res.__("You need to be a Website Moderator to access this endpoint"),
+                req,
+                type: "Error"
+            });
+        }
+    } else auth(req, res, next);
 }
 
 const assistant = (req, res, next) => {
-    if (req.user.db.rank.assistant === true) {
-        next();
-    } else {
-        return res.status(403).render("status", {
-            title: res.__("Error"),
-            status: 403,
-            subtitle: res.__("You need to be a Website Assistant to access this endpoint"),
-            req,
-            type: "Error"
-        });
-    }
+    if (req.user) {
+        if (req.user.db.rank.assistant === true) {
+            next();
+        } else {
+            return res.status(403).render("status", {
+                title: res.__("Error"),
+                status: 403,
+                subtitle: res.__("You need to be a Website Assistant to access this endpoint"),
+                req,
+                type: "Error"
+            });
+        }
+    } else auth(req, res, next);
 }
 const admin = (req, res, next) => {
-    if (req.user.db.rank.admin === true) {
-        next();
-    } else {
-        return res.status(403).render("status", {
-            title: res.__("Error"),
-            status: 403,
-            subtitle: res.__("You need to be a Website Administrator to access this endpoint"),
-            req,
-            type: "Error"
-        });
-    }
+    if (req.user) {
+        if (req.user.db.rank.admin === true) {
+            next();
+        } else {
+            return res.status(403).render("status", {
+                title: res.__("Error"),
+                status: 403,
+                subtitle: res.__("You need to be a Website Administrator to access this endpoint"),
+                req,
+                type: "Error"
+            });
+        }
+    } else auth(req, res, next);
 }
 
 module.exports = {

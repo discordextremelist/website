@@ -8,9 +8,8 @@
         foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
     }
 %>
-<link href="/css/form.css" type="text/css" media="screen, print" rel="stylesheet" />
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
 <link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <style type="text/css">.is-checkradio[type="checkbox"].is-default.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked+label::after,.is-checkradio[type="checkbox"].is-default:checked+label:after{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::after,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:after{border-color:<%= foreground %> !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked+label{color:<%= foreground %>;border-color:<%= defaultColour %> !important;background:<%= defaultColour %>}.is-checkradio[type="checkbox"].is-default.is-block:checked+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked+label:after{border-color:<%= foreground %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label{background:#5e78d5}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:before{border-color:#f2f2f2 !important}</style>
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
@@ -33,7 +32,7 @@
     <div class="container">
         <div class="section">
             <form method="POST">
-                <h3 class="is-size-3 has-text-blurple"><%= __("General Information") %></h3>
+                <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.generalInfo") %></h3>
                 <br />
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Invite Code") %> <span class="has-text-danger">*</span></label>
@@ -52,54 +51,54 @@
                     <p style="padding: 5px;" class="is-size-7 has-text-default"><%= __("Do not include the https://discord.gg/ part.") %></p>
                 </div>
                 <br />
-                <label class="label has-text-blurple"><%= __("Tags") %></label>
+                <label class="label has-text-blurple"><%= __("common.tags") %></label>
                 <div class="columns">
                     <div class="column is-one-quarter">
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="gaming" name="gaming" <% if (server.tags && server.tags.includes("Gaming")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="gaming"><%= __("Gaming") %></label>
+                            <label class="has-text-default" for="gaming"><%= __("common.tags.gaming") %></label>
                         </div>
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="music" name="music" <% if (server.tags && server.tags.includes("Music")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="music"><%= __("Music") %></label>
+                            <label class="has-text-default" for="music"><%= __("common.tags.music") %></label>
                         </div>
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="mediaEntertain" name="mediaEntertain" <% if (server.tags && server.tags.includes("Media & Entertainment")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="mediaEntertain"><%= __("Media & Entertainment") %></label>
+                            <label class="has-text-default" for="mediaEntertain"><%= __("common.tags.mediaEntertainment") %></label>
                         </div>
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="createArts" name="createArts" <% if (server.tags && server.tags.includes("Creative Arts")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="createArts"><%= __("Creative Arts") %></label>
+                            <label class="has-text-default" for="createArts"><%= __("common.tags.creativeArts") %></label>
                         </div>
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="sciTech" name="sciTech" <% if (server.tags && server.tags.includes("Science & Tech")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="sciTech"><%= __("Science & Tech") %></label>
+                            <label class="has-text-default" for="sciTech"><%= __("common.tags.scienceTech") %></label>
                         </div>
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="edu" name="edu" <% if (server.tags && server.tags.includes("Education")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="edu"><%= __("Education") %></label>
+                            <label class="has-text-default" for="edu"><%= __("common.tags.education") %></label>
                         </div>
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="fashBeaut" name="fashBeaut" <% if (server.tags && server.tags.includes("Fashion & Beauty")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="fashBeaut"><%= __("Fashion & Beauty") %></label>
+                            <label class="has-text-default" for="fashBeaut"><%= __("common.tags.fashionBeauty") %></label>
                         </div>
                     </div>
                     <div class="column is-one-quarter">
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="relIdentity" name="relIdentity" <% if (server.tags && server.tags.includes("Relationships & Identity")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="relIdentity"><%= __("Relationships & Identity") %></label>
+                            <label class="has-text-default" for="relIdentity"><%= __("common.tags.relationshipIdentity") %></label>
                         </div>
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="travelCuis" name="travelCuis" <% if (server.tags && server.tags.includes("Travel & Food")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="travelCuis"><%= __("Travel & Food") %></label>
+                            <label class="has-text-default" for="travelCuis"><%= __("common.tags.travelFood") %></label>
                         </div>
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="fitHealth" name="fitHealth" <% if (server.tags && server.tags.includes("Fitness & Health")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="fitHealth"><%= __("Fitness & Health") %></label>
+                            <label class="has-text-default" for="fitHealth"><%= __("common.tags.fitnessHealth") %></label>
                         </div>
                         <div class="field">
                             <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="finance" name="finance" <% if (server.tags && server.tags.includes("Finance")) { %>checked="checked"<% } %>>
-                            <label class="has-text-default" for="finance"><%= __("Finance") %></label>
+                            <label class="has-text-default" for="finance"><%= __("common.tags.finance") %></label>
                         </div>
                     </div>
                     <div class="column is-one-quarter"></div>
@@ -107,7 +106,7 @@
                 </div>
                 <br />
                 <br />
-                <h3 class="is-size-3 has-text-blurple"><%= __("Links") %></h3>
+                <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.links") %></h3>
                 <br />
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Server Website") %></label>
@@ -130,7 +129,7 @@
                 </div>
                 <br />
                 <br />
-                <h3 class="is-size-3 has-text-blurple"><%= __("Descriptions") %></h3>
+                <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.descriptions") %></h3>
                 <br />
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("Server Short Description") %> <span class="has-text-danger">*</span></label>
@@ -154,13 +153,13 @@
                             <span class="icon">
                               <i aria-hidden="true" class="fas fa-check-circle"></i>
                             </span>
-                            <span><%= __("Submit") %></span>
+                            <span><%= __("common.submit") %></span>
                         </button>
                         <a href="/" class="button is-danger">
                             <span class="icon">
                               <i aria-hidden="true" class="fas fa-times-circle"></i>
                             </span>
-                            <span><%= __("Cancel") %></span>
+                            <span><%= __("common.cancel") %></span>
                         </a>
                     </div>
                 </div>

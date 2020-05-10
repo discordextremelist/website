@@ -226,5 +226,22 @@ setTimeout(async () => {
         }).then(() => true).catch(() => false);
     }
     console.log("Done!");
+
+    console.log("Inserting default web options!");
+    await app.db.collection("webOptions").insertOne({
+        _id: "ddosMode",
+        active: false
+    });
+
+    await app.db.collection("webOptions").insertOne({
+        _id: "announcement",
+        active: false,
+        useDefaultColour: true,
+        message: "",
+        background: "",
+        foreground: ""
+    });
+
+    console.log("Done... exiting!");
     process.exit(0);
 }, 5000);

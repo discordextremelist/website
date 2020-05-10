@@ -20,10 +20,10 @@
         <div class="container has-text-centered">
             <img class="backdrop" draggable=false alt="DEL Logo" style="padding: 5px;" src="/img/logo-128px.<%= imageFormat %>" type="image/<%= imageFormat %>" draggable="false">
             <h1 class="title">
-                <%= __("Discord Extreme List") %>
+                <%= __("common.del") %>
             </h1>
             <h2 class="subtitle">
-                <%= __("Discord's unbiased list, giving bots and servers of all sizes a big chance!") %>
+                <%= __("common.del.subtitle") %>
             </h2>
         </div>
     </div>
@@ -31,7 +31,7 @@
 <div class="container">
     <div class="section">
         <% if (bots.length === 0) { %>
-            <h2 class="is-size-3"><%= __("An error occurred whilst fetching bots.") %></h2>
+            <h2 class="is-size-3"><%= __("common.error.fetchFail.bots") %></h2>
         <% } else { %>
             <h2 class="is-size-3 has-text-centered has-text-blurple">
                 <span onclick="invokeSeizureMode();" class="icon is-medium iconalign">
@@ -47,7 +47,7 @@
     </div>
     <div class="section">
         <% if (servers.length === 0) { %>
-            <h2 class="is-size-3"><%= __("An error occurred whilst fetching servers.") %></h2>
+            <h2 class="is-size-3"><%= __("common.error.fetchFail.servers") %></h2>
         <% } else { %>
             <h2 class="is-size-3 has-text-centered has-text-blurple">
                 <span class="icon is-medium iconalign">

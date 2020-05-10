@@ -64,9 +64,11 @@ new Promise((resolve, reject) => {
         app.db = db;
         const botCache = require("./src/Util/Services/botCaching.js");
         const serverCache = require("./src/Util/Services/serverCaching.js");
-        const userCache = require("./src/Util/Services/userCaching.js");
-        const featuredCache = require("./src/Util/Services/featuring.js");
         const templateCache = require("./src/Util/Services/templateCaching.js");
+        const userCache = require("./src/Util/Services/userCaching.js");
+        const libCache = require("./src/Util/Services/libCaching.js");
+        const featuredCache = require("./src/Util/Services/featuring.js");
+        const ddosMode = require("./src/Util/Services/ddosMode.js");
         const banned = require("./src/Util/Services/banned.js");
         const discord = require("./src/Util/Services/discord.js");
         global.redis = new (require("ioredis"))(settings.db.redis);
@@ -76,10 +78,22 @@ new Promise((resolve, reject) => {
         await botCache.uploadBots();
         await serverCache.uploadServers();
         await templateCache.uploadTemplates();
+        await libCache.cacheLibs();
         await featuredCache.updateFeaturedBots();
         await featuredCache.updateFeaturedServers();
-        await banned.updateBanlist();
-        await discord.uploadStatuses();
+        await ddosMode.updateCache();
+
+        async function discordBotUndefined(){
+            if (typeof discord.bot.guilds !== "undefined" && typeof discord.bot.guilds.get(settings.guild.main) !== "undefined"){
+                await banned.updateBanlist();
+                await discord.uploadStatuses();
+            } else {
+                setTimeout(discordBotUndefined, 250);
+            }
+        }
+
+        await discordBotUndefined();
+
         console.timeEnd("Redis Cache");
 
         const createError = require("http-errors");
@@ -89,6 +103,7 @@ new Promise((resolve, reject) => {
         const compression = require("compression");
         const i18n = require("i18n");
         const passport = require("passport");
+        const RedisStore = require("connect-redis")(session);
 
         app.set("view engine", "ejs");
 
@@ -114,18 +129,19 @@ new Promise((resolve, reject) => {
             cookie: "lang",
         });
 
-        app.use(
-            session({
-                secret: settings.website.secrets.cookie,
-                name: "delSession",
-                resave: false,
-                saveUninitialized: true,
-                cookie: {
-                    secure: false,
-                    maxAge: 604800000,
-                },
+        app.use(session({
+            saveUninitialized: true,
+            resave: false,
+            secret: settings.website.secrets.cookie,
+            cookie: {
+                maxAge: 1 * 60 * 60 * 24 * 7
+            },
+            key: settings.website.secrets.cookie,
+            store: new RedisStore({
+                client: global.redis,
+                ttl: 1 * 60 * 60 * 24 * 7
             })
-        );
+        }));
 
         app.use(passport.initialize());
         app.use(passport.session());
@@ -139,13 +155,14 @@ new Promise((resolve, reject) => {
 
         app.use("/", require("./src/Routes/index.js"));
         app.use("/search", require("./src/Routes/search.js"));
-        app.use("/", require("./src/Routes/authentication.js"));
+        app.use("/auth", require("./src/Routes/authentication.js"));
         app.use("/bots", require("./src/Routes/bots.js"));
         app.use("/servers", require("./src/Routes/servers.js"));
         app.use("/templates", require("./src/Routes/templates.js"));
         app.use("/users", require("./src/Routes/users.js"));
         app.use("/staff", require("./src/Routes/staff.js"));
-        app.use("/amp", require("./src/Routes/amp.js"));
+        /* app.use("/amp", require("./src/Routes/amp.js"));
+           todo - advaith */
 
         app.use("*", require("./src/Util/Function/variables.js"));
 
@@ -159,10 +176,10 @@ new Promise((resolve, reject) => {
 
             if (err.message === "Not Found")
                 return res.status(404).render("status", {
-                    title: res.__("Error"),
-                    subtitle: "This page does not exist.",
+                    title: res.__("common.error"),
+                    subtitle: res.__("common.error.404"),
                     status: 404,
-                    type: "Error",
+                    type: res.__("common.error"),
                     req: req,
                     pageType: {
                         home: false,

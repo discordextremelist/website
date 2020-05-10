@@ -1,7 +1,7 @@
 <% if (template.explicitContent === 0) { %>
-    <p class="twemojiParse"><strong><%= __("Explicit Content Filter:") %></strong> ❌ <%= __("Disabled") %></p>
+    <p><strong><%= __("partials.explicitFilter") %></strong> <%= __("partials.explicitFilter.0") %></p>
 <% } else if (template.explicitContent === 1) { %>
-    <p class="twemojiParse"><strong><%= __("Explicit Content Filter:") %></strong> 🔐 <%= __("Members without Roles") %></p>
+    <p><strong><%= __("partials.explicitFilter") %></strong> <%= __("partials.explicitFilter.1") %></p>
 <% } else if (template.explicitContent === 2) { %>
-    <p class="twemojiParse"><strong><%= __("Explicit Content Filter:") %></strong> 🔒 <%= __("All Members") %></p>
+    <p><strong><%= __("partials.explicitFilter") %></strong> <%= __("partials.explicitFilter.2") %></p>
 <% } %>

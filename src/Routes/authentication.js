@@ -25,6 +25,7 @@ const passport = require("passport");
 const Strategy = require("passport-discord").Strategy;
 
 const settings = require("../../settings.json");
+const ddosMode = require("../Util/Services/ddosMode.js");
 
 passport.use(new Strategy ({
     clientID: settings.client.id,
@@ -46,7 +47,15 @@ router.use(bodyParser.urlencoded({
     extended: true
 }));
 
-router.get("/authentication_info", (req, res, next) => {
+router.get("*", async (req, res, next) => {
+    if (ddosMode.getDDOSMode().active === false) {
+        next();
+    } else {
+        return res.status(403).json({ message: "fuckign ddos moade cunt" });
+    }
+});
+
+router.get("/session", (req, res, next) => {
     res.json(req.user.db);
 });
 

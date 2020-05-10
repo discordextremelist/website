@@ -29,9 +29,9 @@
                 <% if (!req.user || req.user.db.preferences.enableGames === true) { %>
                     <div id="snake_game">
                         <% if (req.user) { %>
-                            <p class="is-size-5 has-text-warning"><span><%= __("High Score:") %></span> <span id="highScore"><%= req.user.db.game.snakes.maxScore %></span></p>
+                            <p class="is-size-5 has-text-warning"><span><%= __("page.status.snake.highscore") %></span> <span id="highScore"><%= req.user.db.game.snakes.maxScore %></span></p>
                         <% } %>
-                        <p class="is-size-5"><span><%= ("Score:") %> </span><span id="score"></span></p>
+                        <p class="is-size-5"><span><%= ("page.status.snake.score") %> </span><span id="score"></span></p>
                         <br />
                         <canvas class="snakeNormal" style="background-color: black;" width="400" height="400" id="game"></canvas>
                         <script>
@@ -238,10 +238,10 @@
                         </script>
                     </div>
                 <% } else { %>
-                    <h2 class="is-size-4 backdrop"><%= __("such emptiness..") %></h2>
+                    <h2 class="is-size-4 backdrop"><%= __("page.status.snake.emptiness") %></h2>
                 <% } %>
             <% } else { %>
-                    <p class="is-size-5 backdrop"><%= __("no snake game for you mobile user") %></p>
+                    <p class="is-size-5 backdrop"><%= __("page.status.snake.desktopOnly") %></p>
             <% } %>
         </div>     
 <%- include("./partials/footer.ejs") %>

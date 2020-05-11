@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const app = require("../app.js");
+const execSh = require("exec-sh");
 
 const libraries = [
     {
@@ -214,7 +215,7 @@ const libraries = [
 ];
 
 setTimeout(async () => {
-    console.log(`Adding ${libraries.length} libraries!`);
+    console.log(`Adding ${libraries.length} libraries...`);
     for (const lib of libraries) {
         const success = await app.db.collection("libraries").insertOne({
             _id: lib.name,
@@ -227,11 +228,11 @@ setTimeout(async () => {
     }
     console.log("Done!");
 
-    console.log("Inserting default web options!");
+    console.log("Inserting default web options...");
     await app.db.collection("webOptions").insertOne({
         _id: "ddosMode",
         active: false
-    });
+    }).then(() => true).catch(() => false);
 
     await app.db.collection("webOptions").insertOne({
         _id: "announcement",
@@ -240,8 +241,16 @@ setTimeout(async () => {
         message: "",
         background: "",
         foreground: ""
-    });
+    }).then(() => true).catch(() => false);
 
-    console.log("Done... exiting!");
-    process.exit(0);
+    console.log("Done!");
+
+    console.log("Downloading translations...");
+
+    execSh(`rm -rf scripts/temp_dir/ && mkdir scripts/temp_dir/ && cd scripts/temp_dir/ && git clone https://github.com/discordextremelist/i18n.git && cd i18n/ && rm -rf .github/ && rm -rf crowdin.yml && rm -rf CODEOWNERS && rm -rf ../../../src/Assets/Locale/ && mkdir ../../../src/Assets/Locale/ && mv * ../../../src/Assets/Locale/ && cd ${process.cwd()} && rm -rf scripts/temp_dir/ && exit 1`, { cwd: process.cwd() }, function(err) {
+        if (err) {
+            console.log("Done... exiting!");
+            process.exit(0);
+        }
+    });
 }, 5000);

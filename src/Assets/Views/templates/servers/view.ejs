@@ -74,7 +74,7 @@
                                     <span class="icon">
                                         <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
                                     </span>
-                                    <span><%= __("Staff Management") %></span>
+                                    <span><%= __("common.staffManagement") %></span>
                                     <span class="icon is-small">
                                         <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
                                     </span>
@@ -83,7 +83,7 @@
                                 <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                     <div class="dropdown-content">
                                         <div class="dropdown-item">
-                                            <p class="has-text-danger"><%= __("If you accidentally perform an action that is abusive or inappropriate please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.") %></p>
+                                            <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                         </div>
                                         <hr class="dropdown-divider">
                                         <a class="dropdown-item" href="/servers/<%= server._id %>/edit">
@@ -112,21 +112,21 @@
                             <span class="icon">
                                 <i aria-hidden="true" class="fas fa-plus"></i>
                             </span>
-                            <span><%= __("Invite") %></span>
+                            <span><%= __("common.join") %></span>
                         </a>
                         <% if (server.links.donation) { %>
                             <a target="_blank" rel="noopener" href="<%= server.links.donation %>" class="button is-success">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-dollar-sign"></i>
                                 </span>
-                                <span><%= __("Donate") %></span>
+                                <span><%= __("common.donate") %></span>
                             </a>
                         <% } %>
                     </div>
                     <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
                         <div class="control">
                             <div class="tags has-addons">
-                                <span class="tag is-dark"><%= __("Listing Owner") %></span>
+                                <span class="tag is-dark"><%= __("common.listingOwner") %></span>
                                 <span class="tag is-link"><a class="has-text-white" href="/users/<%= server.owner.id %>"><%= serverOwner.fullUsername %></a></span>
                             </div>
                         </div>
@@ -142,16 +142,16 @@
     </div>
 </section> 
 <div class="container" style="overflow: hidden;">
-    <div id="content" class="section content" style="white-space: pre;"><%- longDesc || "A long description is unavailable as this server was added in v4." %></div>
+    <div id="content" class="section content" style="white-space: pre;"><%- longDesc || __("page.servers.longDesc.unavailable") %></div>
 </div>
 <div class="modal deleteModal">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title has-text-danger"><%= __("Warning!") %></p>
+            <p class="modal-card-title has-text-danger"><%= __("common.warning") %></p>
         </header>
         <section class="modal-card-body has-text-danger">
-            <%= __("This action is irreversible, when you click Delete your server's data will be immediately erased from our database with no way of restoring it.") %>
+            <%= __("page.servers.warning.delete") %>
         </section>
         <footer class="modal-card-foot">
             <div class="buttons">

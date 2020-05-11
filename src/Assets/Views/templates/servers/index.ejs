@@ -95,7 +95,7 @@
         <br />
         <div class="columns is-multiline is-centered">
             <% if (serversData.length === 0) { %>
-                <h2 class="is-size-3"><%= __("An error occurred whilst fetching servers.") %></h2>
+                <h2 class="is-size-3"><%= __("common.error.fetchFail.servers") %></h2>
             <% } else { %>
                 <%- serverChunk.map(chunk => `${chunk.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false })).join("")}`).join("") %>
             <% } %>

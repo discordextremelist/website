@@ -36,8 +36,8 @@ const userCache = require("../Util/Services/userCaching.js");
 
 router.get("/submit", variables, permission.auth, (req, res, next) => {
     res.render("templates/servers/submit", { 
-        title: res.__("Submit Server"), 
-        subtitle: res.__("Submit your server to the list"), 
+        title: res.__("common.nav.me.submitServer"), 
+        subtitle: res.__("common.nav.me.submitServer.subtitle"), 
         req 
     });
 });
@@ -52,8 +52,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         if (fetchRes.jsonBody.code !== 10006) {
             const serverExists = await req.app.db.collection("servers").findOne({ _id: fetchRes.jsonBody.guild.id });
             if (serverExists) return res.status(409).render("status", { 
-                title: res.__("Error"), 
-                subtitle: res.__("This server has already been added to the list."),
+                title: res.__("common.error"), 
+                subtitle: res.__("common.error.server.conflict"),
                 status: 409, 
                 type: "Error",
                 req 
@@ -61,11 +61,11 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         
             if (!req.body.longDescription) {
                 error = true;
-                errors.push(res.__("A long description is required."));
+                errors.push(res.__("common.error.listing.arr.longDescRequired"));
             }
         } else {
             error = true;
-            errors.push(res.__("You provided an invalid invite."));
+            errors.push(res.__("common.error.listing.arr.invite.invalid"));
         }
 
         let tags = [];
@@ -84,8 +84,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
     
         if (error === true) { 
             return res.render("templates/servers/errorOnSubmit", { 
-                title: res.__("Submit Server"), 
-                subtitle: res.__("Submit your server to the list"),
+                title: res.__("common.nav.me.submitServer"), 
+                subtitle: res.__("common.nav.me.submitServer.subtitle"),
                 server: req.body,
                 req,
                 tags,
@@ -153,26 +153,26 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
 
         if (!req.body.invite) {
             error = true;
-            errors.push(res.__("You didn't provide a valid invite."));
+            errors.push(res.__("common.error.listing.arr.invite.invalid"));
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
-                errors.push(res.__("You provided an invalid invite."));
+                errors.push(res.__("common.error.listing.arr.invite.invalid"));
             } else if (req.body.invite.length > 2000) {
                 error = true;
-                errors.push(res.__("The invite link you provided is too long."));
+                errors.push(res.__("common.error.listing.arr.invite.tooLong"));
             } else if (/^https?:\/\//.test(req.body.invite)) {
                 error = true;
-                errors.push(res.__("The invite code cannot be a URL."));
+                errors.push(res.__("common.error.listing.arr.invite.isURL"));
             } else if (req.body.invite.includes("discord.gg")) {
                 error = true;
-                errors.push(res.__("The invite code cannot contain discord.gg."));
+                errors.push(res.__("common.error.server.arr.invite.dgg"));
             }
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(res.__("A long description is required."));
+            errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
 
         let tags = [];
@@ -190,8 +190,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         if (req.body.finance === "on") tags.push("Finance");
 
         return res.render("templates/servers/errorOnSubmit", { 
-            title: res.__("Submit Server"), 
-            subtitle: res.__("Submit your server to the list"),
+            title: res.__("common.nav.me.submitServer"), 
+            subtitle: res.__("common.nav.me.submitServer.subtitle"),
             server: req.body,
             tags,
             req,
@@ -210,9 +210,9 @@ router.get("/:id", variables, async (req, res, next) => {
     if (!server) {
         server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
         if (!server) return res.status(404).render("status", {
-            title: res.__("Error"),
+            title: res.__("common.error"),
             status: 404,
-            subtitle: res.__("This server is not in our database"),
+            subtitle: res.__("common.error.server.404"),
             type: "Error",
             req: req,
             pageType: { server: false, bot: false }
@@ -251,24 +251,24 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
     const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
     
     if (!server) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This server is not in our database"),
+        subtitle: res.__("common.error.server.404"),
         type: "Error",
         req: req
     });
 
     if (server.owner.id !== req.user.id && req.user.db.assistant === false) return res.status(403).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("You do not have the required permission(s) to edit this server."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.server.perms.edit"),
         status: 403, 
         type: "Error",
         req 
     }); 
 
     res.render("templates/servers/edit", { 
-        title: res.__("Edit Server"), 
-        subtitle: res.__("Editing server %s", server.name), 
+        title: res.__("page.servers.edit.title"), 
+        subtitle: res.__("page.servers.edit.subtitle", server.name), 
         req,
         server
     });
@@ -281,16 +281,16 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
 
     if (!server) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This server is not in our database"),
+        subtitle: res.__("common.error.server.404"),
         type: "Error",
         req: req
     });
 
     if (server.owner.id !== req.user.id && req.user.db.assistant === false) return res.status(403).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("You do not have the required permission(s) to edit this server."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.server.perms.edit"),
         status: 403, 
         type: "Error",
         req 
@@ -298,26 +298,26 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
     if (!req.body.invite) {
         error = true;
-        errors.push(res.__("You didn't provide a valid invite."));
+        errors.push(res.__("common.error.listing.arr.invite.invalid"));
     } else {
         if (typeof req.body.invite !== "string") {
             error = true;
-            errors.push(res.__("You provided an invalid invite."));
+            errors.push(res.__("common.error.listing.arr.invite.invalid"));
         } else if (req.body.invite.length > 32) {
             error = true;
-            errors.push(res.__("The invite code you provided is too long."));
+            errors.push(res.__("common.error.listing.arr.invite.tooLong"));
         } else if (/^https?:\/\//.test(req.body.invite)) {
             error = true;
-            errors.push(res.__("The invite code cannot be a URL."));
+            errors.push(res.__("common.error.listing.arr.invite.isURL"));
         } else if (req.body.invite.includes("discord.gg")) {
             error = true;
-            errors.push(res.__("The invite code cannot contain discord.gg."));
+            errors.push(res.__("common.error.server.arr.invite.dgg"));
         }
     }
 
     if (!req.body.longDescription) {
         error = true;
-        errors.push(res.__("A long description is required."));
+        errors.push(res.__("common.error.listing.arr.longDescRequired"));
     }
 
     let tags = [];
@@ -336,17 +336,16 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     
     fetch(`https://discord.com/api/v6/invites/${req.body.invite}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
         fetchRes.jsonBody = await fetchRes.json();
-        console.log(fetchRes.jsonBody) // this does return shit
 
         if (fetchRes.jsonBody.guild.id !== server._id) {
             error = true;
-            errors.push(res.__("The invite code used must be from the same server as the one used during submission!"))
+            errors.push(res.__("common.error.server.arr.invite.sameServer"))
         }
 
         if (error === true) { 
             return res.render("templates/servers/errorOnEdit", { 
-                title: res.__("Edit Server"), 
-                subtitle: res.__("Editing server %s", server.name),
+                title: res.__("page.servers.edit.title"), 
+                subtitle: res.__("page.servers.edit.subtitle", server.name),
                 server: req.body,
                 req,
                 tags,
@@ -422,11 +421,11 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         res.redirect(`/servers/${req.params.id}`);
     }).catch(_ => {
         error = true;
-        errors.push(res.__("An error occurred when querying the Discord API."));
+        errors.push(res.__("common.error.dapiFail"));
 
         return res.render("templates/servers/errorOnEdit", { 
-            title: res.__("Edit Server"), 
-            subtitle: res.__("Editing server %s", server.name),
+            title: res.__("page.servers.edit.title"), 
+            subtitle: res.__("page.servers.edit.subtitle", server.name),
             server: req.body,
             req,
             tags,
@@ -439,16 +438,16 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
     const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
 
     if (!server) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This server is not in our database"),
+        subtitle: res.__("common.error.server.404"),
         type: "Error",
         req: req
     });
 
     if (server.owner.id !== req.user.id) return res.status(403).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("You do not have the required permission(s) to delete this server."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.server.perms.delete"),
         status: 403, 
         type: "Error",
         req 
@@ -473,16 +472,16 @@ router.get("/:id/remove", variables, permission.auth, permission.mod, async (req
     const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
 
     if (!server) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot remove a server that doesn't exist"),
+        subtitle: res.__("common.error.server.404"),
         req,
         type: "Error"
     });
 
     res.render("templates/servers/staffActions/remove", { 
-        title: res.__("Remove Server"), 
-        subtitle: res.__("Removing server %s", server.name),
+        title: res.__("page.servers.remove.title"), 
+        subtitle: res.__("page.servers.remove.subtitle", server.name),
         removingServer: server, 
         req 
     });
@@ -492,9 +491,9 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
     const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
 
     if (!server) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot remove a server that doesn't exist"),
+        subtitle: res.__("common.error.server.404"),
         req,
         type: "Error"
     });

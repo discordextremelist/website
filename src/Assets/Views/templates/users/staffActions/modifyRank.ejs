@@ -10,9 +10,9 @@
                     <i aria-hidden="true" class="fad fa-crown has-text-default fa-1x"></i>
                 </span>
                 <br />
-                <span><%= __("Modify Rank") %></span>
+                <span><%= __("page.users.modifyRank") %></span>
             </h1>
-            <h2 class="subtitle"><%= __("Modifiying the rank of %s", targetUser.fullUsername) %></h2>
+            <h2 class="subtitle"><%= __("page.users.modifyRank.subtitle", targetUser.fullUsername) %></h2>
         </div>
     </div>
 </section>
@@ -20,17 +20,17 @@
     <div class="section">
         <form method="POST">
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Primary Rank") %></label>
+                <label class="label has-text-blurple"><%= __("page.users.modifyRank.primary") %></label>
                 <% if (req.user.db.rank.admin === true) { %>
                     <input class="is-checkradio is-circle has-background-color is-danger" id="admin" type="radio" value="admin" name="rank" <% if (targetUser.rank.mod === true && targetUser.rank.assistant === true && targetUser.rank.admin === true) { %>checked="checked"<% } %>>
-                    <label for="admin" class="has-text-danger"><%= __("Admin") %></label>
+                    <label for="admin" class="has-text-danger"><%= __("common.rank.admin.short") %></label>
                     <input class="is-checkradio is-circle has-background-color is-orange" id="assistant" type="radio" value="assistant" name="rank" <% if (targetUser.rank.mod === true && targetUser.rank.assistant === true && targetUser.rank.admin === false) { %>checked="checked"<% } %>>
-                    <label for="assistant" class="has-text-orange"><%= __("Assistant") %></label>
+                    <label for="assistant" class="has-text-orange"><%= __("common.rank.assistant.short") %></label>
                     <input class="is-checkradio is-circle has-background-color is-success" id="mod" type="radio" value="mod" name="rank" <% if (targetUser.rank.mod === true && targetUser.rank.assistant === false && targetUser.rank.admin === false) { %>checked="checked"<% } %>>
                 <% } %>
-                <label for="mod" class="has-text-success"><%= __("Moderator") %></label>
+                <label for="mod" class="has-text-success"><%= __("common.rank.mod.short") %></label>
                 <input class="is-checkradio is-circle has-background-color is-light" id="user" type="radio" value="user" name="rank" <% if (targetUser.rank.mod === false && targetUser.rank.assistant === false && targetUser.rank.admin === false) { %>checked="checked"<% } %>>
-                <label for="user" class="has-text-light"><%= __("User") %></label>
+                <label for="user" class="has-text-light"><%= __("common.rank.user") %></label>
             </div>
             <br />
             <div class="field">
@@ -46,13 +46,13 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Verified") %></label>
+                <label class="label has-text-blurple"><%= __("common.rank.verified") %></label>
                 <input id="verifySwitch" type="checkbox" name="verified" class="switch is-rounded is-magenta" <% if (targetUser.rank.verified === true) { %>checked="checked"<% } %>>
                 <label for="verifySwitch"></label>
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("COVID-19 Donator") %></label>
+                <label class="label has-text-blurple"><%= __("common.rank.covid") %></label>
                 <input id="covidSwitch" type="checkbox" name="covid" class="switch is-rounded is-red" <% if (targetUser.rank.covid === true) { %>checked="checked"<% } %>>
                 <label for="covidSwitch"></label>
             </div>
@@ -72,7 +72,4 @@
         </form>
     </div>
 </div>
-<script type="text/javascript">
-    const profileCss = CodeMirror.fromTextArea(document.getElementById("profileCss"), { mode: "css", lineNumbers: true, theme: "3024-night" });
-</script>
 <%- include("../../../partials/footer.ejs") %>

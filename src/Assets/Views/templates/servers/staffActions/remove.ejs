@@ -23,9 +23,9 @@
     <div class="section">
         <form method="POST">
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Reason") %> <span class="has-text-danger">*</span></label>
+                <label class="label has-text-blurple"><%= __("common.reason") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" id="reason" name="reason" placeholder="<%= __("Input a custom reason as to why you are removing this template or use a template reason below.") %>">
+                    <input class="input is-rounded" type="text" id="reason" name="reason" placeholder="<%= __("page.remove.servers.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-comment-dots"></i>
                     </span>
@@ -33,16 +33,16 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Premade Reasons") %></label>
+                <label class="label has-text-blurple"><%= __("page.remove.premadeReasons") %></label>
                 <div class="buttons">
                     <button type="button" onclick="isClone();" class="button is-dark">
-                        <span><%= __("Innapropriate Avatar or Name") %></span>
+                        <span><%= __("page.remove.premadeReasons.innapropriate") %></span>
                     </button>
                     <button type="button" onclick="discordTosViolation();" class="button is-dark">
-                        <span><%= __("Discord ToS Violation") %></span>
+                        <span><%= __("page.remove.premadeReasons.discord.tos") %></span>
                     </button>
                     <button type="button" onclick="tosViolation();" class="button is-dark">
-                        <span><%= __("DEL ToS Violation") %></span>
+                        <span><%= __("page.remove.premadeReasons.del.tos") %></span>
                     </button>
                 </div>
             </div>

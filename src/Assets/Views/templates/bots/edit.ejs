@@ -209,7 +209,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.longDesc") %> <span class="has-text-magenta">(<%= __("common.form.htmlMarkdown") %>)</span> <span class="has-text-danger">*</span></label>
+                <label class="label has-text-blurple"><%= __("page.bots.longDesc") %> <span class="has-text-magenta">(<%= bot.status.verified ? __("common.form.jsHtmlMarkdown") : __("common.form.htmlMarkdown") %>)</span> <span class="has-text-danger">*</span></label>
                 <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
                 <textarea hidden name="longDescription" id="longDesc"><%= bot.longDescription %></textarea>
             </div>

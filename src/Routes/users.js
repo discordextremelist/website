@@ -38,9 +38,9 @@ router.get("/:id", variables, async (req, res, next) => {
     if (!dbUser) {
         dbUser = await req.app.db.collection("users").findOne({ _id: req.params.id });
         if (!dbUser) return res.status(404).render("status", {
-            title: res.__("Error"),
+            title: res.__("common.error"),
             status: 404,
-            subtitle: res.__("This user does not exist in our website database"),
+            subtitle: res.__("common.error.user.404"),
             req,
             type: "Error"
         });
@@ -82,7 +82,7 @@ router.get("/:id", variables, async (req, res, next) => {
     const serverOwnerChunk = chunk(serversOwner, 3);
 
     res.render("templates/users/profile", {
-        title: res.__("%s's Profile", dbUser.fullUsername),
+        title: res.__("page.users.profile.title", dbUser.fullUsername),
         subtitle: dbUser.profile.bio,
         userProfile: dbUser,
         req,
@@ -103,17 +103,17 @@ router.get("/:id/rank", variables, permission.auth, permission.assistant, async 
     const targetUser = await req.app.db.collection("users").findOne({ _id: req.params.id });
 
     if (!targetUser) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This user does not exist in our website database"),
+        subtitle: res.__("common.error.user.404"),
         req,
         type: "Error"
     });
 
     if (targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(403).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 403,
-        subtitle: res.__("You cannot modify a user's rank if they have the same or a higher rank than you"),
+        subtitle: res.__("page.users.modifyRank.assistantHierachyBlock.0"),
         req,
         type: "Error"
     });
@@ -125,17 +125,17 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
     const targetUser = await req.app.db.collection("users").findOne({ _id: req.params.id });
 
     if (!targetUser) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This user does not exist in our website database"),
+        subtitle: res.__("common.error.user.404"),
         req,
         type: "Error"
     });
 
     if (targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(403).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 403,
-        subtitle: res.__("You cannot modify a user's rank if they have the same or a higher rank than you"),
+        subtitle: res.__("page.users.modifyRank.assistantHierachyBlock.0"),
         req,
         type: "Error"
     });
@@ -157,9 +157,9 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
 
     if (req.user.db.rank.admin === false && req.body.rank === "assistant" || req.user.db.rank.admin === false && req.body.rank === "admin") {
         return res.status(403).render("status", {
-            title: res.__("Error"),
+            title: res.__("common.error"),
             status: 403,
-            subtitle: res.__("You cannot set a rank that is the same or higher than your own rank"),
+            subtitle: res.__("page.users.modifyRank.assistantHierachyBlock.1"),
             req,
             type: "Error"
         });
@@ -236,22 +236,22 @@ router.get("/profile/:id/edit", variables, permission.auth, async (req, res, nex
 
     const userProfile = await req.app.db.collection("users").findOne({ _id: req.params.id });
     if (!userProfile) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This user does not exist in our website database"),
+        subtitle: res.__("common.error.user.404"),
         req,
         type: "Error"
     });
     
     if (userProfile._id !== req.user.id && req.user.db.rank.assistant === false) return res.status(403).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 403,
-        subtitle: res.__("You do not have the required permission(s) to edit this user's profile."),
+        subtitle: res.__("common.error.user.perms.edit"),
         req: req,
         type: "Error"
     });
 
-    res.render("templates/users/editProfile", { title: res.__("Edit Profile"), subtitle: res.__("Editing profile %s", req.user.db.fullUsername), req, userProfile: userProfile });
+    res.render("templates/users/editProfile", { title: res.__("page.users.edit.title"), subtitle: res.__("page.users.edit.subtitle", req.user.db.fullUsername), req, userProfile: userProfile });
 });
 
 router.post("/profile/:id/edit", variables, permission.auth, async (req, res, next) => {
@@ -261,16 +261,16 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
 
     const userProfile = await req.app.db.collection("users").findOne({ _id: req.params.id });
     if (!userProfile) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This user does not exist in our website database"),
+        subtitle: res.__("common.error.user.404"),
         req: req
     });
     
     if (userProfile._id !== req.user.id && req.user.db.rank.assistant === false) return res.status(403).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 403,
-        subtitle: res.__("You do not have the required permission(s) to edit this user's profile."),
+        subtitle: res.__("common.error.user.perms.edit"),
         req: req,
         type: "Error"
     });
@@ -339,8 +339,8 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
 
 router.get("/game/snake", variables, permission.auth, async (req, res, next) => {
     res.render("templates/users/snake", {
-        title: res.__("Play Snake"),
-        subtitle: res.__("Play the awesome snake game found on status pages!"),
+        title: res.__("common.nav.me.playSnake"),
+        subtitle: res.__("common.nav.me.playSnake.subtitle"),
         req
     });
 })
@@ -401,7 +401,7 @@ router.post("/profile/game/snakes", variables, permission.auth, async (req, res,
 });
 
 router.get("/account/preferences", variables, permission.auth, async (req, res, next) => {
-    res.render("templates/users/accountPreferences", { title: res.__("Preferences"), subtitle: res.__("Edit your account preferences"), req });
+    res.render("templates/users/accountPreferences", { title: res.__("common.nav.me.preferences"), subtitle: res.__("common.nav.me.preferences.subtitle"), req });
 });
 
 router.post("/account/preferences", variables, permission.auth, async (req, res, next) => {

@@ -35,7 +35,7 @@
                 <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.generalInfo") %></h3>
                 <br />
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("Invite Code") %> <span class="has-text-danger">*</span></label>
+                    <label class="label has-text-blurple"><%= __("page.servers.code") %> <span class="has-text-danger">*</span></label>
                     <div class="control">
                         <div class="field has-addons">
                             <p class="control" aria-hidden="true">
@@ -48,7 +48,7 @@
                             </p>
                         </div>
                     </p>
-                    <p style="padding: 5px;" class="is-size-7 has-text-default"><%= __("Do not include the https://discord.gg/ part.") %></p>
+                    <p style="padding: 5px;" class="is-size-7 has-text-default"><%= __("page.servers.code.warning") %></p>
                 </div>
                 <br />
                 <label class="label has-text-blurple"><%= __("common.tags") %></label>
@@ -109,7 +109,7 @@
                 <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.links") %></h3>
                 <br />
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("Server Website") %></label>
+                    <label class="label has-text-blurple"><%= __("page.servers.website") %></label>
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" value="<%= server.links.website %>" name="website" placeholder="https://example.com">
                         <span class="icon is-small is-left">
@@ -119,7 +119,7 @@
                 </div>
                 <br />
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("Server Donation Link") %></label>
+                    <label class="label has-text-blurple"><%= __("page.servers.donate") %></label>
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" value="<%= server.links.donation %>" name="donationUrl" placeholder="https://example.com/givememoneyplsimbroke">
                         <span class="icon is-small is-left">
@@ -132,9 +132,9 @@
                 <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.descriptions") %></h3>
                 <br />
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("Server Short Description") %> <span class="has-text-danger">*</span></label>
+                    <label class="label has-text-blurple"><%= __("page.servers.shortDesc") %> <span class="has-text-danger">*</span></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" value="<%= server.shortDesc %>" name="shortDescription" placeholder="<%= __("This is an amazing server kthx now join") %>" required>
+                        <input class="input is-rounded" type="text" value="<%= server.shortDesc %>" name="shortDescription" placeholder="<%= __("page.servers.shortDesc.placeholder") %>" required>
                         <span class="icon is-small is-left">
                             <i aria-hidden="true" class="fas fa-comment-dots"></i>
                         </span>
@@ -142,7 +142,7 @@
                 </div>
                 <br />
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("Server Long Description") %> (Basic HTML & Markdown) <span class="has-text-danger">*</span></label>
+                    <label class="label has-text-blurple"><%= __("page.servers.longDesc") %> (common.form.basicHtmlMarkdown) <span class="has-text-danger">*</span></label>
                     <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
                     <textarea hidden name="longDescription" id="longDesc" required></textarea>
                 </div>

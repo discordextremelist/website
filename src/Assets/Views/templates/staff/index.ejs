@@ -20,7 +20,7 @@
 <div class="container">
     <div class="section">
         <p>
-            <img style="border-radius: 50%; vertical-align: middle; height: 32px; width: auto; margin-left: 6px;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>" alt="<%= __("%s's Profile Picture", req.user.db.fullUsername) %>" onerror="this.onerror=null;this.src='/img/defaultavatar.<%= imageFormat %>';" draggable="false">
+            <img style="border-radius: 50%; vertical-align: middle; height: 32px; width: auto; margin-left: 6px;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>" alt="<%= __("common.img.avatar", req.user.db.fullUsername) %>" onerror="this.onerror=null;this.src='/img/defaultavatar.<%= imageFormat %>';" draggable="false">
             &nbsp;
             <span style="vertical-align: middle;"><%= user.db.fullUsername %></span>
             <span style="vertical-align: middle; color: #354146;">&nbsp;|&nbsp;</span>
@@ -54,32 +54,32 @@
             <nav class="level stats-header">
                 <div class="level-item has-text-centered">
                     <div>
-                        <p class="heading main"><%= __("Website Statistics") %></p>
+                        <p class="heading main"><%= __("page.staff.webStats") %></p>
                     </div>
                 </div>
             </nav>
             <nav class="level">
                 <div class="level-item body-item has-text-centered">
                     <div>
-                        <p class="heading"><%= __("Bot Count") %></p>
+                        <p class="heading"><%= __("page.staff.webStats.botCount") %></p>
                         <p class="title"><%= stats.botCount %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
-                        <p class="heading"><%= __("Server Count") %></p>
+                        <p class="heading"><%= __("page.staff.webStats.serverCount") %></p>
                         <p class="title"><%= stats.serverCount %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
-                        <p class="heading"><%= __("User Count") %></p>
+                        <p class="heading"><%= __("page.staff.webStats.userCount") %></p>
                         <p class="title"><%= stats.userCount %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
-                        <p class="heading"><%= __("Unapproved Bot Count") %></p>
+                        <p class="heading"><%= __("page.staff.webStats.botCount.unapproved") %></p>
                         <p class="title"><%= stats.unapprovedBots %></p>
                     </div>
                 </div>
@@ -90,32 +90,32 @@
             <nav class="level stats-header">
                 <div class="level-item has-text-centered">
                     <div>
-                        <p class="heading main"><%= __("Your Overview") %></p>
+                        <p class="heading main"><%= __("page.staff.me") %></p>
                     </div>
                 </div>
             </nav>
             <nav class="level">
                 <div class="level-item body-item has-text-centered">
                     <div>
-                        <p class="heading"><%= __("Your Standing") %></p>
+                        <p class="heading"><%= __("page.staff.me.standing") %></p>
                         <p class="title"><%= stats.standing %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
-                        <p class="heading"><%= __("Your Strikes") %></p>
+                        <p class="heading"><%= __("page.staff.me.strikes") %></p>
                         <p class="title"><%= stats.strikes %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
-                        <p class="heading"><%= __("Your Warnings") %></p>
+                        <p class="heading"><%= __("page.staff.me.warnings") %></p>
                         <p class="title"><%= stats.warnings %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
-                        <p class="heading"><%= __("On Leave") %></p>
+                        <p class="heading"><%= __("page.staff.me.onLeave") %></p>
                         <p class="title"><%= stats.away %></p>
                     </div>
                 </div>

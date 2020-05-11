@@ -74,7 +74,7 @@ router.get("/", variables, async (req, res) => {
     const servers = await featuring.getFeaturedServers();
 
     res.render("templates/index", { 
-        title: res.__("Home"), 
+        title: res.__("common.home"), 
         subtitle: "", 
         req, 
         bots,
@@ -88,8 +88,8 @@ router.get("/bots", variables, async (req, res) => {
     const botChunk = chunk(bots, 9);
 
     res.render("templates/bots/index", {
-        title: res.__("Bots"),
-        subtitle: res.__("Our full list of bots"),
+        title: res.__("common.bots"),
+        subtitle: res.__("common.bots.subtitle"),
         req,
         botsData: bots,
         botChunk,
@@ -103,8 +103,8 @@ router.get("/servers", variables, async (req, res) => {
     const serverChunk = chunk(servers, 9);
 
     res.render("templates/servers/index", {
-        title: res.__("Servers"),
-        subtitle: res.__("Our full list of servers"),
+        title: res.__("common.servers"),
+        subtitle: res.__("common.servers.subtitle"),
         req,
         serversData: servers,
         serverChunk,
@@ -118,8 +118,8 @@ router.get("/templates", variables, async (req, res) => {
     const templateChunk = chunk(templates, 9);
 
     res.render("templates/serverTemplates/index", {
-        title: res.__("Templates"),
-        subtitle: res.__("Our full list of templates"),
+        title: res.__("common.templates"),
+        subtitle: res.__("common.templates.subtitle"),
         req,
         templatesData: templates,
         templateChunk,
@@ -129,25 +129,25 @@ router.get("/templates", variables, async (req, res) => {
 });
 
 router.get("/terms", variables, (req, res) => {
-    res.render("templates/legal/terms", { title: res.__("Terms of Use"), subtitle: res.__("Our website's Terms of Use."), req });
+    res.render("templates/legal/terms", { title: res.__("common.nav.more.terms"), subtitle: res.__("common.nav.more.terms.subtitle"), req });
 });
 
 router.get("/privacy", variables, (req, res) => {
-    res.render("templates/legal/privacy", { title: res.__("Privacy Policy"), subtitle: res.__("Our website's Privacy Policy."), req });
+    res.render("templates/legal/privacy", { title: res.__("common.nav.more.privacy"), subtitle: res.__("common.nav.more.privacy.subtitle"), req });
 });
 
 router.get("/cookies", variables, (req, res) => {
-    res.render("templates/legal/cookies", { title: res.__("Cookie Policy"), subtitle: res.__("Our website's Cookie Policy."), req });
+    res.render("templates/legal/cookies", { title: res.__("common.nav.more.cookies"), subtitle: res.__("common.nav.more.cookies.subtitle"), req });
 });
 
 router.get("/guidelines", variables, (req, res) => {
-    res.render("templates/legal/guidelines", { title: res.__("Website Guidelines"), subtitle: res.__("Our Website Guidelines."), req });
+    res.render("templates/legal/guidelines", { title: res.__("common.nav.more.guidelines"), subtitle: res.__("common.nav.more.guidelines.subtitle"), req });
 });
 
 router.get("/widgetbot", variables, (req, res) => {
     res.render("templates/widgetbot", { 
-        title: res.__("WidgetBot Chat"), 
-        subtitle: res.__("Embedded Discord chat for our server by WidgetBot"), 
+        title: res.__("common.widgetbot.chat"), 
+        subtitle: res.__("common.widgetbot.subtitle"), 
         colour,
         req, 
         settings 
@@ -157,8 +157,8 @@ router.get("/widgetbot", variables, (req, res) => {
 router.get("/about", variables, async (req, res) => {
     const { staff, boosters, contributors } = sortAll();
     res.render("templates/about", { 
-        title: res.__("About"), 
-        subtitle: res.__("Information about me and the amazing people who make me possible"), 
+        title: res.__("common.nav.more.about"), 
+        subtitle: res.__("common.nav.more.about.subtitle"), 
         req,
         staff,
         boosters,

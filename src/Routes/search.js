@@ -25,8 +25,8 @@ const renderPath = require("path").join(process.cwd(), "src/Assets/Views/partial
 
 router.get("/", vars, (req, res) => {
     return res.render("templates/search", {
-        title: res.__("Search"),
-        subtitle: res.__("Search the entire website database"),
+        title: res.__("common.search"),
+        subtitle: res.__("common.search.subtitle"),
         req
     });
 });

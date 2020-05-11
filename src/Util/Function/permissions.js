@@ -28,9 +28,9 @@ const auth = (req, res, next) => {
 const member = (req, res, next) => {
     if (!bot.guilds.get(settings.guilds.mainID).members.get(member.id)) {
         return res.status(403).render("status", {
-            title: res.__("Error"),
+            title: res.__("common.error"),
             status: 403,
-            subtitle: res.__("You need to be in our Discord guild to access this endpoint"),
+            subtitle: res.__("common.error.notMember"),
             req,
             type: "Error"
         });
@@ -43,9 +43,9 @@ const mod = (req, res, next) => {
             next();
         } else {
             return res.status(403).render("status", {
-                title: res.__("Error"),
+                title: res.__("common.error"),
                 status: 403,
-                subtitle: res.__("You need to be a Website Moderator to access this endpoint"),
+                subtitle: res.__("common.error.notMod"),
                 req,
                 type: "Error"
             });
@@ -59,9 +59,9 @@ const assistant = (req, res, next) => {
             next();
         } else {
             return res.status(403).render("status", {
-                title: res.__("Error"),
+                title: res.__("common.error"),
                 status: 403,
-                subtitle: res.__("You need to be a Website Assistant to access this endpoint"),
+                subtitle: res.__("common.error.notAssistant"),
                 req,
                 type: "Error"
             });
@@ -74,9 +74,9 @@ const admin = (req, res, next) => {
             next();
         } else {
             return res.status(403).render("status", {
-                title: res.__("Error"),
+                title: res.__("common.error"),
                 status: 403,
-                subtitle: res.__("You need to be a Website Administrator to access this endpoint"),
+                subtitle: res.__("common.error.notAdmin"),
                 req,
                 type: "Error"
             });

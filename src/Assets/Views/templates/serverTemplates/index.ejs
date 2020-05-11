@@ -95,7 +95,7 @@
         <br />
         <div class="columns is-multiline is-centered">
             <% if (templatesData.length === 0) { %>
-                <h2 class="is-size-3"><%= __("An error occurred whilst fetching templates.") %></h2>
+                <h2 class="is-size-3"><%= __("common.error.fetchFail.templates") %></h2>
             <% } else { %>
                 <%- templateChunk.map(chunk => `${chunk.map(template => include("../../partials/cards/templateCard.ejs", { template, search: false })).join("")}`).join("") %>
             <% } %>

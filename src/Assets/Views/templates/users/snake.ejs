@@ -20,8 +20,8 @@
             <% if (req.device.type !== "phone" && req.device.type !== "tablet") { %>
                 <% if (!req.user || req.user.db.preferences.enableGames === true) { %>
                     <div id="snake_game">
-                        <p class="is-size-5 has-text-warning"><span><%= __("High Score:") %></span> <span id="highScore"><%= req.user.db.game.snakes.maxScore %></span></p>
-                        <p class="is-size-5"><span><%= ("Score:") %> </span><span id="score"></span></p>
+                        <p class="is-size-5 has-text-warning"><span><%= __("page.snake.highscore") %></span> <span id="highScore"><%= req.user.db.game.snakes.maxScore %></span></p>
+                        <p class="is-size-5"><span><%= ("page.snake.score") %> </span><span id="score"></span></p>
                         <br />
                         <canvas class="snakeNormal" style="background-color: black;" width="400" height="400" id="game"></canvas>
                         <script>
@@ -130,8 +130,7 @@
                                             snake.y = 160;
                                             snake.cells = [];
                                             snake.maxCells = 4;
-                                            snake.dx = grid;
-                                            snake.dy = 0;
+                                            snake.dx = grid;Score:
                                             apple.x = getRandomInt(0, 25) * grid;
                                             apple.y = getRandomInt(0, 25) * grid;
         
@@ -226,10 +225,10 @@
                         </script>
                     </div>
                 <% } else { %>
-                    <h2 class="is-size-4 backdrop"><%= __("such emptiness..") %></h2>
+                    <h2 class="is-size-4 backdrop"><%= __("page.snake.emptiness") %></h2>
                 <% } %>
             <% } else { %>
-                    <p class="is-size-5 backdrop"><%= __("this is awkward.. you're on mobile sir.. you cannot play snake :(") %></p>
+                    <p class="is-size-5 backdrop"><%= __("page.snake.desktopOnly") %></p>
             <% } %>
         </div>     
 <%- include("../../partials/footer.ejs") %>

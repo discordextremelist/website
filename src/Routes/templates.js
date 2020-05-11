@@ -36,8 +36,8 @@ const templateCache = require("../Util/Services/templateCaching.js");
 
 router.get("/submit", variables, permission.auth, (req, res, next) => {
     res.render("templates/serverTemplates/submit", { 
-        title: res.__("Submit Template"), 
-        subtitle: res.__("Submit your template to the list"), 
+        title: res.__("common.nav.me.submitTemplate"), 
+        subtitle: res.__("common.nav.me.submitTemplate.subtitle"), 
         req 
     });
 });
@@ -52,8 +52,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         if (fetchRes.jsonBody.code !== 10057) {
             const templateExists = await req.app.db.collection("templates").findOne({ _id: fetchRes.jsonBody.code });
             if (templateExists) return res.status(409).render("status", { 
-                title: res.__("Error"), 
-                subtitle: res.__("This template has already been added to the list."),
+                title: res.__("common.error"), 
+                subtitle: res.__("common.error.template.conflict"),
                 status: 409, 
                 type: "Error",
                 req 
@@ -61,11 +61,11 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         
             if (!req.body.longDescription) {
                 error = true;
-                errors.push(res.__("A long description is required."));
+                errors.push(res.__("common.error.listing.arr.longDescRequired"));
             }
         } else {
             error = true;
-            errors.push(res.__("You provided an invalid template code."));
+            errors.push(res.__("common.error.template.arr.invite.invalid"));
         }
 
         let tags = [];
@@ -84,8 +84,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
     
         if (error === true) { 
             return res.render("templates/serverTemplates/errorOnSubmit", { 
-                title: res.__("Submit Template"), 
-                subtitle: res.__("Submit your template to the list"),
+                title: res.__("common.nav.me.submitTemplate"), 
+                subtitle: res.__("common.nav.me.submitTemplate.subtitle"),
                 template: req.body,
                 tags,
                 req,
@@ -169,26 +169,26 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
 
         if (!req.body.code) {
             error = true;
-            errors.push(res.__("You didn't provide a valid template code."));
+            errors.push(res.__("common.error.template.arr.invite.invalid"));
         } else {
             if (typeof req.body.code !== "string") {
                 error = true;
-                errors.push(res.__("You provided an invalid template code."));
+                errors.push(res.__("common.error.template.arr.invite.invalid"));
             } else if (req.body.code.length > 2000) {
                 error = true;
-                errors.push(res.__("The template code you provided is too long."));
+                errors.push(res.__("common.error.template.arr.invite.tooLong"));
             } else if (/^https?:\/\//.test(req.body.code)) {
                 error = true;
-                errors.push(res.__("The template code cannot be a URL."));
+                errors.push(res.__("common.error.template.arr.invite.isURL"));
             } else if (req.body.code.includes("discord.new")) {
                 error = true;
-                errors.push(res.__("The template code cannot contain discord.new."));
+                errors.push(res.__("common.error.template.arr.invite.dnew."));
             }
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(res.__("A long description is required."));
+            errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
 
         let tags = [];
@@ -206,8 +206,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         if (req.body.finance === "on") tags.push("Finance");
 
         return res.render("templates/serverTemplates/errorOnSubmit", { 
-            title: res.__("Submit Template"), 
-            subtitle: res.__("Submit your template to the list"),
+            title: res.__("common.nav.me.submitTemplate"), 
+            subtitle: res.__("common.nav.me.submitTemplate.subtitle"),
             template: req.body,
             tags,
             req,
@@ -227,9 +227,9 @@ router.get("/:id", variables, async (req, res, next) => {
     if (!template) {
         template = await req.app.db.collection("templates").findOne({ _id: req.params.id });
         if (!template) return res.status(404).render("status", {
-            title: res.__("Error"),
+            title: res.__("common.error"),
             status: 404,
-            subtitle: res.__("This template is not in our database"),
+            subtitle: res.__("common.error.template.404"),
             type: "Error",
             req: req,
             pageType: { template: false, bot: false, server: false }
@@ -269,24 +269,24 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
     const template = await req.app.db.collection("templates").findOne({ _id: req.params.id });
     
     if (!template) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This template is not in our database"),
+        subtitle: res.__("common.error.template.404"),
         type: "Error",
         req: req
     });
 
     if (template.owner.id !== req.user.id && req.user.db.assistant === false) return res.status(403).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("You do not have the required permission(s) to edit this template."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.template.perms.edit"),
         status: 403, 
         type: "Error",
         req 
     }); 
 
     res.render("templates/serverTemplates/edit", { 
-        title: res.__("Edit Template"), 
-        subtitle: res.__("Editing template %s", template.name), 
+        title: res.__("page.templates.edit.title"), 
+        subtitle: res.__("page.templates.edit.subtitle", template.name), 
         req,
         template
     });
@@ -299,16 +299,16 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     const template = await req.app.db.collection("templates").findOne({ _id: req.params.id });
 
     if (!template) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This template is not in our database"),
+        subtitle: res.__("common.error.template.404"),
         type: "Error",
         req: req
     });
 
     if (template.owner.id !== req.user.id && req.user.db.assistant === false) return res.status(403).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("You do not have the required permission(s) to edit this template."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.template.perms.edit"),
         status: 403, 
         type: "Error",
         req 
@@ -316,26 +316,26 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
     if (!req.body.code) {
         error = true;
-        errors.push(res.__("You didn't provide a valid template code."));
+        errors.push(res.__("common.error.template.arr.invite.invalid"));
     } else {
         if (typeof req.body.code !== "string") {
             error = true;
-            errors.push(res.__("You provided an invalid template code."));
+            errors.push(res.__("common.error.template.arr.invite.invalid"));
         } else if (req.body.code.length > 2000) {
             error = true;
-            errors.push(res.__("The template code you provided is too long."));
+            errors.push(res.__("common.error.template.arr.invite.tooLong"));
         } else if (/^https?:\/\//.test(req.body.code)) {
             error = true;
-            errors.push(res.__("The template code cannot be a URL."));
+            errors.push(res.__("common.error.template.arr.invite.isURL"));
         } else if (req.body.code.includes("discord.new")) {
             error = true;
-            errors.push(res.__("The template code cannot contain discord.new."));
+            errors.push(res.__("common.error.template.arr.invite.dnew."));
         }
     }
 
     if (!req.body.longDescription) {
         error = true;
-        errors.push(res.__("A long description is required."));
+        errors.push(res.__("common.error.listing.arr.longDescRequired"));
     }
 
     let linkToServerPage = false;
@@ -360,8 +360,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
         if (error === true) { 
             return res.render("templates/serverTemplates/errorOnEdit", { 
-                title: res.__("Edit Template"), 
-                subtitle: res.__("Editing template %s", server.name),
+                title: res.__("page.templates.edit.title"), 
+                subtitle: res.__("page.templates.edit.subtitle", server.name),
                 template: req.body,
                 req,
                 tags,
@@ -469,11 +469,11 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         res.redirect(`/templates/${req.params.id}`);
     }).catch(_ => {
         error = true;
-        errors.push(res.__("An error occurred when querying the Discord API."));
+        errors.push(res.__("common.error.dapiFail"));
 
         return res.render("templates/serverTemplates/errorOnEdit", { 
-            title: res.__("Edit Template"), 
-            subtitle: res.__("Editing template %s", template.name),
+            title: res.__("page.templates.edit.title"), 
+            subtitle: res.__("page.templates.edit.subtitle", template.name),
             template: req.body,
             req,
             tags,
@@ -486,15 +486,15 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
     const template = await req.app.db.collection("templates").findOne({ _id: req.params.id });
 
     if (!template) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This template is not in our database"),
+        subtitle: res.__("common.error.template.404"),
         type: "Error",
         req: req
     });
 
     if (template.owner.id !== req.user.id) return res.status(403).render("status", { 
-        title: res.__("Error"), 
+        title: res.__("common.error"), 
         subtitle: res.__("You do not have the required permission(s) to delete this template."),
         status: 403, 
         type: "Error",
@@ -520,16 +520,16 @@ router.get("/:id/remove", variables, permission.auth, permission.mod, async (req
     const template = await req.app.db.collection("templates").findOne({ _id: req.params.id });
 
     if (!template) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot remove a template that doesn't exist"),
+        subtitle: res.__("common.error.template.404t"),
         req,
         type: "Error"
     });
 
     res.render("templates/serverTemplates/staffActions/remove", { 
-        title: res.__("Remove Template"), 
-        subtitle: res.__("Removing template %s", server.name),
+        title: res.__("page.servers.remove.title"), 
+        subtitle: res.__("page.servers.remove.subtitle", server.name),
         removingTemplate: template, 
         req 
     });
@@ -539,9 +539,9 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
     const template = await req.app.db.collection("templates").findOne({ _id: req.params.id });
 
     if (!template) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot remove a template that doesn't exist"),
+        subtitle: res.__("common.error.template.404t"),
         req,
         type: "Error"
     });
@@ -567,13 +567,13 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
     res.redirect("/staff/queue");
 });
 
-router.post("/:id/sync", variables, permission.auth, permission.mod, async (req, res, next) => {
+router.get("/:id/sync", variables, permission.auth, permission.mod, async (req, res, next) => {
     const template = await req.app.db.collection("templates").findOne({ _id: req.params.id });
 
     if (!template) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot sync a template that doesn't exist"),
+        subtitle: res.__("common.error.template.404"),
         req,
         type: "Error"
     });
@@ -637,9 +637,9 @@ router.post("/:id/sync", variables, permission.auth, permission.mod, async (req,
         await templateCache.updateTemplate(req.params.id);
     }).catch(_ => { 
         return res.status(404).render("status", {
-            title: res.__("Error"),
+            title: res.__("common.error"),
             status: 404,
-            subtitle: res.__("An error occurred when querying the Discord API."),
+            subtitle: res.__("common.error.dapiFail"),
             req,
             type: "Error"
         });

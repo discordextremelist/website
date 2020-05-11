@@ -14,9 +14,9 @@
                 <span><%= title %></span>
             </h1>
             <% if (userProfile._id === user._id) { %>
-                <h2 class="subtitle"><%= __("Editing your profile") %></h2>
+                <h2 class="subtitle"><%= __("page.account.edit.subtitle.me") %></h2>
             <% } else { %>
-                <h2 class="subtitle"><%= __("Editing %s's profile", userProfile.fullUsername) %></h2>
+                <h2 class="subtitle"><%= __("page.account.edit.subtitle.other", userProfile.fullUsername) %></h2>
             <% } %>
         </div>
     </div>
@@ -25,9 +25,9 @@
     <div class="section">
         <form method="POST">
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Bio") %></label>
+                <label class="label has-text-blurple"><%= __("page.account.edit.bio") %></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="bio" value="<%= userProfile.profile.bio %>" placeholder="<%= __("This is your bio, please don't put any links in here.") %>">
+                    <input class="input is-rounded" type="text" name="bio" value="<%= userProfile.profile.bio %>" placeholder="<%= __("page.account.edit.bio.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-comment-dots"></i>
                     </span>
@@ -37,7 +37,7 @@
             <div class="field">
                 <label class="label has-text-blurple"><%= __("common.website") %></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="website" value="<%= userProfile.profile.links.website %>" placeholder="<%= __("If you have a website put its link in here.") %>">
+                    <input class="input is-rounded" type="text" name="website" value="<%= userProfile.profile.links.website %>" placeholder="<%= __("page.account.edit.website.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-globe"></i>
                     </span>
@@ -45,9 +45,9 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("GitHub") %> <span class="has-text-default">(<%= __("Username Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("common.social.github") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="github" value="<%= userProfile.profile.links.github %>" placeholder="<%= __("Without an '@'.") %>">
+                    <input class="input is-rounded" type="text" name="github" value="<%= userProfile.profile.links.github %>" placeholder="<%= __("page.account.edit.social.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fab fa-github"></i>
                     </span>
@@ -55,9 +55,9 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("GitLab") %> <span class="has-text-default">(<%= __("Username Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("common.social.gitlab") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="gitlab" value="<%= userProfile.profile.links.gitlab %>" placeholder="<%= __("Without an '@'.") %>">
+                    <input class="input is-rounded" type="text" name="gitlab" value="<%= userProfile.profile.links.gitlab %>" placeholder="<%= __("page.account.edit.social.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fab fa-gitlab"></i>
                     </span>
@@ -65,9 +65,9 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Twitter") %> <span class="has-text-default">(<%= __("Username Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("common.social.twitter") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="twitter" value="<%= userProfile.profile.links.twitter %>" placeholder="<%= __("Without an '@'.") %>">
+                    <input class="input is-rounded" type="text" name="twitter" value="<%= userProfile.profile.links.twitter %>" placeholder="<%= __("page.account.edit.social.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fab fa-twitter"></i>
                     </span>
@@ -75,9 +75,9 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Instagram") %> <span class="has-text-default">(<%= __("Username Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("common.social.instagram") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="instagram" value="<%= userProfile.profile.links.instagram %>" placeholder="<%= __("Without an '@'.") %>">
+                    <input class="input is-rounded" type="text" name="instagram" value="<%= userProfile.profile.links.instagram %>" placeholder="<%= __("page.account.edit.social.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fab fa-instagram"></i>
                     </span>
@@ -85,9 +85,9 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Snapchat") %> <span class="has-text-default">(<%= __("Username Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("common.social.snapchat") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="snapchat" value="<%= userProfile.profile.links.snapchat %>" placeholder="<%= __("Without an '@'.") %>">
+                    <input class="input is-rounded" type="text" name="snapchat" value="<%= userProfile.profile.links.snapchat %>" placeholder="<%= __("page.account.edit.social.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fab fa-snapchat-ghost"></i>
                     </span>
@@ -95,12 +95,12 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Custom Profile CSS") %> <span class="has-text-default">(<%= __("Verified Users and Staff Only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("page.account.edit.customCSS") %> <span class="has-text-default">(<%= __("page.account.edit.customCSS.notice") %>)</span></label>
                 <% if (userProfile.rank.verified === true || userProfile.rank.mod === true) { %>
                     <div onkeyup="monacoToField();" id="profileCssEditor" class="editorBackdrop" style="width:99%;height:350px;" value="<%= userProfile.profile.css %>"></div>
                     <textarea hidden name="profileCss" id="profileCss"></textarea>
                 <% } else { %>
-                    <p class="has-text-danger"><%= __("You do not have the required permission(s) to use this textarea.") %></p>
+                    <p class="has-text-danger"><%= __("page.account.edit.customCSS.notPermitted") %></p>
                 <% } %>
             </div>
             <br />
@@ -108,7 +108,7 @@
                 <div class="buttons">
                     <button class="button is-success">
                         <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
-                        <span><%= __("Save") %></span>
+                        <span><%= __("common.save") %></span>
                     </button>
                     <a class="button is-danger" href="/users/<% if (userProfile._id === user._id) { %>@me<% } else { %><%= userProfile._id %><% } %>">
                         <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>

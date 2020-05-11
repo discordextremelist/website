@@ -39,8 +39,8 @@ router.get("/submit", variables, permission.auth, async (req, res, next) => {
     const libraries = await req.app.db.collection("libraries").find().sort({ _id: 1 }).toArray();
 
     res.render("templates/bots/submit", { 
-        title: res.__("Submit Bot"), 
-        subtitle: res.__("Submit your bot to the list"), 
+        title: res.__("common.nav.me.submitBot"), 
+        subtitle: res.__("common.nav.me.submitBot.subtitle"), 
         libraries,
         req 
     });
@@ -52,8 +52,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
 
     const botExists = await req.app.db.collection("bots").findOne({ _id: req.body.id });
     if (botExists) return res.status(409).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("This bot has already been added to the list."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.bot.conflict"),
         status: 409, 
         type: "Error",
         req 
@@ -63,13 +63,13 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         fetchRes.jsonBody = await fetchRes.json();
         if (req.body.id.length > 32) {
             error = true;
-            errors.push(res.__("The bot's id cannot be longer than 32 characters."));
+            errors.push(res.__("common.error.bot.arr.idTooLong"));
         } else if (fetchRes.jsonBody.message === "Unknown User") {
             error = true;
-            errors.push(res.__("There isn't a bot with this id."));
+            errors.push(res.__("common.error.bot.arr.notFound"));
         } else if (!fetchRes.jsonBody.bot) {
             error = true;
-            errors.push(res.__("You cannot add users to the bot list."));
+            errors.push(res.__("common.error.bot.arr.isUser"));
         }
 
         let invite;
@@ -79,13 +79,13 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
-                errors.push(res.__("You provided an invalid invite."));
+                errors.push(res.__("common.error.listing.arr.invite.invalid"));
             } else if (req.body.invite.length > 2000) {
                 error = true;
-                errors.push(res.__("The invite link you provided is too long."));
+                errors.push(res.__("common.error.listing.arr.invite.tooLong")); //JUMP
             } else if (!/^https?:\/\//.test(req.body.invite)) {
                 error = true;
-                errors.push(res.__("The invite link must be a valid URL starting with http:// or https://"));
+                errors.push(res.__("common.error.bot.arr.invite.urlInvalid"));
             } else {
                 invite = req.body.invite
             }
@@ -93,7 +93,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(res.__("A long description is required."));
+            errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
 
         let library;
@@ -116,8 +116,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
         if (error === true) { 
             const libraries = await req.app.db.collection("libraries").find({ name: { $ne: library } }).sort({ name: 1 }).toArray();
             return res.render("templates/bots/errorOnSubmit", { 
-                title: res.__("Submit Bot"), 
-                subtitle: res.__("Submit your bot to the list"),
+                title: res.__("common.nav.me.submitBot"), 
+                subtitle: res.__("common.nav.me.submitBot.subtitle"),
                 bot: req.body,
                 libraries,
                 library,
@@ -240,22 +240,22 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
     }).catch(async(fetchRes) => {
         if (req.body.id.length > 32) {
             error = true;
-            errors.push(res.__("The bot's id cannot be longer than 32 characters."));
+            errors.push(res.__("common.error.bot.arr.idTooLong"));
         } else if (fetchRes.jsonBody.message === "Unknown User") {
             error = true;
-            errors.push(res.__("There isn't a bot with this id."));
+            errors.push(res.__("common.error.bot.arr.notFound"));
         } else if (!fetchRes.jsonBody.bot) {
             error = true;
-            errors.push(res.__("You cannot add users to the bot list."));
+            errors.push(res.__("common.error.bot.arr.isUser"));
         }
 
         if (req.body.invite !== "") {
             if (typeof req.body.invite !== "string") {
                 error = true;
-                errors.push(res.__("You provided an invalid invite."));
+                errors.push(res.__("common.error.listing.arr.invite.invalid"));
             } else if (req.body.invite.length > 2000) {
                 error = true;
-                errors.push(res.__("The invite link you provided is too long."));
+                errors.push(res.__("common.error.listing.arr.invite.tooLong"));
             } else if (!/^https?:\/\//.test(req.body.invite)) {
                 error = true;
                 errors.push(res.__("Invite needs to be a valid URL."));
@@ -266,7 +266,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(res.__("A long description is required."));
+            errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
 
         let library;
@@ -288,8 +288,8 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
 
         const libraries = await req.app.db.collection("libraries").find({ name: { $ne: library } }).sort({ name: 1 }).toArray();
         return res.render("templates/bots/errorOnSubmit", { 
-            title: res.__("Submit Bot"), 
-            subtitle: res.__("Submit your bot to the list"),
+            title: res.__("common.nav.me.submitBot"), 
+            subtitle: res.__("common.nav.me.submitBot.subtitle"),
             bot: req.body,
             libraries,
             library,
@@ -316,16 +316,16 @@ router.post("/preview_post", async (req, res, next) => {
 router.post("/:id/setvanity", variables, permission.auth, async (req, res, next) => {
     const botExists = await req.app.db.collection("bots").findOne({ _id: req.params.id });
     if (!botExists) return res.status(404).render("status", {
-        title: res.__("Error"),
-        subtitle: res.__("This bot does not exist."),
+        title: res.__("common.error"),
+        subtitle: res.__("common.error.bot.404"),
         status: 404,
         type: "Error",
         req
     });
 
     if (botExists.owner.id !== req.user.id && req.user.db.assistant === false) return res.status(403).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("You do not have the required permission(s) to set/modify this bot's vanity url."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.bot.perms.vanity"),
         status: 403, 
         type: "Error",
         req 
@@ -333,16 +333,16 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
 
     if (botExists.vanityUrl && botExists.owner.id === req.user.id && req.user.db.assistant === false) {
         return res.status(400).render("status", {
-            title: res.__("Error"),
-            subtitle: res.__("You do not have the required permission(s) to modify your bot's vanity url, please contact an Assistant or higher if you want to change your vanity url."),
+            title: res.__("common.error"),
+            subtitle: res.__("common.error.bot.perms.modifyVanity"),
             status: 400,
             type: "Error",
             req
         });
     } else if (botExists.vanityUrl && req.user.db.assistant === true) {
         if (req.body.vanity.split(" ").length !== 1) return res.status(400).render("status", {
-            title: res.__("Error"),
-            subtitle: res.__("The bot's vanity url cannot be shorter or longer than one word."),
+            title: res.__("common.error"),
+            subtitle: res.__("common.error.bot.vanity.tooLong"),
             status: 400,
             type: "Error",
             req
@@ -370,8 +370,8 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
         res.redirect(`/bots/${req.params.id}`);
     } else if (!botExists.vanityUrl) {
         if (req.body.vanity.split(" ").length !== 1) return res.status(400).render("status", {
-            title: res.__("Error"),
-            subtitle: res.__("Your bot's vanity url cannot be shorter or longer than one word."),
+            title: res.__("common.error"),
+            subtitle: res.__("common.error.bot.vanity.tooLong"),
             status: 400,
             type: "Error",
             req
@@ -403,16 +403,16 @@ router.post("/:id/setvanity", variables, permission.auth, async (req, res, next)
 router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
     const botExists = await req.app.db.collection("bots").findOne({ _id: req.params.id });
     if (!botExists) return res.status(404).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("This bot does not exist."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.bot.404"),
         status: 404, 
         type: "Error",
         req 
     }); 
 
     if (botExists.owner.id !== req.user.id && !botExists.editors.includes(req.user.id) && req.user.db.assistant === false) return res.status(403).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("You do not have the required permission(s) to edit this bot."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.bot.perms.edit"),
         status: 403, 
         type: "Error",
         req 
@@ -421,8 +421,8 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
     const libraries = await req.app.db.collection("libraries").find({ name: { $ne: botExists.library } }).sort({ _id: 1 }).toArray();
 
     res.render("templates/bots/edit", { 
-        title: res.__("Edit Bot"), 
-        subtitle: res.__("Editing bot %s", botExists.name),
+        title: res.__("page.bots.edit.title"), 
+        subtitle: res.__("page.bots.edit.subtitle", botExists.name),
         libraries,
         bot: botExists,
         editors: botExists.editors ? botExists.editors.join(' ') : '',
@@ -439,8 +439,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     const botExists = await req.app.db.collection("bots").findOne({ _id: req.params.id });
     
     if (!botExists) return res.status(404).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("This bot does not exist."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.bot.404"),
         status: 404, 
         type: "Error",
         req 
@@ -448,8 +448,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
     const bot = botExists;
     if (bot.owner.id !== req.user.id && !bot.editors.includes(req.user.id) && req.user.db.mod === false) return res.status(403).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("You do not have the required permission(s) to edit this bot."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.bot.perms.edit"),
         status: 403, 
         type: "Error",
         req 
@@ -462,13 +462,13 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     } else {
         if (typeof req.body.invite !== "string") {
             error = true;
-            errors.push(res.__("You provided an invalid invite."));
+            errors.push(res.__("common.error.listing.arr.invite.invalid"));
         } else if (req.body.invite.length > 2000) {
             error = true;
-            errors.push(res.__("The invite link you provided is too long."));
+            errors.push(res.__("common.error.listing.arr.invite.tooLong"));
         } else if (!/^https?:\/\//.test(req.body.invite)) {
             error = true;
-            errors.push(res.__("The invite link must be a valid URL starting with http:// or https://"));
+            errors.push(res.__("common.error.bot.arr.invite.urlInvalid"));
         } else {
             invite = req.body.invite
         }
@@ -476,7 +476,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
     if (!req.body.longDescription) {
         error = true;
-        errors.push(res.__("A long description is required."));
+        errors.push(res.__("common.error.listing.arr.longDescRequired"));
     }
 
     let library;
@@ -499,8 +499,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     if (error === true) { 
         const libraries = await req.app.db.collection("libraries").find({ name: { $ne: library } }).sort({ name: 1 }).toArray();
         return res.render("templates/bots/errorOnEdit", { 
-            title: res.__("Edit Bot"), 
-            subtitle: res.__("Editing bot %s", bot.name),
+            title: res.__("page.bots.edit.title"), 
+            subtitle: res.__("page.bots.edit.subtitle", bot.name),
             bot: req.body,
             libraries,
             library,
@@ -609,7 +609,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
             }
         });
         await botCache.updateBot(req.params.id);
-    }).catch(_ => { return res.status(400).render("status", { title: res.__("Error"), subtitle: res.__("An error occurred when querying the Discord API."), status: 400, type: "Error", req }) });
+    }).catch(_ => { return res.status(400).render("status", { title: res.__("common.error"), subtitle: res.__("common.error.dapiFail"), status: 400, type: "Error", req }) });
 
     discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** edited bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
     res.redirect(`/bots/${req.params.id}`);
@@ -627,9 +627,9 @@ router.get("/:id", variables, async (req, res, next) => {
         if (!bot) {
             bot = await req.app.db.collection("bots").findOne({ vanityUrl: req.params.id });
             if (!bot) return res.status(404).render("status", {
-                title: res.__("Error"),
+                title: res.__("common.error"),
                 status: 404,
-                subtitle: res.__("This bot is not in our database"),
+                subtitle: res.__("common.error.bot.404"),
                 type: "Error",
                 req: req,
                 pageType: { server: false, bot: false }
@@ -638,9 +638,9 @@ router.get("/:id", variables, async (req, res, next) => {
     }
 
     if (bot.status.archived === true) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("This bot is not in our database"),
+        subtitle: res.__("common.error.bot.404"),
         type: "Error",
         req: req,
         pageType: { server: false, bot: false }
@@ -693,9 +693,9 @@ router.get("/:id/upvote", variables, permission.auth, async (req, res, next) => 
         bot = await req.app.db.collection("bots").findOne({ vanityUrl: req.params.id });
 
         if (!bot) return res.status(404).render("status", {
-            title: res.__("Error"),
+            title: res.__("common.error"),
             status: 404,
-            subtitle: res.__("This bot is not in our database"),
+            subtitle: res.__("common.error.bot.404"),
             type: "Error",
             req: req
         });
@@ -769,9 +769,9 @@ router.get("/:id/downvote", variables, permission.auth, async (req, res, next) =
         bot = await req.app.db.collection("bots").findOne({ vanityUrl: req.params.id });
 
         if (!bot) return res.status(404).render("status", {
-            title: res.__("Error"),
+            title: res.__("common.error"),
             status: 404,
-            subtitle: res.__("This bot is not in our database"),
+            subtitle: res.__("common.error.bot.404"),
             type: "Error",
             req: req
         });
@@ -845,9 +845,9 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
         bot = await req.app.db.collection("bots").findOne({ vanityUrl: req.params.id });
 
         if (!bot) return res.status(404).render("status", {
-            title: res.__("Error"),
+            title: res.__("common.error"),
             status: 404,
-            subtitle: res.__("This bot is not in our database"),
+            subtitle: res.__("common.error.bot.404"),
             type: "Error",
             req: req
         });
@@ -856,7 +856,7 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
     if (!req.user || req.user.id !== bot.owner.id) return res.status(403).render("status", {
         title: "Error",
         status: 403,
-        message: "You cannot perform this action as you are not the owner of the bot",
+        message: res.__("common.error.bot.perms.notOwner"),
         user: req.user,
         req: req
     });
@@ -879,15 +879,15 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
 router.get("/:id/resubmit", variables, permission.auth, async (req, res, next) => {
     const botExists = await req.app.db.collection("bots").findOne({ _id: req.params.id });
     if (!botExists) return res.status(404).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("This bot does not exist."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.bot.404"),
         status: 404, 
         type: "Error",
         req 
     }); 
 
     if (botExists.status.archived === false) return res.status(400).render("status", { 
-        title: res.__("Error"), 
+        title: res.__("common.error"), 
         subtitle: res.__("You cannot resubmit a bot that isn't archived."),
         status: 400, 
         type: "Error",
@@ -895,8 +895,8 @@ router.get("/:id/resubmit", variables, permission.auth, async (req, res, next) =
     }); 
 
     if (botExists.owner.id !== req.user.id && req.user.db.assistant === false) return res.status(403).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("You do not have the required permission(s) to resubmit this bot."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.bot.perms.resubmit"),
         status: 403, 
         type: "Error",
         req 
@@ -905,8 +905,8 @@ router.get("/:id/resubmit", variables, permission.auth, async (req, res, next) =
     const libraries = await req.app.db.collection("libraries").find({ name: { $ne: botExists.library } }).sort({ _id: 1 }).toArray();
 
     res.render("templates/bots/edit", { 
-        title: res.__("Resubmit Bot"), 
-        subtitle: res.__("Resubmitting bot %s", botExists.name),
+        title: res.__("page.bots.resubmit.title"), 
+        subtitle: res.__("page.bots.resubmit.subtitle", botExists.name),
         libraries,
         bot: botExists,
         editors: botExists.editors ? botExists.editors.join(' ') : '',
@@ -923,8 +923,8 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
     const botExists = await req.app.db.collection("bots").findOne({ _id: req.params.id });
     
     if (!botExists) return res.status(404).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("This bot does not exist."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.bot.404"),
         status: 404, 
         type: "Error",
         req 
@@ -932,8 +932,8 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
 
     const bot = botExists;
     if (bot.owner.id !== req.user.id && req.user.db.assistant === false) return res.status(403).render("status", { 
-        title: res.__("Error"), 
-        subtitle: res.__("You do not have the required permission(s) to resubmit this bot."),
+        title: res.__("common.error"), 
+        subtitle: res.__("common.error.bot.perms.resubmit"),
         status: 403, 
         type: "Error",
         req 
@@ -946,13 +946,13 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
     } else {
         if (typeof req.body.invite !== "string") {
             error = true;
-            errors.push(res.__("You provided an invalid invite."));
+            errors.push(res.__("common.error.listing.arr.invite.invalid"));
         } else if (req.body.invite.length > 2000) {
             error = true;
-            errors.push(res.__("The invite link you provided is too long."));
+            errors.push(res.__("common.error.listing.arr.invite.tooLong"));
         } else if (!/^https?:\/\//.test(req.body.invite)) {
             error = true;
-            errors.push(res.__("The invite link must be a valid URL starting with http:// or https://"));
+            errors.push(res.__("common.error.bot.arr.invite.urlInvalid"));
         } else {
             invite = req.body.invite
         }
@@ -960,7 +960,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
 
     if (!req.body.longDescription) {
         error = true;
-        errors.push(res.__("A long description is required."));
+        errors.push(res.__("common.error.listing.arr.longDescRequired"));
     }
 
     let library;
@@ -983,8 +983,8 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
     if (error === true) { 
         const libraries = await req.app.db.collection("libraries").find({ name: { $ne: library } }).sort({ name: 1 }).toArray();
         return res.render("templates/bots/errorOnEdit", { 
-            title: res.__("Resubmit Bot"), 
-            subtitle: res.__("Resubmitting bot %s", bot.name),
+            title: res.__("page.bots.resubmit.title"), 
+            subtitle: res.__("page.bots.resubmit.subtitle", bot.name),
             bot: req.body,
             libraries,
             library,
@@ -1095,7 +1095,7 @@ router.post("/:id/resubmit", variables, permission.auth, async (req, res, next) 
             }
         });
         await botCache.updateBot(req.params.id);
-    }).catch(_ => { return res.status(400).render("status", { title: res.__("Error"), subtitle: res.__("An error occurred when querying the Discord API."), status: 400, type: "Error", req }) });
+    }).catch(_ => { return res.status(400).render("status", { title: res.__("common.error"), subtitle: res.__("common.error.dapiFail"), status: 400, type: "Error", req }) });
 
     discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.resubmitBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** resubmitted bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) } );
     res.redirect(`/bots/${req.params.id}`);
@@ -1105,17 +1105,17 @@ router.get("/:id/approve", variables, permission.auth, permission.mod, async (re
     const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot approve a bot that doesn't exist"),
+        subtitle: res.__("common.bot.error.404"),
         req,
         type: "Error"
     });
 
     if (bot.status.approved === true) return res.status(400).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 400,
-        subtitle: res.__("You cannot approve a bot that is already approved"),
+        subtitle: res.__("common.error.bot.alreadyApproved"),
         req,
         type: "Error"
     });
@@ -1166,17 +1166,17 @@ router.get("/:id/verify", variables, permission.auth, permission.assistant, asyn
     const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot approve a bot that doesn't exist"),
+        subtitle: res.__("common.bot.error.404"),
         req,
         type: "Error"
     });
 
     if (bot.status.verified === true) return res.status(400).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 400,
-        subtitle: res.__("You cannot verify a bot that is already verified"),
+        subtitle: res.__("common.error.bot.alreadyVerified"),
         req,
         type: "Error"
     });
@@ -1231,7 +1231,7 @@ router.get("/:id/unverify", variables, permission.auth, permission.assistant, as
     const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
         subtitle: res.__("You cannot unverify a bot that doesn't exist"),
         req,
@@ -1239,7 +1239,7 @@ router.get("/:id/unverify", variables, permission.auth, permission.assistant, as
     });
 
     if (bot.status.verified === false) return res.status(400).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 400,
         subtitle: res.__("You cannot unverify a bot that is not verified"),
         req,
@@ -1274,17 +1274,17 @@ router.get("/:id/decline", variables, permission.auth, permission.mod, async (re
     const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot decline a bot that doesn't exist"),
+        subtitle: res.__("common.error.bot.404"),
         req,
         type: "Error"
     });
 
     if (bot.status.approved === true) return res.status(400).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 400,
-        subtitle: res.__("You cannot decline a bot that is not in the queue"),
+        subtitle: res.__("common.error.bot.notInQueue"),
         req,
         type: "Error"
     });
@@ -1293,24 +1293,24 @@ router.get("/:id/decline", variables, permission.auth, permission.mod, async (re
 
     if (req.query.from && req.query.from === "queue") redirect = "/staff/queue";
 
-    res.render("templates/bots/staffActions/decline", { title: res.__("Decline Bot"), subtitle: res.__("Declining bot %s", bot.name), redirect, decliningBot: bot, req });
+    res.render("templates/bots/staffActions/decline", { title: res.__("page.bots.decline.title"), subtitle: res.__("page.bots.decline.subtitle", bot.name), redirect, decliningBot: bot, req });
 });
 
 router.post("/:id/decline", variables, permission.auth, permission.mod, async (req, res, next) => {
     const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot decline a bot that doesn't exist"),
+        subtitle: res.__("common.error.bot.404"),
         req,
         type: "Error"
     });
 
     if (bot.status.approved === true) return res.status(400).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 400,
-        subtitle: res.__("You cannot decline a bot that is not in the queue"),
+        subtitle: res.__("common.error.bot.notInQueue"),
         req,
         type: "Error"
     });
@@ -1351,24 +1351,24 @@ router.get("/:id/remove", variables, permission.auth, permission.mod, async (req
     const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot remove a bot that doesn't exist"),
+        subtitle: res.__("common.error.bot.404"),
         req,
         type: "Error"
     });
     
     if (bot.status.approved === false) return res.status(400).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 400,
-        subtitle: res.__("You cannot remove a bot that is in the queue"),
+        subtitle: res.__("common.error.bot.inQueue"),
         req,
         type: "Error"
     });
 
     res.render("templates/bots/staffActions/remove", { 
-        title: res.__("Remove Bot"), 
-        subtitle: res.__("Removing bot %s", bot.name),
+        title: res.__("page.bots.remove.title"), 
+        subtitle: res.__("page.bots.remove.subtitle", bot.name),
         removingBot: bot, 
         req 
     });
@@ -1378,17 +1378,17 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
     const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot remove a bot that doesn't exist"),
+        subtitle: res.__("common.error.bot.404"),
         req,
         type: "Error"
     });
     
     if (bot.status.approved === false) return res.status(400).render("status", {
-        title: res.__("Error"),
+        title: res.__("common.error"),
         status: 400,
-        subtitle: res.__("You cannot remove a bot that is in the queue"),
+        subtitle: res.__("common.error.bot.inQueue"),
         req,
         type: "Error"
     });

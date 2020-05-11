@@ -74,7 +74,7 @@
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
                                             </span>
-                                            <span><%= __("Staff Management") %></span>
+                                            <span><%= __("common.staffManagement") %></span>
                                             <span class="icon is-small">
                                                 <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
                                             </span>
@@ -83,7 +83,7 @@
                                     <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                         <div class="dropdown-content">
                                             <div class="dropdown-item">
-                                                <p class="has-text-danger"><%= __("If you accidentally perform an action that is abusive or inappropriate please report it to a Website Administrator or Assistant instantly to prevent or minimise the severity of any penalties.") %></p>
+                                                <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
                                             <a class="dropdown-item" href="/templates/<%= template._id %>/edit">
@@ -105,20 +105,20 @@
                             <span class="icon">
                                 <i aria-hidden="true" class="fas fa-clone"></i>
                             </span>
-                            <span><%= __("Use Template") %></span>
+                            <span><%= __("page.templates.useTemplate") %></span>
                         </a>
                     </div>
                     <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
                         <div class="control">
                             <div class="tags has-addons">
-                                <span class="tag is-dark"><%= __("Listing Owner") %></span>
+                                <span class="tag is-dark"><%= __("common.listingOwner") %></span>
                                 <span class="tag is-link"><a class="has-text-white" href="/users/<%= template.owner.id %>"><%= templateOwner.fullUsername %></a></span>
                             </div>
                         </div>
                         <div class="control">
                             <div class="tags has-addons">
-                                <span class="tag is-dark"><%= __("Used") %></span>
-                                <span class="tag is-info"><%= __("%s time(s)", template.usageCount) %></span>
+                                <span class="tag is-dark"><%= __("page.templates.used") %></span>
+                                <span class="tag is-info"><%= __("page.templates.usedTimes", template.usageCount) %></span>
                             </div>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
                 <span class="icon is-small">
                     <i class="fas fa-align-center" aria-hidden="true"></i>
                 </span>
-                <span><%= __("Description") %></span>
+                <span><%= __("common.description") %></span>
             </a>
             </li>
             <li>
@@ -149,7 +149,7 @@
                     <span class="icon is-small">
                         <i class="fas fa-info-circle" aria-hidden="true"></i>
                     </span>
-                    <span><%= __("Template Details") %></span>
+                    <span><%= __("page.templates.details") %></span>
                 </a>
             </li>
         </ul>
@@ -162,7 +162,7 @@
                 <div class="columns">
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
-                            <h4 class="is-size-4"><%= __("Channels") %></h4>
+                            <h4 class="is-size-4"><%= __("page.templates.channels") %></h4>
                             <div id="collapsibleBody1">
                                 <div id="channelList">
                                     <%- template.channels.map(channel => include("../../partials/channels.ejs", { channel })).join("") %>
@@ -172,7 +172,7 @@
                     </div>
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
-                            <h4 class="is-size-4"><%= __("Roles") %></h4>
+                            <h4 class="is-size-4"><%= __("page.templates.roles") %></h4>
                             <div id="collapsibleBody2">
                                 <div id="channelList">
                                     <%- template.roles.reverse().map(role => include("../../partials/roles.ejs", { role })).join("") %>
@@ -182,11 +182,11 @@
                     </div>
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
-                            <h4 class="is-size-4"><%= __("Other Information") %></h4>
+                            <h4 class="is-size-4"><%= __("page.templates.otherInfo") %></h4>
                             <div id="collapsibleBody3">
                                 <div id="otherInfo">
-                                    <p><strong><%= __("Region:") %></strong> <%= functions.parseRegion(template.region) %></p>
-                                    <p><strong><%= __("AFK Timeout:") %></strong> <%= Math.floor(template.afkTimeout / 60) %>m</p>
+                                    <p><strong><%= __("page.templates.otherInfo.region") %></strong> <%= functions.parseRegion(template.region) %></p>
+                                    <p><strong><%= __("page.templates.otherInfo.afkTimeout") %></strong> <%= Math.floor(template.afkTimeout / 60) %>m</p>
                                     <%- include("../../partials/verificationLevel.ejs") %>
                                     <%- include("../../partials/msgNotifications.ejs") %>
                                     <%- include("../../partials/explicitFilter.ejs") %>
@@ -203,10 +203,10 @@
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title has-text-danger"><%= __("Warning!") %></p>
+            <p class="modal-card-title has-text-danger"><%= __("common.warning) %></p>
         </header>
         <section class="modal-card-body has-text-danger">
-            <%= __("This action is irreversible, when you click Delete your template's data will be immediately erased from our database with no way of restoring it.") %>
+            <%= __("page.templates.warning.delete") %>
         </section>
         <footer class="modal-card-foot">
             <div class="buttons">

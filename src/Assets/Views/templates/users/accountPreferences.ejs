@@ -21,41 +21,41 @@
     <div class="section">
         <form method="POST">
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Snake Game") %></label>
+                <label class="label has-text-blurple"><%= __("page.account.preferences.snake") %></label>
                 <div class="field">
                     <input class="is-checkradio is-circle has-background-color is-danger" type="checkbox" id="noGames" name="noGames" <% if (req.user.db.preferences.enableGames === false) { %>checked="checked"<% } %>>
-                    <label class="has-text-danger" for="noGames"><%= __("Disable") %></label>
+                    <label class="has-text-danger" for="noGames"><%= __("common.disable") %></label>
                 </div>
                 <br />
-                <label class="label has-text-blurple"><%= __("Experiments") %></label>
+                <label class="label has-text-blurple"><%= __("page.account.preferences.experiments") %></label>
                 <div class="field">
                     <input class="is-checkradio is-circle has-background-color is-success" type="checkbox" id="experiments" name="experiments" <% if (req.user.db.preferences.experiments === true) { %>checked="checked"<% } %>>
-                    <label class="has-text-success" for="experiments"><%= __("Allow") %></label>
+                    <label class="has-text-success" for="experiments"><%= __("common.allow") %></label>
                     <br />
-                    <label class="is-size-7 has-text-danger"><%= __("Enabling experiments may cause issues as you may be testing features that are theoretical or bug ridden, you will also be enrolled in any future beta testing programme(s).") %></label>
+                    <label class="is-size-7 has-text-danger"><%= __("page.account.preferences.experiments.warning") %></label>
                 </div>
                 <br />
-                <label class="label has-text-blurple"><%= __("Default Element Colour") %></label>
+                <label class="label has-text-blurple"><%= __("page.account.preferences.accent") %></label>
                 <div class="field">
                     <input class="backdrop" name="iconColour" type="color" value="<%= req.user.db.preferences.defaultColour %>" style="width:30%; background-color: transparent; border-color: transparent;">
                 </div>
                 <br />    
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("Custom Global CSS") %> <span class="has-text-danger">(<%= __("Danger Will Robinson, Danger!") %>)</span></label>
+                    <label class="label has-text-blurple"><%= __("page.account.preferences.customCSS") %> <span class="has-text-danger">(<%= __("page.account.preferences.customCSS.danger") %>)</span></label>
                     <div onkeyup="monacoToField();" id="customCssEditor" class="editorBackdrop" style="width:99%;height:350px;" value="<%= req.user.db.preferences.customGlobalCss %>"></div>
                     <textarea hidden name="customCss" id="customCss"></textarea>
-                    <label class="is-size-7 has-text-magenta"><%= __("If you cannot access this page and need to reset your global css use the following command in our Discord server:") %> <span class="has-text-info">del,cssreset</span></label>
+                    <label class="is-size-7 has-text-magenta"><%= __("page.account.preferences.customCSS.note") %></label>
                 </div>
                 <br />
                 <div class="field is-grouped">
                     <div class="buttons">
                         <button class="button is-success">
                             <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
-                            <span><%= __("Save") %></span>
+                            <span><%= __("common.save") %></span>
                         </button>
                         <a class="button is-orange" href="/users/account/preferences/reset">
                             <span class="icon"><i aria-hidden="true" class="fas fa-minus-circle"></i></span>
-                            <span><%= __("Revert to Default Settings") %></span>
+                            <span><%= __("page.account.preferences.revert") %></span>
                         </a>
                         <a class="button is-danger" href="/users/<%= req.user.id %>">
                             <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>

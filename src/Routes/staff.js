@@ -29,8 +29,8 @@ router.get("/", variables, permission.mod, async (req, res) => {
     const servers = await req.app.db.collection("servers").find().toArray();
 
     res.render("templates/staff/index", { 
-        title: res.__("Staff Panel"),
-        subtitle: res.__("The centre of moderation and administrative actions on the site"), 
+        title: res.__("common.nav.me.staffPanel"),
+        subtitle: res.__("common.nav.me.staffPanel.subtitle"), 
         user: req.user,
         req,
         stats: {
@@ -41,7 +41,7 @@ router.get("/", variables, permission.mod, async (req, res) => {
             strikes: req.user.db.staffTracking.punishments.strikes.length,
             warnings: req.user.db.staffTracking.punishments.warnings.length,
             standing: req.user.db.staffTracking.details.standing,
-            away: req.user.db.staffTracking.details.away.status ? res.__("Yes") : res.__("No")
+            away: req.user.db.staffTracking.details.away.status ? res.__("common.yes") : res.__("common.no")
         }
     });
 });

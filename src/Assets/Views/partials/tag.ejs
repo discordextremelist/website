@@ -3,6 +3,28 @@
         <span class="icon">
             <i aria-hidden="true" class="fas fa-tag"></i>
         </span>
-        <span><%= __(tag) %></span>
+        <% if (tag === "Gaming") { %>
+            <span><%= __("common.tags.gaming") %></span>
+        <% } else if (tag === "Music") { %>
+            <span><%= __("common.tags.music") %></span>
+        <% } else if (tag === "Media & Entertainment") { %>
+            <span><%= __("common.tags.mediaEntertainment") %></span>
+        <% } else if (tag === "Creative Arts") { %>
+            <span><%= __("common.tags.creativeArts") %></span>
+        <% } else if (tag === "Science & Tech") { %>
+            <span><%= __("common.tags.scienceTech") %></span>
+        <% } else if (tag === "Education") { %>
+            <span><%= __("common.tags.education") %></span>
+        <% } else if (tag === "Fashion & Beauty") { %>
+            <span><%= __("common.tags.relationshipIdentity") %></span>
+        <% } else if (tag === "Relationships & Identity") { %>
+            <span><%= __("common.tags.fitnessHealth") %></span>
+        <% } else if (tag === "Fitness & Health") { %>
+            <span><%= __("common.tags.travelFood") %></span>
+        <% } else if (tag === "Travel & Food") { %>
+            <span><%= __("common.tags.travelFood") %></span>
+        <% } else if (tag === "finance") { %>
+            <span><%= __("common.tags.finance") %></span>
+        <% } %>
     </p>
 </div>

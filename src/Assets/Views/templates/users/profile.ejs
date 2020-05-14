@@ -98,7 +98,7 @@
                         <% if (user && user.db.rank.mod === true || user && userProfile._id === user.id) { %>
                             <div class="buttons">
                                 <% if (userProfile._id === user.id || user.db.rank.assistant === true) { %>
-                                    <a href="/users/profile/@me/edit" class="button is-dark">
+                                    <a href="<%= linkPrefix %>/users/profile/@me/edit" class="button is-dark">
                                         <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
                                         <span><%= __("common.edit") %></span>
                                     </a>
@@ -124,12 +124,12 @@
                                             <hr class="dropdown-divider">
                                             <% if (user.db.rank.assistant === true) { %>
                                                 <% if (req.user.id !== userProfile._id) { %>
-                                                    <a class="dropdown-item" href="/users/profile/<%= userProfile._id %>/edit">
+                                                    <a class="dropdown-item" href="<%= linkPrefix %>/users/profile/<%= userProfile._id %>/edit">
                                                         <span class="icon"><i aria-hidden="true" class="fas fa-pen"></i></span>
                                                         <span><%= __("common.edit") %></span>
                                                     </a>
                                                 <% } %>
-                                                <a class="dropdown-item" href="/users/<%= userProfile._id %>/rank">
+                                                <a class="dropdown-item" href="<%= linkPrefix %>/users/<%= userProfile._id %>/rank">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-crown"></i></span>
                                                     <span><%= __("page.users.modifyRank") %></span>
                                                 </a>

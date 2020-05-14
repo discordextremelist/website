@@ -4,5 +4,5 @@
 <h3><%= error.status %></h3>
 <pre><%= error.stack %></pre>
 <br />
-<button onclick="window.location = '/';"><%= __("common.home") %></button>
+<button onclick="window.location = '<%= linkPrefix %>/';"><%= __("common.home") %></button>
 <button onclick="history.back();"><%= __("common.goback") %></button>

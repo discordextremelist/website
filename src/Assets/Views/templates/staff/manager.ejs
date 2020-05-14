@@ -1,0 +1,39 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/staffNav.ejs") %>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <br />
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-users-cog has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="section">
+        <h1><%= __("common.rank.admin.short") %></h1>
+        <br />
+        <div class="columns is-multiline is-centered">
+            <%- admin.map(user => include("../../partials/cards/userCardMgmt.ejs", { user })).join("") %>
+        </div>
+        <br />
+        <h1><%= __("common.rank.assistant.short") %></h1>
+        <br />
+        <div class="columns is-multiline is-centered">
+            <%- assistant.map(user => include("../../partials/cards/userCardMgmt.ejs", { user })).join("") %>
+        </div>
+        <br />
+        <h1><%= __("common.rank.mod.short") %></h1>
+        <br />
+        <div class="columns is-multiline is-centered">
+            <%- mod.map(user => include("../../partials/cards/userCardMgmt.ejs", { user })).join("") %>
+        </div>
+    </div>
+</div>
+<%- include("../../partials/footer.ejs") %>

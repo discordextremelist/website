@@ -53,11 +53,11 @@
                             <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
                             <span><%= __("common.save") %></span>
                         </button>
-                        <a class="button is-orange" href="/users/account/preferences/reset">
+                        <a class="button is-orange" href="<%= linkPrefix %>/users/account/preferences/reset">
                             <span class="icon"><i aria-hidden="true" class="fas fa-minus-circle"></i></span>
                             <span><%= __("page.account.preferences.revert") %></span>
                         </a>
-                        <a class="button is-danger" href="/users/<%= req.user.id %>">
+                        <a class="button is-danger" href="<%= linkPrefix %>/users/<%= req.user.id %>">
                             <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>
                             <span><%= __("common.cancel") %></span>
                         </a>

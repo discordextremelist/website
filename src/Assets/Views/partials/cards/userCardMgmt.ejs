@@ -1,0 +1,37 @@
+<div class="column is-one-third" is-user-card>
+    <div class="box has-background-primary" style="overflow: hidden; height: 100%;">
+        <article class="media">
+            <div class="media-left">
+                <figure class="image is-64x64">
+                    <img class="is-rounded lazyload" data-src="<%= user.avatar.url %>.<%= imageFormat %>" alt="<%= __("common.img.avatar", user.fullUsername) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail", user._id) %>');" draggable="false">
+                </figure>
+            </div>
+            <div style="overflow: hidden;" class="media-content">
+                <div class="content">
+                    <p>
+                    <span class="is-size-4 title has-text-blurple is-mobile">
+                        <span><%= user.fullUsername %></span>
+                    </span>
+                        <br />
+                        <ul>
+                            <li><%- include("../staffStanding.ejs") %></li>
+                            <li><%= __("page.staff.manager.strikes") %> <%= user.staffTracking.punishments.warnings.length %></li>
+                            <li><%= __("page.staff.manager.warnings") %> <%= user.staffTracking.punishments.warnings.length %></li>
+                            <li><%= __("page.staff.manager.onLeave") %> <%= user.staffTracking.details.away.status ? __("page.staff.manager.onLeave.yes") : __("page.staff.manager.onLeave.no") %></li>
+                        </ul>
+                    </p>
+                </div>
+                <div class="content-footer">
+                    <div class="buttons">
+                        <a href="<%= linkPrefix %>/users/<%= user._id %>" class="button is-blurple is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                            <span><%= __("common.view") %></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>

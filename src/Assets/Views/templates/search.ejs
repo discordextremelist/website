@@ -86,7 +86,7 @@
                 buttons = "";
             %>
             <% if (page > 1) { %>
-                <a href="/servers?page=<%= page - 1 %>" class="pagination-previous button is-primary">
+                <a href="<%= linkPrefix %>/servers?page=<%= page - 1 %>" class="pagination-previous button is-primary">
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-arrow-left"></i>
                     </span>
@@ -101,7 +101,7 @@
                 </a>
             <% } %>
             <% if (page < pages) { %>
-                <a href="/servers?page=<%= page + 1 %>" class="pagination-next button is-primary">
+                <a href="<%= linkPrefix %>/servers?page=<%= page + 1 %>" class="pagination-next button is-primary">
                     <span><%= __("common.pagination.next") %></span>
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-arrow-right"></i>
@@ -119,7 +119,7 @@
                 <%- buttons %>
             </ul>
         </nav>
-        <button class="button is-transparent is-large is-fullwidth is-loading" style="display: none;" id="loader"><%= __("Loading") %></button>
+        <button class="button is-transparent is-large is-fullwidth is-loading" style="display: none;" id="loader"><%= __("common.loading") %></button>
     </div>
 </div>
 <script>

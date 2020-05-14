@@ -19,14 +19,14 @@
                 <div class="content-footer">
                     <div class="buttons">
                         <% if (search === true) { %>
-                            <a href="/templates/<%= template._id %>" class="button is-blurple is-outlined">
+                            <a href="<%= linkPrefix %>/templates/<%= template._id %>" class="button is-blurple is-outlined">
                                 <span class="icon">
                                   <i class="fas fa-copy"></i>
                                 </span>
                                 <span><%= __("common.view.template") %></span>
                             </a>
                         <% } else { %>
-                            <a href="/templates/<%= template._id %>" class="button is-blurple is-outlined">
+                            <a href="<%= linkPrefix %>/templates/<%= template._id %>" class="button is-blurple is-outlined">
                                 <span class="icon">
                                 <i class="fas fa-eye"></i>
                                 </span>

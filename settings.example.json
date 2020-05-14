@@ -12,6 +12,11 @@
         "secret": ""
     },
     "website": {
+        "locales": {
+            "default": "en-NZ",
+            "all": ["en-NZ", "en-UK"],
+            "isntLocale": ["search", "bots", "servers", "templates", "users", "staff", "terms", "privacy", "guidelines", "widgetbot", "about"]
+        },
         "secrets": {
             "cookie": ""
         },

@@ -29,6 +29,8 @@ const variables = async(req, res, next) => {
     res.locals.cssVersion = releaseInfo.cssVersion;
     res.locals.ddosMode = ddosMode.getDDOSMode().active;
     res.locals.gaID = settings.website.gaID;
+    res.locals.linkPrefix = `/${req.locale || settings.website.locales.default}`;
+    res.locals.baseURL = settings.website.url;
     req.session.redirectTo = req.originalUrl;
     req.del = releaseInfo;
     req.del.node = "us-node"; // will be updated in a bit:tm: (*cough* spoiler)

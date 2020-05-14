@@ -54,7 +54,7 @@
                     <% if (req.user) { %>
                         <div class="buttons <% if (mobile) { %>is-centered<% } %>">
                             <% if (template.owner.id === req.user.id) { %>
-                                <a href="/templates/<%= template._id %>/edit" class="button is-dark">
+                                <a href="<%= linkPrefix %>/templates/<%= template._id %>/edit" class="button is-dark">
                                     <span class="icon">
                                         <i aria-hidden="true" class="fas fa-pencil"></i>
                                     </span>
@@ -86,11 +86,11 @@
                                                 <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
-                                            <a class="dropdown-item" href="/templates/<%= template._id %>/edit">
+                                            <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/edit">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
                                                 <span><%= __("common.edit") %></span>
                                             </a>
-                                            <a class="dropdown-item" href="/templates/<%= template._id %>/remove">
+                                            <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/remove">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                                 <span><%= __("common.staff.remove") %></span>
                                             </a>
@@ -112,13 +112,13 @@
                         <div class="control">
                             <div class="tags has-addons">
                                 <span class="tag is-dark"><%= __("common.listingOwner") %></span>
-                                <span class="tag is-link"><a class="has-text-white" href="/users/<%= template.owner.id %>"><%= templateOwner.fullUsername %></a></span>
+                                <span class="tag is-link"><a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.owner.id %>"><%= templateOwner.fullUsername %></a></span>
                             </div>
                         </div>
                         <div class="control">
                             <div class="tags has-addons">
                                 <span class="tag is-dark"><%= __("page.templates.used") %></span>
-                                <span class="tag is-info"><%= __("page.templates.usedTimes", template.usageCount) %></span>
+                                <span class="tag is-info"><%= __("page.templates.used.times", template.usageCount) %></span>
                             </div>
                         </div>
                     </div>
@@ -203,14 +203,14 @@
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title has-text-danger"><%= __("common.warning) %></p>
+            <p class="modal-card-title has-text-danger"><%= __("common.warning") %></p>
         </header>
         <section class="modal-card-body has-text-danger">
             <%= __("page.templates.warning.delete") %>
         </section>
         <footer class="modal-card-foot">
             <div class="buttons">
-                <a class="button is-success" href="/templates/<%= template._id %>/delete">
+                <a class="button is-success" href="<%= linkPrefix %>/templates/<%= template._id %>/delete">
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-check-circle"></i>
                     </span>

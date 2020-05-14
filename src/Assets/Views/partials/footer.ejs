@@ -18,38 +18,38 @@
     </a>
 </p>
 <script type="text/javascript">
-    if(window.matchMedia("(min-width: 768px)").matches&&window.matchMedia("(max-width: 1445px)").matches){const widgetBot=document.getElementById("navWidgetBotXSupport");widgetBot.parentNode.removeChild(widgetBot);const about=document.getElementById("navAbout");about.insertAdjacentHTML("afterend",`<a class="navbar-item" href="/widgetbot" tabindex="0">
+    if(window.matchMedia("(min-width: 768px)").matches&&window.matchMedia("(max-width: 1445px)").matches){const widgetBot=document.getElementById("navWidgetBotXSupport");widgetBot.parentNode.removeChild(widgetBot);const about=document.getElementById("navAbout");about.insertAdjacentHTML("afterend",`<a class="navbar-item" href="<%= linkPrefix %>/widgetbot" tabindex="0">
             <span class="icon iconalign">
                 <i class="fad fa-comment-alt-lines" aria-hidden="true"></i>
             </span>
-            <span><%= __("WidgetBot Chat") %></span>
+            <span><%= __("common.widgetbot.chat") %></span>
         </a>`);<% if (req.user && !mobile) { %>const buttons=document.getElementById("authButtons");buttons.parentNode.removeChild(buttons);const template=document.getElementById("navTemplate");const snake=document.getElementById("navSnake");if(!snake){template.insertAdjacentHTML("afterend",`<hr class="navbar-divider"><% if (ddosMode === true) { %>
                     <a class="navbar-item has-text-danger" title="<%= __("common.notice.ddosMode") %>" disabled tabindex="0">
                         <span class="icon">
                             <i class="fad fa-sign-out" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Logout") %></span>
+                        <span><%= __("common.logout") %></span>
                     </a>
                 <% } else { %>
                     <a class="navbar-item has-text-danger" href="/auth/logout" tabindex="0">
                         <span class="icon">
                             <i class="fad fa-sign-out" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Logout") %></span>
+                        <span><%= __("common.logout") %></span>
                     </a>
                 <% } %>`)}else{snake.insertAdjacentHTML("afterend",`<% if (ddosMode === true) { %>
                     <a class="navbar-item has-text-danger" title="<%= __("common.notice.ddosMode") %>" disabled tabindex="0">
                         <span class="icon">
                             <i class="fad fa-sign-out" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Logout") %></span>
+                        <span><%= __("common.logout") %></span>
                     </a>
                 <% } else { %>
                     <a class="navbar-item has-text-danger" href="/auth/logout" tabindex="0">
                         <span class="icon">
                             <i class="fad fa-sign-out" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("Logout") %></span>
+                        <span><%= __("common.logout") %></span>
                     </a>
                 <% } %>`)}<% } %>}
 </script>

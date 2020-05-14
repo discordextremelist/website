@@ -111,7 +111,7 @@
                 </a>
 
                 <div class="navbar-dropdown is-hidden-mobile">
-                    <a class="navbar-item" href="/staff">
+                    <a class="navbar-item" href="<%= linkPrefix %>/staff">
                         <span class="icon iconalign">
                             <i class="fad fa-house" aria-hidden="true"></i>
                         </span>
@@ -132,31 +132,31 @@
                     </a>
 
                     <div class="navbar-dropdown is-hidden-mobile is-right">
-                        <a class="navbar-item" href="/users/@me">
+                        <a class="navbar-item" href="<%= linkPrefix %>/users/@me">
                             <span class="icon iconalign">
                                 <i class="fad fa-user" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.profile") %></span>
                         </a>
-                        <a class="navbar-item" href="/users/account/preferences">
+                        <a class="navbar-item" href=">%= linkPrefix %>/users/account/preferences">
                             <span class="icon iconalign">
                                 <i class="fad fa-swatchbook" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.preferences") %></span>
                         </a>
-                        <a class="navbar-item" href="/bots/submit">
+                        <a class="navbar-item" href="<%= linkPrefix %>/bots/submit">
                             <span class="icon iconalign">
                                 <i class="fad fa-robot" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.submitBot") %></span>
                         </a>
-                        <a class="navbar-item" href="/servers/submit">
+                        <a class="navbar-item" href="<%= linkPrefix %>/servers/submit">
                             <span class="icon iconalign">
                                 <i class="fad fa-comments-alt" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.submitServer") %></span>
                         </a>
-                        <a class="navbar-item" href="/templates/submit" tabindex="0">
+                        <a class="navbar-item" href="<%= linkPrefix %>/templates/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-copy" aria-hidden="true"></i>
                             </span>
@@ -164,7 +164,7 @@
                         </a>
                         <% if (req.user.db.preferences.enableGames === true) { %>
                             <hr class="navbar-divider">
-                            <a class="navbar-item" href="/users/game/snake">
+                            <a class="navbar-item" href="<%= linkPrefix %>/users/game/snake">
                                 <span class="icon iconalign">
                                     <i class="fad fa-snake" aria-hidden="true"></i>
                                 </span>

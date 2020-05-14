@@ -29,34 +29,34 @@
                 <div class="content-footer">
                     <div class="buttons">
                     <% if (bot.status.archived === true) { %>
-                        <a href="/bots/<%= bot._id %>/resubmit" class="button is-blurple">
+                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>/resubmit" class="button is-blurple">
                             <span class="icon">
                               <i class="fas fa-redo-alt"></i>
                             </span>
                             <span><%= __("common.resubmit") %></span>
                         </a>
                     <% } else if (verificationApp === true) { %>
-                        <a href="/staff/apps/verification/<%= bot._id %>" class="button is-blurple">
+                        <a href="<%= linkPrefix %>/staff/apps/verification/<%= bot._id %>" class="button is-blurple">
                             <span class="icon">
                               <i class="fas fa-eye"></i>
                             </span>
                             <span><%= __("common.application.view") %></span>
                         </a>
                     <% } else if (search === true) { %>
-                        <a href="/bots/<%= bot._id %>" class="button is-blurple is-outlined">
+                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>" class="button is-blurple is-outlined">
                             <span class="icon">
                               <i class="fas fa-robot"></i>
                             </span>
                             <span><%= __("common.view.bot") %></span>
                         </a>
                     <% } else { %>
-                        <a href="/bots/<%= bot._id %>" class="button is-blurple is-outlined">
+                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>" class="button is-blurple is-outlined">
                             <span class="icon">
                               <i class="fas fa-eye"></i>
                             </span>
                             <span><%= __("common.view") %></span>
                         </a>
-                        <a href="/bots/<%= bot._id %>/invite" class="button is-blurple is-outlined">
+                        <a href="<%= bot.invite %>" class="button is-blurple is-outlined">
                             <span class="icon">
                               <i class="fas fa-plus"></i>
                             </span>

@@ -53,7 +53,9 @@ new Promise((resolve, reject) => {
         (error, mongo) => {
             if (error) return reject(error);
             db = mongo.db(settings.db.mongo.db);
-            console.log("Mongo: Connection established! Released deadlock as a part of startup...");
+            console.log(
+                "Mongo: Connection established! Released deadlock as a part of startup..."
+            );
             console.timeEnd("Mongo TTL");
             resolve();
         }
@@ -83,8 +85,12 @@ new Promise((resolve, reject) => {
         await featuredCache.updateFeaturedServers();
         await ddosMode.updateCache();
 
-        async function discordBotUndefined(){
-            if (typeof discord.bot.guilds !== "undefined" && typeof discord.bot.guilds.get(settings.guild.main) !== "undefined"){
+        async function discordBotUndefined() {
+            if (
+                typeof discord.bot.guilds !== "undefined" &&
+                typeof discord.bot.guilds.get(settings.guild.main) !==
+                    "undefined"
+            ) {
                 await banned.updateBanlist();
                 await discord.uploadStatuses();
             } else {
@@ -100,9 +106,9 @@ new Promise((resolve, reject) => {
         const cookieParser = require("cookie-parser");
         const logger = require("morgan");
         const device = require("express-device");
-        const compression = require("compression");
         const i18n = require("i18n");
         const passport = require("passport");
+        const minifyHTML = require("express-minify-html-2");
         const RedisStore = require("connect-redis")(session);
 
         app.set("view engine", "ejs");
@@ -111,37 +117,50 @@ new Promise((resolve, reject) => {
             logger(
                 ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
                 {
-                    skip: (r) => r.url === "/profile/game/snakes",
+                    skip: (r) => r.url === "/profile/game/snakes"
                 }
             )
         );
         app.use(express.json());
         app.use(express.urlencoded({ extended: false }));
         app.use(cookieParser());
-        app.use(compression());
 
         app.use(device.capture());
 
+        app.use(minifyHTML({
+            override: true,
+            exception_url: false,
+            htmlMinifier: {
+                removeComments: false,
+                collapseWhitespace: true,
+                collapseBooleanAttributes: true,
+                removeAttributeQuotes: true,
+                removeEmptyAttributes: true,
+                minifyJS: true
+            }
+        }));
+
         i18n.configure({
-            locales: ["en-NZ"],
+            locales: settings.website.locales.all,
             directory: __dirname + "/src/Assets/Locale",
-            defaultLocale: "en-NZ",
-            cookie: "lang",
+            defaultLocale: settings.website.locales.default
         });
 
-        app.use(session({
-            saveUninitialized: true,
-            resave: false,
-            secret: settings.website.secrets.cookie,
-            cookie: {
-                maxAge: 1 * 60 * 60 * 24 * 7
-            },
-            key: settings.website.secrets.cookie,
-            store: new RedisStore({
-                client: global.redis,
-                ttl: 1 * 60 * 60 * 24 * 7
+        app.use(
+            session({
+                saveUninitialized: true,
+                resave: false,
+                secret: settings.website.secrets.cookie,
+                cookie: {
+                    maxAge: 1 * 60 * 60 * 24 * 7
+                },
+                key: settings.website.secrets.cookie,
+                store: new RedisStore({
+                    client: global.redis,
+                    ttl: 1 * 60 * 60 * 24 * 7
+                })
             })
-        }));
+        );
 
         app.use(passport.initialize());
         app.use(passport.session());
@@ -153,15 +172,44 @@ new Promise((resolve, reject) => {
 
         app.use(i18n.init);
 
-        app.use("/", require("./src/Routes/index.js"));
-        app.use("/search", require("./src/Routes/search.js"));
         app.use("/auth", require("./src/Routes/authentication.js"));
-        app.use("/bots", require("./src/Routes/bots.js"));
-        app.use("/servers", require("./src/Routes/servers.js"));
-        app.use("/templates", require("./src/Routes/templates.js"));
-        app.use("/users", require("./src/Routes/users.js"));
-        app.use("/staff", require("./src/Routes/staff.js"));
-        /* app.use("/amp", require("./src/Routes/amp.js"));
+
+        app.use(["/:lang", "/"], (req, res, next) => {
+            if (req.params.lang && !settings.website.locales.isntLocale.includes(req.params.lang)) {
+                if (settings.website.locales.all.includes(req.params.lang)) {
+                    req.setLocale(req.params.lang);
+                    next();
+                } else {
+                    res.redirect(req.originalUrl.replace(req.params.lang, settings.website.locales.default))
+                }
+            } else if (settings.website.locales.isntLocale.includes(req.params.lang)) {
+                res.redirect(`/${settings.website.locales.default}${req.originalUrl}`);
+            } else {
+                res.redirect(`/${settings.website.locales.default}`);
+            }
+        }); 
+
+        app.use("/:lang/*", (req, res, next) => {
+            if (req.params.lang && !settings.website.locales.isntLocale.includes(req.params.lang)) {
+                if (settings.website.locales.all.includes(req.params.lang)) {
+                    req.setLocale(req.params.lang);
+                    next();
+                } else {
+                    res.redirect(req.originalUrl.replace(req.params.lang, settings.website.locales.default))
+                }
+            } else {
+                res.redirect(`/${settings.website.locales.default}${req.originalUrl}`);
+            }
+        });
+
+        app.use("/:lang", require("./src/Routes/index.js"));
+        app.use("/:lang/search", require("./src/Routes/search.js"));
+        app.use("/:lang/bots", require("./src/Routes/bots.js"));
+        app.use("/:lang/servers", require("./src/Routes/servers.js"));
+        app.use("/:lang/templates", require("./src/Routes/templates.js"));
+        app.use("/:lang/users", require("./src/Routes/users.js"));
+        app.use("/:lang/staff", require("./src/Routes/staff.js"));
+        /* app.use("/:lang/amp", require("./src/Routes/amp.js"));
            todo - advaith */
 
         app.use("*", require("./src/Util/Function/variables.js"));
@@ -186,7 +234,8 @@ new Promise((resolve, reject) => {
                         standard: true,
                         server: false,
                         bot: false,
-                    },
+                        template: false
+                    }
                 });
 
             res.status(err.status || 500);

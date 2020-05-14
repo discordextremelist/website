@@ -16,46 +16,46 @@
     <div id="navbar" class="navbar-menu">
         <div class="navbar-start"> 
 
-            <a class="navbar-item" href="/">
+            <a class="navbar-item" href="<%= linkPrefix %>/">
                 <span class="icon iconalign">
                     <i class="fad fa-house" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.home") %></span>
             </a>
 
-            <a class="navbar-item" href="/bots">
+            <a class="navbar-item" href="<%= linkPrefix %>/bots">
                 <span class="icon iconalign">
                     <i class="fad fa-robot" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.bots") %></span>
             </a>
 
-            <a class="navbar-item" href="/servers">
+            <a class="navbar-item" href="<%= linkPrefix %>/servers">
                 <span class="icon iconalign">
                     <i class="fad fa-comments-alt" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.servers") %></span>
             </a>
 
-            <a class="navbar-item" href="/templates">
+            <a class="navbar-item" href="<%= linkPrefix %>/templates">
                 <span class="icon iconalign">
                     <i class="fad fa-copy" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.templates") %></span>
             </a>
 
-            <a class="navbar-item" href="/search">
+            <a class="navbar-item" href="<%= linkPrefix %>/search">
                 <span class="icon iconalign">
                     <i class="fad fa-search" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.search") %></span>
             </a>
 
-            <a class="navbar-item" id="navWidgetBotXSupport" href="/widgetbot">
+            <a class="navbar-item" id="navWidgetBotXSupport" href="<%= linkPrefix %>/widgetbot">
                 <span class="icon iconalign">
                     <i class="fad fa-comment-alt-lines" aria-hidden="true"></i>
                 </span>
-                <span><%= __("common.nav.widgetBot") %></span>
+                <span><%= __("common.widgetbot") %></span>
             </a>
 
             <div class="navbar-item has-dropdown is-hoverable is-hidden-mobile">
@@ -79,26 +79,26 @@
                         </span>
                         <span><%= __("common.nav.more.docs") %></span>
                     </a>
-                    <a class="navbar-item" id="navAbout" href="/about" tabindex="0">
+                    <a class="navbar-item" id="navAbout" href="<%= linkPrefix %>/about" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-question" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.about") %></span>
                     </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item" href="/terms" tabindex="0">
+                    <a class="navbar-item" href="<%= linkPrefix %>/terms" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-balance-scale" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.terms") %></span>
                     </a>
-                    <a class="navbar-item" href="/privacy" tabindex="0">
+                    <a class="navbar-item" href="<%= linkPrefix %>/privacy" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-user-secret" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.privacy") %></span>
                     </a>
-                    <a class="navbar-item" href="/guidelines" tabindex="0">
+                    <a class="navbar-item" href="<%= linkPrefix %>/guidelines" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-book" aria-hidden="true"></i>
                         </span>
@@ -132,7 +132,7 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span><%= __("common.nav.language.en-GB") %> (English GB)</span>
+                        <span><%= __("common.nav.language.en-UK") %> (English UK)</span>
                     </a>
                     <a class="navbar-item" tabindex="0">
                         <% if (req.locale === "en-US") { %>
@@ -208,39 +208,39 @@
                     </a>
 
                     <div class="navbar-dropdown is-right">
-                        <a class="navbar-item" href="/users/@me" tabindex="0">
+                        <a class="navbar-item" href="<%= linkPrefix %>/users/@me" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-user" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.profile") %></span>
                         </a>
-                        <a class="navbar-item" href="/users/account/preferences" tabindex="0">
+                        <a class="navbar-item" href="<%= linkPrefix %>/users/account/preferences" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-swatchbook" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.preferences") %></span>
                         </a>
                         <% if (req.user.db.rank.mod === true) { %>
-                            <a class="navbar-item" href="/staff" tabindex="0">
+                            <a class="navbar-item" href="<%= linkPrefix %>/staff" tabindex="0">
                                 <span class="icon iconalign">
                                     <i class="fad fa-cogs" aria-hidden="true"></i>
                                 </span>
                                 <span><%= __("common.nav.me.staffPanel") %></span>
                             </a>
                         <% } %>
-                        <a class="navbar-item" href="/bots/submit" tabindex="0">
+                        <a class="navbar-item" href="<%= linkPrefix %>/bots/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-robot" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.submitBot") %></span>
                         </a>
-                        <a class="navbar-item" href="/servers/submit" tabindex="0">
+                        <a class="navbar-item" href="<%= linkPrefix %>/servers/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-comments-alt" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.submitServer") %></span>
                         </a>
-                        <a class="navbar-item" id="navTemplate" href="/templates/submit" tabindex="0">
+                        <a class="navbar-item" id="navTemplate" href="<%= linkPrefix %>/templates/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-copy" aria-hidden="true"></i>
                             </span>
@@ -248,7 +248,7 @@
                         </a>
                         <% if (req.user.db.preferences.enableGames === true) { %>
                             <hr class="navbar-divider">
-                            <a class="navbar-item" id="navSnake" href="/users/game/snake" tabindex="0">
+                            <a class="navbar-item" id="navSnake" href="<%= linkPrefix %>/users/game/snake" tabindex="0">
                                 <span class="icon iconalign">
                                     <i class="fad fa-snake" aria-hidden="true"></i>
                                 </span>

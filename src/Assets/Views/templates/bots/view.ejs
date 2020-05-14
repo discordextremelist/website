@@ -65,7 +65,7 @@
                     </h1>
                     <h2 class="subtitle"><%= bot.shortDesc %></h2>
                     <div class="buttons <% if (mobile) { %>is-centered<% } %>">
-                        <a href="/bots/<%= bot._id %>/upvote" class="button <% if (req.user && bot.votes.positive.includes(req.user.id)) { %>is-success<% } else { %>is-dark<% } %>">
+                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>/upvote" class="button <% if (req.user && bot.votes.positive.includes(req.user.id)) { %>is-success<% } else { %>is-dark<% } %>">
                             <span class="icon">
                                 <i aria-hidden="true" class="fas fa-arrow-alt-up"></i>
                             </span>
@@ -77,7 +77,7 @@
                         <% } else if (votes < 0) { %>
                             <span class="button is-black is-hovered has-text-danger" title="<%= __("common.votes") %>"><%= votes %></span>
                         <% } %>
-                        <a href="/bots/<%= bot._id %>/downvote" class="button <% if (req.user && bot.votes.negative.includes(req.user.id)) { %>is-danger<% } else { %>is-dark<% } %>">
+                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>/downvote" class="button <% if (req.user && bot.votes.negative.includes(req.user.id)) { %>is-danger<% } else { %>is-dark<% } %>">
                             <span class="icon">
                                 <i aria-hidden="true" class="fas fa-arrow-alt-down"></i>
                             </span>
@@ -94,7 +94,7 @@
                             </button>
                             <% if (bot.status.verified === false) { %>
                                 <% if (bot.serverCount >= 100) { %>
-                                    <a href="/apply/verification" class="button is-dark">
+                                    <a href="<%= linkPrefix %>/apply/verification" class="button is-dark">
                                         <span class="icon">
                                             <i aria-hidden="true" class="fas fa-badge-check"></i>
                                         </span>
@@ -110,7 +110,7 @@
                                     <span><%= __("page.bots.setVanity") %></span>
                                 </a>
                             <% } %>
-                            <a href="/bots/<%= bot._id %>/edit" class="button is-dark">
+                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/edit" class="button is-dark">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-pencil"></i>
                                 </span>
@@ -123,7 +123,7 @@
                                 <span><%= __("common.delete") %></span>
                             </a>
                         <% } else if (bot.editors && bot.editors.includes(req.user.id)) { %>
-                            <a href="/bots/<%= bot._id %>/edit" class="button is-dark">
+                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/edit" class="button is-dark">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-pencil"></i>
                                 </span>
@@ -151,28 +151,28 @@
                                     <hr class="dropdown-divider">
                                     <% if (user.db.rank.assistant === true) { %>
                                         <% if (bot.status.verified === false) { %>
-                                            <a class="dropdown-item" href="/bots/<%= bot._id %>/verify">
+                                            <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/verify">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-badge-check"></i></span>
                                                 <span><%= __("common.staff.verify") %></span>
                                             </a>
                                         <% } else { %>
-                                            <a class="dropdown-item" href="/bots/<%= bot._id %>/unverify">
+                                            <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/unverify">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-badge"></i></span>
                                                 <span><%= __("common.staff.unverify") %></span>
                                             </a>
                                         <% } %>
                                     <% } %>
                                     <% if (bot.status.approved === true) { %>
-                                        <a class="dropdown-item" href="/bots/<%= bot._id %>/remove">
+                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/remove">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                             <span><%= __("common.staff.remove") %></span>
                                         </a>
                                     <% } else { %>
-                                        <a class="dropdown-item" href="/bots/<%= bot._id %>/approve">
+                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/approve">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-check"></i></span>
                                             <span><%= __("common.staff.approve") %></span>
                                         </a>
-                                        <a class="dropdown-item" href="/bots/<%= bot._id %>/decline">
+                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/decline">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-minus"></i></span>
                                             <span><%= __("common.staff.decline") %></span>
                                         </a>
@@ -200,7 +200,7 @@
                                 <span><%= __("common.website") %></span>
                             </a>
                         <% } %>
-                        <a target="_blank" href="/bots/<%= bot._id %>/invite" class="button is-info">
+                        <a target="_blank" href="<%= linkPrefix %>/bots/<%= bot._id %>/invite" class="button is-info">
                             <span class="icon">
                                 <i aria-hidden="true" class="fas fa-plus"></i>
                             </span>
@@ -259,7 +259,7 @@
                         <div class="control">
                             <div class="tags has-addons">
                                 <span class="tag is-dark"><%= __("common.owner") %></span>
-                                <span class="tag is-danger"><a class="has-text-white" href="/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a></span>
+                                <span class="tag is-danger"><a class="has-text-white" href="<%= linkPrefix %>/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a></span>
                             </div>
                         </div>
                     </div>
@@ -377,7 +377,7 @@
         </section>
         <footer class="modal-card-foot">
             <div class="buttons">
-                <a class="button is-success" href="/bots/<%= bot._id %>/delete">
+                <a class="button is-success" href="<%= linkPrefix %>/bots/<%= bot._id %>/delete">
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-check-circle"></i>
                     </span>
@@ -400,7 +400,7 @@
         <header class="modal-card-head">
             <p class="modal-card-title has-text-danger"><%= __("page.bots.setVanity") %></p>
         </header>
-        <form action="/bots/<%= bot._id %>/setvanity" method="POST">
+        <form action="<%= linkPrefix %>/bots/<%= bot._id %>/setvanity" method="POST">
             <section class="modal-card-body has-text-danger">
                 <%= __("page.bots.setVanity.warning") %>
                 <div>

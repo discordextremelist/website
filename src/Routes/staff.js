@@ -50,4 +50,25 @@ router.get("/queue", variables, permission.mod, async (req, res) => {
 
 });
 
+router.get("/staff-manager", variables, permission.mod, async (req, res) => {
+    const users = (await req.app.db.collection("users").find().toArray());
+    
+    res.render("templates/staff/manager", { 
+        title: res.__("page.staff.manager"), 
+        subtitle: res.__("page.staff.manager.subtitle"), 
+        req, 
+        admin: users.filter(({rank}) => rank.admin),
+        assistant: users.filter(({rank}) => rank.assistant && !rank.admin),
+        mod: users.filter(({rank}) => rank.mod && !rank.assistant && !rank.admin)
+    });
+});
+
+router.get("/announce", variables, permission.mod, async (req, res) => {
+
+});
+
+router.get("/site-manager", variables, permission.mod, async (req, res) => {
+
+});
+
 module.exports = router;

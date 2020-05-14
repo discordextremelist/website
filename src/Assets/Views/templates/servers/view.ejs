@@ -53,7 +53,7 @@
                     <% if (req.user) { %>
                         <div class="buttons <% if (mobile) { %>is-centered<% } %>">
                             <% if (server.owner.id === req.user.id) { %>
-                                <a href="/servers/<%= server._id %>/edit" class="button is-dark">
+                                <a href="<%= linkPrefix %>/servers/<%= server._id %>/edit" class="button is-dark">
                                     <span class="icon">
                                         <i aria-hidden="true" class="fas fa-pencil"></i>
                                     </span>
@@ -86,11 +86,11 @@
                                             <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                         </div>
                                         <hr class="dropdown-divider">
-                                        <a class="dropdown-item" href="/servers/<%= server._id %>/edit">
+                                        <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/edit">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
                                             <span><%= __("common.edit") %></span>
                                         </a>
-                                        <a class="dropdown-item" href="/servers/<%= server._id %>/remove">
+                                        <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/remove">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                             <span><%= __("common.staff.remove") %></span>
                                         </a>
@@ -127,7 +127,7 @@
                         <div class="control">
                             <div class="tags has-addons">
                                 <span class="tag is-dark"><%= __("common.listingOwner") %></span>
-                                <span class="tag is-link"><a class="has-text-white" href="/users/<%= server.owner.id %>"><%= serverOwner.fullUsername %></a></span>
+                                <span class="tag is-link"><a class="has-text-white" href="<%= linkPrefix %>/users/<%= server.owner.id %>"><%= serverOwner.fullUsername %></a></span>
                             </div>
                         </div>
                     </div>
@@ -155,7 +155,7 @@
         </section>
         <footer class="modal-card-foot">
             <div class="buttons">
-                <a class="button is-success" href="/servers/<%= server._id %>/delete">
+                <a class="button is-success" href="<%= linkPrefix %>/servers/<%= server._id %>/delete">
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-check-circle"></i>
                     </span>

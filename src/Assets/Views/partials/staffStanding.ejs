@@ -1,0 +1,11 @@
+<% if (user.staffTracking.details.standing === "Unmeasured") { %>
+    <p><strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.unmeasured") %></p>
+<% } else if (user.staffTracking.details.standing === "Good") { %>
+    <p><strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.good") %></p>
+<% } else if (user.staffTracking.details.standing === "Moderate") { %>
+    <p><strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.moderate") %></p>
+<% } else if (user.staffTracking.details.standing === "Moderate-Bad") { %>
+    <p><strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.moderateBad") %></p>
+<% } else if (user.staffTracking.details.standing === "Bad") { %>
+    <p><strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.bad") %></p>
+<% } %>

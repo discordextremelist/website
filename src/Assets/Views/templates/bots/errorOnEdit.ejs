@@ -222,7 +222,7 @@
                 <input hidden name="longDescription" id="longDesc" />
             </div>
             <br />
-            <% if (bot.archived === true) %>
+            <% if (bot.archived === true) { %>
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("page.bots.modNotes") %></label>
                     <div onkeyup="monacoToField();" id="modNotesEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
@@ -239,7 +239,7 @@
                         </span>
                         <span><%= __("common.submit") %></span>
                     </button>
-                    <a href="/" class="button is-danger">
+                    <a href="<%= linkPrefix %>/" class="button is-danger">
                         <span class="icon">
                             <i aria-hidden="true" class="fas fa-times-circle"></i>
                         </span>

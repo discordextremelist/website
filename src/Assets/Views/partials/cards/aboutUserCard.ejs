@@ -8,7 +8,7 @@
             </div>
             <div style="overflow: hidden;" class="media-content">
                 <div class="content">
-                    <a href="/users/<%= user.id %>" class="has-text-white is-mobile">
+                    <a href="<%= linkPrefix %>/users/<%= user.id %>" class="has-text-white is-mobile">
                         <span class="is-size-4"><%= user.username %>#<%= user.discriminator %></span>
                         <br />
                         <% if (user.rank === "admin") { %>

@@ -102,14 +102,11 @@ new Promise((resolve, reject) => {
 
         console.timeEnd("Redis Cache");
 
-        const createError = require("http-errors");
         const cookieParser = require("cookie-parser");
         const logger = require("morgan");
         const device = require("express-device");
         const i18n = require("i18n");
         const passport = require("passport");
-        const minifyHTML = require("express-minify-html-2");
-        const RedisStore = require("connect-redis")(session);
 
         app.set("view engine", "ejs");
 
@@ -127,40 +124,20 @@ new Promise((resolve, reject) => {
 
         app.use(device.capture());
 
-        app.use(minifyHTML({
-            override: true,
-            exception_url: false,
-            htmlMinifier: {
-                removeComments: false,
-                collapseWhitespace: true,
-                collapseBooleanAttributes: true,
-                removeAttributeQuotes: true,
-                removeEmptyAttributes: true,
-                minifyJS: true
-            }
-        }));
-
         i18n.configure({
             locales: settings.website.locales.all,
             directory: __dirname + "/src/Assets/Locale",
             defaultLocale: settings.website.locales.default
         });
 
-        app.use(
-            session({
-                saveUninitialized: true,
-                resave: false,
-                secret: settings.website.secrets.cookie,
-                cookie: {
-                    maxAge: 1 * 60 * 60 * 24 * 7
-                },
-                key: settings.website.secrets.cookie,
-                store: new RedisStore({
-                    client: global.redis,
-                    ttl: 1 * 60 * 60 * 24 * 7
-                })
-            })
-        );
+        app.use(session({
+            saveUninitialized: true,
+            resave: false,
+            secret: settings.website.secrets.cookie,
+            cookie: {
+                maxAge: 1 * 60 * 60 * 24 * 7
+            }
+        }));
 
         app.use(passport.initialize());
         app.use(passport.session());
@@ -180,7 +157,7 @@ new Promise((resolve, reject) => {
                     req.setLocale(req.params.lang);
                     next();
                 } else {
-                    res.redirect(req.originalUrl.replace(req.params.lang, settings.website.locales.default))
+                    res.redirect(req.originalUrl.replace(req.params.lang, settings.website.locales.default));
                 }
             } else if (settings.website.locales.isntLocale.includes(req.params.lang)) {
                 res.redirect(`/${settings.website.locales.default}${req.originalUrl}`);
@@ -195,7 +172,7 @@ new Promise((resolve, reject) => {
                     req.setLocale(req.params.lang);
                     next();
                 } else {
-                    res.redirect(req.originalUrl.replace(req.params.lang, settings.website.locales.default))
+                    res.redirect(req.originalUrl.replace(req.params.lang, settings.website.locales.default));
                 }
             } else {
                 res.redirect(`/${settings.website.locales.default}${req.originalUrl}`);
@@ -214,13 +191,10 @@ new Promise((resolve, reject) => {
 
         app.use("*", require("./src/Util/Function/variables.js"));
 
-        app.use((req, res, next) => {
-            next(createError(404));
-        });
-
         app.use((err, req, res, next) => {
+            console.log(err);
             res.locals.message = err.message;
-            res.locals.error = req.app.get("env") === "development" ? err : {};
+            res.locals.error = err;
 
             if (err.message === "Not Found")
                 return res.status(404).render("status", {

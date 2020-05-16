@@ -21,7 +21,6 @@
     "exec-sh": "^0.3.4",
     "express": "~4.16.1",
     "express-device": "^0.4.2",
-    "express-minify-html-2": "^1.0.1",
     "express-session": "^1.17.0",
     "html-entities": "^1.2.1",
     "http-errors": "~1.6.3",

@@ -123,7 +123,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Bot Website") %></label>
+                <label class="label has-text-blurple"><%= __("page.bots.website") %></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="website" value="<%= bot.website %>" placeholder="https://example.com">
                     <span class="icon is-small is-left">
@@ -211,7 +211,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.longDesc") %> (<%= bot.status.verified ? __("common.form.jsHtmlMarkdown") : __("common.form.htmlMarkdown") %>) <span class="has-text-danger">*</span></label>
+                <label class="label has-text-blurple"><%= __("page.bots.longDesc") %> (<%= __("common.form.htmlMarkdown") %>) <span class="has-text-danger">*</span></label>
                 <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
                 <textarea hidden name="longDescription" id="longDesc" required></textarea>
             </div>

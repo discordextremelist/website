@@ -194,47 +194,54 @@
 </section>
 <div class="container">
     <div class="section has-text-centered">
-            <% if (userProfileIsBanned && user && user.db.rank.mod === false) { %>
+            <% if (userProfileIsBanned && req.user && req.user.db.rank.mod === false || userProfileIsBanned && !req.user) { %>
                     <h2 class="is-size-4"><%= __("common.unavailable") %></h2>
-            <% } else if (userProfileIsBanned && !user) { %>
-                    <h2 class="is-size-4"><%= __("common.unavailable") %></h2>
-            <% } else if (botsOwnerData.length === 0 && botsEditorData.length === 0 && serversOwnerData.length === 0 && templatesOwnerData.length === 0) { %>
+            <% } else if (botsOwner.length === 0 && botsEditor.length === 0 && serversOwner.length === 0 && templatesOwner.length === 0) { %>
+                <h2 class="is-size-4"><%= __("page.users.listings.nil") %></h2>
             <% } else { %>
-                    <% if (botsOwnerData.length !== 0 || botsEditorData.length !== 0) { %>
-                        <h2 class="is-size-3"><%= __("common.bots") %></h2>
-                        <% if (botsOwnerData.length !== 0) { %>
-                            <br />
-                            <h3 class="is-size-4"><%= __("common.owner") %></h3>
-                            <br />
-                            <div class="columns is-multiline is-centered">
-                                <%- botOwnerChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
-                            </div>
-                        <% } %>
-                        <% if (botsEditorData.length !== 0) { %>
-                            <br />
-                            <h3 class="is-size-4"><%= __("common.editor") %></h3>
-                            <br />
-                            <div class="columns is-multiline is-centered">
-                                <%- botEditorChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("")}`).join("") %>
-                            </div>
-                        <% } %>
-                    <% } %>
-                    <br />
-                    <% if (serversOwnerData.length !== 0) { %>
-                        <h2 class="is-size-3"><%= __("common.servers") %></h2>
+                <% if (botsOwner.length !== 0 || botsEditor.length !== 0) { %>
+                    <h2 class="is-size-3"><%= __("common.bots") %></h2>
+                    <% if (botsOwner.length !== 0) { %>
+                        <br />
+                        <h3 class="is-size-4"><%= __("common.owner") %></h3>
                         <br />
                         <div class="columns is-multiline is-centered">
-                            <%- serverOwnerChunk.map(chunk => `${chunk.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false })).join("")}`).join("") %>
+                            <%- botsOwner.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("") %>
                         </div>
                     <% } %>
+                    <% if (botsEditor.length !== 0) { %>
+                        <br />
+                        <h3 class="is-size-4"><%= __("common.editor") %></h3>
+                        <br />
+                        <div class="columns is-multiline is-centered">
+                            <%- botsEditor.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("") %>
+                        </div>
+                    <% } %>
+                <% } %>
+                <br />
+                <% if (serversOwner.length !== 0) { %>
+                    <h2 class="is-size-3"><%= __("common.servers") %></h2>
+                    <br />
+                    <div class="columns is-multiline is-centered">
+                        <%- serversOwner.map(server => include("../partials/cards/serverCard.ejs", { server, search: false })).join("") %>
+                    </div>
+                <% } %>
+                <br />
+                <% if (templatesOwner.length !== 0) { %>
+                    <h2 class="is-size-3"><%= __("common.templates") %></h2>
+                    <br />
+                    <div class="columns is-multiline is-centered">
+                        <%- templatesOwner.map(template => include("../partials/cards/templateCard.ejs", { template, search: false })).join("") %>
+                    </div>
+                <% } %>
             <% } %>
             <% if (user && user.id === userProfile._id) { %>
-                <% if (archivedBotsData.length > 0) { %>
+                <% if (archivedBots.length > 0) { %>
                     <br />
                     <h2 class="is-size-4"><%= __("page.users.listings.archivedBots") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- archivedBotsChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: true, verificationApp: false })).join("")}`).join("") %>
+                        <%- archivedBots.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: true, verificationApp: false })).join("") %>
                     </div>
                 <% } %>
             <% } %>

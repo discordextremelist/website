@@ -26,6 +26,9 @@ const banned = require("../Util/Services/banned.js");
 const variables = require("../Util/Function/variables.js");
 const permission = require("../Util/Function/permissions.js");
 
+const botCache = require("../Util/Services/botCaching.js");
+const serverCache = require("../Util/Services/serverCaching.js");
+const templateCache = require("../Util/Services/templateCaching.js");
 const userCache = require("../Util/Services/userCaching.js");
 
 router.get("/:id", variables, async (req, res, next) => {
@@ -46,7 +49,7 @@ router.get("/:id", variables, async (req, res, next) => {
         });
     }
 
-    const bots = await req.app.db.collection("bots").find().sort({ name: 1 }).toArray();
+    const bots = await botCache.getAllBots();
 
     const botsOwner = [];
     const botsEditor = [];
@@ -64,7 +67,7 @@ router.get("/:id", variables, async (req, res, next) => {
         }
     }
 
-    const servers = await req.app.db.collection("servers").find().sort({ name: 1 }).toArray();
+    const servers = await serverCache.getAllServers();
     
     const serversOwner = [];
 
@@ -76,10 +79,17 @@ router.get("/:id", variables, async (req, res, next) => {
         }
     }
 
-    const botOwnerChunk = chunk(botsOwner, 3);
-    const botEditorChunk = chunk(botsEditor, 3);
-    const archivedBotsChunk = chunk(archivedBots, 3);
-    const serverOwnerChunk = chunk(serversOwner, 3);
+    const templates = await templateCache.getAllTemplates();
+    
+    const templatesOwner = [];
+
+    for (var n = 0; n < templates.length; ++n) {
+        const template = templates[n];
+
+        if (req.params.id === template.owner.id) {
+            templatesOwner.push(template);
+        }
+    }
 
     res.render("templates/users/profile", {
         title: res.__("page.users.profile.title", dbUser.fullUsername),
@@ -88,14 +98,11 @@ router.get("/:id", variables, async (req, res, next) => {
         req,
         userStatus: await discord.getStatus(dbUser._id),
         userProfileIsBanned: await banned.check(dbUser._id),
-        botsOwnerData: botsOwner,
-        botOwnerChunk,
-        botsEditorData: botsEditor,
-        botEditorChunk,
-        archivedBotsData: archivedBots,
-        archivedBotsChunk,
-        serversOwnerData: serversOwner,
-        serverOwnerChunk
+        botsOwner,
+        botsEditor,
+        archivedBots,
+        serversOwner,
+        templatesOwner
     });
 });
 

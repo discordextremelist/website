@@ -120,5 +120,4 @@ ssl/
 dump.rdb
 
 # i18n
-# src/Assets/Locale/
-# scripts/temp_dir/
+src/Assets/Locale/

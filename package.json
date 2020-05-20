@@ -21,7 +21,7 @@
     "exec-sh": "^0.3.4",
     "express": "~4.16.1",
     "express-device": "^0.4.2",
-    "express-session": "^1.17.0",
+    "express-session": "^1.17.1",
     "html-entities": "^1.2.1",
     "http-errors": "~1.6.3",
     "i18n": "^0.8.5",

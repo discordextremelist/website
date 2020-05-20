@@ -237,9 +237,8 @@ setTimeout(async () => {
     await app.db.collection("webOptions").insertOne({
         _id: "announcement",
         active: false,
-        useDefaultColour: true,
         message: "",
-        background: "",
+        colour: "",
         foreground: ""
     }).then(() => true).catch(() => false);
 

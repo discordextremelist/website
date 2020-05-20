@@ -1,0 +1,95 @@
+
+            
+
+
+<%- include("../../partials/header.ejs") %>
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<%- include("../../partials/nav.ejs") %>
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container has-text-centered" style="text-align: center;">
+                <br />
+                <h1 class="title">
+                    <span class="icon is-medium iconalign">
+                <i aria-hidden="true" class="fad fa-megaphone has-text-default fa-1x"></i>
+            </span>
+                    <br />
+                    <span><%= title %></span>
+                </h1>
+                <h2 class="subtitle">
+                    <%= subtitle %>
+                </h2>
+            </div>
+        </div>
+    </section>
+    <div class="container">
+        <div class="section">
+            <article class="message is-success">
+                <div class="message-body content has-background-primary">
+                    <ul style="margin-top: unset;">
+                        <li><%= notification %></li>
+                    </ul>
+                </div>
+            </article>
+            
+            <form method="POST">
+                <div class="field">
+                    <label class="label has-text-blurple"><%= __("page.staff.announcer.message") %> <span class="has-text-danger">*</span></label>
+                    <p class="control has-icons-left has-icons-right">
+                        <input class="input is-rounded" type="text" name="message" value="<%= announcement.message %>" placeholder="<%= __("page.staff.announcer.message.placeholder") %>">
+                        <span class="icon is-small is-left">
+                            <i aria-hidden="true" class="fas fa-comment-dots"></i>
+                        </span>
+                    </p>
+                </div>
+                <br />
+                <div class="field">
+                    <label class="label has-text-blurple"><%= __("page.staff.announcer.colour") %> <span class="has-text-danger">*</span></label>
+                    <input onclick="hideCustom();" class="is-checkradio is-circle has-background-color is-link" id="link" type="radio" value="#3273dc" name="colour" <% if (announcement.colour === "#3273dc") { %>checked="checked"<% } %>>
+                    <label for="link" class="has-text-link"><%= __("page.staff.announcer.colours.blue") %></label>
+                    <input onclick="hideCustom();" class="is-checkradio is-circle has-background-color is-info" id="info" type="radio" value="#3298dc" name="colour" <% if (announcement.colour === "#3298dc") { %>checked="checked"<% } %>>
+                    <label for="info" class="has-text-info"><%= __("page.staff.announcer.colours.lightBlue") %></label>
+                    <input onclick="hideCustom();" class="is-checkradio is-circle has-background-color is-success" id="success" type="radio" value="#0dbf04" name="colour" <% if (announcement.colour === "#0dbf04") { %>checked="checked"<% } %>>
+                    <label for="success" class="has-text-success"><%= __("page.staff.announcer.colours.green") %></label>
+                    <input onclick="hideCustom();" class="is-checkradio is-circle has-background-color is-orange" id="orange" type="radio" value="#f24405" name="colour" <% if (announcement.colour === "#f24405") { %>checked="checked"<% } %>>
+                    <label for="orange" class="has-text-orange"><%= __("page.staff.announcer.colours.orange") %></label>
+                    <input onclick="hideCustom();" class="is-checkradio is-circle has-background-color is-danger" id="red" type="radio" value="#cd0930" name="colour" <% if (announcement.colour === "#cd0930") { %>checked="checked"<% } %>>
+                    <label for="red" class="has-text-danger"><%= __("page.staff.announcer.colours.red") %></label>
+                    <input onclick="hideCustom();" class="is-checkradio is-circle has-background-color is-magenta" id="magenta" type="radio" value="#b114ff" name="colour" <% if (announcement.colour === "#b114ff") { %>checked="checked"<% } %>>
+                    <label for="magenta" class="has-text-magenta"><%= __("page.staff.announcer.colours.magenta") %></label>
+                    <input onclick="hideCustom();" class="is-checkradio is-circle has-background-color is-light" id="preferred" type="radio" value="preferred" name="colour" <% if (announcement.colour === "preferred") { %>checked="checked"<% } %>>
+                    <label for="preferred" class="has-text-light"><%= __("page.staff.announcer.colours.preferred") %></label>
+                    <input onclick="showCustom();" class="is-checkradio is-circle has-background-color is-light" id="custom" type="radio" value="custom" name="colour" <% if (!announcement.default.includes(announcement.colour)) { %>checked="checked"<% } %>>
+                    <label for="custom" class="has-text-light"><%= __("page.staff.announcer.colours.custom") %></label>
+                </div>
+                <div style="display: <% if (!announcement.default.includes(announcement.colour)) { %>block<% } else { %>none<% } %>;" id="colourPicker">
+                    <br />
+                    <div class="field">
+                        <label class="label has-text-blurple"><%= __("page.staff.announcer.colours.customPicker") %></label>
+                        <p class="control has-icons-left has-icons-right">
+                            <input class="input is-rounded" type="color" name="customColour" <% if (announcement.colour === "none") { %>value="#FFFFFF"<% } else { %>value="<%= announcement.colour %>"<% } %>>
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-palette"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <br />
+                <div class="field is-grouped">
+                    <div class="buttons">
+                        <button class="button is-success">
+                            <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
+                            <span><%= __("common.set") %></span>
+                        </button>
+                        <a class="button is-danger" href="<%= linkPrefix %>/users/account/preferences/reset">
+                            <span class="icon"><i aria-hidden="true" class="fas fa-minus-circle"></i></span>
+                            <span><%= __("page.staff.announcer.reset") %></span>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">function hideCustom(){document.getElementById("colourPicker").style.display="none"}function showCustom(){document.getElementById("colourPicker").style.display="block"}</script>   
+<%- include("../../partials/footer.ejs") %>            

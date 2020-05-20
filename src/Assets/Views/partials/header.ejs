@@ -1,14 +1,15 @@
 <!doctype HTML>
-<html lang="<%= req.language || "en" %>" dir="ltr">
+<html lang="<%= req.language || defaultLang %>" dir="<%= htmlDir %>">
 <head>
     <meta charset="utf-8">
-
+    
     <title><%= title || "Page" %> - Discord Extreme List</title>
 
     <link href="/img/logo.png" type="image/png" rel="shortcut-icon" />
     <link href="/img/logo.png" type="image/png" rel="icon" />
     <link href="/css/standard.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
     <style type="text/css">.has-text-default { color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>; } </style>
+    <style type="text/css">.has-background-default { background-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>; color: <% if (req.user) { %><%= req.user.db.preferences.defaultForegroundColour || "#ffffff" %><% } else { %>#ffffff<% } %>; } </style>
 
     <% if (usePreload === true) { %>
         <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" type="text/css" media="screen" rel="preload" as="style"  onload="this.onload=null;this.rel='stylesheet'" />
@@ -25,7 +26,7 @@
     <%- include("./locales.ejs") %>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="Discord Extreme List, Discord Bots, Discord Bot List, Discord Bots List, Discord, BotBlock, Bots, Bot Listings, Bot Lists, Bot List, BotBlock Bots, BotBlock Bot Lists, Bots for Discord, Discord Robots">
+    <meta name="keywords" content="Discord Extreme List, Discord Bots, Discord Bot List, Discord Servers, Discord Templates, Discord Template List, Discord Server List">
     <meta name="robots" content="index,follow">
     <meta name="distribution" content="global">
     <meta name="rating" content="safe for kids">
@@ -54,13 +55,20 @@
         <meta itemprop="name" content="<%= title || "Page" %> | Discord Extreme List">
         <meta itemprop="description" content="<%= bot.shortDesc %>">
         <meta itemprop="image" content="<%= bot.avatar.url %>.png">
+    
+        <meta name="author" content="<%= botOwner.fullUsername %>" />
+        <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan" />
     <% } else if (pageType.server === true || pageType.template === true) { %>
         <%
             let listing;
+            let listingOwner;
+
             if (pageType.server === true) {
                 listing = server;
+                listingOwner = serverOwner;
             } else if (pageType.template === true) {
                 listing = template;
+                listingOwner = templateOwner;
             }
         %>
         <meta name="theme-color" content="#2C2F33">
@@ -85,6 +93,9 @@
         <meta itemprop="name" content="<%= title || "Page" %> | Discord Extreme List">
         <meta itemprop="description" content="<%= listing.shortDesc %>">
         <meta itemprop="image" content="<%= listing.icon.url %>.png">
+    
+        <meta name="author" content="<%= listingOwner.fullUsername %>" />
+        <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan" />
     <% } else { %>
         <meta name="theme-color" content="#2C2F33">
         <meta name="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list, giving Discord bots and Discord servers of all sizes an extreme chance!" %>">
@@ -108,6 +119,9 @@
         <meta itemprop="name" content="<%= title || "Page" %> | Discord Extreme List">
         <meta itemprop="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list, giving Discord bots and Discord servers of all sizes an extreme chance!" %>">
         <meta itemprop="image" content="https://discordextremelist.xyz/img/logo.png">
+    
+        <meta name="author" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan" />
+        <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan" />
     <% } %>
 
     <meta name="apple-mobile-web-app-capable" content="yes">

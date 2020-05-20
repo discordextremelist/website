@@ -1,0 +1,183 @@
+[{
+    "name": "discljord",
+    "language": "Clojure",
+    "links": {
+        "docs": "https://igjoshua.github.io/discljord/",
+        "repo": "https://github.com/igjoshua/discljord"
+    }
+}, {
+    "name": "aegis.cpp",
+    "language": "C++",
+    "links": {
+        "docs": "https://docs.aegisbot.io/",
+        "repo": "https://github.com/zeroxs/aegis.cpp"
+    }
+}, {
+    "name": "discordcr",
+    "language": "Crystal",
+    "links": {
+        "docs": "https://discordcr.github.io/discordcr/doc/v0.4.0/",
+        "repo": "https://github.com/discordcr/discordcr"
+    }
+}, {
+    "name": "Discord.Net",
+    "language": "C#",
+    "links": {
+        "docs": "https://discord.foxbot.me/",
+        "repo": "https://github.com/RogueException/Discord.Net"
+    }
+}, {
+    "name": "DSharpPlus",
+    "language": "C#",
+    "links": {
+        "docs": "https://dsharpplus.emzi0767.com/",
+        "repo": "https://github.com/DSharpPlus/DSharpPlus"
+    }
+}, {
+    "name": "dscord",
+    "language": "D",
+    "links": {
+        "docs": "https://b1naryth1ef.github.io/dscord/",
+        "repo": "https://github.com/b1naryth1ef/dscord"
+    }
+}, {
+    "name": "DiscordGo",
+    "language": "Go",
+    "links": {
+        "docs": "https://github.com/bwmarrin/discordgo#documentation",
+        "repo": "https://github.com/bwmarrin/discordgo"
+    }
+}, {
+    "name": "DisGord",
+    "language": "Go",
+    "links": {
+        "docs": "https://pkg.go.dev/github.com/andersfylling/disgord?tab=doc",
+        "repo": "https://github.com/andersfylling/disgord"
+    }
+}, {
+    "name": "catnip",
+    "language": "Java",
+    "links": {
+        "docs": "https://mewna.github.io/catnip/docs/",
+        "repo": "https://github.com/mewna/catnip"
+    }
+}, {
+    "name": "Discord4J",
+    "language": "Java",
+    "links": {
+        "docs": "https://github.com/Discord4J/Discord4J/wiki",
+        "repo": "https://github.com/Discord4J/Discord4J"
+    }
+}, {
+    "name": "Javacord",
+    "language": "Java",
+    "links": {
+        "docs": "https://javacord.org/wiki/getting-started/welcome/",
+        "repo": "https://github.com/Javacord/Javacord"
+    }
+}, {
+    "name": "JDA",
+    "language": "Java",
+    "links": {
+        "docs": "https://github.com/DV8FromTheWorld/JDA#documentation",
+        "repo": "https://github.com/DV8FromTheWorld/JDA"
+    }
+}, {
+    "name": "discord.js",
+    "language": "JavaScript",
+    "links": {
+        "docs": "https://discord.js.org/",
+        "repo": "https://github.com/discordjs/discord.js"
+    }
+}, {
+    "name": "Eris",
+    "language": "JavaScript",
+    "links": {
+        "docs": "https://abal.moe/Eris/",
+        "repo": "https://github.com/abalabahaha/eris"
+    }
+}, {
+    "name": "Discord.jl",
+    "language": "Julia",
+    "links": {
+        "docs": "https://posts.xh4h.com/Discord.jl/dev/",
+        "repo": "https://github.com/Xh4H/Discord.jl"
+    }
+}, {
+    "name": "Discordia",
+    "language": "Lua",
+    "links": {
+        "docs": "https://github.com/SinisterRectus/Discordia/wiki",
+        "repo": "https://github.com/SinisterRectus/Discordia"
+    }
+}, {
+    "name": "discordnim",
+    "language": "Nim",
+    "links": {
+        "docs": "https://krognol.github.io/discordnim/",
+        "repo": "https://github.com/Krognol/discordnim"
+    }
+}, {
+    "name": "Restcord",
+    "language": "PHP",
+    "links": {
+        "docs": "https://www.restcord.com/",
+        "repo": "https://github.com/restcord/restcord"
+    }
+}, {
+    "name": "discord.py",
+    "language": "Python",
+    "links": {
+        "docs": "https://discordpy.readthedocs.io/en/latest/index.html",
+        "repo": "https://github.com/Rapptz/discord.py"
+    }
+}, {
+    "name": "disco",
+    "language": "Python",
+    "links": {
+        "docs": "https://b1naryth1ef.github.io/disco/",
+        "repo": "https://github.com/b1naryth1ef/disco"
+    }
+}, {
+    "name": "discordrb",
+    "language": "Ruby",
+    "links": {
+        "docs": "https://www.rubydoc.info/gems/discordrb",
+        "repo": "https://github.com/discordrb/discordrb"
+    }
+}, {
+    "name": "discord-rs",
+    "language": "Rust",
+    "links": {
+        "docs": "https://wombat.platymuus.com/rustdoc/discord_master/",
+        "repo": "https://github.com/SpaceManiac/discord-rs"
+    }
+}, {
+    "name": "Serenity",
+    "language": "Rust",
+    "links": {
+        "docs": "https://docs.rs/serenity/0.8.6/serenity/client/index.html",
+        "repo": "https://github.com/serenity-rs/serenity"
+    }
+}, {
+    "name": "AckCord",
+    "language": "Scala",
+    "links": {
+        "docs": "https://ackcord.katsstuff.net/api/ackcord/",
+        "repo": "https://github.com/Katrix/AckCord"
+    }
+}, {
+    "name": "Sword",
+    "language": "Swift",
+    "links": {
+        "docs": "https://azoy.github.io/Sword/",
+        "repo": "https://github.com/Azoy/Sword"
+    }
+}, {
+    "name": "Other",
+    "language": "n/a",
+    "links": {
+        "docs": "https://discordextremelist.xyz/",
+        "repo": "https://discordextremelist.xyz/"
+    }
+}]

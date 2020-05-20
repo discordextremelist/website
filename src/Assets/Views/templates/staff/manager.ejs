@@ -17,23 +17,25 @@
 </section>
 <div class="container">
     <div class="section">
-        <h1><%= __("common.rank.admin.short") %></h1>
+        <h3 class="is-size-3"><%= __("common.rank.admin.short") %></h1>
         <br />
         <div class="columns is-multiline is-centered">
             <%- admin.map(user => include("../../partials/cards/userCardMgmt.ejs", { user })).join("") %>
         </div>
         <br />
-        <h1><%= __("common.rank.assistant.short") %></h1>
+        <h3 class="is-size-3"><%= __("common.rank.assistant.short") %></h1>
         <br />
         <div class="columns is-multiline is-centered">
             <%- assistant.map(user => include("../../partials/cards/userCardMgmt.ejs", { user })).join("") %>
         </div>
         <br />
-        <h1><%= __("common.rank.mod.short") %></h1>
+        <h3 class="is-size-3"><%= __("common.rank.mod.short") %></h1>
         <br />
         <div class="columns is-multiline is-centered">
             <%- mod.map(user => include("../../partials/cards/userCardMgmt.ejs", { user })).join("") %>
         </div>
     </div>
 </div>
+<script type="text/javascript">document.addEventListener('DOMContentLoaded',function(){var $dropdowns=getAll('.dropdown:not(.is-hoverable)');if($dropdowns.length>0){$dropdowns.forEach(function($el){$el.addEventListener('click',function(event){event.stopPropagation();$el.classList.toggle('is-active')})});document.addEventListener('click',function(event){closeDropdowns()})}function closeDropdowns(){$dropdowns.forEach(function($el){$el.classList.remove('is-active')})}document.addEventListener('keydown',function(event){var e=event||window.event;if(e.keyCode===27){closeDropdowns()}});function getAll(selector){return Array.prototype.slice.call(document.querySelectorAll(selector),0)}});</script>
+<!-- <script type="text/javascript">const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script> -->
 <%- include("../../partials/footer.ejs") %>

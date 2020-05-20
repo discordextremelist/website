@@ -1,3 +1,8 @@
+<% if (announcement.active === true) { %>
+    <div <% if (announcement.colour === "preferred") { %>class="has-background-default has-text-centered" style="padding: 5px;"<% } else { %>style="background-color: <%= announcement.colour %>; color: <%= announcement.foreground %>; padding: 5px;" class="has-text-centered"<% } %>>
+        <%- announcement.message %>
+    </div>
+<% } %>
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <% if (title !== "Home") { %>
@@ -18,7 +23,7 @@
 
             <a class="navbar-item" href="<%= linkPrefix %>/">
                 <span class="icon iconalign">
-                    <i class="fad fa-house" aria-hidden="true"></i>
+                    <i class="fad fa-house fa-swap-opacity" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.home") %></span>
             </a>
@@ -32,21 +37,21 @@
 
             <a class="navbar-item" href="<%= linkPrefix %>/servers">
                 <span class="icon iconalign">
-                    <i class="fad fa-comments-alt" aria-hidden="true"></i>
+                    <i class="fad fa-comments-alt fa-swap-opacity" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.servers") %></span>
             </a>
 
             <a class="navbar-item" href="<%= linkPrefix %>/templates">
                 <span class="icon iconalign">
-                    <i class="fad fa-copy" aria-hidden="true"></i>
+                    <i class="fad fa-clone" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.templates") %></span>
             </a>
 
             <a class="navbar-item" href="<%= linkPrefix %>/search">
                 <span class="icon iconalign">
-                    <i class="fad fa-search" aria-hidden="true"></i>
+                    <i class="fas fa-search" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.search") %></span>
             </a>
@@ -58,7 +63,7 @@
                 <span><%= __("common.widgetbot") %></span>
             </a>
 
-            <div class="navbar-item has-dropdown is-hoverable is-hidden-mobile">
+            <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-sitemap" aria-hidden="true"></i>
@@ -98,6 +103,12 @@
                         </span>
                         <span><%= __("common.nav.more.privacy") %></span>
                     </a>
+                    <a class="navbar-item" href="<%= linkPrefix %>/cookies" tabindex="0">
+                        <span class="icon iconalign">
+                            <i class="fad fa-cookie" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("common.nav.more.cookies") %></span>
+                    </a>
                     <a class="navbar-item" href="<%= linkPrefix %>/guidelines" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-book" aria-hidden="true"></i>
@@ -109,7 +120,7 @@
         </div>
 
         <div class="navbar-end">
-            <div class="navbar-item has-dropdown is-hoverable is-hidden-mobile">
+            <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-language" aria-hidden="true"></i>
@@ -118,7 +129,7 @@
                 </a>
 
                 <div class="navbar-dropdown">
-                    <a class="navbar-item" tabindex="0">
+                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "en-NZ") %>" tabindex="0">
                         <% if (req.locale === "en-NZ") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -126,7 +137,7 @@
                         <% } %>
                         <span><%= __("common.nav.language.en-NZ") %> (English NZ)</span>
                     </a>
-                    <a class="navbar-item" tabindex="0">
+                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "en-GB") %>" tabindex="0">
                         <% if (req.locale === "en-GB") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -134,7 +145,7 @@
                         <% } %>
                         <span><%= __("common.nav.language.en-UK") %> (English UK)</span>
                     </a>
-                    <a class="navbar-item" tabindex="0">
+                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "en-US") %>" tabindex="0">
                         <% if (req.locale === "en-US") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -143,16 +154,16 @@
                         <span><%= __("common.nav.language.en-US") %> (English US)</span>
                     </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item" tabindex="0">
-                        <% if (req.locale === "de") { %>
+                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "de-DE") %>" tabindex="0">
+                        <% if (req.locale === "de-DE") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
                         <span><%= __("common.nav.language.de") %> (Deutsch)</span>
                     </a>
-                    <a class="navbar-item" tabindex="0">
-                        <% if (req.locale === "he") { %>
+                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "he-IL") %>" tabindex="0">
+                        <% if (req.locale === "he-IL") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
@@ -160,30 +171,22 @@
                         <span><%= __("common.nav.language.he") %> (עִבְרִית)</span>
                     </a>
                     <a class="navbar-item" tabindex="0">
-                        <% if (req.locale === "hu") { %>
-                            <span title="Selected" class="icon has-text-success iconalign">
+                        <% if (req.locale === "hu-HU") { %>
+                            <span title="Selected" href="<%= req.originalUrl.replace(req.locale, "hu-HU") %>" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
                         <span><%= __("common.nav.language.hu") %> (magyar nyelv)</span>
                     </a>
-                    <a class="navbar-item" tabindex="0">
-                        <% if (req.locale === "it") { %>
+                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "it-IT") %>" tabindex="0">
+                        <% if (req.locale === "it-IT") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
                         <span><%= __("common.nav.language.it") %> (italiano)</span>
                     </a>
-                    <a class="navbar-item" tabindex="0">
-                        <% if (req.locale === "mi") { %>
-                            <span title="Selected" class="icon has-text-success iconalign">
-                                <i class="fad fa-check-circle" aria-hidden="true"></i>
-                            </span>
-                        <% } %>
-                        <span><%= __("common.nav.language.mi") %> (Māori)</span>
-                    </a>
-                    <a class="navbar-item" tabindex="0">
+                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "es-ES") %>" tabindex="0">
                         <% if (req.locale === "es-ES") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -201,7 +204,7 @@
             </div>
 
             <% if (req.user) { %>
-                <div class="navbar-item has-dropdown is-hoverable is-hidden-mobile">
+                <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link" tabindex="0">
                         <img style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>?size=256" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>" draggable="false">
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
@@ -210,7 +213,7 @@
                     <div class="navbar-dropdown is-right">
                         <a class="navbar-item" href="<%= linkPrefix %>/users/@me" tabindex="0">
                             <span class="icon iconalign">
-                                <i class="fad fa-user" aria-hidden="true"></i>
+                                <i class="fad fa-user fa-swap-opacity" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.profile") %></span>
                         </a>
@@ -236,13 +239,13 @@
                         </a>
                         <a class="navbar-item" href="<%= linkPrefix %>/servers/submit" tabindex="0">
                             <span class="icon iconalign">
-                                <i class="fad fa-comments-alt" aria-hidden="true"></i>
+                                <i class="fad fa-comments-alt fa-swap-opacity" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.submitServer") %></span>
                         </a>
                         <a class="navbar-item" id="navTemplate" href="<%= linkPrefix %>/templates/submit" tabindex="0">
                             <span class="icon iconalign">
-                                <i class="fad fa-copy" aria-hidden="true"></i>
+                                <i class="fad fa-clone" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.submitTemplate") %></span>
                         </a>

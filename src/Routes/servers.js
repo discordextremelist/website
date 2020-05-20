@@ -46,7 +46,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
     let error = false;
     let errors = [];
     
-    fetch(`https://discord.com/api/v7/invites/${req.body.invite}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
+    fetch(`https://discord.com/api/v6/invites/${req.body.invite}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
         fetchRes.jsonBody = await fetchRes.json();
         
         if (fetchRes.jsonBody.code !== 10006) {

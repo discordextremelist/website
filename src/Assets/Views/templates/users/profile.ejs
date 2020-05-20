@@ -27,7 +27,7 @@
 </script>
 <%- include("../../partials/nav.ejs"); %>
 <% if (userProfile.rank.verified === true || userProfile.rank.mod === true) { %>
-    <style style="text/css">
+    <style>
         <%= userProfile.profile.css %>
     </style>
 <% } %>
@@ -206,7 +206,7 @@
                         <h3 class="is-size-4"><%= __("common.owner") %></h3>
                         <br />
                         <div class="columns is-multiline is-centered">
-                            <%- botsOwner.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("") %>
+                            <%- botsOwner.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("") %>
                         </div>
                     <% } %>
                     <% if (botsEditor.length !== 0) { %>
@@ -214,7 +214,7 @@
                         <h3 class="is-size-4"><%= __("common.editor") %></h3>
                         <br />
                         <div class="columns is-multiline is-centered">
-                            <%- botsEditor.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("") %>
+                            <%- botsEditor.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("") %>
                         </div>
                     <% } %>
                 <% } %>
@@ -223,7 +223,7 @@
                     <h2 class="is-size-3"><%= __("common.servers") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- serversOwner.map(server => include("../partials/cards/serverCard.ejs", { server, search: false })).join("") %>
+                        <%- serversOwner.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false })).join("") %>
                     </div>
                 <% } %>
                 <br />
@@ -231,7 +231,7 @@
                     <h2 class="is-size-3"><%= __("common.templates") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- templatesOwner.map(template => include("../partials/cards/templateCard.ejs", { template, search: false })).join("") %>
+                        <%- templatesOwner.map(template => include("../../partials/cards/templateCard.ejs", { template, search: false })).join("") %>
                     </div>
                 <% } %>
             <% } %>
@@ -241,7 +241,7 @@
                     <h2 class="is-size-4"><%= __("page.users.listings.archivedBots") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- archivedBots.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: true, verificationApp: false })).join("") %>
+                        <%- archivedBots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: true, verificationApp: false })).join("") %>
                     </div>
                 <% } %>
             <% } %>

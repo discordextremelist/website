@@ -1,11 +1,11 @@
 <% if (user.staffTracking.details.standing === "Unmeasured") { %>
-    <p><strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.unmeasured") %></p>
+    <strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.unmeasured") %>
 <% } else if (user.staffTracking.details.standing === "Good") { %>
-    <p><strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.good") %></p>
+    <strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.good") %>
 <% } else if (user.staffTracking.details.standing === "Moderate") { %>
-    <p><strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.moderate") %></p>
+    <strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.moderate") %>
 <% } else if (user.staffTracking.details.standing === "Moderate-Bad") { %>
-    <p><strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.moderateBad") %></p>
+    <strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.moderateBad") %>
 <% } else if (user.staffTracking.details.standing === "Bad") { %>
-    <p><strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.bad") %></p>
+    <strong><%= __("page.staff.manager.standing") %></strong> <%= __("page.staff.manager.bad") %>
 <% } %>

@@ -175,7 +175,7 @@
                             <h4 class="is-size-4"><%= __("page.templates.roles") %></h4>
                             <div id="collapsibleBody2">
                                 <div id="channelList">
-                                    <%- template.roles.reverse().map(role => include("../../partials/roles.ejs", { role })).join("") %>
+                                    <%- template.roles.reverse().filter(r => r.name !== '@everyone').map(role => include("../../partials/roles.ejs", { role })).join("") %>
                                 </div>
                             </div>
                         </div>
@@ -185,7 +185,7 @@
                             <h4 class="is-size-4"><%= __("page.templates.otherInfo") %></h4>
                             <div id="collapsibleBody3">
                                 <div id="otherInfo">
-                                    <p><strong><%= __("page.templates.otherInfo.region") %></strong> <%= functions.parseRegion(template.region) %></p>
+                                    <p><strong><%= __("page.templates.otherInfo.region") %></strong> <img src="https://discord.com/assets/<%= functions.regionIcon(template.region) %>.png" alt="" style="height: 1em; vertical-align: middle"> <%= functions.parseRegion(template.region) %></p>
                                     <p><strong><%= __("page.templates.otherInfo.afkTimeout") %></strong> <%= Math.floor(template.afkTimeout / 60) %>m</p>
                                     <%- include("../../partials/verificationLevel.ejs") %>
                                     <%- include("../../partials/msgNotifications.ejs") %>

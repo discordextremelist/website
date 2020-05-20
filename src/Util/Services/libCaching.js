@@ -21,7 +21,11 @@ const app = require("../../../app.js");
 global.libs = [];
 
 function getLibs() {
-    return global.libs;
+    return global.libs.sort((a, b) => a._id.localeCompare(b._id));
+}
+
+function hasLib(name) {
+    return global.libs.find(x => x._id === name);
 }
 
 async function cacheLibs() {
@@ -37,7 +41,7 @@ async function addLib({
 } = {
     name: "",
     language: "",
-    links: { docs: "", repo:"" }
+    links: { docs: "", repo: "" }
 }) {
     await app.db.collection("libraries").updateOne({ _id: name }, {
         language,
@@ -57,8 +61,8 @@ async function removeLib(name) {
     }
 }
 
-setInterval(async () => {
+setInterval(async() => {
     await cacheLibs();
 }, 900000);
 
-module.exports = { getLibs, cacheLibs, addLib, removeLib };
+module.exports = { getLibs, cacheLibs, addLib, removeLib, hasLib };

@@ -137,7 +137,7 @@ router.get("/privacy", variables, (req, res) => {
 });
 
 router.get("/cookies", variables, (req, res) => {
-    res.render("templates/legal/cookies", { title: res.__("common.nav.more.cookies"), subtitle: res.__("common.nav.more.cookies.subtitle"), req });
+    res.render("templates/legal/cookie", { title: res.__("common.nav.more.cookies"), subtitle: res.__("common.nav.more.cookies.subtitle"), req });
 });
 
 router.get("/guidelines", variables, (req, res) => {

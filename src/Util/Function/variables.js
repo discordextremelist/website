@@ -21,6 +21,7 @@ const browser = require("browser-detect");
 const settings = require("../../../settings.json");
 const releaseInfo = require("../../../release-info.json");
 const ddosMode = require("../Services/ddosMode.js");
+const announcementCache = require("../Services/announcementCaching.js");
 
 const variables = async(req, res, next) => {
     req.browser = browser(req.headers["user-agent"]);
@@ -30,14 +31,19 @@ const variables = async(req, res, next) => {
     res.locals.ddosMode = ddosMode.getDDOSMode().active;
     res.locals.gaID = settings.website.gaID;
     res.locals.linkPrefix = `/${req.locale || settings.website.locales.default}`;
+    res.locals.htmlDir = "ltr";
+    res.locals.defaultLang = settings.website.locales.default;
     res.locals.baseURL = settings.website.url;
+    res.locals.announcement = announcementCache.getAnnouncement();
+    res.locals.announcement.default = ["#3273dc", "#3298dc", "#0dbf04", "#f24405", "#cd0930", "preferred"];
     req.session.redirectTo = req.originalUrl;
     req.del = releaseInfo;
     req.del.node = "us-node"; // will be updated in a bit:tm: (*cough* spoiler)
 
     res.locals.pageType = {
         server: false,
-        bot: false
+        bot: false,
+        template: false
     }
 
     res.locals.socialMedia = {

@@ -1,3 +1,8 @@
+<% if (announcement.active === true) { %>
+    <div <% if (announcement.colour === "preferred") { %>class="has-background-default has-text-centered" style="padding: 5px;"<% } else { %>style="background-color: <%= announcement.colour %>; color: <%= announcement.foreground %>; padding: 5px;" class="has-text-centered"<% } %>>
+        <%- announcement.message %>
+    </div>
+<% } %>
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <% if (title !== "Home") { %>
@@ -16,37 +21,37 @@
     <div id="navbar" class="navbar-menu">
         <div class="navbar-start"> 
 
-            <a class="navbar-item" href="/">
+            <a class="navbar-item" href="<%= linkPrefix %>/">
                 <span class="icon iconalign">
-                    <i class="fad fa-house" aria-hidden="true"></i>
+                    <i class="fad fa-house fa-swap-opacity" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.home") %></span>
             </a>
 
-            <a class="navbar-item" href="/bots">
+            <a class="navbar-item" href="<%= linkPrefix %>/bots">
                 <span class="icon iconalign">
                     <i class="fad fa-robot" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.bots") %></span>
             </a>
 
-            <a class="navbar-item" href="/servers">
+            <a class="navbar-item" href="<%= linkPrefix %>/servers">
                 <span class="icon iconalign">
-                    <i class="fad fa-comments-alt" aria-hidden="true"></i>
+                    <i class="fad fa-comments-alt fa-swap-opacity" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.servers") %></span>
             </a>
 
-            <a class="navbar-item" href="/templates">
+            <a class="navbar-item" href="<%= linkPrefix %>/templates">
                 <span class="icon iconalign">
-                    <i class="fad fa-copy" aria-hidden="true"></i>
+                    <i class="fad fa-clone" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.templates") %></span>
             </a>
 
-            <a class="navbar-item" href="/search">
+            <a class="navbar-item" href="<%= linkPrefix %>/search">
                 <span class="icon iconalign">
-                    <i class="fad fa-search" aria-hidden="true"></i>
+                    <i class="fas fa-search" aria-hidden="true"></i>
                 </span>
                 <span><%= __("common.search") %></span>
             </a>
@@ -72,26 +77,33 @@
                         </span>
                         <span><%= __("common.nav.more.discord") %></span>
                     </a>
-                    <a class="navbar-item" href="/about">
+                    <a class="navbar-item" href="<%= linkPrefix %>/about">
                         <span class="icon iconalign">
                             <i class="fad fa-question" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.about") %></span>
                     </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item" href="/terms">
+                    <a class="navbar-item" href="<%= linkPrefix %>/terms">
                         <span class="icon iconalign">
                             <i class="fad fa-balance-scale" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.terms") %></span>
                     </a>
-                    <a class="navbar-item" href="/privacy">
+                    <a class="navbar-item" href="<%= linkPrefix %>/privacy">
                         <span class="icon iconalign">
                             <i class="fad fa-user-secret" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.privacy") %></span>
                     </a>
-                    <a class="navbar-item" href="/guidelines">
+
+                    <a class="navbar-item" href="<%= linkPrefix %>/cookies" tabindex="0">
+                        <span class="icon iconalign">
+                            <i class="fad fa-cookie" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("common.nav.more.cookies") %></span>
+                    </a>
+                    <a class="navbar-item" href="<%= linkPrefix %>/guidelines">
                         <span class="icon iconalign">
                             <i class="fad fa-book" aria-hidden="true"></i>
                         </span>
@@ -121,6 +133,12 @@
                             <span><%= __("common.nav.me.staffPanel.home.desktop") %></span>
                         <% } %>
                     </a>
+                    <a class="navbar-item" href="<%= linkPrefix %>/staff/announce">
+                        <span class="icon iconalign">
+                            <i class="fad fa-megaphone" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("page.staff.announcer") %></span>
+                    </a>
                 </div>
             </div>
 
@@ -134,7 +152,7 @@
                     <div class="navbar-dropdown is-hidden-mobile is-right">
                         <a class="navbar-item" href="<%= linkPrefix %>/users/@me">
                             <span class="icon iconalign">
-                                <i class="fad fa-user" aria-hidden="true"></i>
+                                <i class="fad fa-user fa-swap-opacity" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.profile") %></span>
                         </a>
@@ -152,13 +170,13 @@
                         </a>
                         <a class="navbar-item" href="<%= linkPrefix %>/servers/submit">
                             <span class="icon iconalign">
-                                <i class="fad fa-comments-alt" aria-hidden="true"></i>
+                                <i class="fad fa-comments-alt fa-swap-opacity" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.submitServer") %></span>
                         </a>
                         <a class="navbar-item" href="<%= linkPrefix %>/templates/submit" tabindex="0">
                             <span class="icon iconalign">
-                                <i class="fad fa-copy" aria-hidden="true"></i>
+                                <i class="fad fa-clone" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.submitTemplate") %></span>
                         </a>

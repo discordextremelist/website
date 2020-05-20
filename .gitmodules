@@ -1,0 +1,3 @@
+[submodule "src/Assets/Locale"]
+	path = src/Assets/Locale
+	url = https://github.com/discordextremelist/i18n.git

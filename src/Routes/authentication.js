@@ -186,8 +186,13 @@ router.get("/login/callback", passport.authenticate("discord", { failureRedirect
 });
 
 router.get("/logout", async (req, res, next) => {
-    await req.logout();
-    res.redirect(req.session.redirectTo || "/");
+    if (!req.user.impersonator) {
+        await req.logout();
+        res.redirect(req.session.redirectTo || "/");
+    } else {
+        req.user.id = req.user.impersonator;
+        res.redirect("/");
+    }
 });
 
 module.exports = router;

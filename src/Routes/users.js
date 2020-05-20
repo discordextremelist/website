@@ -18,20 +18,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const express = require("express");
-const chunk = require("chunk");
 const router = express.Router();
 
 const discord = require("../Util/Services/discord.js");
 const banned = require("../Util/Services/banned.js");
 const variables = require("../Util/Function/variables.js");
 const permission = require("../Util/Function/permissions.js");
+const functions = require("../Util/Function/main.js");
 
 const botCache = require("../Util/Services/botCaching.js");
 const serverCache = require("../Util/Services/serverCaching.js");
 const templateCache = require("../Util/Services/templateCaching.js");
 const userCache = require("../Util/Services/userCaching.js");
 
-router.get("/:id", variables, async (req, res, next) => {
+router.get("/:id", variables, async(req, res, next) => {
     if (req.params.id === "@me") {
         if (!req.user) return res.redirect("/auth/login");
         req.params.id = req.user.id;
@@ -68,7 +68,7 @@ router.get("/:id", variables, async (req, res, next) => {
     }
 
     const servers = await serverCache.getAllServers();
-    
+
     const serversOwner = [];
 
     for (var n = 0; n < servers.length; ++n) {
@@ -80,7 +80,7 @@ router.get("/:id", variables, async (req, res, next) => {
     }
 
     const templates = await templateCache.getAllTemplates();
-    
+
     const templatesOwner = [];
 
     for (var n = 0; n < templates.length; ++n) {
@@ -106,7 +106,7 @@ router.get("/:id", variables, async (req, res, next) => {
     });
 });
 
-router.get("/:id/rank", variables, permission.auth, permission.assistant, async (req, res, next) => {
+router.get("/:id/rank", variables, permission.auth, permission.assistant, async(req, res, next) => {
     const targetUser = await req.app.db.collection("users").findOne({ _id: req.params.id });
 
     if (!targetUser) return res.status(404).render("status", {
@@ -124,11 +124,11 @@ router.get("/:id/rank", variables, permission.auth, permission.assistant, async 
         req,
         type: "Error"
     });
-    
+
     res.render("templates/users/staffActions/modifyRank", { title: res.__("Modify Rank"), subtitle: res.__("Modifiying rank of %s", targetUser.fullUsername), user: req.user, req: req, targetUser: targetUser });
 });
 
-router.post("/:id/rank", variables, permission.auth, permission.assistant, async (req, res, next) => {
+router.post("/:id/rank", variables, permission.auth, permission.assistant, async(req, res, next) => {
     const targetUser = await req.app.db.collection("users").findOne({ _id: req.params.id });
 
     if (!targetUser) return res.status(404).render("status", {
@@ -148,9 +148,9 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
     });
 
     let verified = false;
-    let tester = false; 
+    let tester = false;
     let translator = false;
-    let covid = false; 
+    let covid = false;
     let mod = false;
     let assistant = false;
     let admin = false;
@@ -181,8 +181,8 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         }
     }
 
-    await req.app.db.collection("users").updateOne({ _id: targetUser.id }, 
-        { $set: {
+    await req.app.db.collection("users").updateOne({ _id: targetUser._id }, {
+        $set: {
             rank: {
                 admin: admin,
                 assistant: assistant,
@@ -195,7 +195,7 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         }
     });
 
-    await userCache.updateUser(targetUser.id);
+    await userCache.updateUser(targetUser._id);
 
     await req.app.db.collection("audit").insertOne({
         type: "MODIFY_RANK",
@@ -229,14 +229,14 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         }
     });
 
-    res.redirect(`/users/${targetUser.id}`);
+    res.redirect(`/users/${targetUser._id}`);
 });
 
 router.get("/profile/:id", (req, res, next) => {
     res.redirect("/" + req.params.id)
 });
 
-router.get("/profile/:id/edit", variables, permission.auth, async (req, res, next) => {
+router.get("/profile/:id/edit", variables, permission.auth, async(req, res, next) => {
     if (req.params.id === "@me") {
         req.params.id = req.user.id;
     }
@@ -249,7 +249,7 @@ router.get("/profile/:id/edit", variables, permission.auth, async (req, res, nex
         req,
         type: "Error"
     });
-    
+
     if (userProfile._id !== req.user.id && req.user.db.rank.assistant === false) return res.status(403).render("status", {
         title: res.__("common.error"),
         status: 403,
@@ -261,7 +261,7 @@ router.get("/profile/:id/edit", variables, permission.auth, async (req, res, nex
     res.render("templates/users/editProfile", { title: res.__("page.users.edit.title"), subtitle: res.__("page.users.edit.subtitle", req.user.db.fullUsername), req, userProfile: userProfile });
 });
 
-router.post("/profile/:id/edit", variables, permission.auth, async (req, res, next) => {
+router.post("/profile/:id/edit", variables, permission.auth, async(req, res, next) => {
     if (req.params.id === "@me") {
         req.params.id = req.user.id;
     }
@@ -273,7 +273,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
         subtitle: res.__("common.error.user.404"),
         req: req
     });
-    
+
     if (userProfile._id !== req.user.id && req.user.db.rank.assistant === false) return res.status(403).render("status", {
         title: res.__("common.error"),
         status: 403,
@@ -289,8 +289,8 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
         customCss = "";
     }
 
-    await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
-        { $set: {
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, {
+        $set: {
             profile: {
                 bio: req.body.bio,
                 css: customCss,
@@ -344,7 +344,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async (req, res, ne
     res.redirect("/users/@me");
 });
 
-router.get("/game/snake", variables, permission.auth, async (req, res, next) => {
+router.get("/game/snake", variables, permission.auth, async(req, res, next) => {
     res.render("templates/users/snake", {
         title: res.__("common.nav.me.playSnake"),
         subtitle: res.__("common.nav.me.playSnake.subtitle"),
@@ -352,13 +352,13 @@ router.get("/game/snake", variables, permission.auth, async (req, res, next) => 
     });
 })
 
-router.get("/profile/game/snakes", variables, permission.auth, async (req, res, next) => {
+router.get("/profile/game/snakes", variables, permission.auth, async(req, res, next) => {
     const user = await req.app.db.collection("users").findOne({ _id: req.user.id });
 
     res.status(200).json({ error: false, status: 200, result: user.game.snakes.maxScore });
 });
 
-router.post("/profile/game/snakes", variables, permission.auth, async (req, res, next) => {
+router.post("/profile/game/snakes", variables, permission.auth, async(req, res, next) => {
     if (req.body.score <= req.user.db.game.snakes.maxScore) return res.status(202).json({
         error: false,
         status: 202,
@@ -367,9 +367,9 @@ router.post("/profile/game/snakes", variables, permission.auth, async (req, res,
 
     const user = await req.app.db.collection("users").findOne({ _id: req.user.id });
     const score = user.game.snakes.maxScore + 1;
-    
-    await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
-        { $set: {
+
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, {
+        $set: {
             game: {
                 snakes: {
                     maxScore: score
@@ -407,45 +407,29 @@ router.post("/profile/game/snakes", variables, permission.auth, async (req, res,
     res.status(200).json({ error: false, status: 200, message: "Updated high score" });
 });
 
-router.get("/account/preferences", variables, permission.auth, async (req, res, next) => {
+router.get("/account/preferences", variables, permission.auth, async(req, res, next) => {
     res.render("templates/users/accountPreferences", { title: res.__("common.nav.me.preferences"), subtitle: res.__("common.nav.me.preferences.subtitle"), req });
 });
 
-router.post("/account/preferences", variables, permission.auth, async (req, res, next) => {
+router.post("/account/preferences", variables, permission.auth, async(req, res, next) => {
     let gamePreferences, experiments;
-    
+
     if (req.body.noGames === "on") {
         gamePreferences = false;
     } else {
         gamePreferences = true;
     }
-    
+
     if (req.body.experiments === "on") {
         experiments = true;
     } else {
         experiments = false;
     }
 
-    function getForeground(inputColour) {
-        const colour = (inputColour.charAt(0) === '#') ? inputColour.substring(1, 7) : inputColour;
-        const R = parseInt(colour.substring(0, 2), 16); 
-        const G = parseInt(colour.substring(2, 4), 16); 
-        const B = parseInt(colour.substring(4, 6), 16); 
-        const uiColours = [R / 255, G / 255, B / 255];
-        const c = uiColours.map((col) => {
-            if (col <= 0.03928) {
-                return col / 12.92;
-            }
-            return Math.pow((col + 0.055) / 1.055, 2.4);
-        });
-        const L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
-        return (L > 0.179) ? "#000000" : "#FFFFFF";
-    }
+    const foreground = functions.getForeground(req.body.iconColour);
 
-    const foreground = getForeground(req.body.iconColour);
-
-    await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
-        { $set: {
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, {
+        $set: {
             preferences: {
                 customGlobalCss: req.body.customCss,
                 defaultColour: req.body.iconColour,
@@ -489,9 +473,9 @@ router.post("/account/preferences", variables, permission.auth, async (req, res,
     res.redirect("/users/@me");
 });
 
-router.get("/account/preferences/reset", variables, permission.auth, async (req, res, next) => {
-    await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
-        { $set: {
+router.get("/account/preferences/reset", variables, permission.auth, async(req, res, next) => {
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, {
+        $set: {
             preferences: {
                 customGlobalCss: "",
                 defaultColour: "#b114ff",

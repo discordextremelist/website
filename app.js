@@ -64,11 +64,40 @@ new Promise((resolve, reject) => {
     .then(async () => {
         dbReady = true;
         app.db = db;
+
+    // app.db.collection("users").deleteOne({ _id: "190916650143318016" });
+        for (const lib of require(__dirname+"/src/Assets/libraries.json")) {
+            await db.collection("libraries").updateOne({ _id: lib.name }, {
+                _id: lib.name,
+                language: lib.language,
+                links: {
+                    docs: lib.links.docs,
+                    repo: lib.links.repo
+                }
+            }, { upsert: true }).then(() => true).catch(() => false);
+        }
+        if (
+            !(await db.collection("webOptions").findOne({ _id: "ddosMode" })) ||
+            !(await db.collection("webOptions").findOne({ _id: "announcement" }))
+        ) {
+            await db.collection("webOptions").insertOne({
+                _id: "ddosMode",
+                active: false
+            }).then(() => true).catch(() => false);
+            await db.collection("webOptions").insertOne({
+                _id: "announcement",
+                active: false,
+                message: "",
+                colour: "",
+                foreground: ""
+            }).then(() => true).catch(() => false);
+        }
         const botCache = require("./src/Util/Services/botCaching.js");
         const serverCache = require("./src/Util/Services/serverCaching.js");
         const templateCache = require("./src/Util/Services/templateCaching.js");
         const userCache = require("./src/Util/Services/userCaching.js");
         const libCache = require("./src/Util/Services/libCaching.js");
+        const announcementCache = require("./src/Util/Services/announcementCaching.js");
         const featuredCache = require("./src/Util/Services/featuring.js");
         const ddosMode = require("./src/Util/Services/ddosMode.js");
         const banned = require("./src/Util/Services/banned.js");
@@ -81,6 +110,7 @@ new Promise((resolve, reject) => {
         await serverCache.uploadServers();
         await templateCache.uploadTemplates();
         await libCache.cacheLibs();
+        await announcementCache.updateCache();
         await featuredCache.updateFeaturedBots();
         await featuredCache.updateFeaturedServers();
         await ddosMode.updateCache();

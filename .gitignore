@@ -118,6 +118,3 @@ ssl/
 
 # Redis
 dump.rdb
-
-# i18n
-src/Assets/Locale/

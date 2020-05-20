@@ -51,7 +51,7 @@
     "css-build": "sh ./scripts/css_build.sh",
     "editor-build": "cp -r ./node_modules/monaco-editor/ ./src/Assets/Public/packages/monaco-editor",
     "setup": "node scripts/setup",
-    "sync-translations": "git submodule update --recursive --remote"
+    "sync-translations": "git submodule foreach git pull"
   },
   "repository": {
     "type": "git",

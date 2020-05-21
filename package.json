@@ -13,7 +13,7 @@
     "chunk": "0.0.2",
     "color": "^3.1.2",
     "connect-redis": "^4.0.4",
-    "cookie-parser": "~1.4.4",
+    "cookie-parser": "~1.4.5",
     "cookie-session": "^1.4.0",
     "debug": "~2.6.9",
     "del-i18n": "github:discordextremelist/i18n",

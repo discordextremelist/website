@@ -155,7 +155,7 @@ new Promise((resolve, reject) => {
 
         i18n.configure({
             locales: settings.website.locales.all,
-            directory: __dirname + "/src/Assets/Locale",
+            directory: __dirname + "/node_modules/del-i18n",
             defaultLocale: settings.website.locales.default
         });
 

@@ -95,6 +95,11 @@ router.post("/submit", variables, permission.auth, async(req, res, next) => {
             errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
 
+        if (!req.body.prefix) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.prefixRequired"));
+        }
+
         const library = libraryCache.hasLib(req.body.library) ? req.body.library : "Other";
         let tags = [];
         if (req.body.fun === "on") tags.push("Fun");
@@ -252,6 +257,11 @@ router.post("/submit", variables, permission.auth, async(req, res, next) => {
         if (!req.body.longDescription) {
             error = true;
             errors.push(res.__("common.error.listing.arr.longDescRequired"));
+        }
+
+        if (!req.body.prefix) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.prefixRequired"));
         }
 
         const library = libraryCache.hasLib(req.body.library) ? req.body.library : "Other";
@@ -453,6 +463,11 @@ router.post("/:id/edit", variables, permission.auth, async(req, res, next) => {
         errors.push(res.__("common.error.listing.arr.longDescRequired"));
     }
 
+    if (!req.body.prefix) {
+        error = true;
+        errors.push(res.__("common.error.listing.arr.prefixRequired"));
+    }
+
     let library = libraryCache.hasLib(req.body.library) ? req.body.library : "Other";
     let tags = [];
     if (req.body.fun === "on") tags.push("Fun");
@@ -464,6 +479,8 @@ router.post("/:id/edit", variables, permission.auth, async(req, res, next) => {
     if (req.body.music === "on") tags.push("Music");
 
     if (error === true) {
+        req.body.status.verified = botExists.status.verified;
+
         return res.render("templates/bots/errorOnEdit", {
             title: res.__("page.bots.edit.title"),
             subtitle: res.__("page.bots.edit.subtitle", bot.name),
@@ -929,6 +946,11 @@ router.post("/:id/resubmit", variables, permission.auth, async(req, res, next) =
         errors.push(res.__("common.error.listing.arr.longDescRequired"));
     }
 
+    if (!req.body.prefix) {
+        error = true;
+        errors.push(res.__("common.error.listing.arr.prefixRequired"));
+    }
+
     const library = libraryCache.hasLib(req.body.library) ? req.body.library : "Other";
     let tags = [];
     if (req.body.fun === "on") tags.push("Fun");
@@ -1163,9 +1185,6 @@ router.get("/:id/verify", variables, permission.auth, permission.assistant, asyn
             "status.verified": true
         }
     });
-
-    console.log(await req.app.db.collection("bots").findOne({ _id: req.params.id }));
-    console.log(await req.app.db.collection("users").findOne({ _id: bot.owner.id }));
 
     await botCache.updateBot(req.params.id);
 

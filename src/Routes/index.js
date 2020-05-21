@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 const express = require("express");
 const chunk = require("chunk");
-const colour = require("color");
 const router = express.Router();
 
 const settings = require("../../settings.json");
@@ -148,7 +147,6 @@ router.get("/widgetbot", variables, (req, res) => {
     res.render("templates/widgetbot", { 
         title: res.__("common.widgetbot.chat"), 
         subtitle: res.__("common.widgetbot.subtitle"), 
-        colour,
         req, 
         settings 
     });

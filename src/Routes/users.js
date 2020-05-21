@@ -427,6 +427,7 @@ router.post("/account/preferences", variables, permission.auth, async(req, res, 
     }
 
     const foreground = functions.getForeground(req.body.iconColour);
+    console.log(req.body.customCss)
 
     await req.app.db.collection("users").updateOne({ _id: req.user.id }, {
         $set: {

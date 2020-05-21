@@ -31,7 +31,7 @@
             <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.generalInfo") %></h3>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.generalInfo.id") %> <span class="has-text-danger">(<%= __("Read-only") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("page.bots.generalInfo.id") %> <span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span></label>
                 <p class="control has-icons-left has-icons-right" required>
                     <input class="input is-rounded" type="text" name="id" value="<%= bot._id %>" placeholder="568254611354419211" readonly>
                     <span class="icon is-small is-left">
@@ -41,7 +41,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.generalInfo.editors") %> <span class="has-text-default">(<%= __("Space-Separated") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("page.bots.generalInfo.editors") %> <span class="has-text-default">(<%= __("common.form.spaceSeparated") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="editors" value="<%= bot.editors %>" placeholder="<%= __("page.bots.generalInfo.editors.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -66,7 +66,7 @@
                 <div class="control has-icons-left">
                     <div class="select is-rounded">
                         <select name="library" required>
-                            <option value="" disabled selected><%= __("Select") %></option>
+                            <option value="" disabled selected><%= __("common.select") %></option>
                             <option value="<%= bot.library %>" selected><%= bot.library %></option>
                             <% for (const lib of libraries) { %><option value="<%- lib._id %>"><%- lib._id %></option><% } %>
                         </select>
@@ -104,7 +104,7 @@
             </div>
             <div class="field">
                 <input class="is-checkradio is-circle has-background-color is-pink" type="checkbox" id="music" name="music" <% if (bot.tags && bot.tags.includes("Music")) { %>checked="checked"<% } %>>
-                <label class="has-text-pink" for="music"><%= __("common.bot.tags.music") %></label>
+                <label class="has-text-pink" for="music"><%= __("common.tags.music") %></label>
             </div>
             <br />
             <br />
@@ -201,7 +201,7 @@
             <div class="field">
                 <label class="label has-text-blurple"><%= __("page.bots.shortDesc") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="shortDescription" value="<%= bot.shortDescription %>" placeholder="<%= __("page.bots.shortDesc.placeholder") %>" required>
+                    <input class="input is-rounded" type="text" name="shortDescription" value="<%= bot.shortDesc %>" placeholder="<%= __("page.bots.shortDesc.placeholder") %>" required>
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-comment-dots"></i>
                     </span>
@@ -209,9 +209,9 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.longDesc") %> (<%= bot.status.verified ? __("common.form.jsHtmlMarkdown") : __("common.form.htmlMarkdown") %>) <span class="has-text-danger">*</span></label>
+                <label class="label has-text-blurple"><%= __("page.bots.longDesc") %> (<%= bot.status.verified ? __("common.form.jsHtmlMarkdown") : __("common.form.htmlMarkdown") %>)<span class="has-text-danger">*</span></label>
                 <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
-                <input hidden name="longDescription" id="longDesc" />
+                <textarea hidden name="longDescription" id="longDesc" required></textarea>
             </div>
             <br />
             <% if (bot.archived === true) { %>
@@ -219,7 +219,9 @@
                     <label class="label has-text-blurple"><%= __("page.bots.modNotes") %></label>
                     <div onkeyup="monacoToField();" id="modNotesEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
                     <textarea hidden name="modNotes" id="modNotes"></textarea>
-                    <p style="padding: 5px;" class="is-size-7 has-text-magenta"><%= __("page.bots.modNotes.placeholder") %></p>
+                    <p style="padding: 5px;" class="is-size-7 has-text-default">
+                        <%= __("page.bots.modNotes.placeholder") %>
+                    </p>
                 </div>
                 <br />
             <% } %>
@@ -246,6 +248,6 @@
 <script src="/packages/monaco-editor/min/vs/loader.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
-<script type="text/javascript">function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}</script>
-<script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{value:`<%- bot.longDescription %>`,language:"markdown"});var modNotesEditor=monaco.editor.create(document.getElementById("modNotesEditor"),{value:`<%= bot.modNotes %>`});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
+<script type="text/javascript">function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}</script> 
+<script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"vs-dark",value:`<%- longDesc %>`,language:"markdown"});var modNotesEditor=monaco.editor.create(document.getElementById("modNotesEditor"), {theme:"vs-dark"});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}</script>
 <%- include("../../partials/footer.ejs") %>

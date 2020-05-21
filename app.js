@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const express = require("express");
-const session = require("express-session");
 const path = require("path");
 
 const settings = require("./settings.json");
@@ -133,6 +132,7 @@ new Promise((resolve, reject) => {
         console.timeEnd("Redis Cache");
 
         const cookieParser = require("cookie-parser");
+        const cookieSession = require("cookie-session");
         const logger = require("morgan");
         const device = require("express-device");
         const i18n = require("i18n");
@@ -150,7 +150,6 @@ new Promise((resolve, reject) => {
         );
         app.use(express.json());
         app.use(express.urlencoded({ extended: false }));
-        app.use(cookieParser());
 
         app.use(device.capture());
 
@@ -160,14 +159,13 @@ new Promise((resolve, reject) => {
             defaultLocale: settings.website.locales.default
         });
 
-        app.use(session({
-            saveUninitialized: true,
-            resave: false,
+        app.use(cookieSession({
+            name: "delSession",
             secret: settings.website.secrets.cookie,
-            cookie: {
-                maxAge: 1 * 60 * 60 * 24 * 7
-            }
+            maxAge: 1000 * 60 * 60 * 24 * 7
         }));
+          
+        app.use(cookieParser(settings.website.secrets.cookie));
 
         app.use(passport.initialize());
         app.use(passport.session());

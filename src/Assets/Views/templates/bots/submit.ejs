@@ -59,7 +59,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.generalInfo.editors") %> <span class="has-text-default">(<%= __("Space-Separated") %>)</span></label>
+                <label class="label has-text-blurple"><%= __("page.bots.generalInfo.editors") %> <span class="has-text-default">(<%= __("common.form.spaceSeparated") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="editors" placeholder="<%= __("page.bots.generalInfo.editors.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -86,7 +86,7 @@
                 <div class="control has-icons-left">
                     <div class="select is-rounded">
                         <select name="library" required>
-                    <option value="" disabled selected><%= __("Select") %></option>
+                    <option value="" disabled selected><%= __("common.select") %></option>
                     <% for (const lib of libraries) { %><option value="<%- lib._id %>"><%- lib._id %></option><% } %>
                 </select>
                     </div>

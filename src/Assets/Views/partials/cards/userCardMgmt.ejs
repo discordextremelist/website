@@ -32,7 +32,7 @@
                 </div>
                 <div class="content-footer">
                     <div class="buttons">
-                        <a href="<%= linkPrefix %>/staff/staff-manager/away/<%= user.id %>" class="button is-blurple is-outlined">
+                        <a href="<%= linkPrefix %>/staff/staff-manager/away/<%= user._id %>" class="button is-blurple is-outlined">
                             <span class="icon">
                                 <i class="fas fa-lights-holiday"></i>
                             </span>
@@ -40,7 +40,7 @@
                         </a>
                         <div class="dropdown">
                             <div class="dropdown-trigger">
-                              <button class="button is-blurple is-outlined" aria-haspopup="true" aria-controls="dropdown-ui-actions">
+                              <button class="button is-blurple is-outlined" aria-haspopup="true" aria-controls="dropdown-ui-actions-<%= user._id %>">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-gavel" aria-hidden="true"></i>
                                 </span>
@@ -50,19 +50,19 @@
                                 </span>
                               </button>
                             </div>
-                            <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
+                            <div class="dropdown-menu" id="dropdown-ui-actions-<%= user._id %>" role="menu">
                                 <div class="dropdown-content">
                                     <div class="dropdown-item">
                                         <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                     </div>
                                     <hr class="dropdown-divider">
-                                    <a href="<%= linkPrefix %>/staff/staff-manager/punish/warn/<%= user.id %>">
+                                    <a href="<%= linkPrefix %>/staff/staff-manager/punish/warn/<%= user._id %>">
                                         <span class="icon">
                                             <i class="fas fa-exclamation-triangle"></i>
                                         </span>
                                         <span><%= __("page.staff.manager.warn") %></span>
                                     </a>
-                                    <a href="<%= linkPrefix %>/staff/staff-manager/punish/strike/<%= user.id %>">
+                                    <a href="<%= linkPrefix %>/staff/staff-manager/punish/strike/<%= user._id %>">
                                         <span class="icon">
                                             <i class="fas fa-ban"></i>
                                         </span>

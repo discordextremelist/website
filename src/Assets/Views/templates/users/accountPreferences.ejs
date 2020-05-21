@@ -42,14 +42,14 @@
                 <br />    
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("page.account.preferences.customCSS") %> <span class="has-text-danger">(<%= __("page.account.preferences.customCSS.danger") %>)</span></label>
-                    <div onkeyup="monacoToField();" id="customCssEditor" class="editorBackdrop" style="width:99%;height:350px;" value="<%= req.user.db.preferences.customGlobalCss %>"></div>
-                    <textarea hidden name="customCss" id="customCss"></textarea>
+                    <div onkeyup="monacoToField();" id="profileCssEditor" class="editorBackdrop" style="width:99%;height:350px;" value="<%= req.user.db.preferences.customGlobalCss %>"></div>
+                    <textarea hidden name="customCss" id="profileCss"></textarea>
                     <label class="is-size-7 has-text-default"><%= __("page.account.preferences.customCSS.note") %></label>
                 </div>
                 <br />
                 <div class="field is-grouped">
                     <div class="buttons">
-                        <button class="button is-success">
+                        <button class="button is-success" onclick="monacoToField();">
                             <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
                             <span><%= __("common.save") %></span>
                         </button>
@@ -71,5 +71,5 @@
 <script src="/packages/monaco-editor/min/vs/loader.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
-<script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("customCssEditor"),{value:`<%= req.user.db.preferences.customGlobalCss %>`,language:"css"});function monacoToField(){var o=window.profileCssEditor.getValue();$("#profileCss").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
+<script type="text/javascript">var profileCssEditor=monaco.editor.create(document.getElementById("profileCssEditor"),{value:`<%= req.user.db.preferences.customGlobalCss %>`,language:"css"});function monacoToField(){var o=window.profileCssEditor.getValue();$("#profileCss").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
 <%- include("../../partials/footer.ejs") %>

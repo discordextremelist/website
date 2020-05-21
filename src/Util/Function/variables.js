@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const browser = require("browser-detect");
+const colour = require("color");
 const settings = require("../../../settings.json");
 const releaseInfo = require("../../../release-info.json");
 const ddosMode = require("../Services/ddosMode.js");
@@ -39,6 +40,7 @@ const variables = async(req, res, next) => {
     req.session.redirectTo = req.originalUrl;
     req.del = releaseInfo;
     req.del.node = "us-node"; // will be updated in a bit:tm: (*cough* spoiler)
+    res.locals.colour = colour;
 
     res.locals.pageType = {
         server: false,

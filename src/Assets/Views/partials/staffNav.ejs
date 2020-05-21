@@ -133,12 +133,20 @@
                             <span><%= __("common.nav.me.staffPanel.home.desktop") %></span>
                         <% } %>
                     </a>
-                    <a class="navbar-item" href="<%= linkPrefix %>/staff/announce">
-                        <span class="icon iconalign">
-                            <i class="fad fa-megaphone" aria-hidden="true"></i>
-                        </span>
-                        <span><%= __("page.staff.announcer") %></span>
-                    </a>
+                    <% if (req.user.db.rank.assistant === true) { %>  
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/staff-manager">
+                            <span class="icon iconalign">
+                                <i class="fad fa-users-cog" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("page.staff.manager") %></span>
+                        </a>
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/announce">
+                            <span class="icon iconalign">
+                                <i class="fad fa-megaphone" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("page.staff.announcer") %></span>
+                        </a>
+                    <% } %>
                 </div>
             </div>
 

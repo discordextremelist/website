@@ -46,15 +46,15 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.rank.verified") %></label>
-                <input id="verifySwitch" type="checkbox" name="verified" class="switch is-rounded is-magenta" <% if (targetUser.rank.verified === true) { %>checked="checked"<% } %>>
-                <label for="verifySwitch"></label>
+                <label class="label has-text-blurple"><%= __("common.rank.covid") %></label>
+                <input id="covidSwitch" type="checkbox" name="covid" class="switch is-rounded is-magenta" <% if (targetUser.rank.covid === true) { %>checked="checked"<% } %>>
+                <label for="covidSwitch"></label>
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.rank.covid") %></label>
-                <input id="covidSwitch" type="checkbox" name="covid" class="switch is-rounded is-red" <% if (targetUser.rank.covid === true) { %>checked="checked"<% } %>>
-                <label for="covidSwitch"></label>
+                <label class="label has-text-blurple"><%= __("common.rank.donator") %></label>
+                <input id="verifySwitch" type="checkbox" name="premium" class="switch is-rounded is-red" <% if (targetUser.rank.premium === true) { %>checked="checked"<% } %>>
+                <label for="verifySwitch"></label>
             </div>
             <br />
             <div class="field is-grouped">

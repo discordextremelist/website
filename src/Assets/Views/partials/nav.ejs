@@ -1,3 +1,24 @@
+<noscript>
+    <div style="padding: 25px; background-color: yellow; color: black;" class="has-text-centered">
+        <span class="icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </span>
+        <span><%= __("common.jsDisabled") %></span>
+    </div>
+    <style>
+        body {
+            border-left-color: yellow;
+            border-left-width: 10px;
+            border-left-style: solid;
+            border-right-color: yellow;
+            border-right-width: 10px;
+            border-right-style: solid;
+            border-bottom-color: yellow;
+            border-bottom-width: 10px;
+            border-bottom-style: solid;
+        }
+    </style>
+</noscript>
 <% if (announcement.active === true) { %>
     <div <% if (announcement.colour === "preferred") { %>class="has-background-default has-text-centered" style="padding: 5px;"<% } else { %>style="background-color: <%= announcement.colour %>; color: <%= announcement.foreground %>; padding: 5px;" class="has-text-centered"<% } %>>
         <%- announcement.message %>
@@ -56,29 +77,27 @@
                 <span><%= __("common.search") %></span>
             </a>
 
-            <a class="navbar-item" id="navWidgetBotXSupport" href="<%= linkPrefix %>/widgetbot">
-                <span class="icon iconalign">
-                    <i class="fad fa-comment-alt-lines" aria-hidden="true"></i>
-                </span>
-                <span><%= __("common.widgetbot") %></span>
-            </a>
-
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link" tabindex="0">
+            <div <% if (phone) { %>onclick="display(document.getElementById('moreDropdown'), document.getElementById('moreDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-sitemap" aria-hidden="true"></i>
                     </span>
                     <span><%= __("common.nav.more") %></span>
+                    <% if (phone) { %>
+                        <span>
+                            <i id="moreDropdownArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
+                        </span>
+                    <% } %>
                 </a>
 
-                <div class="navbar-dropdown">
-                    <a class="navbar-item" href="<%= discordServer %>" tabindex="0">
+                <div id="moreDropdown" class="navbar-dropdown is-hidden-mobile">
+                    <a class="navbar-item" href="<%= linkPrefix %>/widgetbot" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fab fa-discord" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.discord") %></span>
                     </a>
-                    <a class="navbar-item" href="https://docs.discordextremelist.xyz/" tabindex="0">
+                    <a class="navbar-item" href="<%= linkPrefix %>/docs" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-books" aria-hidden="true"></i>
                         </span>
@@ -120,16 +139,21 @@
         </div>
 
         <div class="navbar-end">
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link" tabindex="0">
+            <div <% if (phone) { %>onclick="display(document.getElementById('localeDropdown'), document.getElementById('localeDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-language" aria-hidden="true"></i>
                     </span>
                     <span><%= __("common.nav.language") %></span>
+                    <% if (phone) { %>
+                        <span>
+                            <i id="localeDropdownArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
+                        </span>
+                    <% } %>
                 </a>
 
-                <div class="navbar-dropdown">
-                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "en-NZ") %>" tabindex="0">
+                <div id="localeDropdown" class="navbar-dropdown is-hidden-mobile">
+                    <a class="navbar-item" <% if (req.locale !== "en-NZ") { %>href="<%= req.originalUrl.replace(req.locale, "en-NZ") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "en-NZ") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -137,7 +161,7 @@
                         <% } %>
                         <span><%= __("common.nav.language.en-NZ") %> (English NZ)</span>
                     </a>
-                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "en-GB") %>" tabindex="0">
+                    <a class="navbar-item" <% if (req.locale !== "en-GB") { %>href="<%= req.originalUrl.replace(req.locale, "en-GB") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "en-GB") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -145,7 +169,7 @@
                         <% } %>
                         <span><%= __("common.nav.language.en-UK") %> (English UK)</span>
                     </a>
-                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "en-US") %>" tabindex="0">
+                    <a class="navbar-item" <% if (req.locale !== "en-US") { %>href="<%= req.originalUrl.replace(req.locale, "en-US") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "en-US") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -153,8 +177,16 @@
                         <% } %>
                         <span><%= __("common.nav.language.en-US") %> (English US)</span>
                     </a>
+                    <a class="navbar-item" <% if (req.locale !== "en-UD") { %>href="<%= req.originalUrl.replace(req.locale, "en-UD") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "en-UD") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span class="transform"><%- __("common.nav.language.en-UD", { flag: "🇺🇸" }) %> (English UD)</span>
+                    </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "de-DE") %>" tabindex="0">
+                    <a class="navbar-item" <% if (req.locale !== "de-DE") { %>href="<%= req.originalUrl.replace(req.locale, "de-DE") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "de-DE") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -162,7 +194,7 @@
                         <% } %>
                         <span><%= __("common.nav.language.de") %> (Deutsch)</span>
                     </a>
-                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "he-IL") %>" tabindex="0">
+                    <a class="navbar-item" <% if (req.locale !== "he-IL") { %>href="<%= req.originalUrl.replace(req.locale, "he-IL") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "he-IL") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -170,7 +202,7 @@
                         <% } %>
                         <span><%= __("common.nav.language.he") %> (עברית)</span>
                     </a>
-                    <a class="navbar-item" tabindex="0">
+                    <a class="navbar-item" <% if (req.locale !== "hu-HU") { %>href="<%= req.originalUrl.replace(req.locale, "hu-HU") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "hu-HU") { %>
                             <span title="Selected" href="<%= req.originalUrl.replace(req.locale, "hu-HU") %>" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -178,7 +210,7 @@
                         <% } %>
                         <span><%= __("common.nav.language.hu") %> (magyar nyelv)</span>
                     </a>
-                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "it-IT") %>" tabindex="0">
+                    <a class="navbar-item" <% if (req.locale !== "it-IT") { %>href="<%= req.originalUrl.replace(req.locale, "it-IT") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "it-IT") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -186,7 +218,15 @@
                         <% } %>
                         <span><%= __("common.nav.language.it") %> (italiano)</span>
                     </a>
-                    <a class="navbar-item" href="<%= req.originalUrl.replace(req.locale, "es-ES") %>" tabindex="0">
+                    <a class="navbar-item" <% if (req.locale !== "pt-PT") { %>href="<%= req.originalUrl.replace(req.locale, "pt-PT") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "pt-PT") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __("common.nav.language.pt") %> (...)</span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "es-ES") { %>href="<%= req.originalUrl.replace(req.locale, "es-ES") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "es-ES") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
@@ -204,13 +244,18 @@
             </div>
 
             <% if (req.user) { %>
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link" tabindex="0">
+                <div <% if (phone) { %>onclick="display(document.getElementById('userDropdown'), document.getElementById('userDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>" tabindex="0">
                         <img style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>?size=256" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>" draggable="false">
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
+                        <% if (phone) { %>
+                            <span>
+                                <i id="userDropdownArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
                     </a>
 
-                    <div class="navbar-dropdown is-right">
+                    <div id="userDropdown" class="navbar-dropdown is-hidden-mobile is-right">
                         <a class="navbar-item" href="<%= linkPrefix %>/users/@me" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-user fa-swap-opacity" aria-hidden="true"></i>

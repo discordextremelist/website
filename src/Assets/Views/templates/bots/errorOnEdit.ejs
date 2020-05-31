@@ -1,7 +1,6 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
-<link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
-<%- include("../../partials/nav.ejs") %>
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
         <br />
@@ -131,7 +130,7 @@
             <div class="field">
                 <label class="label has-text-blurple"><%= __("page.bots.website") %></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="website" value="<%= bot.website %>" placeholder="https://example.com">
+                    <input class="input is-rounded" type="text" name="website" value="<%= bot.website %>" placeholder="https://watchanimeattheoffice.com">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-globe"></i>
                     </span>
@@ -141,7 +140,7 @@
             <div class="field">
                 <label class="label has-text-blurple"><%= __("page.bots.donate") %></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="donationUrl" value="<%= bot.donationUrl %>" placeholder="https://example.com/givememoneyplsimbroke">
+                    <input class="input is-rounded" type="text" name="donationUrl" value="<%= bot.donationUrl %>" placeholder="https://bigbeans.solutions">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-dollar-sign"></i>
                     </span>
@@ -200,7 +199,7 @@
                         <i class="fas fa-cogs"></i>
                     </span>
                 </p>
-                <a href="https://docs.widgetbot.io/embed/crate/options/" target="_blank" rel="noopener" class="is-size-7 has-text-default"><%= __("common.widgetbot.form.docs") %></label>
+                <a href="https://docs.widgetbot.io/embed/crate/options/" target="_blank" rel="noopener" class="is-size-7 has-text-default"><%= __("common.widgetbot.form.docs") %></a>
             </div>
             <br />
             <br />
@@ -218,15 +217,15 @@
             <br />
             <div class="field">
                 <label class="label has-text-blurple"><%= __("page.bots.longDesc") %> (<%= bot.status.verified ? __("common.form.jsHtmlMarkdown") : __("common.form.htmlMarkdown") %>) <span class="has-text-danger">*</span></label>
-                <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
-                <input hidden name="longDescription" id="longDesc" />
+                <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:500px;"></div>
+                <textarea hidden name="longDescription" id="longDesc"><%- bot.longDescription %></textarea>
             </div>
             <br />
             <% if (bot.archived === true) { %>
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("page.bots.modNotes") %></label>
-                    <div onkeyup="monacoToField();" id="modNotesEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
-                    <textarea hidden name="modNotes" id="modNotes"></textarea>
+                    <div onkeyup="monacoToField();" id="modNotesEditor" class="editorBackdrop" style="width:99%;height:500px;"></div>
+                    <textarea hidden name="modNotes" id="modNotes"><%= bot.modNotes %></textarea>
                     <p style="padding: 5px;" class="is-size-7 has-text-magenta"><%= __("page.bots.modNotes.placeholder") %></p>
                 </div>
                 <br />
@@ -250,10 +249,10 @@
         </form>    
     </div>
 </div>
-<script type="text/javascript">var require={paths:{"vs":"/packages/monaco-editor/min/vs"}};</script>
+<script type="text/javascript">const require={paths:{"vs":"/packages/monaco-editor/min/vs"}};addEventListener('beforeunload',event=>{event.preventDefault();event.returnValue=''});</script>
 <script src="/packages/monaco-editor/min/vs/loader.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
 <script type="text/javascript">function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}</script>
-<script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{value:`<%- bot.longDescription %>`,language:"markdown"});var modNotesEditor=monaco.editor.create(document.getElementById("modNotesEditor"),{value:`<%= bot.modNotes %>`});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
+<script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{value:document.getElementById("longDesc").value,language:"markdown"});var modNotesEditor=monaco.editor.create(document.getElementById("modNotesEditor"),{value:document.getElementById("modNotes").value});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
 <%- include("../../partials/footer.ejs") %>

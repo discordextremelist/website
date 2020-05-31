@@ -18,11 +18,22 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const Eris = require("eris-additions")(require("eris"));
+const metrics = require("datadog-metrics");
 
 const settings = require("../../../settings.json");
 const prefix = "statuses";
 
-const bot = new Eris.Client(settings.client.token);
+metrics.init({ host: "", prefix: "", apiKey: settings.client.datadogKey });
+
+const bot = new Eris.Client(settings.client.token, {
+    guildSubscriptions: true,
+    getAllUsers: true,
+    allowedMentions: {
+        everyone: false,
+        roles: false,
+        users: false
+    }
+});
 
 bot.on("ready", async () => {
     console.log(`Discord: Connected as ${bot.user.tag} (${bot.user.id})`);
@@ -40,13 +51,16 @@ bot.on("presenceUpdate", async (other, oldPresence) => {
 
 bot.on("guildMemberAdd", async (guild, member) => {
     await global.redis.hmset(prefix, member.id, member.status || "offline");
-})
+
+    if (guild.id === settings.guild.main) await postMetric();
+});
 
 bot.on("guildMemberRemove", async (guild, member) => {
     if (guild.id === settings.guild.main) {
         await global.redis.hmset(prefix, member.id, "offline");
+        await postMetric();
     }
-})
+});
 
 async function getStatus(id) {
     const status = await global.redis.hget(prefix, id);
@@ -57,8 +71,13 @@ async function uploadStatuses() {
     await Promise.all(bot.guilds.map(async g => await global.redis.hmset(prefix, ...g.members.map(m => [m.id, m.status]))));
 }
 
+async function postMetric() {
+    const guild = await bot.guilds.get(settings.guild.main);
+    metrics.gauge('del.server.memberCount', guild.memberCount)
+}
+
 bot.connect();
 
 module.exports = {
-    bot, getStatus, uploadStatuses
+    bot, getStatus, uploadStatuses, postMetric
 };

@@ -1,0 +1,42 @@
+<style>
+    .del-http-get {
+        padding: 4px;
+        border-radius: 20px;
+    }
+    pre {
+        background: #0e0e0e;
+    }
+    code {
+        padding: 5px;
+    }
+    :not(pre) > code[class*="language-"], pre[class*="language-"] {
+        background: #0e0e0e;
+    }
+    .number {
+        align-items: inherit;
+        background-color: transparent;
+        border-radius: unset;
+        display: inline-flex;
+        font-size: inherit;
+        height: unset;
+        justify-content: inherit;
+        margin-right: unset;
+        min-width: unset;
+        padding: unset;
+        text-align: inherit;
+        vertical-align: inherit;
+    }
+</style>
+<% const apiBaseURL = "https://api.discordextremelist.xyz/v1" %>
+<div id="routes" style="display: none;">
+    <div>
+        <h5 style="is-size-5"><span class="has-background-link del-http-get"><%= __("docs.routes.get") %></span> <%= __("docs.routes.get.websiteStats") %></h3>
+        <code class="has-background-primary"><%= apiBaseURL %>/stats</code>
+        <br />
+        <br />
+        <h6 class="is-size-6">Response</h6>
+        <pre>
+            <code class="language-json"></code>
+        </pre>
+    </div>
+</div>

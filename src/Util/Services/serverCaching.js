@@ -40,7 +40,11 @@ async function updateServer(id) {
 async function uploadServers() {
     const servers = await app.db.collection("servers").find().toArray();
     if (servers.length < 1) return;
-    await global.redis.hmset(prefix, ...servers.map(s => [s.id, JSON.stringify(s)]));
+    await global.redis.hmset(prefix, ...servers.map(s => [s._id, JSON.stringify(s)]));
+}
+
+async function deleteServer(id) {
+    await global.redis.del(prefix, id);
 }
 
 setInterval(async () => {
@@ -48,5 +52,5 @@ setInterval(async () => {
 }, 900000);
 
 module.exports = {
-    getServer, getAllServers, updateServer, uploadServers
+    getServer, getAllServers, updateServer, uploadServers, deleteServer
 };

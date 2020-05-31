@@ -1,0 +1,31 @@
+<div id="examples" style="display: none;">
+    <h3 class="is-size-4">Node.JS using node-fetch</h3>
+    <pre>npm i node-fetch --save</pre>
+    <br />
+    <pre>
+        <code class="language-javascript">
+const fetch = require("node-fetch");
+
+const apiToken = "YOUR_API_TOKEN";
+const guildCount = 0; // Replace this with your guild count - Must be a valid int.
+const baseURL = "https://api.discordextremelist.xyz/v1"
+
+const headers = {
+    "Content-Type": "application/json",
+    "Authorization": apiToken
+};
+
+const body = {
+    "guildCount": guildCount
+};
+
+fetch(`${baseURL}/bot`, { method: "POST", headers: headers, body: body})
+    .then((res) => {
+        return res.json()
+})
+.then((json) => {
+    console.log(json);
+});
+    </code>
+    </pre>
+</div>

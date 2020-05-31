@@ -40,17 +40,17 @@
 <style type="text/css">.tag:not(body).is-default{background-color:<%= defaultColour %>;color:<%= foreground %>}</style>
 <section class="hero is-primary">
     <div class="hero-body">
-        <div class="container">
+        <div class="container is-fluid">
             <br />
             <div class="columns">
-                <div class="column is-2">
-                    <img class="image" title="<%= template.name %>'s Icon'" style="<% if (mobile) { %>display: block; margin-left: auto; margin-right: auto;<% } %> border-radius: 50%;" src="<%= template.icon.url %>.<%= imageFormat %>?size=128" alt="<%= template.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
+                <div class="column is-3">
+                    <img class="image" title="<%= template.name %>'s Icon'" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= template.icon.url %>.<%= imageFormat %>?size=512in:#testers ad" alt="<%= template.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
                 </div>
-                <div class="column is-10">
-                    <h1 class="is-size-1">
+                <div class="column is-9">
+                    <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
                         <span id="templateName"><%= template.name %></span>
                     </h1>
-                    <h2 class="subtitle"><%= template.shortDesc %></h2>
+                    <h2 class="subtitle <% if (mobile) { %>has-text-centered<% } %>"><%= template.shortDesc %></h2>
                     <% if (req.user) { %>
                         <div class="buttons <% if (mobile) { %>is-centered<% } %>">
                             <% if (template.owner.id === req.user.id) { %>
@@ -67,7 +67,7 @@
                                     <span><%= __("common.delete") %></span>
                                 </a>
                             <% } %>
-                            <% if (user.db.rank.mod && template.owner.id !== req.user.id) { %>
+                            <% if (user.db.rank.mod) { %>
                                 <div class="dropdown">
                                     <div class="dropdown-trigger">
                                         <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
@@ -86,10 +86,12 @@
                                                 <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
-                                            <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/edit">
-                                                <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
-                                                <span><%= __("common.edit") %></span>
-                                            </a>
+                                            <% if (req.user.db.rank.assistant === true) { %>
+                                                <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/edit">
+                                                    <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
+                                                    <span><%= __("common.edit") %></span>
+                                                </a>
+                                            <% } %>
                                             <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/remove">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                                 <span><%= __("common.staff.remove") %></span>
@@ -124,7 +126,116 @@
                     </div>
                     <% if (template.tags && template.tags.length > 0) { %>
                         <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
-                            <%- template.tags.map(tag => include("../../partials/tag.ejs", { tag })).join("") %>
+                            <% if (template.tags.includes("Gaming")) { %>
+                                <div class="control">
+                                    <p class="tag is-link">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.gaming") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (template.tags.includes("Music")) { %>
+                                <div class="control">
+                                    <p class="tag is-info">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.music") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (template.tags.includes("Media & Entertainment")) { %>
+                                <div class="control">
+                                    <p class="tag is-success">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.mediaEntertainment") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (template.tags.includes("Creative Arts")) { %>
+                                <div class="control">
+                                    <p class="tag is-orange">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.creativeArts") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (template.tags.includes("Science & Tech")) { %>
+                                <div class="control">
+                                    <span class="tag is-danger">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.scienceTech") %></span>
+                                    </span>
+                                </div>
+                            <% } %>
+                            <% if (template.tags.includes("Education")) { %>
+                                <div class="control">
+                                    <p class="tag is-magenta">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.education") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (template.tags.includes("Fashion & Beauty")) { %>
+                                <div class="control">
+                                    <p class="tag is-pink">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.fashionBeauty") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (template.tags.includes("Relationships & Identity")) { %>
+                                <div class="control">
+                                    <p class="tag is-link">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.relationshipIdentity") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (template.tags.includes("Fitness & Health")) { %>
+                                <div class="control">
+                                    <p class="tag is-info">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.fitnessHealth") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (template.tags.includes("Travel & Food")) { %>
+                                <div class="control">
+                                    <p class="tag is-success">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.travelFood") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (template.tags.includes("Finance")) { %>
+                                <div class="control">
+                                    <p class="tag is-orange">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.finance") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
                         </div>
                     <% } %>
                 </div>
@@ -155,16 +266,23 @@
         </ul>
         </div>
         <div class="column is-12 tabs-content">
-            <div class="tab-content is-active content" style="white-space: pre;">
+            <div class="tab-content is-active content" style="white-space: pre">
                 <%- longDesc %>
             </div>
             <div class="tab-content">
                 <div class="columns">
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
-                            <h4 class="is-size-4"><%= __("page.templates.channels") %></h4>
-                            <div id="collapsibleBody1">
-                                <div id="channelList">
+                            <h4 class="is-size-4" onclick="collapseToggle(document.getElementById('channelListBody'), document.getElementById('channelListArrow'));">
+                                <span><%= __("page.templates.channels") %></span>
+                                <% if (phone) { %>
+                                    <span>
+                                        <i id="channelListArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
+                                    </span>
+                                <% } %>
+                            </h4>
+                            <div id="channelListBody" class="is-hidden-mobile">
+                                <div id="channelList" style="margin-left: 5px">
                                     <%- template.channels.map(channel => include("../../partials/channels.ejs", { channel })).join("") %>
                                 </div>
                             </div>
@@ -172,9 +290,16 @@
                     </div>
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
-                            <h4 class="is-size-4"><%= __("page.templates.roles") %></h4>
-                            <div id="collapsibleBody2">
-                                <div id="channelList">
+                            <h4 class="is-size-4" onclick="collapseToggle(document.getElementById('rolesListBody'), document.getElementById('rolesArrow'));">
+                                <span><%= __("page.templates.roles") %></span>
+                                <% if (phone) { %>
+                                    <span>
+                                        <i id="rolesArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
+                                    </span>
+                                <% } %>
+                            </h4>
+                            <div id="rolesListBody" class="is-hidden-mobile">
+                                <div>
                                     <%- template.roles.reverse().filter(r => r.name !== '@everyone').map(role => include("../../partials/roles.ejs", { role })).join("") %>
                                 </div>
                             </div>
@@ -182,8 +307,15 @@
                     </div>
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
-                            <h4 class="is-size-4"><%= __("page.templates.otherInfo") %></h4>
-                            <div id="collapsibleBody3">
+                            <h4 class="is-size-4" onclick="collapseToggle(document.getElementById('optionsBody'), document.getElementById('optionsArrow'));">
+                                <span><%= __("page.templates.otherInfo") %></span>
+                                <% if (phone) { %>
+                                    <span>
+                                        <i id="optionsArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
+                                    </span>
+                                <% } %>
+                            </h4>
+                            <div id="optionsBody" class="is-hidden-mobile">
                                 <div id="otherInfo">
                                     <p><strong><%= __("page.templates.otherInfo.region") %></strong> <img src="https://discord.com/assets/<%= functions.regionIcon(template.region) %>.png" alt="" style="height: 1em; vertical-align: middle"> <%= functions.parseRegion(template.region) %></p>
                                     <p><strong><%= __("page.templates.otherInfo.afkTimeout") %></strong> <%= Math.floor(template.afkTimeout / 60) %>m</p>
@@ -227,10 +359,27 @@
     </div>
     <script type="text/javascript">document.querySelector("a#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
 </div>
-<% if (mobile) { %>
-    <style>#collapsibleBody1, #collapsibleBody2, #collapsibleBody3 { display: none }</style>
-    <script>
-        
+<% if (phone) { %>
+    <!-- <style>#collapsibleBody1, #collapsibleBody2, #collapsibleBody3 { display: none }</style> -->
+    <script type="text/javascript">
+        function collapseToggle(s, i) {
+            s
+                .classList
+                .contains("is-hidden-mobile")
+                ? s
+                    .classList
+                    .remove("is-hidden-mobile")
+                : s
+                    .classList
+                    .add("is-hidden-mobile"),
+            i
+                .classList
+                .contains("fa-chevron-left")
+                ? (i.classList.remove("fa-chevron-left"), i.classList.add("fa-chevron-down"))
+                : (i.classList.add("fa-chevron-left"), i.classList.remove("fa-chevron-down"))
+        }
+        // , i.style.right = "16px"
+        //, i.style.right = "18.4px"
     </script>
 <% } %>
 <script type="text/javascript">const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>

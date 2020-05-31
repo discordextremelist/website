@@ -28,6 +28,11 @@ async function getUser(id) {
     return JSON.parse(user);
 }
 
+async function getAllUsers() {
+    const users = await global.redis.hvals(prefix);
+    return users.map(JSON.parse);
+}
+
 async function updateUser(id) {
     const data = await app.db.collection("users").findOne({ _id: id });
     if (!data) return;
@@ -37,7 +42,11 @@ async function updateUser(id) {
 async function uploadUsers() {
     const usersDB = await app.db.collection("users").find().toArray();
     if (usersDB.length < 1) return;
-    await global.redis.hmset(prefix, ...usersDB.map(user => [user.id, JSON.stringify(user)]));
+    await global.redis.hmset(prefix, ...usersDB.map(user => [user._id, JSON.stringify(user)]));
+}
+
+async function deleteUser(id) {
+    await global.redis.del(prefix, id);
 }
 
 setInterval(async () => {
@@ -45,5 +54,5 @@ setInterval(async () => {
 }, 900000);
 
 module.exports = {
-    uploadUsers, updateUser, getUser
+    uploadUsers, updateUser, getUser, getAllUsers, deleteUser
 };

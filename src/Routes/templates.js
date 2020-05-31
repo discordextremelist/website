@@ -35,6 +35,8 @@ const userCache = require("../Util/Services/userCaching.js");
 const templateCache = require("../Util/Services/templateCaching.js");
 
 router.get("/submit", variables, permission.auth, (req, res, next) => {
+    res.locals.premidPageInfo = res.__("premid.templates.submit");
+
     res.render("templates/serverTemplates/submit", { 
         title: res.__("common.nav.me.submitTemplate"), 
         subtitle: res.__("common.nav.me.submitTemplate.subtitle"), 
@@ -43,6 +45,8 @@ router.get("/submit", variables, permission.auth, (req, res, next) => {
 });
 
 router.post("/submit", variables, permission.auth, async (req, res, next) => {
+    res.locals.premidPageInfo = res.__("premid.templates.submit");
+    
     let error = false;
     let errors = [];
     
@@ -235,6 +239,8 @@ router.get("/:id", variables, async (req, res, next) => {
             pageType: { template: false, bot: false, server: false }
         });
     }
+    
+    res.locals.premidPageInfo = res.__("premid.templates.view", template.name);
 
     let templateOwner = await userCache.getUser(template.owner.id);
     if (!templateOwner) {
@@ -283,6 +289,8 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
         type: "Error",
         req 
     }); 
+    
+    res.locals.premidPageInfo = res.__("premid.templates.edit", template.name);
 
     res.render("templates/serverTemplates/edit", { 
         title: res.__("page.templates.edit.title"), 
@@ -313,6 +321,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         type: "Error",
         req 
     }); 
+    
+    res.locals.premidPageInfo = res.__("premid.templates.edit", template.name);
 
     if (!req.body.code) {
         error = true;
@@ -501,17 +511,19 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
         req 
     }); 
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** deleted template **${functions.escapeFormatting(template.name)} \`(${template._id})\`**`);
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` deleted template **${functions.escapeFormatting(template.name)}** \`(${template._id})\``);
 
-    req.app.db.collection("templates").deleteOne({ _id: req.params.id });
+    await req.app.db.collection("templates").deleteOne({ _id: req.params.id });
 
-    req.app.db.collection("audit").insertOne({
+    await req.app.db.collection("audit").insertOne({
         type: "DELETE_TEMPLATE",
         executor: req.user.id,
         target: req.params.id,
         date: Date.now(),
         reason: "None specified."
     });
+    
+    await templateCache.deleteTemplate(req.params.id);
 
     res.redirect("/users/@me");
 });
@@ -526,6 +538,8 @@ router.get("/:id/remove", variables, permission.auth, permission.mod, async (req
         req,
         type: "Error"
     });
+    
+    res.locals.premidPageInfo = res.__("premid.templates.remove", template.name);
 
     res.render("templates/serverTemplates/staffActions/remove", { 
         title: res.__("page.servers.remove.title"), 
@@ -555,7 +569,7 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
         date: Date.now(),
         reason: req.body.reason || "None specified."
     });
-    await templateCache.updateTemplate(req.params.id);
+    await templateCache.deleteTemplate(req.params.id);
 
     discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` removed template **${functions.escapeFormatting(template.name)}** \`(${template._id})\`\n**Reason:** \`${req.body.reason}\``);
 

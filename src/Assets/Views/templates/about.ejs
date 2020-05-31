@@ -48,9 +48,9 @@
                 <%- staff.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("") %>
             </div>
             <br />
-            <h3 class="is-size-3"><%= __("page.about.boosters") %></h3>
+            <h3 class="is-size-3"><%= __("page.about.donators") %></h3>
             <div class="columns is-multiline">
-                <%- boosters.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("") %>
+                <%- donators.map(user => include("../partials/cards/aboutUserCard.ejs", { user })).join("") %>
             </div>
             <h3 class="is-size-3"><%= __("page.about.contributors") %></h3>
             <div class="columns is-multiline">

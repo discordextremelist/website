@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const app = require("../../../app.js");
+const functions = require("../Function/main.js");
 
 async function getFeaturedBots() {
     const bots = await global.redis.get("featured_bots");
@@ -29,24 +30,37 @@ async function getFeaturedServers() {
     return JSON.parse(servers);
 }
 
+async function getFeaturedTemplates() {
+    const templates = await global.redis.get("featured_templates");
+    return JSON.parse(templates);
+}
+
 async function updateFeaturedBots() {
-    const bots = (await app.db.collection("bots").aggregate({ $limit: 6 }).toArray()).filter(({status}) => status.approved && !status.siteBot && !status.archived);
+    const bots = (functions.shuffleArray((await app.db.collection("bots").find().toArray()).filter(({status}) => status.approved && !status.siteBot && !status.archived))).slice(0, 6);
     await global.redis.set("featured_bots", JSON.stringify(bots));
 }
 
 async function updateFeaturedServers() {
-    const servers = await app.db.collection("servers").aggregate({ $limit: 6 }).toArray();
+    const servers = (functions.shuffleArray(await app.db.collection("servers").find().toArray())).slice(0, 6);
     await global.redis.set("featured_servers", JSON.stringify(servers));
+}
+
+async function updateFeaturedTemplates() {
+    const templates = (functions.shuffleArray(await app.db.collection("templates").find().toArray())).slice(0, 6);
+    await global.redis.set("featured_templates", JSON.stringify(templates));
 }
 
 setInterval(async () => {
     await updateFeaturedBots();
     await updateFeaturedServers();
+    await updateFeaturedTemplates();
 }, 900000);
 
 module.exports = {
     getFeaturedBots,
     getFeaturedServers,
+    getFeaturedTemplates,
     updateFeaturedBots, 
-    updateFeaturedServers
+    updateFeaturedServers,
+    updateFeaturedTemplates
 };

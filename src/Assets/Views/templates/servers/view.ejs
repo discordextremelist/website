@@ -39,17 +39,17 @@
 <style type="text/css">h1{font-size:48px}h2{font-size:40px}h3{font-size:32px}h4{font-size:24px}h5{font-size:20px}h6{font-size:16px}strong{color:#fff}code{background-color:#1f1f1f}pre{color:#ff3860;background-color:#1f1f1f}table th{color:#d2d2d2}a:hover{color:#1c5abd}.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{color:#fff;font-weight:inherit}table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all;-webkit-overflow-scrolling:touch}blockquote{background-color:transparent!important;}</style>
 <section class="hero is-primary">
     <div class="hero-body">
-        <div class="container">
+        <div class="container is-fluid">
             <br />
             <div class="columns">
-                <div class="column is-2">
-                    <img class="image" title="<%= server.name %>'s Icon'" style="<% if (mobile) { %>display: block; margin-left: auto; margin-right: auto;<% } %> border-radius: 50%;" src="<%= server.icon.url %>.<%= imageFormat %>?size=128" alt="<%= server.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
+                <div class="column is-3">
+                    <img class="image" title="<%= server.name %>'s Icon'" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= server.icon.url %>.<%= imageFormat %>?size=512" alt="<%= server.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
                 </div>
-                <div class="column is-10">
-                    <h1 class="is-size-1">
+                <div class="column is-9">
+                    <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
                         <span id="serverName"><%= server.name %></span>
                     </h1>
-                    <h2 class="subtitle"><%= server.shortDesc %></h2>
+                    <h2 class="subtitle <% if (mobile) { %>has-text-centered<% } %>"><%= server.shortDesc %></h2>
                     <% if (req.user) { %>
                         <div class="buttons <% if (mobile) { %>is-centered<% } %>">
                             <% if (server.owner.id === req.user.id) { %>
@@ -66,38 +66,40 @@
                                     <span><%= __("common.delete") %></span>
                                 </a>
                             <% } %>
-                        </div>
-                        <% if (user.db.rank.mod && server.owner.id !== req.user.id) { %>
-                            <div class="dropdown">
-                                <div class="dropdown-trigger">
-                                    <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
-                                    <span class="icon">
-                                        <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
-                                    </span>
-                                    <span><%= __("common.staffManagement") %></span>
-                                    <span class="icon is-small">
-                                        <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
-                                    </span>
-                                    </button>
-                                </div>
-                                <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
-                                    <div class="dropdown-content">
-                                        <div class="dropdown-item">
-                                            <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
+                            <% if (req.user.db.rank.mod) { %>
+                                <div class="dropdown">
+                                    <div class="dropdown-trigger">
+                                        <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
+                                        </span>
+                                        <span><%= __("common.staffManagement") %></span>
+                                        <span class="icon is-small">
+                                            <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
+                                        </span>
+                                        </button>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
+                                        <div class="dropdown-content">
+                                            <div class="dropdown-item">
+                                                <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
+                                            </div>
+                                            <hr class="dropdown-divider">
+                                            <% if (req.user.db.rank.assistant === true) { %>
+                                                <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/edit">
+                                                    <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
+                                                    <span><%= __("common.edit") %></span>
+                                                </a>
+                                            <% } %>
+                                            <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/remove">
+                                                <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
+                                                <span><%= __("common.staff.remove") %></span>
+                                            </a>
                                         </div>
-                                        <hr class="dropdown-divider">
-                                        <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/edit">
-                                            <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
-                                            <span><%= __("common.edit") %></span>
-                                        </a>
-                                        <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/remove">
-                                            <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
-                                            <span><%= __("common.staff.remove") %></span>
-                                        </a>
                                     </div>
                                 </div>
-                            </div>
-                        <% } %> 
+                            <% } %> 
+                        </div>
                     <% } %>
                     <div class="buttons <% if (mobile) { %>is-centered<% } %>">
                         <% if (server.links.website) { %>
@@ -108,9 +110,9 @@
                                 <span><%= __("common.website") %></span>
                             </a>
                         <% } %>
-                        <a target="_blank" href="<%= server.links.invite %>" class="button is-info">
+                        <a target="_blank" rel="noopener" href="<%= server.links.invite %>" class="button is-info">
                             <span class="icon">
-                                <i aria-hidden="true" class="fas fa-plus"></i>
+                                <i aria-hidden="true" class="fas fa-users-medical"></i>
                             </span>
                             <span><%= __("common.join") %></span>
                         </a>
@@ -133,7 +135,116 @@
                     </div>
                     <% if (server.tags && server.tags.length > 0) { %>
                         <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
-                            <%- server.tags.map(tag => include("../../partials/tag.ejs", { tag })).join("") %>
+                            <% if (server.tags.includes("Gaming")) { %>
+                                <div class="control">
+                                    <p class="tag is-link">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.gaming") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (server.tags.includes("Music")) { %>
+                                <div class="control">
+                                    <p class="tag is-info">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.music") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (server.tags.includes("Media & Entertainment")) { %>
+                                <div class="control">
+                                    <p class="tag is-success">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.mediaEntertainment") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (server.tags.includes("Creative Arts")) { %>
+                                <div class="control">
+                                    <p class="tag is-orange">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.creativeArts") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (server.tags.includes("Science & Tech")) { %>
+                                <div class="control">
+                                    <span class="tag is-danger">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.scienceTech") %></span>
+                                    </span>
+                                </div>
+                            <% } %>
+                            <% if (server.tags.includes("Education")) { %>
+                                <div class="control">
+                                    <p class="tag is-magenta">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.education") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (server.tags.includes("Fashion & Beauty")) { %>
+                                <div class="control">
+                                    <p class="tag is-pink">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.fashionBeauty") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (server.tags.includes("Relationships & Identity")) { %>
+                                <div class="control">
+                                    <p class="tag is-link">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.relationshipIdentity") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (server.tags.includes("Fitness & Health")) { %>
+                                <div class="control">
+                                    <p class="tag is-info">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.fitnessHealth") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (server.tags.includes("Travel & Food")) { %>
+                                <div class="control">
+                                    <p class="tag is-success">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.travelFood") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
+                            <% if (server.tags.includes("Finance")) { %>
+                                <div class="control">
+                                    <p class="tag is-orange">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-tag"></i>
+                                        </span>
+                                        <span><%= __("common.tags.finance") %></span>
+                                    </p>
+                                </div>
+                            <% } %>
                         </div>
                     <% } %>
                 </div>
@@ -142,7 +253,7 @@
     </div>
 </section> 
 <div class="container" style="overflow: hidden;">
-    <div id="content" class="section content" style="white-space: pre;"><%- longDesc || __("page.servers.longDesc.unavailable") %></div>
+    <div id="content" class="section content" style="white-space: pre;"><%- longDesc || __("common.longDesc.unavailable") %></div>
 </div>
 <div class="modal deleteModal">
     <div class="modal-background"></div>
@@ -151,7 +262,7 @@
             <p class="modal-card-title has-text-danger"><%= __("common.warning") %></p>
         </header>
         <section class="modal-card-body has-text-danger">
-            <%= __("page.servers.warning.delete") %>
+            <%= __("common.warning.delete") %>
         </section>
         <footer class="modal-card-foot">
             <div class="buttons">

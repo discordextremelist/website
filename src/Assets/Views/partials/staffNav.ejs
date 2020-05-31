@@ -56,15 +56,20 @@
                 <span><%= __("common.search") %></span>
             </a>
 
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
+            <div <% if (phone) { %>onclick="display(document.getElementById('moreDropdown'), document.getElementById('moreDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>">
                     <span class="icon iconalign">
                         <i class="fad fa-sitemap" aria-hidden="true"></i>
                     </span>
                     <span><%= __("common.nav.more") %></span>
+                    <% if (phone) { %>
+                        <span>
+                            <i id="moreDropdownArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
+                        </span>
+                    <% } %>
                 </a>
 
-                <div class="navbar-dropdown is-hidden-mobile">
+                <div id="moreDropdown" class="navbar-dropdown is-hidden-mobile">
                     <a class="navbar-item" href="<%= discordServer %>">
                         <span class="icon iconalign">
                             <i class="fab fa-discord" aria-hidden="true"></i>
@@ -75,7 +80,7 @@
                         <span class="icon iconalign">
                             <i class="fad fa-books" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("common.nav.more.discord") %></span>
+                        <span><%= __("common.nav.more.docs") %></span>
                     </a>
                     <a class="navbar-item" href="<%= linkPrefix %>/about">
                         <span class="icon iconalign">
@@ -114,15 +119,20 @@
         </div>
 
         <div class="navbar-end">
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
+            <div <% if (phone) { %>onclick="display(document.getElementById('staffPanelDropdown'), document.getElementById('staffPanelDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>">
                     <span class="icon iconalign">
                         <i class="fad fa-cogs" aria-hidden="true"></i>
                     </span>
                     <span><%= __("common.nav.me.staffPanel") %></span>
+                    <% if (phone) { %>
+                        <span>
+                            <i id="staffPanelDropdownArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
+                        </span>
+                    <% } %>
                 </a>
 
-                <div class="navbar-dropdown is-hidden-mobile">
+                <div id="staffPanelDropdown" class="navbar-dropdown is-hidden-mobile">
                     <a class="navbar-item" href="<%= linkPrefix %>/staff">
                         <span class="icon iconalign">
                             <i class="fad fa-house" aria-hidden="true"></i>
@@ -133,12 +143,24 @@
                             <span><%= __("common.nav.me.staffPanel.home.desktop") %></span>
                         <% } %>
                     </a>
+                    <a class="navbar-item" href="<%= linkPrefix %>/staff/queue">
+                        <span class="icon iconalign">
+                            <i class="fad fa-list-ul" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("page.staff.queue") %></span>
+                    </a>
                     <% if (req.user.db.rank.assistant === true) { %>  
                         <a class="navbar-item" href="<%= linkPrefix %>/staff/staff-manager">
                             <span class="icon iconalign">
                                 <i class="fad fa-users-cog" aria-hidden="true"></i>
                             </span>
                             <span><%= __("page.staff.manager") %></span>
+                        </a>
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/audit">
+                            <span class="icon iconalign">
+                                <i class="fad fa-archive" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("page.staff.audit") %></span>
                         </a>
                         <a class="navbar-item" href="<%= linkPrefix %>/staff/announce">
                             <span class="icon iconalign">
@@ -147,24 +169,37 @@
                             <span><%= __("page.staff.announcer") %></span>
                         </a>
                     <% } %>
+                    <% if (req.user.db.rank.admin === true) { %>
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/site-manager">
+                            <span class="icon iconalign">
+                                <i class="fad fa-terminal" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("page.staff.site-manager") %></span>
+                        </a>
+                    <% } %>
                 </div>
             </div>
 
             <% if (req.user) { %>
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
+                <div <% if (phone) { %>onclick="display(document.getElementById('userDropdown'), document.getElementById('userDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>">
                         <img style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>?size=256" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>" draggable="false">
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
+                        <% if (phone) { %>
+                            <span>
+                                <i id="userDropdownArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
                     </a>
 
-                    <div class="navbar-dropdown is-hidden-mobile is-right">
+                    <div id="userDropdown" class="navbar-dropdown is-hidden-mobile is-right">
                         <a class="navbar-item" href="<%= linkPrefix %>/users/@me">
                             <span class="icon iconalign">
                                 <i class="fad fa-user fa-swap-opacity" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.profile") %></span>
                         </a>
-                        <a class="navbar-item" href=">%= linkPrefix %>/users/account/preferences">
+                        <a class="navbar-item" href="<%= linkPrefix %>/users/account/preferences">
                             <span class="icon iconalign">
                                 <i class="fad fa-swatchbook" aria-hidden="true"></i>
                             </span>
@@ -203,3 +238,4 @@
         </div>
     </div>
 </nav>
+<div id="siteContent">

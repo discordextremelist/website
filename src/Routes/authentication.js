@@ -27,163 +27,190 @@ const Strategy = require("passport-discord").Strategy;
 const settings = require("../../settings.json");
 const ddosMode = require("../Util/Services/ddosMode.js");
 
-passport.use(new Strategy ({
-    clientID: settings.client.id,
-    clientSecret: settings.client.secret,
-    callbackURL: settings.website.url + settings.website.callback,
-    scope: settings.website.authScopes,
-    authorizationURL: "https://discord.com/oauth2/authorize?prompt=none"
-}, (accessToken, refreshToken, profile, done) => {
-    process.nextTick(() => {
-        return done(null, profile);
-    });
-}));
+passport.use(
+    new Strategy(
+        {
+            clientID: settings.client.id,
+            clientSecret: settings.client.secret,
+            callbackURL: settings.website.url + settings.website.callback,
+            scope: settings.website.authScopes,
+            authorizationURL: "https://discord.com/oauth2/authorize?prompt=none"
+        },
+        (accessToken, refreshToken, profile, done) => {
+            process.nextTick(() => {
+                return done(null, profile);
+            });
+        }
+    )
+);
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
 router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({
-    extended: true
-}));
+router.use(
+    bodyParser.urlencoded({
+        extended: true
+    })
+);
 
-router.get("*", async (req, res, next) => {
-    if (ddosMode.getDDOSMode().active === false) {
-        next();
-    } else {
-        return res.status(403).json({ message: "fuckign ddos moade cunt" });
-    }
-});
-
-router.get("/session", (req, res, next) => {
-    res.json(req.user.db);
-});
+// router.get("*", async (req, res, next) => {
+//     if (ddosMode.getDDOSMode().active === false) {
+//         next();
+//     } else {
+//         return res.status(403).json({ message: "fuckign ddos moade cunt" });
+//     }
+// });
 
 router.get("/login", passport.authenticate("discord"));
 
-router.get("/login/callback", passport.authenticate("discord", { failureRedirect: "/login" }), async (req, res, next) => {
-    const user = await req.app.db.collection("users").findOne({ _id: req.user.id });
+router.get(
+    "/login/callback",
+    passport.authenticate("discord", { failureRedirect: "/login" }),
+    async (req, res, next) => {
+        const user = await req.app.db
+            .collection("users")
+            .findOne({ _id: req.user.id });
 
-    if (!user) {
-        await req.app.db.collection("users").insertOne({
-            _id: req.user.id,
-            token: req.user.accessToken,
-            name: req.user.username,
-            discrim: req.user.discriminator,
-            fullUsername: req.user.username + "#" + req.user.discriminator,
-            locale: req.user.locale,
-            avatar: {
-                hash: req.user.avatar,
-                url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
-            },
-            preferences: {
-                customGlobalCss: "",
-                defaultColour: "#b114ff",
-                defaultForegroundColour: "#ffffff",
-                enableGames: true,
-                experiments: false
-            },
-            profile: {
-                bio: "",
-                css: "",
-                links: {
-                    website: "",
-                    github: "",
-                    gitlab: "",
-                    twitter: "",
-                    instagram: "",
-                    snapchat: ""
-                }
-            },
-            game: {
-                snakes: {
-                    maxScore: 0
-                }
-            },
-            rank: {
-                admin: false,
-                assistant: false,
-                mod: false,
-                verified: false,
-                tester: false,
-                translator: false,
-                covid: false
-            },
-            staffTracking: {
-                details: {
-                    away: {
-                        status: false,
-                        message: ""
-                    },
-                    standing: "Unmeasured",
-                    country: "",
-                    timezone: "",
-                    managementNotes: "",
-                    languages: []
+        if (!user) {
+            await req.app.db.collection("users").insertOne({
+                _id: req.user.id,
+                token: req.user.accessToken,
+                name: req.user.username,
+                discrim: req.user.discriminator,
+                fullUsername: req.user.username + "#" + req.user.discriminator,
+                locale: req.user.locale,
+                flags: req.user.flags,
+                avatar: {
+                    hash: req.user.avatar,
+                    url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
                 },
-                lastLogin: 0,
-                lastAccessed: {
-                    time: 0,
-                    page: ""
+                preferences: {
+                    customGlobalCss: "",
+                    defaultColour: "#b114ff",
+                    defaultForegroundColour: "#ffffff",
+                    enableGames: true,
+                    experiments: false
                 },
-                punishments: {
-                    strikes: [],
-                    warnings: []
-                },
-                handledBots: {
-                    allTime: {
-                        total: 0,
-                        approved: 0,
-                        declined: 0
-                    },
-                    prevWeek: {
-                        total: 0,
-                        approved: 0,
-                        declined: 0
-                    },
-                    thisWeek: {
-                        total: 0,
-                        approved: 0,
-                        declined: 0
+                profile: {
+                    bio: "",
+                    css: "",
+                    links: {
+                        website: "",
+                        github: "",
+                        gitlab: "",
+                        twitter: "",
+                        instagram: "",
+                        snapchat: ""
                     }
-                }
-            }
-        })
-    } else {
-        if (user.rank.mod === true) {
-            await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
-                { $set: {
-                    token: req.user.accessToken,
-                    name: req.user.username,
-                    discrim: req.user.discriminator,
-                    fullUsername: req.user.username + "#" + req.user.discriminator,
-                    locale: req.user.locale,
-                    avatar: {
-                        hash: req.user.avatar,
-                        url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
+                },
+                game: {
+                    snakes: {
+                        maxScore: 0
+                    }
+                },
+                rank: {
+                    admin: false,
+                    assistant: false,
+                    mod: false,
+                    verified: false,
+                    tester: false,
+                    translator: false,
+                    covid: false
+                },
+                staffTracking: {
+                    details: {
+                        away: {
+                            status: false,
+                            message: ""
+                        },
+                        standing: "Unmeasured",
+                        country: "",
+                        timezone: "",
+                        managementNotes: "",
+                        languages: []
                     },
-                    "staffTracking.lastLogin": Date.now()
+                    lastLogin: 0,
+                    lastAccessed: {
+                        time: 0,
+                        page: ""
+                    },
+                    punishments: {
+                        strikes: [],
+                        warnings: []
+                    },
+                    handledBots: {
+                        allTime: {
+                            total: 0,
+                            approved: 0,
+                            declined: 0,
+                            remove: 0
+                        },
+                        prevWeek: {
+                            total: 0,
+                            approved: 0,
+                            declined: 0,
+                            remove: 0
+                        },
+                        thisWeek: {
+                            total: 0,
+                            approved: 0,
+                            declined: 0,
+                            remove: 0
+                        }
+                    }
                 }
             });
         } else {
-            await req.app.db.collection("users").updateOne({ _id: req.user.id }, 
-                { $set: {
-                    token: req.user.accessToken,
-                    name: req.user.username,
-                    discrim: req.user.discriminator,
-                    fullUsername: req.user.username + "#" + req.user.discriminator,
-                    locale: req.user.locale,
-                    avatar: {
-                        hash: req.user.avatar,
-                        url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
+            if (user.rank.mod === true) {
+                await req.app.db.collection("users").updateOne(
+                    { _id: req.user.id },
+                    {
+                        $set: {
+                            token: req.user.accessToken,
+                            name: req.user.username,
+                            discrim: req.user.discriminator,
+                            fullUsername:
+                                req.user.username +
+                                "#" +
+                                req.user.discriminator,
+                            locale: req.user.locale,
+                            flags: req.user.flags,
+                            avatar: {
+                                hash: req.user.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
+                            },
+                            "staffTracking.lastLogin": Date.now()
+                        }
                     }
-                }
-            });
+                );
+            } else {
+                await req.app.db.collection("users").updateOne(
+                    { _id: req.user.id },
+                    {
+                        $set: {
+                            token: req.user.accessToken,
+                            name: req.user.username,
+                            discrim: req.user.discriminator,
+                            fullUsername:
+                                req.user.username +
+                                "#" +
+                                req.user.discriminator,
+                            locale: req.user.locale,
+                            flags: req.user.flags,
+                            avatar: {
+                                hash: req.user.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
+                            }
+                        }
+                    }
+                );
+            }
         }
-    }
 
-    res.redirect(req.session.redirectTo || "/");
-});
+        res.redirect(req.session.redirectTo || "/");
+    }
+);
 
 router.get("/logout", async (req, res, next) => {
     if (!req.user.impersonator) {
@@ -191,6 +218,7 @@ router.get("/logout", async (req, res, next) => {
         res.redirect(req.session.redirectTo || "/");
     } else {
         req.user.id = req.user.impersonator;
+        req.user.impersonator = undefined;
         res.redirect("/");
     }
 });

@@ -25,6 +25,10 @@ const ddosMode = require("../Services/ddosMode.js");
 const announcementCache = require("../Services/announcementCaching.js");
 
 const variables = async(req, res, next) => {
+    if (req.originalUrl.includes("?setLang=t")) {
+        return res.redirect(req.originalUrl.replace("?setLang=t", ""));
+    }
+
     req.browser = browser(req.headers["user-agent"]);
     res.locals.browser = req.browser;
     res.locals.requestedAt = Date.now();
@@ -41,6 +45,7 @@ const variables = async(req, res, next) => {
     req.del = releaseInfo;
     req.del.node = "us-node"; // will be updated in a bit:tm: (*cough* spoiler)
     res.locals.colour = colour;
+    res.locals.premidPageInfo = "";
 
     res.locals.pageType = {
         server: false,
@@ -52,15 +57,20 @@ const variables = async(req, res, next) => {
         facebook: "https://facebook.com/DiscordExtremeList",
         twitter: "https://twitter.com/@ExtremeList",
         instagram: "https://www.instagram.com/discordextremelist/",
-        github: "https://github.com/discordextremelist"
+        github: "https://github.com/discordextremelist",
+        patreon: "https://www.patreon.com/discordextremelist"
     }
 
     res.locals.discordServer = "https://discord.gg/WeCer3J";
 
     if (req.device.type === "tablet" || req.device.type === "phone") {
         res.locals.mobile = true;
+        req.device.type === "phone" ? res.locals.phone = true : res.locals.phone = false;
+        req.device.type === "tablet" ? res.locals.tablet = true : res.locals.tablet = false;
     } else {
         res.locals.mobile = false;
+        res.locals.phone = false;
+        res.locals.tablet = false;
     }
 
     if (req.browser.name === "firefox" || req.browser.name === "opera" && req.browser.os === "Android" && req.browser.versionNumber < 46 || req.browser.name === "safari" && req.browser.versionNumber < 11.3 && req.get("User-Agent").toLowerCase().includes("kaios")) {

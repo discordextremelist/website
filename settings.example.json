@@ -9,13 +9,14 @@
     "client": {
         "id": "",
         "token": "",
-        "secret": ""
+        "secret": "",
+        "datadogKey": ""
     },
     "website": {
         "locales": {
             "default": "en-NZ",
-            "all": ["en-NZ", "en-UK"],
-            "isntLocale": ["search", "bots", "servers", "templates", "users", "staff", "terms", "privacy", "guidelines", "widgetbot", "about"]
+            "all": ["en-NZ", "en-GB", "en-US", "de-DE", "es-ES", "he-IL", "hu-HU", "it-IT"],
+            "isntLocale": ["search", "bots", "servers", "templates", "users", "staff", "terms", "privacy", "guidelines", "widgetbot", "about", "docs"]
         },
         "secrets": {
             "cookie": ""
@@ -35,19 +36,23 @@
     },
     "channels": {
         "webLog": "",
-        "default": ""
+        "default": "",
+        "docsDefault": ""
     },
     "roles": {
         "unapprovedBot": "",
         "bot": "",
-        "verifiedBot": "",
+        "premiumBot": "",
         "serverOwner": "",
         "developer": "",
-        "verifiedDeveloper": "",
         "staff": "",
         "mod": "",
+        "assistant": "",
         "admin": "",
-        "everyoneping": "",
+        "testers": "",
+        "translators": "",
+        "booster": "",
+        "donator": "",
         "staffServer": {
             "mod": ""
         }

@@ -1,6 +1,6 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
-<link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script>
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
@@ -28,10 +28,10 @@
 <div class="container">
     <div class="section">
         <form id="form" method="POST">
-            <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.generalInfo") %></h3>
+            <h3 class="is-size-3 has-text-default"><%= __("page.form.category.generalInfo") %></h3>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.generalInfo.id") %> <span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span></label>
+                <label class="label has-text-default"><%= __("page.bots.generalInfo.id") %> <span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span></label>
                 <p class="control has-icons-left has-icons-right" required>
                     <input class="input is-rounded" type="text" name="id" value="<%= bot._id %>" placeholder="568254611354419211" readonly>
                     <span class="icon is-small is-left">
@@ -41,7 +41,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.generalInfo.editors") %> <span class="has-text-default">(<%= __("common.form.spaceSeparated") %>)</span></label>
+                <label class="label has-text-default"><%= __("page.bots.generalInfo.editors") %> <span class="has-text-default">(<%= __("common.form.spaceSeparated") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="editors" value="<%= bot.editors %>" placeholder="<%= __("page.bots.generalInfo.editors.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -52,7 +52,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.generalInfo.prefix") %> <span class="has-text-danger">*</span></label>
+                <label class="label has-text-default"><%= __("page.bots.generalInfo.prefix") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right" required>
                     <input class="input is-rounded" type="text" value="<%= bot.prefix %>" name="prefix" placeholder="!">
                     <span class="icon is-small is-left">
@@ -62,7 +62,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.generalInfo.library") %> <span class="has-text-danger">*</span></label>
+                <label class="label has-text-default"><%= __("page.bots.generalInfo.library") %> <span class="has-text-danger">*</span></label>
                 <div class="control has-icons-left">
                     <div class="select is-rounded">
                         <select name="library" required>
@@ -77,7 +77,7 @@
                 </div>
             </div>
             <br />
-            <label class="label has-text-blurple"><%= __("common.tags") %></label>
+            <label class="label has-text-default"><%= __("common.tags") %></label>
             <div class="field">
                 <input class="is-checkradio is-circle has-background-color is-link" type="checkbox" id="fun" name="fun" <% if (bot.tags && bot.tags.includes("Fun")) { %>checked="checked"<% } %>>
                 <label class="has-text-link" for="fun"><%= __("page.bots.tag.fun") %></label>
@@ -108,10 +108,10 @@
             </div>
             <br />
             <br />
-            <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.links") %></h3>
+            <h3 class="is-size-3 has-text-default"><%= __("page.form.category.links") %></h3>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.invite") %></label>
+                <label class="label has-text-default"><%= __("page.bots.invite") %></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="invite" value="<%= bot.links.invite %>" placeholder="<%= __("page.bots.invite.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -121,9 +121,9 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.website") %></label>
+                <label class="label has-text-default"><%= __("page.bots.website") %></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="website" value="<%= bot.links.website %>" placeholder="https://example.com">
+                    <input class="input is-rounded" type="text" name="website" value="<%= bot.links.website %>" placeholder="https://watchanimeattheoffice.com">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-globe"></i>
                     </span>
@@ -131,9 +131,9 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.donate") %></label>
+                <label class="label has-text-default"><%= __("page.bots.donate") %></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" name="donationUrl" value="<%= bot.links.donate %>" placeholder="https://example.com/givememoneyplsimbroke">
+                    <input class="input is-rounded" type="text" name="donationUrl" value="<%= bot.links.donation %>" placeholder="https://bigbeans.solutions">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-dollar-sign"></i>
                     </span>
@@ -141,7 +141,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.supportServer") %></label>
+                <label class="label has-text-default"><%= __("page.bots.supportServer") %></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="supportServer" value="<%= bot.links.support %>" placeholder="https://discord.gg/someawesumsupportservhor">
                     <span class="icon is-small is-left">
@@ -151,7 +151,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.git") %></label>
+                <label class="label has-text-default"><%= __("page.bots.git") %></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="repo" value="<%= bot.links.repo %>" placeholder="https://github.com/awsumpersunorpage/awsumrepo">
                     <span class="icon is-small is-left">
@@ -161,11 +161,11 @@
             </div>
             <br />
             <br />
-            <h3 class="is-size-3 has-text-blurple"><%= __("common.widgetbot") %></h3>
+            <h3 class="is-size-3 has-text-default"><%= __("common.widgetbot") %></h3>
             <h4 class="is-size-6"><a class="has-text-grey-lighter" rel="noopener" target="_blank" onclick="inviteWB(window, 350, 600);"><%= __("common.widgetbot.invite") %></a></h4>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.widgetbot.form.guildID") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
+                <label class="label has-text-default"><%= __("common.widgetbot.form.guildID") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="widgetServer" value="<%= bot.widgetbot.server %>" placeholder="568567800910839811">
                     <span class="icon is-small is-left">
@@ -175,7 +175,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.widgetbot.form.channelID") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
+                <label class="label has-text-default"><%= __("common.widgetbot.form.channelID") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="widgetChannel" value="<%= bot.widgetbot.channel %>" placeholder="625554238596186112">
                     <span class="icon is-small is-left">
@@ -185,7 +185,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.widgetbot.form.moreOptions") %></label>
+                <label class="label has-text-default"><%= __("common.widgetbot.form.moreOptions") %></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="widgetOptions" value="<%= bot.widgetbot.options %>" placeholder="">
                     <span class="icon is-small is-left">
@@ -196,10 +196,10 @@
             </div>
             <br />
             <br />
-            <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.descriptions") %></h3>
+            <h3 class="is-size-3 has-text-default"><%= __("page.form.category.descriptions") %></h3>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.shortDesc") %> <span class="has-text-danger">*</span></label>
+                <label class="label has-text-default"><%= __("page.bots.shortDesc") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="shortDescription" value="<%= bot.shortDesc %>" placeholder="<%= __("page.bots.shortDesc.placeholder") %>" required>
                     <span class="icon is-small is-left">
@@ -209,15 +209,15 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.bots.longDesc") %> (<%= bot.status.verified ? __("common.form.jsHtmlMarkdown") : __("common.form.htmlMarkdown") %>)<span class="has-text-danger">*</span></label>
-                <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
-                <textarea hidden name="longDescription" id="longDesc" required></textarea>
+                <label class="label has-text-default"><%= __("page.bots.longDesc") %> (<%= bot.status.verified ? __("common.form.jsHtmlMarkdown") : __("common.form.htmlMarkdown") %>)<span class="has-text-danger">*</span></label>
+                <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:500px;"></div>
+                <textarea hidden name="longDescription" id="longDesc" required><%- longDesc %></textarea>
             </div>
             <br />
             <% if (bot.archived === true) { %>
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("page.bots.modNotes") %></label>
-                    <div onkeyup="monacoToField();" id="modNotesEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
+                    <label class="label has-text-default"><%= __("page.bots.modNotes") %></label>
+                    <div onkeyup="monacoToField();" id="modNotesEditor" class="editorBackdrop" style="width:99%;height:500px;"></div>
                     <textarea hidden name="modNotes" id="modNotes"></textarea>
                     <p style="padding: 5px;" class="is-size-7 has-text-default">
                         <%= __("page.bots.modNotes.placeholder") %>
@@ -244,10 +244,10 @@
         </form>    
     </div>
 </div>
-<script type="text/javascript">var require={paths:{"vs":"/packages/monaco-editor/min/vs"}};</script>
+<script type="text/javascript">const require={paths:{"vs":"/packages/monaco-editor/min/vs"}};addEventListener('beforeunload',event=>{event.preventDefault();event.returnValue=''});</script>
 <script src="/packages/monaco-editor/min/vs/loader.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
 <script type="text/javascript">function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}</script> 
-<script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"vs-dark",value:`<%- longDesc %>`,language:"markdown"});var modNotesEditor=monaco.editor.create(document.getElementById("modNotesEditor"), {theme:"vs-dark"});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}</script>
+<script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"vs-dark",value:document.getElementById("longDesc").value,language:"markdown"});var modNotesEditor=monaco.editor.create(document.getElementById("modNotesEditor"), {theme:"vs-dark"});function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}</script>
 <%- include("../../partials/footer.ejs") %>

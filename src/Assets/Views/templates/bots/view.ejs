@@ -29,10 +29,10 @@
 <style type="text/css">h1{font-size:48px}h2{font-size:40px}h3{font-size:32px}h4{font-size:24px}h5{font-size:20px}h6{font-size:16px}strong{color:#fff}code{background-color:#1f1f1f}pre{color:#ff3860;background-color:#1f1f1f}table th{color:#d2d2d2}a:hover{color:#1c5abd}.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{color:#fff;font-weight:inherit}table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all;-webkit-overflow-scrolling:touch}blockquote{background-color:transparent!important;}</style>
 <section class="hero is-primary">
     <div class="hero-body">
-        <div class="container">
+        <div class="container is-fluid">
             <br />
             <div class="columns">
-                <div class="column is-2">
+                <div class="column is-3">
                     <% 
                         let statusInfo;
                         if (botStatus === "online") statusInfo = __("page.bots.status.online")
@@ -40,14 +40,20 @@
                         if (botStatus === "dnd") statusInfo = __("page.bots.status.dnd")
                         if (botStatus === "offline") statusInfo = __("page.bots.status.offline")
                     %> 
-                    <img class="image" title="<%= statusInfo %>" style="<% if (mobile) { %>display: block; margin-left: auto; margin-right: auto;<% } %> border-radius: 50%; animation: <%= botStatus %> 2s infinite !important;" src="<%= bot.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= bot.name %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');" draggable="false">
+                    <img class="image" title="<%= statusInfo %>" style="margin: auto; width: 128px; border-radius: 50%; animation: <%= botStatus %> 2s infinite !important;" src="<%= bot.avatar.url %>.<%= imageFormat %>?size=512" alt="<%= bot.name %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');">
                 </div>
-            <div class="column is-10 <% if (mobile) { %>has-text-centered<% } %>">
+            <div class="column is-9<% if (mobile) { %> has-text-centered<% } %>">
                     <h1 class="is-size-1">
                         <span id="botName"><%= bot.name %></span>
-                        <% if (bot.status.verified === true) { %>
+                        <% if (Boolean(bot.flags & (1 << 16))) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.verified.bot") %>" class="icon is-medium is-size-3 iconalign">
                                 <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
+                            </span>
+                        <% } %>
+
+                        <% if (bot.status.premium === true) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.rank.premium.bot") %>" class="icon is-medium is-size-3 iconalign">
+                                <i aria-hidden="true" class="fad fa-star has-text-warning fa-1x"></i>
                             </span>
                         <% } %>
 
@@ -150,17 +156,23 @@
                                     </div>
                                     <hr class="dropdown-divider">
                                     <% if (user.db.rank.assistant === true) { %>
-                                        <% if (bot.status.verified === false) { %>
-                                            <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/verify">
-                                                <span class="icon"><i aria-hidden="true" class="fas fa-badge-check"></i></span>
-                                                <span><%= __("common.staff.verify") %></span>
+                                        <% if (bot.status.premium === false) { %>
+                                            <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/give-premium">
+                                                <span class="icon"><i aria-hidden="true" class="fas fa-heart"></i></span>
+                                                <span><%= __("common.staff.givePremium") %></span>
                                             </a>
                                         <% } else { %>
-                                            <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/unverify">
-                                                <span class="icon"><i aria-hidden="true" class="fas fa-badge"></i></span>
-                                                <span><%= __("common.staff.unverify") %></span>
+                                            <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/take-premium">
+                                                <span class="icon"><i aria-hidden="true" class="fas fa-heart-broken"></i></span>
+                                                <span><%= __("common.staff.takePremium") %></span>
                                             </a>
                                         <% } %>
+                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/edit">
+                                            <span class="icon">
+                                                <i aria-hidden="true" class="fas fa-pencil"></i>
+                                            </span>
+                                            <span><%= __("common.edit") %></span>
+                                        </a>
                                     <% } %>
                                     <% if (bot.status.approved === true) { %>
                                         <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/remove">
@@ -200,7 +212,7 @@
                                 <span><%= __("common.website") %></span>
                             </a>
                         <% } %>
-                        <a target="_blank" href="<%= linkPrefix %>/bots/<%= bot._id %>/invite" class="button is-info">
+                        <a target="_blank" rel="noopener" href="<%= bot.links.invite %>" class="button is-info">
                             <span class="icon">
                                 <i aria-hidden="true" class="fas fa-plus"></i>
                             </span>
@@ -217,7 +229,7 @@
                         <% if (bot.links.repo) { %>
                             <a target="_blank" rel="noopener" href="<%= bot.links.repo %>" class="button is-orange">
                                 <span class="icon">
-                                    <i aria-hidden="true" class="fas fa-code-branch"></i>
+                                    <i aria-hidden="true" class="fas fa-code"></i>
                                 </span>
                                 <span><%= __("page.bots.git.view") %></span>
                             </a>
@@ -225,7 +237,7 @@
                         <% if (bot.links.support) { %>
                             <a target="_blank" rel="noopener" href="<%= bot.links.support %>" class="button is-danger">
                                 <span class="icon">
-                                    <i aria-hidden="true" class="fas fa-heart"></i>
+                                    <i aria-hidden="true" class="fas fa-user-headset"></i>
                                 </span>
                                 <span><%= __("page.bots.supportServer.view") %></span>
                             </a>
@@ -250,12 +262,14 @@
                                 <span class="tag is-success"><% if (bot.serverCount !== 0) { %><%= bot.serverCount %><% } else { %>???<% } %></span>
                             </div>
                         </div>
-                        <div class="control">
-                            <div class="tags has-addons">
-                                <span class="tag is-dark"><%= __("page.bots.shards") %></span>
-                                <span class="tag is-orange"><% if (bot.shardCount !== 0) { %><%= bot.shardCount %><% } else { %>???<% } %></span>
+                        <% if (bot.shardCount !== 0) { %>
+                            <div class="control">
+                                <div class="tags has-addons">
+                                    <span class="tag is-dark"><%= __("page.bots.shards") %></span>
+                                    <span class="tag is-orange"><%= bot.shardCount %></span>
+                                </div>
                             </div>
-                        </div>
+                        <% } %>
                         <div class="control">
                             <div class="tags has-addons">
                                 <span class="tag is-dark"><%= __("common.owner") %></span>
@@ -360,11 +374,7 @@
     </div>
 </section>
 <div class="container" style="overflow: hidden;">
-    <div id="content" class="section content"></div>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
-    <script>
-        document.getElementById('content').innerHTML = marked(`<%- longDesc %>`);
-    </script> 
+    <div id="content" class="section content"><%- longDesc %></div>
 </div>
 <div class="modal deleteModal">
     <div class="modal-background"></div>

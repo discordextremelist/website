@@ -64,7 +64,6 @@ new Promise((resolve, reject) => {
         dbReady = true;
         app.db = db;
 
-    // app.db.collection("users").deleteOne({ _id: "190916650143318016" });
         for (const lib of require(__dirname+"/src/Assets/libraries.json")) {
             await db.collection("libraries").updateOne({ _id: lib.name }, {
                 _id: lib.name,
@@ -91,6 +90,7 @@ new Promise((resolve, reject) => {
                 foreground: ""
             }).then(() => true).catch(() => false);
         }
+
         const botCache = require("./src/Util/Services/botCaching.js");
         const serverCache = require("./src/Util/Services/serverCaching.js");
         const templateCache = require("./src/Util/Services/templateCaching.js");
@@ -101,7 +101,9 @@ new Promise((resolve, reject) => {
         const ddosMode = require("./src/Util/Services/ddosMode.js");
         const banned = require("./src/Util/Services/banned.js");
         const discord = require("./src/Util/Services/discord.js");
+        const botStatsUpdate = require("./src/Util/Services/botStatsUpdate.js");
         global.redis = new (require("ioredis"))(settings.db.redis);
+        global.redis.flushdb();
 
         console.time("Redis Cache");
         await userCache.uploadUsers();
@@ -112,24 +114,25 @@ new Promise((resolve, reject) => {
         await announcementCache.updateCache();
         await featuredCache.updateFeaturedBots();
         await featuredCache.updateFeaturedServers();
+        await featuredCache.updateFeaturedTemplates();
         await ddosMode.updateCache();
-
-        async function discordBotUndefined() {
+        await (async function discordBotUndefined() {
             if (
                 typeof discord.bot.guilds !== "undefined" &&
                 typeof discord.bot.guilds.get(settings.guild.main) !==
                     "undefined"
-            ) {
+            ) { 
                 await banned.updateBanlist();
                 await discord.uploadStatuses();
             } else {
                 setTimeout(discordBotUndefined, 250);
             }
-        }
-
-        await discordBotUndefined();
-
+        })();
         console.timeEnd("Redis Cache");
+        await botStatsUpdate();
+        setTimeout(async() => {
+            await discord.postMetric();
+        }, 10000)
 
         const cookieParser = require("cookie-parser");
         const cookieSession = require("cookie-session");
@@ -137,6 +140,7 @@ new Promise((resolve, reject) => {
         const device = require("express-device");
         const i18n = require("i18n");
         const passport = require("passport");
+        const languageHandler = require("./src/Util/Middleware/languageHandler.js");
 
         app.set("view engine", "ejs");
 
@@ -179,33 +183,8 @@ new Promise((resolve, reject) => {
 
         app.use("/auth", require("./src/Routes/authentication.js"));
 
-        app.use(["/:lang", "/"], (req, res, next) => {
-            if (req.params.lang && !settings.website.locales.isntLocale.includes(req.params.lang)) {
-                if (settings.website.locales.all.includes(req.params.lang)) {
-                    req.setLocale(req.params.lang);
-                    next();
-                } else {
-                    res.redirect(req.originalUrl.replace(req.params.lang, settings.website.locales.default));
-                }
-            } else if (settings.website.locales.isntLocale.includes(req.params.lang)) {
-                res.redirect(`/${settings.website.locales.default}${req.originalUrl}`);
-            } else {
-                res.redirect(`/${settings.website.locales.default}`);
-            }
-        }); 
-
-        app.use("/:lang/*", (req, res, next) => {
-            if (req.params.lang && !settings.website.locales.isntLocale.includes(req.params.lang)) {
-                if (settings.website.locales.all.includes(req.params.lang)) {
-                    req.setLocale(req.params.lang);
-                    next();
-                } else {
-                    res.redirect(req.originalUrl.replace(req.params.lang, settings.website.locales.default));
-                }
-            } else {
-                res.redirect(`/${settings.website.locales.default}${req.originalUrl}`);
-            }
-        });
+        app.use(["/:lang", "/"], languageHandler.homeHandler);
+        app.use("/:lang/*", languageHandler.globalHandler);
 
         app.use("/:lang", require("./src/Routes/index.js"));
         app.use("/:lang/search", require("./src/Routes/search.js"));
@@ -214,6 +193,7 @@ new Promise((resolve, reject) => {
         app.use("/:lang/templates", require("./src/Routes/templates.js"));
         app.use("/:lang/users", require("./src/Routes/users.js"));
         app.use("/:lang/staff", require("./src/Routes/staff.js"));
+        app.use("/:lang/docs", require("./src/Routes/docs.js"));
         /* app.use("/:lang/amp", require("./src/Routes/amp.js"));
            todo - advaith */
 

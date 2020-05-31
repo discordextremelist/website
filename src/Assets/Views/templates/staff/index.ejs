@@ -32,7 +32,7 @@
                     <span style="vertical-align: middle;" class="has-text-success">
                         <%= __("common.rank.mod") %>
                     </span>
-                <% } else if (req.user.db.rank.admin === false && req.user.db.rank.assistant === false) { %>
+                <% } else if (req.user.db.rank.admin === false && req.user.db.rank.assistant === true) { %>
                     <span style="vertical-align: middle;" title="<%= __("common.rank.assistant") %>" class="icon is-small iconalign">
                         <i aria-hidden="true" class="fad fa-tools has-text-orange fa-1x"></i>
                     </span>

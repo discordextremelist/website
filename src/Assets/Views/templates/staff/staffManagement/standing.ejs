@@ -1,0 +1,60 @@
+<%- include("../../../partials/header.ejs") %>
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
+<%- include("../../../partials/staffNav.ejs") %>
+<section class="hero is-black">
+    <div class="hero-body">
+        <br />
+        <div class="container has-text-centered">
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-star has-text-default"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle">
+                <%= subtitle %>
+            </h2>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="section">
+        <form id="form" method="POST">
+            <div class="field">
+                <label class="label has-text-blurple"><%= __("page.staff.manager.setStanding.standings") %></label>
+                <div class="control">
+                    <div class="select is-rounded">
+                        <select name="standing" required>
+                            <option value="" disabled selected><%= __("common.select") %></option>
+                            <option value="<%= user.staffTracking.details.standing %>" selected><%= __(functions.standingParseEmoji(user.staffTracking.details.standing)) %></option>
+                            <% for (const standing of standings) { %>
+                                <% if (standing._id !== user.staffTracking.details.standing) { %>
+                                    <option value="<%- standing._id %>"><%- standing.display %></option>
+                                <% } %>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="field is-grouped">
+                <div class="buttons">
+                    <button class="button is-success">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fas fa-check-circle"></i>
+                        </span>
+                        <span><%= __("common.submit") %></span>
+                    </button>
+                    <a href="<%= linkPrefix %>/staff/staff-manager" class="button is-danger">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fas fa-times-circle"></i>
+                        </span>
+                        <span><%= __("common.cancel") %></span>
+                    </a>
+                </div>
+            </div>
+        </form>    
+    </div>
+</div>
+<%- include("../../../partials/footer.ejs") %>

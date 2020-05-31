@@ -3,7 +3,7 @@
         <article class="media">
             <div class="media-left">
                 <figure class="image is-64x64">
-                    <img class="is-rounded lazyload" data-src="<%= user.avatar.url %>.<%= imageFormat %>" alt="<%= __("common.img.avatar", user.fullUsername) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail", user._id) %>');" draggable="false">
+                    <img class="is-rounded lazyload" data-src="<%= user.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= __("common.img.avatar", user.fullUsername) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail", user._id) %>');" >
                 </figure>
             </div>
             <div style="overflow: hidden;" class="media-content">
@@ -19,14 +19,14 @@
                 <div class="content-footer">
                     <div class="buttons">
                         <% if (search === true) { %>
-                            <a href="<%= linkPrefix %>/users/<%= user._id %>" class="button is-blurple is-outlined">
+                            <a href="<%= linkPrefix %>/users/<%= user._id %>" class="button is-default is-outlined">
                                 <span class="icon">
                                   <i class="fas fa-user"></i>
                                 </span>
                                 <span><%= __("common.view.user") %></span>
                             </a>
                         <% } else { %>
-                            <a href="<%= linkPrefix %>/users/<%= user._id %>" class="button is-blurple is-outlined">
+                            <a href="<%= linkPrefix %>/users/<%= user._id %>" class="button is-default is-outlined">
                                 <span class="icon">
                                   <i class="fas fa-eye"></i>
                                 </span>

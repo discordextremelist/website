@@ -25,7 +25,7 @@
                         <br />
                         <canvas class="snakeNormal" style="background-color: black;" width="400" height="400" id="game"></canvas>
                         <script>
-                            window.addEventListener("keydown", function(e) {
+                            addEventListener("keydown", function(e) {
                                 if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
                                     e.preventDefault();
                                 }
@@ -203,9 +203,10 @@
         
                             requestAnimationFrame(loop);
 
+                            /* disabled for resource reasons
                             function highscoreRequest() {
                                 this.get = function(callback) {
-                                    xhr.onreadystatechange = () => { 
+                                    xhr.onreadystatechange = () => {
                                         if (xhr.readyState === 4 && xhr.status === 200) callback(xhr.responseText);
                                     }
 
@@ -222,6 +223,7 @@
                                     document.getElementById("highScore").innerHTML = `${JSON.parse(callback).result}`;
                                 });
                             }, 1000)
+                            */
                         </script>
                     </div>
                 <% } else { %>

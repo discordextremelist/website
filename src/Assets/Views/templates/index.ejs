@@ -13,12 +13,22 @@
         ]
     }
 </script>
+<%
+    let defaultColour = "#b114ff";
+    let foreground = "#ffffff";
+
+    if (req.user) {
+        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+    }
+%>
+<style type="text/css">.button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;color:<%= defaultColour %>}.button.is-default.is-outlined:hover,.button.is-default.is-outlined.is-hovered,.button.is-default.is-outlined:focus,.button.is-default.is-outlined.is-focused{background-color:<%= defaultColour %>;border-color:<%= defaultColour %>;color:<%= foreground %>}.button.is-default.is-outlined.is-loading::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-outlined.is-loading:hover::after,.button.is-default.is-outlined.is-loading.is-hovered::after,.button.is-default.is-outlined.is-loading:focus::after,.button.is-default.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= foreground %> <%= foreground %>!important}.button.is-default.is-outlined[disabled],fieldset[disabled] .button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;box-shadow:none;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;color:<%= foreground %>}.button.is-default.is-inverted.is-outlined:hover,.button.is-default.is-inverted.is-outlined.is-hovered,.button.is-default.is-inverted.is-outlined:focus,.button.is-default.is-inverted.is-outlined.is-focused{background-color:<%= foreground %>;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined.is-loading:hover::after,.button.is-default.is-inverted.is-outlined.is-loading.is-hovered::after,.button.is-default.is-inverted.is-outlined.is-loading:focus::after,.button.is-default.is-inverted.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-inverted.is-outlined[disabled],fieldset[disabled] .button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;box-shadow:none;color:<%= foreground %>}</style>
 <%- include("../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
         <br />
         <div class="container has-text-centered">
-            <img class="backdrop" draggable=false alt="DEL Logo" style="padding: 5px;" src="/img/logo-128px.<%= imageFormat %>" type="image/<%= imageFormat %>" draggable="false">
+            <img id="delLogo" draggable=false alt="DEL Logo" style="padding: 5px; width: 128px; height: 128px; border-radius: 50%;" src="/img/logo-128px.<%= imageFormat %>" type="image/<%= imageFormat %>" >
             <h1 class="title">
                 <%= __("common.del") %>
             </h1>
@@ -33,11 +43,11 @@
         <% if (bots.length === 0) { %>
             <h2 class="is-size-3"><%= __("common.error.fetchFail.bots") %></h2>
         <% } else { %>
-            <h2 class="is-size-3 has-text-centered has-text-blurple">
+            <h2 class="is-size-3 has-text-centered has-text-default">
                 <span onclick="invokeSeizureMode();" class="icon is-medium iconalign">
                     <i class="fad fa-robot fa-1x"></i>
                 </span>
-                <span><%= __("Random Bots") %></span>
+                <span><%= __("common.bots.random") %></span>
             </h2>
             <br />
             <div class="columns is-multiline is-centered">
@@ -49,15 +59,31 @@
         <% if (servers.length === 0) { %>
             <h2 class="is-size-3"><%= __("common.error.fetchFail.servers") %></h2>
         <% } else { %>
-            <h2 class="is-size-3 has-text-centered has-text-blurple">
+            <h2 class="is-size-3 has-text-centered has-text-default">
                 <span class="icon is-medium iconalign">
                     <i class="fad fa-comments-alt fa-swap-opacity fa-1x"></i>
                 </span>
-                <span><%= __("Random Servers") %></span>
+                <span><%= __("common.servers.random") %></span>
             </h2>
             <br />
             <div class="columns is-multiline is-centered">
                 <%- servers.map(server => include("../partials/cards/serverCard.ejs", { server, search: false })).join("") %>
+            </div>
+        <% } %>
+    </div>
+    <div class="section">
+        <% if (templates.length === 0) { %>
+            <h2 class="is-size-3"><%= __("common.error.fetchFail.templates") %></h2>
+        <% } else { %>
+            <h2 class="is-size-3 has-text-centered has-text-default">
+                <span class="icon is-medium iconalign">
+                    <i class="fad fa-clone fa-1x"></i>
+                </span>
+                <span><%= __("common.templates.random") %></span>
+            </h2>
+            <br />
+            <div class="columns is-multiline is-centered">
+                <%- templates.map(template => include("../partials/cards/templateCard.ejs", { template, search: false })).join("") %>
             </div>
         <% } %>
     </div>

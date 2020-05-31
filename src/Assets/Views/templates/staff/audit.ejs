@@ -1,0 +1,82 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/staffNav.ejs") %>
+<% 
+    var buttons = "";
+    for (let n = 1; n < pages; n++) {
+        if (n === page) {
+            buttons += `<li><a href="${linkPrefix}/staff/audit?page=${n}" class="pagination-link is-current" aria-label="Goto page ${n}">${n}</a></li>`;
+        } else {
+            buttons += `<li><a href="${linkPrefix}/staff/audit?page=${n}" class="pagination-link "aria-label="Goto page ${n}">${n}</a></li>`;
+        }
+    }
+
+    let defaultColour = "#b114ff";
+    let foreground = "#ffffff";
+
+    if (req.user) {
+        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+    }
+%>
+<style type="text/css">.pagination-link.is-current{background-color:<%= defaultColour %>;border-color:transparent;color:<%= foreground %>}.pagination-link:hover,.pagination-next:hover,.pagination-previous:hover{background-color:<%= defaultColour %>;border-color:transparent;color:<%= foreground %>}</style>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <br />
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-archive has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
+        </div>
+    </div>
+</section>
+<div class="container is-fluid">
+    <div class="section is-fluid">
+        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+            <% if (page > 1) { %>
+                <a href="<%= linkPrefix %>/staff/audit?page=<%= page - 1 %>" class="pagination-previous button is-primary">
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-left"></i>
+                    </span>
+                    <span><%= __("common.pagination.previous") %></span>
+                </a>
+            <% } else { %>
+                <a class="pagination-previous button is-primary" disabled>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-left"></i>
+                    </span>
+                    <span><%= __("common.pagination.previous") %></span>
+                </a>
+            <% } %>
+            <% if (page < pages) { %>
+                <a href="<%= linkPrefix %>/staff/audit?page=<%= page + 1 %>" class="pagination-next button is-primary">
+                    <span><%= __("common.pagination.next") %></span>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+            <% } else { %>
+                <a class="pagination-next button is-primary" disabled>
+                    <span><%= __("common.pagination.next") %></span>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+            <% } %>
+            <ul class="pagination-list">
+                <%- buttons %>
+            </ul>
+        </nav>
+        <br />
+        <% if (logsData.length === 0) { %>
+            <h2 class="is-size-3"><%= __("common.error.fetchFail.bots") %></h2>
+        <% } else { %>
+            <%- logsChunk.map(chunk => `${chunk.map(log => include("../../partials/cards/log.ejs", { log })).join("")}`).join("") %>
+        <% } %>
+    </div>
+</div>
+<%- include("../../partials/footer.ejs") %>

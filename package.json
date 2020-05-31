@@ -1,6 +1,6 @@
 {
   "name": "del-v5",
-  "version": "5.0.0",
+  "version": "5.0.0-Alpha.4",
   "description": "Licensing information viewable in LICENSE.md",
   "main": "app.js",
   "directories": {
@@ -13,29 +13,30 @@
     "chunk": "0.0.2",
     "color": "^3.1.2",
     "connect-redis": "^4.0.4",
-    "cookie-parser": "~1.4.4",
+    "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
+    "datadog-metrics": "^0.8.1",
     "debug": "~2.6.9",
     "del-i18n": "github:discordextremelist/i18n",
-    "ejs": "^3.1.2",
+    "ejs": "^3.1.3",
     "eris": "^0.11.2",
-    "eris-additions": "^1.3.0",
+    "eris-additions": "^1.4.1",
     "exec-sh": "^0.3.4",
     "express": "~4.17.1",
     "express-device": "^0.4.2",
     "html-entities": "^1.3.1",
     "http-errors": "~1.6.3",
-    "i18n": "^0.8.5",
-    "ioredis": "^4.17.1",
+    "i18n": "^0.8.6",
+    "ioredis": "^4.17.3",
     "markdown-it": "^10.0.0",
     "moment": "^2.26.0",
-    "mongodb": "^3.5.2",
+    "mongodb": "^3.5.8",
     "morgan": "~1.10.0",
     "node-fetch": "^2.6.0",
     "passport": "^0.4.1",
     "passport-discord": "^0.1.3",
     "request": "^2.88.2",
-    "sanitize-html": "^1.22.0"
+    "sanitize-html": "^1.25.0"
   },
   "devDependencies": {
     "bulma": "^0.8.2",
@@ -43,7 +44,7 @@
     "ejs-lint": "^1.1.0",
     "monaco-editor": "^0.20.0",
     "node-sass": "^4.14.1",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.4"
   },
   "scripts": {
     "start": "node scripts/start",
@@ -56,7 +57,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.winterfox.tech/delly/v5.git"
+    "url": "https://github.com/discordextremelist/website.git"
   },
   "author": "Cairo Mitchell-Acason, John Burke, Advaith Jagathesan <contact@discordextremelist.xyz>",
   "license": "AGPL-3.0"

@@ -1,5 +1,28 @@
 <%- include("../../partials/header.ejs") %>
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
 <%- include("../../partials/staffNav.ejs") %>
+<%
+    let defaultColour = "#b114ff";
+    let foreground = "#ffffff";
+
+    if (req.user) {
+        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+    }
+%>
+<style type="text/css">.button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;color:<%= defaultColour %>}.button.is-default.is-outlined:hover,.button.is-default.is-outlined.is-hovered,.button.is-default.is-outlined:focus,.button.is-default.is-outlined.is-focused{background-color:<%= defaultColour %>;border-color:<%= defaultColour %>;color:<%= foreground %>}.button.is-default.is-outlined.is-loading::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-outlined.is-loading:hover::after,.button.is-default.is-outlined.is-loading.is-hovered::after,.button.is-default.is-outlined.is-loading:focus::after,.button.is-default.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= foreground %> <%= foreground %>!important}.button.is-default.is-outlined[disabled],fieldset[disabled] .button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;box-shadow:none;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;color:<%= foreground %>}.button.is-default.is-inverted.is-outlined:hover,.button.is-default.is-inverted.is-outlined.is-hovered,.button.is-default.is-inverted.is-outlined:focus,.button.is-default.is-inverted.is-outlined.is-focused{background-color:<%= foreground %>;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined.is-loading:hover::after,.button.is-default.is-inverted.is-outlined.is-loading.is-hovered::after,.button.is-default.is-inverted.is-outlined.is-loading:focus::after,.button.is-default.is-inverted.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-inverted.is-outlined[disabled],fieldset[disabled] .button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;box-shadow:none;color:<%= foreground %>}</style>
+<style type="text/css">
+.modal-card-head.is-warning {
+    border-bottom: 1px solid #ffdd57 !important;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+.modal-card-head.is-info {
+    border-bottom: 1px solid #3298dc !important;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+</style>
 <section class="hero is-primary">
     <div class="hero-body">
         <div class="container has-text-centered">
@@ -36,5 +59,4 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>
 <%- include("../../partials/footer.ejs") %>

@@ -90,9 +90,43 @@ function getForeground(inputColour) {
     return (L > 0.179) ? "#000000" : "#FFFFFF";
 }
 
+function standingParseEmoji(standing) {
+    let result = "page.staff.manager.unavailable";
+
+    if (standing === "Unmeasured") result = "page.staff.manager.unmeasured.emoji";
+    if (standing === "Good") result = "page.staff.manager.good.emoji";
+    if (standing === "Moderate") result = "page.staff.manager.moderate.emoji";
+    if (standing === "Moderate-Bad") result = "page.staff.manager.moderateBad.emoji";
+    if (standing === "Bad") result = "page.staff.manager.bad.emoji";
+
+    return result;
+}
+
+function parseDate(rawDate) {
+    const date = new Date(rawDate);
+    return `${date.getUTCHours()}:${date.getUTCMinutes()} ${date.getUTCDate()}/${date.getUTCMonth()}/${date.getUTCFullYear()} UTC`;
+}
+
+function shuffleArray(array) {
+    let currentIndex = array.length, temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+  
+    return array;
+  }
+
 module.exports = {
     escapeFormatting,
     parseRegion,
     regionIcon,
-    getForeground
+    getForeground,
+    standingParseEmoji,
+    parseDate,
+    shuffleArray
 }

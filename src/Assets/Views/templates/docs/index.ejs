@@ -1,0 +1,128 @@
+<%- include("../../partials/header.ejs") %>
+<link href="/css/all.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
+<link href="/css/prism.css" type="text/css" media="screen" rel="stylesheet" />
+<%- include("../../partials/nav.ejs") %>
+<script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://discordextremelist.xyz/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Documentation",
+                "item": "https://discordextremelist.xyz/docs"
+            }
+        ]
+    }
+</script>
+<%
+    let defaultColour = "#b114ff";
+    let foreground = "#ffffff";
+
+    if (req.user) {
+        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+    }
+%>
+<style type="text/css">
+.menu-list a.is-active {
+    background-color: <%= defaultColour %>;
+    color: <%= foreground %>;
+}
+.menu-list a:hover {
+    background-color: #0e0e0e;
+    color: <%= defaultColour %>;
+}
+</style>
+<section class="hero is-black">
+    <div class="hero-body">
+        <br />
+        <div class="container has-text-centered">
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-books has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
+        </div>
+    </div>
+    </section>
+    <div class="container section columns">
+        <div class="column is-one-quarter">
+            <aside class="menu">
+                <p class="menu-label">
+                    <%= __("docs.label.main") %>
+                </p>
+                <ul class="menu-list">
+                    <li>
+                        <a id="introNav" href="#intro" style="display: block;" class="is-active" onclick="changeBody('intro');">
+                            <%= __("docs.intro") %>
+                        </a>
+                    </li>
+                    <li>
+                        <a id="referenceNav" href="#references" onclick="changeBody('reference');">
+                            <%= __("docs.reference") %>
+                        </a>
+                    </li>
+                </ul>
+                <p class="menu-label">
+                    <%= __("docs.label.api") %>
+                </p>
+                <ul class="menu-list">
+                    <li>
+                        <a id="routesNav" href="#api-routes" onclick="changeBody('routes');">
+                            <%= __("docs.routes") %>
+                        </a>
+                        <a id="librariesNav" href="#api-libraries" onclick="changeBody('libraries');">
+                            <%= __("docs.libraries") %>
+                        </a>
+                        <a id="examplesNav" href="#api-examples" onclick="changeBody('examples');">
+                            <%= __("docs.examples") %>
+                        </a>
+                    </li>
+                </ul>
+              </aside>
+        </div>
+        <div class="column is-three-quarters content">
+            <%- include("./intro.ejs") %>
+            <%- include("./reference.ejs") %>
+            <%- include("./v1-REVISED/routes.ejs") %>
+            <%- include("./v1-REVISED/libraries.ejs") %>
+            <%- include("./v1-REVISED/examples.ejs") %>
+        </div>
+    </div>
+    <script>
+        if (window.location.href.includes("#references")) changeBody("reference");
+        if (window.location.href.includes("#api-routes")) changeBody("routes");
+        if (window.location.href.includes("#api-libraries")) changeBody("libraries");
+        if (window.location.href.includes("#api-examples")) changeBody("examples");
+
+        function changeBody(id) {
+            const bodies = ["intro", "reference", "routes", "libraries", "examples"];
+            for (const div of bodies) {
+                document.getElementById(div).style.display = "none";
+                document.getElementById(`${div}Nav`).classList.remove("is-active");
+            }
+
+            document.getElementById(id).style.display = "block";
+            document.getElementById(`${id}Nav`).classList.add("is-active");
+        }
+    </script>
+    <script src="/js/prism.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer>
+        new Crate({
+          server: "<%= settings.guild.main %>",
+          channel: "<%= settings.channels.docsDefault %>",
+          shard: 'https://e.widgetbot.io'
+        });
+    </script>
+<%- include("../../partials/footer.ejs") %>

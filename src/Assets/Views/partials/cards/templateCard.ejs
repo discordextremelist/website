@@ -1,15 +1,15 @@
-<div class="column is-one-third" is-server-card>
+<div class="column is-one-third" is-template-card>
     <div class="box has-background-primary" style="overflow: hidden; height: 100%;">
         <article class="media">
             <div class="media-left">
                 <figure class="image is-64x64">
-                    <img class="is-rounded lazyload" data-src="<%= template.icon.url %>.<%= imageFormat %>" alt="<%= __("common.img.icon", template.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail", template._id) %>');" draggable="false">
+                    <img class="is-rounded lazyload" data-src="<%= template.icon.url %>.<%= imageFormat %>?size=128" alt="<%= __("common.img.icon", template.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail", template._id) %>');" >
                 </figure>
             </div>
             <div style="overflow: hidden;" class="media-content">
                 <div class="content">
                     <p>
-                    <span class="is-size-4 title has-text-blurple is-mobile">
+                    <span class="is-size-4 title has-text-default is-mobile">
                         <span><%= template.name %></span>
                     </span>
                         <br />
@@ -19,18 +19,24 @@
                 <div class="content-footer">
                     <div class="buttons">
                         <% if (search === true) { %>
-                            <a href="<%= linkPrefix %>/templates/<%= template._id %>" class="button is-blurple is-outlined">
+                            <a href="<%= linkPrefix %>/templates/<%= template._id %>" class="button is-default is-outlined">
                                 <span class="icon">
                                   <i class="fas fa-clone"></i>
                                 </span>
                                 <span><%= __("common.view.template") %></span>
                             </a>
                         <% } else { %>
-                            <a href="<%= linkPrefix %>/templates/<%= template._id %>" class="button is-blurple is-outlined">
+                            <a href="<%= linkPrefix %>/templates/<%= template._id %>" class="button is-default is-outlined">
                                 <span class="icon">
                                 <i class="fas fa-eye"></i>
                                 </span>
                                 <span><%= __("common.view") %></span>
+                            </a>
+                            <a target="_blank" rel="noopener" href="<%= template.links.template %>" class="button is-blurple is-outlined">
+                                <span class="icon">
+                                  <i class="fas fa-clone"></i>
+                                </span>
+                                <span><%= __("page.templates.useTemplate") %></span>
                             </a>
                         <% } %>
                     </div>

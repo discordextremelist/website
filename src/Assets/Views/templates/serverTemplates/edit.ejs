@@ -8,9 +8,8 @@
         foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
     }
 %>
-<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
-<link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
-<style type="text/css">.is-checkradio[type="checkbox"].is-default.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked+label::after,.is-checkradio[type="checkbox"].is-default:checked+label:after{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::after,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:after{border-color:<%= foreground %> !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked+label{color:<%= foreground %>;border-color:<%= defaultColour %> !important;background:<%= defaultColour %>}.is-checkradio[type="checkbox"].is-default.is-block:checked+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked+label:after{border-color:<%= foreground %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label{background:#5e78d5}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:before{border-color:#f2f2f2 !important}</style>
+<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><style type="text/css">.is-checkradio[type="checkbox"].is-default.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked+label::after,.is-checkradio[type="checkbox"].is-default:checked+label:after{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::after,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:after{border-color:<%= foreground %> !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked+label{color:<%= foreground %>;border-color:<%= defaultColour %> !important;background:<%= defaultColour %>}.is-checkradio[type="checkbox"].is-default.is-block:checked+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked+label:after{border-color:<%= foreground %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label{background:#5e78d5}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:before{border-color:#f2f2f2 !important}</style>
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
@@ -32,10 +31,10 @@
     <div class="container">
         <div class="section">
             <form method="POST">
-                <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.generalInfo") %></h3>
+                <h3 class="is-size-3 has-text-default"><%= __("page.form.category.generalInfo") %></h3>
                 <br />
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("page.templates.code") %> <span class="has-text-danger">*</span></label>
+                    <label class="label has-text-default"><%= __("page.templates.code") %> <span class="has-text-danger">*</span></label>
                     <div class="control">
                         <div class="field has-addons">
                             <p class="control" aria-hidden="true">
@@ -44,14 +43,13 @@
                                 </a>
                             </p>
                             <p class="control" required>
-                                <input class="input is-rounded" type="text" name="code" value="<%= template._id %>" placeholder="aUe6qZZgnhGh">
+                                <input class="input is-rounded" type="text" name="code" value="<%= template._id %>" placeholder="aUe6qZZgnhGh" onpaste="setTimeout(() => this.value = this.value.replace('https:/\/discord.new/', ''), 0)">
                             </p>
                         </div>
                     </p>
-                    <p style="padding: 5px;" class="is-size-7 has-text-default"><%= __("page.templates.code.warning") %></p>
                 </div>
                 <br />
-                <label class="label has-text-blurple"><%= __("common.tags") %></label>
+                <label class="label has-text-default"><%= __("common.tags") %></label>
                 <div class="columns">
                     <div class="column is-one-quarter">
                         <div class="field">
@@ -106,10 +104,10 @@
                 </div>
                 <br />
                 <br />
-                <h3 class="is-size-3 has-text-blurple"><%= __("page.form.category.descriptions") %></h3>
+                <h3 class="is-size-3 has-text-default"><%= __("page.form.category.descriptions") %></h3>
                 <br />
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("page.templates.shortDesc") %> <span class="has-text-danger">*</span></label>
+                    <label class="label has-text-default"><%= __("page.templates.shortDesc") %> <span class="has-text-danger">*</span></label>
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" value="<%= template.shortDesc %>" name="shortDescription" placeholder="<%= __("page.templates.shortDesc.placeholder") %>" required>
                         <span class="icon is-small is-left">
@@ -119,8 +117,8 @@
                 </div>
                 <br />
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("page.templates.longDesc") %> (common.form.basicHtmlMarkdown) <span class="has-text-danger">*</span></label>
-                    <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:350px;"></div>
+                    <label class="label has-text-default"><%= __("page.templates.longDesc") %> (common.form.basicHtmlMarkdown) <span class="has-text-danger">*</span></label>
+                    <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:500px;"></div>
                     <textarea hidden name="longDescription" id="longDesc" required></textarea>
                 </div>
                 <br />
@@ -143,7 +141,7 @@
             </form>    
         </div>
         <br />
-        <script type="text/javascript">var require={paths:{"vs":"/packages/monaco-editor/min/vs"}};</script>
+        <script type="text/javascript">const require={paths:{"vs":"/packages/monaco-editor/min/vs"}};addEventListener('beforeunload',event=>{event.preventDefault();event.returnValue=''});</script>
         <script src="/packages/monaco-editor/min/vs/loader.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>

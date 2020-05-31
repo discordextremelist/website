@@ -1,0 +1,9 @@
+<article class="message is-warning">
+    <div class="message-body content has-background-primary">
+        <ul class="has-text-warning" style="margin-top: unset;">
+            <li><strong><%= __("page.staff.manager.punish.executor") %></strong> <%= warning.executorName %></li>
+            <li><strong><%= __("page.staff.manager.punish.reason") %></strong> <%= warning.reason %></li>
+            <li><strong><%= __("page.staff.manager.punish.date") %></strong> <%= functions.parseDate(warning.date) %></li>
+        </ul>
+    </div>
+</article>

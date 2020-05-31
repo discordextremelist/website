@@ -49,6 +49,8 @@ router.get("/:id", variables, async(req, res, next) => {
         });
     }
 
+    res.locals.premidPageInfo = res.__("premid.user", dbUser.fullUsername);
+
     const bots = await botCache.getAllBots();
 
     const botsOwner = [];
@@ -58,7 +60,7 @@ router.get("/:id", variables, async(req, res, next) => {
     for (var n = 0; n < bots.length; ++n) {
         const bot = bots[n];
 
-        if (bot.status.archived === true) {
+        if (bot.status.archived === true && bot.owner.id === req.params.id) {
             archivedBots.push(bot);
         } else if (bot.owner.id === req.params.id) {
             botsOwner.push(bot);
@@ -117,6 +119,8 @@ router.get("/:id/rank", variables, permission.auth, permission.assistant, async(
         type: "Error"
     });
 
+    res.locals.premidPageInfo = res.__("premid.user.modifyRank", targetUser.fullUsername);
+
     if (targetUser.rank.assistant === true && req.user.db.rank.admin === false && req.user.db.rank.assistant === true) return res.status(403).render("status", {
         title: res.__("common.error"),
         status: 403,
@@ -147,7 +151,7 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
         type: "Error"
     });
 
-    let verified = false;
+    let premium = false;
     let tester = false;
     let translator = false;
     let covid = false;
@@ -157,7 +161,7 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
 
     if (req.body.tester === "on") tester = true;
     if (req.body.translator === "on") translator = true;
-    if (req.body.verified === "on") verified = true;
+    if (req.body.premium === "on") premium = true;
     if (req.body.covid === "on") covid = true;
 
     if (req.body.rank === "mod") mod = true;
@@ -189,7 +193,7 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
                 mod: mod,
                 translator: translator,
                 tester: tester,
-                verified: verified,
+                premium: premium,
                 covid: covid
             }
         }
@@ -211,7 +215,7 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
                     mod: targetUser.rank.mod,
                     translator: targetUser.rank.translator,
                     tester: targetUser.rank.tester,
-                    verified: targetUser.rank.verified,
+                    premium: targetUser.rank.premium,
                     covid: targetUser.rank.covid
                 }
             },
@@ -222,7 +226,7 @@ router.post("/:id/rank", variables, permission.auth, permission.assistant, async
                     mod: mod,
                     translator: translator,
                     tester: tester,
-                    verified: verified,
+                    premium: premium,
                     covid: covid
                 }
             }
@@ -258,6 +262,8 @@ router.get("/profile/:id/edit", variables, permission.auth, async(req, res, next
         type: "Error"
     });
 
+    res.locals.premidPageInfo = res.__("premid.user.edit", userProfile.fullUsername);
+
     res.render("templates/users/editProfile", { title: res.__("page.users.edit.title"), subtitle: res.__("page.users.edit.subtitle", req.user.db.fullUsername), req, userProfile: userProfile });
 });
 
@@ -283,7 +289,7 @@ router.post("/profile/:id/edit", variables, permission.auth, async(req, res, nex
     });
 
     let customCss;
-    if (userProfile.rank.verified) {
+    if (userProfile.rank.premium) {
         customCss = req.body.profileCss;
     } else {
         customCss = "";
@@ -408,6 +414,8 @@ router.post("/profile/game/snakes", variables, permission.auth, async(req, res, 
 });
 
 router.get("/account/preferences", variables, permission.auth, async(req, res, next) => {
+    res.locals.premidPageInfo = res.__("premid.preferences");
+
     res.render("templates/users/accountPreferences", { title: res.__("common.nav.me.preferences"), subtitle: res.__("common.nav.me.preferences.subtitle"), req });
 });
 

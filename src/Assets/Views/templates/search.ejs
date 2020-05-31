@@ -42,6 +42,7 @@
 %>
 <link href="/css/search.css" type="text/css" media="screen, print" rel="stylesheet" />
 <style type="text/css">.is-checkradio[type="checkbox"].is-default.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked+label::after,.is-checkradio[type="checkbox"].is-default:checked+label:after{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::after,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:after{border-color:<%= foreground %> !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked+label{color:<%= foreground %>;border-color:<%= defaultColour %> !important;background:<%= defaultColour %>}.is-checkradio[type="checkbox"].is-default.is-block:checked+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked+label:after{border-color:<%= foreground %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label{background:#5e78d5}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:before{border-color:#f2f2f2 !important}</style><%- include("../partials/nav.ejs") %>
+<style type="text/css">.button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;color:<%= defaultColour %>}.button.is-default.is-outlined:hover,.button.is-default.is-outlined.is-hovered,.button.is-default.is-outlined:focus,.button.is-default.is-outlined.is-focused{background-color:<%= defaultColour %>;border-color:<%= defaultColour %>;color:<%= foreground %>}.button.is-default.is-outlined.is-loading::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-outlined.is-loading:hover::after,.button.is-default.is-outlined.is-loading.is-hovered::after,.button.is-default.is-outlined.is-loading:focus::after,.button.is-default.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= foreground %> <%= foreground %>!important}.button.is-default.is-outlined[disabled],fieldset[disabled] .button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;box-shadow:none;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;color:<%= foreground %>}.button.is-default.is-inverted.is-outlined:hover,.button.is-default.is-inverted.is-outlined.is-hovered,.button.is-default.is-inverted.is-outlined:focus,.button.is-default.is-inverted.is-outlined.is-focused{background-color:<%= foreground %>;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined.is-loading:hover::after,.button.is-default.is-inverted.is-outlined.is-loading.is-hovered::after,.button.is-default.is-inverted.is-outlined.is-loading:focus::after,.button.is-default.is-inverted.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-inverted.is-outlined[disabled],fieldset[disabled] .button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;box-shadow:none;color:<%= foreground %>}</style>
 <section class="hero is-primary">
     <div class="hero-body">
         <div class="container has-text-centered">
@@ -63,14 +64,16 @@
             </p>
             <br />
             <div>
-                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="bots" name="bots" checked="checked">
-                <label class="has-text-default" for="bots"><%= __("common.bots") %></label>
-                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="servers" name="servers" checked="checked">
-                <label class="has-text-default" for="servers"><%= __("common.servers") %></label>
                 <% if (req.user && req.user.db.rank.mod) { %>
                     <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="users" name="users">
                     <label class="has-text-default" for="users"><%= __("common.users") %></label>
                 <% } %>
+                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="bots" name="bots" checked="checked">
+                <label class="has-text-default" for="bots"><%= __("common.bots") %></label>
+                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="servers" name="servers" checked="checked">
+                <label class="has-text-default" for="servers"><%= __("common.servers") %></label>
+                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="templates" name="templates" checked="checked">
+                <label class="has-text-default" for="templates"><%= __("common.templates") %></label>
             </div>
             </div>
         </div>
@@ -128,23 +131,23 @@
         async function search(query, only) {
             return new Promise(resolve => {
                 const req = new XMLHttpRequest();
-                req.open("POST", `/search?q=${query}&only=${only.join(",")}`);
-                req.send(null);
+                req.open("POST", "/search");
+                req.setRequestHeader("Content-Type", "application/json");
+                req.send(JSON.stringify({ query, only }));
                 req.onreadystatechange = () => {
                     if (req.readyState === 4) {
                         const results = [];
-                        if (!(req.status >= 200 && req.status < 300)) return;
-                        const res = JSON.parse(req.responseText);
-                        for (let i = 0; i < res.pages.length; i++) {
-                            for (const i of res.pages[i]) {
-                                const cur = { bots: [], servers: [], users: [] };
+                        const { data } = JSON.parse(req.responseText);
+                        for (let i = 0; i < data.pages.length; i++) {
+                            for (const i of data.pages[i]) {
+                                const cur = { bots: [], servers: [], users: [], templates: [] };
                                 const fake = document.createElement("div");
                                 fake.innerHTML = i;
                                 const child = fake.children[0];
+                                if (child.hasAttribute("is-user-card")) cur.users.push(fake.innerHTML);
                                 if (child.hasAttribute("is-bot-card")) cur.bots.push(fake.innerHTML);
                                 if (child.hasAttribute("is-server-card")) cur.servers.push(fake.innerHTML);
-                                if (child.hasAttribute("is-user-card")) cur.users.push(fake.innerHTML);
-                                c
+                                if (child.hasAttribute("is-template-card")) cur.templates.push(fake.innerHTML);
                             }
                         }
                     }
@@ -162,15 +165,17 @@
             input.onkeypress = async ({ keyCode, which, shift }) => {
                 if ((which || keyCode) === 13 && !shift && !input.value.match(/\s+/)) {
                     if (input.value.match(/gay(\s+)?(men\s+)?.*/i)) window.location.href = "/users/302604426781261824";
+                    const c = document.querySelector("input[type='checkbox']#users");
                     const a = document.querySelector("input[type='checkbox']#bots");
                     const b = document.querySelector("input[type='checkbox']#servers");
-                    const c = document.querySelector("input[type='checkbox']#users");
+                    const d = document.querySelector("input[type='checkbox']#templates");
                     const only = !((a && a.checked) && (b && b.checked) && (c && c.checked)) && [
+                        c && c.checked && "users",
                         a && a.checked && "bots",
                         b && b.checked && "servers",
-                        c && c.checked && "users"
+                        d && d.checked && "templates",
                     ].filter(a=>!!a);
-                    await search(input.value, only || ["bots", "servers", "users"]);
+                    await search(input.value, only || ["bots", "servers", "templates"]);
                 }
             }
         }

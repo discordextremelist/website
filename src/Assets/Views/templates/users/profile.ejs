@@ -26,11 +26,21 @@
     }
 </script>
 <%- include("../../partials/nav.ejs"); %>
-<% if (userProfile.rank.verified === true || userProfile.rank.mod === true) { %>
+<% if (userProfile.rank.premium === true || userProfile.rank.mod === true) { %>
     <style>
         <%= userProfile.profile.css %>
     </style>
 <% } %>
+<%
+    let defaultColour = "#b114ff";
+    let foreground = "#ffffff";
+
+    if (req.user) {
+        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+    }
+%>
+<style type="text/css">.button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;color:<%= defaultColour %>}.button.is-default.is-outlined:hover,.button.is-default.is-outlined.is-hovered,.button.is-default.is-outlined:focus,.button.is-default.is-outlined.is-focused{background-color:<%= defaultColour %>;border-color:<%= defaultColour %>;color:<%= foreground %>}.button.is-default.is-outlined.is-loading::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-outlined.is-loading:hover::after,.button.is-default.is-outlined.is-loading.is-hovered::after,.button.is-default.is-outlined.is-loading:focus::after,.button.is-default.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= foreground %> <%= foreground %>!important}.button.is-default.is-outlined[disabled],fieldset[disabled] .button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;box-shadow:none;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;color:<%= foreground %>}.button.is-default.is-inverted.is-outlined:hover,.button.is-default.is-inverted.is-outlined.is-hovered,.button.is-default.is-inverted.is-outlined:focus,.button.is-default.is-inverted.is-outlined.is-focused{background-color:<%= foreground %>;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined.is-loading:hover::after,.button.is-default.is-inverted.is-outlined.is-loading.is-hovered::after,.button.is-default.is-inverted.is-outlined.is-loading:focus::after,.button.is-default.is-inverted.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-inverted.is-outlined[disabled],fieldset[disabled] .button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;box-shadow:none;color:<%= foreground %>}</style>
 <section class="hero is-primary">
     <div class="hero-body">
         <br />
@@ -44,25 +54,30 @@
                         if (userStatus === "dnd") statusInfo = __("page.users.status.dnd")
                         if (userStatus === "offline") statusInfo = __("page.users.status.offline")
                     %> 
-                    <img class="image" title="<%= statusInfo %>" style="border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
+                    <img class="image" title="<%= statusInfo %>" style="border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" >
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1">
                         <span id="userName"><%= userProfile.fullUsername %></span>
-                        <% if (userProfileIsBanned === true || userProfile.rank.bugHunter === true || userProfile.rank.verified === true || userProfile.rank.mod === true || userProfile.rank.admin === true ) { %>
+                        <% if (userProfileIsBanned === true || userProfile.rank.tester === true || userProfile.rank.premium === true || userProfile.rank.mod === true || userProfile.rank.admin === true || Boolean(userProfile.flags & (1 << 17))) { %>
                             <% if (userProfileIsBanned === true) { %>
                                 <span style="vertical-align: middle;" title="<%= __("common.rank.banned") %>" class="icon is-medium is-size-3 iconalign">
                                     <i aria-hidden="true" class="fad fa-ban has-text-danger fa-1x"></i>
                                 </span>
                             <% } else { %>
-                                <% if (userProfile.rank.covid === true) { %>
-                                    <span style="vertical-align: middle;" title="<%= __("common.rank.covid") %>" class="icon is-medium is-size-3 iconalign">
+                                <% if (Boolean(userProfile.flags & (1 << 17))) { %>
+                                    <span style="vertical-align: middle;" title="<%= __("common.rank.verified.dev") %>" class="icon is-medium is-size-3 iconalign">
+                                        <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
+                                    </span>
+                                <% } %>
+                                <% if (userProfile.rank.premium === true) { %>
+                                    <span style="vertical-align: middle;" title="<%= __("common.rank.donator") %>" class="icon is-medium is-size-3 iconalign">
                                         <i aria-hidden="true" class="fad fa-heart has-text-red fa-1x"></i>
                                     </span>
                                 <% } %>
-                                <% if (userProfile.rank.verified === true) { %>
-                                    <span style="vertical-align: middle;" title="<%= __("common.rank.verified.dev") %>" class="icon is-medium is-size-3 iconalign">
-                                        <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
+                                <% if (userProfile.rank.covid === true) { %>
+                                    <span style="vertical-align: middle;" title="<%= __("common.rank.covid") %>" class="icon is-medium is-size-3 iconalign">
+                                        <i aria-hidden="true" class="fad fa-shield-virus has-text-magenta fa-1x"></i>
                                     </span>
                                 <% } %>
                                 <% if (userProfile.rank.tester === true) { %>

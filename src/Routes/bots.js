@@ -37,6 +37,8 @@ const userCache = require("../Util/Services/userCaching.js");
 const libraryCache = require("../Util/Services/libCaching.js");
 
 router.get("/submit", variables, permission.auth, async(req, res, next) => {
+    res.locals.premidPageInfo = res.__("premid.bots.submit");
+
     res.render("templates/bots/submit", {
         title: res.__("common.nav.me.submitBot"),
         subtitle: res.__("common.nav.me.submitBot.subtitle"),
@@ -46,6 +48,8 @@ router.get("/submit", variables, permission.auth, async(req, res, next) => {
 });
 
 router.post("/submit", variables, permission.auth, async(req, res, next) => {
+    res.locals.premidPageInfo = res.__("premid.bots.submit");
+
     let error = false;
     let errors = [];
 
@@ -141,6 +145,7 @@ router.post("/submit", variables, permission.auth, async(req, res, next) => {
             serverCount: 0,
             shardCount: 0,
             token: "DELAPI_" + crypto.randomBytes(16).toString("hex") + `-${req.body.id}`,
+            flags: fetchRes.jsonBody.public_flags,
             shortDesc: req.body.shortDescription,
             longDesc: req.body.longDescription,
             modNotes: req.body.modNotes,
@@ -170,13 +175,13 @@ router.post("/submit", variables, permission.auth, async(req, res, next) => {
             },
             status: {
                 approved: false,
-                verified: false,
+                premium: false,
                 siteBot: false,
                 archived: false
             }
         });
 
-        discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** added bot **${functions.escapeFormatting(fetchRes.jsonBody.username)} \`(${req.body.id})\`**\n<${settings.website.url}/bots/${req.body.id}>`);
+        discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` added bot **${functions.escapeFormatting(fetchRes.jsonBody.username)}** \`(${req.body.id})\`\n<${settings.website.url}/bots/${req.body.id}>`);
 
         await req.app.db.collection("audit").insertOne({
             type: "SUBMIT_BOT",
@@ -191,6 +196,7 @@ router.post("/submit", variables, permission.auth, async(req, res, next) => {
                     prefix: req.body.prefix,
                     library: library,
                     tags: tags,
+                    flags: fetchRes.jsonBody.public_flags,
                     vanityUrl: "",
                     serverCount: 0,
                     shardCount: 0,
@@ -224,7 +230,7 @@ router.post("/submit", variables, permission.auth, async(req, res, next) => {
                     },
                     status: {
                         approved: false,
-                        verified: false,
+                        premium: false,
                         siteBot: false,
                         archived: false
                     }
@@ -335,7 +341,7 @@ router.post("/:id/setvanity", variables, permission.auth, async(req, res, next) 
             req
         });
 
-        await req.app.db.collection("bots").updateOne({ id: req.params.id }, {
+        await req.app.db.collection("bots").updateOne({ _id: req.params.id }, {
             $set: {
                 vanityUrl: req.body.vanity
             }
@@ -364,7 +370,7 @@ router.post("/:id/setvanity", variables, permission.auth, async(req, res, next) 
             req
         });
 
-        await req.app.db.collection("bots").updateOne({ id: req.params.id }, {
+        await req.app.db.collection("bots").updateOne({ _id: req.params.id }, {
             $set: {
                 vanityUrl: req.body.vanity
             }
@@ -396,6 +402,8 @@ router.get("/:id/edit", variables, permission.auth, async(req, res, next) => {
         type: "Error",
         req
     });
+
+    res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
 
     if (botExists.owner.id !== req.user.id && !botExists.editors.includes(req.user.id) && req.user.db.assistant === false) return res.status(403).render("status", {
         title: res.__("common.error"),
@@ -429,6 +437,8 @@ router.post("/:id/edit", variables, permission.auth, async(req, res, next) => {
         type: "Error",
         req
     });
+
+    res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
 
     const bot = botExists;
     if (bot.owner.id !== req.user.id && !bot.editors.includes(req.user.id) && req.user.db.mod === false) return res.status(403).render("status", {
@@ -479,7 +489,7 @@ router.post("/:id/edit", variables, permission.auth, async(req, res, next) => {
     if (req.body.music === "on") tags.push("Music");
 
     if (error === true) {
-        req.body.status.verified = botExists.status.verified;
+        req.body.status.premium = botExists.status.premium;
 
         return res.render("templates/bots/errorOnEdit", {
             title: res.__("page.bots.edit.title"),
@@ -504,12 +514,13 @@ router.post("/:id/edit", variables, permission.auth, async(req, res, next) => {
 
     fetch(`https://discord.com/api/v6/users/${req.params.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}` } }).then(async(fetchRes) => {
         fetchRes.jsonBody = await fetchRes.json();
-        await req.app.db.collection("bots").updateOne({ id: req.params.id }, {
+        await req.app.db.collection("bots").updateOne({ _id: req.params.id }, {
             $set: {
                 name: fetchRes.jsonBody.username,
                 prefix: req.body.prefix,
                 library: library,
                 tags: tags,
+                flags: fetchRes.jsonBody.public_flags,
                 shortDesc: req.body.shortDescription,
                 longDesc: req.body.longDescription,
                 editors: editors,
@@ -544,6 +555,7 @@ router.post("/:id/edit", variables, permission.auth, async(req, res, next) => {
                     prefix: botExists.prefix,
                     library: botExists.library,
                     tags: botExists.tags,
+                    flags: botExists.flags,
                     shortDesc: botExists.shortDesc,
                     longDesc: botExists.longDesc,
                     editors: botExists.editors,
@@ -569,6 +581,7 @@ router.post("/:id/edit", variables, permission.auth, async(req, res, next) => {
                     prefix: req.body.prefix,
                     library: library,
                     tags: tags,
+                    flags: fetchRes.jsonBody.public_flags,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
                     editors: editors,
@@ -594,7 +607,7 @@ router.post("/:id/edit", variables, permission.auth, async(req, res, next) => {
         await botCache.updateBot(req.params.id);
     }).catch(_ => { return res.status(400).render("status", { title: res.__("common.error"), subtitle: res.__("common.error.dapiFail"), status: 400, type: "Error", req }) });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** edited bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) });
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` edited bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\`\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) });
     res.redirect(`/bots/${req.params.id}`);
 });
 
@@ -621,6 +634,8 @@ router.get("/:id", variables, async(req, res, next) => {
         }
     }
 
+    res.locals.premidPageInfo = res.__("premid.bots.view", bot.name);
+
     if (bot.status.archived === true) return res.status(404).render("status", {
         title: res.__("common.error"),
         status: 404,
@@ -639,7 +654,7 @@ router.get("/:id", variables, async(req, res, next) => {
 
     const dirty = entities.decode(md.render(bot.longDesc));
     let clean;
-    if (bot.status.verified === true) {
+    if (bot.status.premium === true) {
         clean = sanitizeHtml(dirty, {
             allowedTags: ["h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "button", "p", "a", "ul", "ol",
                 "nl", "li", "b", "i", "img", "strong", "em", "strike", "code", "hr", "br", "div",
@@ -668,7 +683,7 @@ router.get("/:id", variables, async(req, res, next) => {
         staffServer: settings.guild.staff,
         webUrl: settings.website.url,
         req: req,
-        votes: bot.votes.positive.length + -bot.votes.negative.length
+        votes: bot.votes.positive.length - bot.votes.negative.length
     });
 });
 
@@ -712,7 +727,7 @@ router.get("/:id/upvote", variables, permission.auth, async(req, res, next) => {
         upVotes.push(req.user.id);
     }
 
-    await req.app.db.collection("bots").updateOne({ id: bot._id }, {
+    await req.app.db.collection("bots").updateOne({ _id: bot._id }, {
         $set: {
             votes: {
                 positive: upVotes,
@@ -788,7 +803,7 @@ router.get("/:id/downvote", variables, permission.auth, async(req, res, next) =>
         downVotes.push(req.user.id);
     }
 
-    await req.app.db.collection("bots").updateOne({ id: bot._id }, {
+    await req.app.db.collection("bots").updateOne({ _id: bot._id }, {
         $set: {
             votes: {
                 positive: upVotes,
@@ -847,17 +862,19 @@ router.get("/:id/delete", variables, permission.auth, async(req, res, next) => {
         req: req
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** deleted bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**`);
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\``);
 
-    req.app.db.collection("bots").deleteOne({ _id: req.params.id });
+    await req.app.db.collection("bots").deleteOne({ _id: req.params.id });
 
-    req.app.db.collection("audit").insertOne({
+    await req.app.db.collection("audit").insertOne({
         type: "DELETE_BOT",
         executor: req.user.id,
         target: req.params.id,
         date: Date.now(),
         reason: "None specified."
     });
+    
+    await botCache.deleteBot(req.params.id);
 
     res.redirect("/users/@me");
 });
@@ -887,6 +904,9 @@ router.get("/:id/resubmit", variables, permission.auth, async(req, res, next) =>
         type: "Error",
         req
     });
+
+    res.locals.premidPageInfo = res.__("premid.bots.resubmit", botExists.name);
+
     res.render("templates/bots/edit", {
         title: res.__("page.bots.resubmit.title"),
         subtitle: res.__("page.bots.resubmit.subtitle", botExists.name),
@@ -921,6 +941,8 @@ router.post("/:id/resubmit", variables, permission.auth, async(req, res, next) =
         type: "Error",
         req
     });
+
+    res.locals.premidPageInfo = res.__("premid.bots.resubmit", botExists.name);
 
     let invite;
 
@@ -985,12 +1007,13 @@ router.post("/:id/resubmit", variables, permission.auth, async(req, res, next) =
 
     fetch(`https://discord.com/api/v6/users/${req.params.id}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}` } }).then(async(fetchRes) => {
         fetchRes.jsonBody = await fetchRes.json();
-        await req.app.db.collection("bots").updateOne({ id: req.params.id }, {
+        await req.app.db.collection("bots").updateOne({ _id: req.params.id }, {
             $set: {
                 name: fetchRes.jsonBody.username,
                 prefix: req.body.prefix,
                 library: library,
                 tags: tags,
+                flags: fetchRes.jsonBody.public_flags,
                 shortDesc: req.body.shortDescription,
                 longDesc: req.body.longDescription,
                 editors: editors,
@@ -1021,6 +1044,7 @@ router.post("/:id/resubmit", variables, permission.auth, async(req, res, next) =
                     prefix: botExists.prefix,
                     library: botExists.library,
                     tags: botExists.tags,
+                    flags: botExists.flags,
                     shortDesc: botExists.shortDesc,
                     longDesc: botExists.longDesc,
                     editors: botExists.editors,
@@ -1049,6 +1073,7 @@ router.post("/:id/resubmit", variables, permission.auth, async(req, res, next) =
                     prefix: req.body.prefix,
                     library: library,
                     tags: tags,
+                    flags: fetchRes.jsonBody.public_flags,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
                     editors: editors,
@@ -1077,7 +1102,7 @@ router.post("/:id/resubmit", variables, permission.auth, async(req, res, next) =
         await botCache.updateBot(req.params.id);
     }).catch(_ => { return res.status(400).render("status", { title: res.__("common.error"), subtitle: res.__("common.error.dapiFail"), status: 400, type: "Error", req }) });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.resubmitBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** resubmitted bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) });
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.resubmitBot} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` resubmitted bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\`\n<${settings.website.url}/bots/${req.body.id}>`).catch(e => { console.error(e) });
     res.redirect(`/bots/${req.params.id}`);
 });
 
@@ -1100,32 +1125,45 @@ router.get("/:id/approve", variables, permission.auth, permission.mod, async(req
         type: "Error"
     });
 
-    req.app.db.collection("bots").updateOne({ id: req.params.id }, {
+    await req.app.db.collection("bots").updateOne({ _id: req.params.id }, {
         $set: {
             "status.approved": true
         }
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.check} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** approved bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${bot._id}>`).catch(e => { console.error(e) });
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, {
+        $set: {
+            "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
+            "staffTracking.handledBots.allTime.approved": req.user.db.staffTracking.handledBots.allTime.approved += 1,
+            "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+            "staffTracking.handledBots.thisWeek.approved": req.user.db.staffTracking.handledBots.thisWeek.approved += 1
+        }
+    });
+
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.check} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` approved bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\`\n<${settings.website.url}/bots/${bot._id}>`).catch(e => { console.error(e) });
 
     const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
     if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.check} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\` has been approved!`).catch(e => { console.error(e) });
 
     const mainGuild = await discord.bot.guilds.get(settings.guild.main);
     const staffGuild = await discord.bot.guilds.get(settings.guild.staff);
-    mainGuild.members.get(bot.owner.id).addRole(settings.roles.developer, "User's bot was just approved.")
+
+    const mainGuildOwner = mainGuild.members.get(bot.owner.id);
+    if (mainGuildOwner) mainGuildOwner.addRole(settings.roles.developer, "User's bot was just approved.")
         .catch(e => {
             console.error(e);
             discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${bot.owner.id}> \`${bot.owner.id}\` the role **Bot Developer** upon one of their bots being approved.`);
         });
 
-    mainGuild.members.get(bot._id).addRole(settings.roles.bot, "Bot was approved on the website.")
+    const mainGuildBot = mainGuild.members.get(bot._id);
+    if (mainGuildBot) mainGuildBot.addRole(settings.roles.bot, "Bot was approved on the website.")
         .catch(e => {
             console.error(e);
             discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${bot._id}> \`${bot._id}\` the role **Bot** upon being approved on the website.`);
         });
 
-    staffGuild.members.get(bot._id).kick("Bot was approved on the website.")
+    const botStaffServer = staffGuild.members.get(bot._id);
+    if (botStaffServer) botStaffServer.kick("Bot was approved on the website.")
         .catch(e => {
             console.error(e);
             discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed kicking <@${bot._id}> \`${bot._id}\` from the Staff Server on approval.`);
@@ -1139,10 +1177,12 @@ router.get("/:id/approve", variables, permission.auth, permission.mod, async(req
         reason: "None specified."
     });
 
+    await botCache.updateBot(req.params.id);
+
     res.redirect(`/bots/${req.params.id}`);
 });
 
-router.get("/:id/verify", variables, permission.auth, permission.assistant, async(req, res, next) => {
+router.get("/:id/give-premium", variables, permission.auth, permission.assistant, async(req, res, next) => {
     const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
@@ -1153,64 +1193,55 @@ router.get("/:id/verify", variables, permission.auth, permission.assistant, asyn
         type: "Error"
     });
 
-    if (bot.status.verified === true) return res.status(400).render("status", {
+    if (bot.status.premium === true) return res.status(400).render("status", {
         title: res.__("common.error"),
         status: 400,
-        subtitle: res.__("common.error.bot.alreadyVerified"),
+        subtitle: res.__("common.error.bot.alreadyPremium"),
         req,
         type: "Error"
     });
 
     const mainGuild = await discord.bot.guilds.get(settings.guild.main);
-    mainGuild.members.get(bot.owner.id).addRole(settings.roles.verifiedDeveloper, "User's bot was just verified.")
+    const botMember = await mainGuild.members.get(bot._id);
+
+    if (botMember) botMember.addRole(settings.roles.premiumBot, "Bot was given premium on the website.")
         .catch(e => {
             console.error(e);
-            discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${bot.owner.id}> \`${bot.owner.id}\` the role **Verified Developer** upon one of their bots being verified.`);
+            discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${member.id}> \`${member.id}\` the role **Premium Bot** upon being given premium on the website.`);
         });
 
-    mainGuild.members.get(bot._id).addRole(settings.roles.verifiedBot, "Bot was verified on the website.")
-        .catch(e => {
-            console.error(e);
-            discord.bot.createMessage(settings.channels.alerts, `${settings.emoji.error} Failed giving <@${member.id}> \`${member.id}\` the role **Verified Bot** upon being verified on the website.`);
-        });
-
-    await req.app.db.collection("bots").updateOne({ id: req.params.id }, {
+    await req.app.db.collection("bots").updateOne({ _id: req.params.id }, {
         $set: {
-            "status.verified": true
+            "status.premium": true
         }
     });
 
     await req.app.db.collection("users").updateOne({ _id: bot.owner.id }, {
         $set: {
-            "status.verified": true
+            "status.premium": true
         }
     });
 
     await botCache.updateBot(req.params.id);
 
     req.app.db.collection("audit").insertOne({
-        type: "VERIFY_BOT",
+        type: "PREMIUM_BOT_GIVE",
         executor: req.user.id,
         target: req.params.id,
         date: Date.now(),
         reason: "None specified."
     });
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.verified} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** verified bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${req.params.id}>`).catch(e => { console.error(e) });
-
-    const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.verified} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\` was verified!`).catch(e => { console.error(e) });
-
     res.redirect(`/bots/${req.params.id}`);
 });
 
-router.get("/:id/unverify", variables, permission.auth, permission.assistant, async(req, res, next) => {
+router.get("/:id/take-premium", variables, permission.auth, permission.assistant, async(req, res, next) => {
     const bot = await req.app.db.collection("bots").findOne({ _id: req.params.id });
 
     if (!bot) return res.status(404).render("status", {
         title: res.__("common.error"),
         status: 404,
-        subtitle: res.__("You cannot unverify a bot that doesn't exist"),
+        subtitle: res.__("common.error.bot.404"),
         req,
         type: "Error"
     });
@@ -1218,31 +1249,26 @@ router.get("/:id/unverify", variables, permission.auth, permission.assistant, as
     if (bot.status.verified === false) return res.status(400).render("status", {
         title: res.__("common.error"),
         status: 400,
-        subtitle: res.__("You cannot unverify a bot that is not verified"),
+        subtitle: res.__("common.error.noPremiumTake"),
         req,
         type: "Error"
     });
 
-    req.app.db.collection("bots").updateOne({ id: req.params.id }, {
+    req.app.db.collection("bots").updateOne({ _id: req.params.id }, {
         $set: {
-            "status.verified": false
+            "status.premium": false
         }
     });
 
     await botCache.updateBot(req.params.id);
 
     req.app.db.collection("audit").insertOne({
-        type: "UNVERIFY_BOT",
+        type: "PREMIUM_BOT_TAKE",
         executor: req.user.id,
         target: req.params.id,
         date: Date.now(),
         reason: "None specified."
     });
-
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.unverifiedBot} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** unverified bot **${functions.escapeFormatting(bot.name)} \`(${bot._id})\`**\n<${settings.website.url}/bots/${req.params.id}>`).catch(e => { console.error(e) });
-
-    const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.unverifiedBot} **|** Your bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\` has been unverified!?\n\n**For further information please contact a Website Administrator or Assistant.**`).catch(e => { console.error(e) });
 
     res.redirect(`/bots/${req.params.id}`);
 });
@@ -1257,6 +1283,8 @@ router.get("/:id/decline", variables, permission.auth, permission.mod, async(req
         req,
         type: "Error"
     });
+
+    res.locals.premidPageInfo = res.__("premid.bots.decline", bot.name);
 
     if (bot.status.approved === true) return res.status(400).render("status", {
         title: res.__("common.error"),
@@ -1292,10 +1320,19 @@ router.post("/:id/decline", variables, permission.auth, permission.mod, async(re
         type: "Error"
     });
 
-    await req.app.db.collection("bots").updateOne({ id: req.params.id }, {
+    await req.app.db.collection("bots").updateOne({ _id: req.params.id }, {
         $set: {
             vanityUrl: "",
             "status.archived": true
+        }
+    });
+
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, {
+        $set: {
+            "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
+            "staffTracking.handledBots.allTime.declined": req.user.db.staffTracking.handledBots.allTime.declined += 1,
+            "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+            "staffTracking.handledBots.thisWeek.declined": req.user.db.staffTracking.handledBots.thisWeek.declined += 1
         }
     });
 
@@ -1307,7 +1344,8 @@ router.post("/:id/decline", variables, permission.auth, permission.mod, async(re
         reason: req.body.reason || "None specified."
     });
 
-    await botCache.updateBot(req.params.id);
+
+    await botCache.deleteBot(req.params.id);
 
     discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.cross} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\`\n**Reason:** \`${req.body.reason}\``);
 
@@ -1343,6 +1381,8 @@ router.get("/:id/remove", variables, permission.auth, permission.mod, async(req,
         type: "Error"
     });
 
+    res.locals.premidPageInfo = res.__("premid.bots.remove", bot.name);
+
     res.render("templates/bots/staffActions/remove", {
         title: res.__("page.bots.remove.title"),
         subtitle: res.__("page.bots.remove.subtitle", bot.name),
@@ -1370,10 +1410,19 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async(req
         type: "Error"
     });
 
-    await req.app.db.collection("bots").updateOne({ id: req.params.id }, {
+    await req.app.db.collection("bots").updateOne({ _id: req.params.id }, {
         $set: {
             vanityUrl: "",
             "status.archived": true
+        }
+    });
+
+    await req.app.db.collection("users").updateOne({ _id: req.user.id }, {
+        $set: {
+            "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
+            "staffTracking.handledBots.allTime.remove": req.user.db.staffTracking.handledBots.allTime.remove += 1,
+            "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+            "staffTracking.handledBots.thisWeek.remove": req.user.db.staffTracking.handledBots.thisWeek.remove += 1
         }
     });
 
@@ -1384,7 +1433,8 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async(req
         date: Date.now(),
         reason: req.body.reason || "None specified."
     });
-    await botCache.updateBot(req.params.id);
+    
+    await botCache.deleteBot(req.params.id);
 
     discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id})\`\n**Reason:** \`${req.body.reason}\``);
 

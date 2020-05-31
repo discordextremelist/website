@@ -35,6 +35,8 @@ const serverCache = require("../Util/Services/serverCaching.js");
 const userCache = require("../Util/Services/userCaching.js");
 
 router.get("/submit", variables, permission.auth, (req, res, next) => {
+    res.locals.premidPageInfo = res.__("premid.servers.submit");
+
     res.render("templates/servers/submit", { 
         title: res.__("common.nav.me.submitServer"), 
         subtitle: res.__("common.nav.me.submitServer.subtitle"), 
@@ -43,6 +45,8 @@ router.get("/submit", variables, permission.auth, (req, res, next) => {
 });
 
 router.post("/submit", variables, permission.auth, async (req, res, next) => {
+    res.locals.premidPageInfo = res.__("premid.servers.submit");
+
     let error = false;
     let errors = [];
     
@@ -224,6 +228,8 @@ router.get("/:id", variables, async (req, res, next) => {
         serverOwner = await req.app.db.collection("users").findOne({ _id: server.owner.id });
     }
 
+    res.locals.premidPageInfo = res.__("premid.servers.view", server.name);
+
     const dirty = entities.decode(md.render(server.longDesc)); 
     let clean;
     clean = sanitizeHtml(dirty, {
@@ -265,6 +271,8 @@ router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
         type: "Error",
         req 
     }); 
+    
+    res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 
     res.render("templates/servers/edit", { 
         title: res.__("page.servers.edit.title"), 
@@ -295,6 +303,8 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
         type: "Error",
         req 
     }); 
+    
+    res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 
     if (!req.body.invite) {
         error = true;
@@ -453,17 +463,19 @@ router.get("/:id/delete", variables, permission.auth, async (req, res, next) => 
         req 
     }); 
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)} \`(${req.user.id})\`** deleted server **${functions.escapeFormatting(server.name)} \`(${server._id})\`**`);
+    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` deleted server **${functions.escapeFormatting(server.name)}** \`(${server._id})\``);
 
-    req.app.db.collection("servers").deleteOne({ _id: req.params.id });
+    await req.app.db.collection("servers").deleteOne({ _id: req.params.id });
 
-    req.app.db.collection("audit").insertOne({
+    await req.app.db.collection("audit").insertOne({
         type: "DELETE_SERVER",
         executor: req.user.id,
         target: req.params.id,
         date: Date.now(),
         reason: "None specified."
     });
+    
+    await serverCache.deleteServer(req.params.id);
 
     res.redirect("/users/@me");
 });
@@ -478,6 +490,8 @@ router.get("/:id/remove", variables, permission.auth, permission.mod, async (req
         req,
         type: "Error"
     });
+    
+    res.locals.premidPageInfo = res.__("premid.servers.remove", server.name);
 
     res.render("templates/servers/staffActions/remove", { 
         title: res.__("page.servers.remove.title"), 
@@ -507,7 +521,8 @@ router.post("/:id/remove", variables, permission.auth, permission.mod, async (re
         date: Date.now(),
         reason: req.body.reason || "None specified."
     });
-    await serverCache.updateServer(req.params.id);
+
+    await serverCache.deleteServer(req.params.id);
 
     discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` removed server **${functions.escapeFormatting(server.name)}** \`(${server._id})\`\n**Reason:** \`${req.body.reason}\``);
 

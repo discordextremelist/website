@@ -198,6 +198,26 @@ img.emoji {
     height: 1em;
     width: 1em;
     margin: 0 .05em 0 .1em;
-    vertical-align: -0.1em;
+    vertical-align: -0.229em;
 }
 
+a:hover {
+    color: #2a64dc;
+}
+
+iframe {
+    border-radius: 5px;
+}
+
+.dropdown-arrow {
+    align-items: center; 
+    display: flex; 
+    justify-content: center; 
+    height: 1.5rem;
+    width: 1.5rem; 
+    float: right;
+}
+
+.transform > .emoji {
+    transform: rotate(180deg);
+}

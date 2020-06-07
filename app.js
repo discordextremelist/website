@@ -239,4 +239,8 @@ new Promise((resolve, reject) => {
         process.exit(1);
     });
 
+if (process.env.NODE_ENV === "CI") setTimeout(() => {
+    process.exit(0);
+}, 120000);
+
 module.exports = app;

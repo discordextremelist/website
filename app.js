@@ -104,7 +104,14 @@ new Promise((resolve, reject) => {
         const banned = require("./src/Util/Services/banned.js");
         const discord = require("./src/Util/Services/discord.js");
         const botStatsUpdate = require("./src/Util/Services/botStatsUpdate.js");
-        global.redis = new (require("ioredis"))(process.env.REDIS_URI);
+
+        global.redis = new (require("ioredis"))({
+            port: process.env.REDIS_PORT,
+            host: process.env.REDIS_HOST,
+            db: process.env.REDIS_DB,
+            password: process.env.REDIS_PASSWD
+        });
+
         global.redis.flushdb();
 
         console.time("Redis Cache");

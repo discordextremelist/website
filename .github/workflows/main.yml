@@ -30,7 +30,10 @@ jobs:
       env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           MONGO_DB: ${{ secrets.MONGO_DB }} 
-          REDIS_URI: ${{ secrets.REDIS_URI }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REDIS_DB: ${{ secrets.REDIS_DB }}
+          REDIS_PASSWD: ${{ secrets.REDIS_PASSWD }}
           DISCORD_ID: ${{ secrets.DISCORD_ID }}
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           DISCORD_SECRET: ${{ secrets.DISCORD_SECRET }}

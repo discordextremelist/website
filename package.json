@@ -49,6 +49,7 @@
     },
     "scripts": {
         "start": "node scripts/start",
+        "test": "node scripts/start",
         "pm2": "pm2 start scripts/start --name 'DEL'",
         "dev": "nodemon --signal SIGINT --signal SIGTERM --delay 5 scripts/start",
         "css-build": "sh ./scripts/css_build.sh",

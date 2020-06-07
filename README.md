@@ -1,5 +1,7 @@
 # Discord Extreme List version 5.x.x
 
+![CI](https://github.com/discordextremelist/website/workflows/CI/badge.svg?branch=master)
+
 Licensing information viewable in LICENSE.md
 
 # Setup

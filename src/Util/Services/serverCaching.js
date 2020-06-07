@@ -17,7 +17,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-
 const app = require("../../../app.js");
 const prefix = "servers";
 
@@ -40,7 +39,10 @@ async function updateServer(id) {
 async function uploadServers() {
     const servers = await app.db.collection("servers").find().toArray();
     if (servers.length < 1) return;
-    await global.redis.hmset(prefix, ...servers.map(s => [s._id, JSON.stringify(s)]));
+    await global.redis.hmset(
+        prefix,
+        ...servers.map((s) => [s._id, JSON.stringify(s)])
+    );
 }
 
 async function deleteServer(id) {
@@ -52,5 +54,9 @@ setInterval(async () => {
 }, 900000);
 
 module.exports = {
-    getServer, getAllServers, updateServer, uploadServers, deleteServer
+    getServer,
+    getAllServers,
+    updateServer,
+    uploadServers,
+    deleteServer
 };

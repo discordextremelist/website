@@ -39,7 +39,10 @@ async function updateBot(id) {
 async function uploadBots() {
     const botsDB = await app.db.collection("bots").find().toArray();
     if (botsDB.length < 1) return;
-    await global.redis.hmset(prefix, ...botsDB.map(bot => [bot._id, JSON.stringify(bot)]));
+    await global.redis.hmset(
+        prefix,
+        ...botsDB.map((bot) => [bot._id, JSON.stringify(bot)])
+    );
 }
 
 async function deleteBot(id) {
@@ -51,5 +54,9 @@ setInterval(async () => {
 }, 900000);
 
 module.exports = {
-    getBot, getAllBots, updateBot, uploadBots, deleteBot
+    getBot,
+    getAllBots,
+    updateBot,
+    uploadBots,
+    deleteBot
 };

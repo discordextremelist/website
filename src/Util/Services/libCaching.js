@@ -25,7 +25,7 @@ function getLibs() {
 }
 
 function hasLib(name) {
-    return global.libs.find(x => x._id === name);
+    return global.libs.find((x) => x._id === name);
 }
 
 async function cacheLibs() {
@@ -34,34 +34,36 @@ async function cacheLibs() {
     for (const lib of dbLibs) global.libs.push(lib);
 }
 
-async function addLib({
-    name,
-    language,
-    links: { docs, repo }
-} = {
-    name: "",
-    language: "",
-    links: { docs: "", repo: "" }
-}) {
-    await app.db.collection("libraries").updateOne({ _id: name }, {
-        language,
-        links: { docs, repo }
-    }, { upsert: true });
-    global.libs[global.libs.findIndex(x => x._id === name)] = {
+async function addLib(
+    { name, language, links: { docs, repo } } = {
+        name: "",
+        language: "",
+        links: { docs: "", repo: "" }
+    }
+) {
+    await app.db.collection("libraries").updateOne(
+        { _id: name },
+        {
+            language,
+            links: { docs, repo }
+        },
+        { upsert: true }
+    );
+    global.libs[global.libs.findIndex((x) => x._id === name)] = {
         language,
         links: { docs, repo }
     };
 }
 
 async function removeLib(name) {
-    const index = global.libs.findIndex(x => x._id === name);
+    const index = global.libs.findIndex((x) => x._id === name);
     if (index) {
         global.libs.splice(index, 1);
         await app.db.collection("libraries").deleteOne({ _id: name });
     }
 }
 
-setInterval(async() => {
+setInterval(async () => {
     await cacheLibs();
 }, 900000);
 

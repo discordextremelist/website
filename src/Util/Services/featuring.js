@@ -36,17 +36,28 @@ async function getFeaturedTemplates() {
 }
 
 async function updateFeaturedBots() {
-    const bots = (functions.shuffleArray((await app.db.collection("bots").find().toArray()).filter(({status}) => status.approved && !status.siteBot && !status.archived))).slice(0, 6);
+    const bots = functions
+        .shuffleArray(
+            (await app.db.collection("bots").find().toArray()).filter(
+                ({ status }) =>
+                    status.approved && !status.siteBot && !status.archived
+            )
+        )
+        .slice(0, 6);
     await global.redis.set("featured_bots", JSON.stringify(bots));
 }
 
 async function updateFeaturedServers() {
-    const servers = (functions.shuffleArray(await app.db.collection("servers").find().toArray())).slice(0, 6);
+    const servers = functions
+        .shuffleArray(await app.db.collection("servers").find().toArray())
+        .slice(0, 6);
     await global.redis.set("featured_servers", JSON.stringify(servers));
 }
 
 async function updateFeaturedTemplates() {
-    const templates = (functions.shuffleArray(await app.db.collection("templates").find().toArray())).slice(0, 6);
+    const templates = functions
+        .shuffleArray(await app.db.collection("templates").find().toArray())
+        .slice(0, 6);
     await global.redis.set("featured_templates", JSON.stringify(templates));
 }
 
@@ -60,7 +71,7 @@ module.exports = {
     getFeaturedBots,
     getFeaturedServers,
     getFeaturedTemplates,
-    updateFeaturedBots, 
+    updateFeaturedBots,
     updateFeaturedServers,
     updateFeaturedTemplates
 };

@@ -31,14 +31,17 @@ function getAnnouncement() {
 }
 
 async function updateAnnouncement(announcement) {
-    await app.db.collection("webOptions").updateOne({ _id: "announcement" }, {
-        $set: {
-            active: announcement.active,
-            message: announcement.message,
-            colour: announcement.colour,
-            foreground: announcement.foreground
+    await app.db.collection("webOptions").updateOne(
+        { _id: "announcement" },
+        {
+            $set: {
+                active: announcement.active,
+                message: announcement.message,
+                colour: announcement.colour,
+                foreground: announcement.foreground
+            }
         }
-    });
+    );
 
     global.announcement = {
         active: announcement.active,
@@ -49,12 +52,14 @@ async function updateAnnouncement(announcement) {
 }
 
 async function updateCache() {
-    const announcement = await app.db.collection("webOptions").findOne({ _id: "announcement" });
+    const announcement = await app.db
+        .collection("webOptions")
+        .findOne({ _id: "announcement" });
     if (announcement) global.announcement = announcement;
     return;
 }
 
-setInterval(async() => {
+setInterval(async () => {
     await updateCache();
 }, 60000);
 

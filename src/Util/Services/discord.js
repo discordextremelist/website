@@ -68,16 +68,27 @@ async function getStatus(id) {
 }
 
 async function uploadStatuses() {
-    await Promise.all(bot.guilds.map(async g => await global.redis.hmset(prefix, ...g.members.map(m => [m.id, m.status]))));
+    await Promise.all(
+        bot.guilds.map(
+            async (g) =>
+                await global.redis.hmset(
+                    prefix,
+                    ...g.members.map((m) => [m.id, m.status])
+                )
+        )
+    );
 }
 
 async function postMetric() {
     const guild = await bot.guilds.get(settings.guild.main);
-    metrics.gauge('del.server.memberCount', guild.memberCount)
+    metrics.gauge("del.server.memberCount", guild.memberCount);
 }
 
 bot.connect();
 
 module.exports = {
-    bot, getStatus, uploadStatuses, postMetric
+    bot,
+    getStatus,
+    uploadStatuses,
+    postMetric
 };

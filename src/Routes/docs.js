@@ -25,9 +25,9 @@ const router = express.Router();
 router.get("/", variables, async (req, res, next) => {
     res.locals.premidPageInfo = res.__("premid.docs");
 
-    res.render("templates/docs/index", { 
-        title: res.__("common.nav.more.docs"), 
-        subtitle: res.__("docs.subtitle"), 
+    res.render("templates/docs/index", {
+        title: res.__("common.nav.more.docs"),
+        subtitle: res.__("docs.subtitle"),
         req,
         settings
     });

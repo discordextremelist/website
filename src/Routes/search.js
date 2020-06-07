@@ -21,7 +21,10 @@ const router = require("express").Router();
 const vars = require("../Util/Function/variables");
 const chunk = require("chunk");
 const ejs = require("ejs");
-const renderPath = require("path").join(process.cwd(), "src/Assets/Views/partials");
+const renderPath = require("path").join(
+    process.cwd(),
+    "src/Assets/Views/partials"
+);
 const userCache = require("../Util/Services/userCaching");
 const botCache = require("../Util/Services/botCaching");
 const serverCache = require("../Util/Services/serverCaching");
@@ -39,40 +42,101 @@ router.get("/", vars, (req, res) => {
 
 router.post("/", vars, async (req, res) => {
     let { query, only } = req.body;
-    if (!query) return res.status(400).json({ error: true, status: 400, message: "Missing body parameter 'query'" });
+    if (!query)
+        return res
+            .status(400)
+            .json({
+                error: true,
+                status: 400,
+                message: "Missing body parameter 'query'"
+            });
     const originalQuery = query;
     query = query.toLowerCase();
     let isStaff = false;
     if (!!only && only.includes("users")) {
         if (req.user && req.user.id) {
-            const user = await req.app.db.collection("users").findOne({ _id: req.user.id });
-            if (!user.rank.mod) return res.status(403).json({ error: true, status: 403, message: "Forbidden" });
+            const user = await req.app.db
+                .collection("users")
+                .findOne({ _id: req.user.id });
+            if (!user.rank.mod)
+                return res
+                    .status(403)
+                    .json({ error: true, status: 403, message: "Forbidden" });
             isStaff = true;
         } else {
-            return res.status(403).json({ error: true, status: 403, message: "Forbidden" });
+            return res
+                .status(403)
+                .json({ error: true, status: 403, message: "Forbidden" });
         }
     }
     const [users, bots, servers, templates] = await Promise.all([
         isStaff ? await userCache.getAllUsers() : [],
-        (only.length < 1 || only.includes("bots")) ? await botCache.getAllBots() : [],
-        (only.length < 1 || only.includes("servers")) ? await serverCache.getAllServers() : [],
-        (only.length < 1 || only.includes("templates")) ? await templateCache.getAllTemplates() : [],
+        only.length < 1 || only.includes("bots")
+            ? await botCache.getAllBots()
+            : [],
+        only.length < 1 || only.includes("servers")
+            ? await serverCache.getAllServers()
+            : [],
+        only.length < 1 || only.includes("templates")
+            ? await templateCache.getAllTemplates()
+            : []
     ]);
     const imageFormat = res.locals.imageFormat;
-    let results = chunk(await Promise.all([
-        ...users.filter(({ id, name }) => id === query || name.toLowerCase().indexOf(query) >= 0).map(user => {
-            return ejs.renderFile(renderPath+"/cards/userCard.ejs", { user, imageFormat, search: true, __: res.locals.__ });
-        }),
-        ...bots.filter(({ id, name }) => id === query || name.toLowerCase().indexOf(query) >= 0).map(bot => {
-            return ejs.renderFile(renderPath+"/cards/botCard.ejs", { bot, imageFormat, queue: false, verificationApp: false, search: true, __: res.locals.__ });
-        }),
-        ...servers.filter(({ id, name }) => id === query || name.toLowerCase().indexOf(query) >= 0).map(server => {
-            return ejs.renderFile(renderPath+"/cards/serverCard.ejs", { server, imageFormat, search: true, __: res.locals.__ });
-        }),
-        ...templates.filter(({ id, name }) => id === query || name.toLowerCase().indexOf(query) >= 0).map(server => {
-            return ejs.renderFile(renderPath+"/cards/templateCard.ejs", { server, imageFormat, search: true, __: res.locals.__ });
-        })
-    ]), 3);
+    let results = chunk(
+        await Promise.all([
+            ...users
+                .filter(
+                    ({ id, name }) =>
+                        id === query || name.toLowerCase().indexOf(query) >= 0
+                )
+                .map((user) => {
+                    return ejs.renderFile(renderPath + "/cards/userCard.ejs", {
+                        user,
+                        imageFormat,
+                        search: true,
+                        __: res.locals.__
+                    });
+                }),
+            ...bots
+                .filter(
+                    ({ id, name }) =>
+                        id === query || name.toLowerCase().indexOf(query) >= 0
+                )
+                .map((bot) => {
+                    return ejs.renderFile(renderPath + "/cards/botCard.ejs", {
+                        bot,
+                        imageFormat,
+                        queue: false,
+                        verificationApp: false,
+                        search: true,
+                        __: res.locals.__
+                    });
+                }),
+            ...servers
+                .filter(
+                    ({ id, name }) =>
+                        id === query || name.toLowerCase().indexOf(query) >= 0
+                )
+                .map((server) => {
+                    return ejs.renderFile(
+                        renderPath + "/cards/serverCard.ejs",
+                        { server, imageFormat, search: true, __: res.locals.__ }
+                    );
+                }),
+            ...templates
+                .filter(
+                    ({ id, name }) =>
+                        id === query || name.toLowerCase().indexOf(query) >= 0
+                )
+                .map((server) => {
+                    return ejs.renderFile(
+                        renderPath + "/cards/templateCard.ejs",
+                        { server, imageFormat, search: true, __: res.locals.__ }
+                    );
+                })
+        ]),
+        3
+    );
 
     return res.json({
         error: false,

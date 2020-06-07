@@ -24,12 +24,15 @@ const releaseInfo = require("../../../release-info.json");
 const ddosMode = require("../Services/ddosMode.js");
 const announcementCache = require("../Services/announcementCaching.js");
 
-const variables = async(req, res, next) => {
+const variables = async (req, res, next) => {
     if (req.originalUrl.includes("?setLang=t")) {
         return res.redirect(req.originalUrl.replace("?setLang=t", ""));
     }
 
-    if (req.originalUrl.includes("?localeLayout=rtl") || req.originalUrl.includes("?localeLayout=ltr")) {
+    if (
+        req.originalUrl.includes("?localeLayout=rtl") ||
+        req.originalUrl.includes("?localeLayout=ltr")
+    ) {
         let returnURL = req.originalUrl.replace("?localeLayout=rtl", "");
         returnURL = returnURL.replace("?localeLayout=ltr", "");
         return res.redirect(returnURL);
@@ -41,11 +44,24 @@ const variables = async(req, res, next) => {
     res.locals.cssVersion = releaseInfo.cssVersion;
     res.locals.ddosMode = ddosMode.getDDOSMode().active;
     res.locals.gaID = settings.website.gaID;
-    res.locals.linkPrefix = `/${req.locale || settings.website.locales.default}`;
+    
+    res.locals.linkPrefix = `/${
+        req.locale || settings.website.locales.default
+    }`;
+
     res.locals.defaultLang = settings.website.locales.default;
     res.locals.baseURL = settings.website.url;
     res.locals.announcement = announcementCache.getAnnouncement();
-    res.locals.announcement.default = ["#3273dc", "#3298dc", "#0dbf04", "#f24405", "#cd0930", "preferred"];
+
+    res.locals.announcement.default = [
+        "#3273dc",
+        "#3298dc",
+        "#0dbf04",
+        "#f24405",
+        "#cd0930",
+        "preferred"
+    ];
+
     req.session.redirectTo = req.originalUrl;
     req.del = releaseInfo;
     req.del.node = "us-node"; // will be updated in a bit:tm: (*cough* spoiler)
@@ -54,16 +70,21 @@ const variables = async(req, res, next) => {
 
     if (req.session.disableRTL && req.session.disableRTL === true) {
         res.locals.htmlDir = "ltr";
-    } else settings.website.locales.isRTL.includes(req.locale) ? res.locals.htmlDir = "rtl" : res.locals.htmlDir = "ltr";
+    } else
+        settings.website.locales.isRTL.includes(req.locale)
+            ? (res.locals.htmlDir = "rtl")
+            : (res.locals.htmlDir = "ltr");
 
-    settings.website.locales.isRTL.includes(req.locale) ? req.session.rtlLanguage = true : req.session.rtlLanguage = false;
+    settings.website.locales.isRTL.includes(req.locale)
+        ? (req.session.rtlLanguage = true)
+        : (req.session.rtlLanguage = false);
 
     res.locals.pageType = {
         server: false,
         bot: false,
         template: false,
         user: false
-    }
+    };
 
     res.locals.socialMedia = {
         facebook: "https://facebook.com/DiscordExtremeList",
@@ -71,21 +92,33 @@ const variables = async(req, res, next) => {
         instagram: "https://www.instagram.com/discordextremelist/",
         github: "https://github.com/discordextremelist",
         patreon: "https://www.patreon.com/discordextremelist"
-    }
+    };
 
     res.locals.discordServer = "https://discord.gg/WeCer3J";
 
     if (req.device.type === "tablet" || req.device.type === "phone") {
         res.locals.mobile = true;
-        req.device.type === "phone" ? res.locals.phone = true : res.locals.phone = false;
-        req.device.type === "tablet" ? res.locals.tablet = true : res.locals.tablet = false;
+        req.device.type === "phone"
+            ? (res.locals.phone = true)
+            : (res.locals.phone = false);
+        req.device.type === "tablet"
+            ? (res.locals.tablet = true)
+            : (res.locals.tablet = false);
     } else {
         res.locals.mobile = false;
         res.locals.phone = false;
         res.locals.tablet = false;
     }
 
-    if (req.browser.name === "firefox" || req.browser.name === "opera" && req.browser.os === "Android" && req.browser.versionNumber < 46 || req.browser.name === "safari" && req.browser.versionNumber < 11.3 && req.get("User-Agent").toLowerCase().includes("kaios")) {
+    if (
+        req.browser.name === "firefox" ||
+        (req.browser.name === "opera" &&
+            req.browser.os === "Android" &&
+            req.browser.versionNumber < 46) ||
+        (req.browser.name === "safari" &&
+            req.browser.versionNumber < 11.3 &&
+            req.get("User-Agent").toLowerCase().includes("kaios"))
+    ) {
         usePreload = false;
     } else {
         usePreload = true;
@@ -98,20 +131,28 @@ const variables = async(req, res, next) => {
     }
 
     if (req.user) {
-        const user = await req.app.db.collection("users").findOne({ _id: req.user.id });
+        const user = await req.app.db
+            .collection("users")
+            .findOne({ _id: req.user.id });
         req.user.db = user;
-        
-        if (req.user.db.rank.mod === true && req.url !== "/profile/game/snakes") {
-            req.app.db.collection("users").updateOne({ _id: req.user.id }, 
-                { $set: {
-                    "staffTracking.lastAccessed.time": Date.now(),
-                    "staffTracking.lastAccessed.page": req.originalUrl
+
+        if (
+            req.user.db.rank.mod === true &&
+            req.url !== "/profile/game/snakes"
+        ) {
+            req.app.db.collection("users").updateOne(
+                { _id: req.user.id },
+                {
+                    $set: {
+                        "staffTracking.lastAccessed.time": Date.now(),
+                        "staffTracking.lastAccessed.page": req.originalUrl
+                    }
                 }
-            });
+            );
         }
     }
 
     next();
-}
+};
 
 module.exports = variables;

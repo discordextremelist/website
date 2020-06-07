@@ -27,7 +27,7 @@ async function check(user) {
 
 async function updateBanlist() {
     const bans = await discord.bot.guilds.get(settings.guild.main).getBans();
-    await global.redis.hmset("bans", ...bans.map(ban => [ban.user.id, true]));
+    await global.redis.hmset("bans", ...bans.map((ban) => [ban.user.id, true]));
 }
 
 setInterval(async () => {

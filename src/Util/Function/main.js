@@ -18,10 +18,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const escapeFormatting = (text) => {
-    const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, '$1');
-    const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, '\\$1');
+    const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
+    const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, "\\$1");
     return escaped;
-}
+};
 
 function parseRegion(region) {
     let parsedRegion = `🏴 ${region}`;
@@ -75,7 +75,10 @@ function regionIcon(region) {
 }
 
 function getForeground(inputColour) {
-    const colour = (inputColour.charAt(0) === '#') ? inputColour.substring(1, 7) : inputColour;
+    const colour =
+        inputColour.charAt(0) === "#"
+            ? inputColour.substring(1, 7)
+            : inputColour;
     const R = parseInt(colour.substring(0, 2), 16);
     const G = parseInt(colour.substring(2, 4), 16);
     const B = parseInt(colour.substring(4, 6), 16);
@@ -86,17 +89,19 @@ function getForeground(inputColour) {
         }
         return Math.pow((col + 0.055) / 1.055, 2.4);
     });
-    const L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
-    return (L > 0.179) ? "#000000" : "#FFFFFF";
+    const L = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    return L > 0.179 ? "#000000" : "#FFFFFF";
 }
 
 function standingParseEmoji(standing) {
     let result = "page.staff.manager.unavailable";
 
-    if (standing === "Unmeasured") result = "page.staff.manager.unmeasured.emoji";
+    if (standing === "Unmeasured")
+        result = "page.staff.manager.unmeasured.emoji";
     if (standing === "Good") result = "page.staff.manager.good.emoji";
     if (standing === "Moderate") result = "page.staff.manager.moderate.emoji";
-    if (standing === "Moderate-Bad") result = "page.staff.manager.moderateBad.emoji";
+    if (standing === "Moderate-Bad")
+        result = "page.staff.manager.moderateBad.emoji";
     if (standing === "Bad") result = "page.staff.manager.bad.emoji";
 
     return result;
@@ -112,17 +117,17 @@ function parseDate(__, locale, rawDate) {
         let amPM;
         let hour = date.getUTCHours();
 
-        if (hour === 0) hour = 24; 
+        if (hour === 0) hour = 24;
 
         if (hour >= 12 && hour !== 24) {
             amPM = __("common.dateFormat.pm");
-            if (hour > 12) hour = hour - 12
+            if (hour > 12) hour = hour - 12;
         } else {
             amPM = __("common.dateFormat.am");
-            if (hour === 24) hour = hour - 12
+            if (hour === 24) hour = hour - 12;
         }
 
-        return __("common.dateFormat", { 
+        return __("common.dateFormat", {
             hours: hour,
             minutes: date.getUTCMinutes(),
             dateInMonth: date.getUTCDate(),
@@ -130,28 +135,31 @@ function parseDate(__, locale, rawDate) {
             amPM: amPM,
             year: date.getUTCFullYear()
         });
-    } else return __("common.dateFormat", {
-        hours: date.getUTCHours(),
-        minutes: date.getUTCMinutes(),
-        dateInMonth: date.getUTCDate(),
-        monthNumber: date.getUTCMonth(),
-        year: date.getUTCFullYear()
-    });
+    } else
+        return __("common.dateFormat", {
+            hours: date.getUTCHours(),
+            minutes: date.getUTCMinutes(),
+            dateInMonth: date.getUTCDate(),
+            monthNumber: date.getUTCMonth(),
+            year: date.getUTCFullYear()
+        });
 }
 
 function shuffleArray(array) {
-    let currentIndex = array.length, temporaryValue, randomIndex;
+    let currentIndex = array.length,
+        temporaryValue,
+        randomIndex;
     while (0 !== currentIndex) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-  
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
     }
-  
+
     return array;
-  }
+}
 
 module.exports = {
     escapeFormatting,
@@ -161,4 +169,4 @@ module.exports = {
     standingParseEmoji,
     parseDate,
     shuffleArray
-}
+};

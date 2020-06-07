@@ -18,12 +18,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const auth = (req, res, next) => {
-    if (req.user) { 
+    if (req.user) {
         next();
     } else {
         res.redirect("/auth/login");
     }
-}
+};
 
 const member = (req, res, next) => {
     if (!bot.guilds.get(settings.guilds.mainID).members.get(member.id)) {
@@ -35,7 +35,7 @@ const member = (req, res, next) => {
             type: "Error"
         });
     }
-}
+};
 
 const mod = (req, res, next) => {
     if (req.user) {
@@ -51,7 +51,7 @@ const mod = (req, res, next) => {
             });
         }
     } else auth(req, res, next);
-}
+};
 
 const assistant = (req, res, next) => {
     if (req.user) {
@@ -67,7 +67,7 @@ const assistant = (req, res, next) => {
             });
         }
     } else auth(req, res, next);
-}
+};
 const admin = (req, res, next) => {
     if (req.user) {
         if (req.user.db.rank.admin === true) {
@@ -82,7 +82,7 @@ const admin = (req, res, next) => {
             });
         }
     } else auth(req, res, next);
-}
+};
 
 module.exports = {
     auth,

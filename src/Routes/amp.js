@@ -33,14 +33,14 @@ router.get("/", variables, async (req, res, next) => {
     const servers = await featuring.getFeaturedServers();
     const serverChunk = chunk(bots, 3);
 
-    res.render("amp/templates/index", { 
-        title: "Home", 
-        subtitle: "", 
-        req, 
+    res.render("amp/templates/index", {
+        title: "Home",
+        subtitle: "",
+        req,
         botsData: bots,
         botChunk,
         serversData: servers,
-        serverChunk,
+        serverChunk
     });
 });
 

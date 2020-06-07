@@ -39,7 +39,10 @@ async function updateTemplate(id) {
 async function uploadTemplates() {
     const templates = await app.db.collection("templates").find().toArray();
     if (templates.length < 1) return;
-    await global.redis.hmset(prefix, ...templates.map(t => [t._id, JSON.stringify(t)]));
+    await global.redis.hmset(
+        prefix,
+        ...templates.map((t) => [t._id, JSON.stringify(t)])
+    );
 }
 
 async function deleteTemplate(id) {
@@ -51,5 +54,9 @@ setInterval(async () => {
 }, 900000);
 
 module.exports = {
-    getTemplate, getAllTemplates, updateTemplate, uploadTemplates, deleteTemplate
+    getTemplate,
+    getAllTemplates,
+    updateTemplate,
+    uploadTemplates,
+    deleteTemplate
 };

@@ -17,17 +17,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-
 const app = require("../../../app.js");
 const moment = require("moment");
 
 async function update() {
-    const botStats = await app.db.collection("webOptions").findOne({ _id: "botStats" });
+    const botStats = await app.db
+        .collection("webOptions")
+        .findOne({ _id: "botStats" });
 
     if (!botStats) {
-        await app.db.collection("webOptions").insertOne({
+        return await app.db.collection("webOptions").insertOne({
             _id: "botStats",
-            lastUpdate: Date.now(),
+            lastUpdate: Date.now()
         });
     }
 
@@ -44,21 +45,30 @@ async function update() {
                             "staffTracking.handledBots.thisWeek.approved": 0,
                             "staffTracking.handledBots.thisWeek.declined": 0,
                             "staffTracking.handledBots.thisWeek.remove": 0,
-                            "staffTracking.handledBots.prevWeek.total": user.staffTracking.handledBots.thisWeek.total,
-                            "staffTracking.handledBots.prevWeek.approved": user.staffTracking.handledBots.thisWeek.approved,
-                            "staffTracking.handledBots.prevWeek.declined": user.staffTracking.handledBots.thisWeek.declined,
-                            "staffTracking.handledBots.prevWeek.remove": user.staffTracking.handledBots.thisWeek.remove
+                            "staffTracking.handledBots.prevWeek.total":
+                                user.staffTracking.handledBots.thisWeek.total,
+                            "staffTracking.handledBots.prevWeek.approved":
+                                user.staffTracking.handledBots.thisWeek
+                                    .approved,
+                            "staffTracking.handledBots.prevWeek.declined":
+                                user.staffTracking.handledBots.thisWeek
+                                    .declined,
+                            "staffTracking.handledBots.prevWeek.remove":
+                                user.staffTracking.handledBots.thisWeek.remove
                         }
                     }
                 );
             }
         }
 
-        await app.db.collection("webOptions").updateOne({ _id: "botStats" }, {
-            $set: {
-                lastUpdate: Date.now()
+        await app.db.collection("webOptions").updateOne(
+            { _id: "botStats" },
+            {
+                $set: {
+                    lastUpdate: Date.now()
+                }
             }
-        });
+        );
     }
 }
 
@@ -67,5 +77,3 @@ setInterval(async () => {
 }, 900000);
 
 module.exports = update;
-
-

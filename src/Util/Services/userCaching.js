@@ -42,7 +42,10 @@ async function updateUser(id) {
 async function uploadUsers() {
     const usersDB = await app.db.collection("users").find().toArray();
     if (usersDB.length < 1) return;
-    await global.redis.hmset(prefix, ...usersDB.map(user => [user._id, JSON.stringify(user)]));
+    await global.redis.hmset(
+        prefix,
+        ...usersDB.map((user) => [user._id, JSON.stringify(user)])
+    );
 }
 
 async function deleteUser(id) {
@@ -54,5 +57,9 @@ setInterval(async () => {
 }, 900000);
 
 module.exports = {
-    uploadUsers, updateUser, getUser, getAllUsers, deleteUser
+    uploadUsers,
+    updateUser,
+    getUser,
+    getAllUsers,
+    deleteUser
 };

@@ -15,9 +15,34 @@
     "website": {
         "locales": {
             "default": "en-US",
-            "all": ["en-NZ", "en-GB", "en-US", "en-UD", "de-DE", "es-ES", "he-IL", "hu-HU", "it-IT", "pt-PT"],
+            "all": [
+                "en-NZ",
+                "en-GB",
+                "en-US",
+                "en-UD",
+                "de-DE",
+                "es-ES",
+                "he-IL",
+                "hu-HU",
+                "it-IT",
+                "pt-PT"
+            ],
             "isRTL": ["he-IL"],
-            "isntLocale": ["search", "auth", "bots", "servers", "templates", "users", "staff", "terms", "privacy", "guidelines", "widgetbot", "about", "docs"]
+            "isntLocale": [
+                "search",
+                "auth",
+                "bots",
+                "servers",
+                "templates",
+                "users",
+                "staff",
+                "terms",
+                "privacy",
+                "guidelines",
+                "widgetbot",
+                "about",
+                "docs"
+            ]
         },
         "secrets": {
             "cookie": ""
@@ -57,7 +82,7 @@
         "staffServer": {
             "mod": ""
         }
-      },
+    },
     "emoji": {
         "snowflake": {
             "cross": "",
@@ -80,5 +105,5 @@
         "notification": "",
         "warn": "",
         "info": ""
-    } 
+    }
 }

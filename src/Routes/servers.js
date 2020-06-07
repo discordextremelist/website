@@ -37,10 +37,10 @@ const userCache = require("../Util/Services/userCaching.js");
 router.get("/submit", variables, permission.auth, (req, res, next) => {
     res.locals.premidPageInfo = res.__("premid.servers.submit");
 
-    res.render("templates/servers/submit", { 
-        title: res.__("common.nav.me.submitServer"), 
-        subtitle: res.__("common.nav.me.submitServer.subtitle"), 
-        req 
+    res.render("templates/servers/submit", {
+        title: res.__("common.nav.me.submitServer"),
+        subtitle: res.__("common.nav.me.submitServer.subtitle"),
+        req
     });
 });
 
@@ -49,197 +49,266 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
 
     let error = false;
     let errors = [];
-    
-    fetch(`https://discord.com/api/v6/invites/${req.body.invite}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
-        fetchRes.jsonBody = await fetchRes.json();
-        
-        if (fetchRes.jsonBody.code !== 10006) {
-            const serverExists = await req.app.db.collection("servers").findOne({ _id: fetchRes.jsonBody.guild.id });
-            if (serverExists) return res.status(409).render("status", { 
-                title: res.__("common.error"), 
-                subtitle: res.__("common.error.server.conflict"),
-                status: 409, 
-                type: "Error",
-                req 
-            }); 
-        
-            if (!req.body.longDescription) {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.longDescRequired"));
-            }
-        } else {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invite.invalid"));
-        }
 
-        let tags = [];
-        if (req.body.gaming === "on") tags.push("Gaming");
-        if (req.body.music === "on") tags.push("Music");
-        if (req.body.mediaEntertain === "on") tags.push("Media & Entertainment");
-        if (req.body.createArts === "on") tags.push("Creative Arts");
-        if (req.body.sciTech === "on") tags.push("Science & Tech");
-        if (req.body.edu === "on") tags.push("Education");
-        if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
-    
-        if (req.body.relIdentity === "on") tags.push("Relationships & Identity");
-        if (req.body.travelCuis === "on") tags.push("Travel & Food");
-        if (req.body.fitHealth === "on") tags.push("Fitness & Health");
-        if (req.body.finance === "on") tags.push("Finance");
-    
-        if (error === true) { 
-            return res.render("templates/servers/errorOnSubmit", { 
-                title: res.__("common.nav.me.submitServer"), 
-                subtitle: res.__("common.nav.me.submitServer.subtitle"),
-                server: req.body,
-                req,
-                tags,
-                errors
-            }); 
-        }
-        
-        await req.app.db.collection("servers").insertOne({
-            _id: fetchRes.jsonBody.guild.id,
-            inviteCode: req.body.invite,
-            name: fetchRes.jsonBody.guild.name,
-            shortDesc: req.body.shortDescription,
-            longDesc: req.body.longDescription,
-            tags: tags,
-            owner: {
-                id: req.user.id,
-            },
-            icon: {
-                hash: fetchRes.jsonBody.guild.icon,
-                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
-            },
-            links: {
-                invite: `https://discord.gg/${req.body.invite}`,
-                website: req.body.website,
-                donation: req.body.donationUrl
-            }
-        });
+    fetch(`https://discord.com/api/v6/invites/${req.body.invite}`, {
+        method: "GET",
+        headers: { Authorization: `Bot ${settings.client.token}` }
+    })
+        .then(async (fetchRes) => {
+            fetchRes.jsonBody = await fetchRes.json();
 
-        await discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.addBot} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` added server **${functions.escapeFormatting(fetchRes.jsonBody.guild.name)}** \`(${fetchRes.jsonBody.guild.id})\`\n<${settings.website.url}/servers/${fetchRes.jsonBody.guild.id}>`);
+            if (fetchRes.jsonBody.code !== 10006) {
+                const serverExists = await req.app.db
+                    .collection("servers")
+                    .findOne({ _id: fetchRes.jsonBody.guild.id });
+                if (serverExists)
+                    return res.status(409).render("status", {
+                        title: res.__("common.error"),
+                        subtitle: res.__("common.error.server.conflict"),
+                        status: 409,
+                        type: "Error",
+                        req
+                    });
 
-        await req.app.db.collection("audit").insertOne({
-            type: "SUBMIT_SERVER",
-            executor: req.user.id,
-            date: Date.now(),
-            reason: "None specified.",
-            details: {
-                new: {
-                    _id: fetchRes.jsonBody.guild.id,
-                    inviteCode: req.body.invite,
-                    name: fetchRes.jsonBody.guild.name,
-                    shortDesc: req.body.shortDescription,
-                    longDesc: req.body.longDescription,
-                    tags: tags,
-                    owner: {
-                        id: req.user.id,
-                    },
-                    icon: {
-                        hash: fetchRes.jsonBody.guild.icon,
-                        url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
-                    },
-                    links: {
-                        invite: `https://discord.gg/${req.body.invite}`,
-                        website: req.body.website,
-                        donation: req.body.donationUrl
-                    }
+                if (!req.body.longDescription) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.longDescRequired")
+                    );
                 }
-            }
-        });
-
-        await serverCache.updateServer(fetchRes.jsonBody.guild.id);
-
-        res.redirect(`/servers/${fetchRes.jsonBody.guild.id}`);
-    }).catch(async(fetchRes) => {
-        console.error(fetchRes);
-
-        if (!req.body.invite) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invite.invalid"));
-        } else {
-            if (typeof req.body.invite !== "string") {
+            } else {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.invalid"));
-            } else if (req.body.invite.length > 2000) {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (/^https?:\/\//.test(req.body.invite)) {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.invite.isURL"));
-            } else if (req.body.invite.includes("discord.gg")) {
-                error = true;
-                errors.push(res.__("common.error.server.arr.invite.dgg"));
             }
-        }
 
-        if (!req.body.longDescription) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.longDescRequired"));
-        }
+            let tags = [];
+            if (req.body.gaming === "on") tags.push("Gaming");
+            if (req.body.music === "on") tags.push("Music");
+            if (req.body.mediaEntertain === "on")
+                tags.push("Media & Entertainment");
+            if (req.body.createArts === "on") tags.push("Creative Arts");
+            if (req.body.sciTech === "on") tags.push("Science & Tech");
+            if (req.body.edu === "on") tags.push("Education");
+            if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
 
-        let tags = [];
-        if (req.body.gaming === "on") tags.push("Gaming");
-        if (req.body.music === "on") tags.push("Music");
-        if (req.body.mediaEntertain === "on") tags.push("Media & Entertainment");
-        if (req.body.createArts === "on") tags.push("Creative Arts");
-        if (req.body.sciTech === "on") tags.push("Science & Tech");
-        if (req.body.edu === "on") tags.push("Education");
-        if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+            if (req.body.relIdentity === "on")
+                tags.push("Relationships & Identity");
+            if (req.body.travelCuis === "on") tags.push("Travel & Food");
+            if (req.body.fitHealth === "on") tags.push("Fitness & Health");
+            if (req.body.finance === "on") tags.push("Finance");
 
-        if (req.body.relIdentity === "on") tags.push("Relationships & Identity");
-        if (req.body.travelCuis === "on") tags.push("Travel & Food");
-        if (req.body.fitHealth === "on") tags.push("Fitness & Health");
-        if (req.body.finance === "on") tags.push("Finance");
+            if (error === true) {
+                return res.render("templates/servers/errorOnSubmit", {
+                    title: res.__("common.nav.me.submitServer"),
+                    subtitle: res.__("common.nav.me.submitServer.subtitle"),
+                    server: req.body,
+                    req,
+                    tags,
+                    errors
+                });
+            }
 
-        return res.render("templates/servers/errorOnSubmit", { 
-            title: res.__("common.nav.me.submitServer"), 
-            subtitle: res.__("common.nav.me.submitServer.subtitle"),
-            server: req.body,
-            tags,
-            req,
-            errors
-        }); 
-    });
+            await req.app.db.collection("servers").insertOne({
+                _id: fetchRes.jsonBody.guild.id,
+                inviteCode: req.body.invite,
+                name: fetchRes.jsonBody.guild.name,
+                shortDesc: req.body.shortDescription,
+                longDesc: req.body.longDescription,
+                tags: tags,
+                owner: {
+                    id: req.user.id
+                },
+                icon: {
+                    hash: fetchRes.jsonBody.guild.icon,
+                    url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                },
+                links: {
+                    invite: `https://discord.gg/${req.body.invite}`,
+                    website: req.body.website,
+                    donation: req.body.donationUrl
+                }
+            });
+
+            await discord.bot.createMessage(
+                settings.channels.webLog,
+                `${settings.emoji.addBot} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` added server **${functions.escapeFormatting(
+                    fetchRes.jsonBody.guild.name
+                )}** \`(${fetchRes.jsonBody.guild.id})\`\n<${
+                    settings.website.url
+                }/servers/${fetchRes.jsonBody.guild.id}>`
+            );
+
+            await req.app.db.collection("audit").insertOne({
+                type: "SUBMIT_SERVER",
+                executor: req.user.id,
+                date: Date.now(),
+                reason: "None specified.",
+                details: {
+                    new: {
+                        _id: fetchRes.jsonBody.guild.id,
+                        inviteCode: req.body.invite,
+                        name: fetchRes.jsonBody.guild.name,
+                        shortDesc: req.body.shortDescription,
+                        longDesc: req.body.longDescription,
+                        tags: tags,
+                        owner: {
+                            id: req.user.id
+                        },
+                        icon: {
+                            hash: fetchRes.jsonBody.guild.icon,
+                            url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                        },
+                        links: {
+                            invite: `https://discord.gg/${req.body.invite}`,
+                            website: req.body.website,
+                            donation: req.body.donationUrl
+                        }
+                    }
+                }
+            });
+
+            await serverCache.updateServer(fetchRes.jsonBody.guild.id);
+
+            res.redirect(`/servers/${fetchRes.jsonBody.guild.id}`);
+        })
+        .catch(async (fetchRes) => {
+            console.error(fetchRes);
+
+            if (!req.body.invite) {
+                error = true;
+                errors.push(res.__("common.error.listing.arr.invite.invalid"));
+            } else {
+                if (typeof req.body.invite !== "string") {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.invite.invalid")
+                    );
+                } else if (req.body.invite.length > 2000) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.invite.tooLong")
+                    );
+                } else if (/^https?:\/\//.test(req.body.invite)) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.invite.isURL")
+                    );
+                } else if (req.body.invite.includes("discord.gg")) {
+                    error = true;
+                    errors.push(res.__("common.error.server.arr.invite.dgg"));
+                }
+            }
+
+            if (!req.body.longDescription) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.longDescRequired")
+                );
+            }
+
+            let tags = [];
+            if (req.body.gaming === "on") tags.push("Gaming");
+            if (req.body.music === "on") tags.push("Music");
+            if (req.body.mediaEntertain === "on")
+                tags.push("Media & Entertainment");
+            if (req.body.createArts === "on") tags.push("Creative Arts");
+            if (req.body.sciTech === "on") tags.push("Science & Tech");
+            if (req.body.edu === "on") tags.push("Education");
+            if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+
+            if (req.body.relIdentity === "on")
+                tags.push("Relationships & Identity");
+            if (req.body.travelCuis === "on") tags.push("Travel & Food");
+            if (req.body.fitHealth === "on") tags.push("Fitness & Health");
+            if (req.body.finance === "on") tags.push("Finance");
+
+            return res.render("templates/servers/errorOnSubmit", {
+                title: res.__("common.nav.me.submitServer"),
+                subtitle: res.__("common.nav.me.submitServer.subtitle"),
+                server: req.body,
+                tags,
+                req,
+                errors
+            });
+        });
 });
 
 router.get("/:id", variables, async (req, res, next) => {
     res.locals.pageType = {
         server: true,
         bot: false
-    }
+    };
 
     let server = await serverCache.getServer(req.params.id);
     if (!server) {
-        server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
-        if (!server) return res.status(404).render("status", {
-            title: res.__("common.error"),
-            status: 404,
-            subtitle: res.__("common.error.server.404"),
-            type: "Error",
-            req: req,
-            pageType: { server: false, bot: false }
-        });
+        server = await req.app.db
+            .collection("servers")
+            .findOne({ _id: req.params.id });
+        if (!server)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.server.404"),
+                type: "Error",
+                req: req,
+                pageType: { server: false, bot: false }
+            });
     }
 
     let serverOwner = await userCache.getUser(server.owner.id);
     if (!serverOwner) {
-        serverOwner = await req.app.db.collection("users").findOne({ _id: server.owner.id });
+        serverOwner = await req.app.db
+            .collection("users")
+            .findOne({ _id: server.owner.id });
     }
 
     res.locals.premidPageInfo = res.__("premid.servers.view", server.name);
 
-    const dirty = entities.decode(md.render(server.longDesc)); 
+    const dirty = entities.decode(md.render(server.longDesc));
     let clean;
     clean = sanitizeHtml(dirty, {
-        allowedTags: [ "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "button", "p", "a", "ul", "ol",
-            "nl", "li", "b", "i", "img", "strong", "em", "strike", "code", "hr", "br", "div",
-            "table", "thead", "caption", "tbody", "tr", "th", "td", "pre" ],
+        allowedTags: [
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "blockquote",
+            "button",
+            "p",
+            "a",
+            "ul",
+            "ol",
+            "nl",
+            "li",
+            "b",
+            "i",
+            "img",
+            "strong",
+            "em",
+            "strike",
+            "code",
+            "hr",
+            "br",
+            "div",
+            "table",
+            "thead",
+            "caption",
+            "tbody",
+            "tr",
+            "th",
+            "td",
+            "pre"
+        ],
         allowedAttributes: {
-            "a": ["href", "target", "rel"],
-            "img": ["src"]
-        },
+            a: ["href", "target", "rel"],
+            img: ["src"]
+        }
     });
 
     res.render("templates/servers/view", {
@@ -254,29 +323,33 @@ router.get("/:id", variables, async (req, res, next) => {
 });
 
 router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
-    const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
-    
-    if (!server) return res.status(404).render("status", {
-        title: res.__("common.error"),
-        status: 404,
-        subtitle: res.__("common.error.server.404"),
-        type: "Error",
-        req: req
-    });
+    const server = await req.app.db
+        .collection("servers")
+        .findOne({ _id: req.params.id });
 
-    if (server.owner.id !== req.user.id && req.user.db.assistant === false) return res.status(403).render("status", { 
-        title: res.__("common.error"), 
-        subtitle: res.__("common.error.server.perms.edit"),
-        status: 403, 
-        type: "Error",
-        req 
-    }); 
-    
+    if (!server)
+        return res.status(404).render("status", {
+            title: res.__("common.error"),
+            status: 404,
+            subtitle: res.__("common.error.server.404"),
+            type: "Error",
+            req: req
+        });
+
+    if (server.owner.id !== req.user.id && req.user.db.assistant === false)
+        return res.status(403).render("status", {
+            title: res.__("common.error"),
+            subtitle: res.__("common.error.server.perms.edit"),
+            status: 403,
+            type: "Error",
+            req
+        });
+
     res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 
-    res.render("templates/servers/edit", { 
-        title: res.__("page.servers.edit.title"), 
-        subtitle: res.__("page.servers.edit.subtitle", server.name), 
+    res.render("templates/servers/edit", {
+        title: res.__("page.servers.edit.title"),
+        subtitle: res.__("page.servers.edit.subtitle", server.name),
         req,
         server
     });
@@ -286,24 +359,28 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     let error = false;
     let errors = [];
 
-    const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
+    const server = await req.app.db
+        .collection("servers")
+        .findOne({ _id: req.params.id });
 
-    if (!server) return res.status(404).render("status", {
-        title: res.__("common.error"),
-        status: 404,
-        subtitle: res.__("common.error.server.404"),
-        type: "Error",
-        req: req
-    });
+    if (!server)
+        return res.status(404).render("status", {
+            title: res.__("common.error"),
+            status: 404,
+            subtitle: res.__("common.error.server.404"),
+            type: "Error",
+            req: req
+        });
 
-    if (server.owner.id !== req.user.id && req.user.db.assistant === false) return res.status(403).render("status", { 
-        title: res.__("common.error"), 
-        subtitle: res.__("common.error.server.perms.edit"),
-        status: 403, 
-        type: "Error",
-        req 
-    }); 
-    
+    if (server.owner.id !== req.user.id && req.user.db.assistant === false)
+        return res.status(403).render("status", {
+            title: res.__("common.error"),
+            subtitle: res.__("common.error.server.perms.edit"),
+            status: 403,
+            type: "Error",
+            req
+        });
+
     res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 
     if (!req.body.invite) {
@@ -343,195 +420,280 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
     if (req.body.travelCuis === "on") tags.push("Travel & Food");
     if (req.body.fitHealth === "on") tags.push("Fitness & Health");
     if (req.body.finance === "on") tags.push("Finance");
-    
-    fetch(`https://discord.com/api/v6/invites/${req.body.invite}`, { method: "GET", headers: { Authorization: `Bot ${settings.client.token}`} }).then(async(fetchRes) => {
-        fetchRes.jsonBody = await fetchRes.json();
 
-        if (fetchRes.jsonBody.guild.id !== server._id) {
+    fetch(`https://discord.com/api/v6/invites/${req.body.invite}`, {
+        method: "GET",
+        headers: { Authorization: `Bot ${settings.client.token}` }
+    })
+        .then(async (fetchRes) => {
+            fetchRes.jsonBody = await fetchRes.json();
+
+            if (fetchRes.jsonBody.guild.id !== server._id) {
+                error = true;
+                errors.push(
+                    res.__("common.error.server.arr.invite.sameServer")
+                );
+            }
+
+            if (error === true) {
+                return res.render("templates/servers/errorOnEdit", {
+                    title: res.__("page.servers.edit.title"),
+                    subtitle: res.__("page.servers.edit.subtitle", server.name),
+                    server: req.body,
+                    req,
+                    tags,
+                    errors
+                });
+            }
+
+            await req.app.db.collection("servers").updateOne(
+                { _id: req.params.id },
+                {
+                    $set: {
+                        name: fetchRes.jsonBody.guild.name,
+                        shortDesc: req.body.shortDescription,
+                        longDesc: req.body.longDescription,
+                        inviteCode: req.body.invite,
+                        tags: tags,
+                        icon: {
+                            hash: fetchRes.jsonBody.guild.icon,
+                            url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                        },
+                        links: {
+                            invite: `https://discord.gg/${req.body.invite}`,
+                            website: req.body.website,
+                            donation: req.body.donationUrl
+                        }
+                    }
+                }
+            );
+
+            discord.bot.createMessage(
+                settings.channels.webLog,
+                `${settings.emoji.editBot} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` edited server **${functions.escapeFormatting(
+                    fetchRes.jsonBody.guild.name
+                )}** \`(${fetchRes.jsonBody.guild.id})\`\n<${
+                    settings.website.url
+                }/servers/${fetchRes.jsonBody.guild.id}>`
+            );
+
+            await req.app.db.collection("audit").insertOne({
+                type: "EDIT_SERVER",
+                executor: req.user.id,
+                target: req.params.id,
+                date: Date.now(),
+                reason: "None specified.",
+                details: {
+                    new: {
+                        name: fetchRes.jsonBody.guild.name,
+                        shortDesc: req.body.shortDescription,
+                        longDesc: req.body.longDescription,
+                        inviteCode: req.body.invite,
+                        tags: tags,
+                        icon: {
+                            hash: fetchRes.jsonBody.guild.icon,
+                            url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                        },
+                        links: {
+                            invite: `https://discord.gg/${req.body.invite}`,
+                            website: req.body.website,
+                            donation: req.body.donationUrl
+                        }
+                    },
+                    old: {
+                        name: server.name,
+                        shortDesc: server.shortDesc,
+                        longDesc: server.longDesc,
+                        inviteCode: server.inviteCode,
+                        tags: server.tags,
+                        icon: {
+                            hash: server.icon.hash,
+                            url: server.icon.url
+                        },
+                        links: {
+                            invite: server.links.invite,
+                            website: server.links.website,
+                            donation: server.links.donationUrl
+                        }
+                    }
+                }
+            });
+
+            await serverCache.updateServer(req.params.id);
+
+            res.redirect(`/servers/${req.params.id}`);
+        })
+        .catch((_) => {
             error = true;
-            errors.push(res.__("common.error.server.arr.invite.sameServer"))
-        }
+            errors.push(res.__("common.error.dapiFail"));
 
-        if (error === true) { 
-            return res.render("templates/servers/errorOnEdit", { 
-                title: res.__("page.servers.edit.title"), 
+            return res.render("templates/servers/errorOnEdit", {
+                title: res.__("page.servers.edit.title"),
                 subtitle: res.__("page.servers.edit.subtitle", server.name),
                 server: req.body,
                 req,
                 tags,
                 errors
-            }); 
-        }
-        
-        await req.app.db.collection("servers").updateOne({ _id: req.params.id }, 
-            { $set: {
-                name: fetchRes.jsonBody.guild.name,
-                shortDesc: req.body.shortDescription,
-                longDesc: req.body.longDescription,
-                inviteCode: req.body.invite,
-                tags: tags,
-                icon: {
-                    hash: fetchRes.jsonBody.guild.icon,
-                    url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
-                },
-                links: {
-                    invite: `https://discord.gg/${req.body.invite}`,
-                    website: req.body.website,
-                    donation: req.body.donationUrl
-                }
-            }
+            });
         });
+});
 
-        discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.editBot} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` edited server **${functions.escapeFormatting(fetchRes.jsonBody.guild.name)}** \`(${fetchRes.jsonBody.guild.id})\`\n<${settings.website.url}/servers/${fetchRes.jsonBody.guild.id}>`);
+router.get(
+    "/:id/delete",
+    variables,
+    permission.auth,
+    async (req, res, next) => {
+        const server = await req.app.db
+            .collection("servers")
+            .findOne({ _id: req.params.id });
+
+        if (!server)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.server.404"),
+                type: "Error",
+                req: req
+            });
+
+        if (server.owner.id !== req.user.id)
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.server.perms.delete"),
+                status: 403,
+                type: "Error",
+                req
+            });
+
+        discord.bot.createMessage(
+            settings.channels.webLog,
+            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${
+                req.user.id
+            })\` deleted server **${functions.escapeFormatting(
+                server.name
+            )}** \`(${server._id})\``
+        );
+
+        await req.app.db
+            .collection("servers")
+            .deleteOne({ _id: req.params.id });
 
         await req.app.db.collection("audit").insertOne({
-            type: "EDIT_SERVER",
+            type: "DELETE_SERVER",
             executor: req.user.id,
             target: req.params.id,
             date: Date.now(),
-            reason: "None specified.",
-            details: {
-                new: {
-                    name: fetchRes.jsonBody.guild.name,
-                    shortDesc: req.body.shortDescription,
-                    longDesc: req.body.longDescription,
-                    inviteCode: req.body.invite,
-                    tags: tags,
-                    icon: {
-                        hash: fetchRes.jsonBody.guild.icon,
-                        url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
-                    },
-                    links: {
-                        invite: `https://discord.gg/${req.body.invite}`,
-                        website: req.body.website,
-                        donation: req.body.donationUrl
-                    }
-                },
-                old: {
-                    name: server.name,
-                    shortDesc: server.shortDesc,
-                    longDesc: server.longDesc,
-                    inviteCode: server.inviteCode,
-                    tags: server.tags,
-                    icon: {
-                        hash: server.icon.hash,
-                        url: server.icon.url
-                    },
-                    links: {
-                        invite: server.links.invite,
-                        website: server.links.website,
-                        donation: server.links.donationUrl
-                    }
-                }
-            }
+            reason: "None specified."
         });
-        
-        await serverCache.updateServer(req.params.id);
 
-        res.redirect(`/servers/${req.params.id}`);
-    }).catch(_ => {
-        error = true;
-        errors.push(res.__("common.error.dapiFail"));
+        await serverCache.deleteServer(req.params.id);
 
-        return res.render("templates/servers/errorOnEdit", { 
-            title: res.__("page.servers.edit.title"), 
-            subtitle: res.__("page.servers.edit.subtitle", server.name),
-            server: req.body,
-            req,
-            tags,
-            errors
-        }); 
-    });
-});
+        res.redirect("/users/@me");
+    }
+);
 
-router.get("/:id/delete", variables, permission.auth, async (req, res, next) => {
-    const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
+router.get(
+    "/:id/remove",
+    variables,
+    permission.auth,
+    permission.mod,
+    async (req, res, next) => {
+        const server = await req.app.db
+            .collection("servers")
+            .findOne({ _id: req.params.id });
 
-    if (!server) return res.status(404).render("status", {
-        title: res.__("common.error"),
-        status: 404,
-        subtitle: res.__("common.error.server.404"),
-        type: "Error",
-        req: req
-    });
+        if (!server)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.server.404"),
+                req,
+                type: "Error"
+            });
 
-    if (server.owner.id !== req.user.id) return res.status(403).render("status", { 
-        title: res.__("common.error"), 
-        subtitle: res.__("common.error.server.perms.delete"),
-        status: 403, 
-        type: "Error",
-        req 
-    }); 
+        res.locals.premidPageInfo = res.__(
+            "premid.servers.remove",
+            server.name
+        );
 
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` deleted server **${functions.escapeFormatting(server.name)}** \`(${server._id})\``);
+        res.render("templates/servers/staffActions/remove", {
+            title: res.__("page.servers.remove.title"),
+            subtitle: res.__("page.servers.remove.subtitle", server.name),
+            removingServer: server,
+            req
+        });
+    }
+);
 
-    await req.app.db.collection("servers").deleteOne({ _id: req.params.id });
+router.post(
+    "/:id/remove",
+    variables,
+    permission.auth,
+    permission.mod,
+    async (req, res, next) => {
+        const server = await req.app.db
+            .collection("servers")
+            .findOne({ _id: req.params.id });
 
-    await req.app.db.collection("audit").insertOne({
-        type: "DELETE_SERVER",
-        executor: req.user.id,
-        target: req.params.id,
-        date: Date.now(),
-        reason: "None specified."
-    });
-    
-    await serverCache.deleteServer(req.params.id);
+        if (!server)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.server.404"),
+                req,
+                type: "Error"
+            });
 
-    res.redirect("/users/@me");
-});
+        await req.app.db
+            .collection("servers")
+            .deleteOne({ _id: req.params.id });
 
-router.get("/:id/remove", variables, permission.auth, permission.mod, async (req, res, next) => {
-    const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
+        await req.app.db.collection("audit").insertOne({
+            type: "REMOVE_SERVER",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: req.body.reason || "None specified."
+        });
 
-    if (!server) return res.status(404).render("status", {
-        title: res.__("common.error"),
-        status: 404,
-        subtitle: res.__("common.error.server.404"),
-        req,
-        type: "Error"
-    });
-    
-    res.locals.premidPageInfo = res.__("premid.servers.remove", server.name);
+        await serverCache.deleteServer(req.params.id);
 
-    res.render("templates/servers/staffActions/remove", { 
-        title: res.__("page.servers.remove.title"), 
-        subtitle: res.__("page.servers.remove.subtitle", server.name),
-        removingServer: server, 
-        req 
-    });
-});
+        discord.bot.createMessage(
+            settings.channels.webLog,
+            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${
+                req.user.id
+            })\` removed server **${functions.escapeFormatting(
+                server.name
+            )}** \`(${server._id})\`\n**Reason:** \`${req.body.reason}\``
+        );
 
-router.post("/:id/remove", variables, permission.auth, permission.mod, async (req, res, next) => {
-    const server = await req.app.db.collection("servers").findOne({ _id: req.params.id });
+        const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
+        if (dmChannel)
+            discord.bot
+                .createMessage(
+                    dmChannel.id,
+                    `${
+                        settings.emoji.botDeleted
+                    } **|** Your server **${functions.escapeFormatting(
+                        server.name
+                    )}** \`(${server._id})\` has been removed!\n**Reason:** \`${
+                        req.body.reason
+                    }\``
+                )
+                .catch((e) => {
+                    console.error(e);
+                });
 
-    if (!server) return res.status(404).render("status", {
-        title: res.__("common.error"),
-        status: 404,
-        subtitle: res.__("common.error.server.404"),
-        req,
-        type: "Error"
-    });
-
-    await req.app.db.collection("servers").deleteOne({ _id: req.params.id });
-
-    await req.app.db.collection("audit").insertOne({
-        type: "REMOVE_SERVER",
-        executor: req.user.id,
-        target: req.params.id,
-        date: Date.now(),
-        reason: req.body.reason || "None specified."
-    });
-
-    await serverCache.deleteServer(req.params.id);
-
-    discord.bot.createMessage(settings.channels.webLog, `${settings.emoji.botDeleted} **${functions.escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` removed server **${functions.escapeFormatting(server.name)}** \`(${server._id})\`\n**Reason:** \`${req.body.reason}\``);
-
-    
-    const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-    if (dmChannel) discord.bot.createMessage(dmChannel.id, `${settings.emoji.botDeleted} **|** Your server **${functions.escapeFormatting(server.name)}** \`(${server._id})\` has been removed!\n**Reason:** \`${req.body.reason}\``).catch(e => { console.error(e) });
-
-
-    res.redirect("/staff/queue");
-});
+        res.redirect("/staff/queue");
+    }
+);
 
 module.exports = router;

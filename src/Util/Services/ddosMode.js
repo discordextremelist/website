@@ -30,24 +30,29 @@ function getDDOSMode() {
 }
 
 async function activateDDOSMode() {
-    await app.db.collection("webOptions").updateOne({ _id: "ddosMode" },
-        { $set: {
-            active: true
+    await app.db.collection("webOptions").updateOne(
+        { _id: "ddosMode" },
+        {
+            $set: {
+                active: true
+            }
         }
-    });
+    );
 
     global.ddosMode.active = true;
 }
 
 async function updateCache() {
-    const ddosMode = await app.db.collection("webOptions").findOne({ _id: "ddosMode" });
+    const ddosMode = await app.db
+        .collection("webOptions")
+        .findOne({ _id: "ddosMode" });
     if (ddosMode) global.ddosMode.active = ddosMode.active;
     return;
 }
 
 async function newRequest() {
     global.ddosMode.requests += 1;
-    
+
     if (global.ddosMode.requests >= threshold) await activateDDOSMode();
 }
 
@@ -55,6 +60,8 @@ setInterval(async () => {
     if (global.ddosMode.requests >= threshold) await activateDDOSMode();
 }, 60000);
 
-module.exports = { 
-    getDDOSMode, newRequest, updateCache
+module.exports = {
+    getDDOSMode,
+    newRequest,
+    updateCache
 };

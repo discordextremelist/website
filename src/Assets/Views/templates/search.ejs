@@ -140,6 +140,7 @@
                         const { data } = JSON.parse(req.responseText);
                         for (let i = 0; i < data.pages.length; i++) {
                             for (const i of data.pages[i]) {
+                                console.log(data.pages)
                                 const cur = { bots: [], servers: [], users: [], templates: [] };
                                 const fake = document.createElement("div");
                                 fake.innerHTML = i;

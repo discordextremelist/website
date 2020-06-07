@@ -40,7 +40,7 @@
                         if (botStatus === "dnd") statusInfo = __("page.bots.status.dnd")
                         if (botStatus === "offline") statusInfo = __("page.bots.status.offline")
                     %> 
-                    <img class="image" title="<%= statusInfo %>" style="margin: auto; width: 128px; border-radius: 50%; animation: <%= botStatus %> 2s infinite !important;" src="<%= bot.avatar.url %>.<%= imageFormat %>?size=512" alt="<%= bot.name %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');">
+                    <img class="image" title="<%= statusInfo %>" style="margin: auto; width: 128px; border-radius: 50%; animation: <%= botStatus %> 2s infinite !important;" src="<%= bot.avatar.url %>.<%= imageFormat %>?size=512" alt="<%= __('common.img.avatar', bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');">
                 </div>
             <div class="column is-9<% if (mobile) { %> has-text-centered<% } %>">
                     <h1 class="is-size-1">
@@ -70,84 +70,131 @@
                         <% } %>
                     </h1>
                     <h2 class="subtitle"><%= bot.shortDesc %></h2>
-                    <div class="buttons <% if (mobile) { %>is-centered<% } %>">
-                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>/upvote" class="button <% if (req.user && bot.votes.positive.includes(req.user.id)) { %>is-success<% } else { %>is-dark<% } %>">
-                            <span class="icon">
-                                <i aria-hidden="true" class="fas fa-arrow-alt-up"></i>
-                            </span>
-                        </a>
-                        <% if (votes > 0) { %>
-                            <span class="button is-black is-hovered has-text-success" title="<%= __("common.votes") %></span>"><%= votes %></span>
-                        <% } else if (votes === 0) { %>
-                            <span class="button is-black is-hovered has-text-grey-light" title="<%= __("common.votes") %>"><%= votes %></span>
-                        <% } else if (votes < 0) { %>
-                            <span class="button is-black is-hovered has-text-danger" title="<%= __("common.votes") %>"><%= votes %></span>
-                        <% } %>
-                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>/downvote" class="button <% if (req.user && bot.votes.negative.includes(req.user.id)) { %>is-danger<% } else { %>is-dark<% } %>">
-                            <span class="icon">
-                                <i aria-hidden="true" class="fas fa-arrow-alt-down"></i>
-                            </span>
-                        </a>
-                    </div>
-                    <% if (req.user) { %>
-                        <div class="buttons <% if (mobile) { %>is-centered<% } %>">
-                        <% if (bot.owner.id === req.user.id) { %>
-                            <button class="button is-dark" onclick="copyToClipboard('<%= bot.token %>');">
+                    <% if (htmlDir === "rtl") { %>
+                        <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
+                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/upvote" class="button page <% if (req.user && bot.votes.positive.includes(req.user.id)) { %>is-success<% } else { %>is-dark<% } %>">
                                 <span class="icon">
-                                    <i aria-hidden="true" class="fas fa-key"></i>
+                                    <i aria-hidden="true" class="fas fa-arrow-alt-up"></i>
                                 </span>
-                                <span><%= __("page.bots.copyToken") %></span>
-                            </button>
+                            </a>
+                            <% if (votes > 0) { %>
+                                <span class="button page is-black is-hovered has-text-success" title="<%= __("common.votes") %></span>"><%= votes %></span>
+                            <% } else if (votes === 0) { %>
+                                <span class="button page is-black is-hovered has-text-grey-light" title="<%= __("common.votes") %>"><%= votes %></span>
+                            <% } else if (votes < 0) { %>
+                                <span class="button page is-black is-hovered has-text-danger" title="<%= __("common.votes") %>"><%= votes %></span>
+                            <% } %>
+                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/downvote" class="button page <% if (req.user && bot.votes.negative.includes(req.user.id)) { %>is-danger<% } else { %>is-dark<% } %>">
+                                <span class="icon">
+                                    <i aria-hidden="true" class="fas fa-arrow-alt-down"></i>
+                                </span>
+                            </a>
+                        </div>
+                    <% } else { %>
+                        <div class="buttons <% if (mobile) { %>is-centered<% } %>">
+                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/upvote" class="button <% if (req.user && bot.votes.positive.includes(req.user.id)) { %>is-success<% } else { %>is-dark<% } %>">
+                                <span class="icon">
+                                    <i aria-hidden="true" class="fas fa-arrow-alt-up"></i>
+                                </span>
+                            </a>
+                            <% if (votes > 0) { %>
+                                <span class="button is-black is-hovered has-text-success" title="<%= __("common.votes") %></span>"><%= votes %></span>
+                            <% } else if (votes === 0) { %>
+                                <span class="button is-black is-hovered has-text-grey-light" title="<%= __("common.votes") %>"><%= votes %></span>
+                            <% } else if (votes < 0) { %>
+                                <span class="button is-black is-hovered has-text-danger" title="<%= __("common.votes") %>"><%= votes %></span>
+                            <% } %>
+                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/downvote" class="button <% if (req.user && bot.votes.negative.includes(req.user.id)) { %>is-danger<% } else { %>is-dark<% } %>">
+                                <span class="icon">
+                                    <i aria-hidden="true" class="fas fa-arrow-alt-down"></i>
+                                </span>
+                            </a>
+                        </div> 
+                    <% } %>
+                    <% if (req.user) { %>
+                    <div class="buttons <% if (mobile) { %>is-centered<% } else { %>page<% } %>">
+                        <% if (bot.owner.id === req.user.id) { %>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-dark", 
+                                    icon: "fas fa-key", 
+                                    tag: "button", 
+                                    message: __("page.bots.copyToken"), 
+                                    href: "", 
+                                    additional: `onclick=\"copyToClipboard('${bot.token}');\"` 
+                                });
+                            %>
                             <% if (bot.status.verified === false) { %>
                                 <% if (bot.serverCount >= 100) { %>
-                                    <a href="<%= linkPrefix %>/apply/verification" class="button is-dark">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-badge-check"></i>
-                                        </span>
-                                        <span><%= __("page.bots.verificationApplication") %></span>
-                                    </a>
+                                    <%- 
+                                        include("../../partials/button.ejs", { 
+                                            className: "button is-dark", 
+                                            icon: "fas fa-badge-check", 
+                                            tag: "a", 
+                                            message: __("page.bots.verificationApplication"), 
+                                            href: `${linkPrefix}/apply/verification`, 
+                                            additional: ""
+                                        });
+                                    %>
                                 <% } %>
                             <% } %>
                             <% if (bot.status.approved === false && bot.vanityUrl !== "") { %>
-                                <a href="" id="setVanity" class="button is-dark">
-                                    <span class="icon">
-                                        <i aria-hidden="true" class="fas fa-link"></i>
-                                    </span>
-                                    <span><%= __("page.bots.setVanity") %></span>
-                                </a>
+                                <%- 
+                                    include("../../partials/button.ejs", { 
+                                        className: "button is-dark", 
+                                        icon: "fas fa-link", 
+                                        tag: "a", 
+                                        message: __("page.bots.setVanity"), 
+                                        href: "", 
+                                        additional: "id=\"setVanity\""
+                                    });
+                                %>
                             <% } %>
-                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/edit" class="button is-dark">
-                                <span class="icon">
-                                    <i aria-hidden="true" class="fas fa-pencil"></i>
-                                </span>
-                                <span><%= __("common.edit") %></span>
-                            </a>
-                            <a href="" id="deleteModal" class="button is-dark">
-                                <span class="icon">
-                                    <i aria-hidden="true" class="fas fa-trash"></i>
-                                </span>
-                                <span><%= __("common.delete") %></span>
-                            </a>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-dark", 
+                                    icon: "fas fa-pencil", 
+                                    tag: "a", 
+                                    message: __("common.edit"), 
+                                    href: `${linkPrefix}/bots/${bot._id}/edit`, 
+                                    additional: ""
+                                });
+                            %>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-dark", 
+                                    icon: "fas fa-trash", 
+                                    tag: "a", 
+                                    message: __("common.delete"), 
+                                    href: "", 
+                                    additional: "id=\"deleteModal\""
+                                });
+                            %>
                         <% } else if (bot.editors && bot.editors.includes(req.user.id)) { %>
-                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/edit" class="button is-dark">
-                                <span class="icon">
-                                    <i aria-hidden="true" class="fas fa-pencil"></i>
-                                </span>
-                                <span><%= __("common.edit") %></span>
-                            </a>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-dark", 
+                                    icon: "fas fa-pencil", 
+                                    tag: "a", 
+                                    message: __("common.edit"), 
+                                    href: `${linkPrefix}/bots/${bot._id}/edit`, 
+                                    additional: ""
+                                });
+                            %>
                         <% } %>
                         <% if (user.db.rank.mod) { %>
                             <div class="dropdown">
                                 <div class="dropdown-trigger">
-                                  <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
-                                    <span class="icon">
-                                        <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
-                                    </span>
-                                    <span><%= __("common.staffManagement") %></span>
-                                    <span class="icon is-small">
-                                      <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
-                                    </span>
-                                  </button>
+                                    <%- 
+                                        include("../../partials/button.ejs", { 
+                                            className: "button is-dark", 
+                                            icon: "fas fa-cogs", 
+                                            tag: "dropdownButton", 
+                                            message: __("common.staffManagement"), 
+                                            href: "", 
+                                            additional: "style=\"direction: ltr;\""
+                                        });
+                                    %>
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                   <div class="dropdown-content">
@@ -203,151 +250,181 @@
                         <% } %>
                         </div>
                     <% } %>
-                    <div class="buttons <% if (mobile) { %>is-centered<% } %>">
+                    <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
                         <% if (bot.links.website) { %>
-                            <a target="_blank" rel="noopener" href="<%= bot.links.website %>" class="button is-link">
-                                <span class="icon">
-                                    <i aria-hidden="true" class="fas fa-globe"></i>
-                                </span>
-                                <span><%= __("common.website") %></span>
-                            </a>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-link", 
+                                    icon: "fas fa-globe", 
+                                    tag: "a", 
+                                    message: __("common.website"), 
+                                    href: bot.links.website, 
+                                    additional: "target=\"_blank\" rel=\"noopener\""
+                                });
+                            %>
                         <% } %>
-                        <a target="_blank" rel="noopener" href="<%= bot.links.invite %>" class="button is-info">
-                            <span class="icon">
-                                <i aria-hidden="true" class="fas fa-plus"></i>
-                            </span>
-                            <span><%= __("common.invite") %></span>
-                        </a>
+                        <%- 
+                            include("../../partials/button.ejs", { 
+                                className: "button is-info", 
+                                icon: "fas fa-plus", 
+                                tag: "a", 
+                                message: __("common.invite"), 
+                                href: bot.links.invite, 
+                                additional: "target=\"_blank\" rel=\"noopener\""
+                            });
+                        %>
                         <% if (bot.links.donation) { %>
-                            <a target="_blank" rel="noopener" href="<%= bot.links.donation %>" class="button is-success">
-                                <span class="icon">
-                                    <i aria-hidden="true" class="fas fa-dollar-sign"></i>
-                                </span>
-                                <span><%= __("common.donate") %></span>
-                            </a>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-success", 
+                                    icon: "fas fa-dollar-sign", 
+                                    tag: "a", 
+                                    message: __("common.donate"), 
+                                    href: bot.links.donation, 
+                                    additional: "target=\"_blank\" rel=\"noopener\""
+                                });
+                            %>
                         <% } %>
                         <% if (bot.links.repo) { %>
-                            <a target="_blank" rel="noopener" href="<%= bot.links.repo %>" class="button is-orange">
-                                <span class="icon">
-                                    <i aria-hidden="true" class="fas fa-code"></i>
-                                </span>
-                                <span><%= __("page.bots.git.view") %></span>
-                            </a>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-orange", 
+                                    icon: "fas fa-code", 
+                                    tag: "a", 
+                                    message: __("page.bots.git.view"), 
+                                    href: bot.links.repo, 
+                                    additional: "target=\"_blank\" rel=\"noopener\""
+                                });
+                            %>
                         <% } %>
                         <% if (bot.links.support) { %>
-                            <a target="_blank" rel="noopener" href="<%= bot.links.support %>" class="button is-danger">
-                                <span class="icon">
-                                    <i aria-hidden="true" class="fas fa-user-headset"></i>
-                                </span>
-                                <span><%= __("page.bots.supportServer.view") %></span>
-                            </a>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-danger", 
+                                    icon: "fas fa-user-headset", 
+                                    tag: "a", 
+                                    message: __("page.bots.supportServer.view"), 
+                                    href: bot.links.support, 
+                                    additional: "target=\"_blank\" rel=\"noopener\""
+                                });
+                            %>
                         <% } %>
                     </div>
                     <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
-                        <div class="control">
-                            <div class="tags has-addons">
-                                <span class="tag is-dark"><%= __("page.bots.generalInfo.prefix.view") %></span>
-                                <span class="tag is-link"><%= bot.prefix %></span>
-                            </div>
-                        </div>
-                        <div class="control">
-                            <div class="tags has-addons">
-                                <span class="tag is-dark"><%= __("page.bots.generalInfo.library.view") %></span>
-                                <span class="tag is-info"><%= bot.library %></span>
-                            </div>
-                        </div>
-                        <div class="control">
-                            <div class="tags has-addons">
-                                <span class="tag is-dark"><%= __("common.servers") %></span>
-                                <span class="tag is-success"><% if (bot.serverCount !== 0) { %><%= bot.serverCount %><% } else { %>???<% } %></span>
-                            </div>
-                        </div>
+                        <%- 
+                            include("../../partials/tag.ejs", { 
+                                contentColour: "is-link", 
+                                title: __("page.bots.generalInfo.prefix.view"),
+                                content: bot.prefix,
+                                type: "multi"
+                            });
+                        %>
+                        <%- 
+                            include("../../partials/tag.ejs", { 
+                                contentColour: "is-info", 
+                                title: __("page.bots.generalInfo.library.view"),
+                                content: bot.library,
+                                type: "multi"
+                            });
+                        %>
+                        <%- 
+                            include("../../partials/tag.ejs", { 
+                                contentColour: "is-success", 
+                                title: __("common.servers"),
+                                content: bot.serverCount === 0 ? "???" : bot.serverCount,
+                                type: "multi"
+                            });
+                        %>
                         <% if (bot.shardCount !== 0) { %>
-                            <div class="control">
-                                <div class="tags has-addons">
-                                    <span class="tag is-dark"><%= __("page.bots.shards") %></span>
-                                    <span class="tag is-orange"><%= bot.shardCount %></span>
-                                </div>
-                            </div>
+                            <%- 
+                                include("../../partials/tag.ejs", { 
+                                    contentColour: "is-orange", 
+                                    title: __("page.bots.shards"),
+                                    content: bot.shardCount,
+                                    type: "multi"
+                                });
+                            %>
                         <% } %>
-                        <div class="control">
-                            <div class="tags has-addons">
-                                <span class="tag is-dark"><%= __("common.owner") %></span>
-                                <span class="tag is-danger"><a class="has-text-white" href="<%= linkPrefix %>/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a></span>
-                            </div>
-                        </div>
+                        <%- 
+                            include("../../partials/tag.ejs", { 
+                                contentColour: "is-danger", 
+                                title: __("common.owner"),
+                                content: "insOwner-bot",
+                                type: "multi"
+                            });
+                        %>
                     </div>
                     <% if (bot.tags && bot.tags.length > 0) { %>
                         <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
                             <% if (bot.tags.includes("Fun")) { %>
-                                <div class="control">
-                                    <p class="tag is-link">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("page.bots.tag.fun") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-link", 
+                                        title: "",
+                                        content: __("page.bots.tag.fun"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (bot.tags.includes("Social")) { %>
-                                <div class="control">
-                                    <p class="tag is-info">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("page.bots.tag.social") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-info", 
+                                        title: "",
+                                        content: __("page.bots.tag.social"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (bot.tags.includes("Economy")) { %>
-                                <div class="control">
-                                    <p class="tag is-success">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("page.bots.tag.economy") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-success", 
+                                        title: "",
+                                        content: __("page.bots.tag.economy"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (bot.tags.includes("Utility")) { %>
-                                <div class="control">
-                                    <p class="tag is-orange">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("page.bots.tag.utility") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-orange", 
+                                        title: "",
+                                        content: __("page.bots.tag.utility"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (bot.tags.includes("Moderation")) { %>
-                                <div class="control">
-                                    <span class="tag is-danger">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("page.bots.tag.moderation") %></span>
-                                    </span>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-danger", 
+                                        title: "",
+                                        content: __("page.bots.tag.moderation"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (bot.tags.includes("Multipurpose")) { %>
-                                <div class="control">
-                                    <p class="tag is-magenta">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("page.bots.tag.multipurpose") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-magenta", 
+                                        title: "",
+                                        content: __("page.bots.tag.multipurpose"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (bot.tags.includes("Music")) { %>
-                                <div class="control">
-                                    <p class="tag is-pink">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.music") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-pink", 
+                                        title: "",
+                                        content: __("common.tags.music"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                         </div>
                     <% } %>

@@ -7,6 +7,10 @@ const homeHandler = (req, res, next) => {
                 req.session.delLang = req.params.lang
                 req.setLocale(req.params.lang);
                 next();
+            } else if (req.query.localeLayout) { 
+                req.query.localeLayout === "ltr" ? req.session.disableRTL = true : req.session.disableRTL = false;
+                req.setLocale(req.params.lang);
+                next();
             } else if (req.session.delLang && req.params.lang !== req.session.delLang) {
                 res.redirect(307, req.originalUrl.replace(req.params.lang, req.session.delLang));
             } else {
@@ -41,6 +45,10 @@ const globalHandler = (req, res, next) => {
         if (settings.website.locales.all.includes(req.params.lang)) {
             if (req.query.setLang && req.query.setLang === "t") {
                 req.session.delLang = req.params.lang
+                req.setLocale(req.params.lang);
+                next();
+            } else if (req.query.localeLayout) { 
+                req.query.localeLayout === "ltr" ? req.session.disableRTL = true : req.session.disableRTL = false;
                 req.setLocale(req.params.lang);
                 next();
             } else if (req.session.delLang && req.params.lang !== req.session.delLang) {

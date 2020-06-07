@@ -14,9 +14,10 @@
     },
     "website": {
         "locales": {
-            "default": "en-NZ",
-            "all": ["en-NZ", "en-GB", "en-US", "de-DE", "es-ES", "he-IL", "hu-HU", "it-IT"],
-            "isntLocale": ["search", "bots", "servers", "templates", "users", "staff", "terms", "privacy", "guidelines", "widgetbot", "about", "docs"]
+            "default": "en-US",
+            "all": ["en-NZ", "en-GB", "en-US", "en-UD", "de-DE", "es-ES", "he-IL", "hu-HU", "it-IT", "pt-PT"],
+            "isRTL": ["he-IL"],
+            "isntLocale": ["search", "auth", "bots", "servers", "templates", "users", "staff", "terms", "privacy", "guidelines", "widgetbot", "about", "docs"]
         },
         "secrets": {
             "cookie": ""

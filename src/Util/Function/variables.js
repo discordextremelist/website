@@ -29,6 +29,12 @@ const variables = async(req, res, next) => {
         return res.redirect(req.originalUrl.replace("?setLang=t", ""));
     }
 
+    if (req.originalUrl.includes("?localeLayout=rtl") || req.originalUrl.includes("?localeLayout=ltr")) {
+        let returnURL = req.originalUrl.replace("?localeLayout=rtl", "");
+        returnURL = returnURL.replace("?localeLayout=ltr", "");
+        return res.redirect(returnURL);
+    }
+
     req.browser = browser(req.headers["user-agent"]);
     res.locals.browser = req.browser;
     res.locals.requestedAt = Date.now();
@@ -36,7 +42,6 @@ const variables = async(req, res, next) => {
     res.locals.ddosMode = ddosMode.getDDOSMode().active;
     res.locals.gaID = settings.website.gaID;
     res.locals.linkPrefix = `/${req.locale || settings.website.locales.default}`;
-    res.locals.htmlDir = "ltr";
     res.locals.defaultLang = settings.website.locales.default;
     res.locals.baseURL = settings.website.url;
     res.locals.announcement = announcementCache.getAnnouncement();
@@ -47,10 +52,17 @@ const variables = async(req, res, next) => {
     res.locals.colour = colour;
     res.locals.premidPageInfo = "";
 
+    if (req.session.disableRTL && req.session.disableRTL === true) {
+        res.locals.htmlDir = "ltr";
+    } else settings.website.locales.isRTL.includes(req.locale) ? res.locals.htmlDir = "rtl" : res.locals.htmlDir = "ltr";
+
+    settings.website.locales.isRTL.includes(req.locale) ? req.session.rtlLanguage = true : req.session.rtlLanguage = false;
+
     res.locals.pageType = {
         server: false,
         bot: false,
-        template: false
+        template: false,
+        user: false
     }
 
     res.locals.socialMedia = {

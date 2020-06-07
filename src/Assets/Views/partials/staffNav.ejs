@@ -1,5 +1,5 @@
 <% if (announcement.active === true) { %>
-    <div <% if (announcement.colour === "preferred") { %>class="has-background-default has-text-centered" style="padding: 5px;"<% } else { %>style="background-color: <%= announcement.colour %>; color: <%= announcement.foreground %>; padding: 5px;" class="has-text-centered"<% } %>>
+    <div id="announcementBody" <% if (announcement.colour === "preferred") { %>class="has-background-default has-text-centered" style="padding: 5px;"<% } else { %>style="background-color: <%= announcement.colour %>; color: <%= announcement.foreground %>; padding: 5px;" class="has-text-centered"<% } %>>
         <%- announcement.message %>
     </div>
 <% } %>
@@ -74,7 +74,7 @@
                         <span class="icon iconalign">
                             <i class="fab fa-discord" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("common.nav.more.discord") %></span>
+                        <span><%= __("common.discord") %></span>
                     </a>
                     <a class="navbar-item" href="https://docs.discordextremelist.xyz/">
                         <span class="icon iconalign">

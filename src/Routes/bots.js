@@ -301,6 +301,7 @@ router.post("/preview_post", async(req, res, next) => {
             "table", "thead", "caption", "tbody", "tr", "th", "td", "pre", "iframe", "style", "link"
         ],
         allowedAttributes: false,
+        allowVulnerableTags: true
     });
 
     res.status(200).send(clean);
@@ -661,6 +662,7 @@ router.get("/:id", variables, async(req, res, next) => {
                 "table", "thead", "caption", "tbody", "tr", "th", "td", "pre", "iframe", "style", "script", "noscript", "link"
             ],
             allowedAttributes: false,
+            allowVulnerableTags: true
         });
     } else {
         clean = sanitizeHtml(dirty, {
@@ -669,6 +671,7 @@ router.get("/:id", variables, async(req, res, next) => {
                 "table", "thead", "caption", "tbody", "tr", "th", "td", "pre", "iframe", "style", "link"
             ],
             allowedAttributes: false,
+            allowVulnerableTags: true
         });
     }
 

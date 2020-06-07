@@ -17,7 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const express = require("express");
+const express = require("express")
+
 const path = require("path");
 
 const settings = require("./settings.json");
@@ -141,6 +142,7 @@ new Promise((resolve, reject) => {
         const i18n = require("i18n");
         const passport = require("passport");
         const languageHandler = require("./src/Util/Middleware/languageHandler.js");
+        const sitemap = require("express-sitemap")();
 
         app.set("view engine", "ejs");
 

@@ -1,0 +1,65 @@
+<% if (type === "multi") { %>
+    <% if (htmlDir === "rtl") { %>
+        <div class="control">
+            <div class="tags has-addons">
+                <% if (content === "insOwner-bot") { %>
+                    <span class="tag <%= contentColour %>">
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a>
+                    </span>
+                <% } else if (content === "insOwner-server") { %>
+                    <span class="tag <%= contentColour %>">
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= server.owner.id %>"><%= serverOwner.fullUsername %></a>
+                    </span>
+                <% } else if (content === "insOwner-template") { %>
+                    <span class="tag <%= contentColour %>">
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.owner.id %>"><%= templateOwner.fullUsername %></a>
+                    </span>
+                <% } else { %>
+                    <span class="tag <%= contentColour %>"><%= content %></span>
+                <% } %> 
+                <span class="tag is-dark"><%= title %></span>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="control">
+            <div class="tags has-addons">
+                <span class="tag is-dark"><%= title %></span>
+                <% if (content === "insOwner-bot") { %>
+                    <span class="tag <%= contentColour %>">
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a>
+                    </span>
+                <% } else if (content === "insOwner-server") { %>
+                    <span class="tag <%= contentColour %>">
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= server.owner.id %>"><%= serverOwner.fullUsername %></a>
+                    </span>
+                <% } else if (content === "insOwner-template") { %>
+                    <span class="tag <%= contentColour %>">
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.owner.id %>"><%= templateOwner.fullUsername %></a>
+                    </span>
+                <% } else { %>
+                    <span class="tag <%= contentColour %>"><%= content %></span>
+                <% } %> 
+            </div>
+        </div>
+    <% } %> 
+<% } else if (type === "tag") { %>
+    <% if (htmlDir === "rtl") { %>
+        <div class="control">
+            <p class="tag <%= contentColour %>">
+                <span><%= content %></span>
+                <span class="icon">
+                    <i aria-hidden="true" class="fas fa-tag"></i>
+                </span>
+            </p>
+        </div>
+    <% } else { %>
+        <div class="control">
+            <p class="tag <%= contentColour %>">
+                <span class="icon">
+                    <i aria-hidden="true" class="fas fa-tag"></i>
+                </span>
+                <span><%= content %></span>
+            </p>
+        </div>
+    <% } %> 
+<% } %>

@@ -102,9 +102,41 @@ function standingParseEmoji(standing) {
     return result;
 }
 
-function parseDate(rawDate) {
+function parseDate(__, locale, rawDate) {
+    if (rawDate === 0) return "???";
+
     const date = new Date(rawDate);
-    return `${date.getUTCHours()}:${date.getUTCMinutes()} ${date.getUTCDate()}/${date.getUTCMonth()}/${date.getUTCFullYear()} UTC`;
+    const dateFormat = require(`../../../node_modules/del-i18n/${locale}.json`);
+
+    if (dateFormat["common.dateFormat"].includes("{{amPM}}")) {
+        let amPM;
+        let hour = date.getUTCHours();
+
+        if (hour === 0) hour = 24; 
+
+        if (hour >= 12 && hour !== 24) {
+            amPM = __("common.dateFormat.pm");
+            if (hour > 12) hour = hour - 12
+        } else {
+            amPM = __("common.dateFormat.am");
+            if (hour === 24) hour = hour - 12
+        }
+
+        return __("common.dateFormat", { 
+            hours: hour,
+            minutes: date.getUTCMinutes(),
+            dateInMonth: date.getUTCDate(),
+            monthNumber: date.getUTCMonth(),
+            amPM: amPM,
+            year: date.getUTCFullYear()
+        });
+    } else return __("common.dateFormat", {
+        hours: date.getUTCHours(),
+        minutes: date.getUTCMinutes(),
+        dateInMonth: date.getUTCDate(),
+        monthNumber: date.getUTCMonth(),
+        year: date.getUTCFullYear()
+    });
 }
 
 function shuffleArray(array) {

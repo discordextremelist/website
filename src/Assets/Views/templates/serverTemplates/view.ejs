@@ -52,33 +52,42 @@
                     </h1>
                     <h2 class="subtitle <% if (mobile) { %>has-text-centered<% } %>"><%= template.shortDesc %></h2>
                     <% if (req.user) { %>
-                        <div class="buttons <% if (mobile) { %>is-centered<% } %>">
+                        <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
                             <% if (template.owner.id === req.user.id) { %>
-                                <a href="<%= linkPrefix %>/templates/<%= template._id %>/edit" class="button is-dark">
-                                    <span class="icon">
-                                        <i aria-hidden="true" class="fas fa-pencil"></i>
-                                    </span>
-                                    <span><%= __("common.edit") %></span>
-                                </a>
-                                <a href="" id="deleteModal" class="button is-dark">
-                                    <span class="icon">
-                                        <i aria-hidden="true" class="fas fa-trash"></i>
-                                    </span>
-                                    <span><%= __("common.delete") %></span>
-                                </a>
+                                <%- 
+                                    include("../../partials/button.ejs", { 
+                                        className: "button is-dark", 
+                                        icon: "fas fa-pencil", 
+                                        tag: "a", 
+                                        message: __("common.edit"), 
+                                        href: `${linkPrefix}/templates/${template._id}/edit`, 
+                                        additional: ""
+                                    });
+                                %>
+                                <%- 
+                                    include("../../partials/button.ejs", { 
+                                        className: "button is-dark", 
+                                        icon: "fas fa-trash", 
+                                        tag: "a", 
+                                        message: __("common.delete"), 
+                                        href: "", 
+                                        additional: "id=\"deleteModal\""
+                                    });
+                                %>
                             <% } %>
                             <% if (user.db.rank.mod) { %>
                                 <div class="dropdown">
                                     <div class="dropdown-trigger">
-                                        <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
-                                            <span class="icon">
-                                                <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
-                                            </span>
-                                            <span><%= __("common.staffManagement") %></span>
-                                            <span class="icon is-small">
-                                                <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
-                                            </span>
-                                        </button>
+                                        <%- 
+                                            include("../../partials/button.ejs", { 
+                                                className: "button is-dark", 
+                                                icon: "fas fa-cogs", 
+                                                tag: "dropdownButton", 
+                                                message: __("common.staffManagement"), 
+                                                href: "", 
+                                                additional: "style=\"direction: ltr;\""
+                                            });
+                                        %>
                                     </div>
                                     <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                         <div class="dropdown-content">
@@ -102,7 +111,7 @@
                             <% } %> 
                         </div>
                     <% } %>
-                    <div class="buttons <% if (mobile) { %>is-centered<% } %>">
+                    <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
                         <a target="_blank" href="<%= template.links.template %>" class="button is-link">
                             <span class="icon">
                                 <i aria-hidden="true" class="fas fa-clone"></i>
@@ -111,130 +120,134 @@
                         </a>
                     </div>
                     <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
-                        <div class="control">
-                            <div class="tags has-addons">
-                                <span class="tag is-dark"><%= __("common.listingOwner") %></span>
-                                <span class="tag is-link"><a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.owner.id %>"><%= templateOwner.fullUsername %></a></span>
-                            </div>
-                        </div>
-                        <div class="control">
-                            <div class="tags has-addons">
-                                <span class="tag is-dark"><%= __("page.templates.used") %></span>
-                                <span class="tag is-info"><%= __("page.templates.used.times", template.usageCount) %></span>
-                            </div>
-                        </div>
+                        <%- 
+                            include("../../partials/tag.ejs", { 
+                                contentColour: "is-link", 
+                                title: __("common.listingOwner"),
+                                content: "insOwner-template",
+                                type: "multi"
+                            });
+                        %>
+                        <%- 
+                            include("../../partials/tag.ejs", { 
+                                contentColour: "is-info", 
+                                title: __("page.templates.used"),
+                                content: __("page.templates.used.times", template.usageCount),
+                                type: "multi"
+                            });
+                        %>
                     </div>
                     <% if (template.tags && template.tags.length > 0) { %>
                         <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
                             <% if (template.tags.includes("Gaming")) { %>
-                                <div class="control">
-                                    <p class="tag is-link">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.gaming") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-link", 
+                                        title: "",
+                                        content: __("common.tags.gaming"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (template.tags.includes("Music")) { %>
-                                <div class="control">
-                                    <p class="tag is-info">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.music") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-info", 
+                                        title: "",
+                                        content: __("common.tags.music"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (template.tags.includes("Media & Entertainment")) { %>
-                                <div class="control">
-                                    <p class="tag is-success">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.mediaEntertainment") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-success", 
+                                        title: "",
+                                        content: __("common.tags.mediaEntertainment"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (template.tags.includes("Creative Arts")) { %>
-                                <div class="control">
-                                    <p class="tag is-orange">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.creativeArts") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-orange", 
+                                        title: "",
+                                        content: __("common.tags.creativeArts"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (template.tags.includes("Science & Tech")) { %>
-                                <div class="control">
-                                    <span class="tag is-danger">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.scienceTech") %></span>
-                                    </span>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-danger", 
+                                        title: "",
+                                        content: __("common.tags.scienceTech"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (template.tags.includes("Education")) { %>
-                                <div class="control">
-                                    <p class="tag is-magenta">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.education") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-magenta", 
+                                        title: "",
+                                        content: __("common.tags.education"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (template.tags.includes("Fashion & Beauty")) { %>
-                                <div class="control">
-                                    <p class="tag is-pink">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.fashionBeauty") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-pink", 
+                                        title: "",
+                                        content: __("common.tags.fashionBeauty"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (template.tags.includes("Relationships & Identity")) { %>
-                                <div class="control">
-                                    <p class="tag is-link">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.relationshipIdentity") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-link", 
+                                        title: "",
+                                        content: __("common.tags.relationshipIdentity"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (template.tags.includes("Fitness & Health")) { %>
-                                <div class="control">
-                                    <p class="tag is-info">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.fitnessHealth") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-info", 
+                                        title: "",
+                                        content: __("common.tags.fitnessHealth"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (template.tags.includes("Travel & Food")) { %>
-                                <div class="control">
-                                    <p class="tag is-success">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.travelFood") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-success", 
+                                        title: "",
+                                        content: __("common.tags.travelFood"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                             <% if (template.tags.includes("Finance")) { %>
-                                <div class="control">
-                                    <p class="tag is-orange">
-                                        <span class="icon">
-                                            <i aria-hidden="true" class="fas fa-tag"></i>
-                                        </span>
-                                        <span><%= __("common.tags.finance") %></span>
-                                    </p>
-                                </div>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-orange", 
+                                        title: "",
+                                        content: __("common.tags.finance"),
+                                        type: "tag"
+                                    });
+                                %>
                             <% } %>
                         </div>
                     <% } %>
@@ -247,20 +260,34 @@
     <br />
     <div class="column is-12 tabs is-boxed">
         <ul>
-            <li class="is-active">
+            <li style="direction: ltr;" class="is-active">
                 <a>
-                <span class="icon is-small">
-                    <i class="fas fa-align-center" aria-hidden="true"></i>
-                </span>
-                <span><%= __("common.description") %></span>
-            </a>
+                    <% if (htmlDir !== "rtl") { %>
+                        <span class="icon is-small">
+                            <i class="fas fa-align-center" aria-hidden="true"></i>
+                        </span>
+                    <% } %>
+                    <span><%= __("common.description") %></span>
+                    <% if (htmlDir === "rtl") { %>
+                        <span class="icon is-small">
+                            <i class="fas fa-align-center" aria-hidden="true"></i>
+                        </span>
+                    <% } %>
+                </a>
             </li>
-            <li>
+            <li style="direction: ltr;">
                 <a>
-                    <span class="icon is-small">
-                        <i class="fas fa-info-circle" aria-hidden="true"></i>
-                    </span>
+                    <% if (htmlDir !== "rtl") { %>
+                        <span class="icon is-small">
+                            <i class="fas fa-info-circle" aria-hidden="true"></i>
+                        </span>
+                    <% } %>
                     <span><%= __("page.templates.details") %></span>
+                    <% if (htmlDir === "rtl") { %>
+                        <span class="icon is-small">
+                            <i class="fas fa-info-circle" aria-hidden="true"></i>
+                        </span>
+                    <% } %>
                 </a>
             </li>
         </ul>

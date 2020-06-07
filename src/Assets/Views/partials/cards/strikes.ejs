@@ -3,7 +3,7 @@
         <ul style="margin-top: unset;">
             <li><strong><%= __("page.staff.manager.punish.executor") %></strong> <%= strike.executorName %></li>
             <li><strong><%= __("page.staff.manager.punish.reason") %></strong> <%= strike.reason %></li>
-            <li><strong><%= __("page.staff.manager.punish.date") %></strong> <%= functions.parseDate(strike.date) %></li>
+            <li><strong><%= __("page.staff.manager.punish.date") %></strong> <%= functions.parseDate(__, req.locale, strike.date) %></li>
         </ul>
     </div>
 </article>

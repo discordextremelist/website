@@ -36,6 +36,7 @@
     <meta name="distribution" content="global">
     <meta name="rating" content="safe for kids">
     <meta name="revisit-after" content="1 day">
+    <meta name='dmca-site-verification' content='YVJaNUpkc2svQUxNZ1QxOERRVkxOTjBPOUI4eFNjVkZmYlhFYWtQVzI1ST01' />
 
     <% if (pageType.bot === true) { %>
         <meta name="theme-color" content="#2C2F33">
@@ -147,4 +148,5 @@
 
         gtag('config', '<%= gaID %>');
     </script>
+    <% if (htmlDir === "rtl") { %><%- include("./rtl.ejs") %><% } %>
 </head>

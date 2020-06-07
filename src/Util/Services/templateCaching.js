@@ -43,7 +43,7 @@ async function uploadTemplates() {
 }
 
 async function deleteTemplate(id) {
-    await global.redis.del(prefix, id);
+    await global.redis.hdel(prefix, id);
 }
 
 setInterval(async () => {

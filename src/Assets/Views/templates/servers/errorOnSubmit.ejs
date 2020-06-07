@@ -173,7 +173,15 @@
             </form>    
         </div>
         <br />
-        <script type="text/javascript">const require={paths:{"vs":"/packages/monaco-editor/min/vs"}};addEventListener('beforeunload',event=>{event.preventDefault();event.returnValue=''});</script>
+        <script>
+    const require={paths:{"vs":"/packages/monaco-editor/min/vs"}}
+    const warn = event => {
+        event.preventDefault()
+        event.returnValue=''
+    }
+    addEventListener('beforeunload', warn)
+    document.querySelector('form').onsubmit = () => removeEventListener('beforeunload', warn)
+</script>
         <script src="/packages/monaco-editor/min/vs/loader.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>

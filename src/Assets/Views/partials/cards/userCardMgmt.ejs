@@ -30,9 +30,9 @@
                         <strong><%= __("page.staff.manager.onLeave") %></strong> <%= user.staffTracking.details.away.status ? __("page.staff.manager.onLeave.yes") : __("page.staff.manager.onLeave.no") %>
                         <br />
                         <br />
-                        <strong><%= __("page.staff.manager.lastLogin.time") %></strong> <%= functions.parseDate(user.staffTracking.lastLogin) %>
+                        <strong><%= __("page.staff.manager.lastLogin.time") %></strong> <%= functions.parseDate(__, req.locale, user.staffTracking.lastLogin) %>
                         <br />
-                        <strong><%= __("page.staff.manager.lastAccess.time") %></strong> <%= functions.parseDate(user.staffTracking.lastAccessed.time) %>
+                        <strong><%= __("page.staff.manager.lastAccess.time") %></strong> <%= functions.parseDate(__, req.locale, user.staffTracking.lastAccessed.time) %>
                         <br />
                         <strong><%= __("page.staff.manager.lastAccess.page") %></strong> <%= user.staffTracking.lastAccessed.page %>
                         <br />

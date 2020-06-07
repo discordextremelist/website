@@ -43,7 +43,7 @@ async function uploadBots() {
 }
 
 async function deleteBot(id) {
-    await global.redis.del(prefix, id);
+    await global.redis.hdel(prefix, id);
 }
 
 setInterval(async () => {

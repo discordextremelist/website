@@ -41,6 +41,7 @@
     }
 %>
 <style type="text/css">.button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;color:<%= defaultColour %>}.button.is-default.is-outlined:hover,.button.is-default.is-outlined.is-hovered,.button.is-default.is-outlined:focus,.button.is-default.is-outlined.is-focused{background-color:<%= defaultColour %>;border-color:<%= defaultColour %>;color:<%= foreground %>}.button.is-default.is-outlined.is-loading::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-outlined.is-loading:hover::after,.button.is-default.is-outlined.is-loading.is-hovered::after,.button.is-default.is-outlined.is-loading:focus::after,.button.is-default.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= foreground %> <%= foreground %>!important}.button.is-default.is-outlined[disabled],fieldset[disabled] .button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;box-shadow:none;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;color:<%= foreground %>}.button.is-default.is-inverted.is-outlined:hover,.button.is-default.is-inverted.is-outlined.is-hovered,.button.is-default.is-inverted.is-outlined:focus,.button.is-default.is-inverted.is-outlined.is-focused{background-color:<%= foreground %>;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined.is-loading:hover::after,.button.is-default.is-inverted.is-outlined.is-loading.is-hovered::after,.button.is-default.is-inverted.is-outlined.is-loading:focus::after,.button.is-default.is-inverted.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-inverted.is-outlined[disabled],fieldset[disabled] .button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;box-shadow:none;color:<%= foreground %>}</style>
+<style type="text/css">.tag:not(body){color: <%= foreground %>;background-color: <%= defaultColour %>;}</style>
 <section class="hero is-primary">
     <div class="hero-body">
         <br />
@@ -54,10 +55,10 @@
                         if (userStatus === "dnd") statusInfo = __("page.users.status.dnd")
                         if (userStatus === "offline") statusInfo = __("page.users.status.offline")
                     %> 
-                    <img class="image" title="<%= statusInfo %>" style="border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.url %>.<%= imageFormat %>?size=128" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" >
+                    <img class="image <% if (mobile) { %>is-centered<% } %>" title="<%= statusInfo %>" style="border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.url %>.<%= userProfile.avatar.hash.startsWith('a_') ? 'gif' : imageFormat %>?size=128" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" >
                 </div>
                 <div class="column is-10">
-                    <h1 class="is-size-1">
+                    <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
                         <span id="userName"><%= userProfile.fullUsername %></span>
                         <% if (userProfileIsBanned === true || userProfile.rank.tester === true || userProfile.rank.premium === true || userProfile.rank.mod === true || userProfile.rank.admin === true || Boolean(userProfile.flags & (1 << 17))) { %>
                             <% if (userProfileIsBanned === true) { %>
@@ -111,25 +112,32 @@
                     <h2 class="subtitle"><% if (userProfileIsBanned === false) { %><%= userProfile.profile.bio || __("page.users.bio.nil") %><% } else { %><%= __("page.users.bio.bio") %><% } %></h2>
                     <% if (userProfileIsBanned === false || user && user.db.rank.mod === true) { %>
                         <% if (user && user.db.rank.mod === true || user && userProfile._id === user.id) { %>
-                            <div class="buttons">
-                                <% if (userProfile._id === user.id || user.db.rank.assistant === true) { %>
-                                    <a href="<%= linkPrefix %>/users/profile/@me/edit" class="button is-dark">
-                                        <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
-                                        <span><%= __("common.edit") %></span>
-                                    </a>
+                            <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
+                                <% if (userProfile._id === user.id) { %>
+                                    <%- 
+                                        include("../../partials/button.ejs", { 
+                                            className: "button is-dark", 
+                                            icon: "fas fa-pencil", 
+                                            tag: "a", 
+                                            message: __("common.edit"), 
+                                            href: `${linkPrefix}/users/profile/@me/edit`, 
+                                            additional: ""
+                                        });
+                                    %>
                                 <% } %>
                                 <% if (user.db.rank.assistant) { %>
                                     <div class="dropdown">
                                         <div class="dropdown-trigger">
-                                          <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
-                                            <span class="icon">
-                                                <i aria-hidden="true" class="fas fa-cogs" aria-hidden="true"></i>
-                                            </span>
-                                            <span><%= __("common.staffManagement") %></span>
-                                            <span class="icon is-small">
-                                              <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
-                                            </span>
-                                          </button>
+                                            <%- 
+                                                include("../../partials/button.ejs", { 
+                                                    className: "button is-dark", 
+                                                    icon: "fas fa-cogs", 
+                                                    tag: "dropdownButton", 
+                                                    message: __("common.staffManagement"), 
+                                                    href: "", 
+                                                    additional: "style=\"direction: ltr;\""
+                                                });
+                                            %>
                                         </div>
                                         <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                           <div class="dropdown-content">
@@ -155,51 +163,89 @@
                                 <% } %>
                             </div>
                         <% } %>
-                        <div class="buttons">
+                        <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
                             <% if (userProfile.profile.links.website) { %>
-                                <a target="_blank" rel="noopener" href="<%= userProfile.profile.links.website %>" class="button is-link">
-                                    <span class="icon"><i aria-hidden="true" class="fas fa-globe"></i></span>
-                                    <span><%= __("common.website") %></span>
-                                </a>
+                                <%- 
+                                    include("../../partials/button.ejs", { 
+                                        className: "button is-link", 
+                                        icon: "fas fa-globe", 
+                                        tag: "a", 
+                                        message: __("common.website"), 
+                                        href: userProfile.profile.links.website, 
+                                        additional: "target=\"_blank\" rel=\"noopener\""
+                                    });
+                                %>
                             <% } %>
                             <% if (userProfile.profile.links.twitter) { %>
-                                <a target="_blank" rel="noopener" href="https://twitter.com/@<%= userProfile.profile.links.twitter %>" class="button is-info">
-                                    <span class="icon"><i aria-hidden="true" class="fab fa-twitter"></i></span>
-                                    <span><%= __("common.social.twitter") %></span>
-                                </a>
+                                <%- 
+                                    include("../../partials/button.ejs", { 
+                                        className: "button is-info", 
+                                        icon: "fab fa-twitter", 
+                                        tag: "a", 
+                                        message: __("common.social.twitter"), 
+                                        href: `https://twitter.com/@${userProfile.profile.links.twitter}`, 
+                                        additional: "target=\"_blank\" rel=\"noopener\""
+                                    });
+                                %>
                             <% } %>
                             <% if (userProfile.profile.links.instagram) { %>
-                                <a target="_blank" rel="noopener" href="https://instagram.com/<%= userProfile.profile.links.instagram %>" class="button is-magenta">
-                                    <span class="icon"><i aria-hidden="true" class="fab fa-instagram"></i></span>
-                                    <span><%= __("common.social.instagram") %></span>
-                                </a>
+                                <%- 
+                                    include("../../partials/button.ejs", { 
+                                        className: "button is-magenta", 
+                                        icon: "fab fa-instagram", 
+                                        tag: "a", 
+                                        message: __("common.social.instagram"), 
+                                        href: `https://instagram.com/${userProfile.profile.links.instagram}`, 
+                                        additional: "target=\"_blank\" rel=\"noopener\""
+                                    });
+                                %>
                             <% } %>
                             <% if (userProfile.profile.links.snapchat) { %>
-                                <a target="_blank" rel="noopener" href="https://www.snapchat.com/add/<%= userProfile.profile.links.snapchat %>" class="button is-warning">
-                                    <span class="icon"><i aria-hidden="true" class="fab fa-snapchat-ghost"></i></span>
-                                    <span><%= __("common.social.snapchat") %></span>
-                                </a>
+                                <%- 
+                                    include("../../partials/button.ejs", { 
+                                        className: "button is-warning", 
+                                        icon: "fab fa-snapchat-ghost", 
+                                        tag: "a", 
+                                        message: __("common.social.snapchat"), 
+                                        href: `https://www.snapchat.com/add/${userProfile.profile.links.snapchat}`, 
+                                        additional: "target=\"_blank\" rel=\"noopener\""
+                                    });
+                                %>
                             <% } %>
                             <% if (userProfile.profile.links.gitlab) { %>
-                                <a target="_blank" rel="noopener" href="https://gitlab.com/<%= userProfile.profile.links.gitlab %>" class="button is-orange">
-                                    <span class="icon"><i aria-hidden="true" class="fab fa-gitlab"></i></span>
-                                    <span><%= __("common.social.gitlab") %></span>
-                                </a>
+                                <%- 
+                                    include("../../partials/button.ejs", { 
+                                        className: "button is-orange", 
+                                        icon: "fab fa-gitlab", 
+                                        tag: "a", 
+                                        message: __("common.social.gitlab"), 
+                                        href: `https://gitlab.com/${userProfile.profile.links.gitlab}`, 
+                                        additional: "target=\"_blank\" rel=\"noopener\""
+                                    });
+                                %>
                             <% } %>
                             <% if (userProfile.profile.links.github) { %>
-                                <a target="_blank" rel="noopener" href="https://github.com/<%= userProfile.profile.links.github %>" class="button is-dark">
-                                    <span class="icon"><i aria-hidden="true" class="fab fa-github"></i></span>
-                                    <span><%= __("common.social.github") %></span>
-                                </a>
+                                <%- 
+                                    include("../../partials/button.ejs", { 
+                                        className: "button is-white", 
+                                        icon: "fab fa-github", 
+                                        tag: "a", 
+                                        message: __("common.social.github"), 
+                                        href: `https://github.com/${userProfile.profile.links.gitlab}`, 
+                                        additional: "target=\"_blank\" rel=\"noopener\""
+                                    });
+                                %>
                             <% } %>
                         </div>
                         <div class="field is-grouped is-grouped-multiline">
-                            <div class="control">
-                                <div class="tags has-addons">
-                                    <span class="tag is-dark"><%= __("page.users.snakeHS") %></span>
-                                    <span class="tag is-dark"><%= userProfile.game.snakes.maxScore %></span>
-                                </div>
-                            </div>
+                            <%- 
+                                include("../../partials/tag.ejs", { 
+                                    contentColour: "is-default", 
+                                    title: __("page.users.snakeHS"),
+                                    content: userProfile.game.snakes.maxScore,
+                                    type: "multi"
+                                });
+                            %>
                         </div>
                     </div>
                 </div>

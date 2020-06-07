@@ -46,7 +46,7 @@ async function uploadUsers() {
 }
 
 async function deleteUser(id) {
-    await global.redis.del(prefix, id);
+    await global.redis.hdel(prefix, id);
 }
 
 setInterval(async () => {

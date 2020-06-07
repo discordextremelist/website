@@ -20,7 +20,7 @@
     </style>
 </noscript>
 <% if (announcement.active === true) { %>
-    <div <% if (announcement.colour === "preferred") { %>class="has-background-default has-text-centered" style="padding: 5px;"<% } else { %>style="background-color: <%= announcement.colour %>; color: <%= announcement.foreground %>; padding: 5px;" class="has-text-centered"<% } %>>
+    <div id="announcementBody" <% if (announcement.colour === "preferred") { %>class="has-background-default has-text-centered" style="padding: 5px;"<% } else { %>style="background-color: <%= announcement.colour %>; color: <%= announcement.foreground %>; padding: 5px;" class="has-text-centered"<% } %>>
         <%- announcement.message %>
     </div>
 <% } %>
@@ -95,7 +95,7 @@
                         <span class="icon iconalign">
                             <i class="fab fa-discord" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("common.nav.more.discord") %></span>
+                        <span><%= __("common.discord") %></span>
                     </a>
                     <a class="navbar-item" href="<%= linkPrefix %>/docs" tabindex="0">
                         <span class="icon iconalign">
@@ -159,7 +159,7 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span><%= __("common.nav.language.en-NZ") %> (English NZ)</span>
+                        <span><%= __({ phrase: "common.nav.language.en-NZ", locale: "en-NZ" }) %></span>
                     </a>
                     <a class="navbar-item" <% if (req.locale !== "en-GB") { %>href="<%= req.originalUrl.replace(req.locale, "en-GB") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "en-GB") { %>
@@ -167,7 +167,7 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span><%= __("common.nav.language.en-UK") %> (English UK)</span>
+                        <span><%= __({ phrase: "common.nav.language.en-UK", locale: "en-GB" }) %></span>
                     </a>
                     <a class="navbar-item" <% if (req.locale !== "en-US") { %>href="<%= req.originalUrl.replace(req.locale, "en-US") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "en-US") { %>
@@ -175,7 +175,7 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span><%= __("common.nav.language.en-US") %> (English US)</span>
+                        <span><%= __({ phrase: "common.nav.language.en-US", locale: "en-US" }) %></span>
                     </a>
                     <a class="navbar-item" <% if (req.locale !== "en-UD") { %>href="<%= req.originalUrl.replace(req.locale, "en-UD") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "en-UD") { %>
@@ -183,7 +183,7 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span class="transform"><%- __("common.nav.language.en-UD", { flag: "🇺🇸" }) %> (English UD)</span>
+                        <span class="transform"><%= __({ phrase: "common.nav.language.en-UD", locale: "en-US" }, { flag: "🇺🇸" }) %></span>
                     </a>
                     <hr class="navbar-divider">
                     <a class="navbar-item" <% if (req.locale !== "de-DE") { %>href="<%= req.originalUrl.replace(req.locale, "de-DE") %>?setLang=t"<% } %> tabindex="0">
@@ -192,7 +192,7 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span><%= __("common.nav.language.de") %> (Deutsch)</span>
+                        <span><%= __({ phrase: "common.nav.language.de", locale: "de-DE" }) %></span>
                     </a>
                     <a class="navbar-item" <% if (req.locale !== "he-IL") { %>href="<%= req.originalUrl.replace(req.locale, "he-IL") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "he-IL") { %>
@@ -200,7 +200,7 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span><%= __("common.nav.language.he") %> (עברית)</span>
+                        <span><%= __({ phrase: "common.nav.language.he", locale: "he-IL" }) %></span>
                     </a>
                     <a class="navbar-item" <% if (req.locale !== "hu-HU") { %>href="<%= req.originalUrl.replace(req.locale, "hu-HU") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "hu-HU") { %>
@@ -208,7 +208,7 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span><%= __("common.nav.language.hu") %> (magyar nyelv)</span>
+                        <span><%= __({ phrase: "common.nav.language.hu", locale: "hu-HU" }) %></span>
                     </a>
                     <a class="navbar-item" <% if (req.locale !== "it-IT") { %>href="<%= req.originalUrl.replace(req.locale, "it-IT") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "it-IT") { %>
@@ -216,7 +216,7 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span><%= __("common.nav.language.it") %> (italiano)</span>
+                        <span><%= __({ phrase: "common.nav.language.it", locale: "it-IT" }) %></span>
                     </a>
                     <a class="navbar-item" <% if (req.locale !== "pt-PT") { %>href="<%= req.originalUrl.replace(req.locale, "pt-PT") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "pt-PT") { %>
@@ -224,7 +224,7 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span><%= __("common.nav.language.pt") %> (...)</span>
+                        <span><%= __({ phrase: "common.nav.language.pt", locale: "pt-PT" }) %></span>
                     </a>
                     <a class="navbar-item" <% if (req.locale !== "es-ES") { %>href="<%= req.originalUrl.replace(req.locale, "es-ES") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "es-ES") { %>
@@ -232,7 +232,15 @@
                                 <i class="fad fa-check-circle" aria-hidden="true"></i>
                             </span>
                         <% } %>
-                        <span><%= __("common.nav.language.es-ES") %> (español)</span>
+                        <span><%= __({ phrase: "common.nav.language.es-ES", locale: "es-ES" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "tr-TR") { %>href="<%= req.originalUrl.replace(req.locale, "tr-TR") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "tr-TR") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.tr-TR", locale: "tr-TR" }) %></span>
                     </a>
                     <hr class="navbar-divider">
                     <a class="navbar-item" target="_blank" rel="noopener" href="https://translate.discordextremelist.xyz/" tabindex="0">
@@ -240,6 +248,25 @@
                             <%= __("common.nav.language.helpUs") %>
                         </span>
                     </a>
+                    <% if (req.session.disableRTL === true) { %>
+                        <a class="navbar-item" href="<%= req.originalUrl %>?localeLayout=rtl" tabindex="0">
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                            <span class="has-text-success">
+                                <%= __("common.nav.language.enableRTL") %>
+                            </span>
+                        </a>
+                    <% } else if (!req.session.disableRTL && req.session.rtlLanguage) { %>
+                        <a class="navbar-item" href="<%= req.originalUrl %>?localeLayout=ltr" tabindex="0">
+                            <span title="Selected" class="icon has-text-danger iconalign">
+                                <i class="fad fa-times-circle" aria-hidden="true"></i>
+                            </span>
+                            <span class="has-text-danger">
+                                <%= __("common.nav.language.disableRTL") %>
+                            </span>
+                        </a>
+                    <% } %>
                 </div>
             </div>
 

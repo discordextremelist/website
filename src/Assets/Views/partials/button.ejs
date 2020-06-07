@@ -1,0 +1,39 @@
+<% if (tag === "dropdownButton") { %>
+    <% if (htmlDir === "rtl") { %>
+        <button class="<%= className %>" <%- additional %> aria-haspopup="true" aria-controls="dropdown-ui-actions">
+            <span class="icon is-small">
+                <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+            <span><%= message %></span>
+            <span class="icon">
+                <i aria-hidden="true" class="<%= icon %>" aria-hidden="true"></i>
+            </span>
+        </button>
+    <% } else { %>
+        <button class="<%= className %>" <%- additional %> aria-haspopup="true" aria-controls="dropdown-ui-actions">
+            <span class="icon">
+                <i aria-hidden="true" class="<%= icon %>" aria-hidden="true"></i>
+            </span>
+            <span><%= message %></span>
+            <span class="icon is-small">
+                <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+        </button>
+    <% } %> 
+<% } else { %>
+    <% if (htmlDir === "rtl") { %>
+        <<%= tag %> href="<%= href %>" class="<%= className %> page" <%- additional %>>
+            <span><%= message %></span>
+            <span class="icon">
+                <i aria-hidden="true" class="<%= icon %>"></i>
+            </span>
+        </<%= tag %>>
+    <% } else { %>
+        <<%= tag %> href="<%= href %>" class="<%= className %> page" <%- additional %>>
+            <span class="icon">
+                <i aria-hidden="true" class="<%= icon %>"></i>
+            </span>
+            <span><%= message %></span>
+        </<%= tag %>>
+    <% } %> 
+<% } %>

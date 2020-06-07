@@ -142,20 +142,34 @@ fieldset[disabled] .button.is-default.is-inverted.is-outlined {
         <div class="container has-text-centered">
             <h1 class="title">
                 <span class="icon is-medium iconalign">
-                    <i aria-hidden="true" class="fad fa-comment-alt-lines has-text-default fa-1x"></i>
+                    <i aria-hidden="true" class="fab fa-discord has-text-default fa-1x"></i>
                 </span>
                 <br />
                 <span><%= title %></span>
             </h1>
             <h2 class="subtitle"><%= subtitle %></h2>
-            <a target="_blank" rel="noopener" class="button is-default" href="<%= discordServer %>">
-                <span class="icon"><i aria-hidden="true" class="fas fa-user-plus"></i></span>
-                <span><%= __("common.discord.direct") %></span>
-            </a>
-            <a target="_blank" rel="noopener" class="button is-default" href="<%= linkPrefix %>/bots/543225764036870167">
-                <span class="icon"><i aria-hidden="true" class="fas fa-info-circle"></i></span>
-                <span><%= __("common.widgetbot.del") %></span>
-            </a>
+            <div class="buttons page is-centered">
+                <%- 
+                    include("../partials/button.ejs", { 
+                        className: "button is-default", 
+                        icon: "fas fa-user-plus", 
+                        tag: "a", 
+                        message: __("common.discord.direct"), 
+                        href: discordServer, 
+                        additional: "target=\"_blank\" rel=\"noopener\""
+                    });
+                %>
+                <%- 
+                    include("../partials/button.ejs", { 
+                        className: "button is-default", 
+                        icon: "fas fa-info-circle", 
+                        tag: "a", 
+                        message: __("common.widgetbot.del"), 
+                        href: `${linkPrefix}/bots/543225764036870167`, 
+                        additional: "target=\"_blank\" rel=\"noopener\""
+                    });
+                %>
+            </div>
         </div>
     </div>
     </section>

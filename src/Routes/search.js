@@ -57,7 +57,7 @@ router.post("/", vars, async (req, res) => {
         (only.length < 1 || only.includes("bots")) ? await botCache.getAllBots() : [],
         (only.length < 1 || only.includes("servers")) ? await serverCache.getAllServers() : [],
         (only.length < 1 || only.includes("templates")) ? await templateCache.getAllTemplates() : [],
-    ]); // TODO: Redis cache this later for quicker search, or use elasticsearch. Current response time as of now ~2500ms!
+    ]);
     const imageFormat = res.locals.imageFormat;
     let results = chunk(await Promise.all([
         ...users.filter(({ id, name }) => id === query || name.toLowerCase().indexOf(query) >= 0).map(user => {
@@ -73,6 +73,7 @@ router.post("/", vars, async (req, res) => {
             return ejs.renderFile(renderPath+"/cards/templateCard.ejs", { server, imageFormat, search: true, __: res.locals.__ });
         })
     ]), 3);
+
     return res.json({
         error: false,
         status: 200,

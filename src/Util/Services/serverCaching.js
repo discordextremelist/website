@@ -44,7 +44,7 @@ async function uploadServers() {
 }
 
 async function deleteServer(id) {
-    await global.redis.del(prefix, id);
+    await global.redis.hdel(prefix, id);
 }
 
 setInterval(async () => {

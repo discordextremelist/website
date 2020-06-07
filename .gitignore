@@ -118,3 +118,6 @@ ssl/
 
 # Redis
 dump.rdb
+
+# Sitemap
+src/Assets/Public/sitemap.xml

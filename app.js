@@ -239,7 +239,7 @@ new Promise((resolve, reject) => {
         process.exit(1);
     });
 
-if (process.env.NODE_ENV === "CI") setTimeout(() => {
+if (process.env.DEL_ENV === "CI") setTimeout(() => {
     process.exit(0);
 }, 120000);
 

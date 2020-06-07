@@ -786,7 +786,7 @@ router.get("/mask/:id", variables, permission.admin, async (req, res) => {
 
     fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
         method: "GET",
-        headers: { Authorization: `Bot ${settings.client.token}` }
+        headers: { Authorization: `Bot ${process.ENV.DISCORD_TOKEN}` }
     })
         .then(async (fetchRes) => {
             fetchRes.jsonBody = await fetchRes.json();

@@ -67,7 +67,7 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
 
     fetch(`https://discord.com/api/v6/users/${req.body.id}`, {
         method: "GET",
-        headers: { Authorization: `Bot ${settings.client.token}` }
+        headers: { Authorization: `Bot ${process.ENV.DISCORD_TOKEN}` }
     })
         .then(async (fetchRes) => {
             fetchRes.jsonBody = await fetchRes.json();
@@ -633,7 +633,7 @@ router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
 
     fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
         method: "GET",
-        headers: { Authorization: `Bot ${settings.client.token}` }
+        headers: { Authorization: `Bot ${process.ENV.DISCORD_TOKEN}` }
     })
         .then(async (fetchRes) => {
             fetchRes.jsonBody = await fetchRes.json();
@@ -1312,7 +1312,7 @@ router.post(
 
         fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
             method: "GET",
-            headers: { Authorization: `Bot ${settings.client.token}` }
+            headers: { Authorization: `Bot ${process.ENV.DISCORD_TOKEN}` }
         })
             .then(async (fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();

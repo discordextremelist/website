@@ -40,7 +40,9 @@ Install all of the dependencies by running `npm i`
 
 ## Configuration
 
-Please rename `settings.example.json` to `settings.json` and fill it out appropriately, you may also want to change the `variables.js` file located in `src/Util/Function`.
+1. Rename `settings.example.json` to `settings.json` and fill it out appropriately, changing anything you need to change.
+2. Proceed to rename `.env.example` to `.env` and fill it out appropriately.
+3. (Optional) In addition to this you may wish to change some of the things in the `variables.js` file located in `src/Util/Function`.
 
 ## Running DEL
 

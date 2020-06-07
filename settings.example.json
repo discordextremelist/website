@@ -1,17 +1,4 @@
 {
-    "db": {
-        "mongo": {
-            "uri": "mongodb://localhost:27017",
-            "db": "del"
-        },
-        "redis": "redis://127.0.0.1:6379/1"
-    },
-    "client": {
-        "id": "",
-        "token": "",
-        "secret": "",
-        "datadogKey": ""
-    },
     "website": {
         "locales": {
             "default": "en-US",
@@ -25,7 +12,8 @@
                 "he-IL",
                 "hu-HU",
                 "it-IT",
-                "pt-PT"
+                "pt-PT",
+                "tr-TR"
             ],
             "isRTL": ["he-IL"],
             "isntLocale": [
@@ -44,66 +32,64 @@
                 "docs"
             ]
         },
-        "secrets": {
-            "cookie": ""
-        },
+        "ssl": false,
         "port": {
             "value": 3000,
-            "agressive": false
+            "agressive": true
         },
         "authScopes": ["identify", "guilds.join"],
-        "url": "https://example.com",
+        "url": "https://dev.discordextremelist.xyz",
         "callback": "/auth/login/callback",
-        "gaID": ""
+        "gaID": "UA-165711322-1"
     },
     "guild": {
-        "main": "",
-        "staff": ""
+        "main": "568567800910839811",
+        "staff": "632908146305925129"
     },
     "channels": {
-        "webLog": "",
-        "default": "",
-        "docsDefault": ""
+        "webLog": "698720405296382013",
+        "default": "625554238596186112",
+        "docsDefault": "648996487371554834"
     },
     "roles": {
-        "unapprovedBot": "",
-        "bot": "",
-        "premiumBot": "",
-        "serverOwner": "",
-        "developer": "",
-        "staff": "",
-        "mod": "",
-        "assistant": "",
-        "admin": "",
-        "testers": "",
-        "translators": "",
-        "booster": "",
-        "donator": "",
+        "unapprovedBot": "633141192497823784",
+        "bot": "568587927265869824",
+        "premiumBot": "568970918647300116",
+        "serverOwner": "623052263295942657",
+        "developer": "568572172151291929",
+        "staff": "614786916658708492",
+        "mod": "568568238250917909",
+        "assistant": "615017283890446354",
+        "admin": "568568341414019086",
+        "testers": "641766395939651594",
+        "translators": "694791748555243590",
+        "booster": "588074977572552705",
+        "donator": "714757730820161537",
         "staffServer": {
-            "mod": ""
+            "mod": "633141294633451540"
         }
     },
     "emoji": {
         "snowflake": {
-            "cross": "",
-            "check": ""
+            "cross": "589349182473502720",
+            "check": "589349182394073103"
         },
-        "cross": "",
-        "check": "",
-        "verified": "",
-        "mod": "",
-        "admin": "",
-        "generalCmds": "",
-        "addBot": "",
-        "verificationApp": "",
-        "botDeleted": "",
-        "editBot": "",
-        "resubmitBot": "",
-        "unverifiedBot": "",
-        "verificationAppDenied": "",
-        "error": "",
-        "notification": "",
-        "warn": "",
-        "info": ""
+        "cross": "<:cross:589349182473502720>",
+        "check": "<:check:589349182394073103>",
+        "verified": "<:verified:589349182838538240>",
+        "mod": "<:webMod:589349182666440704>",
+        "admin": "<:webAdmin:589349182893064195>",
+        "generalCmds": "<:generalCmds:589349182561583124>",
+        "addBot": "<:addBot:589349182507057172>",
+        "verificationApp": "<:verificationApp:589349182234558470>",
+        "botDeleted": "<:botDeleted:589349182507057173>",
+        "editBot": "<:editBot:589349182574428188>",
+        "resubmitBot": "<:resubmitBot:589349182729617421>",
+        "unverifiedBot": "<:unverifiedBot:589349182284759109>",
+        "verificationAppDenied": "<:verificationAppDenied:589349182439948289>",
+        "error": "<:error:621988943314812928>",
+        "notification": "<:notification:621988941092093953>",
+        "warn": "<:warn:643349730121875456>",
+        "info": "<:info:645226250889068584>"
     }
 }

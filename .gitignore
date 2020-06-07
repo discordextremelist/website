@@ -114,6 +114,7 @@ dist
 
 # SSL & configuration files
 settings.json
+.env
 ssl/
 
 # Redis

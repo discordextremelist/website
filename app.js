@@ -48,11 +48,11 @@ const { MongoClient } = require("mongodb");
 let db;
 new Promise((resolve, reject) => {
     MongoClient.connect(
-        settings.db.mongo.uri,
+        process.ENV.MONGO_URI,
         { useUnifiedTopology: true, useNewUrlParser: true }, // useNewUrlParser is set to true because sometimes MongoDB is a cunt - Ice, I love this comment - Cairo
         (error, mongo) => {
             if (error) return reject(error);
-            db = mongo.db(settings.db.mongo.db);
+            db = mongo.db(process.ENV.MONGO_DB);
             console.log(
                 "Mongo: Connection established! Released deadlock as a part of startup..."
             );
@@ -103,7 +103,7 @@ new Promise((resolve, reject) => {
         const banned = require("./src/Util/Services/banned.js");
         const discord = require("./src/Util/Services/discord.js");
         const botStatsUpdate = require("./src/Util/Services/botStatsUpdate.js");
-        global.redis = new (require("ioredis"))(settings.db.redis);
+        global.redis = new (require("ioredis"))(process.ENV.REDIS_URI);
         global.redis.flushdb();
 
         console.time("Redis Cache");
@@ -167,11 +167,11 @@ new Promise((resolve, reject) => {
 
         app.use(cookieSession({
             name: "delSession",
-            secret: settings.website.secrets.cookie,
+            secret: process.ENV.COOKIE_SECRET,
             maxAge: 1000 * 60 * 60 * 24 * 7
         }));
           
-        app.use(cookieParser(settings.website.secrets.cookie));
+        app.use(cookieParser(process.ENV.COOKIE_SECRET));
 
         app.use(passport.initialize());
         app.use(passport.session());

@@ -30,8 +30,8 @@ const ddosMode = require("../Util/Services/ddosMode.js");
 passport.use(
     new Strategy(
         {
-            clientID: process.ENV.DISCORD_ID,
-            clientSecret: process.ENV.DISCORD_SECRET,
+            clientID: process.env.DISCORD_ID,
+            clientSecret: process.env.DISCORD_SECRET,
             callbackURL: settings.website.url + settings.website.callback,
             scope: settings.website.authScopes,
             authorizationURL: "https://discord.com/oauth2/authorize?prompt=none"

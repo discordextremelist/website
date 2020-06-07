@@ -23,9 +23,9 @@ const metrics = require("datadog-metrics");
 const settings = require("../../../settings.json");
 const prefix = "statuses";
 
-metrics.init({ host: "", prefix: "", apiKey: process.ENV.DATADOG_KEY });
+metrics.init({ host: "", prefix: "", apiKey: process.env.DATADOG_KEY });
 
-const bot = new Eris.Client(process.ENV.DISCORD_TOKEN, {
+const bot = new Eris.Client(process.env.DISCORD_TOKEN, {
     guildSubscriptions: true,
     getAllUsers: true,
     allowedMentions: {

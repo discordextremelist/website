@@ -39,3 +39,4 @@ jobs:
           DISCORD_SECRET: ${{ secrets.DISCORD_SECRET }}
           DATADOG_KEY: ${{ secrets.DATADOG_KEY }}
           COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
+          NODE_ENV: ${{ secrets.NODE_ENV }}

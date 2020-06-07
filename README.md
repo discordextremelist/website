@@ -10,7 +10,7 @@ Licensing information viewable in LICENSE.md
 
 ### Node.JS Framework
 
-We reccomend that you use Node.JS v12.x.x LTS.
+We recommend that you use Node.JS v12.x.x LTS.
 
 | Node Version        | Supported          |
 | ------------------- | ------------------ |
@@ -19,7 +19,7 @@ We reccomend that you use Node.JS v12.x.x LTS.
 | v13 Current         | 🟡 Partial Support |     
 | v14 Current         | 🔴 No Support      |     
 
-Any version not listed is not supported.
+Any version not listed above is not supported.
 
 ### nodemon (Optional)
 

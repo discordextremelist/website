@@ -1,5 +1,6 @@
 <div id="libraries" style="display: none;">
     <h3 class="is-size-4">Node.JS - discordextremelist.xyz</h3>
+    <h4 class="is-size-6" style="font-weight: normal;">Credit to Jacob_#1234</h4>
     <article class="message is-danger">
         <div class="message-body content has-background-primary">
             <span class="icon">
@@ -10,34 +11,6 @@
             </span>
         </div>
     </article>
-    <pre>
-        <code class="language-javascript">
-const DEL = require('discordextremelist.xyz');
-const client = new DEL.Client('Bot ID', 'API Token');
-
-client.getBot('507970352501227523').then((bot) => {
-    console.log(bot);
-}).catch((e) => {
-    console.error(e);
-});
-
-client.getUser('478255216588750858').then((user) => {
-    console.log(user);
-}).catch((e) => {
-    console.error(e);
-});
-
-client.getWidget('507970352501227523').then((widget) => {
-    console.log(widget);
-}).catch((e) => {
-    console.error(e);
-});
-
-client.updateCount(123).then((bot) => {
-    console.log('Server count has been updated', bot);
-}).catch((e) => {
-    console.error(e);
-});
-    </code>
-    </pre>
+    <pre class="pre-rounded">npm i discordextremelist.xyz --save</pre>
+    <script src="https://gist.github.com/Cairo2k18/cde2c77a9c07b7c9474357c5d2db0d80.js"></script>
 </div>

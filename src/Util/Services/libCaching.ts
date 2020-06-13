@@ -17,31 +17,31 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const app = require("../../../app.js");
+import * as app from "../../app";
 global.libs = [];
 
-function getLibs() {
+export function getLibs() {
     return global.libs.sort((a, b) => a._id.localeCompare(b._id));
 }
 
-function hasLib(name) {
+export function hasLib(name) {
     return global.libs.find((x) => x._id === name);
 }
 
-async function cacheLibs() {
+export async function cacheLibs() {
     global.libs = [];
-    const dbLibs = await app.db.collection("libraries").find().toArray();
+    const dbLibs = await global.db.collection("libraries").find().toArray();
     for (const lib of dbLibs) global.libs.push(lib);
 }
 
-async function addLib(
-    { name, language, links: { docs, repo } } = {
+export async function addLib(
+    { name, language, links: { docs, repo } }: library = {
         name: "",
         language: "",
         links: { docs: "", repo: "" }
     }
 ) {
-    await app.db.collection("libraries").updateOne(
+    await global.db.collection("libraries").updateOne(
         { _id: name },
         {
             language,
@@ -55,16 +55,14 @@ async function addLib(
     };
 }
 
-async function removeLib(name) {
+export async function removeLib(name: string) {
     const index = global.libs.findIndex((x) => x._id === name);
     if (index) {
         global.libs.splice(index, 1);
-        await app.db.collection("libraries").deleteOne({ _id: name });
+        await global.db.collection("libraries").deleteOne({ _id: name });
     }
 }
 
 setInterval(async () => {
     await cacheLibs();
 }, 900000);
-
-module.exports = { getLibs, cacheLibs, addLib, removeLib, hasLib };

@@ -217,7 +217,7 @@ const libraries = [
 setTimeout(async () => {
     console.log(`Adding ${libraries.length} libraries...`);
     for (const lib of libraries) {
-        const success = await app.db.collection("libraries").insertOne({
+        const success = await global.db.collection("libraries").insertOne({
             _id: lib.name,
             language: lib.language,
             links: {
@@ -229,12 +229,12 @@ setTimeout(async () => {
     console.log("Done!");
 
     console.log("Inserting default web options...");
-    await app.db.collection("webOptions").insertOne({
+    await global.db.collection("webOptions").insertOne({
         _id: "ddosMode",
         active: false
     }).then(() => true).catch(() => false);
 
-    await app.db.collection("webOptions").insertOne({
+    await global.db.collection("webOptions").insertOne({
         _id: "announcement",
         active: false,
         message: "",

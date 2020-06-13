@@ -17,28 +17,28 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const app = require("../../../app.js");
-const functions = require("../Function/main.js");
+import * as app from "../../app";
+import * as functions from "../Function/main";
 
-async function getFeaturedBots() {
+export async function getFeaturedBots(): Promise<dbBot[]> {
     const bots = await global.redis.get("featured_bots");
     return JSON.parse(bots);
 }
 
-async function getFeaturedServers() {
+export async function getFeaturedServers(): Promise<dbServer[]> {
     const servers = await global.redis.get("featured_servers");
     return JSON.parse(servers);
 }
 
-async function getFeaturedTemplates() {
+export async function getFeaturedTemplates(): Promise<dbTemplate[]> {
     const templates = await global.redis.get("featured_templates");
     return JSON.parse(templates);
 }
 
-async function updateFeaturedBots() {
+export async function updateFeaturedBots() {
     const bots = functions
         .shuffleArray(
-            (await app.db.collection("bots").find().toArray()).filter(
+            (await global.db.collection("bots").find().toArray()).filter(
                 ({ status }) =>
                     status.approved && !status.siteBot && !status.archived
             )
@@ -47,16 +47,16 @@ async function updateFeaturedBots() {
     await global.redis.set("featured_bots", JSON.stringify(bots));
 }
 
-async function updateFeaturedServers() {
+export async function updateFeaturedServers() {
     const servers = functions
-        .shuffleArray(await app.db.collection("servers").find().toArray())
+        .shuffleArray(await global.db.collection("servers").find().toArray())
         .slice(0, 6);
     await global.redis.set("featured_servers", JSON.stringify(servers));
 }
 
-async function updateFeaturedTemplates() {
+export async function updateFeaturedTemplates() {
     const templates = functions
-        .shuffleArray(await app.db.collection("templates").find().toArray())
+        .shuffleArray(await global.db.collection("templates").find().toArray())
         .slice(0, 6);
     await global.redis.set("featured_templates", JSON.stringify(templates));
 }
@@ -66,12 +66,3 @@ setInterval(async () => {
     await updateFeaturedServers();
     await updateFeaturedTemplates();
 }, 900000);
-
-module.exports = {
-    getFeaturedBots,
-    getFeaturedServers,
-    getFeaturedTemplates,
-    updateFeaturedBots,
-    updateFeaturedServers,
-    updateFeaturedTemplates
-};

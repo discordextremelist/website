@@ -17,13 +17,15 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const escapeFormatting = (text) => {
+import "i18nAPI";
+
+export const escapeFormatting = (text: string) => {
     const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
     const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, "\\$1");
     return escaped;
 };
 
-function parseRegion(region) {
+export function parseRegion(region: string) {
     let parsedRegion = `🏴 ${region}`;
 
     if (region === "us-west") parsedRegion = "US West";
@@ -49,7 +51,7 @@ function parseRegion(region) {
     return parsedRegion;
 }
 
-function regionIcon(region) {
+export function regionIcon(region: string) {
     let icon = "81b90eae4fc67502d59808a7c219ee65";
 
     if (region === "us-west") icon = "e6d6b255259ac878d00819a9555072ad";
@@ -74,7 +76,7 @@ function regionIcon(region) {
     return icon;
 }
 
-function getForeground(inputColour) {
+export function getForeground(inputColour: string) {
     const colour =
         inputColour.charAt(0) === "#"
             ? inputColour.substring(1, 7)
@@ -93,7 +95,7 @@ function getForeground(inputColour) {
     return L > 0.179 ? "#000000" : "#FFFFFF";
 }
 
-function standingParseEmoji(standing) {
+export function standingParseEmoji(standing: string) {
     let result = "page.staff.manager.unavailable";
 
     if (standing === "Unmeasured")
@@ -107,7 +109,7 @@ function standingParseEmoji(standing) {
     return result;
 }
 
-function parseDate(__, locale, rawDate) {
+export function parseDate(__, locale: string, rawDate: number) {
     if (rawDate === 0) return "???";
 
     const date = new Date(rawDate);
@@ -145,7 +147,7 @@ function parseDate(__, locale, rawDate) {
         });
 }
 
-function shuffleArray(array) {
+export function shuffleArray(array) {
     let currentIndex = array.length,
         temporaryValue,
         randomIndex;
@@ -160,13 +162,3 @@ function shuffleArray(array) {
 
     return array;
 }
-
-module.exports = {
-    escapeFormatting,
-    parseRegion,
-    regionIcon,
-    getForeground,
-    standingParseEmoji,
-    parseDate,
-    shuffleArray
-};

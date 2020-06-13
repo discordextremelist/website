@@ -55,11 +55,11 @@
                         if (userStatus === "dnd") statusInfo = __("page.users.status.dnd")
                         if (userStatus === "offline") statusInfo = __("page.users.status.offline")
                     %> 
-                    <img class="image <% if (mobile) { %>is-centered<% } %>" title="<%= statusInfo %>" style="border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.url %>.<%= userProfile.avatar.hash.startsWith('a_') ? 'gif' : imageFormat %>?size=128" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" >
+                    <img class="image" title="<%= statusInfo %>" style="margin: auto; width: 128px; border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.url %>.<%= userProfile.avatar.hash.startsWith('a_') ? 'gif' : imageFormat %>?size=128" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" >
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
-                        <span id="userName"><%= userProfile.fullUsername %></span>
+                        <span id="userName" style="overflow-wrap: break-word;"><%= userProfile.fullUsername %></span>
                         <% if (userProfileIsBanned === true || userProfile.rank.tester === true || userProfile.rank.premium === true || userProfile.rank.mod === true || userProfile.rank.admin === true || Boolean(userProfile.flags & (1 << 17))) { %>
                             <% if (userProfileIsBanned === true) { %>
                                 <span style="vertical-align: middle;" title="<%= __("common.rank.banned") %>" class="icon is-medium is-size-3 iconalign">
@@ -109,7 +109,7 @@
                             <% } %>
                         <% } %> 
                     </h1>
-                    <h2 class="subtitle"><% if (userProfileIsBanned === false) { %><%= userProfile.profile.bio || __("page.users.bio.nil") %><% } else { %><%= __("page.users.bio.bio") %><% } %></h2>
+                    <h2 class="subtitle <% if (mobile) { %>has-text-centered<% } %>"><% if (userProfileIsBanned === false) { %><%= userProfile.profile.bio || __("page.users.bio.nil") %><% } else { %><%= __("page.users.bio.bio") %><% } %></h2>
                     <% if (userProfileIsBanned === false || user && user.db.rank.mod === true) { %>
                         <% if (user && user.db.rank.mod === true || user && userProfile._id === user.id) { %>
                             <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
@@ -142,7 +142,7 @@
                                         <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                           <div class="dropdown-content">
                                             <div class="dropdown-item">
-                                                <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
+                                                <p class="has-text-danger <% if (mobile) { %>has-text-centered<% } %>"><%= __("common.staffManagement.warning") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
                                             <% if (user.db.rank.assistant === true) { %>
@@ -237,7 +237,7 @@
                                 %>
                             <% } %>
                         </div>
-                        <div class="field is-grouped is-grouped-multiline">
+                        <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
                             <%- 
                                 include("../../partials/tag.ejs", { 
                                     contentColour: "is-default", 
@@ -267,7 +267,7 @@
                         <h3 class="is-size-4"><%= __("common.owner") %></h3>
                         <br />
                         <div class="columns is-multiline is-centered">
-                            <%- botsOwner.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("") %>
+                            <%- botsOwner.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false, profile: true })).join("") %>
                         </div>
                     <% } %>
                     <% if (botsEditor.length !== 0) { %>
@@ -275,7 +275,7 @@
                         <h3 class="is-size-4"><%= __("common.editor") %></h3>
                         <br />
                         <div class="columns is-multiline is-centered">
-                            <%- botsEditor.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("") %>
+                            <%- botsEditor.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false, profile: false })).join("") %>
                         </div>
                     <% } %>
                 <% } %>
@@ -284,7 +284,7 @@
                     <h2 class="is-size-3"><%= __("common.servers") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- serversOwner.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false })).join("") %>
+                        <%- serversOwner.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false, profile: true })).join("") %>
                     </div>
                 <% } %>
                 <br />
@@ -292,7 +292,7 @@
                     <h2 class="is-size-3"><%= __("common.templates") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- templatesOwner.map(template => include("../../partials/cards/templateCard.ejs", { template, search: false })).join("") %>
+                        <%- templatesOwner.map(template => include("../../partials/cards/templateCard.ejs", { template, search: false, profile: true })).join("") %>
                     </div>
                 <% } %>
             <% } %>
@@ -302,7 +302,7 @@
                     <h2 class="is-size-4"><%= __("page.users.listings.archivedBots") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- archivedBots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: true, verificationApp: false })).join("") %>
+                        <%- archivedBots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: true, verificationApp: false, profile: false })).join("") %>
                     </div>
                 <% } %>
             <% } %>

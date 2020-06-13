@@ -17,24 +17,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const settings = require("../../../settings.json");
-const discord = require("./discord.js");
+import { Request, Response } from "express";
+import browser from "browser-detect";
 
-async function check(user) {
-    const ban = await global.redis.hget("bans", user);
-    return ban !== null;
-}
-
-async function updateBanlist() {
-    const bans = await discord.bot.guilds.get(settings.guild.main).getBans();
-    await global.redis.hmset("bans", ...bans.map((ban) => [ban.user.id, true]));
-}
-
-setInterval(async () => {
-    await updateBanlist();
-}, 900000);
-
-module.exports = {
-    check,
-    updateBanlist
+export const middleware = (req: Request, res: Response, next: () => void) => {
+    res.locals.browser = browser(req.headers["user-agent"]);
+    next();
 };

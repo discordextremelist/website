@@ -61,6 +61,30 @@
                             </span>
                             <span><%= __("common.view") %></span>
                         </a>
+                        <a href="https://discord.com/oauth2/authorize?client_id=<%= bot._id %>&scope=bot&guild_id=<%= staffServer %>" target="_blank" rel="noopener" class="button is-success is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-vial"></i>
+                            </span>
+                            <span><%= __("page.bots.invite.staff") %></span>
+                        </a>
+                        <a href="https://discord.com/oauth2/authorize?client_id=<%= bot._id %>&scope=bot&guild_id=<%= mainServer %>" target="_blank" rel="noopener" class="button is-blurple is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </span>
+                            <span><%= __("page.bots.invite.main") %></span>
+                        </a>
+                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>/approve" class="button is-success is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            <span><%= __("common.staff.approve") %></span>
+                        </a>
+                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>/decline" class="button is-danger is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-minus"></i>
+                            </span>
+                            <span><%= __("common.staff.decline") %></span>
+                        </a>
                     <% } else { %>
                         <a href="<%= linkPrefix %>/bots/<%= bot._id %>" class="button is-default is-outlined">
                             <span class="icon">
@@ -68,6 +92,14 @@
                             </span>
                             <span><%= __("common.view") %></span>
                         </a>
+                        <% if (profile === true) { %>
+                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/edit" class="button is-warning is-outlined">
+                                <span class="icon">
+                                  <i class="fas fa-pencil"></i>
+                                </span>
+                                <span><%= __("common.edit") %></span>
+                            </a>
+                        <% } %>
                         <a href="<%= bot.links.invite %>" class="button is-blurple is-outlined">
                             <span class="icon">
                               <i class="fas fa-plus"></i>

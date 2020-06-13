@@ -17,7 +17,11 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const auth = (req, res, next) => {
+import { Request, Response } from "express";
+import { bot } from "../Services/discord";
+import * as settings from "../../../settings.json";
+
+export const auth = (req: Request, res: Response, next: () => void) => {
     if (req.user) {
         next();
     } else {
@@ -25,8 +29,12 @@ const auth = (req, res, next) => {
     }
 };
 
-const member = (req, res, next) => {
-    if (!bot.guilds.get(settings.guilds.mainID).members.get(member.id)) {
+export const member = (req: Request, res: Response, next: () => void) => {
+    if (
+        !bot.guilds.cache
+            .get(settings.guild.main)
+            .members.cache.get(req.user.id)
+    ) {
         return res.status(403).render("status", {
             title: res.__("common.error"),
             status: 403,
@@ -37,7 +45,7 @@ const member = (req, res, next) => {
     }
 };
 
-const mod = (req, res, next) => {
+export const mod = (req: Request, res: Response, next: () => void) => {
     if (req.user) {
         if (req.user.db.rank.mod === true) {
             next();
@@ -53,7 +61,7 @@ const mod = (req, res, next) => {
     } else auth(req, res, next);
 };
 
-const assistant = (req, res, next) => {
+export const assistant = (req: Request, res: Response, next: () => void) => {
     if (req.user) {
         if (req.user.db.rank.assistant === true) {
             next();
@@ -68,7 +76,8 @@ const assistant = (req, res, next) => {
         }
     } else auth(req, res, next);
 };
-const admin = (req, res, next) => {
+
+export const admin = (req: Request, res: Response, next: () => void) => {
     if (req.user) {
         if (req.user.db.rank.admin === true) {
             next();
@@ -82,12 +91,4 @@ const admin = (req, res, next) => {
             });
         }
     } else auth(req, res, next);
-};
-
-module.exports = {
-    auth,
-    member,
-    mod,
-    assistant,
-    admin
 };

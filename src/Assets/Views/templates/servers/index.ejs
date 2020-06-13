@@ -98,7 +98,7 @@
             <% if (serversData.length === 0) { %>
                 <h2 class="is-size-3"><%= __("common.error.fetchFail.servers") %></h2>
             <% } else { %>
-                <%- serverChunk.map(chunk => `${chunk.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false })).join("")}`).join("") %>
+                <%- serverChunk.map(chunk => `${chunk.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false, profile: false })).join("")}`).join("") %>
             <% } %>
         </div>
 

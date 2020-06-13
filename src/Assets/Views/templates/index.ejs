@@ -51,7 +51,7 @@
             </h2>
             <br />
             <div class="columns is-multiline is-centered">
-                <%- bots.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false })).join("") %>
+                <%- bots.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false, profile: false })).join("") %>
             </div>
         <% } %>
     </div>
@@ -67,7 +67,7 @@
             </h2>
             <br />
             <div class="columns is-multiline is-centered">
-                <%- servers.map(server => include("../partials/cards/serverCard.ejs", { server, search: false })).join("") %>
+                <%- servers.map(server => include("../partials/cards/serverCard.ejs", { server, search: false, profile: false })).join("") %>
             </div>
         <% } %>
     </div>
@@ -83,7 +83,7 @@
             </h2>
             <br />
             <div class="columns is-multiline is-centered">
-                <%- templates.map(template => include("../partials/cards/templateCard.ejs", { template, search: false })).join("") %>
+                <%- templates.map(template => include("../partials/cards/templateCard.ejs", { template, search: false, profile: false })).join("") %>
             </div>
         <% } %>
     </div>

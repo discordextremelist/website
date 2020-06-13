@@ -17,9 +17,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const settings = require("../../../settings.json");
+import { Request, Response } from "express";
+import * as settings from "../../../settings.json";
 
-const homeHandler = (req, res, next) => {
+export const homeHandler = (req: Request, res: Response, next: () => void) => {
     if (
         req.params.lang &&
         !settings.website.locales.isntLocale.includes(req.params.lang)
@@ -88,7 +89,11 @@ const homeHandler = (req, res, next) => {
     }
 };
 
-const globalHandler = (req, res, next) => {
+export const globalHandler = (
+    req: Request,
+    res: Response,
+    next: () => void
+) => {
     if (
         req.params.lang &&
         !settings.website.locales.isntLocale.includes(req.params.lang)
@@ -146,9 +151,4 @@ const globalHandler = (req, res, next) => {
             );
         }
     }
-};
-
-module.exports = {
-    homeHandler,
-    globalHandler
 };

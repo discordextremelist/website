@@ -17,46 +17,38 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const app = require("../../../app.js");
-const prefix = "servers";
+import * as app from "../../app";
+const prefix = "bots";
 
-async function getServer(id) {
-    const server = await global.redis.hget(prefix, id);
-    return JSON.parse(server);
+export async function getBot(id: string): Promise<dbBot> {
+    const bot = await global.redis.hget(prefix, id);
+    return JSON.parse(bot);
 }
 
-async function getAllServers() {
-    const servers = await global.redis.hvals(prefix);
-    return servers.map(JSON.parse);
+export async function getAllBots(): Promise<dbBot[]> {
+    const bots = await global.redis.hvals(prefix);
+    return bots.map(JSON.parse);
 }
 
-async function updateServer(id) {
-    const data = await app.db.collection("servers").findOne({ _id: id });
+export async function updateBot(id: string) {
+    const data: dbBot = await global.db.collection("bots").findOne({ _id: id });
     if (!data) return;
     await global.redis.hmset(prefix, id, JSON.stringify(data));
 }
 
-async function uploadServers() {
-    const servers = await app.db.collection("servers").find().toArray();
-    if (servers.length < 1) return;
+export async function uploadBots() {
+    const botsDB: dbBot[] = await global.db.collection("bots").find().toArray();
+    if (botsDB.length < 1) return;
     await global.redis.hmset(
         prefix,
-        ...servers.map((s) => [s._id, JSON.stringify(s)])
+        ...botsDB.map((bot: dbBot) => [bot._id, JSON.stringify(bot)])
     );
 }
 
-async function deleteServer(id) {
+export async function deleteBot(id: string) {
     await global.redis.hdel(prefix, id);
 }
 
 setInterval(async () => {
-    await uploadServers();
+    await uploadBots();
 }, 900000);
-
-module.exports = {
-    getServer,
-    getAllServers,
-    updateServer,
-    uploadServers,
-    deleteServer
-};

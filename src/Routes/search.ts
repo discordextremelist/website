@@ -17,20 +17,26 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const router = require("express").Router();
-const vars = require("../Util/Function/variables");
-const chunk = require("chunk");
-const ejs = require("ejs");
+import * as express from "express";
+import { Request, Response } from "express";
+
+import chunk = require("chunk");
+import * as ejs from "ejs";
+
+import { variables } from "../Util/Function/variables";
+import * as botCache from "../Util/Services/botCaching";
+import * as userCache from "../Util/Services/userCaching";
+import * as serverCache from "../Util/Services/serverCaching";
+import * as templateCache from "../Util/Services/templateCaching";
+
 const renderPath = require("path").join(
     process.cwd(),
     "src/Assets/Views/partials"
 );
-const userCache = require("../Util/Services/userCaching");
-const botCache = require("../Util/Services/botCaching");
-const serverCache = require("../Util/Services/serverCaching");
-const templateCache = require("../Util/Services/templateCaching");
 
-router.get("/", vars, (req, res) => {
+const router = express.Router();
+
+router.get("/", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.search");
 
     return res.render("templates/search", {
@@ -40,22 +46,20 @@ router.get("/", vars, (req, res) => {
     });
 });
 
-router.post("/", vars, async (req, res) => {
+router.post("/", variables, async (req: Request, res: Response) => {
     let { query, only } = req.body;
     if (!query)
-        return res
-            .status(400)
-            .json({
-                error: true,
-                status: 400,
-                message: "Missing body parameter 'query'"
-            });
+        return res.status(400).json({
+            error: true,
+            status: 400,
+            message: "Missing body parameter 'query'"
+        });
     const originalQuery = query;
     query = query.toLowerCase();
     let isStaff = false;
     if (!!only && only.includes("users")) {
         if (req.user && req.user.id) {
-            const user = await req.app.db
+            const user: dbUser = await global.db
                 .collection("users")
                 .findOne({ _id: req.user.id });
             if (!user.rank.mod)
@@ -86,8 +90,8 @@ router.post("/", vars, async (req, res) => {
         await Promise.all([
             ...users
                 .filter(
-                    ({ id, name }) =>
-                        id === query || name.toLowerCase().indexOf(query) >= 0
+                    ({ _id, name }) =>
+                        _id === query || name.toLowerCase().indexOf(query) >= 0
                 )
                 .map((user) => {
                     return ejs.renderFile(renderPath + "/cards/userCard.ejs", {
@@ -99,8 +103,8 @@ router.post("/", vars, async (req, res) => {
                 }),
             ...bots
                 .filter(
-                    ({ id, name }) =>
-                        id === query || name.toLowerCase().indexOf(query) >= 0
+                    ({ _id, name }) =>
+                        _id === query || name.toLowerCase().indexOf(query) >= 0
                 )
                 .map((bot) => {
                     return ejs.renderFile(renderPath + "/cards/botCard.ejs", {
@@ -109,29 +113,42 @@ router.post("/", vars, async (req, res) => {
                         queue: false,
                         verificationApp: false,
                         search: true,
+                        profile: false,
                         __: res.locals.__
                     });
                 }),
             ...servers
                 .filter(
-                    ({ id, name }) =>
-                        id === query || name.toLowerCase().indexOf(query) >= 0
+                    ({ _id, name }) =>
+                        _id === query || name.toLowerCase().indexOf(query) >= 0
                 )
                 .map((server) => {
                     return ejs.renderFile(
                         renderPath + "/cards/serverCard.ejs",
-                        { server, imageFormat, search: true, __: res.locals.__ }
+                        {
+                            server,
+                            imageFormat,
+                            search: true,
+                            profile: false,
+                            __: res.locals.__
+                        }
                     );
                 }),
             ...templates
                 .filter(
-                    ({ id, name }) =>
-                        id === query || name.toLowerCase().indexOf(query) >= 0
+                    ({ _id, name }) =>
+                        _id === query || name.toLowerCase().indexOf(query) >= 0
                 )
                 .map((server) => {
                     return ejs.renderFile(
                         renderPath + "/cards/templateCard.ejs",
-                        { server, imageFormat, search: true, __: res.locals.__ }
+                        {
+                            server,
+                            imageFormat,
+                            search: true,
+                            profile: false,
+                            __: res.locals.__
+                        }
                     );
                 })
         ]),
@@ -148,4 +165,4 @@ router.post("/", vars, async (req, res) => {
     });
 });
 
-module.exports = router;
+export = router;

@@ -17,15 +17,16 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const express = require("express");
+import * as express from "express";
+import { Request, Response } from "express";
+
+import * as bodyParser from "body-parser";
+import * as passport from "passport";
+
+import * as settings from "../../settings.json";
+
 const router = express.Router();
-
-const bodyParser = require("body-parser");
-const passport = require("passport");
 const Strategy = require("passport-discord").Strategy;
-
-const settings = require("../../settings.json");
-const ddosMode = require("../Util/Services/ddosMode.js");
 
 passport.use(
     new Strategy(
@@ -54,26 +55,18 @@ router.use(
     })
 );
 
-// router.get("*", async (req, res, next) => {
-//     if (ddosMode.getDDOSMode().active === false) {
-//         next();
-//     } else {
-//         return res.status(403).json({ message: "fuckign ddos moade cunt" });
-//     }
-// });
-
 router.get("/login", passport.authenticate("discord"));
 
 router.get(
     "/login/callback",
-    passport.authenticate("discord", { failureRedirect: "/login" }),
-    async (req, res, next) => {
-        const user = await req.app.db
+    passport.authenticate("discord", { failureRedirect: "/auth/login" }),
+    async (req: Request, res: Response, next) => {
+        const user: dbUser = await global.db
             .collection("users")
             .findOne({ _id: req.user.id });
 
         if (!user) {
-            await req.app.db.collection("users").insertOne({
+            await global.db.collection("users").insertOne({
                 _id: req.user.id,
                 token: req.user.accessToken,
                 name: req.user.username,
@@ -113,7 +106,7 @@ router.get(
                     admin: false,
                     assistant: false,
                     mod: false,
-                    verified: false,
+                    premium: false,
                     tester: false,
                     translator: false,
                     covid: false
@@ -163,7 +156,7 @@ router.get(
             });
         } else {
             if (user.rank.mod === true) {
-                await req.app.db.collection("users").updateOne(
+                await global.db.collection("users").updateOne(
                     { _id: req.user.id },
                     {
                         $set: {
@@ -185,7 +178,7 @@ router.get(
                     }
                 );
             } else {
-                await req.app.db.collection("users").updateOne(
+                await global.db.collection("users").updateOne(
                     { _id: req.user.id },
                     {
                         $set: {
@@ -212,7 +205,7 @@ router.get(
     }
 );
 
-router.get("/logout", async (req, res, next) => {
+router.get("/logout", async (req: Request, res: Response, next) => {
     if (!req.user.impersonator) {
         await req.logout();
         res.redirect(req.session.redirectTo || "/");
@@ -223,4 +216,4 @@ router.get("/logout", async (req, res, next) => {
     }
 });
 
-module.exports = router;
+export = router;

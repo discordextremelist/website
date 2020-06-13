@@ -17,11 +17,19 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const browser = require("browser-detect");
+import { guild } from "../../../settings.json";
+import { bot } from "./discord.js";
 
-const middleware = (req, res, next) => {
-    res.locals.browser = browser(req.headers["user-agent"]);
-    next();
-};
+export async function check(user: string): Promise<boolean> {
+    const ban = await global.redis.hget("bans", user);
+    return ban !== null;
+}
 
-module.exports = middleware;
+export async function updateBanlist() {
+    const bans: discordBan[] = await bot.guilds.get(guild.main).getBans();
+    await global.redis.hmset("bans", ...bans.map((ban) => [ban.user.id, true]));
+}
+
+setInterval(async () => {
+    await updateBanlist();
+}, 900000);

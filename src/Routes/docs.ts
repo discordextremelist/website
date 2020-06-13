@@ -17,12 +17,15 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const express = require("express");
-const variables = require("../Util/Function/variables.js");
-const settings = require("../../settings.json");
+import * as express from "express";
+import { Request, Response } from "express";
+
+import { variables } from "../Util/Function/variables";
+import * as settings from "../../settings.json";
+
 const router = express.Router();
 
-router.get("/", variables, async (req, res, next) => {
+router.get("/", variables, async (req: Request, res: Response, next) => {
     res.locals.premidPageInfo = res.__("premid.docs");
 
     res.render("templates/docs/index", {

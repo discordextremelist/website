@@ -17,14 +17,21 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const browser = require("browser-detect");
-const colour = require("color");
-const settings = require("../../../settings.json");
-const releaseInfo = require("../../../release-info.json");
-const ddosMode = require("../Services/ddosMode.js");
-const announcementCache = require("../Services/announcementCaching.js");
+import { Request, Response } from "express";
 
-const variables = async (req, res, next) => {
+import browser from "browser-detect";
+import * as colour from "color";
+import * as settings from "../../../settings.json";
+import * as releaseInfo from "../../../release-info.json";
+import * as ddosMode from "../Services/ddosMode";
+import * as announcementCache from "../Services/announcementCaching";
+import * as banList from "../Services/banned";
+
+export const variables = async (
+    req: Request,
+    res: Response,
+    next: () => void
+) => {
     if (req.originalUrl.includes("?setLang=t")) {
         return res.redirect(req.originalUrl.replace("?setLang=t", ""));
     }
@@ -44,7 +51,7 @@ const variables = async (req, res, next) => {
     res.locals.cssVersion = releaseInfo.cssVersion;
     res.locals.ddosMode = ddosMode.getDDOSMode().active;
     res.locals.gaID = settings.website.gaID;
-    
+
     res.locals.linkPrefix = `/${
         req.locale || settings.website.locales.default
     }`;
@@ -119,9 +126,9 @@ const variables = async (req, res, next) => {
             req.browser.versionNumber < 11.3 &&
             req.get("User-Agent").toLowerCase().includes("kaios"))
     ) {
-        usePreload = false;
+        res.locals.usePreload = false;
     } else {
-        usePreload = true;
+        res.locals.usePreload = true;
     }
 
     if (req.headers.accept.includes("image/webp") === true) {
@@ -131,7 +138,7 @@ const variables = async (req, res, next) => {
     }
 
     if (req.user) {
-        const user = await req.app.db
+        const user = await global.db
             .collection("users")
             .findOne({ _id: req.user.id });
         req.user.db = user;
@@ -140,7 +147,7 @@ const variables = async (req, res, next) => {
             req.user.db.rank.mod === true &&
             req.url !== "/profile/game/snakes"
         ) {
-            req.app.db.collection("users").updateOne(
+            global.db.collection("users").updateOne(
                 { _id: req.user.id },
                 {
                     $set: {
@@ -150,9 +157,10 @@ const variables = async (req, res, next) => {
                 }
             );
         }
+
+        const isBanned = await banList.check(req.user.id);
+        if (isBanned) return res.status(403).render("banned", { req });
     }
 
     next();
 };
-
-module.exports = variables;

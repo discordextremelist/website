@@ -97,7 +97,7 @@
             <% if (botsData.length === 0) { %>
                 <h2 class="is-size-3"><%= __("common.error.fetchFail.bots") %></h2>
             <% } else { %>
-                <%- botChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, search: false, archived: false, verificationApp: false })).join("")}`).join("") %>
+                <%- botChunk.map(chunk => `${chunk.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, search: false, archived: false, verificationApp: false, profile: false })).join("")}`).join("") %>
             <% } %>
         </div>
 

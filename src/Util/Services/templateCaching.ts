@@ -17,46 +17,43 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const app = require("../../../app.js");
+import * as app from "../../app";
 const prefix = "templates";
 
-async function getTemplate(id) {
+export async function getTemplate(id: string): Promise<dbTemplate> {
     const template = await global.redis.hget(prefix, id);
     return JSON.parse(template);
 }
 
-async function getAllTemplates() {
+export async function getAllTemplates(): Promise<dbTemplate[]> {
     const templates = await global.redis.hvals(prefix);
     return templates.map(JSON.parse);
 }
 
-async function updateTemplate(id) {
-    const data = await app.db.collection("templates").findOne({ _id: id });
+export async function updateTemplate(id: string) {
+    const data: dbTemplate = await global.db
+        .collection("templates")
+        .findOne({ _id: id });
     if (!data) return;
     await global.redis.hmset(prefix, id, JSON.stringify(data));
 }
 
-async function uploadTemplates() {
-    const templates = await app.db.collection("templates").find().toArray();
+export async function uploadTemplates() {
+    const templates: dbTemplate[] = await global.db
+        .collection("templates")
+        .find()
+        .toArray();
     if (templates.length < 1) return;
     await global.redis.hmset(
         prefix,
-        ...templates.map((t) => [t._id, JSON.stringify(t)])
+        ...templates.map((t: dbTemplate) => [t._id, JSON.stringify(t)])
     );
 }
 
-async function deleteTemplate(id) {
+export async function deleteTemplate(id: string) {
     await global.redis.hdel(prefix, id);
 }
 
 setInterval(async () => {
     await uploadTemplates();
 }, 900000);
-
-module.exports = {
-    getTemplate,
-    getAllTemplates,
-    updateTemplate,
-    uploadTemplates,
-    deleteTemplate
-};

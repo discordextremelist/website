@@ -17,51 +17,48 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const app = require("../../../app.js");
-const threshold = 2; // requests/min
+import * as app from "../../app";
 
-global.ddosMode = {
+global.announcement = {
     active: false,
-    requests: 0
+    message: "",
+    colour: "",
+    foreground: ""
 };
 
-function getDDOSMode() {
-    return global.ddosMode;
+export function getAnnouncement() {
+    return global.announcement;
 }
 
-async function activateDDOSMode() {
-    await app.db.collection("webOptions").updateOne(
-        { _id: "ddosMode" },
+export async function updateAnnouncement(announcement: announcement) {
+    await global.db.collection("webOptions").updateOne(
+        { _id: "announcement" },
         {
             $set: {
-                active: true
+                active: announcement.active,
+                message: announcement.message,
+                colour: announcement.colour,
+                foreground: announcement.foreground
             }
         }
     );
 
-    global.ddosMode.active = true;
+    global.announcement = {
+        active: announcement.active,
+        message: announcement.message,
+        colour: announcement.colour,
+        foreground: announcement.foreground
+    };
 }
 
-async function updateCache() {
-    const ddosMode = await app.db
+export async function updateCache() {
+    const announcement: announcement = await global.db
         .collection("webOptions")
-        .findOne({ _id: "ddosMode" });
-    if (ddosMode) global.ddosMode.active = ddosMode.active;
+        .findOne({ _id: "announcement" });
+    if (announcement) global.announcement = announcement;
     return;
 }
 
-async function newRequest() {
-    global.ddosMode.requests += 1;
-
-    if (global.ddosMode.requests >= threshold) await activateDDOSMode();
-}
-
 setInterval(async () => {
-    if (global.ddosMode.requests >= threshold) await activateDDOSMode();
+    await updateCache();
 }, 60000);
-
-module.exports = {
-    getDDOSMode,
-    newRequest,
-    updateCache
-};

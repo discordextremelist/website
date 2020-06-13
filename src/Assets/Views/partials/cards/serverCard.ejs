@@ -32,6 +32,14 @@
                                 </span>
                                 <span><%= __("common.view") %></span>
                             </a>
+                            <% if (profile === true) { %>
+                                <a href="<%= linkPrefix %>/servers/<%= server._id %>/edit" class="button is-warning is-outlined">
+                                    <span class="icon">
+                                      <i class="fas fa-pencil"></i>
+                                    </span>
+                                    <span><%= __("common.edit") %></span>
+                                </a>
+                            <% } %>
                             <a target="_blank" rel="noopener" href="<%= server.links.invite %>" class="button is-blurple is-outlined">
                                 <span class="icon">
                                   <i class="fas fa-users-medical"></i>

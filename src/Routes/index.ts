@@ -17,23 +17,25 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const express = require("express");
-const chunk = require("chunk");
+import * as express from "express";
+import { Request, Response } from "express";
+
+import * as chunk from "chunk";
+
+import * as settings from "../../settings.json";
+import { variables } from "../Util/Function/variables";
+import * as featuring from "../Util/Services/featuring";
+import * as botCache from "../Util/Services/botCaching";
+import * as serverCache from "../Util/Services/serverCaching";
+import * as templateCache from "../Util/Services/templateCaching";
+import * as discord from "../Util/Services/discord";
+
 const router = express.Router();
-
-const settings = require("../../settings.json");
-
-const variables = require("../Util/Function/variables.js");
-const featuring = require("../Util/Services/featuring.js");
-const botCache = require("../Util/Services/botCaching.js");
-const serverCache = require("../Util/Services/serverCaching.js");
-const templateCache = require("../Util/Services/templateCaching.js");
-const discord = require("../Util/Services/discord.js");
 
 const nickSorter = (a, b) =>
     (a.nick || a.user.username).localeCompare(b.nick || b.user.username);
 function sortAll() {
-    let members = discord.bot.guilds.get(settings.guild.main).members;
+    let members = discord.bot.guilds.cache.get(settings.guild.main).members;
     if (!members) throw new Error("Fetching members failed!");
     const staff = [],
         donators = [],
@@ -87,7 +89,7 @@ function sortAll() {
     };
 }
 
-router.get("/", variables, async (req, res) => {
+router.get("/", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.home");
 
     const bots = await featuring.getFeaturedBots();
@@ -104,7 +106,7 @@ router.get("/", variables, async (req, res) => {
     });
 });
 
-router.get("/bots", variables, async (req, res) => {
+router.get("/bots", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.bots");
 
     const bots = (await botCache.getAllBots()).filter(
@@ -118,12 +120,12 @@ router.get("/bots", variables, async (req, res) => {
         req,
         botsData: bots,
         botChunk,
-        page: req.query.page ? parseInt(req.query.page) : 1,
+        page: 1,
         pages: Math.ceil(bots.length / 9)
     });
 });
 
-router.get("/servers", variables, async (req, res) => {
+router.get("/servers", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.servers");
 
     const servers = await serverCache.getAllServers();
@@ -135,12 +137,12 @@ router.get("/servers", variables, async (req, res) => {
         req,
         serversData: servers,
         serverChunk,
-        page: req.query.page ? parseInt(req.query.page) : 1,
+        page: 1,
         pages: Math.ceil(servers.length / 9)
     });
 });
 
-router.get("/templates", variables, async (req, res) => {
+router.get("/templates", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.templates");
 
     const templates = await templateCache.getAllTemplates();
@@ -152,12 +154,12 @@ router.get("/templates", variables, async (req, res) => {
         req,
         templatesData: templates,
         templateChunk,
-        page: req.query.page ? parseInt(req.query.page) : 1,
+        page: 1,
         pages: Math.ceil(templates.length / 9)
     });
 });
 
-router.get("/terms", variables, (req, res) => {
+router.get("/terms", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.terms");
 
     res.render("templates/legal/terms", {
@@ -167,7 +169,7 @@ router.get("/terms", variables, (req, res) => {
     });
 });
 
-router.get("/privacy", variables, (req, res) => {
+router.get("/privacy", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.privacy");
 
     res.render("templates/legal/privacy", {
@@ -177,7 +179,7 @@ router.get("/privacy", variables, (req, res) => {
     });
 });
 
-router.get("/cookies", variables, (req, res) => {
+router.get("/cookies", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.cookie");
 
     res.render("templates/legal/cookie", {
@@ -187,7 +189,7 @@ router.get("/cookies", variables, (req, res) => {
     });
 });
 
-router.get("/guidelines", variables, (req, res) => {
+router.get("/guidelines", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.guidelines");
 
     res.render("templates/legal/guidelines", {
@@ -197,7 +199,7 @@ router.get("/guidelines", variables, (req, res) => {
     });
 });
 
-router.get("/widgetbot", variables, (req, res) => {
+router.get("/widgetbot", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.widgetbot");
 
     res.render("templates/widgetbot", {
@@ -208,7 +210,7 @@ router.get("/widgetbot", variables, (req, res) => {
     });
 });
 
-router.get("/about", variables, async (req, res) => {
+router.get("/about", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.about");
 
     const { staff, donators, contributors } = sortAll();
@@ -222,4 +224,4 @@ router.get("/about", variables, async (req, res) => {
     });
 });
 
-module.exports = router;
+export = router;

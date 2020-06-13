@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "lib": ["esnext"],
+        "module": "commonjs",
+        "resolveJsonModule": true
+    },
+    "files": [
+        "src/typings/custom.d.ts",
+        "src/typings/del.d.ts",
+        "src/typings/discord.d.ts",
+        "src/typings/webOptions.d.ts"
+    ]
+}

@@ -17,16 +17,16 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const app = require("../../../app.js");
-const moment = require("moment");
+import * as app from "../../app";
+import moment from "moment";
 
-async function update() {
-    const botStats = await app.db
+export async function update() {
+    const botStats: botStats = await global.db
         .collection("webOptions")
         .findOne({ _id: "botStats" });
 
     if (!botStats) {
-        return await app.db.collection("webOptions").insertOne({
+        return await global.db.collection("webOptions").insertOne({
             _id: "botStats",
             lastUpdate: Date.now()
         });
@@ -34,10 +34,13 @@ async function update() {
 
     const date = moment().diff(moment(botStats.lastUpdate), "days");
     if (date > 7) {
-        const users = await app.db.collection("users").find().toArray();
+        const users: dbUser[] = await global.db
+            .collection("users")
+            .find()
+            .toArray();
         for (const user of users) {
             if (user.rank.mod === true) {
-                await app.db.collection("users").updateOne(
+                await global.db.collection("users").updateOne(
                     { _id: user._id },
                     {
                         $set: {
@@ -61,7 +64,7 @@ async function update() {
             }
         }
 
-        await app.db.collection("webOptions").updateOne(
+        await global.db.collection("webOptions").updateOne(
             { _id: "botStats" },
             {
                 $set: {
@@ -75,5 +78,3 @@ async function update() {
 setInterval(async () => {
     await update();
 }, 900000);
-
-module.exports = update;

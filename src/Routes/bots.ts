@@ -17,121 +17,328 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const express = require("express");
-const fetch = require("node-fetch");
-const crypto = require("crypto");
+import * as express from "express";
+import { Request, Response } from "express";
+
+import * as fetch from "node-fetch";
+import * as crypto from "crypto";
+import * as sanitizeHtml from "sanitize-html";
+
+import * as settings from "../../settings.json";
+import * as discord from "../Util/Services/discord";
+import { variables } from "../Util/Function/variables";
+import * as permission from "../Util/Function/permissions";
+import * as functions from "../Util/Function/main";
+
+import * as botCache from "../Util/Services/botCaching";
+import * as userCache from "../Util/Services/userCaching";
+import * as libraryCache from "../Util/Services/libCaching";
+import { TextChannel } from "discord.js";
+
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
-const sanitizeHtml = require("sanitize-html");
 const router = express.Router();
 
-const settings = require("../../settings.json");
-const discord = require("../Util/Services/discord.js");
-const variables = require("../Util/Function/variables.js");
-const permission = require("../Util/Function/permissions.js");
-const functions = require("../Util/Function/main.js");
+router.get(
+    "/submit",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response, next) => {
+        res.locals.premidPageInfo = res.__("premid.bots.submit");
 
-const botCache = require("../Util/Services/botCaching.js");
-const userCache = require("../Util/Services/userCaching.js");
-const libraryCache = require("../Util/Services/libCaching.js");
-
-router.get("/submit", variables, permission.auth, async (req, res, next) => {
-    res.locals.premidPageInfo = res.__("premid.bots.submit");
-
-    res.render("templates/bots/submit", {
-        title: res.__("common.nav.me.submitBot"),
-        subtitle: res.__("common.nav.me.submitBot.subtitle"),
-        libraries: libraryCache.getLibs(),
-        req
-    });
-});
-
-router.post("/submit", variables, permission.auth, async (req, res, next) => {
-    res.locals.premidPageInfo = res.__("premid.bots.submit");
-
-    let error = false;
-    let errors = [];
-
-    const botExists = await req.app.db
-        .collection("bots")
-        .findOne({ _id: req.body.id });
-    if (botExists)
-        return res.status(409).render("status", {
-            title: res.__("common.error"),
-            subtitle: res.__("common.error.bot.conflict"),
-            status: 409,
-            type: "Error",
+        res.render("templates/bots/submit", {
+            title: res.__("common.nav.me.submitBot"),
+            subtitle: res.__("common.nav.me.submitBot.subtitle"),
+            libraries: libraryCache.getLibs(),
             req
         });
+    }
+);
 
-    fetch(`https://discord.com/api/v6/users/${req.body.id}`, {
-        method: "GET",
-        headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
-    })
-        .then(async (fetchRes) => {
-            fetchRes.jsonBody = await fetchRes.json();
-            if (req.body.id.length > 32) {
-                error = true;
-                errors.push(res.__("common.error.bot.arr.idTooLong"));
-            } else if (fetchRes.jsonBody.message === "Unknown User") {
-                error = true;
-                errors.push(res.__("common.error.bot.arr.notFound"));
-            } else if (!fetchRes.jsonBody.bot) {
-                error = true;
-                errors.push(res.__("common.error.bot.arr.isUser"));
-            }
+router.post(
+    "/submit",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response, next) => {
+        res.locals.premidPageInfo = res.__("premid.bots.submit");
 
-            let invite;
+        let error = false;
+        let errors: string[] = [];
 
-            if (req.body.invite === "") {
-                invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
-            } else {
-                if (typeof req.body.invite !== "string") {
+        let invite: string;
+
+        const botExists = await global.db
+            .collection("bots")
+            .findOne({ _id: req.body.id });
+
+        if (botExists)
+            return res.status(409).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.conflict"),
+                status: 409,
+                type: "Error",
+                req
+            });
+
+        fetch(`https://discord.com/api/v6/users/${req.body.id}`, {
+            method: "GET",
+            headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
+        })
+            .then(async (fetchRes: any) => {
+                fetchRes.jsonBody = await fetchRes.json();
+                if (req.body.id.length > 32) {
                     error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.invite.invalid")
-                    );
-                } else if (req.body.invite.length > 2000) {
+                    errors.push(res.__("common.error.bot.arr.idTooLong"));
+                } else if (fetchRes.jsonBody.message === "Unknown User") {
                     error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.invite.tooLong")
-                    ); //JUMP
-                } else if (!/^https?:\/\//.test(req.body.invite)) {
+                    errors.push(res.__("common.error.bot.arr.notFound"));
+                } else if (!fetchRes.jsonBody.bot) {
                     error = true;
-                    errors.push(
-                        res.__("common.error.bot.arr.invite.urlInvalid")
-                    );
-                } else {
-                    invite = req.body.invite;
+                    errors.push(res.__("common.error.bot.arr.isUser"));
                 }
-            }
 
-            if (!req.body.longDescription) {
-                error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.longDescRequired")
+                if (req.body.invite === "") {
+                    invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
+                } else {
+                    if (typeof req.body.invite !== "string") {
+                        error = true;
+                        errors.push(
+                            res.__("common.error.listing.arr.invite.invalid")
+                        );
+                    } else if (req.body.invite.length > 2000) {
+                        error = true;
+                        errors.push(
+                            res.__("common.error.listing.arr.invite.tooLong")
+                        );
+                    } else if (!/^https?:\/\//.test(req.body.invite)) {
+                        error = true;
+                        errors.push(
+                            res.__("common.error.bot.arr.invite.urlInvalid")
+                        );
+                    } else {
+                        invite = req.body.invite;
+                    }
+                }
+
+                if (!req.body.longDescription) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.longDescRequired")
+                    );
+                }
+
+                if (!req.body.prefix) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.prefixRequired")
+                    );
+                }
+
+                const library = libraryCache.hasLib(req.body.library)
+                    ? req.body.library
+                    : "Other";
+                let tags: string[] = [];
+                if (req.body.fun === "on") tags.push("Fun");
+                if (req.body.social === "on") tags.push("Social");
+                if (req.body.economy === "on") tags.push("Economy");
+                if (req.body.utility === "on") tags.push("Utility");
+                if (req.body.moderation === "on") tags.push("Moderation");
+                if (req.body.multipurpose === "on") tags.push("Multipurpose");
+                if (req.body.music === "on") tags.push("Music");
+
+                if (error === true) {
+                    return res.render("templates/bots/errorOnSubmit", {
+                        title: res.__("common.nav.me.submitBot"),
+                        subtitle: res.__("common.nav.me.submitBot.subtitle"),
+                        bot: req.body,
+                        libraries: libraryCache.getLibs(),
+                        library,
+                        req,
+                        errors,
+                        tags
+                    });
+                }
+
+                let editors: any[];
+
+                if (req.body.editors !== "") {
+                    editors = [...new Set(req.body.editors.split(/\D+/g))];
+                } else {
+                    editors = [];
+                }
+
+                await global.db.collection("bots").insertOne({
+                    _id: req.body.id,
+                    name: fetchRes.jsonBody.username,
+                    prefix: req.body.prefix,
+                    library: library,
+                    tags: tags,
+                    vanityUrl: "",
+                    serverCount: 0,
+                    shardCount: 0,
+                    token:
+                        "DELAPI_" +
+                        crypto.randomBytes(16).toString("hex") +
+                        `-${req.body.id}`,
+                    flags: fetchRes.jsonBody.public_flags,
+                    shortDesc: req.body.shortDescription,
+                    longDesc: req.body.longDescription,
+                    modNotes: req.body.modNotes,
+                    editors: editors,
+                    owner: {
+                        id: req.user.id
+                    },
+                    avatar: {
+                        hash: fetchRes.jsonBody.avatar,
+                        url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
+                    },
+                    votes: {
+                        positive: [],
+                        negative: []
+                    },
+                    links: {
+                        invite: invite,
+                        support: req.body.supportServer,
+                        website: req.body.website,
+                        donation: req.body.donationUrl,
+                        repo: req.body.repo
+                    },
+                    widgetbot: {
+                        channel: req.body.widgetChannel,
+                        options: req.body.widgetOptions,
+                        server: req.body.widgetServer
+                    },
+                    status: {
+                        approved: false,
+                        premium: false,
+                        siteBot: false,
+                        archived: false
+                    }
+                });
+
+                discord.logsChannel.send(
+                    `${settings.emoji.addBot} **${functions.escapeFormatting(
+                        req.user.db.fullUsername
+                    )}** \`(${
+                        req.user.id
+                    })\` added bot **${functions.escapeFormatting(
+                        fetchRes.jsonBody.username
+                    )}** \`(${req.body.id})\`\n<${settings.website.url}/bots/${
+                        req.body.id
+                    }>`
                 );
-            }
 
-            if (!req.body.prefix) {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.prefixRequired"));
-            }
+                await global.db.collection("audit").insertOne({
+                    type: "SUBMIT_BOT",
+                    executor: req.user.id,
+                    target: req.params.id,
+                    date: Date.now(),
+                    reason: "None specified.",
+                    details: {
+                        new: {
+                            _id: req.body.id,
+                            name: fetchRes.jsonBody.username,
+                            prefix: req.body.prefix,
+                            library: library,
+                            tags: tags,
+                            flags: fetchRes.jsonBody.public_flags,
+                            vanityUrl: "",
+                            serverCount: 0,
+                            shardCount: 0,
+                            token:
+                                "DELAPI_" +
+                                crypto.randomBytes(16).toString("hex") +
+                                `-${req.body.id}`,
+                            shortDesc: req.body.shortDescription,
+                            longDesc: req.body.longDescription,
+                            modNotes: req.body.modNotes,
+                            editors: editors,
+                            owner: {
+                                id: req.user.id
+                            },
+                            avatar: {
+                                hash: fetchRes.jsonBody.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
+                            },
+                            votes: {
+                                positive: [],
+                                negative: []
+                            },
+                            links: {
+                                invite: invite,
+                                support: req.body.supportServer,
+                                website: req.body.website,
+                                donation: req.body.donationUrl,
+                                repo: req.body.repo
+                            },
+                            widgetbot: {
+                                channel: req.body.widgetChannel,
+                                options: req.body.widgetOptions,
+                                server: req.body.widgetServer
+                            },
+                            status: {
+                                approved: false,
+                                premium: false,
+                                siteBot: false,
+                                archived: false
+                            }
+                        }
+                    }
+                });
+                await botCache.updateBot(req.params.id);
+                res.redirect(`/bots/${req.body.id}`);
+            })
+            .catch(async () => {
+                if (req.body.id.length > 32) {
+                    error = true;
+                    errors.push(res.__("common.error.bot.arr.idTooLong"));
+                }
 
-            const library = libraryCache.hasLib(req.body.library)
-                ? req.body.library
-                : "Other";
-            let tags = [];
-            if (req.body.fun === "on") tags.push("Fun");
-            if (req.body.social === "on") tags.push("Social");
-            if (req.body.economy === "on") tags.push("Economy");
-            if (req.body.utility === "on") tags.push("Utility");
-            if (req.body.moderation === "on") tags.push("Moderation");
-            if (req.body.multipurpose === "on") tags.push("Multipurpose");
-            if (req.body.music === "on") tags.push("Music");
+                if (req.body.invite !== "") {
+                    if (typeof req.body.invite !== "string") {
+                        error = true;
+                        errors.push(
+                            res.__("common.error.listing.arr.invite.invalid")
+                        );
+                    } else if (req.body.invite.length > 2000) {
+                        error = true;
+                        errors.push(
+                            res.__("common.error.listing.arr.invite.tooLong")
+                        );
+                    } else if (!/^https?:\/\//.test(req.body.invite)) {
+                        error = true;
+                        errors.push(res.__("Invite needs to be a valid URL."));
+                    } else {
+                        invite = req.body.invite;
+                    }
+                }
 
-            if (error === true) {
+                if (!req.body.longDescription) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.longDescRequired")
+                    );
+                }
+
+                if (!req.body.prefix) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.prefixRequired")
+                    );
+                }
+
+                const library = libraryCache.hasLib(req.body.library)
+                    ? req.body.library
+                    : "Other";
+                let tags = [];
+                if (req.body.fun === "on") tags.push("Fun");
+                if (req.body.social === "on") tags.push("Social");
+                if (req.body.economy === "on") tags.push("Economy");
+                if (req.body.utility === "on") tags.push("Utility");
+                if (req.body.moderation === "on") tags.push("Moderation");
+                if (req.body.multipurpose === "on") tags.push("Multipurpose");
+                if (req.body.music === "on") tags.push("Music");
                 return res.render("templates/bots/errorOnSubmit", {
                     title: res.__("common.nav.me.submitBot"),
                     subtitle: res.__("common.nav.me.submitBot.subtitle"),
@@ -142,200 +349,11 @@ router.post("/submit", variables, permission.auth, async (req, res, next) => {
                     errors,
                     tags
                 });
-            }
-
-            let editors;
-
-            if (req.body.editors !== "") {
-                editors = [...new Set(req.body.editors.split(/\D+/g))];
-            } else {
-                editors = [];
-            }
-
-            await req.app.db.collection("bots").insertOne({
-                _id: req.body.id,
-                name: fetchRes.jsonBody.username,
-                prefix: req.body.prefix,
-                library: library,
-                tags: tags,
-                vanityUrl: "",
-                serverCount: 0,
-                shardCount: 0,
-                token:
-                    "DELAPI_" +
-                    crypto.randomBytes(16).toString("hex") +
-                    `-${req.body.id}`,
-                flags: fetchRes.jsonBody.public_flags,
-                shortDesc: req.body.shortDescription,
-                longDesc: req.body.longDescription,
-                modNotes: req.body.modNotes,
-                editors: editors,
-                owner: {
-                    id: req.user.id
-                },
-                avatar: {
-                    hash: fetchRes.jsonBody.avatar,
-                    url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
-                },
-                votes: {
-                    positive: [],
-                    negative: []
-                },
-                links: {
-                    invite: invite,
-                    support: req.body.supportServer,
-                    website: req.body.website,
-                    donation: req.body.donationUrl,
-                    repo: req.body.repo
-                },
-                widgetbot: {
-                    channel: req.body.widgetChannel,
-                    options: req.body.widgetOptions,
-                    server: req.body.widgetServer
-                },
-                status: {
-                    approved: false,
-                    premium: false,
-                    siteBot: false,
-                    archived: false
-                }
             });
+    }
+);
 
-            discord.bot.createMessage(
-                settings.channels.webLog,
-                `${settings.emoji.addBot} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` added bot **${functions.escapeFormatting(
-                    fetchRes.jsonBody.username
-                )}** \`(${req.body.id})\`\n<${settings.website.url}/bots/${
-                    req.body.id
-                }>`
-            );
-
-            await req.app.db.collection("audit").insertOne({
-                type: "SUBMIT_BOT",
-                executor: req.user.id,
-                target: req.params.id,
-                date: Date.now(),
-                reason: "None specified.",
-                details: {
-                    new: {
-                        _id: req.body.id,
-                        name: fetchRes.jsonBody.username,
-                        prefix: req.body.prefix,
-                        library: library,
-                        tags: tags,
-                        flags: fetchRes.jsonBody.public_flags,
-                        vanityUrl: "",
-                        serverCount: 0,
-                        shardCount: 0,
-                        token:
-                            "DELAPI_" +
-                            crypto.randomBytes(16).toString("hex") +
-                            `-${req.body.id}`,
-                        shortDesc: req.body.shortDescription,
-                        longDesc: req.body.longDescription,
-                        modNotes: req.body.modNotes,
-                        editors: editors,
-                        owner: {
-                            id: req.user.id
-                        },
-                        avatar: {
-                            hash: fetchRes.jsonBody.avatar,
-                            url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
-                        },
-                        votes: {
-                            positive: [],
-                            negative: []
-                        },
-                        links: {
-                            invite: invite,
-                            support: req.body.supportServer,
-                            website: req.body.website,
-                            donation: req.body.donationUrl,
-                            repo: req.body.repo
-                        },
-                        widgetbot: {
-                            channel: req.body.widgetChannel,
-                            options: req.body.widgetOptions,
-                            server: req.body.widgetServer
-                        },
-                        status: {
-                            approved: false,
-                            premium: false,
-                            siteBot: false,
-                            archived: false
-                        }
-                    }
-                }
-            });
-            await botCache.updateBot(req.params.id);
-            res.redirect(`/bots/${req.body.id}`);
-        })
-        .catch(async (fetchRes) => {
-            if (req.body.id.length > 32) {
-                error = true;
-                errors.push(res.__("common.error.bot.arr.idTooLong"));
-            }
-
-            if (req.body.invite !== "") {
-                if (typeof req.body.invite !== "string") {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.invite.invalid")
-                    );
-                } else if (req.body.invite.length > 2000) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.invite.tooLong")
-                    );
-                } else if (!/^https?:\/\//.test(req.body.invite)) {
-                    error = true;
-                    errors.push(res.__("Invite needs to be a valid URL."));
-                } else {
-                    invite = req.body.invite;
-                }
-            }
-
-            if (!req.body.longDescription) {
-                error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.longDescRequired")
-                );
-            }
-
-            if (!req.body.prefix) {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.prefixRequired"));
-            }
-
-            const library = libraryCache.hasLib(req.body.library)
-                ? req.body.library
-                : "Other";
-            let tags = [];
-            if (req.body.fun === "on") tags.push("Fun");
-            if (req.body.social === "on") tags.push("Social");
-            if (req.body.economy === "on") tags.push("Economy");
-            if (req.body.utility === "on") tags.push("Utility");
-            if (req.body.moderation === "on") tags.push("Moderation");
-            if (req.body.multipurpose === "on") tags.push("Multipurpose");
-            if (req.body.music === "on") tags.push("Music");
-            return res.render("templates/bots/errorOnSubmit", {
-                title: res.__("common.nav.me.submitBot"),
-                subtitle: res.__("common.nav.me.submitBot.subtitle"),
-                bot: req.body,
-                libraries: libraryCache.getLibs(),
-                library,
-                req,
-                errors,
-                tags
-            });
-        });
-});
-
-router.post("/preview_post", async (req, res, next) => {
+router.post("/preview_post", async (req: Request, res: Response, next) => {
     const dirty = entities.decode(md.render(req.body.longDesc));
 
     const clean = sanitizeHtml(dirty, {
@@ -387,8 +405,8 @@ router.post(
     "/:id/setvanity",
     variables,
     permission.auth,
-    async (req, res, next) => {
-        const botExists = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const botExists = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
         if (!botExists)
@@ -434,7 +452,7 @@ router.post(
                     req
                 });
 
-            await req.app.db.collection("bots").updateOne(
+            await global.db.collection("bots").updateOne(
                 { _id: req.params.id },
                 {
                     $set: {
@@ -443,7 +461,7 @@ router.post(
                 }
             );
 
-            await req.app.db.collection("audit").insertOne({
+            await global.db.collection("audit").insertOne({
                 type: "MODIFY_VANITY",
                 executor: req.user.id,
                 target: req.params.id,
@@ -467,7 +485,7 @@ router.post(
                     req
                 });
 
-            await req.app.db.collection("bots").updateOne(
+            await global.db.collection("bots").updateOne(
                 { _id: req.params.id },
                 {
                     $set: {
@@ -476,7 +494,7 @@ router.post(
                 }
             );
 
-            await req.app.db.collection("audit").insertOne({
+            await global.db.collection("audit").insertOne({
                 type: "SET_VANITY",
                 executor: req.user.id,
                 target: req.params.id,
@@ -494,274 +512,283 @@ router.post(
     }
 );
 
-router.get("/:id/edit", variables, permission.auth, async (req, res, next) => {
-    const botExists = await req.app.db
-        .collection("bots")
-        .findOne({ _id: req.params.id });
-    if (!botExists)
-        return res.status(404).render("status", {
-            title: res.__("common.error"),
-            subtitle: res.__("common.error.bot.404"),
-            status: 404,
-            type: "Error",
-            req
-        });
-
-    res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
-
-    if (
-        botExists.owner.id !== req.user.id &&
-        !botExists.editors.includes(req.user.id) &&
-        req.user.db.assistant === false
-    )
-        return res.status(403).render("status", {
-            title: res.__("common.error"),
-            subtitle: res.__("common.error.bot.perms.edit"),
-            status: 403,
-            type: "Error",
-            req
-        });
-    res.render("templates/bots/edit", {
-        title: res.__("page.bots.edit.title"),
-        subtitle: res.__("page.bots.edit.subtitle", botExists.name),
-        libraries: libraryCache.getLibs(),
-        bot: botExists,
-        editors: botExists.editors ? botExists.editors.join(" ") : "",
-        req,
-        resubmit: false,
-        longDesc: botExists.longDesc
-    });
-});
-
-router.post("/:id/edit", variables, permission.auth, async (req, res, next) => {
-    let error = false;
-    let errors = [];
-
-    const botExists = await req.app.db
-        .collection("bots")
-        .findOne({ _id: req.params.id });
-
-    if (!botExists)
-        return res.status(404).render("status", {
-            title: res.__("common.error"),
-            subtitle: res.__("common.error.bot.404"),
-            status: 404,
-            type: "Error",
-            req
-        });
-
-    res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
-
-    const bot = botExists;
-    if (
-        bot.owner.id !== req.user.id &&
-        !bot.editors.includes(req.user.id) &&
-        req.user.db.mod === false
-    )
-        return res.status(403).render("status", {
-            title: res.__("common.error"),
-            subtitle: res.__("common.error.bot.perms.edit"),
-            status: 403,
-            type: "Error",
-            req
-        });
-
-    let invite;
-
-    if (req.body.invite === "") {
-        invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
-    } else {
-        if (typeof req.body.invite !== "string") {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invite.invalid"));
-        } else if (req.body.invite.length > 2000) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-        } else if (!/^https?:\/\//.test(req.body.invite)) {
-            error = true;
-            errors.push(res.__("common.error.bot.arr.invite.urlInvalid"));
-        } else {
-            invite = req.body.invite;
-        }
-    }
-
-    if (!req.body.longDescription) {
-        error = true;
-        errors.push(res.__("common.error.listing.arr.longDescRequired"));
-    }
-
-    if (!req.body.prefix) {
-        error = true;
-        errors.push(res.__("common.error.listing.arr.prefixRequired"));
-    }
-
-    let library = libraryCache.hasLib(req.body.library)
-        ? req.body.library
-        : "Other";
-    let tags = [];
-    if (req.body.fun === "on") tags.push("Fun");
-    if (req.body.social === "on") tags.push("Social");
-    if (req.body.economy === "on") tags.push("Economy");
-    if (req.body.utility === "on") tags.push("Utility");
-    if (req.body.moderation === "on") tags.push("Moderation");
-    if (req.body.multipurpose === "on") tags.push("Multipurpose");
-    if (req.body.music === "on") tags.push("Music");
-
-    if (error === true) {
-        req.body.status.premium = botExists.status.premium;
-
-        return res.render("templates/bots/errorOnEdit", {
-            title: res.__("page.bots.edit.title"),
-            subtitle: res.__("page.bots.edit.subtitle", bot.name),
-            bot: req.body,
-            libraries: libraryCache.getLibs(),
-            library,
-            req,
-            errors,
-            resubmit: false,
-            tags
-        });
-    }
-
-    let editors;
-
-    if (req.body.editors !== "") {
-        editors = [...new Set(req.body.editors.split(/\D+/g))];
-    } else {
-        editors = [];
-    }
-
-    fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
-        method: "GET",
-        headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
-    })
-        .then(async (fetchRes) => {
-            fetchRes.jsonBody = await fetchRes.json();
-            await req.app.db.collection("bots").updateOne(
-                { _id: req.params.id },
-                {
-                    $set: {
-                        name: fetchRes.jsonBody.username,
-                        prefix: req.body.prefix,
-                        library: library,
-                        tags: tags,
-                        flags: fetchRes.jsonBody.public_flags,
-                        shortDesc: req.body.shortDescription,
-                        longDesc: req.body.longDescription,
-                        editors: editors,
-                        avatar: {
-                            hash: fetchRes.jsonBody.avatar,
-                            url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
-                        },
-                        links: {
-                            invite: invite,
-                            support: req.body.supportServer,
-                            website: req.body.website,
-                            donation: req.body.donationUrl,
-                            repo: req.body.repo
-                        },
-                        widgetbot: {
-                            channel: req.body.widgetChannel,
-                            options: req.body.widgetOptions,
-                            server: req.body.widgetServer
-                        }
-                    }
-                }
-            );
-
-            await req.app.db.collection("audit").insertOne({
-                type: "EDIT_BOT",
-                executor: req.user.id,
-                target: req.params.id,
-                date: Date.now(),
-                reason: "None specified.",
-                details: {
-                    old: {
-                        name: botExists.name,
-                        prefix: botExists.prefix,
-                        library: botExists.library,
-                        tags: botExists.tags,
-                        flags: botExists.flags,
-                        shortDesc: botExists.shortDesc,
-                        longDesc: botExists.longDesc,
-                        editors: botExists.editors,
-                        avatar: {
-                            hash: botExists.avatar.hash,
-                            url: botExists.avatar.url
-                        },
-                        links: {
-                            invite: botExists.links.invite,
-                            support: botExists.links.support,
-                            website: botExists.links.website,
-                            donation: botExists.links.donation,
-                            repo: botExists.links.repo
-                        },
-                        widgetbot: {
-                            channel: botExists.widgetbot.channel,
-                            options: botExists.widgetbot.options,
-                            server: botExists.widgetbot.server
-                        }
-                    },
-                    new: {
-                        name: fetchRes.jsonBody.username,
-                        prefix: req.body.prefix,
-                        library: library,
-                        tags: tags,
-                        flags: fetchRes.jsonBody.public_flags,
-                        shortDesc: req.body.shortDescription,
-                        longDesc: req.body.longDescription,
-                        editors: editors,
-                        avatar: {
-                            hash: fetchRes.jsonBody.avatar,
-                            url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
-                        },
-                        links: {
-                            invite: invite,
-                            support: req.body.supportServer,
-                            website: req.body.website,
-                            donation: req.body.donationUrl,
-                            repo: req.body.repo
-                        },
-                        widgetbot: {
-                            channel: req.body.widgetChannel,
-                            options: req.body.widgetOptions,
-                            server: req.body.widgetServer
-                        }
-                    }
-                }
+router.get(
+    "/:id/edit",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response, next) => {
+        const botExists = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+        if (!botExists)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.404"),
+                status: 404,
+                type: "Error",
+                req
             });
-            await botCache.updateBot(req.params.id);
+
+        res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
+
+        if (
+            botExists.owner.id !== req.user.id &&
+            !botExists.editors.includes(req.user.id) &&
+            req.user.db.assistant === false
+        )
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.perms.edit"),
+                status: 403,
+                type: "Error",
+                req
+            });
+        res.render("templates/bots/edit", {
+            title: res.__("page.bots.edit.title"),
+            subtitle: res.__("page.bots.edit.subtitle", botExists.name),
+            libraries: libraryCache.getLibs(),
+            bot: botExists,
+            editors: botExists.editors ? botExists.editors.join(" ") : "",
+            req,
+            resubmit: false,
+            longDesc: botExists.longDesc
+        });
+    }
+);
+
+router.post(
+    "/:id/edit",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response, next) => {
+        let error = false;
+        let errors = [];
+
+        const botExists: dbBot | undefined = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+
+        if (!botExists)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.404"),
+                status: 404,
+                type: "Error",
+                req
+            });
+
+        res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
+
+        const bot = botExists;
+        if (
+            bot.owner.id !== req.user.id &&
+            !bot.editors.includes(req.user.id) &&
+            req.user.db.mod === false
+        )
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.perms.edit"),
+                status: 403,
+                type: "Error",
+                req
+            });
+
+        let invite;
+
+        if (req.body.invite === "") {
+            invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
+        } else {
+            if (typeof req.body.invite !== "string") {
+                error = true;
+                errors.push(res.__("common.error.listing.arr.invite.invalid"));
+            } else if (req.body.invite.length > 2000) {
+                error = true;
+                errors.push(res.__("common.error.listing.arr.invite.tooLong"));
+            } else if (!/^https?:\/\//.test(req.body.invite)) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.invite.urlInvalid"));
+            } else {
+                invite = req.body.invite;
+            }
+        }
+
+        if (!req.body.longDescription) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.longDescRequired"));
+        }
+
+        if (!req.body.prefix) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.prefixRequired"));
+        }
+
+        let library = libraryCache.hasLib(req.body.library)
+            ? req.body.library
+            : "Other";
+        let tags = [];
+        if (req.body.fun === "on") tags.push("Fun");
+        if (req.body.social === "on") tags.push("Social");
+        if (req.body.economy === "on") tags.push("Economy");
+        if (req.body.utility === "on") tags.push("Utility");
+        if (req.body.moderation === "on") tags.push("Moderation");
+        if (req.body.multipurpose === "on") tags.push("Multipurpose");
+        if (req.body.music === "on") tags.push("Music");
+
+        if (error === true) {
+            req.body.status.premium = botExists.status.premium;
+
+            return res.render("templates/bots/errorOnEdit", {
+                title: res.__("page.bots.edit.title"),
+                subtitle: res.__("page.bots.edit.subtitle", bot.name),
+                bot: req.body,
+                libraries: libraryCache.getLibs(),
+                library,
+                req,
+                errors,
+                resubmit: false,
+                tags
+            });
+        }
+
+        let editors;
+
+        if (req.body.editors !== "") {
+            editors = [...new Set(req.body.editors.split(/\D+/g))];
+        } else {
+            editors = [];
+        }
+
+        fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
+            method: "GET",
+            headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
         })
-        .catch((_) => {
-            return res
-                .status(400)
-                .render("status", {
+            .then(async (fetchRes) => {
+                fetchRes.jsonBody = await fetchRes.json();
+                await global.db.collection("bots").updateOne(
+                    { _id: req.params.id },
+                    {
+                        $set: {
+                            name: fetchRes.jsonBody.username,
+                            prefix: req.body.prefix,
+                            library: library,
+                            tags: tags,
+                            flags: fetchRes.jsonBody.public_flags,
+                            shortDesc: req.body.shortDescription,
+                            longDesc: req.body.longDescription,
+                            editors: editors,
+                            avatar: {
+                                hash: fetchRes.jsonBody.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
+                            },
+                            links: {
+                                invite: invite,
+                                support: req.body.supportServer,
+                                website: req.body.website,
+                                donation: req.body.donationUrl,
+                                repo: req.body.repo
+                            },
+                            widgetbot: {
+                                channel: req.body.widgetChannel,
+                                options: req.body.widgetOptions,
+                                server: req.body.widgetServer
+                            }
+                        }
+                    }
+                );
+
+                await global.db.collection("audit").insertOne({
+                    type: "EDIT_BOT",
+                    executor: req.user.id,
+                    target: req.params.id,
+                    date: Date.now(),
+                    reason: "None specified.",
+                    details: {
+                        old: {
+                            name: botExists.name,
+                            prefix: botExists.prefix,
+                            library: botExists.library,
+                            tags: botExists.tags,
+                            flags: botExists.flags,
+                            shortDesc: botExists.shortDesc,
+                            longDesc: botExists.longDesc,
+                            editors: botExists.editors,
+                            avatar: {
+                                hash: botExists.avatar.hash,
+                                url: botExists.avatar.url
+                            },
+                            links: {
+                                invite: botExists.links.invite,
+                                support: botExists.links.support,
+                                website: botExists.links.website,
+                                donation: botExists.links.donation,
+                                repo: botExists.links.repo
+                            },
+                            widgetbot: {
+                                channel: botExists.widgetbot.channel,
+                                options: botExists.widgetbot.options,
+                                server: botExists.widgetbot.server
+                            }
+                        },
+                        new: {
+                            name: fetchRes.jsonBody.username,
+                            prefix: req.body.prefix,
+                            library: library,
+                            tags: tags,
+                            flags: fetchRes.jsonBody.public_flags,
+                            shortDesc: req.body.shortDescription,
+                            longDesc: req.body.longDescription,
+                            editors: editors,
+                            avatar: {
+                                hash: fetchRes.jsonBody.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
+                            },
+                            links: {
+                                invite: invite,
+                                support: req.body.supportServer,
+                                website: req.body.website,
+                                donation: req.body.donationUrl,
+                                repo: req.body.repo
+                            },
+                            widgetbot: {
+                                channel: req.body.widgetChannel,
+                                options: req.body.widgetOptions,
+                                server: req.body.widgetServer
+                            }
+                        }
+                    }
+                });
+                await botCache.updateBot(req.params.id);
+            })
+            .catch((_) => {
+                return res.status(400).render("status", {
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.dapiFail"),
                     status: 400,
                     type: "Error",
                     req
                 });
-        });
+            });
 
-    discord.bot
-        .createMessage(
-            settings.channels.webLog,
-            `${settings.emoji.editBot} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${req.user.id})\` edited bot **${functions.escapeFormatting(
-                bot.name
-            )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                req.body.id
-            }>`
-        )
-        .catch((e) => {
-            console.error(e);
-        });
-    res.redirect(`/bots/${req.params.id}`);
-});
+        discord.logsChannel
+            .send(
+                `${settings.emoji.editBot} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` edited bot **${functions.escapeFormatting(
+                    bot.name
+                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
+                    req.body.id
+                }>`
+            )
+            .catch((e) => {
+                console.error(e);
+            });
+        res.redirect(`/bots/${req.params.id}`);
+    }
+);
 
-router.get("/:id", variables, async (req, res, next) => {
+router.get("/:id", variables, async (req: Request, res: Response, next) => {
     res.locals.pageType = {
         server: false,
         bot: true,
@@ -770,11 +797,11 @@ router.get("/:id", variables, async (req, res, next) => {
 
     let bot = await botCache.getBot(req.params.id);
     if (!bot) {
-        bot = await req.app.db
+        bot = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
         if (!bot) {
-            bot = await req.app.db
+            bot = await global.db
                 .collection("bots")
                 .findOne({ vanityUrl: req.params.id });
             if (!bot)
@@ -803,12 +830,12 @@ router.get("/:id", variables, async (req, res, next) => {
 
     let botOwner = await userCache.getUser(bot.owner.id);
     if (!botOwner) {
-        botOwner = await req.app.db
+        botOwner = await global.db
             .collection("users")
             .findOne({ _id: bot.owner.id });
     }
 
-    botStatus = await discord.getStatus(bot._id);
+    let botStatus = await discord.getStatus(bot._id);
 
     const dirty = entities.decode(md.render(bot.longDesc));
     let clean;
@@ -919,13 +946,13 @@ router.get(
     "/:id/upvote",
     variables,
     permission.auth,
-    async (req, res, next) => {
-        let bot = await req.app.db
+    async (req: Request, res: Response, next) => {
+        let bot = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot) {
-            bot = await req.app.db
+            bot = await global.db
                 .collection("bots")
                 .findOne({ vanityUrl: req.params.id });
 
@@ -964,7 +991,7 @@ router.get(
             upVotes.push(req.user.id);
         }
 
-        await req.app.db.collection("bots").updateOne(
+        await global.db.collection("bots").updateOne(
             { _id: bot._id },
             {
                 $set: {
@@ -978,7 +1005,7 @@ router.get(
 
         await botCache.updateBot(bot._id);
 
-        req.app.db.collection("audit").insertOne({
+        global.db.collection("audit").insertOne({
             type: "UPVOTE_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -1008,13 +1035,13 @@ router.get(
     "/:id/downvote",
     variables,
     permission.auth,
-    async (req, res, next) => {
-        let bot = await req.app.db
+    async (req: Request, res: Response, next) => {
+        let bot = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot) {
-            bot = await req.app.db
+            bot = await global.db
                 .collection("bots")
                 .findOne({ vanityUrl: req.params.id });
 
@@ -1053,7 +1080,7 @@ router.get(
             downVotes.push(req.user.id);
         }
 
-        await req.app.db.collection("bots").updateOne(
+        await global.db.collection("bots").updateOne(
             { _id: bot._id },
             {
                 $set: {
@@ -1067,7 +1094,7 @@ router.get(
 
         await botCache.updateBot(bot._id);
 
-        req.app.db.collection("audit").insertOne({
+        global.db.collection("audit").insertOne({
             type: "DOWNVOTE_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -1097,13 +1124,13 @@ router.get(
     "/:id/delete",
     variables,
     permission.auth,
-    async (req, res, next) => {
-        let bot = await req.app.db
+    async (req: Request, res: Response, next) => {
+        let bot = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot) {
-            bot = await req.app.db
+            bot = await global.db
                 .collection("bots")
                 .findOne({ vanityUrl: req.params.id });
 
@@ -1126,8 +1153,7 @@ router.get(
                 req: req
             });
 
-        discord.bot.createMessage(
-            settings.channels.webLog,
+        discord.logsChannel.send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1137,9 +1163,9 @@ router.get(
             })\``
         );
 
-        await req.app.db.collection("bots").deleteOne({ _id: req.params.id });
+        await global.db.collection("bots").deleteOne({ _id: req.params.id });
 
-        await req.app.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "DELETE_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -1157,8 +1183,8 @@ router.get(
     "/:id/resubmit",
     variables,
     permission.auth,
-    async (req, res, next) => {
-        const botExists = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const botExists = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
         if (!botExists)
@@ -1215,11 +1241,11 @@ router.post(
     "/:id/resubmit",
     variables,
     permission.auth,
-    async (req, res, next) => {
+    async (req: Request, res: Response, next) => {
         let error = false;
         let errors = [];
 
-        const botExists = await req.app.db
+        const botExists: dbBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1316,7 +1342,7 @@ router.post(
         })
             .then(async (fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
-                await req.app.db.collection("bots").updateOne(
+                await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
@@ -1344,7 +1370,7 @@ router.post(
                     }
                 );
 
-                await req.app.db.collection("audit").insertOne({
+                await global.db.collection("audit").insertOne({
                     type: "RESUBMIT_BOT",
                     executor: req.user.id,
                     target: req.params.id,
@@ -1414,20 +1440,17 @@ router.post(
                 await botCache.updateBot(req.params.id);
             })
             .catch((_) => {
-                return res
-                    .status(400)
-                    .render("status", {
-                        title: res.__("common.error"),
-                        subtitle: res.__("common.error.dapiFail"),
-                        status: 400,
-                        type: "Error",
-                        req
-                    });
+                return res.status(400).render("status", {
+                    title: res.__("common.error"),
+                    subtitle: res.__("common.error.dapiFail"),
+                    status: 400,
+                    type: "Error",
+                    req
+                });
             });
 
-        discord.bot
-            .createMessage(
-                settings.channels.webLog,
+        discord.logsChannel
+            .send(
                 `${settings.emoji.resubmitBot} **${functions.escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${
@@ -1450,8 +1473,8 @@ router.get(
     variables,
     permission.auth,
     permission.mod,
-    async (req, res, next) => {
-        const bot = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const bot: dbBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1473,7 +1496,7 @@ router.get(
                 type: "Error"
             });
 
-        await req.app.db.collection("bots").updateOne(
+        await global.db.collection("bots").updateOne(
             { _id: req.params.id },
             {
                 $set: {
@@ -1482,21 +1505,20 @@ router.get(
             }
         );
 
-        await req.app.db.collection("users").updateOne(
+        await global.db.collection("users").updateOne(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledBots.allTime.total": (req.user.db.staffTracking.handledBots.allTime.total += 1),
-                    "staffTracking.handledBots.allTime.approved": (req.user.db.staffTracking.handledBots.allTime.approved += 1),
-                    "staffTracking.handledBots.thisWeek.total": (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
-                    "staffTracking.handledBots.thisWeek.approved": (req.user.db.staffTracking.handledBots.thisWeek.approved += 1)
+                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
+                    "staffTracking.handledBots.allTime.approved": req.user.db.staffTracking.handledBots.allTime.approved += 1,
+                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+                    "staffTracking.handledBots.thisWeek.approved": req.user.db.staffTracking.handledBots.thisWeek.approved += 1
                 }
             }
         );
 
-        discord.bot
-            .createMessage(
-                settings.channels.webLog,
+        discord.logsChannel
+            .send(
                 `${settings.emoji.check} **${functions.escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${
@@ -1511,11 +1533,10 @@ router.get(
                 console.error(e);
             });
 
-        const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-        if (dmChannel)
-            discord.bot
-                .createMessage(
-                    dmChannel.id,
+        const owner = discord.bot.users.cache.get(bot.owner.id);
+        if (owner)
+            owner
+                .send(
                     `${
                         settings.emoji.check
                     } **|** Your bot **${functions.escapeFormatting(
@@ -1526,20 +1547,20 @@ router.get(
                     console.error(e);
                 });
 
-        const mainGuild = await discord.bot.guilds.get(settings.guild.main);
-        const staffGuild = await discord.bot.guilds.get(settings.guild.staff);
+        const mainGuild = await discord.bot.guilds.cache.get(
+            settings.guild.main
+        );
+        const staffGuild = await discord.bot.guilds.cache.get(
+            settings.guild.staff
+        );
 
-        const mainGuildOwner = mainGuild.members.get(bot.owner.id);
+        const mainGuildOwner = mainGuild.members.cache.get(bot.owner.id);
         if (mainGuildOwner)
-            mainGuildOwner
-                .addRole(
-                    settings.roles.developer,
-                    "User's bot was just approved."
-                )
+            mainGuildOwner.roles
+                .add(settings.roles.developer, "User's bot was just approved.")
                 .catch((e) => {
                     console.error(e);
-                    discord.bot.createMessage(
-                        settings.channels.alerts,
+                    discord.alertsChannel.send(
                         `${settings.emoji.error} Failed giving <@${bot.owner.id}> \`${bot.owner.id}\` the role **Bot Developer** upon one of their bots being approved.`
                     );
                 });
@@ -1550,25 +1571,23 @@ router.get(
                 .addRole(settings.roles.bot, "Bot was approved on the website.")
                 .catch((e) => {
                     console.error(e);
-                    discord.bot.createMessage(
-                        settings.channels.alerts,
+                    discord.alertsChannel.send(
                         `${settings.emoji.error} Failed giving <@${bot._id}> \`${bot._id}\` the role **Bot** upon being approved on the website.`
                     );
                 });
 
-        const botStaffServer = staffGuild.members.get(bot._id);
+        const botStaffServer = staffGuild.members.cache.get(bot._id);
         if (botStaffServer)
             botStaffServer
                 .kick("Bot was approved on the website.")
                 .catch((e) => {
                     console.error(e);
-                    discord.bot.createMessage(
-                        settings.channels.alerts,
+                    discord.alertsChannel.send(
                         `${settings.emoji.error} Failed kicking <@${bot._id}> \`${bot._id}\` from the Staff Server on approval.`
                     );
                 });
 
-        req.app.db.collection("audit").insertOne({
+        global.db.collection("audit").insertOne({
             type: "APPROVE_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -1587,8 +1606,8 @@ router.get(
     variables,
     permission.auth,
     permission.assistant,
-    async (req, res, next) => {
-        const bot = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const bot: dbBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1610,24 +1629,25 @@ router.get(
                 type: "Error"
             });
 
-        const mainGuild = await discord.bot.guilds.get(settings.guild.main);
-        const botMember = await mainGuild.members.get(bot._id);
+        const mainGuild = await discord.bot.guilds.cache.get(
+            settings.guild.main
+        );
+        const botMember = await mainGuild.members.cache.get(bot._id);
 
         if (botMember)
-            botMember
-                .addRole(
+            botMember.roles
+                .add(
                     settings.roles.premiumBot,
                     "Bot was given premium on the website."
                 )
                 .catch((e) => {
                     console.error(e);
-                    discord.bot.createMessage(
-                        settings.channels.alerts,
-                        `${settings.emoji.error} Failed giving <@${member.id}> \`${member.id}\` the role **Premium Bot** upon being given premium on the website.`
+                    discord.alertsChannel.send(
+                        `${settings.emoji.error} Failed giving <@${botMember.id}> \`${botMember.id}\` the role **Premium Bot** upon being given premium on the website.`
                     );
                 });
 
-        await req.app.db.collection("bots").updateOne(
+        await global.db.collection("bots").updateOne(
             { _id: req.params.id },
             {
                 $set: {
@@ -1636,7 +1656,7 @@ router.get(
             }
         );
 
-        await req.app.db.collection("users").updateOne(
+        await global.db.collection("users").updateOne(
             { _id: bot.owner.id },
             {
                 $set: {
@@ -1647,7 +1667,7 @@ router.get(
 
         await botCache.updateBot(req.params.id);
 
-        req.app.db.collection("audit").insertOne({
+        global.db.collection("audit").insertOne({
             type: "PREMIUM_BOT_GIVE",
             executor: req.user.id,
             target: req.params.id,
@@ -1664,8 +1684,8 @@ router.get(
     variables,
     permission.auth,
     permission.assistant,
-    async (req, res, next) => {
-        const bot = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const bot: dbBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1678,7 +1698,7 @@ router.get(
                 type: "Error"
             });
 
-        if (bot.status.verified === false)
+        if (bot.status.premium === false)
             return res.status(400).render("status", {
                 title: res.__("common.error"),
                 status: 400,
@@ -1687,7 +1707,7 @@ router.get(
                 type: "Error"
             });
 
-        req.app.db.collection("bots").updateOne(
+        global.db.collection("bots").updateOne(
             { _id: req.params.id },
             {
                 $set: {
@@ -1698,7 +1718,7 @@ router.get(
 
         await botCache.updateBot(req.params.id);
 
-        req.app.db.collection("audit").insertOne({
+        global.db.collection("audit").insertOne({
             type: "PREMIUM_BOT_TAKE",
             executor: req.user.id,
             target: req.params.id,
@@ -1715,8 +1735,8 @@ router.get(
     variables,
     permission.auth,
     permission.mod,
-    async (req, res, next) => {
-        const bot = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const bot: dbBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1760,8 +1780,8 @@ router.post(
     variables,
     permission.auth,
     permission.mod,
-    async (req, res, next) => {
-        const bot = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const bot: dbBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1783,7 +1803,7 @@ router.post(
                 type: "Error"
             });
 
-        await req.app.db.collection("bots").updateOne(
+        await global.db.collection("bots").updateOne(
             { _id: req.params.id },
             {
                 $set: {
@@ -1793,19 +1813,19 @@ router.post(
             }
         );
 
-        await req.app.db.collection("users").updateOne(
+        await global.db.collection("users").updateOne(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledBots.allTime.total": (req.user.db.staffTracking.handledBots.allTime.total += 1),
-                    "staffTracking.handledBots.allTime.declined": (req.user.db.staffTracking.handledBots.allTime.declined += 1),
-                    "staffTracking.handledBots.thisWeek.total": (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
-                    "staffTracking.handledBots.thisWeek.declined": (req.user.db.staffTracking.handledBots.thisWeek.declined += 1)
+                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
+                    "staffTracking.handledBots.allTime.declined": req.user.db.staffTracking.handledBots.allTime.declined += 1,
+                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+                    "staffTracking.handledBots.thisWeek.declined": req.user.db.staffTracking.handledBots.thisWeek.declined += 1
                 }
             }
         );
 
-        await req.app.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "DECLINE_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -1815,8 +1835,7 @@ router.post(
 
         await botCache.deleteBot(req.params.id);
 
-        discord.bot.createMessage(
-            settings.channels.webLog,
+        discord.logsChannel.send(
             `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1826,8 +1845,7 @@ router.post(
             })\`\n**Reason:** \`${req.body.reason}\``
         );
 
-        const guild = await discord.bot.guilds.get(settings.guild.staff);
-        const member = guild.members.get(req.body.id);
+        const member = discord.staffGuild.members.cache.get(req.body.id);
 
         if (member) {
             await member.kick("Bot's listing has been declined.").catch((e) => {
@@ -1835,11 +1853,10 @@ router.post(
             });
         }
 
-        const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-        if (dmChannel)
-            discord.bot
-                .createMessage(
-                    dmChannel.id,
+        const owner = discord.bot.users.cache.get(bot.owner.id);
+        if (owner)
+            owner
+                .send(
                     `${
                         settings.emoji.cross
                     } **|** Your bot **${functions.escapeFormatting(
@@ -1861,8 +1878,8 @@ router.get(
     variables,
     permission.auth,
     permission.mod,
-    async (req, res, next) => {
-        const bot = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const bot: dbBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1900,8 +1917,8 @@ router.post(
     variables,
     permission.auth,
     permission.mod,
-    async (req, res, next) => {
-        const bot = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const bot: dbBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1923,7 +1940,7 @@ router.post(
                 type: "Error"
             });
 
-        await req.app.db.collection("bots").updateOne(
+        await global.db.collection("bots").updateOne(
             { _id: req.params.id },
             {
                 $set: {
@@ -1933,19 +1950,19 @@ router.post(
             }
         );
 
-        await req.app.db.collection("users").updateOne(
+        await global.db.collection("users").updateOne(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledBots.allTime.total": (req.user.db.staffTracking.handledBots.allTime.total += 1),
-                    "staffTracking.handledBots.allTime.remove": (req.user.db.staffTracking.handledBots.allTime.remove += 1),
-                    "staffTracking.handledBots.thisWeek.total": (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
-                    "staffTracking.handledBots.thisWeek.remove": (req.user.db.staffTracking.handledBots.thisWeek.remove += 1)
+                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
+                    "staffTracking.handledBots.allTime.remove": req.user.db.staffTracking.handledBots.allTime.remove += 1,
+                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+                    "staffTracking.handledBots.thisWeek.remove": req.user.db.staffTracking.handledBots.thisWeek.remove += 1
                 }
             }
         );
 
-        await req.app.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "REMOVE_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -1955,8 +1972,7 @@ router.post(
 
         await botCache.deleteBot(req.params.id);
 
-        discord.bot.createMessage(
-            settings.channels.webLog,
+        discord.logsChannel.send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1966,8 +1982,7 @@ router.post(
             })\`\n**Reason:** \`${req.body.reason}\``
         );
 
-        const guild = await discord.bot.guilds.get(settings.guild.main);
-        const member = guild.members.get(req.body.id);
+        const member = discord.mainGuild.members.cache.get(req.body.id);
 
         if (member) {
             await member
@@ -1977,11 +1992,10 @@ router.post(
                 });
         }
 
-        const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-        if (dmChannel)
-            discord.bot
-                .createMessage(
-                    dmChannel.id,
+        const owner = discord.bot.users.cache.get(bot.owner.id);
+        if (owner)
+            owner
+                .send(
                     `${
                         settings.emoji.botDeleted
                     } **|** Your bot **${functions.escapeFormatting(
@@ -1998,4 +2012,4 @@ router.post(
     }
 );
 
-module.exports = router;
+export = router;

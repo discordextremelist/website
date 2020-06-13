@@ -17,29 +17,30 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const express = require("express");
+import * as express from "express";
+import { Request, Response } from "express";
+
+import * as discord from "../Util/Services/discord";
+import * as banned from "../Util/Services/banned";
+import { variables } from "../Util/Function/variables";
+import * as permission from "../Util/Function/permissions";
+import * as functions from "../Util/Function/main";
+import * as botCache from "../Util/Services/botCaching";
+import * as serverCache from "../Util/Services/serverCaching";
+import * as templateCache from "../Util/Services/templateCaching";
+import * as userCache from "../Util/Services/userCaching";
+
 const router = express.Router();
 
-const discord = require("../Util/Services/discord.js");
-const banned = require("../Util/Services/banned.js");
-const variables = require("../Util/Function/variables.js");
-const permission = require("../Util/Function/permissions.js");
-const functions = require("../Util/Function/main.js");
-
-const botCache = require("../Util/Services/botCaching.js");
-const serverCache = require("../Util/Services/serverCaching.js");
-const templateCache = require("../Util/Services/templateCaching.js");
-const userCache = require("../Util/Services/userCaching.js");
-
-router.get("/:id", variables, async (req, res, next) => {
+router.get("/:id", variables, async (req: Request, res: Response, next) => {
     if (req.params.id === "@me") {
         if (!req.user) return res.redirect("/auth/login");
         req.params.id = req.user.id;
     }
 
-    let dbUser = await userCache.getUser(req.params.id);
+    let dbUser: dbUser | undefined = await userCache.getUser(req.params.id);
     if (!dbUser) {
-        dbUser = await req.app.db
+        dbUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
         if (!dbUser)
@@ -56,13 +57,11 @@ router.get("/:id", variables, async (req, res, next) => {
 
     const bots = await botCache.getAllBots();
 
-    const botsOwner = [];
-    const botsEditor = [];
-    const archivedBots = [];
+    const botsOwner: dbBot[] = [];
+    const botsEditor: dbBot[] = [];
+    const archivedBots: dbBot[] = [];
 
-    for (var n = 0; n < bots.length; ++n) {
-        const bot = bots[n];
-
+    for (const bot of bots) {
         if (bot.status.archived === true && bot.owner.id === req.params.id) {
             archivedBots.push(bot);
         } else if (bot.owner.id === req.params.id) {
@@ -74,11 +73,9 @@ router.get("/:id", variables, async (req, res, next) => {
 
     const servers = await serverCache.getAllServers();
 
-    const serversOwner = [];
+    const serversOwner: dbServer[] = [];
 
-    for (var n = 0; n < servers.length; ++n) {
-        const server = servers[n];
-
+    for (const server of servers) {
         if (req.params.id === server.owner.id) {
             serversOwner.push(server);
         }
@@ -86,11 +83,9 @@ router.get("/:id", variables, async (req, res, next) => {
 
     const templates = await templateCache.getAllTemplates();
 
-    const templatesOwner = [];
+    const templatesOwner: dbTemplate[] = [];
 
-    for (var n = 0; n < templates.length; ++n) {
-        const template = templates[n];
-
+    for (const template of templates) {
         if (req.params.id === template.owner.id) {
             templatesOwner.push(template);
         }
@@ -116,8 +111,8 @@ router.get(
     variables,
     permission.auth,
     permission.assistant,
-    async (req, res, next) => {
-        const targetUser = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const targetUser: dbUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -165,8 +160,8 @@ router.post(
     variables,
     permission.auth,
     permission.assistant,
-    async (req, res, next) => {
-        const targetUser = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const targetUser: dbUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -234,7 +229,7 @@ router.post(
             }
         }
 
-        await req.app.db.collection("users").updateOne(
+        await global.db.collection("users").updateOne(
             { _id: targetUser._id },
             {
                 $set: {
@@ -253,10 +248,10 @@ router.post(
 
         await userCache.updateUser(targetUser._id);
 
-        await req.app.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "MODIFY_RANK",
             executor: req.user.id,
-            target: targetUser.id,
+            target: targetUser._id,
             date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
@@ -289,7 +284,7 @@ router.post(
     }
 );
 
-router.get("/profile/:id", (req, res, next) => {
+router.get("/profile/:id", (req: Request, res: Response, next) => {
     res.redirect("/" + req.params.id);
 });
 
@@ -297,12 +292,12 @@ router.get(
     "/profile/:id/edit",
     variables,
     permission.auth,
-    async (req, res, next) => {
+    async (req: Request, res: Response, next) => {
         if (req.params.id === "@me") {
             req.params.id = req.user.id;
         }
 
-        const userProfile = await req.app.db
+        const userProfile: dbUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
@@ -347,12 +342,12 @@ router.post(
     "/profile/:id/edit",
     variables,
     permission.auth,
-    async (req, res, next) => {
+    async (req: Request, res: Response, next) => {
         if (req.params.id === "@me") {
             req.params.id = req.user.id;
         }
 
-        const userProfile = await req.app.db
+        const userProfile: dbUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
@@ -375,14 +370,14 @@ router.post(
                 type: "Error"
             });
 
-        let customCss;
+        let customCss: string;
         if (userProfile.rank.premium) {
             customCss = req.body.profileCss;
         } else {
             customCss = "";
         }
 
-        await req.app.db.collection("users").updateOne(
+        await global.db.collection("users").updateOne(
             { _id: req.user.id },
             {
                 $set: {
@@ -402,7 +397,7 @@ router.post(
             }
         );
 
-        await req.app.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "MODIFY_PROFILE",
             executor: req.user.id,
             target: userProfile._id,
@@ -445,7 +440,7 @@ router.get(
     "/game/snake",
     variables,
     permission.auth,
-    async (req, res, next) => {
+    async (req: Request, res: Response, next) => {
         res.render("templates/users/snake", {
             title: res.__("common.nav.me.playSnake"),
             subtitle: res.__("common.nav.me.playSnake.subtitle"),
@@ -458,8 +453,8 @@ router.get(
     "/profile/game/snakes",
     variables,
     permission.auth,
-    async (req, res, next) => {
-        const user = await req.app.db
+    async (req: Request, res: Response, next) => {
+        const user: dbUser = await global.db
             .collection("users")
             .findOne({ _id: req.user.id });
 
@@ -475,7 +470,7 @@ router.post(
     "/profile/game/snakes",
     variables,
     permission.auth,
-    async (req, res, next) => {
+    async (req: Request, res: Response, next) => {
         if (req.body.score <= req.user.db.game.snakes.maxScore)
             return res.status(202).json({
                 error: false,
@@ -484,12 +479,12 @@ router.post(
                     "Posted score is lower or equal to the user's current high score - no changes were made"
             });
 
-        const user = await req.app.db
+        const user: dbUser = await global.db
             .collection("users")
             .findOne({ _id: req.user.id });
         const score = user.game.snakes.maxScore + 1;
 
-        await req.app.db.collection("users").updateOne(
+        await global.db.collection("users").updateOne(
             { _id: req.user.id },
             {
                 $set: {
@@ -502,7 +497,7 @@ router.post(
             }
         );
 
-        await req.app.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "GAME_HIGHSCORE_UPDATE",
             executor: req.user.id,
             target: req.user.id,
@@ -540,7 +535,7 @@ router.get(
     "/account/preferences",
     variables,
     permission.auth,
-    async (req, res, next) => {
+    async (req: Request, res: Response, next) => {
         res.locals.premidPageInfo = res.__("premid.preferences");
 
         res.render("templates/users/accountPreferences", {
@@ -555,8 +550,8 @@ router.post(
     "/account/preferences",
     variables,
     permission.auth,
-    async (req, res, next) => {
-        let gamePreferences, experiments;
+    async (req: Request, res: Response, next) => {
+        let gamePreferences: boolean, experiments: boolean;
 
         if (req.body.noGames === "on") {
             gamePreferences = false;
@@ -571,9 +566,8 @@ router.post(
         }
 
         const foreground = functions.getForeground(req.body.iconColour);
-        console.log(req.body.customCss);
 
-        await req.app.db.collection("users").updateOne(
+        await global.db.collection("users").updateOne(
             { _id: req.user.id },
             {
                 $set: {
@@ -588,7 +582,7 @@ router.post(
             }
         );
 
-        await req.app.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "MODIFY_PREFERENCES",
             executor: req.user.id,
             target: req.user.id,
@@ -627,8 +621,8 @@ router.get(
     "/account/preferences/reset",
     variables,
     permission.auth,
-    async (req, res, next) => {
-        await req.app.db.collection("users").updateOne(
+    async (req: Request, res: Response, next) => {
+        await global.db.collection("users").updateOne(
             { _id: req.user.id },
             {
                 $set: {

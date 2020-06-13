@@ -17,49 +17,43 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const ioRedis = require("ioredis");
+import * as app from "../../app";
+const prefix = "servers";
 
-const app = require("../../../app.js");
-const settings = require("../../../settings.json");
-const prefix = "users";
-
-async function getUser(id) {
-    const user = await global.redis.hget(prefix, id);
-    return JSON.parse(user);
+export async function getServer(id: string): Promise<dbServer> {
+    const server = await global.redis.hget(prefix, id);
+    return JSON.parse(server);
 }
 
-async function getAllUsers() {
-    const users = await global.redis.hvals(prefix);
-    return users.map(JSON.parse);
+export async function getAllServers(): Promise<dbServer[]> {
+    const servers = await global.redis.hvals(prefix);
+    return servers.map(JSON.parse);
 }
 
-async function updateUser(id) {
-    const data = await app.db.collection("users").findOne({ _id: id });
+export async function updateServer(id: string) {
+    const data: dbServer = await global.db
+        .collection("servers")
+        .findOne({ _id: id });
     if (!data) return;
     await global.redis.hmset(prefix, id, JSON.stringify(data));
 }
 
-async function uploadUsers() {
-    const usersDB = await app.db.collection("users").find().toArray();
-    if (usersDB.length < 1) return;
+export async function uploadServers() {
+    const servers: dbServer[] = await global.db
+        .collection("servers")
+        .find()
+        .toArray();
+    if (servers.length < 1) return;
     await global.redis.hmset(
         prefix,
-        ...usersDB.map((user) => [user._id, JSON.stringify(user)])
+        ...servers.map((s: dbServer) => [s._id, JSON.stringify(s)])
     );
 }
 
-async function deleteUser(id) {
+export async function deleteServer(id: string) {
     await global.redis.hdel(prefix, id);
 }
 
 setInterval(async () => {
-    await uploadUsers();
+    await uploadServers();
 }, 900000);
-
-module.exports = {
-    uploadUsers,
-    updateUser,
-    getUser,
-    getAllUsers,
-    deleteUser
-};

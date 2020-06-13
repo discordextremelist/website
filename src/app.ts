@@ -17,21 +17,29 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const express = require("express")
+import * as express from "express";
+import { Request, Response } from "express";
 
-const path = require("path");
+import * as path from "path";
+import * as cookieParser from "cookie-parser";
+import cookieSession = require("cookie-session");
+import * as logger from "morgan";
+import * as device from "express-device";
+import * as passport from "passport";
+import * as languageHandler from "./Util/Middleware/languageHandler";
 
 require("dotenv").config()
-const settings = require("./settings.json");
+const i18n = require("i18n");
+import * as settings from "../settings.json";
 
 const app = express();
 
-dbReady = false;
+let dbReady: Boolean = false;
 
 app.set("views", path.join(__dirname, "src/Assets/Views"));
 app.use(express.static(path.join(__dirname, "src/Assets/Public")));
 
-app.get("*", (req, res, next) => {
+app.get("*", (req: Request, res: Response, next: () => void) => {
     if (
         dbReady === false &&
         !req.url.includes(".css") &&
@@ -45,15 +53,15 @@ app.get("*", (req, res, next) => {
 
 console.time("Mongo TTL");
 console.log("Mongo: Connection opening...");
-const { MongoClient } = require("mongodb");
-let db;
+import { MongoClient } from "mongodb";
+
 new Promise((resolve, reject) => {
     MongoClient.connect(
         process.env.MONGO_URI,
         { useUnifiedTopology: true, useNewUrlParser: true }, // useNewUrlParser is set to true because sometimes MongoDB is a cunt - Ice, I love this comment - Cairo
         (error, mongo) => {
             if (error) return reject(error);
-            db = mongo.db(process.env.MONGO_DB);
+            global.db = mongo.db(process.env.MONGO_DB);
             console.log(
                 "Mongo: Connection established! Released deadlock as a part of startup..."
             );
@@ -64,10 +72,9 @@ new Promise((resolve, reject) => {
 })
     .then(async () => {
         dbReady = true;
-        app.db = db;
 
         for (const lib of require(__dirname+"/src/Assets/libraries.json")) {
-            await db.collection("libraries").updateOne({ _id: lib.name }, {
+            await global.db.collection("libraries").updateOne({ _id: lib.name }, {
                 _id: lib.name,
                 language: lib.language,
                 links: {
@@ -77,14 +84,14 @@ new Promise((resolve, reject) => {
             }, { upsert: true }).then(() => true).catch(() => false);
         }
         if (
-            !(await db.collection("webOptions").findOne({ _id: "ddosMode" })) ||
-            !(await db.collection("webOptions").findOne({ _id: "announcement" }))
+            !(await global.db.collection("webOptions").findOne({ _id: "ddosMode" })) ||
+            !(await global.db.collection("webOptions").findOne({ _id: "announcement" }))
         ) {
-            await db.collection("webOptions").insertOne({
+            await global.db.collection("webOptions").insertOne({
                 _id: "ddosMode",
                 active: false
             }).then(() => true).catch(() => false);
-            await db.collection("webOptions").insertOne({
+            await global.db.collection("webOptions").insertOne({
                 _id: "announcement",
                 active: false,
                 message: "",
@@ -93,17 +100,17 @@ new Promise((resolve, reject) => {
             }).then(() => true).catch(() => false);
         }
 
-        const botCache = require("./src/Util/Services/botCaching.js");
-        const serverCache = require("./src/Util/Services/serverCaching.js");
-        const templateCache = require("./src/Util/Services/templateCaching.js");
-        const userCache = require("./src/Util/Services/userCaching.js");
-        const libCache = require("./src/Util/Services/libCaching.js");
-        const announcementCache = require("./src/Util/Services/announcementCaching.js");
-        const featuredCache = require("./src/Util/Services/featuring.js");
-        const ddosMode = require("./src/Util/Services/ddosMode.js");
-        const banned = require("./src/Util/Services/banned.js");
-        const discord = require("./src/Util/Services/discord.js");
-        const botStatsUpdate = require("./src/Util/Services/botStatsUpdate.js");
+        const botCache = require("./Util/Services/botCaching.js");
+        const serverCache = require("./Util/Services/serverCaching.js");
+        const templateCache = require("./Util/Services/templateCaching.js");
+        const userCache = require("./Util/Services/userCaching.js");
+        const libCache = require("./Util/Services/libCaching.js");
+        const announcementCache = require("./Util/Services/announcementCaching.js");
+        const featuredCache = require("./Util/Services/featuring.js");
+        const ddosMode = require("./Util/Services/ddosMode.js");
+        const banned = require("./Util/Services/banned.js");
+        const discord = require("./Util/Services/discord.js");
+        const botStatsUpdate = require("./Util/Services/botStatsUpdate.js");
 
         global.redis = new (require("ioredis"))({
             port: process.env.REDIS_PORT,
@@ -137,20 +144,14 @@ new Promise((resolve, reject) => {
                 setTimeout(discordBotUndefined, 250);
             }
         })();
+
         console.timeEnd("Redis Cache");
+
         await botStatsUpdate();
+
         setTimeout(async() => {
             await discord.postMetric();
         }, 10000)
-
-        const cookieParser = require("cookie-parser");
-        const cookieSession = require("cookie-session");
-        const logger = require("morgan");
-        const device = require("express-device");
-        const i18n = require("i18n");
-        const passport = require("passport");
-        const languageHandler = require("./src/Util/Middleware/languageHandler.js");
-        const sitemap = require("express-sitemap")();
 
         app.set("view engine", "ejs");
 
@@ -158,7 +159,7 @@ new Promise((resolve, reject) => {
             logger(
                 ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
                 {
-                    skip: (r) => r.url === "/profile/game/snakes"
+                    skip: (r: { url: string; }) => r.url === "/profile/game/snakes"
                 }
             )
         );
@@ -191,26 +192,23 @@ new Promise((resolve, reject) => {
 
         app.use(i18n.init);
 
-        app.use("/auth", require("./src/Routes/authentication.js"));
+        app.use("/auth", require("./Routes/authentication.js"));
 
         app.use(["/:lang", "/"], languageHandler.homeHandler);
         app.use("/:lang/*", languageHandler.globalHandler);
 
-        app.use("/:lang", require("./src/Routes/index.js"));
-        app.use("/:lang/search", require("./src/Routes/search.js"));
-        app.use("/:lang/bots", require("./src/Routes/bots.js"));
-        app.use("/:lang/servers", require("./src/Routes/servers.js"));
-        app.use("/:lang/templates", require("./src/Routes/templates.js"));
-        app.use("/:lang/users", require("./src/Routes/users.js"));
-        app.use("/:lang/staff", require("./src/Routes/staff.js"));
-        app.use("/:lang/docs", require("./src/Routes/docs.js"));
-        /* app.use("/:lang/amp", require("./src/Routes/amp.js"));
-           todo - advaith */
+        app.use("/:lang", require("./Routes/index.js"));
+        app.use("/:lang/search", require("./Routes/search.js"));
+        app.use("/:lang/bots", require("./Routes/bots.js"));
+        app.use("/:lang/servers", require("./Routes/servers.js"));
+        app.use("/:lang/templates", require("./Routes/templates.js"));
+        app.use("/:lang/users", require("./Routes/users.js"));
+        app.use("/:lang/staff", require("./Routes/staff.js"));
+        app.use("/:lang/docs", require("./Routes/docs.js"));
 
-        app.use("*", require("./src/Util/Function/variables.js"));
+        app.use("*", require("./Util/Function/variables.js"));
 
-        app.use((err, req, res, next) => {
-            console.log(err);
+        app.use((err: { message: string; status?: number; }, req: Request, res: Response, next: () => void) => {
             res.locals.message = err.message;
             res.locals.error = err;
 
@@ -232,6 +230,10 @@ new Promise((resolve, reject) => {
 
             res.status(err.status || 500);
             res.render("error");
+
+            app.listen(settings.website.port.value || 3000, () => {
+                console.log(`Website: Ready on port ${settings.website.port.value || 3000}`);
+            });
         });
     })
     .catch((e) => {
@@ -243,4 +245,4 @@ if (process.env.DEL_ENV === "CI") setTimeout(() => {
     process.exit(0);
 }, 120000);
 
-module.exports = app;
+export = app;

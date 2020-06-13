@@ -98,7 +98,7 @@
             <% if (templatesData.length === 0) { %>
                 <h2 class="is-size-3"><%= __("common.error.fetchFail.templates") %></h2>
             <% } else { %>
-                <%- templateChunk.map(chunk => `${chunk.map(template => include("../../partials/cards/templateCard.ejs", { template, search: false })).join("")}`).join("") %>
+                <%- templateChunk.map(chunk => `${chunk.map(template => include("../../partials/cards/templateCard.ejs", { template, search: false, profile: false })).join("")}`).join("") %>
             <% } %>
         </div>
 

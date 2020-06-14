@@ -2,6 +2,8 @@
 @import "variables.scss";
 @import "ext.scss";
 
+$rtl: true;
+
 @import "../../node_modules/bulma/bulma.sass";
 @import "../../node_modules/bulma-extensions/bulma-checkradio/src/sass/index.sass";
 @import "../../node_modules/bulma-extensions/bulma-switch/src/sass/index.sass";

@@ -36,17 +36,16 @@
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.code") %> <span class="has-text-danger">*</span></label>
                     <div class="control">
-                        <div class="field has-addons">
-                            <p class="control" aria-hidden="true">
-                                <a class="button is-rounded is-static">
-                                    https://discord.gg/
-                                </a>
-                            </p>
-                            <p class="control" required>
-                                <input class="input is-rounded" type="text" name="invite" placeholder="WeCer3J" onpaste="setTimeout(() => this.value = this.value.replace('https:/\/discord.gg/', ''), 0)">
-                            </p>
-                        </div>
-                    </p>
+                    <div class="field has-addons <% if (htmlDir === "rtl") { %>has-addons-right<% } %>" style="direction: ltr;">
+                        <p class="control" aria-hidden="true">
+                            <a class="button is-rounded is-static">
+                                https://discord.gg/
+                            </a>
+                        </p>
+                        <p class="control" required>
+                            <input class="input is-rounded" type="text" name="invite" placeholder="WeCer3J" onpaste="setTimeout(() => this.value = this.value.replace('https:/\/discord.gg/', ''), 0)">
+                        </p>
+                    </div>
                 </div>
                 <br />
                 <label class="label has-text-default"><%= __("common.tags") %></label>

@@ -44,7 +44,7 @@
                 <div class="field">
                     <label class="label has-text-blurple"><%= __("page.servers.code") %> <span class="has-text-danger">*</span></label>
                     <div class="control">
-                        <div class="field has-addons">
+                        <div class="field has-addons <% if (htmlDir === "rtl") { %>has-addons-right<% } %>" style="direction: ltr;">
                             <p class="control" aria-hidden="true">
                                 <a class="button is-rounded is-static">
                                     https://discord.gg/

@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 interface announcement {
-    id?: string,
+    id?: string;
     active: boolean;
     message: string;
     colour: string;
@@ -26,12 +26,12 @@ interface announcement {
 }
 
 interface ddosMode {
-    id?: string,
+    id?: string;
     active: boolean;
     requests: number;
 }
 
 interface botStats {
-    id?: string,
+    id?: string;
     lastUpdate: number;
 }

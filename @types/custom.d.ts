@@ -19,18 +19,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { BrowserDetectInfo } from "browser-detect/dist/types/browser-detect.interface";
 import { Db } from "mongodb";
-export {}
+export {};
 
 declare global {
-	namespace NodeJS {
-		interface Global {
-			redis: any;
-			announcement: announcement;
-			ddosMode: ddosMode;
-			libs: library[];
-			db: Db;
-		}
-	}
+    namespace NodeJS {
+        interface Global {
+            redis: any;
+            announcement: announcement;
+            ddosMode: ddosMode;
+            libs: library[];
+            db: Db;
+        }
+    }
 }
 
 declare module "sanitize-html" {
@@ -43,30 +43,33 @@ declare module "discord.js" {
     interface GuildMember {
         order?: number;
         rank?: string;
+        avatar?: string;
+        username?: string;
+        discriminator?: string;
     }
 }
 
 declare module "express-serve-static-core" {
     interface Request {
-        session: any,
-        user: any,
-        locale: any,
-        setLocale(language: string): any,
-        browser: BrowserDetectInfo,
+        session: any;
+        user: any;
+        locale: any;
+        setLocale(language: string): any;
+        browser: BrowserDetectInfo;
         device: {
-            type: string
-        },
+            type: string;
+        };
         del: {
-            version: string,
-            channel: string,
-            cssVersion: string,
-            node?: string
-        }
+            version: string;
+            channel: string;
+            cssVersion: string;
+            node?: string;
+        };
     }
 
     interface Response {
-        session: any,
-        user: any,
-        __: any
+        session: any;
+        user: any;
+        __: any;
     }
 }

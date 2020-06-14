@@ -58,6 +58,10 @@ function sortAll() {
                 : mod
                 ? "mod"
                 : null;
+            const user = discord.bot.users.cache.get(member.id);
+            member.avatar = user.avatar;
+            member.username = user.username;
+            member.discriminator = user.discriminator;
             staff.push(member);
         } else if (
             member.roles.cache.has(settings.roles.booster) ||
@@ -67,6 +71,10 @@ function sortAll() {
             const donator = member.roles.cache.has(settings.roles.donator);
             member.order = booster ? 1 : donator ? 2 : 0;
             member.rank = booster ? "booster" : "donator";
+            const user = discord.bot.users.cache.get(member.id);
+            member.avatar = user.avatar;
+            member.username = user.username;
+            member.discriminator = user.discriminator;
             donators.push(member);
         } else if (
             member.roles.cache.has(settings.roles.translators) ||
@@ -78,6 +86,10 @@ function sortAll() {
             const tester = member.roles.cache.has(settings.roles.testers);
             member.order = translator ? 1 : tester ? 2 : 0;
             member.rank = translator ? "translator" : "tester";
+            const user = discord.bot.users.cache.get(member.id);
+            member.avatar = user.avatar;
+            member.username = user.username;
+            member.discriminator = user.discriminator;
             contributors.push(member);
         }
     }

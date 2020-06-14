@@ -17,8 +17,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as app from "../../app";
-
 global.announcement = {
     active: false,
     message: "",
@@ -30,7 +28,7 @@ export function getAnnouncement() {
     return global.announcement;
 }
 
-export async function updateAnnouncement(announcement: announcement) {
+export async function updateAnnouncement(announcement) {
     await global.db.collection("webOptions").updateOne(
         { _id: "announcement" },
         {
@@ -52,10 +50,11 @@ export async function updateAnnouncement(announcement: announcement) {
 }
 
 export async function updateCache() {
-    const announcement: announcement = await global.db
+    const announcement = await global.db
         .collection("webOptions")
         .findOne({ _id: "announcement" });
-    if (announcement) global.announcement = announcement;
+
+    global.announcement = announcement;
     return;
 }
 

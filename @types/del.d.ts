@@ -19,10 +19,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 interface authUser {
     // todo - remember to add the rest of the shit here
-    user: dbUser;
+    user: delUser;
 }
 
-interface dbUser {
+interface delUser {
     _id: string;
     token: string;
     name: string;
@@ -111,7 +111,7 @@ interface dbUser {
     };
 }
 
-interface dbBot {
+interface delBot {
     _id: string;
     name: string;
     prefix: string;
@@ -157,7 +157,7 @@ interface dbBot {
     };
 }
 
-interface dbServer {
+interface delServer {
     _id: string;
     inviteCode: string;
     name: string;
@@ -178,7 +178,7 @@ interface dbServer {
     };
 }
 
-interface dbTemplate {
+interface delTemplate {
     _id: string;
     name: string;
     region: string;

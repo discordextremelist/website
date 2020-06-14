@@ -17,22 +17,22 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as express from "express";
+import express from "express";
 import { Request, Response } from "express";
 
-import * as bodyParser from "body-parser";
-import * as passport from "passport";
+import bodyParser from "body-parser";
+import passport from "passport";
+import { Strategy } from "passport-discord";
 
 import * as settings from "../../settings.json";
 
 const router = express.Router();
-const Strategy = require("passport-discord").Strategy;
 
 passport.use(
     new Strategy(
         {
-            clientID: process.env.DISCORD_ID,
-            clientSecret: process.env.DISCORD_SECRET,
+            clientID: settings.secrets.discord.id,
+            clientSecret: settings.secrets.discord.secret,
             callbackURL: settings.website.url + settings.website.callback,
             scope: settings.website.authScopes,
             authorizationURL: "https://discord.com/oauth2/authorize?prompt=none"
@@ -61,7 +61,7 @@ router.get(
     "/login/callback",
     passport.authenticate("discord", { failureRedirect: "/auth/login" }),
     async (req: Request, res: Response, next) => {
-        const user: dbUser = await global.db
+        const user: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.user.id });
 

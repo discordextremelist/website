@@ -1,8 +1,11 @@
 # Discord Extreme List version 5.x.x
 
-![CI](https://github.com/discordextremelist/website/workflows/CI/badge.svg?branch=master)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/discordextremelist/website)
+![GitHub last commit](https://img.shields.io/github/last-commit/discordextremelist/website)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/discordextremelist/website)
+![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/discordextremelist/website/v5.0.0-Alpha.5?include_prereleases)
 
-Licensing information viewable in LICENSE.md
+Licensing information viewable in the LICENSE file
 
 # Setup
 
@@ -10,16 +13,21 @@ Licensing information viewable in LICENSE.md
 
 ### Node.JS Framework
 
-We recommend that you use Node.JS v12.x.x LTS.
+**We recommend that you use Node.JS v12.x.x LTS.**
 
 | Node Version        | Supported          |
 | ------------------- | ------------------ |
+| < v10               | 🔴 No Support      |
 | v10 Maintenance LTS | 🟢 Full Support    |
 | v12 Active LTS      | 🟢 Full Support    |
 | v13 Previous (EOL)  | 🟡 Partial Support |     
 | v14 Current         | 🟢 Full Support    |  
 
-Any version not listed above is not supported.
+| Name                    | Definition                                                                                     |
+| ----------------------- | ---------------------------------------------------------------------------------------------- |
+| 🟢 Full Support         | We will provide version-specific security and bug patches.                                     |
+| 🟡 Partial Support      | We will provide version-specific security pacthes.                                             |
+| 🔴 No Support           | We will not provide any security or bug patches for this version, please use another version.  |     
 
 ### nodemon (Optional)
 
@@ -35,35 +43,26 @@ A MongoDB instance is required - it must match the configuration in the `setting
 
 ### Redis
 
-Redis must be installed for authentication/sessions to work - it must match the configuration in the `settings.json` file.
+Redis must be installed for caching to work, the site will not function correctly without it - it must match the configuration in the `settings.json` file.
 
 ### NPM Packages
-Install all of the dependencies by running `npm i`
+Install all of the dependencies by running `npm i` command.
 
 ## Configuration
 
 1. Rename `settings.example.json` to `settings.json` and fill it out appropriately, changing anything you need to change.
-2. Proceed to rename `.env.example` to `.env` and fill it out appropriately.
-3. (Optional) In addition to this you may wish to change some of the things in the `variables.js` file located in `src/Util/Function`.
+2. (Optional) In addition to this you may wish to change some of the things in the `variables.ts` file located in `src/Util/Function`.
 
 ## Running DEL
 
-### Development
+### Compiling
 
-#### With nodemon (Reccomended)
-
-Run the `npm run dev` command.
-
-#### Without nodemon
-
-Run the `npm run start` command.
+When you first start DEL or you make changes to any files in DEL's src folder you will need to compile using the `npm run compile` command.
 
 ### Production
 
-#### With PM2
+We reccomend when running DEL in production you use the `npm run pm2` command, however you can still run DEL using the standard `npm run start` command.
 
-Run the `npm run pm2` command.
+### Development/Testing
 
-#### Without PM2
-
-Run the `npm run start` command.
+We reccomend you run DEL using the `npm run start` command.

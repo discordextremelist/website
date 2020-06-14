@@ -17,31 +17,35 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as app from "../../app";
 const prefix = "bots";
 
-export async function getBot(id: string): Promise<dbBot> {
+export async function getBot(id: string): Promise<delBot> {
     const bot = await global.redis.hget(prefix, id);
     return JSON.parse(bot);
 }
 
-export async function getAllBots(): Promise<dbBot[]> {
+export async function getAllBots(): Promise<delBot[]> {
     const bots = await global.redis.hvals(prefix);
     return bots.map(JSON.parse);
 }
 
 export async function updateBot(id: string) {
-    const data: dbBot = await global.db.collection("bots").findOne({ _id: id });
+    const data: delBot = await global.db
+        .collection("bots")
+        .findOne({ _id: id });
     if (!data) return;
     await global.redis.hmset(prefix, id, JSON.stringify(data));
 }
 
 export async function uploadBots() {
-    const botsDB: dbBot[] = await global.db.collection("bots").find().toArray();
+    const botsDB: delBot[] = await global.db
+        .collection("bots")
+        .find()
+        .toArray();
     if (botsDB.length < 1) return;
     await global.redis.hmset(
         prefix,
-        ...botsDB.map((bot: dbBot) => [bot._id, JSON.stringify(bot)])
+        ...botsDB.map((bot: delBot) => [bot._id, JSON.stringify(bot)])
     );
 }
 

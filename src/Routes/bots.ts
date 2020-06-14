@@ -17,23 +17,22 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as express from "express";
+import express from "express";
 import { Request, Response } from "express";
 
 import * as fetch from "node-fetch";
 import * as crypto from "crypto";
-import * as sanitizeHtml from "sanitize-html";
+import sanitizeHtml from "sanitize-html";
 
 import * as settings from "../../settings.json";
 import * as discord from "../Util/Services/discord";
-import { variables } from "../Util/Function/variables";
 import * as permission from "../Util/Function/permissions";
 import * as functions from "../Util/Function/main";
+import { variables } from "../Util/Function/variables";
 
 import * as botCache from "../Util/Services/botCaching";
 import * as userCache from "../Util/Services/userCaching";
 import * as libraryCache from "../Util/Services/libCaching";
-import { TextChannel } from "discord.js";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -83,7 +82,7 @@ router.post(
 
         fetch(`https://discord.com/api/v6/users/${req.body.id}`, {
             method: "GET",
-            headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
+            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: any) => {
                 fetchRes.jsonBody = await fetchRes.json();
@@ -564,7 +563,7 @@ router.post(
         let error = false;
         let errors = [];
 
-        const botExists: dbBot | undefined = await global.db
+        const botExists: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -660,7 +659,7 @@ router.post(
 
         fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
             method: "GET",
-            headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
+            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
@@ -1245,7 +1244,7 @@ router.post(
         let error = false;
         let errors = [];
 
-        const botExists: dbBot | undefined = await global.db
+        const botExists: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1338,7 +1337,7 @@ router.post(
 
         fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
             method: "GET",
-            headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
+            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
@@ -1474,7 +1473,7 @@ router.get(
     permission.auth,
     permission.mod,
     async (req: Request, res: Response, next) => {
-        const bot: dbBot | undefined = await global.db
+        const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1565,10 +1564,10 @@ router.get(
                     );
                 });
 
-        const mainGuildBot = mainGuild.members.get(bot._id);
+        const mainGuildBot = mainGuild.members.cache.get(bot._id);
         if (mainGuildBot)
-            mainGuildBot
-                .addRole(settings.roles.bot, "Bot was approved on the website.")
+            mainGuildBot.roles
+                .add(settings.roles.bot, "Bot was approved on the website.")
                 .catch((e) => {
                     console.error(e);
                     discord.alertsChannel.send(
@@ -1607,7 +1606,7 @@ router.get(
     permission.auth,
     permission.assistant,
     async (req: Request, res: Response, next) => {
-        const bot: dbBot | undefined = await global.db
+        const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1685,7 +1684,7 @@ router.get(
     permission.auth,
     permission.assistant,
     async (req: Request, res: Response, next) => {
-        const bot: dbBot | undefined = await global.db
+        const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1736,7 +1735,7 @@ router.get(
     permission.auth,
     permission.mod,
     async (req: Request, res: Response, next) => {
-        const bot: dbBot | undefined = await global.db
+        const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1781,7 +1780,7 @@ router.post(
     permission.auth,
     permission.mod,
     async (req: Request, res: Response, next) => {
-        const bot: dbBot | undefined = await global.db
+        const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1879,7 +1878,7 @@ router.get(
     permission.auth,
     permission.mod,
     async (req: Request, res: Response, next) => {
-        const bot: dbBot | undefined = await global.db
+        const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 
@@ -1918,7 +1917,7 @@ router.post(
     permission.auth,
     permission.mod,
     async (req: Request, res: Response, next) => {
-        const bot: dbBot | undefined = await global.db
+        const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
 

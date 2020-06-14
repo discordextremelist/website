@@ -17,8 +17,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import "i18nAPI";
-
 export const escapeFormatting = (text: string) => {
     const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
     const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, "\\$1");

@@ -17,19 +17,19 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as express from "express";
+import express from "express";
 import { Request, Response } from "express";
 
 import * as fetch from "node-fetch";
-import * as sanitizeHtml from "sanitize-html";
+import sanitizeHtml from "sanitize-html";
 
 import * as settings from "../../settings.json";
 import * as discord from "../Util/Services/discord";
-import { variables } from "../Util/Function/variables";
 import * as permission from "../Util/Function/permissions";
 import * as functions from "../Util/Function/main";
 import * as userCache from "../Util/Services/userCaching";
 import * as templateCache from "../Util/Services/templateCaching";
+import { variables } from "../Util/Function/variables";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -63,14 +63,14 @@ router.post(
 
         fetch(`https://discord.com/api/guilds/templates/${req.body.code}`, {
             method: "GET",
-            headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
+            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
                 if (fetchRes.jsonBody.code !== 10057) {
                     const templateExists:
-                        | dbTemplate
+                        | delTemplate
                         | undefined = await global.db
                         .collection("templates")
                         .findOne({ _id: fetchRes.jsonBody.code });
@@ -169,8 +169,7 @@ router.post(
                     }
                 });
 
-                await discord.bot.createMessage(
-                    settings.channels.webLog,
+                await discord.logsChannel.send(
                     `${settings.emoji.addBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -313,7 +312,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
         template: true
     };
 
-    let template: dbTemplate | undefined = await templateCache.getTemplate(
+    let template: delTemplate | undefined = await templateCache.getTemplate(
         req.params.id
     );
     if (!template) {
@@ -333,7 +332,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
 
     res.locals.premidPageInfo = res.__("premid.templates.view", template.name);
 
-    let templateOwner: dbUser | undefined = await userCache.getUser(
+    let templateOwner: delUser | undefined = await userCache.getUser(
         template.owner.id
     );
     if (!templateOwner) {
@@ -402,7 +401,7 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response, next) => {
-        const template: dbTemplate | undefined = await global.db
+        const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
 
@@ -449,7 +448,7 @@ router.post(
         let error = false;
         let errors = [];
 
-        const template: dbTemplate | undefined = await global.db
+        const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
 
@@ -524,7 +523,7 @@ router.post(
 
         fetch(`https://discord.com/api/guilds/templates/${req.body.code}`, {
             method: "GET",
-            headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
+            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
@@ -592,8 +591,7 @@ router.post(
                     }
                 );
 
-                await discord.bot.createMessage(
-                    settings.channels.webLog,
+                await discord.logsChannel.send(
                     `${settings.emoji.editBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -666,7 +664,7 @@ router.post(
                                 template.defaultMessageNotifications,
                             explicitContent: template.explicitContent,
                             roles: template.roles,
-                            channels: template.chanmels,
+                            channels: template.channels,
                             usageCount: template.usageCount,
                             shortDesc: template.shortDesc,
                             longDesc: template.longDesc,
@@ -715,7 +713,7 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response, next) => {
-        const template: dbTemplate | undefined = await global.db
+        const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
 
@@ -739,8 +737,7 @@ router.get(
                 req
             });
 
-        discord.bot.createMessage(
-            settings.channels.webLog,
+        discord.logsChannel.send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -774,7 +771,7 @@ router.get(
     permission.auth,
     permission.mod,
     async (req: Request, res: Response, next) => {
-        const template: dbTemplate | undefined = await global.db
+        const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
 
@@ -794,7 +791,7 @@ router.get(
 
         res.render("templates/serverTemplates/staffActions/remove", {
             title: res.__("page.servers.remove.title"),
-            subtitle: res.__("page.servers.remove.subtitle", server.name),
+            subtitle: res.__("page.servers.remove.subtitle", template.name),
             removingTemplate: template,
             req
         });
@@ -807,7 +804,7 @@ router.post(
     permission.auth,
     permission.mod,
     async (req: Request, res: Response, next) => {
-        const template: dbTemplate | undefined = await global.db
+        const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
 
@@ -833,8 +830,7 @@ router.post(
         });
         await templateCache.deleteTemplate(req.params.id);
 
-        discord.bot.createMessage(
-            settings.channels.webLog,
+        discord.logsChannel.send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -844,11 +840,10 @@ router.post(
             )}** \`(${template._id})\`\n**Reason:** \`${req.body.reason}\``
         );
 
-        const dmChannel = await discord.bot.getDMChannel(bot.owner.id);
-        if (dmChannel)
-            discord.bot
-                .createMessage(
-                    dmChannel.id,
+        const owner = discord.bot.users.cache.get(template.owner.id);
+        if (owner)
+            owner
+                .send(
                     `${
                         settings.emoji.botDeleted
                     } **|** Your template **${functions.escapeFormatting(
@@ -871,7 +866,7 @@ router.get(
     permission.auth,
     permission.mod,
     async (req: Request, res: Response, next) => {
-        const template: dbTemplate | undefined = await global.db
+        const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
 
@@ -886,7 +881,7 @@ router.get(
 
         fetch(`https://discord.com/api/guilds/templates/${req.body.code}`, {
             method: "GET",
-            headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
+            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
@@ -974,7 +969,7 @@ router.get(
                                 template.defaultMessageNotifications,
                             explicitContent: template.explicitContent,
                             roles: template.roles,
-                            channels: template.chanmels,
+                            channels: template.channels,
                             usageCount: template.usageCount
                         }
                     }

@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as express from "express";
+import express from "express";
 import { Request, Response } from "express";
 
 import * as discord from "../Util/Services/discord";
@@ -38,12 +38,12 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
         req.params.id = req.user.id;
     }
 
-    let dbUser: dbUser | undefined = await userCache.getUser(req.params.id);
-    if (!dbUser) {
-        dbUser = await global.db
+    let delUser: delUser | undefined = await userCache.getUser(req.params.id);
+    if (!delUser) {
+        delUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
-        if (!dbUser)
+        if (!delUser)
             return res.status(404).render("status", {
                 title: res.__("common.error"),
                 status: 404,
@@ -53,13 +53,13 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
             });
     }
 
-    res.locals.premidPageInfo = res.__("premid.user", dbUser.fullUsername);
+    res.locals.premidPageInfo = res.__("premid.user", delUser.fullUsername);
 
     const bots = await botCache.getAllBots();
 
-    const botsOwner: dbBot[] = [];
-    const botsEditor: dbBot[] = [];
-    const archivedBots: dbBot[] = [];
+    const botsOwner: delBot[] = [];
+    const botsEditor: delBot[] = [];
+    const archivedBots: delBot[] = [];
 
     for (const bot of bots) {
         if (bot.status.archived === true && bot.owner.id === req.params.id) {
@@ -73,7 +73,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
 
     const servers = await serverCache.getAllServers();
 
-    const serversOwner: dbServer[] = [];
+    const serversOwner: delServer[] = [];
 
     for (const server of servers) {
         if (req.params.id === server.owner.id) {
@@ -83,7 +83,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
 
     const templates = await templateCache.getAllTemplates();
 
-    const templatesOwner: dbTemplate[] = [];
+    const templatesOwner: delTemplate[] = [];
 
     for (const template of templates) {
         if (req.params.id === template.owner.id) {
@@ -92,12 +92,12 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     }
 
     res.render("templates/users/profile", {
-        title: res.__("page.users.profile.title", dbUser.fullUsername),
-        subtitle: dbUser.profile.bio,
-        userProfile: dbUser,
+        title: res.__("page.users.profile.title", delUser.fullUsername),
+        subtitle: delUser.profile.bio,
+        userProfile: delUser,
         req,
-        userStatus: await discord.getStatus(dbUser._id),
-        userProfileIsBanned: await banned.check(dbUser._id),
+        userStatus: await discord.getStatus(delUser._id),
+        userProfileIsBanned: await banned.check(delUser._id),
         botsOwner,
         botsEditor,
         archivedBots,
@@ -112,7 +112,7 @@ router.get(
     permission.auth,
     permission.assistant,
     async (req: Request, res: Response, next) => {
-        const targetUser: dbUser = await global.db
+        const targetUser: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -161,7 +161,7 @@ router.post(
     permission.auth,
     permission.assistant,
     async (req: Request, res: Response, next) => {
-        const targetUser: dbUser = await global.db
+        const targetUser: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -297,7 +297,7 @@ router.get(
             req.params.id = req.user.id;
         }
 
-        const userProfile: dbUser = await global.db
+        const userProfile: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
@@ -347,7 +347,7 @@ router.post(
             req.params.id = req.user.id;
         }
 
-        const userProfile: dbUser = await global.db
+        const userProfile: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
@@ -454,7 +454,7 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response, next) => {
-        const user: dbUser = await global.db
+        const user: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.user.id });
 
@@ -479,7 +479,7 @@ router.post(
                     "Posted score is lower or equal to the user's current high score - no changes were made"
             });
 
-        const user: dbUser = await global.db
+        const user: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.user.id });
         const score = user.game.snakes.maxScore + 1;

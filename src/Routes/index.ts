@@ -17,18 +17,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as express from "express";
+import express from "express";
 import { Request, Response } from "express";
 
-import * as chunk from "chunk";
+import chunk = require("chunk");
 
 import * as settings from "../../settings.json";
-import { variables } from "../Util/Function/variables";
 import * as featuring from "../Util/Services/featuring";
 import * as botCache from "../Util/Services/botCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as discord from "../Util/Services/discord";
+import { variables } from "../Util/Function/variables";
 
 const router = express.Router();
 
@@ -40,15 +40,16 @@ function sortAll() {
     const staff = [],
         donators = [],
         contributors = [];
-    for (const member of members.filter((m) => !m.user.bot)) {
+    for (const item of members.cache.filter((m) => !m.user.bot)) {
+        const member = item[1];
         if (
-            member.roles.includes(settings.roles.admin) ||
-            member.roles.includes(settings.roles.assistant) ||
-            member.roles.includes(settings.roles.mod)
+            member.roles.cache.has(settings.roles.admin) ||
+            member.roles.cache.has(settings.roles.assistant) ||
+            member.roles.cache.has(settings.roles.mod)
         ) {
-            const admin = member.roles.includes(settings.roles.admin);
-            const assistant = member.roles.includes(settings.roles.assistant);
-            const mod = member.roles.includes(settings.roles.mod);
+            const admin = member.roles.cache.has(settings.roles.admin);
+            const assistant = member.roles.cache.has(settings.roles.assistant);
+            const mod = member.roles.cache.has(settings.roles.mod);
             member.order = admin ? 3 : assistant ? 2 : mod ? 1 : 0;
             member.rank = admin
                 ? "admin"
@@ -59,22 +60,22 @@ function sortAll() {
                 : null;
             staff.push(member);
         } else if (
-            member.roles.includes(settings.roles.booster) ||
-            member.roles.includes(settings.roles.donator)
+            member.roles.cache.has(settings.roles.booster) ||
+            member.roles.cache.has(settings.roles.donator)
         ) {
-            const booster = member.roles.includes(settings.roles.booster);
-            const donator = member.roles.includes(settings.roles.donator);
+            const booster = member.roles.cache.has(settings.roles.booster);
+            const donator = member.roles.cache.has(settings.roles.donator);
             member.order = booster ? 1 : donator ? 2 : 0;
             member.rank = booster ? "booster" : "donator";
             donators.push(member);
         } else if (
-            member.roles.includes(settings.roles.translators) ||
-            member.roles.includes(settings.roles.testers)
+            member.roles.cache.has(settings.roles.translators) ||
+            member.roles.cache.has(settings.roles.testers)
         ) {
-            const translator = member.roles.includes(
+            const translator = member.roles.cache.has(
                 settings.roles.translators
             );
-            const tester = member.roles.includes(settings.roles.testers);
+            const tester = member.roles.cache.has(settings.roles.testers);
             member.order = translator ? 1 : tester ? 2 : 0;
             member.rank = translator ? "translator" : "tester";
             contributors.push(member);

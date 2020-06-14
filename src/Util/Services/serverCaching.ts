@@ -17,21 +17,20 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as app from "../../app";
 const prefix = "servers";
 
-export async function getServer(id: string): Promise<dbServer> {
+export async function getServer(id: string): Promise<delServer> {
     const server = await global.redis.hget(prefix, id);
     return JSON.parse(server);
 }
 
-export async function getAllServers(): Promise<dbServer[]> {
+export async function getAllServers(): Promise<delServer[]> {
     const servers = await global.redis.hvals(prefix);
     return servers.map(JSON.parse);
 }
 
 export async function updateServer(id: string) {
-    const data: dbServer = await global.db
+    const data: delServer = await global.db
         .collection("servers")
         .findOne({ _id: id });
     if (!data) return;
@@ -39,14 +38,14 @@ export async function updateServer(id: string) {
 }
 
 export async function uploadServers() {
-    const servers: dbServer[] = await global.db
+    const servers: delServer[] = await global.db
         .collection("servers")
         .find()
         .toArray();
     if (servers.length < 1) return;
     await global.redis.hmset(
         prefix,
-        ...servers.map((s: dbServer) => [s._id, JSON.stringify(s)])
+        ...servers.map((s: delServer) => [s._id, JSON.stringify(s)])
     );
 }
 

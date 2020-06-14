@@ -17,10 +17,9 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as app from "../../app";
-import moment from "moment";
+import moment = require("moment");
 
-export async function update() {
+export async function botStatsUpdate() {
     const botStats: botStats = await global.db
         .collection("webOptions")
         .findOne({ _id: "botStats" });
@@ -34,7 +33,7 @@ export async function update() {
 
     const date = moment().diff(moment(botStats.lastUpdate), "days");
     if (date > 7) {
-        const users: dbUser[] = await global.db
+        const users: delUser[] = await global.db
             .collection("users")
             .find()
             .toArray();
@@ -76,5 +75,5 @@ export async function update() {
 }
 
 setInterval(async () => {
-    await update();
+    await botStatsUpdate();
 }, 900000);

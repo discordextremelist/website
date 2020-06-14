@@ -23,7 +23,7 @@ import * as metrics from "datadog-metrics";
 import * as settings from "../../../settings.json";
 const prefix = "statuses";
 
-metrics.init({ host: "", prefix: "", apiKey: process.env.DATADOG_KEY });
+metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
 
 export const bot = new Discord.Client({
     allowedMentions: { parse: [] },
@@ -105,4 +105,4 @@ export async function postMetric() {
     if (guild) metrics.gauge("del.server.memberCount", guild.memberCount);
 }
 
-bot.login(process.env.DISCORD_TOKEN);
+bot.login(settings.secrets.discord.token);

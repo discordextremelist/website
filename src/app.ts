@@ -17,27 +17,40 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as express from "express";
+import express from "express";
 import { Request, Response } from "express";
 
 import * as path from "path";
-import * as cookieParser from "cookie-parser";
-import cookieSession = require("cookie-session");
-import * as logger from "morgan";
+import cookieParser from "cookie-parser";
+import cookieSession from "cookie-session";
+// import cookieSession = require("cookie-session");
+import logger from "morgan";
 import * as device from "express-device";
-import * as passport from "passport";
+import passport from "passport";
 import * as languageHandler from "./Util/Middleware/languageHandler";
 
-require("dotenv").config()
+import * as botCache from "./Util/Services/botCaching";
+import * as serverCache from "./Util/Services/serverCaching";
+import * as templateCache from "./Util/Services/templateCaching";
+import * as userCache from "./Util/Services/userCaching";
+import * as libCache from "./Util/Services/libCaching";
+import * as announcementCache from "./Util/Services/announcementCaching";
+import * as featuredCache from "./Util/Services/featuring";
+import * as ddosMode from "./Util/Services/ddosMode";
+import * as banned from "./Util/Services/banned";
+import * as discord from "./Util/Services/discord";
+import { botStatsUpdate } from "./Util/Services/botStatsUpdate";
+
 const i18n = require("i18n");
 import * as settings from "../settings.json";
+import { MongoClient } from "mongodb";
 
 const app = express();
 
-let dbReady: Boolean = false;
+let dbReady: boolean = false;
 
-app.set("views", path.join(__dirname, "src/Assets/Views"));
-app.use(express.static(path.join(__dirname, "src/Assets/Public")));
+app.set("views", path.join(__dirname + "/../../assets/Views"));
+app.use(express.static(path.join(__dirname + "/../../assets/Public")));
 
 app.get("*", (req: Request, res: Response, next: () => void) => {
     if (
@@ -47,21 +60,18 @@ app.get("*", (req: Request, res: Response, next: () => void) => {
     ) {
         return res
             .status(503)
-            .sendFile(path.join(__dirname + "/src/Assets/Public/loading.html"));
+            .sendFile(path.join(__dirname + "/../../assets/Public/loading.html"));
     } else next();
 });
 
-console.time("Mongo TTL");
-console.log("Mongo: Connection opening...");
-import { MongoClient } from "mongodb";
-
 new Promise((resolve, reject) => {
+    console.time("Mongo TTL");
     MongoClient.connect(
-        process.env.MONGO_URI,
+        settings.secrets.mongo.uri,
         { useUnifiedTopology: true, useNewUrlParser: true }, // useNewUrlParser is set to true because sometimes MongoDB is a cunt - Ice, I love this comment - Cairo
         (error, mongo) => {
             if (error) return reject(error);
-            global.db = mongo.db(process.env.MONGO_DB);
+            global.db = mongo.db(settings.secrets.mongo.db);
             console.log(
                 "Mongo: Connection established! Released deadlock as a part of startup..."
             );
@@ -73,7 +83,7 @@ new Promise((resolve, reject) => {
     .then(async () => {
         dbReady = true;
 
-        for (const lib of require(__dirname+"/src/Assets/libraries.json")) {
+        for (const lib of require("../../assets/libraries.json")) {
             await global.db.collection("libraries").updateOne({ _id: lib.name }, {
                 _id: lib.name,
                 language: lib.language,
@@ -100,23 +110,11 @@ new Promise((resolve, reject) => {
             }).then(() => true).catch(() => false);
         }
 
-        const botCache = require("./Util/Services/botCaching.js");
-        const serverCache = require("./Util/Services/serverCaching.js");
-        const templateCache = require("./Util/Services/templateCaching.js");
-        const userCache = require("./Util/Services/userCaching.js");
-        const libCache = require("./Util/Services/libCaching.js");
-        const announcementCache = require("./Util/Services/announcementCaching.js");
-        const featuredCache = require("./Util/Services/featuring.js");
-        const ddosMode = require("./Util/Services/ddosMode.js");
-        const banned = require("./Util/Services/banned.js");
-        const discord = require("./Util/Services/discord.js");
-        const botStatsUpdate = require("./Util/Services/botStatsUpdate.js");
-
         global.redis = new (require("ioredis"))({
-            port: process.env.REDIS_PORT,
-            host: process.env.REDIS_HOST,
-            db: process.env.REDIS_DB,
-            password: process.env.REDIS_PASSWD
+            port: settings.secrets.redis.port,
+            host: settings.secrets.redis.host,
+            db: settings.secrets.redis.db,
+            password: settings.secrets.redis.passwd
         });
 
         global.redis.flushdb();
@@ -135,7 +133,7 @@ new Promise((resolve, reject) => {
         await (async function discordBotUndefined() {
             if (
                 typeof discord.bot.guilds !== "undefined" &&
-                typeof discord.bot.guilds.get(settings.guild.main) !==
+                typeof discord.bot.guilds.cache.get(settings.guild.main) !==
                     "undefined"
             ) { 
                 await banned.updateBanlist();
@@ -157,6 +155,7 @@ new Promise((resolve, reject) => {
 
         app.use(
             logger(
+                // @ts-ignore
                 ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
                 {
                     skip: (r: { url: string; }) => r.url === "/profile/game/snakes"
@@ -170,17 +169,17 @@ new Promise((resolve, reject) => {
 
         i18n.configure({
             locales: settings.website.locales.all,
-            directory: __dirname + "/node_modules/del-i18n",
+            directory: __dirname + "/../../node_modules/del-i18n",
             defaultLocale: settings.website.locales.default
         });
 
         app.use(cookieSession({
             name: "delSession",
-            secret: process.env.COOKIE_SECRET,
+            secret: settings.secrets.cookie,
             maxAge: 1000 * 60 * 60 * 24 * 7
         }));
           
-        app.use(cookieParser(process.env.COOKIE_SECRET));
+        app.use(cookieParser(settings.secrets.cookie));
 
         app.use(passport.initialize());
         app.use(passport.session());
@@ -192,21 +191,19 @@ new Promise((resolve, reject) => {
 
         app.use(i18n.init);
 
-        app.use("/auth", require("./Routes/authentication.js"));
+        app.use("/auth", require("./Routes/authentication"));
 
         app.use(["/:lang", "/"], languageHandler.homeHandler);
         app.use("/:lang/*", languageHandler.globalHandler);
 
-        app.use("/:lang", require("./Routes/index.js"));
-        app.use("/:lang/search", require("./Routes/search.js"));
-        app.use("/:lang/bots", require("./Routes/bots.js"));
-        app.use("/:lang/servers", require("./Routes/servers.js"));
-        app.use("/:lang/templates", require("./Routes/templates.js"));
-        app.use("/:lang/users", require("./Routes/users.js"));
-        app.use("/:lang/staff", require("./Routes/staff.js"));
-        app.use("/:lang/docs", require("./Routes/docs.js"));
-
-        app.use("*", require("./Util/Function/variables.js"));
+        app.use("/:lang", require("./Routes/index"));
+        app.use("/:lang/search", require("./Routes/search"));
+        app.use("/:lang/bots", require("./Routes/bots"));
+        app.use("/:lang/servers", require("./Routes/servers"));
+        app.use("/:lang/templates", require("./Routes/templates"));
+        app.use("/:lang/users", require("./Routes/users"));
+        app.use("/:lang/staff", require("./Routes/staff"));
+        app.use("/:lang/docs", require("./Routes/docs"));
 
         app.use((err: { message: string; status?: number; }, req: Request, res: Response, next: () => void) => {
             res.locals.message = err.message;
@@ -230,19 +227,15 @@ new Promise((resolve, reject) => {
 
             res.status(err.status || 500);
             res.render("error");
+        });
 
-            app.listen(settings.website.port.value || 3000, () => {
-                console.log(`Website: Ready on port ${settings.website.port.value || 3000}`);
-            });
+        app.listen(settings.website.port.value || 3000, () => {
+            console.log(`Website: Ready on port ${settings.website.port.value || 3000}`);
         });
     })
     .catch((e) => {
         console.error("Mongo error: ", e);
         process.exit(1);
     });
-
-if (process.env.DEL_ENV === "CI") setTimeout(() => {
-    process.exit(0);
-}, 120000);
 
 export = app;

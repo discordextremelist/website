@@ -17,19 +17,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as express from "express";
+import express from "express";
 import { Request, Response } from "express";
 
 import * as fetch from "node-fetch";
-import * as chunk from "chunk";
+import chunk = require("chunk");
 
 import * as settings from "../../settings.json";
-import * as discord from "../Util/Services/discord";
-import { variables } from "../Util/Function/variables";
 import * as permission from "../Util/Function/permissions";
 import * as functions from "../Util/Function/main";
 import * as userCache from "../Util/Services/userCaching";
 import * as announcementCache from "../Util/Services/announcementCaching";
+import { variables } from "../Util/Function/variables";
 
 const router = express.Router();
 
@@ -38,19 +37,19 @@ router.get(
     variables,
     permission.mod,
     async (req: Request, res: Response) => {
-        const bots: dbBot[] = await global.db
+        const bots: delBot[] = await global.db
             .collection("bots")
             .find()
             .toArray();
-        const users: dbUser[] = await global.db
+        const users: delUser[] = await global.db
             .collection("users")
             .find()
             .toArray();
-        const servers: dbServer[] = await global.db
+        const servers: delServer[] = await global.db
             .collection("servers")
             .find()
             .toArray();
-        const templates: dbTemplate[] = await global.db
+        const templates: delTemplate[] = await global.db
             .collection("templates")
             .find()
             .toArray();
@@ -104,7 +103,7 @@ router.get(
     variables,
     permission.mod,
     async (req: Request, res: Response) => {
-        const bots: dbBot[] = await global.db
+        const bots: delBot[] = await global.db
             .collection("bots")
             .find()
             .toArray();
@@ -156,7 +155,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const users: dbUser[] = await global.db
+        const users: delUser[] = await global.db
             .collection("users")
             .find()
             .toArray();
@@ -208,7 +207,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: dbUser | undefined = await global.db
+        const user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -253,7 +252,7 @@ router.post(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: dbUser | undefined = await global.db
+        const user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -327,7 +326,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: dbUser | undefined = await global.db
+        const user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -396,7 +395,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: dbUser | undefined = await global.db
+        const user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -469,7 +468,7 @@ router.post(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: dbUser | undefined = await global.db
+        const user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -544,7 +543,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: dbUser | undefined = await global.db
+        const user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -594,7 +593,7 @@ router.post(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: dbUser | undefined = await global.db
+        const user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -662,7 +661,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: dbUser | undefined = await global.db
+        const user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -712,7 +711,7 @@ router.post(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: dbUser | undefined = await global.db
+        const user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
@@ -859,13 +858,13 @@ router.get(
     permission.admin,
     async (req: Request, res: Response) => {
         if (req.params.id === req.user.id) return res.redirect("/staff");
-        let user: dbUser | undefined = await global.db
+        let user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
 
         fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
             method: "GET",
-            headers: { Authorization: `Bot ${process.env.DISCORD_TOKEN}` }
+            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();

@@ -17,31 +17,35 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as app from "../../app";
 const prefix = "users";
 
-export async function getUser(id: string): Promise<dbUser> {
+export async function getUser(id: string): Promise<delUser> {
     const user = await global.redis.hget(prefix, id);
     return JSON.parse(user);
 }
 
-export async function getAllUsers(): Promise<dbUser[]> {
+export async function getAllUsers(): Promise<delUser[]> {
     const users = await global.redis.hvals(prefix);
     return users.map(JSON.parse);
 }
 
 export async function updateUser(id: string) {
-    const data: dbUser = await global.db.collection("users").findOne({ _id: id });
+    const data: delUser = await global.db
+        .collection("users")
+        .findOne({ _id: id });
     if (!data) return;
     await global.redis.hmset(prefix, id, JSON.stringify(data));
 }
 
 export async function uploadUsers() {
-    const usersDB: dbUser[] = await global.db.collection("users").find().toArray();
+    const usersDB: delUser[] = await global.db
+        .collection("users")
+        .find()
+        .toArray();
     if (usersDB.length < 1) return;
     await global.redis.hmset(
         prefix,
-        ...usersDB.map((u: dbUser) => [u._id, JSON.stringify(u)])
+        ...usersDB.map((u: delUser) => [u._id, JSON.stringify(u)])
     );
 }
 

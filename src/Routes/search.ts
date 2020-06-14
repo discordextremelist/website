@@ -17,17 +17,17 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as express from "express";
+import express from "express";
 import { Request, Response } from "express";
 
 import chunk = require("chunk");
 import * as ejs from "ejs";
 
-import { variables } from "../Util/Function/variables";
 import * as botCache from "../Util/Services/botCaching";
 import * as userCache from "../Util/Services/userCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
+import { variables } from "../Util/Function/variables";
 
 const renderPath = require("path").join(
     process.cwd(),
@@ -59,7 +59,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
     let isStaff = false;
     if (!!only && only.includes("users")) {
         if (req.user && req.user.id) {
-            const user: dbUser = await global.db
+            const user: delUser = await global.db
                 .collection("users")
                 .findOne({ _id: req.user.id });
             if (!user.rank.mod)

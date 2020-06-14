@@ -17,21 +17,20 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as app from "../../app";
 const prefix = "templates";
 
-export async function getTemplate(id: string): Promise<dbTemplate> {
+export async function getTemplate(id: string): Promise<delTemplate> {
     const template = await global.redis.hget(prefix, id);
     return JSON.parse(template);
 }
 
-export async function getAllTemplates(): Promise<dbTemplate[]> {
+export async function getAllTemplates(): Promise<delTemplate[]> {
     const templates = await global.redis.hvals(prefix);
     return templates.map(JSON.parse);
 }
 
 export async function updateTemplate(id: string) {
-    const data: dbTemplate = await global.db
+    const data: delTemplate = await global.db
         .collection("templates")
         .findOne({ _id: id });
     if (!data) return;
@@ -39,14 +38,14 @@ export async function updateTemplate(id: string) {
 }
 
 export async function uploadTemplates() {
-    const templates: dbTemplate[] = await global.db
+    const templates: delTemplate[] = await global.db
         .collection("templates")
         .find()
         .toArray();
     if (templates.length < 1) return;
     await global.redis.hmset(
         prefix,
-        ...templates.map((t: dbTemplate) => [t._id, JSON.stringify(t)])
+        ...templates.map((t: delTemplate) => [t._id, JSON.stringify(t)])
     );
 }
 

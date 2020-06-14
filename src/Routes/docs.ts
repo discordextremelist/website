@@ -17,11 +17,11 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as express from "express";
+import express from "express";
 import { Request, Response } from "express";
 
-import { variables } from "../Util/Function/variables";
 import * as settings from "../../settings.json";
+import { variables } from "../Util/Function/variables";
 
 const router = express.Router();
 

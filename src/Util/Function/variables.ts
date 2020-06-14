@@ -20,10 +20,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { Request, Response } from "express";
 
 import browser from "browser-detect";
-import * as colour from "color";
+import color from "color";
 import * as settings from "../../../settings.json";
 import * as releaseInfo from "../../../release-info.json";
-import * as ddosMode from "../Services/ddosMode";
 import * as announcementCache from "../Services/announcementCaching";
 import * as banList from "../Services/banned";
 
@@ -49,7 +48,7 @@ export const variables = async (
     res.locals.browser = req.browser;
     res.locals.requestedAt = Date.now();
     res.locals.cssVersion = releaseInfo.cssVersion;
-    res.locals.ddosMode = ddosMode.getDDOSMode().active;
+    res.locals.ddosMode = false; //ddosMode.getDDOSMode().active;
     res.locals.gaID = settings.website.gaID;
 
     res.locals.linkPrefix = `/${
@@ -72,7 +71,7 @@ export const variables = async (
     req.session.redirectTo = req.originalUrl;
     req.del = releaseInfo;
     req.del.node = "us-node"; // will be updated in a bit:tm: (*cough* spoiler)
-    res.locals.colour = colour;
+    res.locals.colour = color;
     res.locals.premidPageInfo = "";
 
     if (req.session.disableRTL && req.session.disableRTL === true) {

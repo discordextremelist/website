@@ -17,21 +17,19 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as app from "../../app";
-global.libs = [];
-
 export function getLibs() {
     return global.libs.sort((a, b) => a._id.localeCompare(b._id));
 }
 
-export function hasLib(name) {
+export function hasLib(name: string) {
     return global.libs.find((x) => x._id === name);
 }
 
 export async function cacheLibs() {
-    global.libs = [];
+    const libraries: library[] = [];
     const dbLibs = await global.db.collection("libraries").find().toArray();
-    for (const lib of dbLibs) global.libs.push(lib);
+    for (const lib of dbLibs) libraries.push(lib);
+    global.libs = libraries;
 }
 
 export async function addLib(

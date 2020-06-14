@@ -17,20 +17,19 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as app from "../../app";
 import * as functions from "../Function/main";
 
-export async function getFeaturedBots(): Promise<dbBot[]> {
+export async function getFeaturedBots(): Promise<delBot[]> {
     const bots = await global.redis.get("featured_bots");
     return JSON.parse(bots);
 }
 
-export async function getFeaturedServers(): Promise<dbServer[]> {
+export async function getFeaturedServers(): Promise<delServer[]> {
     const servers = await global.redis.get("featured_servers");
     return JSON.parse(servers);
 }
 
-export async function getFeaturedTemplates(): Promise<dbTemplate[]> {
+export async function getFeaturedTemplates(): Promise<delTemplate[]> {
     const templates = await global.redis.get("featured_templates");
     return JSON.parse(templates);
 }

@@ -57,7 +57,13 @@ Install all of the dependencies by running `npm i` command.
 
 ### Compiling
 
-When you first start DEL or you make changes to any files in DEL's src folder you will need to compile using the `npm run compile` command.
+#### First Start
+
+When you first start DEL you will need to run the following command: `npm run compile && npm run editor-compile`
+
+### Making Changes
+
+Every time you make a change to any of the `.ts` files you will need to run the `npm run compile` command to ensure everything is up to date.
 
 ### Production
 

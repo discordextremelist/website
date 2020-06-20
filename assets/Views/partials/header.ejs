@@ -1,5 +1,5 @@
 <!doctype HTML>
-<html lang="<%= req.language || defaultLang %>" dir="<%= htmlDir %>">
+<html lang="<%= req.locale || defaultLang %>" dir="<%= htmlDir %>">
 <head>
     <meta charset="utf-8">
     
@@ -16,7 +16,7 @@
     <% if (req.user) { %><style type="text/css"><%= req.user.db.preferences.customGlobalCss %></style><% } %>
 
     <% if (usePreload === true) { %>
-        <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" type="text/css" media="screen" rel="preload" as="style"  onload="this.onload=null;this.rel='stylesheet'" />
+        <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
         <link href="/fonts/fa/css/all.css?v=<%= cssVersion %>" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <% } else { %>  
         <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" media="screen" rel="stylesheet" />
@@ -27,9 +27,10 @@
     <link rel="search" title="Search" href="/<%= req.locale %>/search" />
     <link rel="preconnect" href="https://cdn.discordapp.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://twemoji.maxcdn.com">
 
     <%- include("./locales.ejs") %>
-
+    
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords" content="Discord Extreme List, Discord Bots, Discord Bot List, Discord Servers, Discord Templates, Discord Template List, Discord Server List">
     <meta name="robots" content="index,follow">
@@ -139,14 +140,5 @@
     <meta name="msapplication-TileImage" content="/img/logo-144px.png">
     <meta name="msapplication-config" content="/browserconfig.xml">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script type="text/plain" cookie-consent="tracking" async src="https://www.googletagmanager.com/gtag/js?id=<%= gaID %>"></script>
-    <script type="text/plain" cookie-consent="tracking">
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', '<%= gaID %>');
-    </script>
     <% if (htmlDir === "rtl") { %><%- include("./rtl.ejs") %><% } %>
 </head>

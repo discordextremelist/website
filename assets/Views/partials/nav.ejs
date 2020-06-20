@@ -218,14 +218,6 @@
                         <% } %>
                         <span><%= __({ phrase: "common.nav.language.it", locale: "it-IT" }) %></span>
                     </a>
-                    <a class="navbar-item" <% if (req.locale !== "pt-PT") { %>href="<%= req.originalUrl.replace(req.locale, "pt-PT") %>?setLang=t"<% } %> tabindex="0">
-                        <% if (req.locale === "pt-PT") { %>
-                            <span title="Selected" class="icon has-text-success iconalign">
-                                <i class="fad fa-check-circle" aria-hidden="true"></i>
-                            </span>
-                        <% } %>
-                        <span><%= __({ phrase: "common.nav.language.pt", locale: "pt-PT" }) %></span>
-                    </a>
                     <a class="navbar-item" <% if (req.locale !== "es-ES") { %>href="<%= req.originalUrl.replace(req.locale, "es-ES") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "es-ES") { %>
                             <span title="Selected" class="icon has-text-success iconalign">

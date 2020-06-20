@@ -31,22 +31,26 @@ import { variables } from "../Util/Function/variables";
 
 const renderPath = require("path").join(
     process.cwd(),
-    "src/Assets/Views/partials"
+    "assets/Views/partials"
 );
 
 const router = express.Router();
 
 router.get("/", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.search");
-
-    return res.render("templates/search", {
-        title: res.__("common.search"),
-        subtitle: res.__("common.search.subtitle"),
-        req
-    });
 });
 
-router.post("/", variables, async (req: Request, res: Response) => {
+router.post("/", variables, (req: Request, res: Response) => {
+    let { query, only } = req.body;
+    if (!query)
+        return res.status(400).json({
+            error: true,
+            status: 400,
+            message: "Missing body parameter 'query'"
+        });
+});
+
+router.post("/", variables, (req: Request, res: Response) => {
     let { query, only } = req.body;
     if (!query)
         return res.status(400).json({
@@ -95,6 +99,8 @@ router.post("/", variables, async (req: Request, res: Response) => {
                 )
                 .map((user) => {
                     return ejs.renderFile(renderPath + "/cards/userCard.ejs", {
+                        req,
+                        linkPrefix: res.locals.linkPrefix,
                         user,
                         imageFormat,
                         search: true,
@@ -108,6 +114,8 @@ router.post("/", variables, async (req: Request, res: Response) => {
                 )
                 .map((bot) => {
                     return ejs.renderFile(renderPath + "/cards/botCard.ejs", {
+                        req,
+                        linkPrefix: res.locals.linkPrefix,
                         bot,
                         imageFormat,
                         queue: false,
@@ -126,6 +134,8 @@ router.post("/", variables, async (req: Request, res: Response) => {
                     return ejs.renderFile(
                         renderPath + "/cards/serverCard.ejs",
                         {
+                            req,
+                            linkPrefix: res.locals.linkPrefix,
                             server,
                             imageFormat,
                             search: true,
@@ -139,11 +149,13 @@ router.post("/", variables, async (req: Request, res: Response) => {
                     ({ _id, name }) =>
                         _id === query || name.toLowerCase().indexOf(query) >= 0
                 )
-                .map((server) => {
+                .map((template) => {
                     return ejs.renderFile(
                         renderPath + "/cards/templateCard.ejs",
                         {
-                            server,
+                            req,
+                            linkPrefix: res.locals.linkPrefix,
+                            template,
                             imageFormat,
                             search: true,
                             profile: false,
@@ -154,7 +166,6 @@ router.post("/", variables, async (req: Request, res: Response) => {
         ]),
         3
     );
-
     return res.json({
         error: false,
         status: 200,
@@ -163,6 +174,6 @@ router.post("/", variables, async (req: Request, res: Response) => {
             pages: results
         }
     });
-});
+};*/
 
 export = router;

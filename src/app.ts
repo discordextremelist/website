@@ -23,7 +23,6 @@ import { Request, Response } from "express";
 import * as path from "path";
 import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session";
-// import cookieSession = require("cookie-session");
 import logger from "morgan";
 import * as device from "express-device";
 import passport from "passport";
@@ -156,7 +155,7 @@ new Promise((resolve, reject) => {
         app.use(
             logger(
                 // @ts-ignore
-                ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
+                ':req[cf-connecting-ip] - [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
                 {
                     skip: (r: { url: string; }) => r.url === "/profile/game/snakes"
                 }

@@ -106,6 +106,7 @@ router.get(
         const bots: delBot[] = await global.db
             .collection("bots")
             .find()
+            .sort({ "date.submitted": -1 })
             .toArray();
 
         res.locals.premidPageInfo = res.__("premid.staff.queue");

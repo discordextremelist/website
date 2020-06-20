@@ -81,76 +81,59 @@
 </section>
 <div class="container is-fluid">
     <div class="section is-fluid" id="display">
-        <nav style="display: none;" class="pagination is-centered" role="navigation" aria-label="pagination">
-            <%
-                // !!!!! PLACEHOLDERS - PLEASE REMOVE !!!!!
-                page = 1;
-                pages = 1;
-                buttons = "";
-            %>
+        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
             <% if (page > 1) { %>
-                <a href="<%= linkPrefix %>/servers?page=<%= page - 1 %>" class="pagination-previous button is-primary">
-                    <span class="icon">
-                        <i aria-hidden="true" class="fas fa-arrow-left"></i>
-                    </span>
-                    <span><%= __("common.pagination.previous") %></span>
-                </a>
+                <a href="/staff/apps/staff?page=<%= page - 1 %>" class="pagination-previous button is-primary"><i class="fas fa-arrow-left"></i>&nbsp; Previous</a>
             <% } else { %>
-                <a class="pagination-previous button is-primary" disabled>
-                    <span class="icon">
-                        <i aria-hidden="true" class="fas fa-arrow-left"></i>
-                    </span>
-                    <span><%= __("common.pagination.previous") %></span>
-                </a>
+                <a class="pagination-previous button is-primary" disabled><i class="fas fa-arrow-left"></i>&nbsp; Previous</a>
             <% } %>
             <% if (page < pages) { %>
-                <a href="<%= linkPrefix %>/servers?page=<%= page + 1 %>" class="pagination-next button is-primary">
-                    <span><%= __("common.pagination.next") %></span>
-                    <span class="icon">
-                        <i aria-hidden="true" class="fas fa-arrow-right"></i>
-                    </span>
-                </a>
+                <a href="/staff/apps/staff?page=<%= page + 1 %>" class="pagination-next button is-primary">Next &nbsp;<i class="fas fa-arrow-right"></i></a>
             <% } else { %>
-                <a class="pagination-next button is-primary" disabled>
-                    <span><%= __("common.pagination.next") %></span>
-                    <span class="icon">
-                        <i aria-hidden="true" class="fas fa-arrow-right"></i>
-                    </span>
-                </a>
+                <a class="pagination-next button is-primary" disabled>Next &nbsp;<i class="fas fa-arrow-right"></i></a>
             <% } %>
-            <ul class="pagination-list">
-                <%- buttons %>
-            </ul>
         </nav>
         <button class="button is-transparent is-large is-fullwidth is-loading" style="display: none;" id="loader"><%= __("common.loading") %></button>
     </div>
 </div>
 <script>
     (function () {
-        let searching = false;
         async function search(query, only) {
             return new Promise(resolve => {
                 const req = new XMLHttpRequest();
                 req.open("POST", "/search");
                 req.setRequestHeader("Content-Type", "application/json");
-                req.send(JSON.stringify({ query, only }));
+                if (!page) let page = 1;
+                req.send(JSON.stringify({ query, only, page }));
                 req.onreadystatechange = () => {
                     if (req.readyState === 4) {
+                        const nav = document.querySelector("nav.pagination.is-centered");
+                        const pageList = document.querySelector("ul.pagination-list");
+                        if (pageList.children.length > 0) {
+                            while (pageList.firstElementChild && !pageList.firstElementChild.remove());
+                        }
+                        nav.removeAttribute("style");
                         const results = [];
                         const { data } = JSON.parse(req.responseText);
-                        for (let i = 0; i < data.pages.length; i++) {
-                            for (const i of data.pages[i]) {
-                                console.log(data.pages)
-                                const cur = { bots: [], servers: [], users: [], templates: [] };
-                                const fake = document.createElement("div");
-                                fake.innerHTML = i;
-                                const child = fake.children[0];
-                                if (child.hasAttribute("is-user-card")) cur.users.push(fake.innerHTML);
-                                if (child.hasAttribute("is-bot-card")) cur.bots.push(fake.innerHTML);
-                                if (child.hasAttribute("is-server-card")) cur.servers.push(fake.innerHTML);
-                                if (child.hasAttribute("is-template-card")) cur.templates.push(fake.innerHTML);
+                        console.log(data)
+                        for (let i = 0; i < 18; i++) {
+                            const cur = { bots: [], servers: [], users: [], templates: [] };
+                            for (const html of data.pages[i]) {
+                                if (html.includes("is-user-card")) cur.users.push(html);
+                                if (html.includes("is-bot-card")) cur.bots.push(html);
+                                if (html.includes("is-server-card")) cur.servers.push(html);
+                                if (html.includes("is-template-card")) cur.templates.push(html);
                             }
+                            const liTag = document.createElement("li");
+                            const aTag = document.createElement("a");
+                            aTag.setAttribute("class", "pagination-link"+((i+1)==page?" is-current":""));
+                            aTag.innerHTML = (i+1).toString();
+                            aTag.setAttribute("aria-label", (i+1).toString());
+                            liTag.appendChild(aTag);
+                            liTag.addEventListener("click", doPagination);
+                            pageList.appendChild(liTag);
                         }
+                        doPagination(pageList.children[0]);
                     }
                 };
             });

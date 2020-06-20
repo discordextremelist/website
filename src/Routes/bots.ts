@@ -22,6 +22,7 @@ import { Request, Response } from "express";
 
 import * as fetch from "node-fetch";
 import * as crypto from "crypto";
+import * as Discord from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
 import * as settings from "../../settings.json";
@@ -208,6 +209,11 @@ router.post(
                         options: req.body.widgetOptions,
                         server: req.body.widgetServer
                     },
+                    date: {
+                        submitted: Date.now(),
+                        approved: 0,
+                        edited: 0
+                    },
                     status: {
                         approved: false,
                         premium: false,
@@ -216,7 +222,7 @@ router.post(
                     }
                 });
 
-                discord.logsChannel.send(
+                (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
                     `${settings.emoji.addBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -690,7 +696,8 @@ router.post(
                                 channel: req.body.widgetChannel,
                                 options: req.body.widgetOptions,
                                 server: req.body.widgetServer
-                            }
+                            },
+                            "date.edited": Date.now()
                         }
                     }
                 );
@@ -768,7 +775,7 @@ router.post(
                 });
             });
 
-        discord.logsChannel
+        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel)
             .send(
                 `${settings.emoji.editBot} **${functions.escapeFormatting(
                     req.user.db.fullUsername
@@ -1152,7 +1159,7 @@ router.get(
                 req: req
             });
 
-        discord.logsChannel.send(
+        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1364,6 +1371,11 @@ router.post(
                                 donation: req.body.donationUrl,
                                 repo: req.body.repo
                             },
+                            date: {
+                                submitted: Date.now(),
+                                approved: 0,
+                                edited: 0
+                            },
                             "status.archived": false
                         }
                     }
@@ -1448,7 +1460,7 @@ router.post(
                 });
             });
 
-        discord.logsChannel
+        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel)
             .send(
                 `${settings.emoji.resubmitBot} **${functions.escapeFormatting(
                     req.user.db.fullUsername
@@ -1499,7 +1511,8 @@ router.get(
             { _id: req.params.id },
             {
                 $set: {
-                    "status.approved": true
+                    "status.approved": true,
+                    "date.approved": Date.now()
                 }
             }
         );
@@ -1516,7 +1529,7 @@ router.get(
             }
         );
 
-        discord.logsChannel
+        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel)
             .send(
                 `${settings.emoji.check} **${functions.escapeFormatting(
                     req.user.db.fullUsername
@@ -1834,7 +1847,7 @@ router.post(
 
         await botCache.deleteBot(req.params.id);
 
-        discord.logsChannel.send(
+        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
             `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1971,7 +1984,7 @@ router.post(
 
         await botCache.deleteBot(req.params.id);
 
-        discord.logsChannel.send(
+        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${

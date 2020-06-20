@@ -21,6 +21,7 @@ import express from "express";
 import { Request, Response } from "express";
 
 import * as fetch from "node-fetch";
+import * as Discord from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
 import * as settings from "../../settings.json";
@@ -145,7 +146,7 @@ router.post(
                     }
                 });
 
-                discord.logsChannel.send(
+                (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
                     `${settings.emoji.addBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -506,7 +507,7 @@ router.post(
                     }
                 );
 
-                discord.logsChannel.send(
+                (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
                     `${settings.emoji.editBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -607,7 +608,7 @@ router.get(
                 req
             });
 
-        discord.logsChannel.send(
+        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -697,7 +698,7 @@ router.post(
 
         await serverCache.deleteServer(req.params.id);
 
-        discord.logsChannel.send(
+        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${

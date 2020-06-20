@@ -130,7 +130,7 @@ export const variables = async (
         res.locals.usePreload = true;
     }
 
-    if (req.headers.accept.includes("image/webp") === true) {
+    if (req.headers.accept && req.headers.accept.includes("image/webp")) {
         res.locals.imageFormat = "webp";
     } else {
         res.locals.imageFormat = "png";

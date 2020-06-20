@@ -1,8 +1,8 @@
 {
   "name": "del-website",
-  "version": "5.0.0-Alpha.6",
+  "version": "5.0.0-Alpha.7",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
-  "main": "app.js",
+  "main": "dist/src/app.js",
   "directories": {
     "doc": "docs"
   },
@@ -52,12 +52,12 @@
     "passport-discord": "^0.1.4",
     "request": "^2.88.2",
     "sanitize-html": "^1.26.0",
-    "snyk": "^1.339.2",
+    "snyk": "^1.339.3",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
   },
   "devDependencies": {
-    "bulma": "^0.9.0",
+    "bulma": "^0.8.2",
     "bulma-extensions": "^6.2.7",
     "ejs-lint": "^1.1.0",
     "monaco-editor": "^0.20.0",
@@ -73,7 +73,8 @@
     "editor-compile": "cp -r ./node_modules/monaco-editor/ ./src/Assets/Public/packages/monaco-editor",
     "setup": "node scripts/setup",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepare": "npm run snyk-protect",
+    "dev": "nodemon --exec \"tsc && node dist/src/app.js\" --ext ts"
   },
   "repository": {
     "type": "git",

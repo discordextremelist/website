@@ -23,29 +23,19 @@ read input
 if [ $input = 1 ]
 then 
     node-sass --omit-source-map-url assets/Sass/main.scss assets/Public/css/standard.css --output-style compressed 
-    node-sass --omit-source-map-url assets/Sass/mainRTL.scss assets/Public/css/standard-rtl.css --output-style compressed 
 elif [ $input = 2 ]
 then
     node-sass --omit-source-map-url assets/Sass/form.scss assets/Public/css/form.css --output-style compressed
-    node-sass --omit-source-map-url assets/Sass/formRTL.scss assets/Public/css/form-rtl.css --output-style compressed
 elif [ $input = 3 ]
 then
     node-sass --omit-source-map-url assets/Sass/search.scss assets/Public/css/search.css --output-style compressed
-    node-sass --omit-source-map-url assets/Sass/searchRTL.scss assets/Public/css/search-rtl.css --output-style compressed
 elif [ $input = 4 ]
 then
     node-sass --omit-source-map-url assets/Sass/listing.scss assets/Public/css/listing.css --output-style compressed
-    node-sass --omit-source-map-url assets/Sass/listingRTL.scss assets/Public/css/listing-rtl.css --output-style compressed
 else
     node-sass --omit-source-map-url assets/Sass/main.scss assets/Public/css/standard.css --output-style compressed 
     node-sass --omit-source-map-url assets/Sass/form.scss assets/Public/css/form.css --output-style compressed
     node-sass --omit-source-map-url assets/Sass/search.scss assets/Public/css/search.css --output-style compressed
     node-sass --omit-source-map-url assets/Sass/listing.scss assets/Public/css/listing.css --output-style compressed
     node-sass --omit-source-map-url assets/Sass/all.scss assets/Public/css/all.css --output-style compressed
-
-    node-sass --omit-source-map-url assets/Sass/mainRTL.scss assets/Public/css/standard-rtl.css --output-style compressed 
-    node-sass --omit-source-map-url assets/Sass/formRTL.scss assets/Public/css/form-rtl.css --output-style compressed
-    node-sass --omit-source-map-url assets/Sass/searchRTL.scss assets/Public/css/search-rtl.css --output-style compressed
-    node-sass --omit-source-map-url assets/Sass/listingRTL.scss assets/Public/css/listing-rtl.css --output-style compressed
-    node-sass --omit-source-map-url assets/Sass/allRTL.scss assets/Public/css/all-rtl.css --output-style compressed
 fi

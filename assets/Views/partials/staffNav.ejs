@@ -1,3 +1,24 @@
+<noscript>
+    <div style="padding: 25px; background-color: yellow; color: black;" class="has-text-centered">
+        <span class="icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </span>
+        <span><%= __("common.jsDisabled") %></span>
+    </div>
+    <style>
+        body {
+            border-left-color: yellow;
+            border-left-width: 10px;
+            border-left-style: solid;
+            border-right-color: yellow;
+            border-right-width: 10px;
+            border-right-style: solid;
+            border-bottom-color: yellow;
+            border-bottom-width: 10px;
+            border-bottom-style: solid;
+        }
+    </style>
+</noscript>
 <% if (announcement.active === true) { %>
     <div id="announcementBody" <% if (announcement.colour === "preferred") { %>class="has-background-default has-text-centered" style="padding: 5px;"<% } else { %>style="background-color: <%= announcement.colour %>; color: <%= announcement.foreground %>; padding: 5px;" class="has-text-centered"<% } %>>
         <%- announcement.message %>
@@ -6,7 +27,7 @@
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <% if (title !== "Home") { %>
-            <a class="navbar-item" href="/">
+            <a class="navbar-item" href="/" aria-hidden="true">
                 <img style="width: auto !important; height: 48px !important;" alt="<% __("common.nav.logoAlt") %>" src="/img/logo-128px.<%= imageFormat %>" draggable="false">
             </a>
         <% } %>
@@ -57,7 +78,7 @@
             </a>
 
             <div <% if (phone) { %>onclick="display(document.getElementById('moreDropdown'), document.getElementById('moreDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>">
+                <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-sitemap" aria-hidden="true"></i>
                     </span>
@@ -70,45 +91,44 @@
                 </a>
 
                 <div id="moreDropdown" class="navbar-dropdown is-hidden-mobile">
-                    <a class="navbar-item" href="<%= discordServer %>">
+                    <a class="navbar-item" href="<%= linkPrefix %>/widgetbot" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fab fa-discord" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.discord") %></span>
                     </a>
-                    <a class="navbar-item" href="https://docs.discordextremelist.xyz/">
+                    <a class="navbar-item" href="<%= linkPrefix %>/docs" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-books" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.docs") %></span>
                     </a>
-                    <a class="navbar-item" href="<%= linkPrefix %>/about">
+                    <a class="navbar-item" id="navAbout" href="<%= linkPrefix %>/about" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-question" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.about") %></span>
                     </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item" href="<%= linkPrefix %>/terms">
+                    <a class="navbar-item" href="<%= linkPrefix %>/terms" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-balance-scale" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.terms") %></span>
                     </a>
-                    <a class="navbar-item" href="<%= linkPrefix %>/privacy">
+                    <a class="navbar-item" href="<%= linkPrefix %>/privacy" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-user-secret" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.privacy") %></span>
                     </a>
-
                     <a class="navbar-item" href="<%= linkPrefix %>/cookies" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-cookie" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.cookies") %></span>
                     </a>
-                    <a class="navbar-item" href="<%= linkPrefix %>/guidelines">
+                    <a class="navbar-item" href="<%= linkPrefix %>/guidelines" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-book" aria-hidden="true"></i>
                         </span>
@@ -119,6 +139,129 @@
         </div>
 
         <div class="navbar-end">
+            <div <% if (phone) { %>onclick="display(document.getElementById('localeDropdown'), document.getElementById('localeDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>" tabindex="0">
+                    <span class="icon iconalign">
+                        <i class="fad fa-language" aria-hidden="true"></i>
+                    </span>
+                    <% if (phone) { %>
+                        <span><%= __("common.nav.language") %></span>
+                        <span>
+                            <i id="localeDropdownArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
+                        </span>
+                    <% } %>
+                </a>
+
+                <div id="localeDropdown" class="navbar-dropdown is-hidden-mobile">
+                    <a class="navbar-item" <% if (req.locale !== "en-NZ") { %>href="<%= req.originalUrl.replace(req.locale, "en-NZ") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "en-NZ") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.en-NZ", locale: "en-NZ" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "en-GB") { %>href="<%= req.originalUrl.replace(req.locale, "en-GB") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "en-GB") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.en-UK", locale: "en-GB" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "en-US") { %>href="<%= req.originalUrl.replace(req.locale, "en-US") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "en-US") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.en-US", locale: "en-US" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "en-UD") { %>href="<%= req.originalUrl.replace(req.locale, "en-UD") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "en-UD") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span class="transform"><%= __({ phrase: "common.nav.language.en-UD", locale: "en-US" }, { flag: "🇺🇸" }) %></span>
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item" <% if (req.locale !== "de-DE") { %>href="<%= req.originalUrl.replace(req.locale, "de-DE") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "de-DE") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.de", locale: "de-DE" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "he-IL") { %>href="<%= req.originalUrl.replace(req.locale, "he-IL") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "he-IL") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.he", locale: "he-IL" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "hu-HU") { %>href="<%= req.originalUrl.replace(req.locale, "hu-HU") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "hu-HU") { %>
+                            <span title="Selected" href="<%= req.originalUrl.replace(req.locale, "hu-HU") %>" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.hu", locale: "hu-HU" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "it-IT") { %>href="<%= req.originalUrl.replace(req.locale, "it-IT") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "it-IT") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.it", locale: "it-IT" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "es-ES") { %>href="<%= req.originalUrl.replace(req.locale, "es-ES") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "es-ES") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.es-ES", locale: "es-ES" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "tr-TR") { %>href="<%= req.originalUrl.replace(req.locale, "tr-TR") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "tr-TR") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.tr-TR", locale: "tr-TR" }) %></span>
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item" target="_blank" rel="noopener" href="https://translate.discordextremelist.xyz/" tabindex="0">
+                        <span>
+                            <%= __("common.nav.language.helpUs") %>
+                        </span>
+                    </a>
+                    <% if (req.session.disableRTL === true) { %>
+                        <a class="navbar-item" href="<%= req.originalUrl %>?localeLayout=rtl" tabindex="0">
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                            <span class="has-text-success">
+                                <%= __("common.nav.language.enableRTL") %>
+                            </span>
+                        </a>
+                    <% } else if (!req.session.disableRTL && req.session.rtlLanguage) { %>
+                        <a class="navbar-item" href="<%= req.originalUrl %>?localeLayout=ltr" tabindex="0">
+                            <span title="Selected" class="icon has-text-danger iconalign">
+                                <i class="fad fa-times-circle" aria-hidden="true"></i>
+                            </span>
+                            <span class="has-text-danger">
+                                <%= __("common.nav.language.disableRTL") %>
+                            </span>
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+            
             <div <% if (phone) { %>onclick="display(document.getElementById('staffPanelDropdown'), document.getElementById('staffPanelDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>">
                     <span class="icon iconalign">
@@ -179,10 +322,10 @@
                     <% } %>
                 </div>
             </div>
-
+            
             <% if (req.user) { %>
                 <div <% if (phone) { %>onclick="display(document.getElementById('userDropdown'), document.getElementById('userDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>">
+                    <a class="navbar-link <% if (phone) { %>is-arrowless<% } %>" tabindex="0">
                         <img style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.url %>.<%= imageFormat %>?size=256" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>" draggable="false">
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
                         <% if (phone) { %>
@@ -193,31 +336,39 @@
                     </a>
 
                     <div id="userDropdown" class="navbar-dropdown is-hidden-mobile is-right">
-                        <a class="navbar-item" href="<%= linkPrefix %>/users/@me">
+                        <a class="navbar-item" href="<%= linkPrefix %>/users/@me" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-user fa-swap-opacity" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.profile") %></span>
                         </a>
-                        <a class="navbar-item" href="<%= linkPrefix %>/users/account/preferences">
+                        <a class="navbar-item" href="<%= linkPrefix %>/users/account/preferences" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-swatchbook" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.preferences") %></span>
                         </a>
-                        <a class="navbar-item" href="<%= linkPrefix %>/bots/submit">
+                        <% if (req.user.db.rank.mod === true) { %>
+                            <a class="navbar-item" href="<%= linkPrefix %>/staff" tabindex="0">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-cogs" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("common.nav.me.staffPanel") %></span>
+                            </a>
+                        <% } %>
+                        <a class="navbar-item" href="<%= linkPrefix %>/bots/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-robot" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.submitBot") %></span>
                         </a>
-                        <a class="navbar-item" href="<%= linkPrefix %>/servers/submit">
+                        <a class="navbar-item" href="<%= linkPrefix %>/servers/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-comments-alt fa-swap-opacity" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.nav.me.submitServer") %></span>
                         </a>
-                        <a class="navbar-item" href="<%= linkPrefix %>/templates/submit" tabindex="0">
+                        <a class="navbar-item" id="navTemplate" href="<%= linkPrefix %>/templates/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-clone" aria-hidden="true"></i>
                             </span>
@@ -225,7 +376,7 @@
                         </a>
                         <% if (req.user.db.preferences.enableGames === true) { %>
                             <hr class="navbar-divider">
-                            <a class="navbar-item" href="<%= linkPrefix %>/users/game/snake">
+                            <a class="navbar-item" id="navSnake" href="<%= linkPrefix %>/users/game/snake" tabindex="0">
                                 <span class="icon iconalign">
                                     <i class="fad fa-snake" aria-hidden="true"></i>
                                 </span>
@@ -239,3 +390,4 @@
     </div>
 </nav>
 <div id="siteContent">
+    

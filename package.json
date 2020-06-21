@@ -70,7 +70,7 @@
     "start": "node dist/src/app",
     "pm2": "pm2 start dist/src/app --name 'DEL'",
     "css-compile": "sh ./scripts/css_build.sh",
-    "editor-compile": "cp -r ./node_modules/monaco-editor/ ./src/Assets/Public/packages/monaco-editor",
+    "editor-compile": "cp -r ./node_modules/monaco-editor/ ./assets/Public/packages/monaco-editor",
     "setup": "node scripts/setup",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",

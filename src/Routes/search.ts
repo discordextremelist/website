@@ -50,7 +50,7 @@ router.post("/", variables, (req: Request, res: Response) => {
         });
 });
 
-router.post("/", variables, (req: Request, res: Response) => {
+router.post("/", variables, async (req: Request, res: Response) => {
     let { query, only } = req.body;
     if (!query)
         return res.status(400).json({
@@ -174,6 +174,6 @@ router.post("/", variables, (req: Request, res: Response) => {
             pages: results
         }
     });
-};*/
+});
 
 export = router;

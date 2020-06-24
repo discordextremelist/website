@@ -38,16 +38,12 @@ const router = express.Router();
 
 router.get("/", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.search");
-});
 
-router.post("/", variables, (req: Request, res: Response) => {
-    let { query, only } = req.body;
-    if (!query)
-        return res.status(400).json({
-            error: true,
-            status: 400,
-            message: "Missing body parameter 'query'"
-        });
+    return res.render("templates/search", {
+        title: res.__("common.search"),
+        subtitle: res.__("common.search.subtitle"),
+        req
+    });
 });
 
 router.post("/", variables, async (req: Request, res: Response) => {
@@ -112,6 +108,10 @@ router.post("/", variables, async (req: Request, res: Response) => {
                     ({ _id, name }) =>
                         _id === query || name.toLowerCase().indexOf(query) >= 0
                 )
+                .filter(
+                    ({ status }) =>
+                    !status.archived && status.approved
+                )
                 .map((bot) => {
                     return ejs.renderFile(renderPath + "/cards/botCard.ejs", {
                         req,
@@ -164,7 +164,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
                     );
                 })
         ]),
-        3
+        18
     );
     return res.json({
         error: false,

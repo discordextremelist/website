@@ -81,88 +81,75 @@
 </section>
 <div class="container is-fluid">
     <div class="section is-fluid" id="display">
-        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-            <% if (page > 1) { %>
-                <a href="/staff/apps/staff?page=<%= page - 1 %>" class="pagination-previous button is-primary"><i class="fas fa-arrow-left"></i>&nbsp; Previous</a>
-            <% } else { %>
-                <a class="pagination-previous button is-primary" disabled><i class="fas fa-arrow-left"></i>&nbsp; Previous</a>
-            <% } %>
-            <% if (page < pages) { %>
-                <a href="/staff/apps/staff?page=<%= page + 1 %>" class="pagination-next button is-primary">Next &nbsp;<i class="fas fa-arrow-right"></i></a>
-            <% } else { %>
-                <a class="pagination-next button is-primary" disabled>Next &nbsp;<i class="fas fa-arrow-right"></i></a>
-            <% } %>
-        </nav>
-        <button class="button is-transparent is-large is-fullwidth is-loading" style="display: none;" id="loader"><%= __("common.loading") %></button>
+        <div>
+            <h2 class="is-size-3" id="initialMsg" style="display: block;"><%= __("page.search.initial") %></h2>
+            <button class="button is-transparent is-large is-fullwidth is-loading" style="display: none;" id="loader"><%= __("common.loading") %></button>
+            <div class="columns is-multiline is-centered" id="renderingDiv"></div>
+        </div>
     </div>
 </div>
 <script>
-    (function () {
-        async function search(query, only) {
-            return new Promise(resolve => {
-                const req = new XMLHttpRequest();
-                req.open("POST", "/search");
-                req.setRequestHeader("Content-Type", "application/json");
-                if (!page) let page = 1;
-                req.send(JSON.stringify({ query, only, page }));
-                req.onreadystatechange = () => {
-                    if (req.readyState === 4) {
-                        const nav = document.querySelector("nav.pagination.is-centered");
-                        const pageList = document.querySelector("ul.pagination-list");
-                        if (pageList.children.length > 0) {
-                            while (pageList.firstElementChild && !pageList.firstElementChild.remove());
-                        }
-                        nav.removeAttribute("style");
-                        const results = [];
-                        const { data } = JSON.parse(req.responseText);
-                        console.log(data)
-                        for (let i = 0; i < 18; i++) {
-                            const cur = { bots: [], servers: [], users: [], templates: [] };
-                            for (const html of data.pages[i]) {
-                                if (html.includes("is-user-card")) cur.users.push(html);
-                                if (html.includes("is-bot-card")) cur.bots.push(html);
-                                if (html.includes("is-server-card")) cur.servers.push(html);
-                                if (html.includes("is-template-card")) cur.templates.push(html);
-                            }
-                            const liTag = document.createElement("li");
-                            const aTag = document.createElement("a");
-                            aTag.setAttribute("class", "pagination-link"+((i+1)==page?" is-current":""));
-                            aTag.innerHTML = (i+1).toString();
-                            aTag.setAttribute("aria-label", (i+1).toString());
-                            liTag.appendChild(aTag);
-                            liTag.addEventListener("click", doPagination);
-                            pageList.appendChild(liTag);
-                        }
-                        doPagination(pageList.children[0]);
-                    }
-                };
-            });
-        }
-        function toggleSearching() {
-            searching = !searching;
-            const elem = document.querySelector("button.button.is-transparent.is-large.is-fullwidth.is-loading#loader");
-            elem && elem.classList[searching ? "add" : "remove"]("is-loading");
-        }
-        const div = document.querySelector("div.section#display");
+    const input = document.getElementById("searchInput");
+
+    input.addEventListener("keyup", async (event) => {
+        if (event.keyCode === 13) {
+            await doSearch();
+        } else return;
+    });
+
+    async function doSearch() {
+        const initialMsg = document.getElementById("initialMsg");
+        const loader = document.getElementById("loader");
+
+        document.getElementById("renderingDiv").innerHTML = "";
+        loader.style.display = "block";
+        initialMsg.style.display = "none";
+
         const input = document.querySelector("input.input.is-rounded.is-dark#searchInput");
-        if (input instanceof HTMLInputElement) {
-            input.onkeypress = async ({ keyCode, which, shift }) => {
-                if ((which || keyCode) === 13 && !shift && !input.value.match(/\s+/)) {
-                    if (input.value.match(/gay(\s+)?(men\s+)?.*/i)) window.location.href = "/users/302604426781261824";
-                    const c = document.querySelector("input[type='checkbox']#users");
-                    const a = document.querySelector("input[type='checkbox']#bots");
-                    const b = document.querySelector("input[type='checkbox']#servers");
-                    const d = document.querySelector("input[type='checkbox']#templates");
-                    const only = !((a && a.checked) && (b && b.checked) && (c && c.checked)) && [
-                        c && c.checked && "users",
-                        a && a.checked && "bots",
-                        b && b.checked && "servers",
-                        d && d.checked && "templates",
-                    ].filter(a=>!!a);
-                    await search(input.value, only || ["bots", "servers", "templates"]);
-                }
-            }
+
+        if (input.value.match(/gay(\s+)?(men\s+)?.*/i)) window.location.href = "/users/302604426781261824";
+
+        const c = document.querySelector("input[type='checkbox']#users");
+        const a = document.querySelector("input[type='checkbox']#bots");
+        const b = document.querySelector("input[type='checkbox']#servers");
+        const d = document.querySelector("input[type='checkbox']#templates");
+        const only = !((a && a.checked) && (b && b.checked) && (c && c.checked)) && [
+            c && c.checked && "users",
+            a && a.checked && "bots",
+            b && b.checked && "servers",
+            d && d.checked && "templates",
+        ].filter(a=>!!a);
+
+        async function fetchPOST(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: "POST", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, *cors, same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                redirect: "follow", // manual, *follow, error
+                referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify(data)
+            });
+
+            return response.json();
         }
-    })();
+        
+        fetchPOST("<%= linkPrefix %>/search", {
+            query: input.value,
+            only: only || ["bots", "servers", "templates"]
+        })
+        .then(data => {
+            let content = "";
+            for (const card of data.data.pages[0]) {
+                content = content + card;
+            }
+
+            loader.style.display = "none";
+            document.getElementById("renderingDiv").innerHTML = content;
+        });
+    }
 </script>
 <%- include("../partials/footer.ejs") %>

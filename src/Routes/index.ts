@@ -122,18 +122,19 @@ router.get("/", variables, async (req: Request, res: Response) => {
 router.get("/bots", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.bots");
 
+    if (!req.query.page) req.query.page = "1";
+
     const bots = (await botCache.getAllBots()).filter(
         ({ status }) => status.approved && !status.siteBot && !status.archived
     );
-    const botChunk = chunk(bots, 9);
 
     res.render("templates/bots/index", {
         title: res.__("common.bots"),
         subtitle: res.__("common.bots.subtitle"),
         req,
-        botsData: bots,
-        botChunk,
-        page: 1,
+        bots,
+        botsPgArr: bots.slice((9 * Number(req.query.page)) - 9, 9 * Number(req.query.page)),
+        page: req.query.page,
         pages: Math.ceil(bots.length / 9)
     });
 });
@@ -141,16 +142,17 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
 router.get("/servers", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.servers");
 
+    if (!req.query.page) req.query.page = "1";
+
     const servers = await serverCache.getAllServers();
-    const serverChunk = chunk(servers, 9);
 
     res.render("templates/servers/index", {
         title: res.__("common.servers"),
         subtitle: res.__("common.servers.subtitle"),
         req,
-        serversData: servers,
-        serverChunk,
-        page: 1,
+        servers,
+        serversPgArr: servers.slice((9 * Number(req.query.page)) - 9, 9 * Number(req.query.page)),
+        page: req.query.page,
         pages: Math.ceil(servers.length / 9)
     });
 });
@@ -158,16 +160,17 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
 router.get("/templates", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.templates");
 
+    if (!req.query.page) req.query.page = "1";
+
     const templates = await templateCache.getAllTemplates();
-    const templateChunk = chunk(templates, 9);
 
     res.render("templates/serverTemplates/index", {
         title: res.__("common.templates"),
         subtitle: res.__("common.templates.subtitle"),
         req,
-        templatesData: templates,
-        templateChunk,
-        page: 1,
+        templates,
+        templatesPgArr: templates.slice((9 * Number(req.query.page)) - 9, 9 * Number(req.query.page)),
+        page: req.query.page,
         pages: Math.ceil(templates.length / 9)
     });
 });

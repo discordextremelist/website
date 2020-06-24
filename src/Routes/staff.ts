@@ -135,7 +135,7 @@ router.get(
             .sort({ date: -1 })
             .toArray();
 
-        const logsChunk = chunk(logs, 15);
+        if (!req.query.page) req.query.page = "1";
 
         res.locals.premidPageInfo = res.__("premid.staff.audit");
 
@@ -143,9 +143,9 @@ router.get(
             title: res.__("page.staff.audit"),
             subtitle: res.__("page.staff.audit.subtitle"),
             req,
-            logsData: logs,
-            logsChunk,
-            page: 1,
+            logs,
+            logsPgArr: logs.slice((15 * Number(req.query.page)) - 15, 15 * Number(req.query.page)),
+            page: req.query.page,
             pages: Math.ceil(logs.length / 15)
         });
     }

@@ -19,6 +19,8 @@
                             <span><%= __("common.rank.mod") %></span>
                         <% } else if (user.rank === "booster") { %>
                             <span><%= __("common.rank.booster") %></span>
+                        <% } else if (user.rank === "donator") { %>
+                            <span><%= __("common.rank.donator") %></span>
                         <% } else if (user.rank === "translator") { %>
                             <span><%= __("common.rank.translator") %></span>
                         <% } else if (user.rank === "tester") { %>
@@ -57,6 +59,13 @@
         box-shadow: transparent 0px 2px 52px 0px;
     }
     .has-background-contrib-booster:hover {
+        box-shadow: rgba(205, 82, 255, 0.3) 0px 2px 52px 0px;
+    }
+    .has-background-contrib-donator {
+        background: linear-gradient(-35deg, rgba(205, 82, 255, 0.5) 20%, rgb(205, 82, 255) 130%); 
+        box-shadow: transparent 0px 2px 52px 0px;
+    }
+    .has-background-contrib-donator:hover {
         box-shadow: rgba(205, 82, 255, 0.3) 0px 2px 52px 0px;
     }
     .has-background-contrib-tester {

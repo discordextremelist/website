@@ -114,11 +114,50 @@ router.post(
                     } else if (!/^https?:\/\//.test(req.body.invite)) {
                         error = true;
                         errors.push(
-                            res.__("common.error.bot.arr.invite.urlInvalid")
+                            res.__("common.error.listing.arr.invite.urlInvalid")
                         );
                     } else {
                         invite = req.body.invite;
                     }
+                }
+
+                let invalidURL = 0;
+
+                if (
+                    req.body.supportServer &&
+                    !/^https?:\/\//.test(req.body.supportServer)
+                ) {
+                    error = true;
+                    invalidURL = 1;
+                }
+
+                if (
+                    req.body.website &&
+                    !/^https?:\/\//.test(req.body.website)
+                ) {
+                    error = true;
+                    invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                }
+
+                if (
+                    req.body.donationUrl &&
+                    !/^https?:\/\//.test(req.body.donationUrl)
+                ) {
+                    error = true;
+                    if (invalidURL !== 2)
+                        invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                }
+
+                if (req.body.repo && !/^https?:\/\//.test(req.body.repo)) {
+                    error = true;
+                    if (invalidURL !== 2)
+                        invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                }
+
+                if (invalidURL === 1) {
+                    errors.push(res.__("common.error.listing.arr.invalidURL"));
+                } else if (invalidURL === 2) {
+                    errors.push(res.__("common.error.listing.arr.invalidURLs"));
                 }
 
                 if (!req.body.longDescription) {
@@ -222,7 +261,9 @@ router.post(
                     }
                 });
 
-                (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+                (discord.bot.channels.cache.get(
+                    settings.channels.webLog
+                ) as Discord.TextChannel).send(
                     `${settings.emoji.addBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -611,10 +652,48 @@ router.post(
                 errors.push(res.__("common.error.listing.arr.invite.tooLong"));
             } else if (!/^https?:\/\//.test(req.body.invite)) {
                 error = true;
-                errors.push(res.__("common.error.bot.arr.invite.urlInvalid"));
+                errors.push(
+                    res.__("common.error.listing.arr.invite.urlInvalid")
+                );
             } else {
                 invite = req.body.invite;
             }
+        }
+
+        let invalidURL = 0;
+
+        if (
+            req.body.supportServer &&
+            !/^https?:\/\//.test(req.body.supportServer)
+        ) {
+            error = true;
+            invalidURL = 1;
+        }
+
+        if (req.body.website && !/^https?:\/\//.test(req.body.website)) {
+            error = true;
+            invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
+        if (
+            req.body.donationUrl &&
+            !/^https?:\/\//.test(req.body.donationUrl)
+        ) {
+            error = true;
+            if (invalidURL !== 2)
+                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
+        if (req.body.repo && !/^https?:\/\//.test(req.body.repo)) {
+            error = true;
+            if (invalidURL !== 2)
+                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
+        if (invalidURL === 1) {
+            errors.push(res.__("common.error.listing.arr.invalidURL"));
+        } else if (invalidURL === 2) {
+            errors.push(res.__("common.error.listing.arr.invalidURLs"));
         }
 
         if (!req.body.longDescription) {
@@ -640,7 +719,9 @@ router.post(
         if (req.body.music === "on") tags.push("Music");
 
         if (error === true) {
-            req.body.status.premium = botExists.status.premium;
+            req.body.status
+                ? (req.body.status.premium = botExists.status.premium)
+                : (req.body.status = { premium: botExists.status.premium });
 
             return res.render("templates/bots/errorOnEdit", {
                 title: res.__("page.bots.edit.title"),
@@ -775,7 +856,9 @@ router.post(
                 });
             });
 
-        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel)
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel)
             .send(
                 `${settings.emoji.editBot} **${functions.escapeFormatting(
                     req.user.db.fullUsername
@@ -972,8 +1055,8 @@ router.get(
                 });
         }
 
-        let upVotes = bot.votes.positive;
-        let downVotes = bot.votes.negative;
+        let upVotes = [...bot.votes.positive];
+        let downVotes = [...bot.votes.negative];
 
         if (upVotes.includes(req.user.id) || downVotes.includes(req.user.id)) {
             if (upVotes.includes(req.user.id)) {
@@ -1159,7 +1242,9 @@ router.get(
                 req: req
             });
 
-        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1205,9 +1290,7 @@ router.get(
         if (botExists.status.archived === false)
             return res.status(400).render("status", {
                 title: res.__("common.error"),
-                subtitle: res.__(
-                    "You cannot resubmit a bot that isn't archived."
-                ),
+                subtitle: res.__("common.error.bot.notArchived"),
                 status: 400,
                 type: "Error",
                 req
@@ -1264,6 +1347,15 @@ router.post(
                 req
             });
 
+        if (botExists.status.archived === false)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.notArchived"),
+                status: 400,
+                type: "Error",
+                req
+            });
+
         const bot = botExists;
         if (bot.owner.id !== req.user.id && req.user.db.assistant === false)
             return res.status(403).render("status", {
@@ -1279,7 +1371,7 @@ router.post(
             botExists.name
         );
 
-        let invite;
+        let invite: string;
 
         if (req.body.invite === "") {
             invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
@@ -1292,10 +1384,48 @@ router.post(
                 errors.push(res.__("common.error.listing.arr.invite.tooLong"));
             } else if (!/^https?:\/\//.test(req.body.invite)) {
                 error = true;
-                errors.push(res.__("common.error.bot.arr.invite.urlInvalid"));
+                errors.push(
+                    res.__("common.error.listing.arr.invite.urlInvalid")
+                );
             } else {
                 invite = req.body.invite;
             }
+        }
+
+        let invalidURL = 0;
+
+        if (
+            req.body.supportServer &&
+            !/^https?:\/\//.test(req.body.supportServer)
+        ) {
+            error = true;
+            invalidURL = 1;
+        }
+
+        if (req.body.website && !/^https?:\/\//.test(req.body.website)) {
+            error = true;
+            invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
+        if (
+            req.body.donationUrl &&
+            !/^https?:\/\//.test(req.body.donationUrl)
+        ) {
+            error = true;
+            if (invalidURL !== 2)
+                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
+        if (req.body.repo && !/^https?:\/\//.test(req.body.repo)) {
+            error = true;
+            if (invalidURL !== 2)
+                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
+        if (invalidURL === 1) {
+            errors.push(res.__("common.error.listing.arr.invalidURL"));
+        } else if (invalidURL === 2) {
+            errors.push(res.__("common.error.listing.arr.invalidURLs"));
         }
 
         if (!req.body.longDescription) {
@@ -1460,7 +1590,9 @@ router.post(
                 });
             });
 
-        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel)
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel)
             .send(
                 `${settings.emoji.resubmitBot} **${functions.escapeFormatting(
                     req.user.db.fullUsername
@@ -1529,7 +1661,9 @@ router.get(
             }
         );
 
-        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel)
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel)
             .send(
                 `${settings.emoji.check} **${functions.escapeFormatting(
                     req.user.db.fullUsername
@@ -1559,12 +1693,8 @@ router.get(
                     console.error(e);
                 });
 
-        const mainGuild = await discord.bot.guilds.cache.get(
-            settings.guild.main
-        );
-        const staffGuild = await discord.bot.guilds.cache.get(
-            settings.guild.staff
-        );
+        const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
+        const staffGuild = discord.bot.guilds.cache.get(settings.guild.staff);
 
         const mainGuildOwner = mainGuild.members.cache.get(bot.owner.id);
         if (mainGuildOwner)
@@ -1780,9 +1910,9 @@ router.get(
         res.render("templates/bots/staffActions/decline", {
             title: res.__("page.bots.decline.title"),
             subtitle: res.__("page.bots.decline.subtitle", bot.name),
-            redirect,
             decliningBot: bot,
-            req
+            req,
+            redirect
         });
     }
 );
@@ -1847,7 +1977,9 @@ router.post(
 
         await botCache.deleteBot(req.params.id);
 
-        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel).send(
             `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1857,7 +1989,9 @@ router.post(
             })\`\n**Reason:** \`${req.body.reason}\``
         );
 
-        const member = discord.staffGuild.members.cache.get(req.body.id);
+        const staffGuild = discord.bot.guilds.cache.get(settings.guild.staff);
+
+        const member = staffGuild.members.cache.get(req.body.id);
 
         if (member) {
             await member.kick("Bot's listing has been declined.").catch((e) => {
@@ -1915,11 +2049,17 @@ router.get(
 
         res.locals.premidPageInfo = res.__("premid.bots.remove", bot.name);
 
+        let redirect = `/bots/${bot._id}`;
+
+        if (req.query.from && req.query.from === "queue")
+            redirect = "/staff/queue";
+
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.remove.title"),
             subtitle: res.__("page.bots.remove.subtitle", bot.name),
             removingBot: bot,
-            req
+            req,
+            redirect
         });
     }
 );
@@ -1984,7 +2124,9 @@ router.post(
 
         await botCache.deleteBot(req.params.id);
 
-        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1994,7 +2136,9 @@ router.post(
             })\`\n**Reason:** \`${req.body.reason}\``
         );
 
-        const member = discord.mainGuild.members.cache.get(req.body.id);
+        const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
+
+        const member = mainGuild.members.cache.get(req.body.id);
 
         if (member) {
             await member

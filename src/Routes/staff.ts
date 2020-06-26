@@ -21,7 +21,6 @@ import express from "express";
 import { Request, Response } from "express";
 
 import * as fetch from "node-fetch";
-import chunk = require("chunk");
 
 import * as settings from "../../settings.json";
 import * as permission from "../Util/Function/permissions";
@@ -137,6 +136,16 @@ router.get(
 
         if (!req.query.page) req.query.page = "1";
 
+        let iteratedLogs: auditLog[] = logs.slice(
+            15 * Number(req.query.page) - 15,
+            15 * Number(req.query.page)
+        );
+
+        for (const log of iteratedLogs) {
+            log.executor = await functions.auditUserIDParse(log.executor);
+            log.target = await functions.auditUserIDParse(log.target);
+        }
+
         res.locals.premidPageInfo = res.__("premid.staff.audit");
 
         res.render("templates/staff/audit", {
@@ -144,9 +153,10 @@ router.get(
             subtitle: res.__("page.staff.audit.subtitle"),
             req,
             logs,
-            logsPgArr: logs.slice((15 * Number(req.query.page)) - 15, 15 * Number(req.query.page)),
+            logsPgArr: iteratedLogs,
             page: req.query.page,
-            pages: Math.ceil(logs.length / 15)
+            pages: Math.ceil(logs.length / 15),
+            functions
         });
     }
 );
@@ -807,12 +817,15 @@ router.post(
             foreground = functions.getForeground(req.body.colour);
         }
 
-        await announcementCache.updateAnnouncement({
-            active: true,
-            message: req.body.message,
-            colour: colour,
-            foreground: foreground
-        });
+        await announcementCache.updateAnnouncement(
+            {
+                active: true,
+                message: req.body.message,
+                colour: colour,
+                foreground: foreground
+            },
+            req
+        );
 
         res.render("templates/staff/announceWithNotif", {
             title: res.__("page.staff.announcer"),
@@ -828,12 +841,15 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        announcementCache.updateAnnouncement({
-            active: false,
-            message: "",
-            colour: "",
-            foreground: ""
-        });
+        announcementCache.updateAnnouncement(
+            {
+                active: false,
+                message: "",
+                colour: "",
+                foreground: ""
+            },
+            req
+        );
 
         res.render("templates/staff/announceWithNotif", {
             title: res.__("page.staff.announcer"),

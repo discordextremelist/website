@@ -65,8 +65,6 @@ bot.on("guildMemberRemove", async (member) => {
     }
 });
 
-export const mainGuild = bot.guilds.cache.get(settings.guild.main);
-export const staffGuild = bot.guilds.cache.get(settings.guild.staff);
 export const logsChannel = bot.channels.cache.get(
     settings.channels.webLog
 ) as Discord.TextChannel;
@@ -75,6 +73,8 @@ export const alertsChannel = bot.channels.cache.get(
 ) as Discord.TextChannel;
 
 export function getMember(id: string): Discord.GuildMember | undefined {
+    const mainGuild = bot.guilds.cache.get(settings.guild.main);
+
     if (mainGuild) {
         const member:
             | Discord.GuildMember

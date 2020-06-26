@@ -1,4 +1,39 @@
+<% const logFormat = functions.parseAudit(__, log.type) %>
 <div class="box has-background-primary" style="overflow: hidden; height: 100%;">
-    
-    <%= JSON.stringify(log) %>
+    <p class="is-size-4">
+        <span class="icon is-large">
+            <i class="<%= logFormat.icon %>" aria-hidden="true"></i>
+        </span>
+        <span><%= logFormat.name %></span>
+    </p>
+    <p><span class="has-text-default"><%= __("page.staff.audit._id") %></span> <%= log._id %></p>
+    <p><span class="has-text-default"><%= __("page.staff.audit.executor") %></span> <%= log.executor %></p>
+    <p><span class="has-text-default"><%= __("page.staff.audit.target") %></span> <%= log.target %></p>
+    <p><span class="has-text-default"><%= __("page.staff.audit.reason") %></span> <%= log.reason %></p>
+    <p><span class="has-text-default"><%= __("page.staff.audit.date") %></span> <%= functions.parseDate(__, req.locale, log.date) %></p>
+    <% if (log.details) { %>
+        <br />
+        <div class="buttons">
+            <a class="button is-default is-outlined" onclick="toggleShowRaw('<%= log._id %>');">
+                <span class="icon"><i aria-hidden="true" class="fas fa-brackets-curly"></i></span>
+                <span><%= __("page.staff.audit.jsonData") %></span>
+            </a>
+        </div>
+        <div style="display: none;" id="rawLOG-<%= log._id %>">
+            <div class="columns">
+                <% if (log.details.old) { %>
+                    <div class="column is-one-half">
+                        <span class="is-size-5"><%= __("page.staff.audit.before") %></span>
+                        <br />
+                        <pre class="has-background-primary"><code class="prettyprint"><%= JSON.stringify(log.details.old, null, 4) %></code></pre>
+                    </div>
+                <% } %>
+                <div class="column is-one-half">
+                    <span class="is-size-5"><%= __("page.staff.audit.after") %></span>
+                    <br />
+                    <pre class="has-background-primary"><code class="prettyprint"><%= JSON.stringify(log.details.new, null, 4) %></code></pre>
+                </div>
+            </div>
+        </div>
+    <% } %>
 </div>

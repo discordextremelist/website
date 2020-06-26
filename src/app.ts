@@ -59,7 +59,9 @@ app.get("*", (req: Request, res: Response, next: () => void) => {
     ) {
         return res
             .status(503)
-            .sendFile(path.join(__dirname + "/../../assets/Public/loading.html"));
+            .sendFile(
+                path.join(__dirname + "/../../assets/Public/loading.html")
+            );
     } else next();
 });
 
@@ -83,30 +85,50 @@ new Promise((resolve, reject) => {
         dbReady = true;
 
         for (const lib of require("../../assets/libraries.json")) {
-            await global.db.collection("libraries").updateOne({ _id: lib.name }, {
-                _id: lib.name,
-                language: lib.language,
-                links: {
-                    docs: lib.links.docs,
-                    repo: lib.links.repo
-                }
-            }, { upsert: true }).then(() => true).catch(() => false);
+            await global.db
+                .collection("libraries")
+                .updateOne(
+                    { _id: lib.name },
+                    {
+                        _id: lib.name,
+                        language: lib.language,
+                        links: {
+                            docs: lib.links.docs,
+                            repo: lib.links.repo
+                        }
+                    },
+                    { upsert: true }
+                )
+                .then(() => true)
+                .catch(() => false);
         }
         if (
-            !(await global.db.collection("webOptions").findOne({ _id: "ddosMode" })) ||
-            !(await global.db.collection("webOptions").findOne({ _id: "announcement" }))
+            !(await global.db
+                .collection("webOptions")
+                .findOne({ _id: "ddosMode" })) ||
+            !(await global.db
+                .collection("webOptions")
+                .findOne({ _id: "announcement" }))
         ) {
-            await global.db.collection("webOptions").insertOne({
-                _id: "ddosMode",
-                active: false
-            }).then(() => true).catch(() => false);
-            await global.db.collection("webOptions").insertOne({
-                _id: "announcement",
-                active: false,
-                message: "",
-                colour: "",
-                foreground: ""
-            }).then(() => true).catch(() => false);
+            await global.db
+                .collection("webOptions")
+                .insertOne({
+                    _id: "ddosMode",
+                    active: false
+                })
+                .then(() => true)
+                .catch(() => false);
+            await global.db
+                .collection("webOptions")
+                .insertOne({
+                    _id: "announcement",
+                    active: false,
+                    message: "",
+                    colour: "",
+                    foreground: ""
+                })
+                .then(() => true)
+                .catch(() => false);
         }
 
         global.redis = new (require("ioredis"))({
@@ -134,7 +156,7 @@ new Promise((resolve, reject) => {
                 typeof discord.bot.guilds !== "undefined" &&
                 typeof discord.bot.guilds.cache.get(settings.guild.main) !==
                     "undefined"
-            ) { 
+            ) {
                 await banned.updateBanlist();
                 await discord.uploadStatuses();
             } else {
@@ -146,9 +168,9 @@ new Promise((resolve, reject) => {
 
         await botStatsUpdate();
 
-        setTimeout(async() => {
+        setTimeout(async () => {
             await discord.postMetric();
-        }, 10000)
+        }, 10000);
 
         app.set("view engine", "ejs");
 
@@ -157,7 +179,8 @@ new Promise((resolve, reject) => {
                 // @ts-ignore
                 ':req[cf-connecting-ip] - [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
                 {
-                    skip: (r: { url: string; }) => r.url === "/profile/game/snakes"
+                    skip: (r: { url: string }) =>
+                        r.url === "/profile/game/snakes"
                 }
             )
         );
@@ -172,12 +195,14 @@ new Promise((resolve, reject) => {
             defaultLocale: settings.website.locales.default
         });
 
-        app.use(cookieSession({
-            name: "delSession",
-            secret: settings.secrets.cookie,
-            maxAge: 1000 * 60 * 60 * 24 * 7
-        }));
-          
+        app.use(
+            cookieSession({
+                name: "delSession",
+                secret: settings.secrets.cookie,
+                maxAge: 1000 * 60 * 60 * 24 * 7
+            })
+        );
+
         app.use(cookieParser(settings.secrets.cookie));
 
         app.use(passport.initialize());
@@ -204,32 +229,41 @@ new Promise((resolve, reject) => {
         app.use("/:lang/staff", require("./Routes/staff"));
         app.use("/:lang/docs", require("./Routes/docs"));
 
-        app.use((err: { message: string; status?: number; }, req: Request, res: Response, next: () => void) => {
-            res.locals.message = err.message;
-            res.locals.error = err;
+        app.use(
+            (
+                err: { message: string; status?: number },
+                req: Request,
+                res: Response,
+                next: () => void
+            ) => {
+                res.locals.message = err.message;
+                res.locals.error = err;
 
-            if (err.message === "Not Found")
-                return res.status(404).render("status", {
-                    title: res.__("common.error"),
-                    subtitle: res.__("common.error.404"),
-                    status: 404,
-                    type: res.__("common.error"),
-                    req: req,
-                    pageType: {
-                        home: false,
-                        standard: true,
-                        server: false,
-                        bot: false,
-                        template: false
-                    }
-                });
+                if (err.message === "Not Found")
+                    return res.status(404).render("status", {
+                        title: res.__("common.error"),
+                        subtitle: res.__("common.error.404"),
+                        status: 404,
+                        type: res.__("common.error"),
+                        req: req,
+                        pageType: {
+                            home: false,
+                            standard: true,
+                            server: false,
+                            bot: false,
+                            template: false
+                        }
+                    });
 
-            res.status(err.status || 500);
-            res.render("error");
-        });
+                res.status(err.status || 500);
+                res.render("error");
+            }
+        );
 
         app.listen(settings.website.port.value || 3000, () => {
-            console.log(`Website: Ready on port ${settings.website.port.value || 3000}`);
+            console.log(
+                `Website: Ready on port ${settings.website.port.value || 3000}`
+            );
         });
     })
     .catch((e) => {

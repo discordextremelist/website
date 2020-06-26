@@ -170,7 +170,9 @@ router.post(
                     }
                 });
 
-                await (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+                await (discord.bot.channels.cache.get(
+                    settings.channels.webLog
+                ) as Discord.TextChannel).send(
                     `${settings.emoji.addBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -575,9 +577,6 @@ router.post(
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             tags: tags,
-                            owner: {
-                                id: req.user.id
-                            },
                             icon: {
                                 hash:
                                     fetchRes.jsonBody.serialized_source_guild
@@ -592,7 +591,9 @@ router.post(
                     }
                 );
 
-                await (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+                await (discord.bot.channels.cache.get(
+                    settings.channels.webLog
+                ) as Discord.TextChannel).send(
                     `${settings.emoji.editBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -641,9 +642,6 @@ router.post(
                             longDesc: req.body.longDescription,
                             tags: tags,
                             fromGuild: template.fromGuild,
-                            owner: {
-                                id: req.user.id
-                            },
                             icon: {
                                 hash:
                                     fetchRes.jsonBody.serialized_source_guild
@@ -671,9 +669,6 @@ router.post(
                             longDesc: template.longDesc,
                             tags: template.tags,
                             fromGuild: template.fromGuild,
-                            owner: {
-                                id: template.owner.id
-                            },
                             icon: {
                                 hash: template.icon.hash,
                                 url: `https://cdn.discordapp.com/icons/${template.fromGuild}/${template.icon.hash}`
@@ -738,7 +733,9 @@ router.get(
                 req
             });
 
-        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -831,7 +828,9 @@ router.post(
         });
         await templateCache.deleteTemplate(req.params.id);
 
-        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${

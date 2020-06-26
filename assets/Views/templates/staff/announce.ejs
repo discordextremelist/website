@@ -1,6 +1,7 @@
 <%- include("../../partials/header.ejs") %>
 <link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><%- include("../../partials/staffNav.ejs") %>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script>
+<%- include("../../partials/staffNav.ejs") %>
     <section class="hero is-primary">
         <div class="hero-body">
             <div class="container has-text-centered" style="text-align: center;">
@@ -69,7 +70,7 @@
                             <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
                             <span><%= __("common.set") %></span>
                         </button>
-                        <a class="button is-danger" href="<%= linkPrefix %>/users/account/preferences/reset" <% if (announcement.active === false) { %>disabled<% } %>>
+                        <a class="button is-danger" href="<%= linkPrefix %>/staff/announce/reset" <% if (announcement.active === false) { %>disabled<% } %>>
                             <span class="icon"><i aria-hidden="true" class="fas fa-minus-circle"></i></span>
                             <span><%= __("page.staff.announcer.reset") %></span>
                         </a>

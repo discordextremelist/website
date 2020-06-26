@@ -97,6 +97,30 @@ router.post(
                     );
                 }
 
+                let invalidURL = 0;
+
+                if (
+                    req.body.website &&
+                    !/^https?:\/\//.test(req.body.website)
+                ) {
+                    error = true;
+                    invalidURL = 1;
+                }
+
+                if (
+                    req.body.donationUrl &&
+                    !/^https?:\/\//.test(req.body.donationUrl)
+                ) {
+                    error = true;
+                    invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                }
+
+                if (invalidURL === 1) {
+                    errors.push(res.__("common.error.listing.arr.invalidURL"));
+                } else if (invalidURL === 2) {
+                    errors.push(res.__("common.error.listing.arr.invalidURLs"));
+                }
+
                 let tags: string[] = [];
 
                 if (req.body.gaming === "on") tags.push("Gaming");
@@ -146,7 +170,9 @@ router.post(
                     }
                 });
 
-                (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+                (discord.bot.channels.cache.get(
+                    settings.channels.webLog
+                ) as Discord.TextChannel).send(
                     `${settings.emoji.addBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -435,6 +461,27 @@ router.post(
             }
         }
 
+        let invalidURL = 0;
+
+        if (req.body.website && !/^https?:\/\//.test(req.body.website)) {
+            error = true;
+            invalidURL = 1;
+        }
+
+        if (
+            req.body.donationUrl &&
+            !/^https?:\/\//.test(req.body.donationUrl)
+        ) {
+            error = true;
+            invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
+        if (invalidURL === 1) {
+            errors.push(res.__("common.error.listing.arr.invalidURL"));
+        } else if (invalidURL === 2) {
+            errors.push(res.__("common.error.listing.arr.invalidURLs"));
+        }
+
         if (!req.body.longDescription) {
             error = true;
             errors.push(res.__("common.error.listing.arr.longDescRequired"));
@@ -507,7 +554,9 @@ router.post(
                     }
                 );
 
-                (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+                (discord.bot.channels.cache.get(
+                    settings.channels.webLog
+                ) as Discord.TextChannel).send(
                     `${settings.emoji.editBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -608,7 +657,9 @@ router.get(
                 req
             });
 
-        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -698,7 +749,9 @@ router.post(
 
         await serverCache.deleteServer(req.params.id);
 
-        (discord.bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel).send(
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${

@@ -14,6 +14,8 @@ PREMIUM_BOT_TAKE: When a staff member takes premium from a bot.
 SUBMIT_BOT: When a user submits a bot.
 UPVOTE_BOT: When a user upvotes a bot.
 DOWNVOTE_BOT: When a user downvotes a bot.
+DELETE_BOT: When a user deletes a bot.
+REMOVE_BOT: When a staff member removes a bot.
 SUBMIT_SERVER: When a user submits a server.
 EDIT_SERVER: When a user edits a server.
 DELETE_SERVER: When a user deletes a server.
@@ -27,4 +29,7 @@ RESET_AWAY: When a staff member places another staff member as no longer on away
 MODIFY_STANDING: When a staff member changes another staff member's standing.
 ADD_WARNING: When a staff member warns another staff member. 
 ADD_STRIKE: When a staff member strikes another staff member.
+UPDATE_ANNOUNCEMENT: When a staff member updates the site-wide announcement.
+RESET_ANNOUNCEMENT: When a staff member removes (resets) the site-wide announcement.
+UNKNOWN: A fallback display event used when parsing does not recognise the audit type provided.
 ```

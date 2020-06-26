@@ -17,6 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { Request } from "express";
+
 global.announcement = {
     active: false,
     message: "",
@@ -28,7 +30,7 @@ export function getAnnouncement() {
     return global.announcement;
 }
 
-export async function updateAnnouncement(announcement) {
+export async function updateAnnouncement(announcement, req: Request) {
     await global.db.collection("webOptions").updateOne(
         { _id: "announcement" },
         {
@@ -40,6 +42,37 @@ export async function updateAnnouncement(announcement) {
             }
         }
     );
+
+    let type: string;
+    announcement.active
+        ? (type = "UPDATE_ANNOUNCEMENT")
+        : (type = "RESET_ANNOUNCEMENT");
+
+    await global.db.collection("audit").insertOne({
+        type: type,
+        executor: req.user.id,
+        target: "announcement",
+        date: Date.now(),
+        reason: req.body.reason || "None specified.",
+        details: {
+            old: {
+                announcement: {
+                    active: global.announcement.active,
+                    message: global.announcement.message,
+                    colour: global.announcement.colour,
+                    foreground: global.announcement.foreground
+                }
+            },
+            new: {
+                announcement: {
+                    active: announcement.active,
+                    message: announcement.message,
+                    colour: announcement.colour,
+                    foreground: announcement.foreground
+                }
+            }
+        }
+    });
 
     global.announcement = {
         active: announcement.active,

@@ -82,7 +82,7 @@
 <div class="container is-fluid">
     <div class="section is-fluid" id="display">
         <div>
-            <h2 class="is-size-3" id="initialMsg" style="display: block;"><%= __("page.search.initial") %></h2>
+            <h2 class="is-size-3" id="noticeMsg" style="display: block;"><%= __("page.search.initial") %></h2>
             <button class="button is-transparent is-large is-fullwidth is-loading" style="display: none;" id="loader"><%= __("common.loading") %></button>
             <div class="columns is-multiline is-centered" id="renderingDiv"></div>
         </div>
@@ -98,12 +98,12 @@
     });
 
     async function doSearch() {
-        const initialMsg = document.getElementById("initialMsg");
+        const noticeMsg = document.getElementById("noticeMsg");
         const loader = document.getElementById("loader");
 
         document.getElementById("renderingDiv").innerHTML = "";
         loader.style.display = "block";
-        initialMsg.style.display = "none";
+        noticeMsg.style.display = "none";
 
         const input = document.querySelector("input.input.is-rounded.is-dark#searchInput");
 
@@ -122,15 +122,15 @@
 
         async function fetchPOST(url = '', data = {}) {
             const response = await fetch(url, {
-                method: "POST", // *GET, POST, PUT, DELETE, etc.
-                mode: "cors", // no-cors, *cors, same-origin
-                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: "same-origin", // include, *same-origin, omit
+                method: "POST",
+                mode: "cors", 
+                cache: "no-cache", 
+                credentials: "same-origin",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                redirect: "follow", // manual, *follow, error
-                referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
                 body: JSON.stringify(data)
             });
 
@@ -143,10 +143,16 @@
         })
         .then(data => {
             let content = "";
-            for (const card of data.data.pages[0]) {
-                content = content + card;
-            }
 
+            if (data.data.pages.length !== 0) {
+                for (const card of data.data.pages[0]) {
+                    content = content + card;
+                }
+            } else {
+                noticeMsg.innerHTML = "<h2 class=\"is-size-3\" id=\"noticeMsg\"><%= __("common.error.fetchFail.search.noResults") %></h2>"; 
+                noticeMsg.style.display = "block";
+            }
+            
             loader.style.display = "none";
             document.getElementById("renderingDiv").innerHTML = content;
         });

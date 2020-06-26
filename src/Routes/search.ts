@@ -29,10 +29,7 @@ import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import { variables } from "../Util/Function/variables";
 
-const renderPath = require("path").join(
-    process.cwd(),
-    "assets/Views/partials"
-);
+const renderPath = require("path").join(process.cwd(), "assets/Views/partials");
 
 const router = express.Router();
 
@@ -108,10 +105,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
                     ({ _id, name }) =>
                         _id === query || name.toLowerCase().indexOf(query) >= 0
                 )
-                .filter(
-                    ({ status }) =>
-                    !status.archived && status.approved
-                )
+                .filter(({ status }) => !status.archived && status.approved)
                 .map((bot) => {
                     return ejs.renderFile(renderPath + "/cards/botCard.ejs", {
                         req,

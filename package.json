@@ -52,7 +52,7 @@
     "passport-discord": "^0.1.4",
     "request": "^2.88.2",
     "sanitize-html": "^1.26.0",
-    "snyk": "^1.348.1",
+    "snyk": "^1.349.0",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
   },

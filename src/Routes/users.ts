@@ -30,6 +30,8 @@ import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
 
+const Entities = require("html-entities").XmlEntities;
+const entities = new Entities();
 const router = express.Router();
 
 router.get("/:id", variables, async (req: Request, res: Response, next) => {
@@ -541,6 +543,9 @@ router.get(
         res.render("templates/users/accountPreferences", {
             title: res.__("common.nav.me.preferences"),
             subtitle: res.__("common.nav.me.preferences.subtitle"),
+            customGlobalCssDB: entities.decode(
+                req.user.db.preferences.customGlobalCss
+            ),
             req
         });
     }

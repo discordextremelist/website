@@ -20,8 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 
-import chunk = require("chunk");
-
 import * as settings from "../../settings.json";
 import * as featuring from "../Util/Services/featuring";
 import * as botCache from "../Util/Services/botCaching";
@@ -69,7 +67,7 @@ function sortAll() {
         ) {
             const booster = member.roles.cache.has(settings.roles.booster);
             const donator = member.roles.cache.has(settings.roles.donator);
-            member.order = booster ? 1 : donator ? 2 : 0;
+            member.order = booster ? 2 : donator ? 1 : 0;
             member.rank = booster ? "booster" : "donator";
             const user = discord.bot.users.cache.get(member.id);
             member.avatar = user.avatar;
@@ -133,7 +131,10 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
         subtitle: res.__("common.bots.subtitle"),
         req,
         bots,
-        botsPgArr: bots.slice((9 * Number(req.query.page)) - 9, 9 * Number(req.query.page)),
+        botsPgArr: bots.slice(
+            9 * Number(req.query.page) - 9,
+            9 * Number(req.query.page)
+        ),
         page: req.query.page,
         pages: Math.ceil(bots.length / 9)
     });
@@ -151,7 +152,10 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
         subtitle: res.__("common.servers.subtitle"),
         req,
         servers,
-        serversPgArr: servers.slice((9 * Number(req.query.page)) - 9, 9 * Number(req.query.page)),
+        serversPgArr: servers.slice(
+            9 * Number(req.query.page) - 9,
+            9 * Number(req.query.page)
+        ),
         page: req.query.page,
         pages: Math.ceil(servers.length / 9)
     });
@@ -169,7 +173,10 @@ router.get("/templates", variables, async (req: Request, res: Response) => {
         subtitle: res.__("common.templates.subtitle"),
         req,
         templates,
-        templatesPgArr: templates.slice((9 * Number(req.query.page)) - 9, 9 * Number(req.query.page)),
+        templatesPgArr: templates.slice(
+            9 * Number(req.query.page) - 9,
+            9 * Number(req.query.page)
+        ),
         page: req.query.page,
         pages: Math.ceil(templates.length / 9)
     });

@@ -92,7 +92,7 @@
                             </span>
                             <span><%= __("common.view") %></span>
                         </a>
-                        <% if (profile === true) { %>
+                        <% if (profile === true && bot.owner.id === req.user.id || profile === true && bot.editors.includes("req.user.id")) { %>
                             <a href="<%= linkPrefix %>/bots/<%= bot._id %>/edit" class="button is-warning is-outlined">
                                 <span class="icon">
                                   <i class="fas fa-pencil"></i>

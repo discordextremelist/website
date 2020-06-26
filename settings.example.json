@@ -56,7 +56,7 @@
             "agressive": true
         },
         "authScopes": ["identify", "guilds.join"],
-        "url": "https://dev.discordextremelist.xyz",
+        "url": "https://discordextremelist.xyz",
         "callback": "/auth/login/callback",
         "gaID": "UA-165711322-1"
     },

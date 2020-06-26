@@ -87,8 +87,8 @@ router.post("/", variables, async (req: Request, res: Response) => {
         await Promise.all([
             ...users
                 .filter(
-                    ({ _id, name }) =>
-                        _id === query || name.toLowerCase().indexOf(query) >= 0
+                    ({ _id, fullUsername }) =>
+                        _id === query || fullUsername.toLowerCase().indexOf(query) >= 0
                 )
                 .map((user) => {
                     return ejs.renderFile(renderPath + "/cards/userCard.ejs", {

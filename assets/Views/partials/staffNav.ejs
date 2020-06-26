@@ -178,6 +178,31 @@
                         <span><%= __({ phrase: "common.nav.language.en-US", locale: "en-US" }) %></span>
                     </a>
                     <hr class="navbar-divider">
+                    <a class="navbar-item" <% if (req.locale !== "de-DE") { %>href="<%= req.originalUrl.replace(req.locale, "de-DE") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "de-DE") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.de", locale: "de-DE" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "he-IL") { %>href="<%= req.originalUrl.replace(req.locale, "he-IL") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "he-IL") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.he", locale: "he-IL" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "tr-TR") { %>href="<%= req.originalUrl.replace(req.locale, "tr-TR") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "tr-TR") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.tr-TR", locale: "tr-TR" }) %></span>
+                    </a>
+                    <hr class="navbar-divider">
                     <a class="navbar-item" target="_blank" rel="noopener" href="https://translate.discordextremelist.xyz/" tabindex="0">
                         <span>
                             <%= __("common.nav.language.helpUs") %>

@@ -498,7 +498,7 @@ router.post(
                     req
                 });
 
-            if (settings.website.bannedVanityURLs && settings.website.bannedVanityURLs.includes(req.body.vanity))
+            if (settings.website.bannedVanityURLs && settings.website.bannedVanityURLs.includes(req.body.vanity.toLowerCase()))
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.blacklisted"),
@@ -511,7 +511,7 @@ router.post(
                 { _id: req.params.id },
                 {
                     $set: {
-                        vanityUrl: req.body.vanity
+                        vanityUrl: req.body.vanity.toLowerCase()
                     }
                 }
             );
@@ -540,7 +540,7 @@ router.post(
                     req
                 });
 
-            if (settings.website.bannedVanityURLs && settings.website.bannedVanityURLs.includes(req.body.vanity))
+            if (settings.website.bannedVanityURLs && settings.website.bannedVanityURLs.includes(req.body.vanity.toLowerCase()))
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.blacklisted"),
@@ -553,7 +553,7 @@ router.post(
                 { _id: req.params.id },
                 {
                     $set: {
-                        vanityUrl: req.body.vanity
+                        vanityUrl: req.body.vanity.toLowerCase()
                     }
                 }
             );

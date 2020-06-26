@@ -101,7 +101,7 @@
         <meta itemprop="description" content="<%= listing.shortDesc %>">
         <meta itemprop="image" content="<%= listing.icon.url %>.png">
     
-        <meta name="author" content="<%= listingOwner.fullUsername %>" />
+        <meta name="author" content="<%= listingOwner ? listingOwner.fullUsername : 'Unknown' %>" />
         <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan" />
     <% } else { %>
         <meta name="theme-color" content="#2C2F33">

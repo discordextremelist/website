@@ -466,7 +466,7 @@ router.post(
 
         if (
             botExists.owner.id !== req.user.id &&
-            req.user.db.assistant === false
+            req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
                 title: res.__("common.error"),
@@ -479,7 +479,7 @@ router.post(
         if (
             botExists.vanityUrl &&
             botExists.owner.id === req.user.id &&
-            req.user.db.assistant === false
+            req.user.db.rank.assistant === false
         ) {
             return res.status(400).render("status", {
                 title: res.__("common.error"),
@@ -493,6 +493,15 @@ router.post(
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.tooLong"),
+                    status: 400,
+                    type: "Error",
+                    req
+                });
+
+            if (settings.website.bannedVanityURLs && settings.website.bannedVanityURLs.includes(req.body.vanity))
+                return res.status(400).render("status", {
+                    title: res.__("common.error"),
+                    subtitle: res.__("common.error.bot.vanity.blacklisted"),
                     status: 400,
                     type: "Error",
                     req
@@ -526,6 +535,15 @@ router.post(
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.tooLong"),
+                    status: 400,
+                    type: "Error",
+                    req
+                });
+
+            if (settings.website.bannedVanityURLs && settings.website.bannedVanityURLs.includes(req.body.vanity))
+                return res.status(400).render("status", {
+                    title: res.__("common.error"),
+                    subtitle: res.__("common.error.bot.vanity.blacklisted"),
                     status: 400,
                     type: "Error",
                     req
@@ -580,7 +598,7 @@ router.get(
         if (
             botExists.owner.id !== req.user.id &&
             !botExists.editors.includes(req.user.id) &&
-            req.user.db.assistant === false
+            req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
                 title: res.__("common.error"),
@@ -1298,7 +1316,7 @@ router.get(
 
         if (
             botExists.owner.id !== req.user.id &&
-            req.user.db.assistant === false
+            req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
                 title: res.__("common.error"),
@@ -1357,7 +1375,7 @@ router.post(
             });
 
         const bot = botExists;
-        if (bot.owner.id !== req.user.id && req.user.db.assistant === false)
+        if (bot.owner.id !== req.user.id && req.user.db.rank.assistant === false)
             return res.status(403).render("status", {
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.perms.resubmit"),

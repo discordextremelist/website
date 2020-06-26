@@ -390,7 +390,7 @@ router.get(
                 req: req
             });
 
-        if (server.owner.id !== req.user.id && req.user.db.assistant === false)
+        if (server.owner.id !== req.user.id && req.user.db.rank.assistant === false)
             return res.status(403).render("status", {
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.server.perms.edit"),
@@ -431,7 +431,7 @@ router.post(
                 req: req
             });
 
-        if (server.owner.id !== req.user.id && req.user.db.assistant === false)
+        if (server.owner.id !== req.user.id && req.user.db.rank.assistant === false)
             return res.status(403).render("status", {
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.server.perms.edit"),

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-const app = require("../app.js");
-const execSh = require("exec-sh");
+const app = require("../dist/src/app.js");
 
 const libraries = [
     {
@@ -243,13 +242,5 @@ setTimeout(async () => {
     }).then(() => true).catch(() => false);
 
     console.log("Done!");
-
-    console.log("Downloading translations...");
-
-    execSh(`rm -rf scripts/temp_dir/ && mkdir scripts/temp_dir/ && cd scripts/temp_dir/ && git clone https://github.com/discordextremelist/i18n.git && cd i18n/ && rm -rf .github/ && rm -rf crowdin.yml && rm -rf CODEOWNERS && rm -rf ../../../src/Assets/Locale/ && mkdir ../../../src/Assets/Locale/ && mv * ../../../src/Assets/Locale/ && cd ${process.cwd()} && rm -rf scripts/temp_dir/ && exit 1`, { cwd: process.cwd() }, function(err) {
-        if (err) {
-            console.log("Done... exiting!");
-            process.exit(0);
-        }
-    });
+    process.exit(0);
 }, 5000);

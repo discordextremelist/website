@@ -419,7 +419,7 @@ router.get(
 
         if (
             template.owner.id !== req.user.id &&
-            req.user.db.assistant === false
+            req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
                 title: res.__("common.error"),
@@ -466,7 +466,7 @@ router.post(
 
         if (
             template.owner.id !== req.user.id &&
-            req.user.db.assistant === false
+            req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
                 title: res.__("common.error"),

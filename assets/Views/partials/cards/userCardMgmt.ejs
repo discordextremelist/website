@@ -9,9 +9,9 @@
             <div style="overflow: hidden;" class="media-content">
                 <div class="content">
                     <p>
-                    <span class="is-size-4 title has-text-default is-mobile">
+                    <a href="<%= linkPrefix %>/users/<%= user._id %>" class="is-size-4 title has-text-default is-mobile">
                         <span><%= user.fullUsername %></span>
-                    </span>
+                    </a>
                         <br />
                         <%- include("../staffStanding.ejs") %>
                         <%

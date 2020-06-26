@@ -22,7 +22,9 @@ import { Request, Response } from "express";
 
 import * as path from "path";
 import cookieParser from "cookie-parser";
+import createError from "http-errors";
 import cookieSession from "cookie-session";
+import color from "color";
 import logger from "morgan";
 import * as device from "express-device";
 import passport from "passport";
@@ -38,7 +40,9 @@ import * as featuredCache from "./Util/Services/featuring";
 import * as ddosMode from "./Util/Services/ddosMode";
 import * as banned from "./Util/Services/banned";
 import * as discord from "./Util/Services/discord";
+import * as releaseInfo from "../release-info.json";
 import { botStatsUpdate } from "./Util/Services/botStatsUpdate";
+import { variables } from "./Util/Function/variables";
 
 const i18n = require("i18n");
 import * as settings from "../settings.json";
@@ -229,6 +233,13 @@ new Promise((resolve, reject) => {
         app.use("/:lang/staff", require("./Routes/staff"));
         app.use("/:lang/docs", require("./Routes/docs"));
 
+        app.use(variables);
+
+        app.use((req: Request, res: Response, next: () => void) => {
+            // @ts-ignore
+            next(createError(404));
+        });
+        
         app.use(
             (
                 err: { message: string; status?: number },

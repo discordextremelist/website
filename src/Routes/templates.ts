@@ -25,6 +25,7 @@ import * as Discord from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
 import * as settings from "../../settings.json";
+import * as htmlRef from "../../htmlReference.json";
 import * as discord from "../Util/Services/discord";
 import * as permission from "../Util/Function/permissions";
 import * as functions from "../Util/Function/main";
@@ -347,44 +348,9 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     const dirty = entities.decode(md.render(template.longDesc));
     let clean: string;
     clean = sanitizeHtml(dirty, {
-        allowedTags: [
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "h5",
-            "h6",
-            "blockquote",
-            "button",
-            "p",
-            "a",
-            "ul",
-            "ol",
-            "nl",
-            "li",
-            "b",
-            "i",
-            "img",
-            "strong",
-            "em",
-            "strike",
-            "code",
-            "hr",
-            "br",
-            "div",
-            "table",
-            "thead",
-            "caption",
-            "tbody",
-            "tr",
-            "th",
-            "td",
-            "pre"
-        ],
-        allowedAttributes: {
-            a: ["href", "target", "rel"],
-            img: ["src"]
-        }
+        allowedTags: htmlRef.minimal.tags,
+        allowedAttributes: htmlRef.minimal.attributes,
+        allowVulnerableTags: true
     });
 
     res.render("templates/serverTemplates/view", {

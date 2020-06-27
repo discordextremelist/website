@@ -26,6 +26,7 @@ import * as Discord from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
 import * as settings from "../../settings.json";
+import * as htmlRef from "../../htmlReference.json";
 import * as discord from "../Util/Services/discord";
 import * as permission from "../Util/Function/permissions";
 import * as functions from "../Util/Function/main";
@@ -399,6 +400,7 @@ router.post(
     }
 );
 
+/* TODO: Add preview for long description on edit & submit page
 router.post("/preview_post", async (req: Request, res: Response, next) => {
     const dirty = entities.decode(md.render(req.body.longDesc));
 
@@ -445,7 +447,7 @@ router.post("/preview_post", async (req: Request, res: Response, next) => {
     });
 
     res.status(200).send(clean);
-});
+});*/
 
 router.post(
     "/:id/setvanity",
@@ -948,88 +950,14 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     let clean;
     if (bot.status.premium === true) {
         clean = sanitizeHtml(dirty, {
-            allowedTags: [
-                "h1",
-                "h2",
-                "h3",
-                "h4",
-                "h5",
-                "h6",
-                "blockquote",
-                "button",
-                "p",
-                "a",
-                "ul",
-                "ol",
-                "nl",
-                "li",
-                "b",
-                "i",
-                "img",
-                "strong",
-                "em",
-                "strike",
-                "code",
-                "hr",
-                "br",
-                "div",
-                "table",
-                "thead",
-                "caption",
-                "tbody",
-                "tr",
-                "th",
-                "td",
-                "pre",
-                "iframe",
-                "style",
-                "script",
-                "noscript",
-                "link"
-            ],
-            allowedAttributes: false,
+            allowedTags: htmlRef.trusted.tags,
+            allowedAttributes: htmlRef.trusted.attributes,
             allowVulnerableTags: true
         });
     } else {
         clean = sanitizeHtml(dirty, {
-            allowedTags: [
-                "h1",
-                "h2",
-                "h3",
-                "h4",
-                "h5",
-                "h6",
-                "blockquote",
-                "button",
-                "p",
-                "a",
-                "ul",
-                "ol",
-                "nl",
-                "li",
-                "b",
-                "i",
-                "img",
-                "strong",
-                "em",
-                "strike",
-                "code",
-                "hr",
-                "br",
-                "div",
-                "table",
-                "thead",
-                "caption",
-                "tbody",
-                "tr",
-                "th",
-                "td",
-                "pre",
-                "iframe",
-                "style",
-                "link"
-            ],
-            allowedAttributes: false,
+            allowedTags: htmlRef.standard.tags,
+            allowedAttributes: htmlRef.standard.attributes,
             allowVulnerableTags: true
         });
     }

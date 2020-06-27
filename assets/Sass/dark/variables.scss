@@ -1,10 +1,14 @@
 @charset "UTF-8";
 
-$primary: #0e0e0e;
-$primary-dark: #000000;
+$primary: #23272A;
+$primary-dark: #111112;
 $white: #ffffff;
 $black: $primary;
-$bg: #000000;
+$bg: #2C2F33;
+
+$grey: #9e9e9e;
+$dark: #616161;
+$darker: #424242;
 
 // Standard Variables
 
@@ -22,8 +26,8 @@ $family-sans-serif: "Lexend Deca", sans-serif;
 // Navbar
 
 $navbar-background-color: $primary;
-$navbar-item-hover-background-color: #000;
-$navbar-dropdown-background-color: #000;
+$navbar-item-hover-background-color: $black;
+$navbar-dropdown-background-color: $black;
 $navbar-dropdown-item-hover-color: $white;
 $navbar-item-hover-color: $white;
 $navbar-item-color: $white;
@@ -35,7 +39,7 @@ $navbar-dropdown-item-hover-background-color: #131313;
 
 // Input
 
-$input-color: $white;
+$input-color: $grey;
 $input-background-color: $primary;
 $input-border-color: $primary;
 $input-hover-border-color: $primary-dark;
@@ -58,8 +62,8 @@ $dropdown-item-hover-background-color: #131313;
 // Static Buttons
 
 // $button-static-color: $
-$button-static-background-color: #1e1e1e;
-$button-static-border-color: #1e1e1e;
+$button-static-background-color: $darker;
+$button-static-border-color: $darker;
 
 // Pagination
 

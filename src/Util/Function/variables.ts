@@ -136,6 +136,8 @@ export const variables = async (
         res.locals.imageFormat = "png";
     }
 
+    res.locals.preferredTheme = "black";
+
     if (req.user) {
         const user = await global.db
             .collection("users")
@@ -156,6 +158,8 @@ export const variables = async (
                 }
             );
         }
+
+        req.user.db.preferences.theme === 0 ? res.locals.preferredTheme = "black" : res.locals.preferredTheme = "dark";
 
         const isBanned = await banList.check(req.user.id);
         if (isBanned) return res.status(403).render("banned", { req });

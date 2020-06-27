@@ -83,7 +83,8 @@ router.get(
                     defaultColour: "#b114ff",
                     defaultForegroundColour: "#ffffff",
                     enableGames: true,
-                    experiments: false
+                    experiments: false,
+                    theme: 0
                 },
                 profile: {
                     bio: "",

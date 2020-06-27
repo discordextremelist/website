@@ -79,6 +79,8 @@ router.get(
     }
 );
 
+/* NOTICE: Use only in development. 
+
 router.get(
     "/session",
     variables,
@@ -95,7 +97,7 @@ router.get(
     (req: Request, res: Response) => {
         res.json(req.user.db);
     }
-);
+); */
 
 router.get(
     "/queue",

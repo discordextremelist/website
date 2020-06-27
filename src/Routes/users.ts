@@ -558,7 +558,10 @@ router.post(
     variables,
     permission.auth,
     async (req: Request, res: Response, next) => {
-        let gamePreferences: boolean, experiments: boolean;
+        let gamePreferences: boolean, experiments: boolean, theme: number;
+
+        // Refer to docs/THEME.md in the root directory of this project.
+        req.body.theme === "black" || !["black", "dark"].includes(req.body.theme) ? theme = 0 : theme = 1;
 
         if (req.body.noGames === "on") {
             gamePreferences = false;
@@ -583,7 +586,8 @@ router.post(
                         defaultColour: req.body.iconColour,
                         defaultForegroundColour: foreground,
                         enableGames: gamePreferences,
-                        experiments: experiments
+                        experiments: experiments,
+                        theme: theme
                     }
                 }
             }
@@ -603,7 +607,8 @@ router.post(
                         defaultForegroundColour:
                             req.user.db.preferences.defaultForegroundColour,
                         enableGames: req.user.db.preferences.enableGames,
-                        experiments: req.user.db.preferences.experiments
+                        experiments: req.user.db.preferences.experiments,
+                        theme: theme
                     }
                 },
                 new: {
@@ -612,7 +617,8 @@ router.post(
                         defaultColour: req.body.iconColour,
                         defaultForegroundColour: foreground,
                         enableGames: gamePreferences,
-                        experiments: experiments
+                        experiments: experiments,
+                        theme: theme
                     }
                 }
             }
@@ -638,7 +644,8 @@ router.get(
                         defaultColour: "#b114ff",
                         defaultForegroundColour: "#ffffff",
                         enableGames: true,
-                        experiments: false
+                        experiments: false,
+                        theme: 0
                     }
                 }
             }

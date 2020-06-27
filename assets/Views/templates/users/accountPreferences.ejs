@@ -1,5 +1,5 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><%- include("../../partials/nav.ejs") %>
 <section class="hero is-primary">
     <div class="hero-body">
@@ -37,6 +37,22 @@
                 <label class="label has-text-default"><%= __("page.account.preferences.accent") %></label>
                 <div class="field">
                     <input class="backdrop" name="iconColour" type="color" value="<%= req.user.db.preferences.defaultColour %>" style="width:30%; background-color: transparent; border-color: transparent;">
+                </div>
+                <br />
+                <div class="field">
+                    <label class="label has-text-default"><%= __("page.account.preferences.theme") %></label>
+                    <div class="control has-icons-left">
+                        <div class="select is-rounded">
+                            <select name="theme" required>
+                                <option disabled><%= __("common.select") %></option>
+                                <option value="black" <% if (req.user.db.preferences.theme === 0) { %>selected<% } %>><%= __("common.theme.black") %></option>
+                                <option value="dark" <% if (req.user.db.preferences.theme === 1) { %>selected<% } %>><%= __("common.theme.dark") %></option>
+                            </select>
+                        </div>
+                        <div class="icon is-small is-left">
+                            <i aria-hidden="true" class="fas fa-palette"></i>
+                        </div>
+                    </div>
                 </div>
                 <br />    
                 <div class="field">

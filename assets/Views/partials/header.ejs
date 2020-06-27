@@ -7,7 +7,7 @@
 
     <link href="/img/logo.png" type="image/png" rel="shortcut-icon" />
     <link href="/img/logo.png" type="image/png" rel="icon" />
-    <link href="/css/standard.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
+    <link href="/css/theme/<%= preferredTheme %>/standard.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
     <style type="text/css">
         .has-text-default { color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %> !important; }
         .has-text-default:hover { color: <% if (req.user) { %><%= colour(`${req.user.db.preferences.defaultColour}`).darken(0.1) || colour("#b114ff").darken(0.1) %><% } else { %><%= colour("#b114ff").darken(0.1) %><% } %>; }

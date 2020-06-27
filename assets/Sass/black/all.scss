@@ -1,0 +1,12 @@
+@charset "UTF-8";
+@import "variables.scss";
+@import "ext.scss";
+
+@import "../../../node_modules/bulma/bulma.sass";
+@import "../../../node_modules/bulma-extensions/bulma-checkradio/src/sass/index.sass";
+@import "../../../node_modules/bulma-extensions/bulma-switch/src/sass/index.sass";
+
+.level-item.body-item {
+    padding-left: 40px;
+    padding-right: 40px;
+}

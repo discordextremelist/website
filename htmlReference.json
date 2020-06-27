@@ -88,6 +88,7 @@
                 "coords",
                 "datetime",
                 "headers",
+                "href",
                 "hidden",
                 "height",
                 "id",

@@ -128,11 +128,13 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const logs: auditLog[] = await global.db
+        const logsUnfiltered: auditLog[] = await global.db
             .collection("audit")
             .find()
             .sort({ date: -1 })
             .toArray();
+
+        const logs = logsUnfiltered.filter(log => log.type !== "GAME_HIGHSCORE_UPDATE");
 
         if (!req.query.page) req.query.page = "1";
 

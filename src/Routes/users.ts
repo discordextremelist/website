@@ -443,6 +443,8 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response, next) => {
+        res.locals.premidPageInfo = res.__("premid.snake");
+
         res.render("templates/users/snake", {
             title: res.__("common.nav.me.playSnake"),
             subtitle: res.__("common.nav.me.playSnake.subtitle"),

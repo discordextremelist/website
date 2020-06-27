@@ -922,7 +922,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
                 });
         }
     }
-
+    
     res.locals.premidPageInfo = res.__("premid.bots.view", bot.name);
 
     if (bot.status.archived === true)

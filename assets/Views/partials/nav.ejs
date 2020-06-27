@@ -194,6 +194,14 @@
                         <% } %>
                         <span><%= __({ phrase: "common.nav.language.he", locale: "he-IL" }) %></span>
                     </a>
+                    <a class="navbar-item" <% if (req.locale !== "hu-HU") { %>href="<%= req.originalUrl.replace(req.locale, "hu-HU") %>?setLang=t"<% } %> tabindex="0">
+                        <% if (req.locale === "hu-HU") { %>
+                            <span title="Selected" href="<%= req.originalUrl.replace(req.locale, "hu-HU") %>" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.hu", locale: "hu-HU" }) %></span>
+                    </a>
                     <a class="navbar-item" <% if (req.locale !== "tr-TR") { %>href="<%= req.originalUrl.replace(req.locale, "tr-TR") %>?setLang=t"<% } %> tabindex="0">
                         <% if (req.locale === "tr-TR") { %>
                             <span title="Selected" class="icon has-text-success iconalign">

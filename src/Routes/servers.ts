@@ -32,6 +32,7 @@ import * as functions from "../Util/Function/main";
 import * as userCache from "../Util/Services/userCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import { variables } from "../Util/Function/variables";
+import * as tokenManager from "../Util/Services/adminTokenManager";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -102,7 +103,7 @@ router.post(
 
                 if (
                     req.body.website &&
-                    !/^https?:\/\//.test(req.body.website)
+                    !/^https:\/\//.test(req.body.website)
                 ) {
                     error = true;
                     invalidURL = 1;
@@ -110,7 +111,7 @@ router.post(
 
                 if (
                     req.body.donationUrl &&
-                    !/^https?:\/\//.test(req.body.donationUrl)
+                    !/^https:\/\//.test(req.body.donationUrl)
                 ) {
                     error = true;
                     invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
@@ -235,7 +236,7 @@ router.post(
                         errors.push(
                             res.__("common.error.listing.arr.invite.tooLong")
                         );
-                    } else if (/^https?:\/\//.test(req.body.invite)) {
+                    } else if (/^https:\/\//.test(req.body.invite)) {
                         error = true;
                         errors.push(
                             res.__("common.error.listing.arr.invite.isURL")
@@ -338,6 +339,25 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     });
 });
 
+router.get("/:id/src", variables, permission.auth, permission.admin, async (req: Request, res: Response, next) => {
+    if (req.params.id === "@me") {
+        if (!req.user) return res.redirect("/auth/login");
+        req.params.id = req.user.id;
+    }
+
+    if (!req.query.token) return res.json({});
+    // @ts-ignore
+    const tokenCheck = await tokenManager.verifyToken(req.user.id, req.query.token);
+    if (tokenCheck === false) return res.json({});
+
+    const cache = await serverCache.getServer(req.params.id);
+    const db = await global.db
+            .collection("servers")
+            .findOne({ _id: req.params.id });
+
+    return res.json({ cache: cache, db: db });
+});
+
 router.get(
     "/:id/edit",
     variables,
@@ -418,7 +438,7 @@ router.post(
             } else if (req.body.invite.length > 32) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (/^https?:\/\//.test(req.body.invite)) {
+            } else if (/^https:\/\//.test(req.body.invite)) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.isURL"));
             } else if (req.body.invite.includes("discord.gg")) {
@@ -429,14 +449,14 @@ router.post(
 
         let invalidURL = 0;
 
-        if (req.body.website && !/^https?:\/\//.test(req.body.website)) {
+        if (req.body.website && !/^https:\/\//.test(req.body.website)) {
             error = true;
             invalidURL = 1;
         }
 
         if (
             req.body.donationUrl &&
-            !/^https?:\/\//.test(req.body.donationUrl)
+            !/^https:\/\//.test(req.body.donationUrl)
         ) {
             error = true;
             invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);

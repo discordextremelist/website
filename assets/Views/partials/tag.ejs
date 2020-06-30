@@ -6,6 +6,10 @@
                     <span class="tag <%= contentColour %>">
                         <a class="has-text-white" href="<%= linkPrefix %>/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a>
                     </span>
+                <% } else if (content === "insEditor-bot") { %>
+                    <span class="tag <%= contentColour %>">
+                        <%- editors %>
+                    </span>
                 <% } else if (content === "insOwner-server") { %>
                     <span class="tag <%= contentColour %>">
                         <a class="has-text-white" href="<%= linkPrefix %>/users/<%= server.owner.id %>"><%= serverOwner ? serverOwner.fullUsername : 'Unknown' %></a>
@@ -27,6 +31,10 @@
                 <% if (content === "insOwner-bot") { %>
                     <span class="tag <%= contentColour %>">
                         <a class="has-text-white" href="<%= linkPrefix %>/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a>
+                    </span>
+                <% } else if (content === "insEditor-bot") { %>
+                    <span class="tag <%= contentColour %>">
+                        <%- editors %>
                     </span>
                 <% } else if (content === "insOwner-server") { %>
                     <span class="tag <%= contentColour %>">

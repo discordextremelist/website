@@ -137,6 +137,8 @@ export const variables = async (
     }
 
     res.locals.preferredTheme = "black";
+    res.locals.siteThemeColour = "#0e0e0e";
+    res.locals.siteThemeColourDarker = "#000000";
 
     if (req.user) {
         const user = await global.db
@@ -159,7 +161,11 @@ export const variables = async (
             );
         }
 
-        req.user.db.preferences.theme === 0 ? res.locals.preferredTheme = "black" : res.locals.preferredTheme = "dark";
+        req.user.db.preferences.theme === 0 || !req.user.db.preferences.theme ? res.locals.preferredTheme = "black" : res.locals.preferredTheme = "dark";
+        if (res.locals.preferredTheme === "dark") {
+            res.locals.siteThemeColour = "#131313";
+            res.locals.siteThemeColourDarker = "#131313";
+        }
 
         const isBanned = await banList.check(req.user.id);
         if (isBanned) return res.status(403).render("banned", { req });

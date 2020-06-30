@@ -21,14 +21,12 @@ import express from "express";
 import { Request, Response } from "express";
 
 import * as path from "path";
+import * as device from "express-device";
+import cookieSession from "cookie-session";
 import cookieParser from "cookie-parser";
 import createError from "http-errors";
-import cookieSession from "cookie-session";
-import color from "color";
-import logger from "morgan";
-import * as device from "express-device";
 import passport from "passport";
-import * as languageHandler from "./Util/Middleware/languageHandler";
+import logger from "morgan";
 
 import * as botCache from "./Util/Services/botCaching";
 import * as serverCache from "./Util/Services/serverCaching";
@@ -40,9 +38,14 @@ import * as featuredCache from "./Util/Services/featuring";
 import * as ddosMode from "./Util/Services/ddosMode";
 import * as banned from "./Util/Services/banned";
 import * as discord from "./Util/Services/discord";
-import * as releaseInfo from "../release-info.json";
+import * as tokenManager from "./Util/Services/adminTokenManager";
+
+import * as languageHandler from "./Util/Middleware/languageHandler";
+
 import { botStatsUpdate } from "./Util/Services/botStatsUpdate";
 import { variables } from "./Util/Function/variables";
+import { monacoIsStupid } from "./Util/Middleware/monacoIsStupid";
+import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap";
 
 const i18n = require("i18n");
 import * as settings from "../settings.json";
@@ -144,7 +147,7 @@ new Promise((resolve, reject) => {
 
         global.redis.flushdb();
 
-        console.time("Redis Cache");
+        console.time("Redis Cache & Core Refresh");
         await userCache.uploadUsers();
         await botCache.uploadBots();
         await serverCache.uploadServers();
@@ -155,6 +158,13 @@ new Promise((resolve, reject) => {
         await featuredCache.updateFeaturedServers();
         await featuredCache.updateFeaturedTemplates();
         await ddosMode.updateCache();
+        await botStatsUpdate();
+        await tokenManager.tokenResetAll();
+
+        setTimeout(async () => {
+            await discord.postMetric();
+        }, 10000);
+
         await (async function discordBotUndefined() {
             if (
                 typeof discord.bot.guilds !== "undefined" &&
@@ -168,13 +178,7 @@ new Promise((resolve, reject) => {
             }
         })();
 
-        console.timeEnd("Redis Cache");
-
-        await botStatsUpdate();
-
-        setTimeout(async () => {
-            await discord.postMetric();
-        }, 10000);
+        console.timeEnd("Redis Cache & Core Refresh");
 
         app.set("view engine", "ejs");
 
@@ -217,21 +221,30 @@ new Promise((resolve, reject) => {
             next();
         });
 
+        app.get("/sitemap.xml", sitemapIndex);
+
         app.use(i18n.init);
 
         app.use("/auth", require("./Routes/authentication"));
-
+         
+        // Locale handler.
+        // Don't put anything below here that you don't want it's locale to be checked whatever (broken english kthx)
         app.use(["/:lang", "/"], languageHandler.homeHandler);
         app.use("/:lang/*", languageHandler.globalHandler);
 
+        app.use("/:lang/sitemap.xml", sitemapGenerator);
+
         app.use("/:lang", require("./Routes/index"));
         app.use("/:lang/search", require("./Routes/search"));
+        app.use("/:lang/docs", require("./Routes/docs"));
+
+        app.use("*", monacoIsStupid);
+
         app.use("/:lang/bots", require("./Routes/bots"));
         app.use("/:lang/servers", require("./Routes/servers"));
         app.use("/:lang/templates", require("./Routes/templates"));
         app.use("/:lang/users", require("./Routes/users"));
         app.use("/:lang/staff", require("./Routes/staff"));
-        app.use("/:lang/docs", require("./Routes/docs"));
 
         app.use(variables);
 

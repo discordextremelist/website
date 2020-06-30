@@ -2,4 +2,5 @@ User-agent: *
 Disallow: 
 Disallow: /staff/
 Disallow: /users/account/
+
 Sitemap: https://discordextremelist.xyz/sitemap.xml

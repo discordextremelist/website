@@ -19,18 +19,6 @@
     ]
 }
 </script>
-<script type="application/ld+json">
-{
-    "@context": "http://schema.org",
-    "@type": "WebSite",
-    "url": "https://discordextremelist.xyz/",
-    "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://discordextremelist.xyz/search?q={search}",
-        "query-input": "required name=search"
-    }
-}
-</script>
 <%
     let defaultColour = "#b114ff";
     let foreground = "#ffffff";
@@ -91,6 +79,13 @@
 <script>
     const input = document.getElementById("searchInput");
 
+    <% if (search !== "") { %>
+        document.addEventListener("DOMContentLoaded", async () => {
+            input.value = "<%= search %>";
+            await doSearch();    
+        });
+    <% } %>
+
     input.addEventListener("keyup", async (event) => {
         if (event.keyCode === 13) {
             await doSearch();
@@ -107,7 +102,7 @@
 
         const input = document.querySelector("input.input.is-rounded.is-dark#searchInput");
 
-        if (input.value.match(/gay(\s+)?(men\s+)?.*/i)) window.location.href = "/users/302604426781261824";
+        if (input.value.match(/gay(\s+)?(men\s+)?.*/i)) return window.location.href = "/users/302604426781261824";
 
         const c = document.querySelector("input[type='checkbox']#users");
         const a = document.querySelector("input[type='checkbox']#bots");

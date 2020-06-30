@@ -35,16 +35,22 @@ import { variables } from "../Util/Function/variables";
 import * as botCache from "../Util/Services/botCaching";
 import * as userCache from "../Util/Services/userCaching";
 import * as libraryCache from "../Util/Services/libCaching";
+import * as tokenManager from "../Util/Services/adminTokenManager";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
 const router = express.Router();
 
+router.get("/search", (req: Request, res: Response, next) => {
+    res.redirect("/search");
+});
+
 router.get(
     "/submit",
     variables,
     permission.auth,
+    permission.member,
     async (req: Request, res: Response, next) => {
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 
@@ -61,6 +67,7 @@ router.post(
     "/submit",
     variables,
     permission.auth,
+    permission.member,
     async (req: Request, res: Response, next) => {
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 
@@ -112,7 +119,7 @@ router.post(
                         errors.push(
                             res.__("common.error.listing.arr.invite.tooLong")
                         );
-                    } else if (!/^https?:\/\//.test(req.body.invite)) {
+                    } else if (!/^https:\/\//.test(req.body.invite)) {
                         error = true;
                         errors.push(
                             res.__("common.error.listing.arr.invite.urlInvalid")
@@ -126,30 +133,27 @@ router.post(
 
                 if (
                     req.body.supportServer &&
-                    !/^https?:\/\//.test(req.body.supportServer)
+                    !/^https:\/\//.test(req.body.supportServer)
                 ) {
                     error = true;
                     invalidURL = 1;
                 }
 
-                if (
-                    req.body.website &&
-                    !/^https?:\/\//.test(req.body.website)
-                ) {
+                if (req.body.website && !/^https:\/\//.test(req.body.website)) {
                     error = true;
                     invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
                 }
 
                 if (
                     req.body.donationUrl &&
-                    !/^https?:\/\//.test(req.body.donationUrl)
+                    !/^https:\/\//.test(req.body.donationUrl)
                 ) {
                     error = true;
                     if (invalidURL !== 2)
                         invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
                 }
 
-                if (req.body.repo && !/^https?:\/\//.test(req.body.repo)) {
+                if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
                     error = true;
                     if (invalidURL !== 2)
                         invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
@@ -353,7 +357,7 @@ router.post(
                         errors.push(
                             res.__("common.error.listing.arr.invite.tooLong")
                         );
-                    } else if (!/^https?:\/\//.test(req.body.invite)) {
+                    } else if (!/^https:\/\//.test(req.body.invite)) {
                         error = true;
                         errors.push(res.__("Invite needs to be a valid URL."));
                     } else {
@@ -453,6 +457,7 @@ router.post(
     "/:id/setvanity",
     variables,
     permission.auth,
+    permission.member,
     async (req: Request, res: Response, next) => {
         const botExists = await global.db
             .collection("bots")
@@ -479,18 +484,31 @@ router.post(
             });
 
         if (
-            botExists.vanityUrl &&
-            botExists.owner.id === req.user.id &&
-            req.user.db.rank.assistant === false
-        ) {
+            req.body.vanity.includes(".") ||
+            req.body.vanity.includes("/") ||
+            req.body.vanity.includes("\\")
+        )
             return res.status(400).render("status", {
                 title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.perms.modifyVanity"),
+                subtitle: res.__("common.error.bot.vanity.blacklisted"),
                 status: 400,
                 type: "Error",
                 req
             });
-        } else if (botExists.vanityUrl && req.user.db.assistant === true) {
+
+        const bots = await botCache.getAllBots();
+        for (const bot of bots) {
+            if (req.body.vanity === bot.vanityUrl)
+                return res.status(409).render("status", {
+                    title: res.__("common.error"),
+                    subtitle: res.__("common.error.bot.vanity.conflict"),
+                    status: 409,
+                    type: "Error",
+                    req
+                });
+        }
+
+        if (botExists.vanityUrl) {
             if (req.body.vanity.split(" ").length !== 1)
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
@@ -500,7 +518,21 @@ router.post(
                     req
                 });
 
-            if (settings.website.bannedVanityURLs && settings.website.bannedVanityURLs.includes(req.body.vanity.toLowerCase()))
+            if (req.body.vanity === botExists.vanityUrl)
+                return res.status(400).render("status", {
+                    title: res.__("common.error"),
+                    subtitle: res.__("common.error.bot.vanity.same"),
+                    status: 400,
+                    type: "Error",
+                    req
+                });
+
+            if (
+                settings.website.bannedVanityURLs &&
+                settings.website.bannedVanityURLs.includes(
+                    req.body.vanity.toLowerCase()
+                )
+            )
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.blacklisted"),
@@ -542,7 +574,12 @@ router.post(
                     req
                 });
 
-            if (settings.website.bannedVanityURLs && settings.website.bannedVanityURLs.includes(req.body.vanity.toLowerCase()))
+            if (
+                settings.website.bannedVanityURLs &&
+                settings.website.bannedVanityURLs.includes(
+                    req.body.vanity.toLowerCase()
+                )
+            )
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.blacklisted"),
@@ -582,7 +619,9 @@ router.get(
     "/:id/edit",
     variables,
     permission.auth,
+    permission.member,
     async (req: Request, res: Response, next) => {
+        console.log(req.url); // this never gets hit
         const botExists = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -622,10 +661,46 @@ router.get(
     }
 );
 
+router.get(
+    "/:id/edit",
+    variables,
+    permission.auth,
+    permission.member,
+    async (req: Request, res: Response, next) => {
+        const botExists = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+        if (!botExists)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.404"),
+                status: 404,
+                type: "Error",
+                req
+            });
+
+        res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
+
+        if (
+            botExists.owner.id !== req.user.id &&
+            !botExists.editors.includes(req.user.id) &&
+            req.user.db.rank.assistant === false
+        )
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.perms.tokenReset"),
+                status: 403,
+                type: "Error",
+                req
+            });
+    }
+);
+
 router.post(
     "/:id/edit",
     variables,
     permission.auth,
+    permission.member,
     async (req: Request, res: Response, next) => {
         let error = false;
         let errors = [];
@@ -659,7 +734,7 @@ router.post(
                 req
             });
 
-        let invite;
+        let invite: string;
 
         if (req.body.invite === "") {
             invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
@@ -670,7 +745,7 @@ router.post(
             } else if (req.body.invite.length > 2000) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (!/^https?:\/\//.test(req.body.invite)) {
+            } else if (!/^https:\/\//.test(req.body.invite)) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.invite.urlInvalid")
@@ -684,27 +759,24 @@ router.post(
 
         if (
             req.body.supportServer &&
-            !/^https?:\/\//.test(req.body.supportServer)
+            !/^https:\/\//.test(req.body.supportServer)
         ) {
             error = true;
             invalidURL = 1;
         }
 
-        if (req.body.website && !/^https?:\/\//.test(req.body.website)) {
+        if (req.body.website && !/^https:\/\//.test(req.body.website)) {
             error = true;
             invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
         }
 
-        if (
-            req.body.donationUrl &&
-            !/^https?:\/\//.test(req.body.donationUrl)
-        ) {
+        if (req.body.donationUrl && !/^https:\/\//.test(req.body.donationUrl)) {
             error = true;
             if (invalidURL !== 2)
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
         }
 
-        if (req.body.repo && !/^https?:\/\//.test(req.body.repo)) {
+        if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
             error = true;
             if (invalidURL !== 2)
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
@@ -924,7 +996,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
                 });
         }
     }
-    
+
     res.locals.premidPageInfo = res.__("premid.bots.view", bot.name);
 
     if (bot.status.archived === true)
@@ -962,6 +1034,40 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
         });
     }
 
+    function sen(name: string) {
+        return sanitizeHtml(name, {
+            allowedTags: [],
+            allowedAttributes: {},
+            allowVulnerableTags: false
+        });
+    }
+
+    let editors = "";
+    let looped = 0;
+    let editorsLength = bot.editors.length;
+    
+    for (const editor of bot.editors) {
+        const user = await userCache.getUser(editor);
+        looped += 1;
+
+        if (user) {
+            editorsLength !== looped
+                ? (editors += `<a class="has-text-white" href="${
+                      settings.website.url
+                  }${res.locals.linkPrefix}/users/${user._id}">${
+                      sen(user.fullUsername) || "Unknown#0000"
+                  }</a>,&nbsp;`)
+                : (editors += `<a class="has-text-white" href="${
+                      settings.website.url
+                  }${res.locals.linkPrefix}/users/${user._id}">${
+                      sen(user.fullUsername) || "Unknown#0000"
+                  }</a>`);
+        } else {
+            if (editorsLength === looped)
+                editors = editors.substring(0, editors.length - 2);
+        }
+    }
+
     res.render("templates/bots/view", {
         title: bot.name,
         subtitle: bot.shortDesc,
@@ -973,9 +1079,40 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
         staffServer: settings.guild.staff,
         webUrl: settings.website.url,
         req: req,
+        editors,
         votes: bot.votes.positive.length - bot.votes.negative.length
     });
 });
+
+router.get(
+    "/:id/src",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response, next) => {
+        if (req.params.id === "@me") {
+            if (!req.user) return res.redirect("/auth/login");
+            req.params.id = req.user.id;
+        }
+
+        if (!req.query.token) return res.json({});
+        
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            // @ts-ignore
+            req.query.token
+        );
+
+        if (tokenCheck === false) return res.json({});
+
+        const cache = await botCache.getBot(req.params.id);
+        const db = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+
+        return res.json({ cache: cache, db: db });
+    }
+);
 
 router.get(
     "/:id/upvote",
@@ -1026,6 +1163,52 @@ router.get(
             upVotes.push(req.user.id);
         }
 
+        if (bot.votes.positive.includes(req.user.id)) {
+            global.db.collection("audit").insertOne({
+                type: "REMOVE_UPVOTE_BOT",
+                executor: req.user.id,
+                target: req.params.id,
+                date: Date.now(),
+                reason: "None specified.",
+                details: {
+                    old: {
+                        votes: {
+                            positive: bot.votes.positive,
+                            negative: bot.votes.negative
+                        }
+                    },
+                    new: {
+                        votes: {
+                            positive: upVotes,
+                            negative: downVotes
+                        }
+                    }
+                }
+            });
+        } else {
+            global.db.collection("audit").insertOne({
+                type: "UPVOTE_BOT",
+                executor: req.user.id,
+                target: req.params.id,
+                date: Date.now(),
+                reason: "None specified.",
+                details: {
+                    old: {
+                        votes: {
+                            positive: bot.votes.positive,
+                            negative: bot.votes.negative
+                        }
+                    },
+                    new: {
+                        votes: {
+                            positive: upVotes,
+                            negative: downVotes
+                        }
+                    }
+                }
+            });
+        }
+
         await global.db.collection("bots").updateOne(
             { _id: bot._id },
             {
@@ -1039,29 +1222,7 @@ router.get(
         );
 
         await botCache.updateBot(bot._id);
-
-        global.db.collection("audit").insertOne({
-            type: "UPVOTE_BOT",
-            executor: req.user.id,
-            target: req.params.id,
-            date: Date.now(),
-            reason: "None specified.",
-            details: {
-                old: {
-                    votes: {
-                        positive: bot.votes.positive,
-                        negative: bot.votes.negative
-                    }
-                },
-                new: {
-                    votes: {
-                        positive: upVotes,
-                        negative: downVotes
-                    }
-                }
-            }
-        });
-
+        
         res.redirect(`/bots/${bot._id}`);
     }
 );
@@ -1090,8 +1251,8 @@ router.get(
                 });
         }
 
-        let upVotes = bot.votes.positive;
-        let downVotes = bot.votes.negative;
+        let upVotes = [...bot.votes.positive];
+        let downVotes = [...bot.votes.negative];
 
         if (upVotes.includes(req.user.id) || downVotes.includes(req.user.id)) {
             if (downVotes.includes(req.user.id)) {
@@ -1127,29 +1288,53 @@ router.get(
             }
         );
 
-        await botCache.updateBot(bot._id);
-
-        global.db.collection("audit").insertOne({
-            type: "DOWNVOTE_BOT",
-            executor: req.user.id,
-            target: req.params.id,
-            date: Date.now(),
-            reason: "None specified.",
-            details: {
-                old: {
-                    votes: {
-                        positive: bot.votes.positive,
-                        negative: bot.votes.negative
-                    }
-                },
-                new: {
-                    votes: {
-                        positive: upVotes,
-                        negative: downVotes
+        if (bot.votes.negative.includes(req.user.id)) {
+            global.db.collection("audit").insertOne({
+                type: "REMOVE_DOWNVOTE_BOT",
+                executor: req.user.id,
+                target: req.params.id,
+                date: Date.now(),
+                reason: "None specified.",
+                details: {
+                    old: {
+                        votes: {
+                            positive: bot.votes.positive,
+                            negative: bot.votes.negative
+                        }
+                    },
+                    new: {
+                        votes: {
+                            positive: upVotes,
+                            negative: downVotes
+                        }
                     }
                 }
-            }
-        });
+            });
+        } else {
+            global.db.collection("audit").insertOne({
+                type: "DOWNVOTE_BOT",
+                executor: req.user.id,
+                target: req.params.id,
+                date: Date.now(),
+                reason: "None specified.",
+                details: {
+                    old: {
+                        votes: {
+                            positive: bot.votes.positive,
+                            negative: bot.votes.negative
+                        }
+                    },
+                    new: {
+                        votes: {
+                            positive: upVotes,
+                            negative: downVotes
+                        }
+                    }
+                }
+            });
+        }
+
+        await botCache.updateBot(bot._id);
 
         res.redirect(`/bots/${bot._id}`);
     }
@@ -1220,6 +1405,7 @@ router.get(
     "/:id/resubmit",
     variables,
     permission.auth,
+    permission.member,
     async (req: Request, res: Response, next) => {
         const botExists = await global.db
             .collection("bots")
@@ -1276,6 +1462,7 @@ router.post(
     "/:id/resubmit",
     variables,
     permission.auth,
+    permission.member,
     async (req: Request, res: Response, next) => {
         let error = false;
         let errors = [];
@@ -1303,7 +1490,10 @@ router.post(
             });
 
         const bot = botExists;
-        if (bot.owner.id !== req.user.id && req.user.db.rank.assistant === false)
+        if (
+            bot.owner.id !== req.user.id &&
+            req.user.db.rank.assistant === false
+        )
             return res.status(403).render("status", {
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.perms.resubmit"),
@@ -1328,7 +1518,7 @@ router.post(
             } else if (req.body.invite.length > 2000) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (!/^https?:\/\//.test(req.body.invite)) {
+            } else if (!/^https:\/\//.test(req.body.invite)) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.invite.urlInvalid")
@@ -1342,27 +1532,24 @@ router.post(
 
         if (
             req.body.supportServer &&
-            !/^https?:\/\//.test(req.body.supportServer)
+            !/^https:\/\//.test(req.body.supportServer)
         ) {
             error = true;
             invalidURL = 1;
         }
 
-        if (req.body.website && !/^https?:\/\//.test(req.body.website)) {
+        if (req.body.website && !/^https:\/\//.test(req.body.website)) {
             error = true;
             invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
         }
 
-        if (
-            req.body.donationUrl &&
-            !/^https?:\/\//.test(req.body.donationUrl)
-        ) {
+        if (req.body.donationUrl && !/^https:\/\//.test(req.body.donationUrl)) {
             error = true;
             if (invalidURL !== 2)
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
         }
 
-        if (req.body.repo && !/^https?:\/\//.test(req.body.repo)) {
+        if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
             error = true;
             if (invalidURL !== 2)
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);

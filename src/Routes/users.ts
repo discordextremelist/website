@@ -29,6 +29,7 @@ import * as botCache from "../Util/Services/botCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
+import * as tokenManager from "../Util/Services/adminTokenManager";
 
 const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
@@ -286,6 +287,36 @@ router.post(
     }
 );
 
+router.get("/:id/src", variables, permission.auth, permission.admin, async (req: Request, res: Response, next) => {
+    if (req.params.id === "@me") {
+        if (!req.user) return res.redirect("/auth/login");
+        req.params.id = req.user.id;
+    }
+
+    if (!req.query.token) return res.json({});
+    // @ts-ignore
+    const tokenCheck = await tokenManager.verifyToken(req.user.id, req.query.token);
+    if (tokenCheck === false) return res.json({});
+    
+
+    const cache: delUser | undefined = await userCache.getUser(req.params.id);
+
+    const db: delUser | undefined = await global.db
+        .collection("users")
+        .findOne({ _id: req.params.id });;
+
+    return res.json({ cache: cache, db: db });
+});
+
+router.get("/@me/src/session", variables, permission.auth, permission.admin, async (req: Request, res: Response, next) => {
+    if (!req.query.token) return res.json({});
+    // @ts-ignore
+    const tokenCheck = await tokenManager.verifyToken(req.user.id, req.query.token);
+    if (tokenCheck === false) return res.json({});
+
+    return res.json(req.user);
+});
+
 router.get("/profile/:id", (req: Request, res: Response, next) => {
     res.redirect("/" + req.params.id);
 });
@@ -380,7 +411,7 @@ router.post(
         }
 
         await global.db.collection("users").updateOne(
-            { _id: req.user.id },
+            { _id: req.params.id },
             {
                 $set: {
                     profile: {
@@ -434,7 +465,7 @@ router.post(
         });
         await userCache.updateUser(req.params.id);
 
-        res.redirect("/users/@me");
+        res.redirect(`/users/${req.params.id}`);
     }
 );
 

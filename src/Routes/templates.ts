@@ -32,6 +32,7 @@ import * as functions from "../Util/Function/main";
 import * as userCache from "../Util/Services/userCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import { variables } from "../Util/Function/variables";
+import * as tokenManager from "../Util/Services/adminTokenManager";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -260,7 +261,7 @@ router.post(
                         errors.push(
                             res.__("common.error.template.arr.invite.tooLong")
                         );
-                    } else if (/^https?:\/\//.test(req.body.code)) {
+                    } else if (/^https:\/\//.test(req.body.code)) {
                         error = true;
                         errors.push(
                             res.__("common.error.template.arr.invite.isURL")
@@ -365,6 +366,25 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     });
 });
 
+router.get("/:id/src", variables, permission.auth, permission.admin, async (req: Request, res: Response, next) => {
+    if (req.params.id === "@me") {
+        if (!req.user) return res.redirect("/auth/login");
+        req.params.id = req.user.id;
+    }
+
+    if (!req.query.token) return res.json({});
+    // @ts-ignore
+    const tokenCheck = await tokenManager.verifyToken(req.user.id, req.query.token);
+    if (tokenCheck === false) return res.json({});
+
+    const cache = await templateCache.getTemplate(req.params.id);
+    const db = await global.db
+            .collection("templates")
+            .findOne({ _id: req.params.id });
+
+    return res.json({ cache: cache, db: db });
+});
+
 router.get(
     "/:id/edit",
     variables,
@@ -457,7 +477,7 @@ router.post(
             } else if (req.body.code.length > 2000) {
                 error = true;
                 errors.push(res.__("common.error.template.arr.invite.tooLong"));
-            } else if (/^https?:\/\//.test(req.body.code)) {
+            } else if (/^https:\/\//.test(req.body.code)) {
                 error = true;
                 errors.push(res.__("common.error.template.arr.invite.isURL"));
             } else if (req.body.code.includes("discord.new")) {

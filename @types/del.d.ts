@@ -113,6 +113,7 @@ interface delUser {
 
 interface delBot {
     _id: string;
+    _cacheID?: string;
     name: string;
     prefix: string;
     library: string;

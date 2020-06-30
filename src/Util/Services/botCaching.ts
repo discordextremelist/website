@@ -21,7 +21,12 @@ const prefix = "bots";
 
 export async function getBot(id: string): Promise<delBot> {
     const bot = await global.redis.hget(prefix, id);
-    return JSON.parse(bot);
+    if (!bot) return bot;
+
+    const parsedBot = JSON.parse(bot);
+    if (parsedBot.id) parsedBot._id = parsedBot.id;
+    
+    return parsedBot;
 }
 
 export async function getAllBots(): Promise<delBot[]> {
@@ -43,6 +48,17 @@ export async function uploadBots() {
         .find()
         .toArray();
     if (botsDB.length < 1) return;
+
+    for (const bot of botsDB) {
+        /* 
+        Yes I know, don't do this (@ts-ignore)... it's because ID does not exist on delBot type and
+        I don't want to add it as this is a fix for a weird bug.
+        */
+
+        // @ts-ignore
+        if (bot.id) bot._id = bot.id;
+    }
+
     await global.redis.hmset(
         prefix,
         ...botsDB.map((bot: delBot) => [bot._id, JSON.stringify(bot)])

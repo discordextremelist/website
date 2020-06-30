@@ -32,7 +32,7 @@ export async function botStatsUpdate() {
     }
 
     const date = moment().diff(moment(botStats.lastUpdate), "days");
-    if (date > 7) {
+    if (date > 2) {
         const users: delUser[] = await global.db
             .collection("users")
             .find()

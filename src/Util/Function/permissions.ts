@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Request, Response } from "express";
 import { bot } from "../Services/discord";
+import * as https from "https";
 import * as settings from "../../../settings.json";
 
 export const auth = (req: Request, res: Response, next: () => void) => {
@@ -35,14 +36,43 @@ export const member = (req: Request, res: Response, next: () => void) => {
             .get(settings.guild.main)
             .members.cache.get(req.user.id)
     ) {
-        return res.status(403).render("status", {
-            title: res.__("common.error"),
-            status: 403,
-            subtitle: res.__("common.error.notMember"),
-            req,
-            type: "Error"
+        const data = JSON.stringify({
+            access_token: req.user.accessToken
         });
+
+        const options = {
+            hostname: "discord.com",
+            port: 443,
+            path: `/api/v6/guilds/${settings.guild.main}/members/${req.user.id}`,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Content-Length": data.length,
+                "Authorization": "Bot " + settings.secrets.discord.token
+            }
+        };
+
+        const msReq = https.request(options, (response) => {
+            if (response.statusCode === 403 && !req.user.impersonator) {
+                return res.status(403).render("status", {
+                    title: res.__("common.error"),
+                    status: 403,
+                    subtitle: res.__("common.error.notMember"),
+                    req,
+                    type: "Error"
+                });
+            } else next();
+        });
+
+        msReq.on("error", (e) => {
+            console.error(e);
+        });
+
+        msReq.write(data);
+        msReq.end();
     }
+    
+    next();
 };
 
 export const mod = (req: Request, res: Response, next: () => void) => {

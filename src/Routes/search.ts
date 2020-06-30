@@ -36,10 +36,14 @@ const router = express.Router();
 router.get("/", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.search");
 
+    let search;
+    req.query.q ? search = req.query.q : search = "";
+
     return res.render("templates/search", {
         title: res.__("common.search"),
         subtitle: res.__("common.search.subtitle"),
-        req
+        req,
+        search
     });
 });
 

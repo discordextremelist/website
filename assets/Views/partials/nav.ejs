@@ -1,3 +1,4 @@
+<body>
 <noscript>
     <div style="padding: 25px; background-color: yellow; color: black;" class="has-text-centered">
         <span class="icon">
@@ -97,17 +98,29 @@
                         </span>
                         <span><%= __("common.discord") %></span>
                     </a>
+                    <a class="navbar-item" id="navAbout" href="<%= linkPrefix %>/about" tabindex="0">
+                        <span class="icon iconalign">
+                            <i class="fad fa-info-circle" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("common.nav.more.about") %></span>
+                    </a>
+                    <a class="navbar-item" href="/blog" target="_blank" rel="noopener" tabindex="0">
+                        <span class="icon iconalign">
+                            <i class="fad fa-pen" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("common.nav.more.blog") %></span>
+                    </a>
+                    <a class="navbar-item" href="https://status.discordextremelist.xyz" target="_blank" rel="noopener" tabindex="0">
+                        <span class="icon iconalign">
+                            <i class="fad fa-thermometer-three-quarters" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("common.nav.more.status") %></span>
+                    </a>
                     <a class="navbar-item" href="<%= linkPrefix %>/docs" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fad fa-books" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.docs") %></span>
-                    </a>
-                    <a class="navbar-item" id="navAbout" href="<%= linkPrefix %>/about" tabindex="0">
-                        <span class="icon iconalign">
-                            <i class="fad fa-question" aria-hidden="true"></i>
-                        </span>
-                        <span><%= __("common.nav.more.about") %></span>
                     </a>
                     <hr class="navbar-divider">
                     <a class="navbar-item" href="<%= linkPrefix %>/terms" tabindex="0">

@@ -25,6 +25,7 @@ import passport from "passport";
 import { Strategy } from "passport-discord";
 
 import * as settings from "../../settings.json";
+import * as tokenManager from "../Util/Services/adminTokenManager";
 
 const router = express.Router();
 
@@ -208,6 +209,8 @@ router.get(
 
 router.get("/logout", async (req: Request, res: Response, next) => {
     if (!req.user.impersonator) {
+        if (req.user.db.admin) await tokenManager.tokenReset(req.user.id);
+
         await req.logout();
         res.redirect(req.session.redirectTo || "/");
     } else {

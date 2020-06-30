@@ -34,66 +34,66 @@
                 <div class="content-footer">
                     <div class="buttons">
                     <% if (bot.status.archived === true) { %>
-                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>/resubmit" class="button is-default is-outlined">
+                        <a href="<%= linkPrefix %>/bots/<%= bot._id || bot.id %>/resubmit" class="button is-default is-outlined">
                             <span class="icon">
                               <i class="fas fa-redo-alt"></i>
                             </span>
                             <span><%= __("common.resubmit") %></span>
                         </a>
                     <% } else if (verificationApp === true) { %>
-                        <a href="<%= linkPrefix %>/staff/apps/verification/<%= bot._id %>" class="button is-default is-outlined">
+                        <a href="<%= linkPrefix %>/staff/apps/verification/<%= bot._id || bot.id %>" class="button is-default is-outlined">
                             <span class="icon">
                               <i class="fas fa-eye"></i>
                             </span>
                             <span><%= __("common.application.view") %></span>
                         </a>
                     <% } else if (search === true) { %>
-                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>" class="button is-default is-outlined">
+                        <a href="<%= linkPrefix %>/bots/<%= bot.vanityUrl ? bot.vanityUrl : (bot._id || bot.id) %>" class="button is-default is-outlined">
                             <span class="icon">
                                 <i class="fas fa-robot"></i>
                             </span>
                             <span><%= __("common.view.bot") %></span>
                         </a>
                     <% } else if (queue === true) { %>
-                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>" class="button is-default is-outlined">
+                        <a href="<%= linkPrefix %>/bots/<%= bot.vanityUrl ? bot.vanityUrl : (bot._id || bot.id) %>" class="button is-default is-outlined">
                             <span class="icon">
                                 <i class="fas fa-eye"></i>
                             </span>
                             <span><%= __("common.view") %></span>
                         </a>
-                        <a href="https://discord.com/oauth2/authorize?client_id=<%= bot._id %>&scope=bot&guild_id=<%= staffServer %>" target="_blank" rel="noopener" class="button is-success is-outlined">
+                        <a href="https://discord.com/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= staffServer %>" target="_blank" rel="noopener" class="button is-success is-outlined">
                             <span class="icon">
                                 <i class="fas fa-vial"></i>
                             </span>
                             <span><%= __("page.bots.invite.staff") %></span>
                         </a>
-                        <a href="https://discord.com/oauth2/authorize?client_id=<%= bot._id %>&scope=bot&guild_id=<%= mainServer %>" target="_blank" rel="noopener" class="button is-blurple is-outlined">
+                        <a href="https://discord.com/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= mainServer %>" target="_blank" rel="noopener" class="button is-blurple is-outlined">
                             <span class="icon">
                                 <i class="fas fa-shield-alt"></i>
                             </span>
                             <span><%= __("page.bots.invite.main") %></span>
                         </a>
-                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>/approve" class="button is-success is-outlined">
+                        <a href="<%= linkPrefix %>/bots/<%= bot._id || bot.id %>/approve" class="button is-success is-outlined">
                             <span class="icon">
                                 <i class="fas fa-check"></i>
                             </span>
                             <span><%= __("common.staff.approve") %></span>
                         </a>
-                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>/decline" class="button is-danger is-outlined">
+                        <a href="<%= linkPrefix %>/bots/<%= bot._id || bot.id %>/decline" class="button is-danger is-outlined">
                             <span class="icon">
                                 <i class="fas fa-minus"></i>
                             </span>
                             <span><%= __("common.staff.decline") %></span>
                         </a>
                     <% } else { %>
-                        <a href="<%= linkPrefix %>/bots/<%= bot._id %>" class="button is-default is-outlined">
+                        <a href="<%= linkPrefix %>/bots/<%= bot.vanityUrl ? bot.vanityUrl : (bot._id || bot.id) %>" class="button is-default is-outlined">
                             <span class="icon">
                               <i class="fas fa-eye"></i>
                             </span>
                             <span><%= __("common.view") %></span>
                         </a>
-                        <% if (profile === true && bot.owner.id === req.user.id || profile === true && bot.editors.includes("req.user.id")) { %>
-                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/edit" class="button is-warning is-outlined">
+                        <% if (req.user && profile === true && (bot.owner.id === req.user.id || bot.editors.includes(req.user.id))) { %>
+                            <a href="<%= linkPrefix %>/bots/<%= bot._id || bot.id %>/edit" class="button is-warning is-outlined">
                                 <span class="icon">
                                   <i class="fas fa-pencil"></i>
                                 </span>

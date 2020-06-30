@@ -12,7 +12,7 @@
         .has-text-default { color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %> !important; }
         .has-text-default:hover { color: <% if (req.user) { %><%= colour(`${req.user.db.preferences.defaultColour}`).darken(0.1) || colour("#b114ff").darken(0.1) %><% } else { %><%= colour("#b114ff").darken(0.1) %><% } %>; }
         .has-background-default { background-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>; color: <% if (req.user) { %><%= req.user.db.preferences.defaultForegroundColour || "#ffffff" %><% } else { %>#ffffff<% } %>; }
-        ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:#0e0e0e}::-webkit-scrollbar-thumb{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}::-webkit-scrollbar-thumb:hover{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}
+        ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}::-webkit-scrollbar-thumb:hover{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}
     </style>
     <% if (req.user) { %><style type="text/css"><%= req.user.db.preferences.customGlobalCss %></style><% } %>
 
@@ -25,7 +25,7 @@
     <% } %>
 
     <link rel="manifest" href="/manifest.json">
-    <link rel="search" title="Search" href="/<%= req.locale %>/search" />
+    <link rel="search" title="Search" href="<%= linkPrefix %>/search" />
     <link rel="preconnect" href="https://cdn.discordapp.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://twemoji.maxcdn.com">
@@ -36,12 +36,14 @@
     <meta name="keywords" content="Discord Extreme List, Discord Bots, Discord Bot List, Discord Servers, Discord Templates, Discord Template List, Discord Server List">
     <meta name="robots" content="index,follow">
     <meta name="distribution" content="global">
-    <meta name="rating" content="safe for kids">
     <meta name="revisit-after" content="1 day">
 
+    <meta name="theme-color" content="<%= req.user ? req.user.db.preferences.defaultColour || "#b114ff" : "#b114ff" %>">
+
     <% if (pageType.bot === true) { %>
-        <meta name="theme-color" content="#2C2F33">
         <meta name="description" content="<%= bot.shortDesc %>">
+
+        <link rel="canonical" href="<%= baseURL %><%= linkPrefix %>/bots/<%= bot.vanityUrl || bot._id %>">
 
         <meta name="twitter:card" content="summary">
         <meta name="twitter:site" content="@ExtremeList">
@@ -54,7 +56,7 @@
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="Discord Extreme List">
         <meta property="og:title" content="<%= title || "Page" %> | Discord Extreme List">
-        <meta property="og:url" content="https://discordextremelist.xyz">
+        <meta property="og:url" content="<%= baseURL %><%= linkPrefix %>/bots/<%= bot.vanityUrl || bot._id %>">
         <meta property="og:description" content="<%= bot.shortDesc %>">
         <meta property="og:image" content="<%= bot.avatar.url %>.png">
         <meta property="og:image:alt" content="DEL's Logo">
@@ -69,17 +71,23 @@
         <%
             let listing;
             let listingOwner;
+            let folder;
 
             if (pageType.server === true) {
                 listing = server;
                 listingOwner = serverOwner;
+                folder = 'servers';
             } else if (pageType.template === true) {
                 listing = template;
                 listingOwner = templateOwner;
+                folder = 'templates';
             }
+            
+            
         %>
-        <meta name="theme-color" content="#2C2F33">
         <meta name="description" content="<%= listing.shortDesc %>">
+
+        <link rel="canonical" href="<%= baseURL %><%= linkPrefix %>/<%= folder %>/<%= listing._id %>">
 
         <meta name="twitter:card" content="summary">
         <meta name="twitter:site" content="@ExtremeList">
@@ -92,7 +100,7 @@
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="Discord Extreme List">
         <meta property="og:title" content="<%= title || "Page" %> | Discord Extreme List">
-        <meta property="og:url" content="https://discordextremelist.xyz">
+        <meta property="og:url" content="<%= baseURL %><%= linkPrefix %>/<%= folder %>/<%= listing._id %>">
         <meta property="og:description" content="<%= listing.shortDesc %>">
         <meta property="og:image" content="<%= listing.icon.url %>.png">
         <meta property="og:image:alt" content="DEL's Logo">
@@ -104,7 +112,6 @@
         <meta name="author" content="<%= listingOwner ? listingOwner.fullUsername : 'Unknown' %>" />
         <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan" />
     <% } else { %>
-        <meta name="theme-color" content="#2C2F33">
         <meta name="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list, giving Discord bots and Discord servers of all sizes an extreme chance!" %>">
 
         <meta name="twitter:card" content="summary">
@@ -141,4 +148,28 @@
     <meta name="msapplication-config" content="/browserconfig.xml">
 
     <% if (htmlDir === "rtl") { %><%- include("./rtl.ejs") %><% } %>
+    
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "WebSite",
+            "url": "https://discordextremelist.xyz/",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://discordextremelist.xyz/search?q={query}",
+                "query-input": "required name=query"
+            }
+        }
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaID %>"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '<%= gaID %>');
+    </script>
+
 </head>

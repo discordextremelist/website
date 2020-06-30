@@ -40,13 +40,13 @@
 <style type="text/css">.tag:not(body).is-default{background-color:<%= defaultColour %>;color:<%= foreground %>}</style>
 <section class="hero is-primary">
     <div class="hero-body">
-        <div class="container is-fluid">
-            <br />
+        <br>
+        <div class="container">
             <div class="columns">
-                <div class="column is-3">
+                <div class="column is-2">
                     <img class="image" title="<%= template.name %>'s Icon'" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= template.icon.url %>.<%= imageFormat %>?size=512in:#testers ad" alt="<%= template.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
                 </div>
-                <div class="column is-9">
+                <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
                         <span id="templateName"><%= template.name %></span>
                     </h1>
@@ -293,7 +293,7 @@
         </ul>
         </div>
         <div class="column is-12 tabs-content">
-            <div class="tab-content is-active content" style="white-space: pre">
+            <div class="tab-content is-active content" style="white-space: pre-wrap">
                 <%- longDesc %>
             </div>
             <div class="tab-content">

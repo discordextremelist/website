@@ -1,6 +1,6 @@
 {
   "name": "del-website",
-  "version": "5.0.3-Release",
+  "version": "5.0.4-Release",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
   "main": "dist/src/app.js",
   "directories": {
@@ -52,7 +52,7 @@
     "passport-discord": "^0.1.4",
     "request": "^2.88.2",
     "sanitize-html": "^1.26.0",
-    "snyk": "^1.349.0",
+    "snyk": "^1.352.1",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
   },
@@ -74,13 +74,20 @@
     "setup": "node scripts/setup",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
-    "dev": "nodemon --exec \"tsc && fuser -k 3000/tcp && node dist/src/app.js\" --ext ts"
+    "dev": "nodemon --exec \"tsc && fuser -k 3000/tcp && node dist/src/app.js\" --ext ts",
+    "update": "npm run compile && pm2 restart 1",
+    "updatel": "npm run compile && pm2 restart 1 && pm2 logs 1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/discordextremelist/website.git"
   },
-  "author": "Cairo Mitchell-Acason, John Burke, Advaith Jagathesan <contact@discordextremelist.xyz>",
+  "author": "Cairo Mitchell-Acason <cairomitchellacason@gmail.com>",
+  "contributors": [
+    "Cairo Mitchell-Acason <cairomitchellacason@gmail.com>",
+    "John Burke",
+    "Advaith Jagathesan <advaithj1@gmail.com>"
+  ],
   "license": "AGPL-3.0",
   "snyk": true
 }

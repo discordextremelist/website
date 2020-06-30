@@ -28,6 +28,7 @@ import * as functions from "../Util/Function/main";
 import * as userCache from "../Util/Services/userCaching";
 import * as announcementCache from "../Util/Services/announcementCaching";
 import { variables } from "../Util/Function/variables";
+import * as tokenManager from "../Util/Services/adminTokenManager";
 
 const router = express.Router();
 
@@ -879,6 +880,12 @@ router.get(
     permission.admin,
     async (req: Request, res: Response) => {
         if (req.params.id === req.user.id) return res.redirect("/staff");
+
+        if (!req.query.token) return res.json({});
+        // @ts-ignore
+        const tokenCheck = await tokenManager.verifyToken(req.user.id, req.query.token);
+        if (tokenCheck === false) return res.json({});
+
         let user: delUser | undefined = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });

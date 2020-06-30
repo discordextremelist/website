@@ -44,7 +44,7 @@
 <style type="text/css">.tag:not(body){color: <%= foreground %>;background-color: <%= defaultColour %>;}</style>
 <section class="hero is-primary">
     <div class="hero-body">
-        <br />
+        <br>
         <div class="container">
             <div class="columns">
                 <div class="column is-2">
@@ -145,7 +145,7 @@
                                                 <p class="has-text-danger <% if (mobile) { %>has-text-centered<% } %>"><%= __("common.staffManagement.warning") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
-                                            <% if (user.db.rank.assistant === true) { %>
+                                            <% if (req.user && req.user.db.rank.assistant === true) { %>
                                                 <% if (req.user.id !== userProfile._id) { %>
                                                     <a class="dropdown-item" href="<%= linkPrefix %>/users/profile/<%= userProfile._id %>/edit">
                                                         <span class="icon"><i aria-hidden="true" class="fas fa-pen"></i></span>
@@ -275,7 +275,7 @@
                         <h3 class="is-size-4"><%= __("common.editor") %></h3>
                         <br />
                         <div class="columns is-multiline is-centered">
-                            <%- botsEditor.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false, profile: false })).join("") %>
+                            <%- botsEditor.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false, profile: true })).join("") %>
                         </div>
                     <% } %>
                 <% } %>

@@ -27,6 +27,7 @@ import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as discord from "../Util/Services/discord";
 import { variables } from "../Util/Function/variables";
+import { sitemapGenerator } from "../Util/Middleware/sitemap";
 
 const router = express.Router();
 
@@ -132,11 +133,11 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
         req,
         bots,
         botsPgArr: bots.slice(
-            9 * Number(req.query.page) - 9,
-            9 * Number(req.query.page)
+            15 * Number(req.query.page) - 15,
+            15 * Number(req.query.page)
         ),
         page: req.query.page,
-        pages: Math.ceil(bots.length / 9)
+        pages: Math.ceil(bots.length / 15)
     });
 });
 
@@ -153,11 +154,11 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
         req,
         servers,
         serversPgArr: servers.slice(
-            9 * Number(req.query.page) - 9,
-            9 * Number(req.query.page)
+            15 * Number(req.query.page) - 15,
+            15 * Number(req.query.page)
         ),
         page: req.query.page,
-        pages: Math.ceil(servers.length / 9)
+        pages: Math.ceil(servers.length / 15)
     });
 });
 
@@ -174,11 +175,11 @@ router.get("/templates", variables, async (req: Request, res: Response) => {
         req,
         templates,
         templatesPgArr: templates.slice(
-            9 * Number(req.query.page) - 9,
-            9 * Number(req.query.page)
+            15 * Number(req.query.page) - 15,
+            15 * Number(req.query.page)
         ),
         page: req.query.page,
-        pages: Math.ceil(templates.length / 9)
+        pages: Math.ceil(templates.length / 15)
     });
 });
 

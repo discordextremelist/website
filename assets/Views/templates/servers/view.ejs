@@ -39,13 +39,13 @@
 <style type="text/css">h1{font-size:48px}h2{font-size:40px}h3{font-size:32px}h4{font-size:24px}h5{font-size:20px}h6{font-size:16px}strong{color:#fff}code{background-color:#1f1f1f}pre{color:#ff3860;background-color:#1f1f1f}table th{color:#d2d2d2}a:hover{color:#1c5abd}.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{color:#fff;font-weight:inherit}table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all;-webkit-overflow-scrolling:touch}blockquote{background-color:transparent!important;}</style>
 <section class="hero is-primary">
     <div class="hero-body">
-        <div class="container is-fluid">
-            <br />
+        <br>
+        <div class="container">
             <div class="columns">
-                <div class="column is-3">
+                <div class="column is-2">
                     <img class="image" title="<%= server.name %>'s Icon'" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= server.icon.url %>.<%= imageFormat %>?size=512" alt="<%= server.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
                 </div>
-                <div class="column is-9">
+                <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
                         <span id="serverName"><%= server.name %></span>
                     </h1>
@@ -276,7 +276,7 @@
     </div>
 </section> 
 <div class="container" style="overflow: hidden;">
-    <div id="content" class="section content" style="white-space: pre;"><%- longDesc || __("common.unavailable.longDesc") %></div>
+    <div id="content" class="section content" style="white-space: pre-wrap;"><%- longDesc || __("common.unavailable.longDesc") %></div>
 </div>
 <div class="modal deleteModal">
     <div class="modal-background"></div>

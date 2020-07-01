@@ -47,7 +47,7 @@ import { variables } from "./Util/Function/variables";
 import { monacoIsStupid } from "./Util/Middleware/monacoIsStupid";
 import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap";
 
-const i18n = require("i18n");
+import i18n from "i18n";
 import * as settings from "../settings.json";
 import { MongoClient } from "mongodb";
 

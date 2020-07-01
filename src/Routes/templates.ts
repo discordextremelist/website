@@ -242,6 +242,8 @@ router.post(
 
                 await templateCache.updateTemplate(fetchRes.jsonBody.code);
 
+                await discord.postWebMetric("template");
+
                 res.redirect(`/templates/${fetchRes.jsonBody.code}`);
             })
             .catch(async (fetchRes) => {
@@ -745,6 +747,8 @@ router.get(
 
         await templateCache.deleteTemplate(req.params.id);
 
+        await discord.postWebMetric("template");
+
         res.redirect("/users/@me");
     }
 );
@@ -841,6 +845,9 @@ router.post(
                 .catch((e) => {
                     console.error(e);
                 });
+
+
+        await discord.postWebMetric("template");
 
         res.redirect("/staff/queue");
     }

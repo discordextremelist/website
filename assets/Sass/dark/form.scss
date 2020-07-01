@@ -114,6 +114,13 @@
     box-shadow: none;
 }
 
+.switch[type="checkbox"]+label::before,
+.switch[type="checkbox"]+label:before,
+.switch[type="checkbox"]+label::after,
+.switch[type="checkbox"]+label:after {
+    outline: 0
+}
+
 .monaco-editor .button.codicon {
     height: 18px;
     color: #fff !important;

@@ -57,6 +57,7 @@
         },
         "authScopes": ["identify", "guilds.join"],
         "url": "https://discordextremelist.xyz",
+        "dev": true,
         "callback": "/auth/login/callback",
         "gaID": "UA-165711322-1",
         "bannedVanityURLs": []

@@ -36,8 +36,8 @@
 %>
 <link href="/css/theme/<%= preferredTheme %>/listing.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
 <style>.message{background-color:#f5f5f5;border-radius:4px;font-size:1rem}.message strong{color:currentColor}.message a:not(.button):not(.tag):not(.dropdown-item){color:currentColor;text-decoration:underline}.message.is-small{font-size:.75rem}.message.is-medium{font-size:1.25rem}.message.is-large{font-size:1.5rem}.message.is-default{background-color:<%= defaultColour %>}.message.is-default .message-header{background-color:<%= defaultColour %>;color:<%= foreground %>}.message.is-default .message-body{border-color:#fff;color:<%= defaultColour %>}</style>
-<style>code{background-color: <%= siteThemeColour %>;color: <%= defaultColour %>;border-radius: 5px;}</style>
-<section class="hero is-primary">
+<style>code{background-color: <%= siteThemeColour %>;color: <%= (bot.theme && bot.theme.useCustomColor) ? bot.theme.color : defaultColour %>;border-radius: 5px;}</style>
+<section class="hero is-primary" <% if (bot.theme && bot.theme.banner) { %>style="background-image: url(<%= bot.theme.banner %>); background-size: cover"<% } %>>
     <div class="hero-body">
         <br>
         <div class="container">
@@ -125,33 +125,19 @@
                     <div class="buttons <% if (mobile) { %>is-centered<% } else { %>page<% } %>">
                         <% if (bot.owner.id === req.user.id) { %>
                             <%- 
-                                include("../../partials/button.ejs", { 
-                                    className: "button is-dark", 
-                                    icon: "fas fa-key", 
-                                    tag: "button", 
-                                    message: __("page.bots.copyToken"), 
-                                    href: "", 
-                                    additional: `onclick=\"copyToClipboard('${bot.token}');\"` 
-                                });
+                                // include("../../partials/button.ejs", { 
+                                //     className: "button is-white", 
+                                //     icon: "fas fa-key", 
+                                //     tag: "button", 
+                                //     message: __("page.bots.copyToken"), 
+                                //     href: "", 
+                                //     additional: `` 
+                                // });
                             %>
-                            <% if (bot.status.verified === false) { %>
-                                <% if (bot.serverCount >= 100) { %>
-                                    <%- 
-                                        include("../../partials/button.ejs", { 
-                                            className: "button is-dark", 
-                                            icon: "fas fa-badge-check", 
-                                            tag: "a", 
-                                            message: __("page.bots.verificationApplication"), 
-                                            href: `${linkPrefix}/apply/verification`, 
-                                            additional: ""
-                                        });
-                                    %>
-                                <% } %>
-                            <% } %>
                             <% if (bot.status.approved !== false) { %>
                                 <%- 
                                     include("../../partials/button.ejs", { 
-                                        className: "button is-dark", 
+                                        className: "button is-link", 
                                         icon: "fas fa-link", 
                                         tag: "a", 
                                         message: __("page.bots.setVanity"), 
@@ -162,7 +148,7 @@
                             <% } %>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-dark", 
+                                    className: "button is-warning", 
                                     icon: "fas fa-pencil", 
                                     tag: "a", 
                                     message: __("common.edit"), 
@@ -170,9 +156,35 @@
                                     additional: ""
                                 });
                             %>
+                            <div style="padding-right: .5em;" class="dropdown is-hoverable">
+                                <div class="dropdown-trigger">
+                                    <%- 
+                                        include("../../partials/button.ejs", { 
+                                            className: "button is-orange", 
+                                            icon: "fas fa-key", 
+                                            tag: "dropdownButton", 
+                                            message: __("page.bots.manageToken"), 
+                                            href: "", 
+                                            additional: "style=\"direction: ltr;\""
+                                        });
+                                    %>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
+                                  <div class="dropdown-content">
+                                    <a class="dropdown-item" onclick="copyToClipboard('<%= bot.token %>');">
+                                        <span class="icon"><i aria-hidden="true" class="fas fa-copy"></i></span>
+                                        <span><%= __("page.bots.copyToken") %></span>
+                                    </a>
+                                    <a class="dropdown-item">
+                                        <span class="icon"><i aria-hidden="true" class="fas fa-redo-alt"></i></span>
+                                        <span><%= __("page.bots.resetToken") %></span>
+                                    </a>
+                                  </div>
+                                </div>
+                            </div>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-dark", 
+                                    className: "button is-danger", 
                                     icon: "fas fa-trash", 
                                     tag: "a", 
                                     message: __("common.delete"), 
@@ -183,7 +195,7 @@
                         <% } else if (bot.editors && bot.editors.includes(req.user.id)) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-dark", 
+                                    className: "button is-warning", 
                                     icon: "fas fa-pencil", 
                                     tag: "a", 
                                     message: __("common.edit"), 
@@ -193,7 +205,7 @@
                             %>
                         <% } %>
                         <% if (user.db.rank.mod) { %>
-                            <div class="dropdown">
+                            <div class="dropdown is-hoverable">
                                 <div class="dropdown-trigger">
                                     <%- 
                                         include("../../partials/button.ejs", { 
@@ -254,11 +266,11 @@
                                             <span><%= __("common.staff.decline") %></span>
                                         </a>
                                     <% } %>
-                                    <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot._id %>&scope=bot&guild_id=<%= staffServer %>">
+                                    <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= staffServer %>">
                                         <span class="icon"><i class="fas fa-vial"></i></span>
                                         <span><%= __("page.bots.invite.staff") %></span>
                                     </a>
-                                    <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot._id %>&scope=bot&guild_id=<%= mainServer %>">
+                                    <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= mainServer %>">
                                         <span class="icon"><i class="fas fa-shield-alt"></i></span>
                                         <span><%= __("page.bots.invite.main") %></span>
                                     </a>
@@ -269,6 +281,16 @@
                         </div>
                     <% } %>
                     <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
+                        <%- 
+                            include("../../partials/button.ejs", { 
+                                className: "button is-success", 
+                                icon: "fas fa-plus", 
+                                tag: "a", 
+                                message: __("common.invite.full"), 
+                                href: bot.links.invite, 
+                                additional: "target=\"_blank\" rel=\"noopener\""
+                            });
+                        %>
                         <% if (bot.links.website) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 
@@ -281,20 +303,22 @@
                                 });
                             %>
                         <% } %>
-                        <%- 
-                            include("../../partials/button.ejs", { 
-                                className: "button is-info", 
-                                icon: "fas fa-plus", 
-                                tag: "a", 
-                                message: __("common.invite"), 
-                                href: bot.links.invite, 
-                                additional: "target=\"_blank\" rel=\"noopener\""
-                            });
-                        %>
+                        <% if (bot.social && bot.social.twitter) { %>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-info", 
+                                    icon: "fab fa-twitter", 
+                                    tag: "a", 
+                                    message: `@${bot.social.twitter}`, 
+                                    href: `https://twitter.com/${bot.social.twitter}`, 
+                                    additional: "target=\"_blank\" rel=\"noopener\""
+                                });
+                            %>
+                        <% } %>
                         <% if (bot.links.donation) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-success", 
+                                    className: "button is-warning", 
                                     icon: "fas fa-dollar-sign", 
                                     tag: "a", 
                                     message: __("common.donate"), 

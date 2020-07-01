@@ -217,6 +217,8 @@ router.post(
 
                 await serverCache.updateServer(fetchRes.jsonBody.guild.id);
 
+                await discord.postWebMetric("server");
+
                 res.redirect(`/servers/${fetchRes.jsonBody.guild.id}`);
             })
             .catch(async (fetchRes) => {
@@ -667,6 +669,8 @@ router.get(
 
         await serverCache.deleteServer(req.params.id);
 
+        await discord.postWebMetric("server");
+
         res.redirect("/users/@me");
     }
 );
@@ -762,6 +766,8 @@ router.post(
                 .catch((e: string) => {
                     console.error(e);
                 });
+
+        await discord.postWebMetric("server");
 
         res.redirect("/staff/queue");
     }

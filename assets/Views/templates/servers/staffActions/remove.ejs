@@ -34,8 +34,8 @@
             <div class="field">
                 <label class="label has-text-blurple"><%= __("page.remove.premadeReasons") %></label>
                 <div class="buttons">
-                    <button type="button" onclick="isClone();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.innapropriate") %></span>
+                    <button type="button" onclick="innapAvatarName();" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.inappropriate") %></span>
                     </button>
                     <button type="button" onclick="discordTosViolation();" class="button is-dark">
                         <span><%= __("page.remove.premadeReasons.discord.tos") %></span>
@@ -63,7 +63,7 @@
 </div>
 <script type="text/javascript">
     function innapAvatarName() {
-        document.getElementById("reason").value = "This template contains an innapropriate avatar and/or name!";
+        document.getElementById("reason").value = "This template contains an inappropriate avatar and/or name!";
     }
     function discordTosViolation() {
         document.getElementById("reason").value = "Violating Discord's Terms of Use.";

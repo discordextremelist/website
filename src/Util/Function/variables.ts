@@ -57,6 +57,7 @@ export const variables = async (
 
     res.locals.defaultLang = settings.website.locales.default;
     res.locals.baseURL = settings.website.url;
+    res.locals.dev = settings.website.dev;
     res.locals.announcement = announcementCache.getAnnouncement();
 
     res.locals.announcement.default = [

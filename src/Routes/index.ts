@@ -27,7 +27,6 @@ import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as discord from "../Util/Services/discord";
 import { variables } from "../Util/Function/variables";
-import { sitemapGenerator } from "../Util/Middleware/sitemap";
 
 const router = express.Router();
 

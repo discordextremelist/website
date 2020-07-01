@@ -25,13 +25,13 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
-        <br />
+        <br>
         <div class="container has-text-centered">
             <h1 class="title">
                 <span class="icon is-medium iconalign">
             <i aria-hidden="true" class="fad fa-plus has-text-default"></i>
         </span>
-                <br />
+                <br>
                 <span><%= title %></span>
             </h1>
             <h2 class="subtitle">
@@ -46,30 +46,46 @@
             <h3 class="is-size-3 has-text-default">
                 <%= __("page.form.category.generalInfo") %>
             </h3>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.id") %> <span class="has-text-danger">*</span></label>
+                <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
+                    <%= __("page.bots.generalInfo.id.details") %>
+                </p>
                 <p class="control has-icons-left has-icons-right" required>
                     <input class="input is-rounded" type="text" name="id" placeholder="568254611354419211">
                     <span class="icon is-small is-left">
-                <i aria-hidden="true" class="fas fa-hashtag"></i>
-            </span>
+                        <i aria-hidden="true" class="fas fa-hashtag"></i>
+                    </span>
                 </p>
             </div>
-            <br />
+            <br>
+            <div class="field">
+                <label class="label has-text-default"><%= __("page.bots.generalInfo.clientID") %></label>
+                <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
+                    <%= __("page.bots.generalInfo.clientID.details") %>
+                </p>
+                <p class="control has-icons-left has-icons-right">
+                    <input class="input is-rounded" type="text" name="clientID" placeholder="568254611354419211">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fas fa-hashtag"></i>
+                    </span>
+                </p>
+            </div>
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.editors") %> <span class="has-text-default">(<%= __("common.form.spaceSeparated") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="editors" placeholder="<%= __("page.bots.generalInfo.editors.placeholder") %>">
                     <span class="icon is-small is-left">
-                <i aria-hidden="true" class="fas fa-user"></i>
-            </span>
+                        <i aria-hidden="true" class="fas fa-user"></i>
+                    </span>
                 </p>
                 <p style="padding: 5px;" class="is-size-7 has-text-default">
                     <%= __("page.bots.generalInfo.editors.notice") %>
                 </p>
             </div>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.prefix") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right" required>
@@ -79,7 +95,7 @@
             </span>
                 </p>
             </div>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.library") %> <span class="has-text-danger">*</span></label>
                 <div class="control has-icons-left">
@@ -94,7 +110,7 @@
                     </div>
                 </div>
             </div>
-            <br />
+            <br>
             <label class="label has-text-default"><%= __("common.tags") %></label>
             <div class="field">
                 <input class="is-checkradio is-circle has-background-color is-link" type="checkbox" id="fun" name="fun">
@@ -124,12 +140,12 @@
                 <input class="is-checkradio is-circle has-background-color is-pink" type="checkbox" id="music" name="music">
                 <label class="has-text-pink" for="music"><%= __("common.tags.music") %></label>
             </div>
-            <br />
-            <br />
+            <br>
+            <br>
             <h3 class="is-size-3 has-text-default">
                 <%= __("page.form.category.links") %>
             </h3>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.invite") %></label>
                 <p class="control has-icons-left has-icons-right">
@@ -139,7 +155,7 @@
             </span>
                 </p>
             </div>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.website") %></label>
                 <p class="control has-icons-left has-icons-right">
@@ -149,7 +165,7 @@
             </span>
                 </p>
             </div>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.donate") %></label>
                 <p class="control has-icons-left has-icons-right">
@@ -159,7 +175,7 @@
             </span>
                 </p>
             </div>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.supportServer") %></label>
                 <p class="control has-icons-left has-icons-right">
@@ -169,7 +185,7 @@
             </span>
                 </p>
             </div>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.git") %></label>
                 <p class="control has-icons-left has-icons-right">
@@ -179,8 +195,53 @@
             </span>
                 </p>
             </div>
-            <br />
-            <br />
+            <br>
+            <br>
+            <h3 class="is-size-3 has-text-default"><%= __("common.social") %></h3>
+            <br>
+            <div class="field">
+                <label class="label has-text-default"><%= __("common.social.twitter") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input class="input is-rounded" type="text" name="twitter" placeholder="bestbot">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="far fa-at"></i>
+                    </span>
+                </p>
+            </div>
+            <br>
+            <br>
+            <h3 class="is-size-3 has-text-default"><%= __("page.form.category.theme") %></h3>
+            <br>
+            <div class="field">
+                <label for="customColorSwitch" class="label has-text-default"><%= __("page.bots.theme.useCustomColor") %></label>
+                <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
+                    <%= __("page.bots.theme.useCustomColor.details") %>
+                </p>
+                <input id="customColorSwitch" type="checkbox" name="useCustomColor" class="switch is-rounded is-info">
+                <label for="customColorSwitch"></label>
+            </div>
+            <br>
+            <div class="field" id="customColor" style="display: none">
+                <label class="label has-text-default"><%= __("page.bots.theme.color") %></label>
+                <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
+                    <%= __("page.bots.theme.color.details") %>
+                </p>
+                <p class="control">
+                    <input class="backdrop" name="color" type="color" value="#b114ff" style="width:30%; background-color: transparent; border-color: transparent;">
+                </p>
+                <br>
+            </div>
+            <div class="field">
+                <label class="label has-text-default"><%= __("page.bots.theme.bannerURL") %></label>
+                <p class="control has-icons-left">
+                    <input class="input is-rounded" type="text" name="banner" placeholder="https://discord.bot/banner.png">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fas fa-image"></i>
+                    </span>
+                </p>
+            </div>
+            <br>
+            <br>
             <h3 class="is-size-3 has-text-default">
                 <%= __("common.widgetbot") %>
             </h3>
@@ -189,7 +250,7 @@
                     <%= __("common.widgetbot.invite") %>
                 </a>
             </h4>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("common.widgetbot.form.guildID") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
@@ -199,7 +260,7 @@
             </span>
                 </p>
             </div>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("common.widgetbot.form.channelID") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
@@ -209,7 +270,7 @@
             </span>
                 </p>
             </div>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("common.widgetbot.form.moreOptions") %></label>
                 <p class="control has-icons-left has-icons-right">
@@ -220,12 +281,12 @@
                 </p>
             <a href="https://docs.widgetbot.io/embed/crate/options/" target="_blank" rel="noopener" class="is-size-7 has-text-default"><%= __("common.widgetbot.form.docs") %></a>
             </div>
-            <br />
-            <br />
+            <br>
+            <br>
             <h3 class="is-size-3 has-text-default">
                 <%= __("page.form.category.descriptions") %>
             </h3>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.shortDesc") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
@@ -235,13 +296,13 @@
             </span>
                 </p>
             </div>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.longDesc") %> (<%= __("common.form.htmlMarkdown") %>) <span class="has-text-danger">*</span></label>
                 <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:500px;"></div>
                 <textarea hidden name="longDescription" id="longDesc" required></textarea>
             </div>
-            <br />
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.modNotes") %></label>
                 <div onkeyup="monacoToField();" id="modNotesEditor" class="editorBackdrop" style="width:99%;height:300px;"></div>
@@ -250,7 +311,7 @@
                     <%= __("page.bots.modNotes.placeholder") %>
                 </p>
             </div>
-            <br />
+            <br>
             <div class="field is-grouped">
                 <div class="buttons">
                     <button onclick="monacoToField();" class="button is-success">
@@ -271,6 +332,13 @@
     </div>
 </div>
 <script>
+    const useCustomColor = document.querySelector('#customColorSwitch')
+    const customColor = document.querySelector('#customColor')
+    useCustomColor.addEventListener('change', () => {
+        if(useCustomColor.checked) {
+            customColor.style.display = 'inherit'
+        } else customColor.style.display = 'none'
+    })
     const require={paths:{"vs":"/packages/monaco-editor/min/vs"}}
     const warn = event => {
         event.preventDefault()

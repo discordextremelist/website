@@ -107,7 +107,7 @@ router.post(
                 }
 
                 if (req.body.invite === "") {
-                    invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
+                    invite = `https://discord.com/oauth2/authorize?client_id=${req.body.clientID || req.body.id}&scope=bot`;
                 } else {
                     if (typeof req.body.invite !== "string") {
                         error = true;
@@ -123,6 +123,11 @@ router.post(
                         error = true;
                         errors.push(
                             res.__("common.error.listing.arr.invite.urlInvalid")
+                        );
+                    } else if (req.body.invite.includes('discordapp.com')) {
+                        error = true;
+                        errors.push(
+                            res.__("common.error.listing.arr.invite.discordapp")
                         );
                     } else {
                         invite = req.body.invite;
@@ -154,6 +159,12 @@ router.post(
                 }
 
                 if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
+                    error = true;
+                    if (invalidURL !== 2)
+                        invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                }
+
+                if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
                     error = true;
                     if (invalidURL !== 2)
                         invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
@@ -214,6 +225,7 @@ router.post(
 
                 await global.db.collection("bots").insertOne({
                     _id: req.body.id,
+                    clientID: req.body.clientID,
                     name: fetchRes.jsonBody.username,
                     prefix: req.body.prefix,
                     library: library,
@@ -247,6 +259,14 @@ router.post(
                         website: req.body.website,
                         donation: req.body.donationUrl,
                         repo: req.body.repo
+                    },
+                    social: {
+                        twitter: req.body.twitter
+                    },
+                    theme: {
+                        useCustomColor: req.body.useCustomColor,
+                        color: req.body.color,
+                        banner: req.body.banner
                     },
                     widgetbot: {
                         channel: req.body.widgetChannel,
@@ -323,6 +343,14 @@ router.post(
                                 donation: req.body.donationUrl,
                                 repo: req.body.repo
                             },
+                            social: {
+                                twitter: req.body.twitter
+                            },
+                            theme: {
+                                useCustomColor: req.body.useCustomColor,
+                                color: req.body.color,
+                                banner: req.body.banner
+                            },
                             widgetbot: {
                                 channel: req.body.widgetChannel,
                                 options: req.body.widgetOptions,
@@ -338,6 +366,9 @@ router.post(
                     }
                 });
                 await botCache.updateBot(req.params.id);
+
+                await discord.postWebMetric("bot");
+                
                 res.redirect(`/bots/${req.body.id}`);
             })
             .catch(async () => {
@@ -621,7 +652,6 @@ router.get(
     permission.auth,
     permission.member,
     async (req: Request, res: Response, next) => {
-        console.log(req.url); // this never gets hit
         const botExists = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -658,41 +688,6 @@ router.get(
             resubmit: false,
             longDesc: botExists.longDesc
         });
-    }
-);
-
-router.get(
-    "/:id/edit",
-    variables,
-    permission.auth,
-    permission.member,
-    async (req: Request, res: Response, next) => {
-        const botExists = await global.db
-            .collection("bots")
-            .findOne({ _id: req.params.id });
-        if (!botExists)
-            return res.status(404).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.404"),
-                status: 404,
-                type: "Error",
-                req
-            });
-
-        res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
-
-        if (
-            botExists.owner.id !== req.user.id &&
-            !botExists.editors.includes(req.user.id) &&
-            req.user.db.rank.assistant === false
-        )
-            return res.status(403).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.perms.tokenReset"),
-                status: 403,
-                type: "Error",
-                req
-            });
     }
 );
 
@@ -737,7 +732,7 @@ router.post(
         let invite: string;
 
         if (req.body.invite === "") {
-            invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
+            invite = `https://discord.com/oauth2/authorize?client_id=${req.body.clientID || req.body.id}&scope=bot`;
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
@@ -749,6 +744,11 @@ router.post(
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.invite.urlInvalid")
+                );
+            } else if (req.body.invite.includes('discordapp.com')) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.invite.discordapp")
                 );
             } else {
                 invite = req.body.invite;
@@ -777,6 +777,12 @@ router.post(
         }
 
         if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
+            error = true;
+            if (invalidURL !== 2)
+                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
+        if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
             error = true;
             if (invalidURL !== 2)
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
@@ -865,6 +871,14 @@ router.post(
                                 donation: req.body.donationUrl,
                                 repo: req.body.repo
                             },
+                            social: {
+                                twitter: req.body.twitter
+                            },
+                            theme: {
+                                useCustomColor: req.body.useCustomColor,
+                                color: req.body.color,
+                                banner: req.body.banner
+                            },
                             widgetbot: {
                                 channel: req.body.widgetChannel,
                                 options: req.body.widgetOptions,
@@ -902,6 +916,14 @@ router.post(
                                 donation: botExists.links.donation,
                                 repo: botExists.links.repo
                             },
+                            social: {
+                                twitter: botExists.social.twitter
+                            },
+                            theme: {
+                                useCustomColor: botExists.theme.useCustomColor,
+                                color: botExists.theme.color,
+                                banner: botExists.theme.banner
+                            },
                             widgetbot: {
                                 channel: botExists.widgetbot.channel,
                                 options: botExists.widgetbot.options,
@@ -927,6 +949,14 @@ router.post(
                                 website: req.body.website,
                                 donation: req.body.donationUrl,
                                 repo: req.body.repo
+                            },
+                            social: {
+                                twitter: req.body.twitter
+                            },
+                            theme: {
+                                useCustomColor: req.body.useCustomColor,
+                                color: req.body.color,
+                                banner: req.body.banner
                             },
                             widgetbot: {
                                 channel: req.body.widgetChannel,
@@ -1397,6 +1427,8 @@ router.get(
 
         await botCache.deleteBot(req.params.id);
 
+        await discord.postWebMetric("bot");
+
         res.redirect("/users/@me");
     }
 );
@@ -1510,7 +1542,7 @@ router.post(
         let invite: string;
 
         if (req.body.invite === "") {
-            invite = `https://discord.com/oauth2/authorize?client_id=${req.body.id}&scope=bot`;
+            invite = `https://discord.com/oauth2/authorize?client_id=${req.body.clientID || req.body.id}&scope=bot`;
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
@@ -1522,6 +1554,11 @@ router.post(
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.invite.urlInvalid")
+                );
+            } else if (req.body.invite.includes('discordapp.com')) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.invite.discordapp")
                 );
             } else {
                 invite = req.body.invite;
@@ -1550,6 +1587,12 @@ router.post(
         }
 
         if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
+            error = true;
+            if (invalidURL !== 2)
+                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
+        if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
             error = true;
             if (invalidURL !== 2)
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
@@ -1671,6 +1714,14 @@ router.post(
                                 donation: botExists.links.donation,
                                 repo: botExists.links.repo
                             },
+                            social: {
+                                twitter: botExists.social.twitter
+                            },
+                            theme: {
+                                useCustomColor: botExists.theme.useCustomColor,
+                                color: botExists.theme.color,
+                                banner: botExists.theme.banner
+                            },
                             widgetbot: {
                                 channel: botExists.widgetbot.channel,
                                 options: botExists.widgetbot.options,
@@ -1699,6 +1750,14 @@ router.post(
                                 website: req.body.website,
                                 donation: req.body.donationUrl,
                                 repo: req.body.repo
+                            },
+                            social: {
+                                twitter: req.body.twitter
+                            },
+                            theme: {
+                                useCustomColor: req.body.useCustomColor,
+                                color: req.body.color,
+                                banner: req.body.banner
                             },
                             widgetbot: {
                                 channel: req.body.widgetChannel,

@@ -13,21 +13,22 @@ Licensing information viewable in the LICENSE file
 
 ### Node.JS Framework
 
-**We recommend that you use Node.JS v12.x.x LTS.**
+**We recommend that you use the latest fully supported version of NodeJS.**
 
 | Node Version        | Supported          |
 | ------------------- | ------------------ |
 | < v10               | 🔴 No Support      |
-| v10 Maintenance LTS | 🟢 Full Support    |
-| v12 Active LTS      | 🟢 Full Support    |
-| v13 Previous (EOL)  | 🟡 Partial Support |     
+| v10 Maintenance LTS | 🟡 Partial Support |
+| v11 End of Life     | 🟡 Partial Support |
+| v12 Active LTS      | 🟢 Full Support    |   
+| v13 Previous (EOL)  | 🟢 Full Support    |     
 | v14 Current         | 🟢 Full Support    |  
 
-| Name                    | Definition                                                                                     |
-| ----------------------- | ---------------------------------------------------------------------------------------------- |
-| 🟢 Full Support         | We will provide version-specific security and bug patches.                                     |
-| 🟡 Partial Support      | We will provide version-specific security patches.                                             |
-| 🔴 No Support           | We will not provide any security or bug patches for this version, please use another version.  |     
+| Name                    | Definition                                                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 🟢 Full Support         | This code has been tested and is currently actively supported on this version.                               |
+| 🟡 Partial Support      | This code has been previously tested on this version, however it is no longer supported and may stop working |
+| 🔴 No Support           | This code has not been tested on this version and may break at any time or outright not work.                |     
 
 ### nodemon (Optional)
 

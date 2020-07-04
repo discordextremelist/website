@@ -1,10 +1,5 @@
 # Discord Extreme List version 5.x.x
 
-![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/discordextremelist/website)
-![GitHub last commit](https://img.shields.io/github/last-commit/discordextremelist/website)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/discordextremelist/website)
-![GitHub commits since latest release (by SemVer including pre-releases)](https://img.shields.io/github/commits-since/discordextremelist/website/v5.0.0-Alpha.6?include_prereleases)
-
 Licensing information viewable in the LICENSE file
 
 # Setup

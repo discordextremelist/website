@@ -26,7 +26,7 @@ Licensing information viewable in the LICENSE file
 | Name                    | Definition                                                                                     |
 | ----------------------- | ---------------------------------------------------------------------------------------------- |
 | 🟢 Full Support         | We will provide version-specific security and bug patches.                                     |
-| 🟡 Partial Support      | We will provide version-specific security pacthes.                                             |
+| 🟡 Partial Support      | We will provide version-specific security patches.                                             |
 | 🔴 No Support           | We will not provide any security or bug patches for this version, please use another version.  |     
 
 ### nodemon (Optional)

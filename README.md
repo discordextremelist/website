@@ -22,7 +22,7 @@ Licensing information viewable in the LICENSE file
 | Name                    | Definition                                                                                                   |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------ |
 | 🟢 Full Support         | This code has been tested and is currently actively supported on this version.                               |
-| 🟡 Partial Support      | This code has been previously tested on this version, however it is no longer supported and may stop working |
+| 🟡 Partial Support      | This code has been previously tested on this version, however it is no longer supported and may stop working. |
 | 🔴 No Support           | This code has not been tested on this version and may break at any time or outright not work.                |     
 
 ### nodemon (Optional)

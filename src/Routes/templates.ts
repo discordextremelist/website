@@ -64,7 +64,7 @@ router.post(
         let error = false;
         let errors: string[] = [];
 
-        fetch(`https://discord.com/api/guilds/templates/${req.body.code}`, {
+        fetch(`https://discord.com/api/v6/guilds/templates/${req.body.code}`, {
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
@@ -78,13 +78,18 @@ router.post(
                         .collection("templates")
                         .findOne({ _id: fetchRes.jsonBody.code });
                     if (templateExists)
-                        return res.status(409).render("status", {
-                            title: res.__("common.error"),
-                            subtitle: res.__("common.error.template.conflict"),
+                        return res.status(409).json({
+                            error: true,
                             status: 409,
-                            type: "Error",
-                            req
+                            errors: [res.__("common.error.template.conflict")]
                         });
+
+                    if (!req.body.shortDescription) {
+                        error = true;
+                        errors.push(
+                            res.__("common.error.listing.arr.shortDescRequired")
+                        );
+                    }
 
                     if (!req.body.longDescription) {
                         error = true;
@@ -101,36 +106,27 @@ router.post(
 
                 let tags: string[] = [];
 
-                if (req.body.gaming === "on") tags.push("Gaming");
-                if (req.body.music === "on") tags.push("Music");
+                if (req.body.gaming === true) tags.push("Gaming");
+                if (req.body.music === true) tags.push("Music");
                 if (req.body.mediaEntertain === "on")
                     tags.push("Media & Entertainment");
-                if (req.body.createArts === "on") tags.push("Creative Arts");
-                if (req.body.sciTech === "on") tags.push("Science & Tech");
-                if (req.body.edu === "on") tags.push("Education");
-                if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+                if (req.body.createArts === true) tags.push("Creative Arts");
+                if (req.body.sciTech === true) tags.push("Science & Tech");
+                if (req.body.edu === true) tags.push("Education");
+                if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
 
                 if (req.body.relIdentity === "on")
                     tags.push("Relationships & Identity");
-                if (req.body.travelCuis === "on") tags.push("Travel & Food");
-                if (req.body.fitHealth === "on") tags.push("Fitness & Health");
-                if (req.body.finance === "on") tags.push("Finance");
+                if (req.body.travelCuis === true) tags.push("Travel & Food");
+                if (req.body.fitHealth === true) tags.push("Fitness & Health");
+                if (req.body.finance === true) tags.push("Finance");
 
-                if (error === true) {
-                    return res.render(
-                        "templates/serverTemplates/errorOnSubmit",
-                        {
-                            title: res.__("common.nav.me.submitTemplate"),
-                            subtitle: res.__(
-                                "common.nav.me.submitTemplate.subtitle"
-                            ),
-                            template: req.body,
-                            tags,
-                            req,
-                            errors
-                        }
-                    );
-                }
+                if (error === true)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: errors
+                    });
 
                 await global.db.collection("templates").insertOne({
                     _id: fetchRes.jsonBody.code,
@@ -244,7 +240,11 @@ router.post(
 
                 await discord.postWebMetric("template");
 
-                res.redirect(`/templates/${fetchRes.jsonBody.code}`);
+                return res.status(200).json({
+                    error: false,
+                    status: 200,
+                    errors: []
+                });
             })
             .catch(async (fetchRes) => {
                 if (!req.body.code) {
@@ -276,6 +276,13 @@ router.post(
                     }
                 }
 
+                if (!req.body.shortDescription) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.shortDescRequired")
+                    );
+                }
+
                 if (!req.body.longDescription) {
                     error = true;
                     errors.push(
@@ -285,28 +292,25 @@ router.post(
 
                 let tags: string[] = [];
 
-                if (req.body.gaming === "on") tags.push("Gaming");
-                if (req.body.music === "on") tags.push("Music");
+                if (req.body.gaming === true) tags.push("Gaming");
+                if (req.body.music === true) tags.push("Music");
                 if (req.body.mediaEntertain === "on")
                     tags.push("Media & Entertainment");
-                if (req.body.createArts === "on") tags.push("Creative Arts");
-                if (req.body.sciTech === "on") tags.push("Science & Tech");
-                if (req.body.edu === "on") tags.push("Education");
-                if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+                if (req.body.createArts === true) tags.push("Creative Arts");
+                if (req.body.sciTech === true) tags.push("Science & Tech");
+                if (req.body.edu === true) tags.push("Education");
+                if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
 
                 if (req.body.relIdentity === "on")
                     tags.push("Relationships & Identity");
-                if (req.body.travelCuis === "on") tags.push("Travel & Food");
-                if (req.body.fitHealth === "on") tags.push("Fitness & Health");
-                if (req.body.finance === "on") tags.push("Finance");
+                if (req.body.travelCuis === true) tags.push("Travel & Food");
+                if (req.body.fitHealth === true) tags.push("Fitness & Health");
+                if (req.body.finance === true) tags.push("Finance");
 
-                return res.render("templates/serverTemplates/errorOnSubmit", {
-                    title: res.__("common.nav.me.submitTemplate"),
-                    subtitle: res.__("common.nav.me.submitTemplate.subtitle"),
-                    template: req.body,
-                    tags,
-                    req,
-                    errors
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: errors
                 });
             });
     }
@@ -368,24 +372,33 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     });
 });
 
-router.get("/:id/src", variables, permission.auth, permission.admin, async (req: Request, res: Response, next) => {
-    if (req.params.id === "@me") {
-        if (!req.user) return res.redirect("/auth/login");
-        req.params.id = req.user.id;
-    }
+router.get(
+    "/:id/src",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response, next) => {
+        if (req.params.id === "@me") {
+            if (!req.user) return res.redirect("/auth/login");
+            req.params.id = req.user.id;
+        }
 
-    if (!req.query.token) return res.json({});
-    // @ts-ignore
-    const tokenCheck = await tokenManager.verifyToken(req.user.id, req.query.token);
-    if (tokenCheck === false) return res.json({});
+        if (!req.query.token) return res.json({});
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            // @ts-ignore
+            req.query.token
+        );
+        if (tokenCheck === false) return res.json({});
 
-    const cache = await templateCache.getTemplate(req.params.id);
-    const db = await global.db
+        const cache = await templateCache.getTemplate(req.params.id);
+        const db = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
 
-    return res.json({ cache: cache, db: db });
-});
+        return res.json({ cache: cache, db: db });
+    }
+);
 
 router.get(
     "/:id/edit",
@@ -444,24 +457,20 @@ router.post(
             .findOne({ _id: req.params.id });
 
         if (!template)
-            return res.status(404).render("status", {
-                title: res.__("common.error"),
+            return res.status(404).json({
+                error: true,
                 status: 404,
-                subtitle: res.__("common.error.template.404"),
-                type: "Error",
-                req: req
+                errors: [res.__("common.error.template.404")]
             });
 
         if (
             template.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
-            return res.status(403).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.template.perms.edit"),
+            return res.status(403).json({
+                error: true,
                 status: 403,
-                type: "Error",
-                req
+                errors: [res.__("common.error.template.perms.edit")]
             });
 
         res.locals.premidPageInfo = res.__(
@@ -497,41 +506,34 @@ router.post(
         if (req.body.ltsp === "on") linkToServerPage = true;
 
         let tags: string[] = [];
-        if (req.body.gaming === "on") tags.push("Gaming");
-        if (req.body.music === "on") tags.push("Music");
+        if (req.body.gaming === true) tags.push("Gaming");
+        if (req.body.music === true) tags.push("Music");
         if (req.body.mediaEntertain === "on")
             tags.push("Media & Entertainment");
-        if (req.body.createArts === "on") tags.push("Creative Arts");
-        if (req.body.sciTech === "on") tags.push("Science & Tech");
-        if (req.body.edu === "on") tags.push("Education");
-        if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+        if (req.body.createArts === true) tags.push("Creative Arts");
+        if (req.body.sciTech === true) tags.push("Science & Tech");
+        if (req.body.edu === true) tags.push("Education");
+        if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
 
         if (req.body.relIdentity === "on")
             tags.push("Relationships & Identity");
-        if (req.body.travelCuis === "on") tags.push("Travel & Food");
-        if (req.body.fitHealth === "on") tags.push("Fitness & Health");
-        if (req.body.finance === "on") tags.push("Finance");
+        if (req.body.travelCuis === true) tags.push("Travel & Food");
+        if (req.body.fitHealth === true) tags.push("Fitness & Health");
+        if (req.body.finance === true) tags.push("Finance");
 
-        fetch(`https://discord.com/api/guilds/templates/${req.body.code}`, {
+        fetch(`https://discord.com/api/v6/guilds/templates/${req.body.code}`, {
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
-                if (error === true) {
-                    return res.render("templates/serverTemplates/errorOnEdit", {
-                        title: res.__("page.templates.edit.title"),
-                        subtitle: res.__(
-                            "page.templates.edit.subtitle",
-                            template.name
-                        ),
-                        template: req.body,
-                        req,
-                        tags,
-                        errors
+                if (error === true)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: errors
                     });
-                }
 
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
@@ -671,22 +673,17 @@ router.post(
 
                 await templateCache.updateTemplate(req.params.id);
 
-                res.redirect(`/templates/${req.params.id}`);
+                return res.status(200).json({
+                    error: false,
+                    status: 200,
+                    errors: []
+                });
             })
             .catch(() => {
-                error = true;
-                errors.push(res.__("common.error.dapiFail"));
-
-                return res.render("templates/serverTemplates/errorOnEdit", {
-                    title: res.__("page.templates.edit.title"),
-                    subtitle: res.__(
-                        "page.templates.edit.subtitle",
-                        template.name
-                    ),
-                    template: req.body,
-                    req,
-                    tags,
-                    errors
+                return res.status(502).json({
+                    error: true,
+                    status: 502,
+                    errors: [res.__("common.error.dapiFail")]
                 });
             });
     }
@@ -846,7 +843,6 @@ router.post(
                     console.error(e);
                 });
 
-
         await discord.postWebMetric("template");
 
         res.redirect("/staff/queue");
@@ -872,10 +868,15 @@ router.get(
                 type: "Error"
             });
 
-        fetch(`https://discord.com/api/guilds/templates/${req.body.code}`, {
-            method: "GET",
-            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-        })
+        await fetch(
+            `https://discord.com/api/v6/guilds/templates/${req.params.id}`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bot ${settings.secrets.discord.token}`
+                }
+            }
+        )
             .then(async (fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
@@ -984,4 +985,4 @@ router.get(
     }
 );
 
-module.exports = router;
+export = router;

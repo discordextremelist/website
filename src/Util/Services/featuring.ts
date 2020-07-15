@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import * as functions from "../Function/main";
+import * as discord from "./discord";
 
 export async function getFeaturedBots(): Promise<delBot[]> {
     const bots = await global.redis.get("featured_bots");
@@ -38,8 +39,13 @@ export async function updateFeaturedBots() {
     const bots = functions
         .shuffleArray(
             (await global.db.collection("bots").find().toArray()).filter(
-                ({ status }) =>
-                    status.approved && !status.siteBot && !status.archived
+                ({ _id, status }) =>
+                    status.approved &&
+                    !status.siteBot &&
+                    !status.archived &&
+                    discord
+                        .getStatus(_id)
+                        .then((status) => status !== "offline")
             )
         )
         .slice(0, 6);

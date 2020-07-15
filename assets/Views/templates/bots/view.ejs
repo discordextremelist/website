@@ -138,6 +138,16 @@
                             <% } %>
                             <%- 
                                 include("../../partials/button.ejs", { 
+                                    className: "button is-success",
+                                    icon: "fas fa-sync-alt",
+                                    tag: "a",
+                                    message: __("common.sync"),
+                                    href: `${linkPrefix}/bots/${bot._id}/sync`,
+                                    additional: ""
+                                });
+                            %>
+                            <%- 
+                                include("../../partials/button.ejs", { 
                                     className: "button is-warning",
                                     icon: "fas fa-pencil",
                                     tag: "a",
@@ -165,7 +175,7 @@
                                         <span class="icon"><i aria-hidden="true" class="fas fa-copy"></i></span>
                                         <span><%= __("page.bots.copyToken") %></span>
                                     </a>
-                                    <a class="dropdown-item">
+                                    <a class="dropdown-item" href="/bots/<%= bot._id %>/tokenreset">
                                         <span class="icon"><i aria-hidden="true" class="fas fa-redo-alt"></i></span>
                                         <span><%= __("page.bots.resetToken") %></span>
                                     </a>
@@ -234,6 +244,12 @@
                                                 <span><%= __("page.bots.setVanity") %></span>
                                             </a>
                                         <% } %>
+                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/sync">
+                                            <span class="icon">
+                                                <i aria-hidden="true" class="fas fa-sync-alt"></i>
+                                            </span>
+                                            <span><%= __("common.sync") %></span>
+                                        </a>
                                         <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/edit">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-pencil"></i>

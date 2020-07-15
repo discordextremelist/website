@@ -81,12 +81,10 @@ router.post(
             .findOne({ _id: req.body.id });
 
         if (botExists)
-            return res.status(409).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.conflict"),
+            return res.status(409).json({
+                error: true,
                 status: 409,
-                type: "Error",
-                req
+                errors: [res.__("common.error.bot.conflict")]
             });
 
         fetch(`https://discord.com/api/v6/users/${req.body.id}`, {
@@ -95,19 +93,24 @@ router.post(
         })
             .then(async (fetchRes: any) => {
                 fetchRes.jsonBody = await fetchRes.json();
-                if (req.body.id.length > 32) {
+                if (req.body.id.length > 32 && req.body.id) {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.idTooLong"));
-                } else if (fetchRes.jsonBody.message === "Unknown User") {
+                } else if (
+                    fetchRes.jsonBody.message === "Unknown User" &&
+                    req.body.id
+                ) {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.notFound"));
-                } else if (!fetchRes.jsonBody.bot) {
+                } else if (!fetchRes.jsonBody.bot && req.body.id) {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.isUser"));
                 }
 
                 if (req.body.invite === "") {
-                    invite = `https://discord.com/oauth2/authorize?client_id=${req.body.clientID || req.body.id}&scope=bot`;
+                    invite = `https://discord.com/oauth2/authorize?client_id=${
+                        req.body.clientID || req.body.id
+                    }&scope=bot`;
                 } else {
                     if (typeof req.body.invite !== "string") {
                         error = true;
@@ -124,7 +127,7 @@ router.post(
                         errors.push(
                             res.__("common.error.listing.arr.invite.urlInvalid")
                         );
-                    } else if (req.body.invite.includes('discordapp.com')) {
+                    } else if (req.body.invite.includes("discordapp.com")) {
                         error = true;
                         errors.push(
                             res.__("common.error.listing.arr.invite.discordapp")
@@ -164,10 +167,23 @@ router.post(
                         invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
                 }
 
-                if (req.body.privacyPolicy && !/^https:\/\//.test(req.body.privacyPolicy)) {
+                if (
+                    req.body.privacyPolicy &&
+                    !/^https:\/\//.test(req.body.privacyPolicy)
+                ) {
                     error = true;
                     if (invalidURL !== 2)
                         invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                }
+
+                if (
+                    req.body.invite &&
+                    req.body.invite.includes("&permissions=8")
+                ) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.inviteHasAdmin")
+                    );
                 }
 
                 if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
@@ -182,10 +198,32 @@ router.post(
                     errors.push(res.__("common.error.listing.arr.invalidURLs"));
                 }
 
+                if (!req.body.id) {
+                    error = true;
+                    errors.push(res.__("common.error.listing.arr.IDRequired"));
+                }
+
+                if (!req.body.shortDescription) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.shortDescRequired")
+                    );
+                }
+
                 if (!req.body.longDescription) {
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.longDescRequired")
+                    );
+                }
+
+                if (
+                    req.body.longDescription &&
+                    req.body.longDescription.length < 150
+                ) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.notAtMinChars", "150")
                     );
                 }
 
@@ -200,24 +238,19 @@ router.post(
                     ? req.body.library
                     : "Other";
                 let tags: string[] = [];
-                if (req.body.fun === "on") tags.push("Fun");
-                if (req.body.social === "on") tags.push("Social");
-                if (req.body.economy === "on") tags.push("Economy");
-                if (req.body.utility === "on") tags.push("Utility");
-                if (req.body.moderation === "on") tags.push("Moderation");
-                if (req.body.multipurpose === "on") tags.push("Multipurpose");
-                if (req.body.music === "on") tags.push("Music");
+                if (req.body.fun === true) tags.push("Fun");
+                if (req.body.social === true) tags.push("Social");
+                if (req.body.economy === true) tags.push("Economy");
+                if (req.body.utility === true) tags.push("Utility");
+                if (req.body.moderation === true) tags.push("Moderation");
+                if (req.body.multipurpose === true) tags.push("Multipurpose");
+                if (req.body.music === true) tags.push("Music");
 
                 if (error === true) {
-                    return res.render("templates/bots/errorOnSubmit", {
-                        title: res.__("common.nav.me.submitBot"),
-                        subtitle: res.__("common.nav.me.submitBot.subtitle"),
-                        bot: req.body,
-                        libraries: libraryCache.getLibs(),
-                        library,
-                        req,
-                        errors,
-                        tags
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: errors
                     });
                 }
 
@@ -376,8 +409,12 @@ router.post(
                 await botCache.updateBot(req.params.id);
 
                 await discord.postWebMetric("bot");
-                
-                res.redirect(`/bots/${req.body.id}`);
+
+                return res.status(200).json({
+                    error: false,
+                    status: 200,
+                    errors: []
+                });
             })
             .catch(async () => {
                 if (req.body.id.length > 32) {
@@ -404,10 +441,42 @@ router.post(
                     }
                 }
 
+                if (
+                    req.body.invite &&
+                    req.body.invite.includes("&permissions=8")
+                ) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.inviteHasAdmin")
+                    );
+                }
+
+                if (!req.body.id) {
+                    error = true;
+                    errors.push(res.__("common.error.listing.arr.IDRequired"));
+                }
+
+                if (!req.body.shortDescription) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.shortDescRequired")
+                    );
+                }
+
                 if (!req.body.longDescription) {
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.longDescRequired")
+                    );
+                }
+
+                if (
+                    req.body.longDescription &&
+                    req.body.longDescription.length < 150
+                ) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.notAtMinChars", "150")
                     );
                 }
 
@@ -418,26 +487,10 @@ router.post(
                     );
                 }
 
-                const library = libraryCache.hasLib(req.body.library)
-                    ? req.body.library
-                    : "Other";
-                let tags = [];
-                if (req.body.fun === "on") tags.push("Fun");
-                if (req.body.social === "on") tags.push("Social");
-                if (req.body.economy === "on") tags.push("Economy");
-                if (req.body.utility === "on") tags.push("Utility");
-                if (req.body.moderation === "on") tags.push("Moderation");
-                if (req.body.multipurpose === "on") tags.push("Multipurpose");
-                if (req.body.music === "on") tags.push("Music");
-                return res.render("templates/bots/errorOnSubmit", {
-                    title: res.__("common.nav.me.submitBot"),
-                    subtitle: res.__("common.nav.me.submitBot.subtitle"),
-                    bot: req.body,
-                    libraries: libraryCache.getLibs(),
-                    library,
-                    req,
-                    errors,
-                    tags
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: errors
                 });
             });
     }
@@ -491,6 +544,68 @@ router.post("/preview_post", async (req: Request, res: Response, next) => {
 
     res.status(200).send(clean);
 });*/
+
+router.get(
+    "/:id/tokenreset",
+    variables,
+    permission.auth,
+    permission.member,
+    async (req: Request, res: Response, next) => {
+        const botExists = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+        if (!botExists)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.404"),
+                status: 404,
+                type: "Error",
+                req
+            });
+
+        if (
+            botExists.owner.id !== req.user.id &&
+            req.user.db.rank.assistant === false
+        )
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.perms.tokenReset"),
+                status: 403,
+                type: "Error",
+                req
+            });
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    token:
+                        "DELAPI_" +
+                        crypto.randomBytes(16).toString("hex") +
+                        `-${req.params.id}`
+                }
+            }
+        );
+
+        await global.db.collection("audit").insertOne({
+            type: "RESET_BOT_TOKEN",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: "None specified."
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        return res.status(200).render("status", {
+            title: res.__("common.success"),
+            subtitle: res.__("common.success.bot.tokenReset"),
+            status: 200,
+            type: "Success",
+            req
+        });
+    }
+);
 
 router.post(
     "/:id/setvanity",
@@ -713,12 +828,10 @@ router.post(
             .findOne({ _id: req.params.id });
 
         if (!botExists)
-            return res.status(404).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.404"),
+            return res.status(404).json({
+                error: true,
                 status: 404,
-                type: "Error",
-                req
+                errors: [res.__("common.error.bot.404")]
             });
 
         res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
@@ -729,18 +842,18 @@ router.post(
             !bot.editors.includes(req.user.id) &&
             req.user.db.mod === false
         )
-            return res.status(403).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.perms.edit"),
+            return res.status(403).json({
+                error: true,
                 status: 403,
-                type: "Error",
-                req
+                errors: [res.__("common.error.bot.perms.edit")]
             });
 
         let invite: string;
 
         if (req.body.invite === "") {
-            invite = `https://discord.com/oauth2/authorize?client_id=${req.body.clientID || req.body.id}&scope=bot`;
+            invite = `https://discord.com/oauth2/authorize?client_id=${
+                req.body.clientID || req.body.id
+            }&scope=bot`;
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
@@ -753,7 +866,7 @@ router.post(
                 errors.push(
                     res.__("common.error.listing.arr.invite.urlInvalid")
                 );
-            } else if (req.body.invite.includes('discordapp.com')) {
+            } else if (req.body.invite.includes("discordapp.com")) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.invite.discordapp")
@@ -790,7 +903,10 @@ router.post(
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
         }
 
-        if (req.body.privacyPolicy && !/^https:\/\//.test(req.body.privacyPolicy)) {
+        if (
+            req.body.privacyPolicy &&
+            !/^https:\/\//.test(req.body.privacyPolicy)
+        ) {
             error = true;
             if (invalidURL !== 2)
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
@@ -808,9 +924,26 @@ router.post(
             errors.push(res.__("common.error.listing.arr.invalidURLs"));
         }
 
+        if (req.body.invite && req.body.invite.includes("&permissions=8")) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
+        }
+
+        if (!req.body.shortDescription) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+        }
+
         if (!req.body.longDescription) {
             error = true;
             errors.push(res.__("common.error.listing.arr.longDescRequired"));
+        }
+
+        if (req.body.longDescription && req.body.longDescription.length < 150) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.notAtMinChars", "150")
+            );
         }
 
         if (!req.body.prefix) {
@@ -822,33 +955,28 @@ router.post(
             ? req.body.library
             : "Other";
         let tags = [];
-        if (req.body.fun === "on") tags.push("Fun");
-        if (req.body.social === "on") tags.push("Social");
-        if (req.body.economy === "on") tags.push("Economy");
-        if (req.body.utility === "on") tags.push("Utility");
-        if (req.body.moderation === "on") tags.push("Moderation");
-        if (req.body.multipurpose === "on") tags.push("Multipurpose");
-        if (req.body.music === "on") tags.push("Music");
+
+        if (req.body.fun === true) tags.push("Fun");
+        if (req.body.social === true) tags.push("Social");
+        if (req.body.economy === true) tags.push("Economy");
+        if (req.body.utility === true) tags.push("Utility");
+        if (req.body.moderation === true) tags.push("Moderation");
+        if (req.body.multipurpose === true) tags.push("Multipurpose");
+        if (req.body.music === true) tags.push("Music");
 
         if (error === true) {
             req.body.status
                 ? (req.body.status.premium = botExists.status.premium)
                 : (req.body.status = { premium: botExists.status.premium });
 
-            return res.render("templates/bots/errorOnEdit", {
-                title: res.__("page.bots.edit.title"),
-                subtitle: res.__("page.bots.edit.subtitle", bot.name),
-                bot: req.body,
-                libraries: libraryCache.getLibs(),
-                library,
-                req,
-                errors,
-                resubmit: false,
-                tags
+            return res.status(400).json({
+                error: true,
+                status: 400,
+                errors: errors
             });
         }
 
-        let editors;
+        let editors: any;
 
         if (req.body.editors !== "") {
             editors = [...new Set(req.body.editors.split(/\D+/g))];
@@ -876,7 +1004,7 @@ router.post(
                             editors: editors,
                             avatar: {
                                 hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
                             },
                             links: {
                                 invite: invite,
@@ -936,7 +1064,8 @@ router.post(
                                 twitter: botExists.social.twitter
                             },
                             theme: {
-                                useCustomColour: botExists.theme.useCustomColour,
+                                useCustomColour:
+                                    botExists.theme.useCustomColour,
                                 colour: botExists.theme.colour,
                                 banner: botExists.theme.banner
                             },
@@ -957,7 +1086,7 @@ router.post(
                             editors: editors,
                             avatar: {
                                 hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
                             },
                             links: {
                                 invite: invite,
@@ -986,12 +1115,10 @@ router.post(
                 await botCache.updateBot(req.params.id);
             })
             .catch((_) => {
-                return res.status(400).render("status", {
-                    title: res.__("common.error"),
-                    subtitle: res.__("common.error.dapiFail"),
-                    status: 400,
-                    type: "Error",
-                    req
+                return res.status(502).json({
+                    error: true,
+                    status: 502,
+                    errors: [res.__("common.error.dapiFail")]
                 });
             });
 
@@ -1012,7 +1139,12 @@ router.post(
             .catch((e) => {
                 console.error(e);
             });
-        res.redirect(`/bots/${req.params.id}`);
+
+        return res.status(200).json({
+            error: false,
+            status: 200,
+            errors: []
+        });
     }
 );
 
@@ -1024,6 +1156,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     };
 
     let bot = await botCache.getBot(req.params.id);
+
     if (!bot) {
         bot = await global.db
             .collection("bots")
@@ -1092,7 +1225,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     let editors = "";
     let looped = 0;
     let editorsLength = bot.editors.length;
-    
+
     for (const editor of bot.editors) {
         const user = await userCache.getUser(editor);
         looped += 1;
@@ -1143,10 +1276,10 @@ router.get(
         }
 
         if (!req.query.token) return res.json({});
-        
+
         const tokenCheck = await tokenManager.verifyToken(
             req.user.id,
-            // @ts-ignore
+            // @ts-expect-error
             req.query.token
         );
 
@@ -1269,7 +1402,7 @@ router.get(
         );
 
         await botCache.updateBot(bot._id);
-        
+
         res.redirect(`/bots/${bot._id}`);
     }
 );
@@ -1521,21 +1654,17 @@ router.post(
             .findOne({ _id: req.params.id });
 
         if (!botExists)
-            return res.status(404).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.404"),
+            return res.status(404).json({
+                error: true,
                 status: 404,
-                type: "Error",
-                req
+                errors: [res.__("common.error.bot.404")]
             });
 
         if (botExists.status.archived === false)
-            return res.status(400).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.notArchived"),
+            return res.status(400).json({
+                error: true,
                 status: 400,
-                type: "Error",
-                req
+                errors: [res.__("common.error.bot.notArchived")]
             });
 
         const bot = botExists;
@@ -1543,12 +1672,10 @@ router.post(
             bot.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
-            return res.status(403).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.perms.resubmit"),
+            return res.status(403).json({
+                error: true,
                 status: 403,
-                type: "Error",
-                req
+                errors: [res.__("common.error.bot.perms.resubmit")]
             });
 
         res.locals.premidPageInfo = res.__(
@@ -1559,7 +1686,9 @@ router.post(
         let invite: string;
 
         if (req.body.invite === "") {
-            invite = `https://discord.com/oauth2/authorize?client_id=${req.body.clientID || req.body.id}&scope=bot`;
+            invite = `https://discord.com/oauth2/authorize?client_id=${
+                req.body.clientID || req.body.id
+            }&scope=bot`;
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
@@ -1572,7 +1701,7 @@ router.post(
                 errors.push(
                     res.__("common.error.listing.arr.invite.urlInvalid")
                 );
-            } else if (req.body.invite.includes('discordapp.com')) {
+            } else if (req.body.invite.includes("discordapp.com")) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.invite.discordapp")
@@ -1609,7 +1738,10 @@ router.post(
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
         }
 
-        if (req.body.privacyPolicy && !/^https:\/\//.test(req.body.privacyPolicy)) {
+        if (
+            req.body.privacyPolicy &&
+            !/^https:\/\//.test(req.body.privacyPolicy)
+        ) {
             error = true;
             if (invalidURL !== 2)
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
@@ -1621,15 +1753,32 @@ router.post(
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
         }
 
+        if (req.body.invite && req.body.invite.includes("&permissions=8")) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
+        }
+
         if (invalidURL === 1) {
             errors.push(res.__("common.error.listing.arr.invalidURL"));
         } else if (invalidURL === 2) {
             errors.push(res.__("common.error.listing.arr.invalidURLs"));
         }
 
+        if (!req.body.shortDescription) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+        }
+
         if (!req.body.longDescription) {
             error = true;
             errors.push(res.__("common.error.listing.arr.longDescRequired"));
+        }
+
+        if (req.body.longDescription && req.body.longDescription.length < 150) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.notAtMinChars", "150")
+            );
         }
 
         if (!req.body.prefix) {
@@ -1641,29 +1790,23 @@ router.post(
             ? req.body.library
             : "Other";
         let tags = [];
-        if (req.body.fun === "on") tags.push("Fun");
-        if (req.body.social === "on") tags.push("Social");
-        if (req.body.economy === "on") tags.push("Economy");
-        if (req.body.utility === "on") tags.push("Utility");
-        if (req.body.moderation === "on") tags.push("Moderation");
-        if (req.body.multipurpose === "on") tags.push("Multipurpose");
-        if (req.body.music === "on") tags.push("Music");
+        if (req.body.fun === true) tags.push("Fun");
+        if (req.body.social === true) tags.push("Social");
+        if (req.body.economy === true) tags.push("Economy");
+        if (req.body.utility === true) tags.push("Utility");
+        if (req.body.moderation === true) tags.push("Moderation");
+        if (req.body.multipurpose === true) tags.push("Multipurpose");
+        if (req.body.music === true) tags.push("Music");
 
         if (error === true) {
-            return res.render("templates/bots/errorOnEdit", {
-                title: res.__("page.bots.resubmit.title"),
-                subtitle: res.__("page.bots.resubmit.subtitle", bot.name),
-                bot: req.body,
-                libraries: libraryCache.getLibs(),
-                library,
-                req,
-                resubmit: true,
-                errors,
-                tags
+            return res.status(400).json({
+                error: true,
+                status: 400,
+                errors: errors
             });
         }
 
-        let editors;
+        let editors: any;
 
         if (req.body.editors !== "") {
             editors = [...new Set(req.body.editors.split(/\D+/g))];
@@ -1691,7 +1834,7 @@ router.post(
                             editors: editors,
                             avatar: {
                                 hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
                             },
                             links: {
                                 invite: invite,
@@ -1743,7 +1886,8 @@ router.post(
                                 twitter: botExists.social.twitter
                             },
                             theme: {
-                                useCustomColour: botExists.theme.useCustomColour,
+                                useCustomColour:
+                                    botExists.theme.useCustomColour,
                                 colour: botExists.theme.colour,
                                 banner: botExists.theme.banner
                             },
@@ -1767,7 +1911,7 @@ router.post(
                             editors: editors,
                             avatar: {
                                 hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
                             },
                             links: {
                                 invite: invite,
@@ -1799,12 +1943,10 @@ router.post(
                 await botCache.updateBot(req.params.id);
             })
             .catch((_) => {
-                return res.status(400).render("status", {
-                    title: res.__("common.error"),
-                    subtitle: res.__("common.error.dapiFail"),
-                    status: 400,
-                    type: "Error",
-                    req
+                return res.status(502).json({
+                    error: true,
+                    status: 502,
+                    errors: [res.__("common.error.dapiFail")]
                 });
             });
 
@@ -1825,7 +1967,12 @@ router.post(
             .catch((e) => {
                 console.error(e);
             });
-        res.redirect(`/bots/${req.params.id}`);
+
+        return res.status(200).json({
+            error: false,
+            status: 200,
+            errors: []
+        });
     }
 );
 
@@ -2383,6 +2530,99 @@ router.post(
                 });
 
         res.redirect("/staff/queue");
+    }
+);
+
+router.get(
+    "/:id/sync",
+    variables,
+    permission.auth,
+    permission.member,
+    async (req: Request, res: Response, next) => {
+        let error = false;
+        let errors = [];
+
+        const botExists: delBot | undefined = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+
+        if (!botExists)
+            return res.status(404).json({
+                error: true,
+                status: 404,
+                errors: [res.__("common.error.bot.404")]
+            });
+
+        res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
+
+        const bot = botExists;
+        if (
+            bot.owner.id !== req.user.id &&
+            !bot.editors.includes(req.user.id) &&
+            req.user.db.mod === false
+        )
+            return res.status(403).json({
+                error: true,
+                status: 403,
+                errors: [res.__("common.error.bot.perms.edit")]
+            });
+
+        await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
+            method: "GET",
+            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
+        })
+            .then(async (fetchRes) => {
+                fetchRes.jsonBody = await fetchRes.json();
+                await global.db.collection("bots").updateOne(
+                    { _id: req.params.id },
+                    {
+                        $set: {
+                            name: fetchRes.jsonBody.username,
+                            flags: fetchRes.jsonBody.public_flags,
+                            avatar: {
+                                hash: fetchRes.jsonBody.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                            }
+                        }
+                    }
+                );
+
+                await global.db.collection("audit").insertOne({
+                    type: "SYNC_BOT",
+                    executor: req.user.id,
+                    target: req.params.id,
+                    date: Date.now(),
+                    reason: "None specified.",
+                    details: {
+                        old: {
+                            name: botExists.name,
+                            flags: botExists.flags,
+                            avatar: {
+                                hash: botExists.avatar.hash,
+                                url: botExists.avatar.url
+                            }
+                        },
+                        new: {
+                            name: fetchRes.jsonBody.username,
+                            flags: fetchRes.jsonBody.public_flags,
+                            avatar: {
+                                hash: fetchRes.jsonBody.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                            }
+                        }
+                    }
+                });
+                await botCache.updateBot(req.params.id);
+            })
+            .catch((_) => {
+                return res.status(502).json({
+                    error: true,
+                    status: 502,
+                    errors: [res.__("common.error.dapiFail")]
+                });
+            });
+
+        res.redirect(`/bots/${bot._id}`);
     }
 );
 

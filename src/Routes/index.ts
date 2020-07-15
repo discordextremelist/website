@@ -123,7 +123,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
     if (!req.query.page) req.query.page = "1";
 
     const bots = (await botCache.getAllBots()).filter(
-        ({ status }) => status.approved && !status.siteBot && !status.archived
+        ({ _id, status }) =>
+            status.approved && !status.siteBot && !status.archived
     );
 
     res.render("templates/bots/index", {

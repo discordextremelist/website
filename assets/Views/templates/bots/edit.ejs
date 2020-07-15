@@ -27,13 +27,21 @@
 </section>
 <div class="container">
     <div class="section">
+        <article id="errors" style="display: none;" class="message is-danger">
+            <div class="message-body content has-background-primary">
+                <ul id="errorList" style="margin-top: unset;">
+                    
+                </ul>
+            </div>
+        </article>
+
         <form id="form" method="POST">
             <h3 class="is-size-3 has-text-default"><%= __("page.form.category.generalInfo") %></h3>
             <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.id") %> <span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span></label>
                 <p class="control has-icons-left" required>
-                    <input class="input is-rounded" type="text" name="id" value="<%= bot._id %>" placeholder="568254611354419211" readonly>
+                    <input id="form_id" class="input is-rounded" type="text" name="id" value="<%= bot._id %>" placeholder="568254611354419211" readonly>
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-hashtag"></i>
                     </span>
@@ -43,7 +51,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.clientID") %> <span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span></label>
                 <p class="control has-icons-left" required>
-                    <input class="input is-rounded" type="text" name="clientID" value="<%= bot.clientID || bot._id %>" readonly>
+                    <input id="form_clientID" class="input is-rounded" type="text" name="clientID" value="<%= bot.clientID || bot._id %>" readonly>
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-hashtag"></i>
                     </span>
@@ -54,7 +62,7 @@
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.editors") %> <span class="has-text-default">(<%= __("common.form.spaceSeparated") %>)</span></label>
                 <p style="padding-bottom: 10px;" class="is-size-7 has-text-default"><%= __("page.bots.generalInfo.editors.notice") %></p>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="editors" value="<%= editors %>" placeholder="<%= __("page.bots.generalInfo.editors.placeholder") %>">
+                    <input id="form_editors" class="input is-rounded" type="text" name="editors" value="<%= editors %>" placeholder="<%= __("page.bots.generalInfo.editors.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-user"></i>
                     </span>
@@ -64,7 +72,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.prefix") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left" required>
-                    <input class="input is-rounded" type="text" value="<%= bot.prefix %>" name="prefix" placeholder="!">
+                    <input id="form_prefix" class="input is-rounded" type="text" value="<%= bot.prefix %>" name="prefix" placeholder="!">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-paper-plane"></i>
                     </span>
@@ -75,7 +83,7 @@
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.library") %> <span class="has-text-danger">*</span></label>
                 <div class="control has-icons-left">
                     <div class="select is-rounded">
-                        <select name="library" required>
+                        <select id="form_library" name="library" required>
                             <option value="" disabled selected><%= __("common.select") %></option>
                             <option value="<%= bot.library %>" selected><%= bot.library %></option>
                             <% for (const lib of libraries) { %><option value="<%- lib._id %>"><%- lib._id %></option><% } %>
@@ -123,7 +131,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.invite") %></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="invite" value="<%= bot.links.invite %>" placeholder="<%= __("page.bots.invite.placeholder") %>">
+                    <input id="form_invite" class="input is-rounded" type="text" name="invite" value="<%= bot.links.invite %>" placeholder="<%= __("page.bots.invite.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-link"></i>
                     </span>
@@ -133,7 +141,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.website") %></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="website" value="<%= bot.links.website %>" placeholder="https://watchanimeattheoffice.com">
+                    <input id="form_website" class="input is-rounded" type="text" name="website" value="<%= bot.links.website %>" placeholder="https://watchanimeattheoffice.com">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-globe"></i>
                     </span>
@@ -143,7 +151,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.donate") %></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="donationUrl" value="<%= bot.links.donation %>" placeholder="https://bigbeans.solutions">
+                    <input id="form_donationUrl" class="input is-rounded" type="text" name="donationUrl" value="<%= bot.links.donation %>" placeholder="https://bigbeans.solutions">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-dollar-sign"></i>
                     </span>
@@ -153,7 +161,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.supportServer") %></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="supportServer" value="<%= bot.links.support %>" placeholder="https://discord.gg/someawesumsupportservhor">
+                    <input  id="form_supportServer" class="input is-rounded" type="text" name="supportServer" value="<%= bot.links.support %>" placeholder="https://discord.gg/someawesumsupportservhor">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-heart"></i>
                     </span>
@@ -163,7 +171,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.git") %></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="repo" value="<%= bot.links.repo %>" placeholder="https://github.com/awsumpersunorpage/awsumrepo">
+                    <input id="form_repo" class="input is-rounded" type="text" name="repo" value="<%= bot.links.repo %>" placeholder="https://github.com/awsumpersunorpage/awsumrepo">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-code"></i>
                     </span>
@@ -176,7 +184,7 @@
                     <%= __("page.bots.privacyPolicy.optional") %>
                 </p>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="privacyPolicy" value="<%= bot.links.privacyPolicy %>" placeholder="https://discord.bot/privacy">
+                    <input id="form_privacyPolicy" class="input is-rounded" type="text" name="privacyPolicy" value="<%= bot.links.privacyPolicy %>" placeholder="https://discord.bot/privacy">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-user-secret"></i>
                     </span>
@@ -189,7 +197,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("common.social.twitter") %></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="twitter" value="<%= bot.social && bot.social.twitter %>" placeholder="bestbot">
+                    <input id="form_twitter" class="input is-rounded" type="text" name="twitter" value="<%= bot.social && bot.social.twitter %>" placeholder="bestbot">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="far fa-at"></i>
                     </span>
@@ -204,24 +212,24 @@
                 <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
                     <%= __("page.bots.theme.useCustomColor.details") %>
                 </p>
-                <input id="customColourSwitch" type="checkbox" name="useCustomColour" class="switch is-rounded is-info" <% if (bot.theme && bot.theme.useCustomColour) { %>checked<% } %>>
-                <label for="customColourSwitch"></label>
+                <input id="form_customColourSwitch" id="customColourSwitch" type="checkbox" name="useCustomColour" class="switch is-rounded is-info" <% if (bot.theme && bot.theme.useCustomColour) { %>checked<% } %>>
+                <label for="form_customColourSwitch"></label>
             </div>
             <br>
-            <div class="field" id="customColor" style="display: <% if(bot.theme && bot.theme.useCustomColour) { %>inherit<% } else { %>none<% } %>">
+            <div class="field" id="form_customColour" style="display: <% if(bot.theme && bot.theme.useCustomColour) { %>inherit<% } else { %>none<% } %>">
                 <label class="label has-text-default"><%= __("page.bots.theme.color") %></label>
                 <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
                     <%= __("page.bots.theme.color.details") %>
                 </p>
                 <p class="control">
-                    <input class="backdrop" name="colour" type="color" value="<%= bot.theme && bot.theme.colour || "#b114ff" %>" style="width:30%; background-color: transparent; border-color: transparent;">
+                    <input id="form_colour" class="backdrop" name="colour" type="color" value="<%= bot.theme && bot.theme.colour || "#b114ff" %>" style="width:30%; background-color: transparent; border-color: transparent;">
                 </p>
                 <br>
             </div>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.theme.bannerURL") %></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="banner" value="<%= bot.theme && bot.theme.banner %>" placeholder="https://discord.bot/files/banner.png">
+                    <input id="form_banner" class="input is-rounded" type="text" name="banner" value="<%= bot.theme && bot.theme.banner %>" placeholder="https://discord.bot/files/banner.png">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-image"></i>
                     </span>
@@ -235,7 +243,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("common.widgetbot.form.guildID") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="widgetServer" value="<%= bot.widgetbot.server %>" placeholder="568567800910839811">
+                    <input id="form_widgetServer" class="input is-rounded" type="text" name="widgetServer" value="<%= bot.widgetbot.server %>" placeholder="568567800910839811">
                     <span class="icon is-small is-left">
                         <i class="fas fa-users"></i>
                     </span>
@@ -245,7 +253,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("common.widgetbot.form.channelID") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="widgetChannel" value="<%= bot.widgetbot.channel %>" placeholder="625554238596186112">
+                    <input id="form_widgetChannel" class="input is-rounded" type="text" name="widgetChannel" value="<%= bot.widgetbot.channel %>" placeholder="625554238596186112">
                     <span class="icon is-small is-left">
                         <i class="fas fa-comments-alt"></i>
                     </span>
@@ -254,11 +262,11 @@
             <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("common.widgetbot.form.moreOptions") %></label>
-                <a style="padding-bottom: 10px;" href="https://docs.widgetbot.io/embed/crate/options/" target="_blank" rel="noopener" class="is-size-7 has-text-default">
+                <p style="cursor: pointer; padding-bottom: 10px;" onclick="window.open('https://docs.widgetbot.io/embed/crate/options/');" target="_blank" rel="noopener" class="is-size-7 has-text-default">
                     <%= __("common.widgetbot.form.docs") %>
-                </a>
+                </p>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="widgetOptions" value="<%= bot.widgetbot.options %>" placeholder="">
+                    <input id="form_widgetOptions" class="input is-rounded" type="text" name="widgetOptions" value="<%= bot.widgetbot.options %>" placeholder="">
                     <span class="icon is-small is-left">
                         <i class="fas fa-cogs"></i>
                     </span>
@@ -271,7 +279,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.shortDesc") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="shortDescription" value="<%= bot.shortDesc %>" placeholder="<%= __("page.bots.shortDesc.placeholder") %>" required>
+                    <input id="form_shortDescription" class="input is-rounded" type="text" name="shortDescription" value="<%= bot.shortDesc %>" placeholder="<%= __("page.bots.shortDesc.placeholder") %>" required>
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-comment-dots"></i>
                     </span>
@@ -279,7 +287,10 @@
             </div>
             <br>
             <div class="field">
-                <label class="label has-text-default"><%= __("page.bots.longDesc") %> (<%= bot.status.verified ? __("common.form.jsHtmlMarkdown") : __("common.form.htmlMarkdown") %>)<span class="has-text-danger">*</span></label>
+                <label class="label has-text-default"><%= __("page.bots.longDesc") %> (<%= bot.status.verified ? __("common.form.jsHtmlMarkdown") : __("common.form.htmlMarkdown") %>) <span class="has-text-danger">*</span></label>
+                <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
+                    <%= __("page.bots.longDesc.charMin", "150") %>
+                </p>
                 <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:500px;"></div>
                 <textarea hidden name="longDescription" id="longDesc" required><%- longDesc %></textarea>
             </div>
@@ -303,7 +314,7 @@
                         </span>
                         <span><%= __("common.submit") %></span>
                     </a>
-                    <a href="<%= linkPrefix %>/" id="cancelButton" class="button is-danger">
+                    <a href="<%= linkPrefix %>/bots/<%= bot._id %>" id="cancelButton" class="button is-danger">
                         <span class="icon">
                             <i aria-hidden="true" class="fas fa-times-circle"></i>
                         </span>
@@ -315,8 +326,8 @@
     </div>
 </div>
 <script>
-    const useCustomColor = document.querySelector('#customColourSwitch')
-    const customColor = document.querySelector('#customColor')
+    const useCustomColor = document.querySelector('#form_customColourSwitch')
+    const customColor = document.querySelector('#form_customColour')
     useCustomColor.addEventListener('change', () => {
         if(useCustomColor.checked) {
             customColor.style.display = 'inherit'
@@ -328,7 +339,6 @@
         event.returnValue=''
     }
     addEventListener('beforeunload', warn)
-    document.querySelector('form').onsubmit = () => removeEventListener('beforeunload', warn)
 </script>
 <script src="/packages/monaco-editor/min/vs/loader.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
@@ -340,6 +350,7 @@ function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").v
 function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}
 function doSubmit() {
     monacoToField();
+    document.getElementById("errors").style.display = "none";
     document.getElementById("submitButton").classList.add("is-loading");
     document.getElementById("cancelButton").setAttribute("disabled", true);
     document.getElementById("cancelButton").removeAttribute("href");
@@ -361,50 +372,58 @@ function doSubmit() {
             return response.json();
         }
         
-        fetchPOST("<%= linkPrefix %>/search", {
-            name: fetchRes.jsonBody.username,
-            prefix: req.body.prefix,
-            library: library,
-            tags: tags,
-            flags: fetchRes.jsonBody.public_flags,
-            shortDesc: req.body.shortDescription,
-            longDesc: req.body.longDescription,
-            editors: editors,
-            avatar: {
-                hash: fetchRes.jsonBody.avatar,
-                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
-            },
-            links: {
-                invite: invite,
-                support: req.body.supportServer,
-                website: req.body.website,
-                donation: req.body.donationUrl,
-                repo: req.body.repo,
-                privacyPolicy: req.body.privacyPolicy
-            },
-            social: {
-                twitter: req.body.twitter
-            },
-            theme: {
-                useCustomColour: req.body.useCustomColour,
-                colour: req.body.colour,
-                banner: req.body.banner
-            },
-            widgetbot: {
-                channel: req.body.widgetChannel,
-                options: req.body.widgetOptions,
-                server: req.body.widgetServer
-            }
+        let modNotes = "";
+        <% if (resubmit) { %>
+            modNotes = document.getElementById("modNotes").value
+        <% } %> 
+
+        fetchPOST("<%= linkPrefix %>/bots/<%= bot._id %>/edit", {
+            prefix: document.getElementById("form_prefix").value,
+            library: document.getElementById("form_library").value,
+            editors: document.getElementById("form_editors").value,
+
+            fun: document.getElementById("fun").checked,
+            social: document.getElementById("social").checked,
+            economy: document.getElementById("economy").checked,
+            utility: document.getElementById("utility").checked,
+            moderation: document.getElementById("moderation").checked,
+            multipurpose: document.getElementById("multipurpose").checked,
+            music: document.getElementById("music").checked,
+            
+            shortDescription: document.getElementById("form_shortDescription").value,
+            longDescription: document.getElementById("longDesc").value,
+
+            modNotes: modNotes,
+
+            supportServer: document.getElementById("form_supportServer").value,
+            website: document.getElementById("form_website").value,
+            donationUrl: document.getElementById("form_donationUrl").value,
+            repo: document.getElementById("form_repo").value,
+            invite: document.getElementById("form_invite").value,
+
+            twitter: document.getElementById("form_twitter").value,
+            privacyPolicy: document.getElementById("form_privacyPolicy").value,
+            
+            useCustomColour: document.getElementById("form_customColourSwitch").checked,
+            colour: document.getElementById("form_colour").value,
+            banner: document.getElementById("form_banner").value,
+
+            widgetChannel: document.getElementById("form_widgetChannel").value,
+            widgetOptions: document.getElementById("form_widgetOptions").value,
+            widgetServer: document.getElementById("form_widgetServer").value
         })
         .then(data => {
             if (!data || data.error === true) {
-
-
+                document.getElementById("errors").style.display = "block";
+                document.getElementById("errorList").innerHTML = data.errors.map(err => `<li>${err}</li>`).join('');
                 scroll(0, 0);
                 document.getElementById("submitButton").classList.remove("is-loading");
                 document.getElementById("cancelButton").removeAttribute("disabled");
-                document.getElementById("cancelButton").setAttribute("href", "/bots/<%= bot._id %>");
-            } else return window.location("/bots/<%= bot._id %>");
+                document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/bots/<%= bot._id %>");
+            } else {
+                removeEventListener("beforeunload", warn);
+                window.location = "/bots/<%= bot._id %>";
+            }
         });
 }
 </script>

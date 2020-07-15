@@ -44,7 +44,7 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-2">
-                    <img class="image" title="<%= template.name %>'s Icon'" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= template.icon.url %>.<%= imageFormat %>?size=512in:#testers ad" alt="<%= template.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
+                    <img class="image" title="<%= template.name %>'s Icon'" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= template.icon.url %>.<%= imageFormat %>?size=512" alt="<%= template.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
@@ -56,7 +56,17 @@
                             <% if (template.owner.id === req.user.id) { %>
                                 <%- 
                                     include("../../partials/button.ejs", { 
-                                        className: "button is-dark", 
+                                        className: "button is-success", 
+                                        icon: "fas fa-sync-alt", 
+                                        tag: "a", 
+                                        message: __("common.sync"), 
+                                        href: `${linkPrefix}/templates/${template._id}/sync`, 
+                                        additional: ""
+                                    });
+                                %>
+                                <%- 
+                                    include("../../partials/button.ejs", { 
+                                        className: "button is-warning", 
                                         icon: "fas fa-pencil", 
                                         tag: "a", 
                                         message: __("common.edit"), 
@@ -66,7 +76,7 @@
                                 %>
                                 <%- 
                                     include("../../partials/button.ejs", { 
-                                        className: "button is-dark", 
+                                        className: "button is-danger", 
                                         icon: "fas fa-trash", 
                                         tag: "a", 
                                         message: __("common.delete"), 
@@ -95,6 +105,10 @@
                                                 <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
+                                            <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/sync">
+                                                <span class="icon"><i aria-hidden="true" class="fas fa-sync-alt"></i></span>
+                                                <span><%= __("common.sync") %></span>
+                                            </a>
                                             <% if (req.user.db.rank.assistant === true) { %>
                                                 <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/edit">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>

@@ -72,11 +72,12 @@ app.get("*", (req: Request, res: Response, next: () => void) => {
     } else next();
 });
 
+console.log(settings.secrets.mongo.uri);
 new Promise((resolve, reject) => {
     console.time("Mongo TTL");
     MongoClient.connect(
         settings.secrets.mongo.uri,
-        { useUnifiedTopology: true, useNewUrlParser: true }, // useNewUrlParser is set to true because sometimes MongoDB is a cunt - Ice, I love this comment - Cairo
+        { useUnifiedTopology: true }, // useNewUrlParser is set to true because sometimes MongoDB is a cunt - Ice, I love this comment - Cairo
         (error, mongo) => {
             if (error) return reject(error);
             global.db = mongo.db(settings.secrets.mongo.db);

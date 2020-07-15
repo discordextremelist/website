@@ -120,3 +120,6 @@ dump.rdb
 
 # Sitemap
 src/Assets/Public/sitemap.xml
+
+# Yarn is disgusting
+yarn.lock

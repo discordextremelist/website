@@ -16,7 +16,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 10
-      - name: npm
+      - name: snyk install
+        run: npm i -g snyk
+      - name: dependencies
         run: npm install
       - name: settings
         run: cp settings.example.json settings.json
@@ -35,7 +37,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 11
-      - name: npm
+      - name: snyk install
+        run: npm i -g snyk
+      - name: dependencies
         run: npm install
       - name: settings
         run: cp settings.example.json settings.json
@@ -54,7 +58,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: npm
+      - name: snyk install
+        run: npm i -g snyk
+      - name: dependencies
         run: npm install
       - name: settings
         run: cp settings.example.json settings.json
@@ -73,7 +79,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 13
-      - name: npm
+      - name: snyk install
+        run: npm i -g snyk
+      - name: dependencies
         run: npm install
       - name: settings
         run: cp settings.example.json settings.json
@@ -92,7 +100,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14
-      - name: npm
+      - name: snyk install
+        run: npm i -g snyk
+      - name: dependencies
         run: npm install
       - name: settings
         run: cp settings.example.json settings.json

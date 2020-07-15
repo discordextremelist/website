@@ -191,8 +191,21 @@
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="repo" placeholder="https://github.com/awsumpersunorpage/awsumrepo">
                     <span class="icon is-small is-left">
-                <i aria-hidden="true" class="fas fa-code-branch"></i>
-            </span>
+                        <i aria-hidden="true" class="fas fa-code-branch"></i>
+                    </span>
+                </p>
+            </div>
+            <br>
+            <div class="field">
+                <label class="label has-text-default"><%= __("page.bots.privacyPolicy") %></label>
+                <p class="control has-icons-left">
+                    <input class="input is-rounded" type="text" name="privacyPolicy" placeholder="https://discord.bot/privacy">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fas fa-user-secret"></i>
+                    </span>
+                </p>
+                <p style="padding-top: 10px" class="is-size-7 has-text-orange">
+                    <%= __("page.bots.privacyPolicy.optional") %>
                 </p>
             </div>
             <br>
@@ -217,7 +230,7 @@
                 <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
                     <%= __("page.bots.theme.useCustomColor.details") %>
                 </p>
-                <input id="customColorSwitch" type="checkbox" name="useCustomColor" class="switch is-rounded is-info">
+                <input id="customColorSwitch" type="checkbox" name="useCustomColour" class="switch is-rounded is-info">
                 <label for="customColorSwitch"></label>
             </div>
             <br>
@@ -227,14 +240,14 @@
                     <%= __("page.bots.theme.color.details") %>
                 </p>
                 <p class="control">
-                    <input class="backdrop" name="color" type="color" value="#b114ff" style="width:30%; background-color: transparent; border-color: transparent;">
+                    <input class="backdrop" name="colour" type="color" value="#b114ff" style="width:30%; background-color: transparent; border-color: transparent;">
                 </p>
                 <br>
             </div>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.theme.bannerURL") %></label>
                 <p class="control has-icons-left">
-                    <input class="input is-rounded" type="text" name="banner" placeholder="https://discord.bot/banner.png">
+                    <input class="input is-rounded" type="text" name="banner" placeholder="https://discord.bot/files/banner.png">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-image"></i>
                     </span>

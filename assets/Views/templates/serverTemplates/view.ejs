@@ -76,7 +76,7 @@
                                 %>
                             <% } %>
                             <% if (user.db.rank.mod) { %>
-                                <div class="dropdown">
+                                <div class="dropdown is-hoverable">
                                     <div class="dropdown-trigger">
                                         <%- 
                                             include("../../partials/button.ejs", { 
@@ -104,6 +104,10 @@
                                             <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/remove">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                                 <span><%= __("common.staff.remove") %></span>
+                                            </a>
+                                            <a class="dropdown-item" onclick="copyToClipboard('<%= template._id %>');">
+                                                <span class="icon"><i aria-hidden="true" class="fas fa-copy"></i></span>
+                                                <span><%= __("common.copyID") %></span>
                                             </a>
                                         </div>
                                     </div>
@@ -408,6 +412,12 @@
         // , i.style.right = "16px"
         //, i.style.right = "18.4px"
     </script>
+<% } %>
+<% if (req.user && req.user.db.rank.mod === true) { %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" integrity="sha384-OHBBOqpYHNsIqQy8hL1U+8OXf9hH6QRxi0+EODezv82DfnZoV7qoHAZDwMwEJvSw" crossorigin="anonymous">
+    <script src="/js/bulma-toast.min.js" async></script>
+    <style>.notification.is-default.animated{color:<%= foreground %>;background-color:<%= defaultColour %>;border-radius:3%}</style>
+    <script>function copyToClipboard(t){const hideWB=document.createElement("style");hideWB.innerHTML="widgetbot-crate {display: none;}";document.body.appendChild(hideWB);const e=document.createElement("textarea");e.value=t,e.setAttribute("readonly",""),e.style={position:"absolute",left:"-9999px"},document.body.appendChild(e),e.select(),document.execCommand("copy"),document.body.removeChild(e),bulmaToast.toast({message:"Copied to clipboard",type:"is-default",position:"bottom-right",duration:2e3,opacity:.75,animate:{in:"fadeInRight",out:"fadeOutRight"}});setTimeout(()=>{hideWB.innerHTML="widgetbot-crate {display: block;}"},3000)}</script>
 <% } %>
 <script type="text/javascript">const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>
 <script type="text/javascript">$(".tabs").each(function(index){var $tabParent=$(this);var $tabs=$tabParent.find("li");var $contents=$tabParent.next(".tabs-content").find(".tab-content");$tabs.click(function(){var curIndex=$(this).index();$tabs.removeClass("is-active");$tabs.eq(curIndex).addClass("is-active");$contents.removeClass("is-active");$contents.eq(curIndex).addClass("is-active")})});</script>

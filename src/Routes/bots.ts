@@ -164,6 +164,12 @@ router.post(
                         invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
                 }
 
+                if (req.body.privacyPolicy && !/^https:\/\//.test(req.body.privacyPolicy)) {
+                    error = true;
+                    if (invalidURL !== 2)
+                        invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                }
+
                 if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
                     error = true;
                     if (invalidURL !== 2)
@@ -258,14 +264,15 @@ router.post(
                         support: req.body.supportServer,
                         website: req.body.website,
                         donation: req.body.donationUrl,
-                        repo: req.body.repo
+                        repo: req.body.repo,
+                        privacyPolicy: req.body.privacyPolicy
                     },
                     social: {
                         twitter: req.body.twitter
                     },
                     theme: {
-                        useCustomColor: req.body.useCustomColor,
-                        color: req.body.color,
+                        useCustomColour: req.body.useCustomColour,
+                        colour: req.body.colour,
                         banner: req.body.banner
                     },
                     widgetbot: {
@@ -341,14 +348,15 @@ router.post(
                                 support: req.body.supportServer,
                                 website: req.body.website,
                                 donation: req.body.donationUrl,
-                                repo: req.body.repo
+                                repo: req.body.repo,
+                                privacyPolicy: req.body.privacyPolicy
                             },
                             social: {
                                 twitter: req.body.twitter
                             },
                             theme: {
-                                useCustomColor: req.body.useCustomColor,
-                                color: req.body.color,
+                                useCustomColour: req.body.useCustomColour,
+                                colour: req.body.colour,
                                 banner: req.body.banner
                             },
                             widgetbot: {
@@ -782,6 +790,12 @@ router.post(
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
         }
 
+        if (req.body.privacyPolicy && !/^https:\/\//.test(req.body.privacyPolicy)) {
+            error = true;
+            if (invalidURL !== 2)
+                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
         if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
             error = true;
             if (invalidURL !== 2)
@@ -869,14 +883,15 @@ router.post(
                                 support: req.body.supportServer,
                                 website: req.body.website,
                                 donation: req.body.donationUrl,
-                                repo: req.body.repo
+                                repo: req.body.repo,
+                                privacyPolicy: req.body.privacyPolicy
                             },
                             social: {
                                 twitter: req.body.twitter
                             },
                             theme: {
-                                useCustomColor: req.body.useCustomColor,
-                                color: req.body.color,
+                                useCustomColour: req.body.useCustomColour,
+                                colour: req.body.colour,
                                 banner: req.body.banner
                             },
                             widgetbot: {
@@ -914,14 +929,15 @@ router.post(
                                 support: botExists.links.support,
                                 website: botExists.links.website,
                                 donation: botExists.links.donation,
-                                repo: botExists.links.repo
+                                repo: botExists.links.repo,
+                                privacyPolicy: botExists.links.privacyPolicy
                             },
                             social: {
                                 twitter: botExists.social.twitter
                             },
                             theme: {
-                                useCustomColor: botExists.theme.useCustomColor,
-                                color: botExists.theme.color,
+                                useCustomColour: botExists.theme.useCustomColour,
+                                colour: botExists.theme.colour,
                                 banner: botExists.theme.banner
                             },
                             widgetbot: {
@@ -948,14 +964,15 @@ router.post(
                                 support: req.body.supportServer,
                                 website: req.body.website,
                                 donation: req.body.donationUrl,
-                                repo: req.body.repo
+                                repo: req.body.repo,
+                                privacyPolicy: req.body.privacyPolicy
                             },
                             social: {
                                 twitter: req.body.twitter
                             },
                             theme: {
-                                useCustomColor: req.body.useCustomColor,
-                                color: req.body.color,
+                                useCustomColour: req.body.useCustomColour,
+                                colour: req.body.colour,
                                 banner: req.body.banner
                             },
                             widgetbot: {
@@ -989,7 +1006,7 @@ router.post(
                 })\` edited bot **${functions.escapeFormatting(
                     bot.name
                 )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                    req.body.id
+                    req.params.id
                 }>`
             )
             .catch((e) => {
@@ -1592,6 +1609,12 @@ router.post(
                 invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
         }
 
+        if (req.body.privacyPolicy && !/^https:\/\//.test(req.body.privacyPolicy)) {
+            error = true;
+            if (invalidURL !== 2)
+                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+        }
+
         if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
             error = true;
             if (invalidURL !== 2)
@@ -1675,7 +1698,8 @@ router.post(
                                 support: req.body.supportServer,
                                 website: req.body.website,
                                 donation: req.body.donationUrl,
-                                repo: req.body.repo
+                                repo: req.body.repo,
+                                privacyPolicy: req.body.privacyPolicy
                             },
                             date: {
                                 submitted: Date.now(),
@@ -1712,14 +1736,15 @@ router.post(
                                 support: botExists.links.support,
                                 website: botExists.links.website,
                                 donation: botExists.links.donation,
-                                repo: botExists.links.repo
+                                repo: botExists.links.repo,
+                                privacyPolicy: botExists.links.privacyPolicy
                             },
                             social: {
                                 twitter: botExists.social.twitter
                             },
                             theme: {
-                                useCustomColor: botExists.theme.useCustomColor,
-                                color: botExists.theme.color,
+                                useCustomColour: botExists.theme.useCustomColour,
+                                colour: botExists.theme.colour,
                                 banner: botExists.theme.banner
                             },
                             widgetbot: {
@@ -1749,14 +1774,15 @@ router.post(
                                 support: req.body.supportServer,
                                 website: req.body.website,
                                 donation: req.body.donationUrl,
-                                repo: req.body.repo
+                                repo: req.body.repo,
+                                privacyPolicy: req.body.privacyPolicy
                             },
                             social: {
                                 twitter: req.body.twitter
                             },
                             theme: {
-                                useCustomColor: req.body.useCustomColor,
-                                color: req.body.color,
+                                useCustomColour: req.body.useCustomColour,
+                                colour: req.body.colour,
                                 banner: req.body.banner
                             },
                             widgetbot: {

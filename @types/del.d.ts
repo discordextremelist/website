@@ -145,13 +145,14 @@ interface delBot {
         website: string;
         donation: string;
         repo: string;
+        privacyPolicy: string;
     };
     social: {
         twitter: string;
     };
     theme: {
-        useCustomColor: boolean;
-        color: string;
+        useCustomColour: boolean;
+        colour: string;
         banner: string;
     }
     widgetbot: {

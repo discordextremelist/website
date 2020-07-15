@@ -12,7 +12,7 @@
     <% if (pageType.bot === true) { 
         let color = "#b114ff"
         if(req.user) color = req.user.db.preferences.defaultColour
-        if(bot.theme && bot.theme.useCustomColor) color = bot.theme.color
+        if(bot.theme && bot.theme.useCustomColour) color = bot.theme.colour
     %>
     <style type="text/css">
         .has-text-default { color: <% if (req.user) { %><%= color %><% } else { %>#b114ff<% } %> !important; }
@@ -52,7 +52,7 @@
     <meta name="distribution" content="global">
     <meta name="revisit-after" content="1 day">
 
-    <meta name="theme-color" content="<%= (pageType.bot === true && bot.theme && bot.theme.useCustomColor) ? bot.theme.color : req.user ? req.user.db.preferences.defaultColour || "#b114ff" : "#b114ff" %>">
+    <meta name="theme-color" content="<%= (pageType.bot === true && bot.theme && bot.theme.useCustomColour) ? bot.theme.colour : req.user ? req.user.db.preferences.defaultColour || "#b114ff" : "#b114ff" %>">
 
     <% if (dev === true) { %>
         <meta name="robots" content="noindex">

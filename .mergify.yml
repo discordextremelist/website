@@ -4,6 +4,11 @@ pull_request_rules:
       - base=master
       - "#approved-reviews-by>=1"
       - status-success=DeepScan
+      - status-success=node v10 - tsc
+      - status-success=node v11 - tsc
+      - status-success=node v12 - tsc
+      - status-success=node v13 - tsc
+      - status-success=node v14 - tsc
     actions:
       merge:
         method: merge

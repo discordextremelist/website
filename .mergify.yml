@@ -9,6 +9,7 @@ pull_request_rules:
       - status-success=node v12 - tsc
       - status-success=node v13 - tsc
       - status-success=node v14 - tsc
+      - status-success=security/snyk (Discord Extreme List)
     actions:
       merge:
         method: merge

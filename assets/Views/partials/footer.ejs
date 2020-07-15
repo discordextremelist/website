@@ -2,8 +2,8 @@
 </div>
 </div>
 <div style="padding: 1.25rem;" id="siteFooter" class="has-text-centered has-background-black">
-    <!-- This is a license notice, removing or modifiying this is a breach of the DEL Open Source license. -->
-    <a onclick="showLicense();" title="<%= __("common.footer.copyright.title.0") %>" id="licenseNotice" class="has-text-white" target="_blank" rel="noopener"><%- __("common.footer.copyright", { currentYear: new Date().getFullYear(), names: "Cairo Mitchell-Acason, John Burke, Advaith Jagathesan;" }) %></a>
+    <!-- This is a license notice, removing or modifying this is a breach of the DEL Open Source license. -->
+    <a onclick="showLicense()" style="padding-bottom: 10px" title="<%= __("common.footer.copyright.title.0") %>" id="licenseNotice" class="has-text-white" target="_blank" rel="noopener"><%- __("common.footer.copyright", { currentYear: new Date().getFullYear(), names: "Cairo Mitchell-Acason, John Burke, Advaith Jagathesan;" }) %></a>
     <!-- END -->
     <div id="generalLicenseInfo" style="display: none;">
         <%= __("common.footer.trademark") %>
@@ -66,7 +66,7 @@
 <script type="text/javascript">console.log(`%cSTOP! DELLYTIME%c\n\nDEBUG INFORMATION:\n%cVersion: <%= req.del.version %>\nRelease Channel: <%= req.del.channel %>\nNode: <%= req.del.node %>\nResponse time: <%= Date.now() - requestedAt %>ms\n\nUser-Agent: ${navigator.userAgent}`,"color: red; font-size: xx-large; background-color: #000; padding: 10px; border-radius: 5px;","color: yellow; font-size: medium;","font-size: x-small;");</script>
 <script src="https://twemoji.maxcdn.com/v/13.0.0/twemoji.min.js" integrity="sha384-avLpk7eChiSgpDvwa4N7hvg9vj6V9sfFmGHurVkPOlWUalASzcO3d2x3qcbQqhsH" crossorigin="anonymous"></script>
 <script type="text/javascript" defer>twemoji.parse(document.body, {folder: 'svg', ext: '.svg'})</script>
-<script src="https://4ptzyp93lnp4.statuspage.io/embed/script.js"></script>
+<script src="https://status.discordextremelist.xyz/embed/script.js"></script>
 <% if (subtitle === "") { %><script type="text/javascript" async defer>let seizure=0;function invokeSeizureMode(){seizure+=1;if(seizure===3){seizureMode()}}function seizureMode(){const body=document.getElementById("siteContent");const hero=document.getElementsByClassName("hero")[0];let audio;if(Math.floor(Math.random()*10)+1>=10){audio=new Audio("/audio/nyan.mp3")}else{audio=new Audio("/audio/rick.mp3")}body.style.fontFamily="Comic Sans MS";document.getElementsByClassName("title")[0].innerText="Discord Seizure List:tm:!";document.getElementsByClassName("subtitle")[0].innerText="Discord's unbiased list, giving people seizures all across the world!";document.getElementById("delLogo").src = "/img/logo-seizuremode.png";audio.play();setInterval(()=>{setTimeout(()=>{body.style.backgroundColor="#ff1493";hero.style.backgroundColor="#ffffff"},0);setTimeout(()=>{body.style.backgroundColor="#ffffff";hero.style.backgroundColor="#ff1493"},20)},100)}</script><% } %>
 <% if (mobile) { %>
     <script type="text/javascript">function display(s,i){s.classList.contains("is-hidden-mobile")?s.classList.remove("is-hidden-mobile"):s.classList.add("is-hidden-mobile"),i.classList.contains("fa-chevron-left")?(i.classList.remove("fa-chevron-left"),i.classList.add("fa-chevron-down"),i.style.right="16px"):(i.classList.add("fa-chevron-left"),i.classList.remove("fa-chevron-down"),i.style.right="18.4px")}</script>

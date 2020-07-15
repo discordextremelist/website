@@ -78,18 +78,23 @@ router.post(
                         .collection("servers")
                         .findOne({ _id: fetchRes.jsonBody.guild.id });
                     if (serverExists)
-                        return res.status(409).render("status", {
-                            title: res.__("common.error"),
-                            subtitle: res.__("common.error.server.conflict"),
+                        return res.status(409).json({
+                            error: true,
                             status: 409,
-                            type: "Error",
-                            req
+                            errors: [res.__("common.error.server.conflict")]
                         });
 
                     if (!req.body.longDescription) {
                         error = true;
                         errors.push(
                             res.__("common.error.listing.arr.longDescRequired")
+                        );
+                    }
+
+                    if (!req.body.shortDescription) {
+                        error = true;
+                        errors.push(
+                            res.__("common.error.listing.arr.shortDescRequired")
                         );
                     }
                 } else {
@@ -101,10 +106,7 @@ router.post(
 
                 let invalidURL = 0;
 
-                if (
-                    req.body.website &&
-                    !/^https:\/\//.test(req.body.website)
-                ) {
+                if (req.body.website && !/^https:\/\//.test(req.body.website)) {
                     error = true;
                     invalidURL = 1;
                 }
@@ -125,31 +127,27 @@ router.post(
 
                 let tags: string[] = [];
 
-                if (req.body.gaming === "on") tags.push("Gaming");
-                if (req.body.music === "on") tags.push("Music");
+                if (req.body.gaming === true) tags.push("Gaming");
+                if (req.body.music === true) tags.push("Music");
                 if (req.body.mediaEntertain === "on")
                     tags.push("Media & Entertainment");
-                if (req.body.createArts === "on") tags.push("Creative Arts");
-                if (req.body.sciTech === "on") tags.push("Science & Tech");
-                if (req.body.edu === "on") tags.push("Education");
-                if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+                if (req.body.createArts === true) tags.push("Creative Arts");
+                if (req.body.sciTech === true) tags.push("Science & Tech");
+                if (req.body.edu === true) tags.push("Education");
+                if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
 
                 if (req.body.relIdentity === "on")
                     tags.push("Relationships & Identity");
-                if (req.body.travelCuis === "on") tags.push("Travel & Food");
-                if (req.body.fitHealth === "on") tags.push("Fitness & Health");
-                if (req.body.finance === "on") tags.push("Finance");
+                if (req.body.travelCuis === true) tags.push("Travel & Food");
+                if (req.body.fitHealth === true) tags.push("Fitness & Health");
+                if (req.body.finance === true) tags.push("Finance");
 
-                if (error === true) {
-                    return res.render("templates/servers/errorOnSubmit", {
-                        title: res.__("common.nav.me.submitServer"),
-                        subtitle: res.__("common.nav.me.submitServer.subtitle"),
-                        server: req.body,
-                        req,
-                        tags,
-                        errors
+                if (error === true)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: errors
                     });
-                }
 
                 await global.db.collection("servers").insertOne({
                     _id: fetchRes.jsonBody.guild.id,
@@ -217,7 +215,13 @@ router.post(
 
                 await serverCache.updateServer(fetchRes.jsonBody.guild.id);
 
-                res.redirect(`/servers/${fetchRes.jsonBody.guild.id}`);
+                await discord.postWebMetric("server");
+
+                return res.status(200).json({
+                    error: false,
+                    status: 200,
+                    errors: []
+                });
             })
             .catch(async (fetchRes) => {
                 if (!req.body.invite) {
@@ -249,6 +253,13 @@ router.post(
                     }
                 }
 
+                if (!req.body.shortDescription) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.shortDescRequired")
+                    );
+                }
+
                 if (!req.body.longDescription) {
                     error = true;
                     errors.push(
@@ -258,28 +269,25 @@ router.post(
 
                 let tags: string[] = [];
 
-                if (req.body.gaming === "on") tags.push("Gaming");
-                if (req.body.music === "on") tags.push("Music");
+                if (req.body.gaming === true) tags.push("Gaming");
+                if (req.body.music === true) tags.push("Music");
                 if (req.body.mediaEntertain === "on")
                     tags.push("Media & Entertainment");
-                if (req.body.createArts === "on") tags.push("Creative Arts");
-                if (req.body.sciTech === "on") tags.push("Science & Tech");
-                if (req.body.edu === "on") tags.push("Education");
-                if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+                if (req.body.createArts === true) tags.push("Creative Arts");
+                if (req.body.sciTech === true) tags.push("Science & Tech");
+                if (req.body.edu === true) tags.push("Education");
+                if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
 
                 if (req.body.relIdentity === "on")
                     tags.push("Relationships & Identity");
-                if (req.body.travelCuis === "on") tags.push("Travel & Food");
-                if (req.body.fitHealth === "on") tags.push("Fitness & Health");
-                if (req.body.finance === "on") tags.push("Finance");
+                if (req.body.travelCuis === true) tags.push("Travel & Food");
+                if (req.body.fitHealth === true) tags.push("Fitness & Health");
+                if (req.body.finance === true) tags.push("Finance");
 
-                return res.render("templates/servers/errorOnSubmit", {
-                    title: res.__("common.nav.me.submitServer"),
-                    subtitle: res.__("common.nav.me.submitServer.subtitle"),
-                    server: req.body,
-                    tags,
-                    req,
-                    errors
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: errors
                 });
             });
     }
@@ -339,24 +347,34 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     });
 });
 
-router.get("/:id/src", variables, permission.auth, permission.admin, async (req: Request, res: Response, next) => {
-    if (req.params.id === "@me") {
-        if (!req.user) return res.redirect("/auth/login");
-        req.params.id = req.user.id;
-    }
+router.get(
+    "/:id/src",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response, next) => {
+        if (req.params.id === "@me") {
+            if (!req.user) return res.redirect("/auth/login");
+            req.params.id = req.user.id;
+        }
 
-    if (!req.query.token) return res.json({});
-    // @ts-ignore
-    const tokenCheck = await tokenManager.verifyToken(req.user.id, req.query.token);
-    if (tokenCheck === false) return res.json({});
+        if (!req.query.token) return res.json({});
 
-    const cache = await serverCache.getServer(req.params.id);
-    const db = await global.db
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            // @ts-ignore
+            req.query.token
+        );
+        if (tokenCheck === false) return res.json({});
+
+        const cache = await serverCache.getServer(req.params.id);
+        const db = await global.db
             .collection("servers")
             .findOne({ _id: req.params.id });
 
-    return res.json({ cache: cache, db: db });
-});
+        return res.json({ cache: cache, db: db });
+    }
+);
 
 router.get(
     "/:id/edit",
@@ -376,7 +394,10 @@ router.get(
                 req: req
             });
 
-        if (server.owner.id !== req.user.id && req.user.db.rank.assistant === false)
+        if (
+            server.owner.id !== req.user.id &&
+            req.user.db.rank.assistant === false
+        )
             return res.status(403).render("status", {
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.server.perms.edit"),
@@ -409,21 +430,20 @@ router.post(
             .findOne({ _id: req.params.id });
 
         if (!server)
-            return res.status(404).render("status", {
-                title: res.__("common.error"),
+            return res.status(404).json({
+                error: true,
                 status: 404,
-                subtitle: res.__("common.error.server.404"),
-                type: "Error",
-                req: req
+                errors: [res.__("common.error.server.404")]
             });
 
-        if (server.owner.id !== req.user.id && req.user.db.rank.assistant === false)
-            return res.status(403).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.server.perms.edit"),
+        if (
+            server.owner.id !== req.user.id &&
+            req.user.db.rank.assistant === false
+        )
+            return res.status(403).json({
+                error: true,
                 status: 403,
-                type: "Error",
-                req
+                errors: [res.__("common.error.server.perms.edit")]
             });
 
         res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
@@ -454,10 +474,7 @@ router.post(
             invalidURL = 1;
         }
 
-        if (
-            req.body.donationUrl &&
-            !/^https:\/\//.test(req.body.donationUrl)
-        ) {
+        if (req.body.donationUrl && !/^https:\/\//.test(req.body.donationUrl)) {
             error = true;
             invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
         }
@@ -475,20 +492,20 @@ router.post(
 
         let tags: string[] = [];
 
-        if (req.body.gaming === "on") tags.push("Gaming");
-        if (req.body.music === "on") tags.push("Music");
+        if (req.body.gaming === true) tags.push("Gaming");
+        if (req.body.music === true) tags.push("Music");
         if (req.body.mediaEntertain === "on")
             tags.push("Media & Entertainment");
-        if (req.body.createArts === "on") tags.push("Creative Arts");
-        if (req.body.sciTech === "on") tags.push("Science & Tech");
-        if (req.body.edu === "on") tags.push("Education");
-        if (req.body.fashBeaut === "on") tags.push("Fashion & Beauty");
+        if (req.body.createArts === true) tags.push("Creative Arts");
+        if (req.body.sciTech === true) tags.push("Science & Tech");
+        if (req.body.edu === true) tags.push("Education");
+        if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
 
         if (req.body.relIdentity === "on")
             tags.push("Relationships & Identity");
-        if (req.body.travelCuis === "on") tags.push("Travel & Food");
-        if (req.body.fitHealth === "on") tags.push("Fitness & Health");
-        if (req.body.finance === "on") tags.push("Finance");
+        if (req.body.travelCuis === true) tags.push("Travel & Food");
+        if (req.body.fitHealth === true) tags.push("Fitness & Health");
+        if (req.body.finance === true) tags.push("Finance");
 
         fetch(`https://discord.com/api/v6/invites/${req.body.invite}`, {
             method: "GET",
@@ -504,19 +521,12 @@ router.post(
                     );
                 }
 
-                if (error === true) {
-                    return res.render("templates/servers/errorOnEdit", {
-                        title: res.__("page.servers.edit.title"),
-                        subtitle: res.__(
-                            "page.servers.edit.subtitle",
-                            server.name
-                        ),
-                        server: req.body,
-                        req,
-                        tags,
-                        errors
+                if (error === true)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: errors
                     });
-                }
 
                 await global.db.collection("servers").updateOne(
                     { _id: req.params.id },
@@ -598,19 +608,17 @@ router.post(
 
                 await serverCache.updateServer(req.params.id);
 
-                res.redirect(`/servers/${req.params.id}`);
+                return res.status(200).json({
+                    error: false,
+                    status: 200,
+                    errors: []
+                });
             })
             .catch(() => {
-                error = true;
-                errors.push(res.__("common.error.dapiFail"));
-
-                return res.render("templates/servers/errorOnEdit", {
-                    title: res.__("page.servers.edit.title"),
-                    subtitle: res.__("page.servers.edit.subtitle", server.name),
-                    server: req.body,
-                    req,
-                    tags,
-                    errors
+                return res.status(502).json({
+                    error: true,
+                    status: 502,
+                    errors: [res.__("common.error.dapiFail")]
                 });
             });
     }
@@ -666,6 +674,8 @@ router.get(
         });
 
         await serverCache.deleteServer(req.params.id);
+
+        await discord.postWebMetric("server");
 
         res.redirect("/users/@me");
     }
@@ -763,7 +773,119 @@ router.post(
                     console.error(e);
                 });
 
+        await discord.postWebMetric("server");
+
         res.redirect("/staff/queue");
+    }
+);
+
+router.get(
+    "/:id/sync",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response, next) => {
+        let error = false;
+        let errors: string[] = [];
+
+        const server: delServer | undefined = await global.db
+            .collection("servers")
+            .findOne({ _id: req.params.id });
+
+        if (!server)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.server.404"),
+                type: "Error",
+                req: req
+            });
+
+        if (
+            server.owner.id !== req.user.id &&
+            req.user.db.rank.assistant === false
+        )
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.server.perms.edit"),
+                status: 403,
+                type: "Error",
+                req
+            });
+
+        await fetch(`https://discord.com/api/v6/invites/${server.inviteCode}`, {
+            method: "GET",
+            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
+        })
+            .then(async (fetchRes) => {
+                fetchRes.jsonBody = await fetchRes.json();
+
+                if (fetchRes.jsonBody.guild.id !== server._id) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.server.arr.invite.sameServer")
+                    );
+                }
+
+                if (error === true) {
+                    return res.status(404).render("status", {
+                        title: res.__("common.error"),
+                        status: 404,
+                        subtitle: res.__("common.error.server.404"),
+                        req,
+                        type: "Error"
+                    });
+                }
+
+                await global.db.collection("servers").updateOne(
+                    { _id: req.params.id },
+                    {
+                        $set: {
+                            name: fetchRes.jsonBody.guild.name,
+                            icon: {
+                                hash: fetchRes.jsonBody.guild.icon,
+                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                            }
+                        }
+                    }
+                );
+
+                await global.db.collection("audit").insertOne({
+                    type: "SYNC_SERVER",
+                    executor: req.user.id,
+                    target: req.params.id,
+                    date: Date.now(),
+                    reason: "None specified.",
+                    details: {
+                        new: {
+                            name: fetchRes.jsonBody.guild.name,
+                            icon: {
+                                hash: fetchRes.jsonBody.guild.icon,
+                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                            }
+                        },
+                        old: {
+                            name: server.name,
+                            icon: {
+                                hash: server.icon.hash,
+                                url: server.icon.url
+                            }
+                        }
+                    }
+                });
+
+                await serverCache.updateServer(req.params.id);
+
+                res.redirect(`/servers/${req.params.id}`);
+            })
+            .catch(() => {
+                return res.status(404).render("status", {
+                    title: res.__("common.error"),
+                    status: 404,
+                    subtitle: res.__("common.error.dapiFail"),
+                    req,
+                    type: "Error"
+                });
+            });
     }
 );
 

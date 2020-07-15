@@ -8,12 +8,26 @@
     <link href="/img/logo.png" type="image/png" rel="shortcut-icon" />
     <link href="/img/logo.png" type="image/png" rel="icon" />
     <link href="/css/theme/<%= preferredTheme %>/standard.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
+    <% if (pageType.bot === true) { 
+        let color = "#b114ff"
+        if(req.user) color = req.user.db.preferences.defaultColour
+        if(bot.theme && bot.theme.useCustomColour) color = bot.theme.colour
+    %>
     <style type="text/css">
-        .has-text-default { color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %> !important; }
+        .has-text-default { color: <% if (req.user) { %><%= color %><% } else { %>#b114ff<% } %> !important; }
         .has-text-default:hover { color: <% if (req.user) { %><%= colour(`${req.user.db.preferences.defaultColour}`).darken(0.1) || colour("#b114ff").darken(0.1) %><% } else { %><%= colour("#b114ff").darken(0.1) %><% } %>; }
-        .has-background-default { background-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>; color: <% if (req.user) { %><%= req.user.db.preferences.defaultForegroundColour || "#ffffff" %><% } else { %>#ffffff<% } %>; }
-        ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}::-webkit-scrollbar-thumb:hover{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}
+        .has-background-default { background-color: <% if (req.user) { %><%= color %><% } else { %>#b114ff<% } %>; color: <% if (req.user) { %><%= req.user.db.preferences.defaultForegroundColour || "#ffffff" %><% } else { %>#ffffff<% } %>; }
+        ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<% if (req.user) { %><%= color %><% } else { %>#b114ff<% } %>}::-webkit-scrollbar-thumb:hover{background:<% if (req.user) { %><%= color %><% } else { %>#b114ff<% } %>}
     </style>
+    <% } else { %>
+        <style type="text/css">
+            .has-text-default { color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %> !important; }
+            .has-text-default:hover { color: <% if (req.user) { %><%= colour(`${req.user.db.preferences.defaultColour}`).darken(0.1) || colour("#b114ff").darken(0.1) %><% } else { %><%= colour("#b114ff").darken(0.1) %><% } %>; }
+            .has-background-default { background-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>; color: <% if (req.user) { %><%= req.user.db.preferences.defaultForegroundColour || "#ffffff" %><% } else { %>#ffffff<% } %>; }
+            ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}::-webkit-scrollbar-thumb:hover{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}
+            <% if (req.user) { %>.editorBackdrop { filter: drop-shadow(0px 1px 2px <%= req.user.db.preferences.defaultColour || "#b114ff" %>) }<% } %>
+        </style>
+    <% } %>
     <% if (req.user) { %><style type="text/css"><%= req.user.db.preferences.customGlobalCss %></style><% } %>
 
     <% if (usePreload === true) { %>
@@ -38,7 +52,12 @@
     <meta name="distribution" content="global">
     <meta name="revisit-after" content="1 day">
 
-    <meta name="theme-color" content="<%= req.user ? req.user.db.preferences.defaultColour || "#b114ff" : "#b114ff" %>">
+    <meta name="theme-color" content="<%= (pageType.bot === true && bot.theme && bot.theme.useCustomColour) ? bot.theme.colour : req.user ? req.user.db.preferences.defaultColour || "#b114ff" : "#b114ff" %>">
+
+    <% if (dev === true) { %>
+        <meta name="robots" content="noindex">
+    <% } %> 
+
 
     <% if (pageType.bot === true) { %>
         <meta name="description" content="<%= bot.shortDesc %>">

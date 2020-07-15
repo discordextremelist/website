@@ -32,7 +32,7 @@
                                 </span>
                                 <span><%= __("common.view") %></span>
                             </a>
-                            <% if (profile === true && server.owner.id === req.user.id) { %>
+                            <% if (req.user && profile === true && server.owner && server.owner.id === req.user.id) { %>
                                 <a href="<%= linkPrefix %>/servers/<%= server._id %>/edit" class="button is-warning is-outlined">
                                     <span class="icon">
                                       <i class="fas fa-pencil"></i>

@@ -60,17 +60,12 @@
                 <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
                         <span id="userName" style="overflow-wrap: break-word;"><%= userProfile.fullUsername %></span>
-                        <% if (userProfileIsBanned === true || userProfile.rank.tester === true || userProfile.rank.translator === true || userProfile.rank.premium === true || userProfile.rank.mod === true || userProfile.rank.admin === true || Boolean(userProfile.flags & (1 << 17))) { %>
+                        <% if (userProfileIsBanned === true || userProfile.rank.tester === true || userProfile.rank.translator === true || userProfile.rank.premium === true || userProfile.rank.mod === true || userProfile.rank.admin === true) { %>
                             <% if (userProfileIsBanned === true) { %>
                                 <span style="vertical-align: middle;" title="<%= __("common.rank.banned") %>" class="icon is-medium is-size-3 iconalign">
                                     <i aria-hidden="true" class="fad fa-ban has-text-danger fa-1x"></i>
                                 </span>
                             <% } else { %>
-                                <% if (Boolean(userProfile.flags & (1 << 17))) { %>
-                                    <span style="vertical-align: middle;" title="<%= __("common.rank.verified.dev") %>" class="icon is-medium is-size-3 iconalign">
-                                        <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
-                                    </span>
-                                <% } %>
                                 <% if (userProfile.rank.premium === true) { %>
                                     <span style="vertical-align: middle;" title="<%= __("common.rank.donator") %>" class="icon is-medium is-size-3 iconalign">
                                         <i aria-hidden="true" class="fad fa-heart has-text-red fa-1x"></i>
@@ -227,7 +222,7 @@
                             <% if (userProfile.profile.links.github) { %>
                                 <%- 
                                     include("../../partials/button.ejs", { 
-                                        className: "button is-white", 
+                                        className: "button is-dark", 
                                         icon: "fab fa-github", 
                                         tag: "a", 
                                         message: __("common.social.github"), 

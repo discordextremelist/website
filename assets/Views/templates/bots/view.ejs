@@ -33,11 +33,16 @@
         defaultColour = req.user.db.preferences.defaultColour || "#b114ff";
         foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff";
     }
+
+    if (bot.theme && bot.theme.useCustomColour) {
+        defaultColour = bot.theme.colour;
+        foreground = req.user.db.preferences.defaultForegroundColour;
+    }
 %>
 <link href="/css/theme/<%= preferredTheme %>/listing.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
 <style>.message{background-color:#f5f5f5;border-radius:4px;font-size:1rem}.message strong{color:currentColor}.message a:not(.button):not(.tag):not(.dropdown-item){color:currentColor;text-decoration:underline}.message.is-small{font-size:.75rem}.message.is-medium{font-size:1.25rem}.message.is-large{font-size:1.5rem}.message.is-default{background-color:<%= defaultColour %>}.message.is-default .message-header{background-color:<%= defaultColour %>;color:<%= foreground %>}.message.is-default .message-body{border-color:#fff;color:<%= defaultColour %>}</style>
-<style>code{background-color: <%= siteThemeColour %>;color: <%= defaultColour %>;border-radius: 5px;}</style>
-<section class="hero is-primary">
+<style>code{background-color: <%= siteThemeColour %>;color: <%= defaultColour %> %>;border-radius: 5px;}</style>
+<section class="hero is-primary" <% if (bot.theme && bot.theme.banner) { %>style="background-image: url(<%= bot.theme.banner %>); background-size: cover"<% } %>>
     <div class="hero-body">
         <br>
         <div class="container">
@@ -49,17 +54,12 @@
                         if (botStatus === "idle") statusInfo = __("page.bots.status.idle")
                         if (botStatus === "dnd") statusInfo = __("page.bots.status.dnd")
                         if (botStatus === "offline") statusInfo = __("page.bots.status.offline")
-                    %> 
+                    %>
                     <img class="image" title="<%= statusInfo %>" style="margin: auto; width: 128px; border-radius: 50%; animation: <%= botStatus %> 2s infinite !important;" src="<%= bot.avatar.url %>.<%= imageFormat %>?size=512" alt="<%= __('common.img.avatar', bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');">
                 </div>
             <div class="column is-10<% if (mobile) { %> has-text-centered<% } %>">
                     <h1 class="is-size-1">
                         <span id="botName"><%= bot.name %></span>
-                        <% if (Boolean(bot.flags & (1 << 16))) { %>
-                            <span style="vertical-align: middle;" title="<%= __("common.rank.verified.bot") %>" class="icon is-medium is-size-3 iconalign">
-                                <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
-                            </span>
-                        <% } %>
 
                         <% if (bot.status.premium === true) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.premium.bot") %>" class="icon is-medium is-size-3 iconalign">
@@ -82,7 +82,7 @@
                     <h2 class="subtitle"><%= bot.shortDesc %></h2>
                     <% if (htmlDir === "rtl") { %>
                         <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
-                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/upvote" class="button page <% if (req.user && bot.votes.positive.includes(req.user.id)) { %>is-success<% } else { %>is-dark<% } %>">
+                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/upvote" rel="nofollow" class="button page <% if (req.user && bot.votes.positive.includes(req.user.id)) { %>is-success<% } else { %>is-dark<% } %>">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-arrow-alt-up"></i>
                                 </span>
@@ -94,7 +94,7 @@
                             <% } else if (votes < 0) { %>
                                 <span class="button page is-black is-hovered has-text-danger" title="<%= __("common.votes") %>"><%= votes %></span>
                             <% } %>
-                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/downvote" class="button page <% if (req.user && bot.votes.negative.includes(req.user.id)) { %>is-danger<% } else { %>is-dark<% } %>">
+                            <a href="<%= linkPrefix %>/bots/<%= bot._id %>/downvote" rel="nofollow" class="button page <% if (req.user && bot.votes.negative.includes(req.user.id)) { %>is-danger<% } else { %>is-dark<% } %>">
                                 <span class="icon">
                                     <i aria-hidden="true" class="fas fa-arrow-alt-down"></i>
                                 </span>
@@ -119,89 +119,101 @@
                                     <i aria-hidden="true" class="fas fa-arrow-alt-down"></i>
                                 </span>
                             </a>
-                        </div> 
+                        </div>
                     <% } %>
                     <% if (req.user) { %>
                     <div class="buttons <% if (mobile) { %>is-centered<% } else { %>page<% } %>">
                         <% if (bot.owner.id === req.user.id) { %>
-                            <%- 
-                                include("../../partials/button.ejs", { 
-                                    className: "button is-dark", 
-                                    icon: "fas fa-key", 
-                                    tag: "button", 
-                                    message: __("page.bots.copyToken"), 
-                                    href: "", 
-                                    additional: `onclick=\"copyToClipboard('${bot.token}');\"` 
-                                });
-                            %>
-                            <% if (bot.status.verified === false) { %>
-                                <% if (bot.serverCount >= 100) { %>
-                                    <%- 
-                                        include("../../partials/button.ejs", { 
-                                            className: "button is-dark", 
-                                            icon: "fas fa-badge-check", 
-                                            tag: "a", 
-                                            message: __("page.bots.verificationApplication"), 
-                                            href: `${linkPrefix}/apply/verification`, 
-                                            additional: ""
-                                        });
-                                    %>
-                                <% } %>
-                            <% } %>
                             <% if (bot.status.approved !== false) { %>
                                 <%- 
                                     include("../../partials/button.ejs", { 
-                                        className: "button is-dark", 
-                                        icon: "fas fa-link", 
-                                        tag: "a", 
-                                        message: __("page.bots.setVanity"), 
-                                        href: "", 
+                                        className: "button is-link",
+                                        icon: "fas fa-link",
+                                        tag: "a",
+                                        message: __("page.bots.setVanity"),
+                                        href: "",
                                         additional: "id=\"setVanity\""
                                     });
                                 %>
                             <% } %>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-dark", 
-                                    icon: "fas fa-pencil", 
-                                    tag: "a", 
-                                    message: __("common.edit"), 
-                                    href: `${linkPrefix}/bots/${bot._id}/edit`, 
+                                    className: "button is-success",
+                                    icon: "fas fa-sync-alt",
+                                    tag: "a",
+                                    message: __("common.sync"),
+                                    href: `${linkPrefix}/bots/${bot._id}/sync`,
                                     additional: ""
                                 });
                             %>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-dark", 
-                                    icon: "fas fa-trash", 
-                                    tag: "a", 
-                                    message: __("common.delete"), 
-                                    href: "", 
+                                    className: "button is-warning",
+                                    icon: "fas fa-pencil",
+                                    tag: "a",
+                                    message: __("common.edit"),
+                                    href: `${linkPrefix}/bots/${bot._id}/edit`,
+                                    additional: ""
+                                });
+                            %>
+                            <div style="padding-right: .5em;" class="dropdown is-hoverable">
+                                <div class="dropdown-trigger">
+                                    <%- 
+                                        include("../../partials/button.ejs", { 
+                                            className: "button is-orange",
+                                            icon: "fas fa-key",
+                                            tag: "dropdownButton",
+                                            message: __("page.bots.manageToken"),
+                                            href: "",
+                                            additional: "style=\"direction: ltr;\""
+                                        });
+                                    %>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
+                                  <div class="dropdown-content">
+                                    <a class="dropdown-item" onclick="copyToClipboard('<%= bot.token %>');">
+                                        <span class="icon"><i aria-hidden="true" class="fas fa-copy"></i></span>
+                                        <span><%= __("page.bots.copyToken") %></span>
+                                    </a>
+                                    <a class="dropdown-item" href="/bots/<%= bot._id %>/tokenreset">
+                                        <span class="icon"><i aria-hidden="true" class="fas fa-redo-alt"></i></span>
+                                        <span><%= __("page.bots.resetToken") %></span>
+                                    </a>
+                                  </div>
+                                </div>
+                            </div>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-danger",
+                                    icon: "fas fa-trash",
+                                    tag: "a",
+                                    message: __("common.delete"),
+                                    href: "",
                                     additional: "id=\"deleteModal\""
                                 });
                             %>
                         <% } else if (bot.editors && bot.editors.includes(req.user.id)) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-dark", 
-                                    icon: "fas fa-pencil", 
-                                    tag: "a", 
-                                    message: __("common.edit"), 
-                                    href: `${linkPrefix}/bots/${bot._id}/edit`, 
+                                    className: "button is-warning",
+                                    icon: "fas fa-pencil",
+                                    tag: "a",
+                                    message: __("common.edit"),
+                                    href: `${linkPrefix}/bots/${bot._id}/edit`,
                                     additional: ""
                                 });
                             %>
                         <% } %>
                         <% if (user.db.rank.mod) { %>
-                            <div class="dropdown">
+                            <div class="dropdown is-hoverable">
                                 <div class="dropdown-trigger">
                                     <%- 
                                         include("../../partials/button.ejs", { 
-                                            className: "button is-dark", 
-                                            icon: "fas fa-cogs", 
-                                            tag: "dropdownButton", 
-                                            message: __("common.staffManagement"), 
-                                            href: "", 
+                                            className: "button is-dark",
+                                            icon: "fas fa-cogs",
+                                            tag: "dropdownButton",
+                                            message: __("common.staffManagement"),
+                                            href: "",
                                             additional: "style=\"direction: ltr;\""
                                         });
                                     %>
@@ -232,6 +244,12 @@
                                                 <span><%= __("page.bots.setVanity") %></span>
                                             </a>
                                         <% } %>
+                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/sync">
+                                            <span class="icon">
+                                                <i aria-hidden="true" class="fas fa-sync-alt"></i>
+                                            </span>
+                                            <span><%= __("common.sync") %></span>
+                                        </a>
                                         <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/edit">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-pencil"></i>
@@ -254,14 +272,24 @@
                                             <span><%= __("common.staff.decline") %></span>
                                         </a>
                                     <% } %>
-                                    <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot._id %>&scope=bot&guild_id=<%= staffServer %>">
+                                    <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= staffServer %>">
                                         <span class="icon"><i class="fas fa-vial"></i></span>
                                         <span><%= __("page.bots.invite.staff") %></span>
                                     </a>
-                                    <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot._id %>&scope=bot&guild_id=<%= mainServer %>">
+                                    <a class="dropdown-item" target="_blank" href="https://discord.com/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= mainServer %>">
                                         <span class="icon"><i class="fas fa-shield-alt"></i></span>
                                         <span><%= __("page.bots.invite.main") %></span>
                                     </a>
+                                    <a class="dropdown-item" onclick="copyToClipboard('<%= bot._id %>');">
+                                        <span class="icon"><i aria-hidden="true" class="fas fa-copy"></i></span>
+                                        <span><%= __("common.copyID") %></span>
+                                    </a>
+                                    <% if (bot.clientID) { %>
+                                        <a class="dropdown-item" onclick="copyToClipboard('<%= bot.clientID %>');">
+                                            <span class="icon"><i aria-hidden="true" class="fas fa-copy"></i></span>
+                                            <span><%= __("page.bots.copyClientID") %></span>
+                                        </a>
+                                    <% } %>
                                   </div>
                                 </div>
                             </div>
@@ -269,36 +297,60 @@
                         </div>
                     <% } %>
                     <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
+                        <%- 
+                            include("../../partials/button.ejs", { 
+                                className: "button is-magenta",
+                                icon: "fas fa-plus",
+                                tag: "a",
+                                message: __("common.invite.full"),
+                                href: bot.links.invite,
+                                additional: "target=\"_blank\" rel=\"noopener\""
+                            });
+                        %>
                         <% if (bot.links.website) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-link", 
-                                    icon: "fas fa-globe", 
-                                    tag: "a", 
-                                    message: __("common.website"), 
-                                    href: bot.links.website, 
+                                    className: "button is-link",
+                                    icon: "fas fa-globe",
+                                    tag: "a",
+                                    message: __("common.website"),
+                                    href: bot.links.website,
                                     additional: "target=\"_blank\" rel=\"noopener\""
                                 });
                             %>
                         <% } %>
-                        <%- 
-                            include("../../partials/button.ejs", { 
-                                className: "button is-info", 
-                                icon: "fas fa-plus", 
-                                tag: "a", 
-                                message: __("common.invite"), 
-                                href: bot.links.invite, 
-                                additional: "target=\"_blank\" rel=\"noopener\""
-                            });
-                        %>
+                        <% if (bot.social && bot.social.twitter) { %>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-info",
+                                    icon: "fab fa-twitter",
+                                    tag: "a",
+                                    message: `@${bot.social.twitter}`,
+                                    href: `https://twitter.com/${bot.social.twitter}`,
+                                    additional: "target=\"_blank\" rel=\"noopener\""
+                                });
+                            %>
+                        <% } %>
                         <% if (bot.links.donation) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-success", 
-                                    icon: "fas fa-dollar-sign", 
-                                    tag: "a", 
-                                    message: __("common.donate"), 
-                                    href: bot.links.donation, 
+                                    className: "button is-success",
+                                    icon: "fas fa-dollar-sign",
+                                    tag: "a",
+                                    message: __("common.donate"),
+                                    href: bot.links.donation,
+                                    additional: "target=\"_blank\" rel=\"noopener\""
+                                });
+                            %>
+                        <% } %>
+                        <% if (bot.links.privacyPolicy) { %>
+                            <%- 
+                                include("../../partials/button.ejs", { 
+                                    className: "button is-warning",
+                                    icon: "fas fa-user-secret",
+                                    tag: "a",
+                                    message: __("common.nav.more.privacy"),
+                                    href: bot.links.privacyPolicy,
                                     additional: "target=\"_blank\" rel=\"noopener\""
                                 });
                             %>
@@ -306,11 +358,11 @@
                         <% if (bot.links.repo) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-orange", 
-                                    icon: "fas fa-code", 
-                                    tag: "a", 
-                                    message: __("page.bots.git.view"), 
-                                    href: bot.links.repo, 
+                                    className: "button is-orange",
+                                    icon: "fas fa-code",
+                                    tag: "a",
+                                    message: __("page.bots.git.view"),
+                                    href: bot.links.repo,
                                     additional: "target=\"_blank\" rel=\"noopener\""
                                 });
                             %>
@@ -318,11 +370,11 @@
                         <% if (bot.links.support) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 
-                                    className: "button is-danger", 
-                                    icon: "fas fa-user-headset", 
-                                    tag: "a", 
-                                    message: __("page.bots.supportServer.view"), 
-                                    href: bot.links.support, 
+                                    className: "button is-danger",
+                                    icon: "fas fa-user-headset",
+                                    tag: "a",
+                                    message: __("page.bots.supportServer.view"),
+                                    href: bot.links.support,
                                     additional: "target=\"_blank\" rel=\"noopener\""
                                 });
                             %>
@@ -331,7 +383,7 @@
                     <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
                         <%- 
                             include("../../partials/tag.ejs", { 
-                                contentColour: "is-link", 
+                                contentColour: "is-link",
                                 title: __("page.bots.generalInfo.prefix.view"),
                                 content: bot.prefix,
                                 type: "multi"
@@ -339,7 +391,7 @@
                         %>
                         <%- 
                             include("../../partials/tag.ejs", { 
-                                contentColour: "is-info", 
+                                contentColour: "is-info",
                                 title: __("page.bots.generalInfo.library.view"),
                                 content: bot.library,
                                 type: "multi"
@@ -347,7 +399,7 @@
                         %>
                         <%- 
                             include("../../partials/tag.ejs", { 
-                                contentColour: "is-success", 
+                                contentColour: "is-success",
                                 title: __("common.servers"),
                                 content: bot.serverCount === 0 ? "???" : bot.serverCount,
                                 type: "multi"
@@ -356,7 +408,7 @@
                         <% if (bot.shardCount !== 0) { %>
                             <%- 
                                 include("../../partials/tag.ejs", { 
-                                    contentColour: "is-orange", 
+                                    contentColour: "is-orange",
                                     title: __("page.bots.shards"),
                                     content: bot.shardCount,
                                     type: "multi"
@@ -365,7 +417,7 @@
                         <% } %>
                         <%- 
                             include("../../partials/tag.ejs", { 
-                                contentColour: "is-danger", 
+                                contentColour: "is-danger",
                                 title: __("common.owner"),
                                 content: "insOwner-bot",
                                 type: "multi"
@@ -374,7 +426,7 @@
                         <% if (bot.editors && editors) { %>
                             <%- 
                                 include("../../partials/tag.ejs", { 
-                                    contentColour: "is-magenta", 
+                                    contentColour: "is-magenta",
                                     title: __("common.editors"),
                                     content: "insEditor-bot",
                                     type: "multi"
@@ -387,7 +439,7 @@
                             <% if (bot.tags.includes("Fun")) { %>
                                 <%- 
                                     include("../../partials/tag.ejs", { 
-                                        contentColour: "is-link", 
+                                        contentColour: "is-link",
                                         title: "",
                                         content: __("page.bots.tag.fun"),
                                         type: "tag"
@@ -397,7 +449,7 @@
                             <% if (bot.tags.includes("Social")) { %>
                                 <%- 
                                     include("../../partials/tag.ejs", { 
-                                        contentColour: "is-info", 
+                                        contentColour: "is-info",
                                         title: "",
                                         content: __("page.bots.tag.social"),
                                         type: "tag"
@@ -407,7 +459,7 @@
                             <% if (bot.tags.includes("Economy")) { %>
                                 <%- 
                                     include("../../partials/tag.ejs", { 
-                                        contentColour: "is-success", 
+                                        contentColour: "is-success",
                                         title: "",
                                         content: __("page.bots.tag.economy"),
                                         type: "tag"
@@ -417,7 +469,7 @@
                             <% if (bot.tags.includes("Utility")) { %>
                                 <%- 
                                     include("../../partials/tag.ejs", { 
-                                        contentColour: "is-orange", 
+                                        contentColour: "is-orange",
                                         title: "",
                                         content: __("page.bots.tag.utility"),
                                         type: "tag"
@@ -427,7 +479,7 @@
                             <% if (bot.tags.includes("Moderation")) { %>
                                 <%- 
                                     include("../../partials/tag.ejs", { 
-                                        contentColour: "is-danger", 
+                                        contentColour: "is-danger",
                                         title: "",
                                         content: __("page.bots.tag.moderation"),
                                         type: "tag"
@@ -437,7 +489,7 @@
                             <% if (bot.tags.includes("Multipurpose")) { %>
                                 <%- 
                                     include("../../partials/tag.ejs", { 
-                                        contentColour: "is-magenta", 
+                                        contentColour: "is-magenta",
                                         title: "",
                                         content: __("page.bots.tag.multipurpose"),
                                         type: "tag"
@@ -447,7 +499,7 @@
                             <% if (bot.tags.includes("Music")) { %>
                                 <%- 
                                     include("../../partials/tag.ejs", { 
-                                        contentColour: "is-pink", 
+                                        contentColour: "is-pink",
                                         title: "",
                                         content: __("common.tags.music"),
                                         type: "tag"

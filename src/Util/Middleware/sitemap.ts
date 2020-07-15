@@ -26,21 +26,23 @@ import * as serverCache from "../../Util/Services/serverCaching";
 import * as templateCache from "../../Util/Services/templateCaching";
 import * as userCache from "../../Util/Services/userCaching";
 
+const base = settings.website.url
+
 const url = (path: string, lang: string) =>
     `<url>
-        <loc>https://discordextremelist.xyz/${lang}${path}</loc>
-        <xhtml:link rel="alternate" hreflang="en"    href="https://discordextremelist.xyz/en-US${path}"/>
-        <xhtml:link rel="alternate" hreflang="en-us" href="https://discordextremelist.xyz/en-US${path}"/>
-        <xhtml:link rel="alternate" hreflang="en-gb" href="https://discordextremelist.xyz/en-GB${path}"/>
-        <xhtml:link rel="alternate" hreflang="en-nz" href="https://discordextremelist.xyz/en-NZ${path}"/>
-        <xhtml:link rel="alternate" hreflang="de"    href="https://discordextremelist.xyz/de-DE${path}"/>
-        <xhtml:link rel="alternate" hreflang="de-de" href="https://discordextremelist.xyz/de-DE${path}"/>
-        <xhtml:link rel="alternate" hreflang="he"    href="https://discordextremelist.xyz/he-IL${path}"/>
-        <xhtml:link rel="alternate" hreflang="he-il" href="https://discordextremelist.xyz/he-IL${path}"/>
-        <xhtml:link rel="alternate" hreflang="hu"    href="https://discordextremelist.xyz/hu-HU${path}"/>
-        <xhtml:link rel="alternate" hreflang="hu-hu" href="https://discordextremelist.xyz/hu-HU${path}"/>
-        <xhtml:link rel="alternate" hreflang="tr"    href="https://discordextremelist.xyz/tr-TR${path}"/>
-        <xhtml:link rel="alternate" hreflang="tr-tr" href="https://discordextremelist.xyz/tr-TR${path}"/>
+        <loc>${base}/${lang}${path}</loc>
+        <xhtml:link rel="alternate" hreflang="en"    href="${base}/en-US${path}"/>
+        <xhtml:link rel="alternate" hreflang="en-us" href="${base}/en-US${path}"/>
+        <xhtml:link rel="alternate" hreflang="en-gb" href="${base}/en-GB${path}"/>
+        <xhtml:link rel="alternate" hreflang="en-nz" href="${base}/en-NZ${path}"/>
+        <xhtml:link rel="alternate" hreflang="de"    href="${base}/de-DE${path}"/>
+        <xhtml:link rel="alternate" hreflang="de-de" href="${base}/de-DE${path}"/>
+        <xhtml:link rel="alternate" hreflang="he"    href="${base}/he-IL${path}"/>
+        <xhtml:link rel="alternate" hreflang="he-il" href="${base}/he-IL${path}"/>
+        <xhtml:link rel="alternate" hreflang="hu"    href="${base}/hu-HU${path}"/>
+        <xhtml:link rel="alternate" hreflang="hu-hu" href="${base}/hu-HU${path}"/>
+        <xhtml:link rel="alternate" hreflang="tr"    href="${base}/tr-TR${path}"/>
+        <xhtml:link rel="alternate" hreflang="tr-tr" href="${base}/tr-TR${path}"/>
     </url>`
 
 export const sitemapGenerator = async (req: Request, res: Response, next: () => void) => {
@@ -81,7 +83,7 @@ export const sitemapIndex = async (req: Request, res: Response, next: () => void
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     ${settings.website.locales.all.map(l => 
     `<sitemap>
-        <loc>https://discordextremelist.xyz/${l}/sitemap.xml</loc>
+        <loc>${base}/${l}/sitemap.xml</loc>
     </sitemap>`).join('\n     ')}
 </sitemapindex>`)
 };

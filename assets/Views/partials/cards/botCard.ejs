@@ -11,11 +11,6 @@
                     <p>
                     <span class="is-size-4 title has-text-default is-mobile">
                         <span><%= bot.name %></span>
-                        <% if (bot.flags & (1 << 16)) { %>
-                            <span style="vertical-align: middle;" title="<%= __("common.rank.verified.bot") %>" class="icon iconalign">
-                                <i aria-hidden="true" class="fad fa-badge-check has-text-magenta fa-1x"></i>
-                            </span>
-                        <% } %>
                         <% if (bot.status.premium === true) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.premium.bot") %>" class="icon iconalign">
                                 <i aria-hidden="true" class="fad fa-star has-text-warning fa-1x"></i>

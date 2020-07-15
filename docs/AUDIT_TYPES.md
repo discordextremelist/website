@@ -31,5 +31,6 @@ ADD_WARNING: When a staff member warns another staff member.
 ADD_STRIKE: When a staff member strikes another staff member.
 UPDATE_ANNOUNCEMENT: When a staff member updates the site-wide announcement.
 RESET_ANNOUNCEMENT: When a staff member removes (resets) the site-wide announcement.
+RESET_BOT_TOKEN: When a user or staff member resets their bot's DELAPI token.
 UNKNOWN: A fallback display event used when parsing does not recognise the audit type provided.
 ```

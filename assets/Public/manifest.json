@@ -24,9 +24,15 @@
             "sizes": "64x64"
         },
         {
-            "src": "/img/logo-48px.webp",
+            "src": "/img/logo-32px.webp",
             "type": "image/webp",
-            "sizes": "48x48"
+            "sizes": "32x32"
+        },
+        {
+            "src": "/img/logo-maskable.png",
+            "type": "image/png",
+            "sizes": "640x640",
+            "purpose": "maskable"
         },
         {
             "src": "/img/logo.png",
@@ -49,9 +55,9 @@
             "sizes": "64x64"
         },
         {
-            "src": "/img/logo-48px.png",
+            "src": "/img/logo-32px.png",
             "type": "image/png",
-            "sizes": "48x48"
+            "sizes": "32x32"
         }
     ],
     "start_url": "/?source=pwa",

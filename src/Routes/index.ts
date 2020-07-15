@@ -27,7 +27,6 @@ import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as discord from "../Util/Services/discord";
 import { variables } from "../Util/Function/variables";
-import { sitemapGenerator } from "../Util/Middleware/sitemap";
 
 const router = express.Router();
 
@@ -124,7 +123,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
     if (!req.query.page) req.query.page = "1";
 
     const bots = (await botCache.getAllBots()).filter(
-        ({ status }) => status.approved && !status.siteBot && !status.archived
+        ({ _id, status }) =>
+            status.approved && !status.siteBot && !status.archived
     );
 
     res.render("templates/bots/index", {

@@ -114,6 +114,7 @@ interface delUser {
 interface delBot {
     _id: string;
     _cacheID?: string;
+    clientID: string;
     name: string;
     prefix: string;
     library: string;
@@ -144,7 +145,16 @@ interface delBot {
         website: string;
         donation: string;
         repo: string;
+        privacyPolicy: string;
     };
+    social: {
+        twitter: string;
+    };
+    theme: {
+        useCustomColour: boolean;
+        colour: string;
+        banner: string;
+    }
     widgetbot: {
         channel: string;
         options: string;

@@ -159,7 +159,7 @@ export function parseDate(__, locale: string, rawDate: number) {
 
 export function parseAudit(__, auditType: string) {
     let returnType = {
-        name: __("page.staff.audit.type.UNKNOWN"),
+        name: `${__("page.staff.audit.type.UNKNOWN")}: ${auditType}`,
         icon: "far fa-question has-text-white"
     };
 
@@ -212,6 +212,14 @@ export function parseAudit(__, auditType: string) {
             returnType.name = __("page.staff.audit.type.EDIT_BOT");
             returnType.icon = "far fa-pen has-text-warning";
             break;
+        case "RESET_BOT_TOKEN":
+            returnType.name = __("page.staff.audit.type.RESET_BOT_TOKEN");
+            returnType.icon = "far fa-key has-text-orange";
+            break;
+        case "SYNC_BOT":
+            returnType.name = __("page.staff.audit.type.SYNC_BOT");
+            returnType.icon = "far fa-sync-alt has-text-success";
+            break;
         case "PREMIUM_BOT_GIVE":
             returnType.name = __("page.staff.audit.type.PREMIUM_BOT_GIVE");
             returnType.icon = "far fa-heart has-text-success";
@@ -240,6 +248,10 @@ export function parseAudit(__, auditType: string) {
             returnType.name = __("page.staff.audit.type.EDIT_SERVER");
             returnType.icon = "far fa-pen has-text-warning";
             break;
+        case "SYNC_SERVER":
+            returnType.name = __("page.staff.audit.type.SYNC_SERVER");
+            returnType.icon = "far fa-sync-alt has-text-success";
+            break;
         case "DELETE_SERVER":
             returnType.name = __("page.staff.audit.type.DELETE_SERVER");
             returnType.icon = "far fa-trash has-text-danger";
@@ -255,6 +267,10 @@ export function parseAudit(__, auditType: string) {
         case "EDIT_TEMPLATE":
             returnType.name = __("page.staff.audit.type.EDIT_TEMPLATE");
             returnType.icon = "far fa-pen has-text-warning";
+            break;
+        case "SYNC_TEMPLATE":
+            returnType.name = __("page.staff.audit.type.SYNC_TEMPLATE");
+            returnType.icon = "far fa-sync-alt has-text-success";
             break;
         case "DELETE_TEMPLATE":
             returnType.name = __("page.staff.audit.type.DELETE_TEMPLATE");

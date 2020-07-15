@@ -30,10 +30,18 @@
     </section>
     <div class="container">
         <div class="section">
+            <article id="errors" style="display: none;" class="message is-danger">
+                <div class="message-body content has-background-primary">
+                    <ul id="errorList" style="margin-top: unset;">
+                        
+                    </ul>
+                </div>
+            </article>
+
             <form method="POST">
                 <h3 class="is-size-3 has-text-default"><%= __("page.form.category.generalInfo") %></h3>
                 <br />
-                <div class="field">
+                <div class="field">await discord.getStatus(_id
                     <label class="label has-text-default"><%= __("page.servers.code") %> <span class="has-text-danger">*</span></label>
                     <div class="control">
                         <div class="field has-addons <% if (htmlDir === "rtl") { %>has-addons-right<% } %>" style="direction: ltr;">
@@ -43,7 +51,7 @@
                                 </a>
                             </p>
                             <p class="control" required>
-                                <input class="input is-rounded" type="text" name="invite" value="<%= server.inviteCode %>" placeholder="WeCer3J" onpaste="setTimeout(() => this.value = this.value.replace('https:/\/discord.gg/', ''), 0)">
+                                <input id="form_inviteCode" class="input is-rounded" type="text" name="invite" value="<%= server.inviteCode %>" placeholder="WeCer3J" onpaste="setTimeout(() => this.value = this.value.replace('https:/\/discord.gg/', ''), 0)">
                             </p>
                         </div>
                     </p>
@@ -109,7 +117,7 @@
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.website") %></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" value="<%= server.links.website %>" name="website" placeholder="https://watchanimeattheoffice.com">
+                        <input id="form_website" class="input is-rounded" type="text" value="<%= server.links.website %>" name="website" placeholder="https://watchanimeattheoffice.com">
                         <span class="icon is-small is-left">
                             <i aria-hidden="true" class="fas fa-globe"></i>
                         </span>
@@ -119,7 +127,7 @@
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.donate") %></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" value="<%= server.links.donation %>" name="donationUrl" placeholder="https://bigbeans.solutions">
+                        <input id="form_donationUrl" class="input is-rounded" type="text" value="<%= server.links.donation %>" name="donationUrl" placeholder="https://bigbeans.solutions">
                         <span class="icon is-small is-left">
                             <i aria-hidden="true" class="fas fa-dollar-sign"></i>
                         </span>
@@ -132,7 +140,7 @@
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.shortDesc") %> <span class="has-text-danger">*</span></label>
                     <p class="control has-icons-left has-icons-right">
-                        <input class="input is-rounded" type="text" value="<%= server.shortDesc %>" name="shortDescription" placeholder="<%= __("page.servers.shortDesc.placeholder") %>" required>
+                        <input id="form_shortDescription" class="input is-rounded" type="text" value="<%= server.shortDesc %>" name="shortDescription" placeholder="<%= __("page.servers.shortDesc.placeholder") %>" required>
                         <span class="icon is-small is-left">
                             <i aria-hidden="true" class="fas fa-comment-dots"></i>
                         </span>
@@ -147,13 +155,13 @@
                 <br />
                 <div class="field is-grouped">
                     <div class="buttons">
-                        <button onclick="monacoToField();" class="button is-success">
+                        <a id="submitButton" onclick="doSubmit();" class="button is-success">
                             <span class="icon">
                               <i aria-hidden="true" class="fas fa-check-circle"></i>
                             </span>
                             <span><%= __("common.submit") %></span>
-                        </button>
-                        <a href="<%= linkPrefix %>/" class="button is-danger">
+                        </a>
+                        <a id="cancelButton" href="<%= linkPrefix %>/servers/<%= server._id %>" class="button is-danger">
                             <span class="icon">
                               <i aria-hidden="true" class="fas fa-times-circle"></i>
                             </span>
@@ -172,6 +180,64 @@
     }
     addEventListener('beforeunload', warn)
     document.querySelector('form').onsubmit = () => removeEventListener('beforeunload', warn)
+
+    function doSubmit() {
+        monacoToField();
+        document.getElementById("errors").style.display = "none";
+        document.getElementById("submitButton").classList.add("is-loading");
+        document.getElementById("cancelButton").setAttribute("disabled", true);
+        document.getElementById("cancelButton").removeAttribute("href");
+
+        async function fetchPOST(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: "POST",
+                mode: "cors", 
+                cache: "no-cache", 
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(data)
+            });
+
+            return response.json();
+        }
+
+        fetchPOST("<%= linkPrefix %>/servers/<%= server._id %>/edit", {
+            shortDescription: document.getElementById("form_shortDescription").value,
+            longDescription: document.getElementById("longDesc").value,
+            invite: document.getElementById("form_inviteCode").value,
+            website: document.getElementById("form_website").value,
+            donationUrl: document.getElementById("form_donationUrl").value,
+
+            gaming: document.getElementById("gaming").checked,
+            music: document.getElementById("music").checked,
+            mediaEntertain : document.getElementById("mediaEntertain").checked,
+            createArts: document.getElementById("createArts").checked,
+            sciTech: document.getElementById("sciTech").checked,
+            edu: document.getElementById("edu").checked, 
+            fashBeaut: document.getElementById("fashBeaut").checked,
+            relIdentity: document.getElementById("relIdentity").checked,
+            travelCuis: document.getElementById("travelCuis").checked,
+            fitHealth: document.getElementById("fitHealth").checked,
+            finance: document.getElementById("finance").checked
+        })
+        .then(data => {
+            if (!data || data.error === true) {
+                document.getElementById("errors").style.display = "block";
+                document.getElementById("errorList").innerHTML = data.errors.map(err => `<li>${err}</li>`).join('');
+                scroll(0, 0);
+                document.getElementById("submitButton").classList.remove("is-loading");
+                document.getElementById("cancelButton").removeAttribute("disabled");
+                document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/servers/<%= server._id %>");
+            } else {
+                removeEventListener("beforeunload", warn);
+                window.location = "<%= linkPrefix %>/servers/<%= server._id %>";
+            }
+        });
+    }
 </script>
         <script src="/packages/monaco-editor/min/vs/loader.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>

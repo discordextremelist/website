@@ -105,4 +105,53 @@ export async function postMetric() {
     if (guild) metrics.gauge("del.server.memberCount", guild.memberCount);
 }
 
+export async function postWebMetric(type: string) {
+    switch (type) {
+        case "bot":
+            const bots: delBot[] = await global.db
+                .collection("bots")
+                .find()
+                .toArray();
+
+            settings.website.dev
+                ? metrics.gauge("del.website.dev.botCount", bots.length)
+                : metrics.gauge("del.website.botCount", bots.length);
+            break;
+        case "server":
+            const servers: delServer[] = await global.db
+                .collection("servers")
+                .find()
+                .toArray();
+
+            settings.website.dev
+                ? metrics.gauge("del.website.dev.serverCount", servers.length)
+                : metrics.gauge("del.website.serverCount", servers.length);
+            break;
+        case "template":
+            const templates: delTemplate[] = await global.db
+                .collection("templates")
+                .find()
+                .toArray();
+
+            settings.website.dev
+                ? metrics.gauge("del.website.dev.templateCount", templates.length)
+                : metrics.gauge("del.website.templateCount", templates.length);
+            break;
+        case "user":
+            const users: delUser[] = await global.db
+                .collection("users")
+                .find()
+                .toArray();
+
+            settings.website.dev
+                ? metrics.gauge("del.website.dev.userCount", users.length)
+                : metrics.gauge("del.website.userCount", users.length);
+            break;
+    }
+}
+
+setTimeout(() => {
+    postWebMetric("user");
+}, 5000);
+
 bot.login(settings.secrets.discord.token);

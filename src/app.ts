@@ -138,12 +138,24 @@ new Promise((resolve, reject) => {
                 .catch(() => false);
         }
 
-        global.redis = new (require("ioredis"))({
-            port: settings.secrets.redis.port,
-            host: settings.secrets.redis.host,
-            db: settings.secrets.redis.db,
-            password: settings.secrets.redis.passwd
-        });
+        let redisConfig;
+        if (settings.secrets.redis.sentinels.length > 0) {
+            redisConfig = {
+                sentinels: settings.secrets.redis.sentinels,
+                name: settings.secrets.redis.name,
+                db: settings.secrets.redis.db,
+                password: settings.secrets.redis.passwd
+            };
+        } else {
+            redisConfig = {
+                port: settings.secrets.redis.port,
+                host: settings.secrets.redis.host,
+                db: settings.secrets.redis.db,
+                password: settings.secrets.redis.passwd
+            };
+        }
+
+        global.redis = new (require("ioredis"))(redisConfig);
 
         global.redis.flushdb();
 
@@ -226,7 +238,7 @@ new Promise((resolve, reject) => {
         app.use(i18n.init);
 
         app.use("/auth", require("./Routes/authentication"));
-         
+
         // Locale handler.
         // Don't put anything below here that you don't want it's locale to be checked whatever (broken english kthx)
         app.use(["/:lang", "/"], languageHandler.homeHandler);
@@ -252,7 +264,7 @@ new Promise((resolve, reject) => {
             // @ts-ignore
             next(createError(404));
         });
-        
+
         app.use(
             (
                 err: { message: string; status?: number },

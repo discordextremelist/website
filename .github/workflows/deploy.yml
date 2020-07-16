@@ -13,7 +13,7 @@ jobs:
             - name: Build
               run: docker build -t ${{ secrets.DOCKER_URL }}/del/site:${GITHUB_REF#refs/tags} .
             - name: Push
-              run: docker push ${{ secrets.DOCKER_URL }}/del/site:${{ITHUB_REF#refs/tags}
+              run: docker push ${{ secrets.DOCKER_URL }}/del/site:${GITHUB_REF#refs/tags}
     deploy:
         needs: build
         runs-on: ubuntu-latest

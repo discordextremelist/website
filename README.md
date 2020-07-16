@@ -3,6 +3,7 @@
 ![Compile](https://github.com/discordextremelist/website/workflows/Compile/badge.svg)
 [![DeepScan grade](https://deepscan.io/api/teams/8370/projects/12889/branches/206397/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=8370&pid=12889&bid=206397)
 ![Snyk vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/discordextremelist/website)
+[![Code style](https://img.shields.io/badge/code%20style-prettier-ff69b4)](https://github.com/prettier/prettier)
 
 Licensing information viewable in the LICENSE file
 

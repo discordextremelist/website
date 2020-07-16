@@ -1,5 +1,6 @@
 # Discord Extreme List version 5.x.x
 
+![Compile](https://github.com/discordextremelist/website/workflows/Compile/badge.svg)
 [![DeepScan grade](https://deepscan.io/api/teams/8370/projects/12889/branches/206397/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=8370&pid=12889&bid=206397)
 ![Snyk vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/discordextremelist/website)
 
@@ -25,7 +26,7 @@ Licensing information viewable in the LICENSE file
 | Name                    | Definition                                                                                                   |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------ |
 | 🟢 Full Support         | This code has been tested and is currently actively supported on this version.                               |
-| 🟡 Partial Support      | This code has been previously tested on this version, however it is no longer supported and may stop working. |
+| 🟡 Partial Support      | This code has is actively tested however support is deprecated and this could break in future.               |
 | 🔴 No Support           | This code has not been tested on this version and may break at any time or outright not work.                |     
 
 ### nodemon (Optional)

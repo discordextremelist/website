@@ -1,4 +1,4 @@
-# Discord Extreme List version 5.x.x
+# DEL Website (v5.x.x +)
 
 ![Compile](https://github.com/discordextremelist/website/workflows/Compile/badge.svg)
 [![DeepScan grade](https://deepscan.io/api/teams/8370/projects/12889/branches/206397/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=8370&pid=12889&bid=206397)

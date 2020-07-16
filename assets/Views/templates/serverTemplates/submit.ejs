@@ -17,7 +17,7 @@
         <div class="container has-text-centered">
             <h1 class="title">
                 <span class="icon is-medium iconalign">
-                    <i aria-hidden="true" class="fad fa-plus has-text-default"></i>
+                    <i aria-hidden="true" class="fas fa-plus has-text-default"></i>
                 </span>
                 <br />
                 <span><%= title %></span>
@@ -132,7 +132,7 @@
                 <br />
                 <div class="field is-grouped">
                     <div class="buttons">
-                        <article id="submitButton" onclick="doSubmit();" class="button is-success">
+                        <a id="submitButton" onclick="doSubmit();" class="button is-success">
                             <span class="icon">
                               <i aria-hidden="true" class="fas fa-check-circle"></i>
                             </span>
@@ -209,7 +209,7 @@
                 document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/users/@me");
             } else {
                 removeEventListener("beforeunload", warn);
-                window.location = "<%= linkPrefix %>/users/@me";
+                window.location = `<%= linkPrefix %>/templates/${document.getElementById("id").value}`;
             }
         });
     }

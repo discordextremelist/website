@@ -5,9 +5,9 @@
     
     <title><%= title || "Page" %> - Discord Extreme List</title>
 
-    <link href="/img/logo.png" type="image/png" rel="shortcut-icon" />
-    <link href="/img/logo.png" type="image/png" rel="icon" />
-    <link href="/css/theme/<%= preferredTheme %>/standard.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
+    <link href="/img/logo.png" type="image/png" rel="shortcut-icon">
+    <link href="/img/logo.png" type="image/png" rel="icon">
+    <link href="/css/theme/<%= preferredTheme %>/standard.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet">
     <% if (pageType.bot === true) { 
         let color = "#b114ff"
         if(req.user) color = req.user.db.preferences.defaultColour
@@ -31,15 +31,15 @@
     <% if (req.user) { %><style type="text/css"><%= req.user.db.preferences.customGlobalCss %></style><% } %>
 
     <% if (usePreload === true) { %>
-        <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-        <link href="/fonts/fa/css/all.css?v=<%= cssVersion %>" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+        <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link href="/fonts/fa/css/all.css?v=<%= cssVersion %>" type="text/css" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <% } else { %>  
-        <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" media="screen" rel="stylesheet" />
-        <link href="/fonts/fa/css/all.css?v=<%= cssVersion %>" media="screen" rel="stylesheet" />     
+        <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" media="screen" rel="stylesheet">
+        <link href="/fonts/fa/css/all.css?v=<%= cssVersion %>" media="screen" rel="stylesheet">     
     <% } %>
 
     <link rel="manifest" href="/manifest.json">
-    <link rel="search" title="Search" href="<%= linkPrefix %>/search" />
+    <link rel="search" title="Search" href="<%= linkPrefix %>/search">
     <link rel="preconnect" href="https://cdn.discordapp.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://twemoji.maxcdn.com">
@@ -84,8 +84,8 @@
         <meta itemprop="description" content="<%= bot.shortDesc %>">
         <meta itemprop="image" content="<%= bot.avatar.url %>.png">
     
-        <meta name="author" content="<%= botOwner.fullUsername %>" />
-        <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan" />
+        <meta name="author" content="<%= botOwner.fullUsername %>">
+        <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan">
     <% } else if (pageType.server === true || pageType.template === true) { %>
         <%
             let listing;
@@ -128,8 +128,8 @@
         <meta itemprop="description" content="<%= listing.shortDesc %>">
         <meta itemprop="image" content="<%= listing.icon.url %>.png">
     
-        <meta name="author" content="<%= listingOwner ? listingOwner.fullUsername : 'Unknown' %>" />
-        <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan" />
+        <meta name="author" content="<%= listingOwner ? listingOwner.fullUsername : 'Unknown' %>">
+        <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan">
     <% } else { %>
         <meta name="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list, giving Discord bots and Discord servers of all sizes an extreme chance!" %>">
 
@@ -153,8 +153,8 @@
         <meta itemprop="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list, giving Discord bots and Discord servers of all sizes an extreme chance!" %>">
         <meta itemprop="image" content="https://discordextremelist.xyz/img/logo.png">
     
-        <meta name="author" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan" />
-        <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan" />
+        <meta name="author" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan">
+        <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan">
     <% } %>
 
     <meta name="apple-mobile-web-app-capable" content="yes">

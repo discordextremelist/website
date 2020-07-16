@@ -206,7 +206,7 @@
                 scroll(0, 0);
                 document.getElementById("submitButton").classList.remove("is-loading");
                 document.getElementById("cancelButton").removeAttribute("disabled");
-                document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/temrplates/<%= template._id %>");
+                document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/templates/<%= template._id %>");
             } else {
                 removeEventListener("beforeunload", warn);
                 window.location = "<%= linkPrefix %>/templates/<%= template._id %>";

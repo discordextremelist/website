@@ -51,7 +51,7 @@
     "passport": "^0.4.1",
     "passport-discord": "^0.1.4",
     "request": "^2.88.2",
-    "sanitize-html": "^1.26.0",
+    "sanitize-html": "^1.27.1",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.6"
   },
@@ -69,7 +69,7 @@
     "start": "node dist/src/app",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",
     "css-compile": "sh ./scripts/css_build.sh",
-    "editor-compile": "cp -r ./node_modules/monaco-editor/ ./assets/Public/packages/monaco-editor",
+    "editor-compile": "mkdir ./assets/Public/packages && cp -r ./node_modules/monaco-editor/ ./assets/Public/packages/monaco-editor",
     "setup": "node scripts/setup",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",

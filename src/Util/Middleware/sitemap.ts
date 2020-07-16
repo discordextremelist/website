@@ -37,6 +37,8 @@ const url = (path: string, lang: string) =>
         <xhtml:link rel="alternate" hreflang="en-nz" href="${base}/en-NZ${path}"/>
         <xhtml:link rel="alternate" hreflang="de"    href="${base}/de-DE${path}"/>
         <xhtml:link rel="alternate" hreflang="de-de" href="${base}/de-DE${path}"/>
+        <xhtml:link rel="alternate" hreflang="es"    href="${base}/es-ES${path}"/>
+        <xhtml:link rel="alternate" hreflang="es-es" href="${base}/es-ES${path}"/>
         <xhtml:link rel="alternate" hreflang="he"    href="${base}/he-IL${path}"/>
         <xhtml:link rel="alternate" hreflang="he-il" href="${base}/he-IL${path}"/>
         <xhtml:link rel="alternate" hreflang="hu"    href="${base}/hu-HU${path}"/>

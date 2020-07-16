@@ -199,6 +199,14 @@
                         <% } %>
                         <span><%= __({ phrase: "common.nav.language.de", locale: "de-DE" }) %></span>
                     </a>
+                    <a class="navbar-item" <% if (req.locale !== "es-ES") { %>href="<%= req.originalUrl.replace(req.locale, "es-ES") %>?setLang=t"<% } %> rel="nofollow" tabindex="0">
+                        <% if (req.locale === "es-ES") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.es-ES", locale: "es-ES" }) %></span>
+                    </a>
                     <a class="navbar-item" <% if (req.locale !== "he-IL") { %>href="<%= req.originalUrl.replace(req.locale, "he-IL") %>?setLang=t"<% } %> rel="nofollow" tabindex="0">
                         <% if (req.locale === "he-IL") { %>
                             <span title="Selected" class="icon has-text-success iconalign">

@@ -17,7 +17,7 @@
         <div class="container has-text-centered">
             <h1 class="title">
                 <span class="icon is-medium iconalign">
-                    <i aria-hidden="true" class="fad fa-plus has-text-default"></i>
+                    <i aria-hidden="true" class="fas fa-plus has-text-default"></i>
                 </span>
                 <br />
                 <span><%= title %></span>
@@ -160,7 +160,7 @@
                             </span>
                             <span><%= __("common.submit") %></span>
                         </a>
-                        <a id="cancelButton" href="<%= linkPrefix %>/" class="button is-danger">
+                        <a id="cancelButton" href="<%= linkPrefix %>/users/@me" class="button is-danger">
                             <span class="icon">
                               <i aria-hidden="true" class="fas fa-times-circle"></i>
                             </span>
@@ -230,10 +230,10 @@
                 scroll(0, 0);
                 document.getElementById("submitButton").classList.remove("is-loading");
                 document.getElementById("cancelButton").removeAttribute("disabled");
-                document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/servers/<%= server._id %>");
+                document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/users/@me");
             } else {
                 removeEventListener("beforeunload", warn);
-                window.location = "<%= linkPrefix %>/servers/<%= server._id %>";
+                window.location = `<%= linkPrefix %>/servers/${document.getElementById("id").value}`;
             }
         });
     }

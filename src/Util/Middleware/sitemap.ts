@@ -26,7 +26,7 @@ import * as serverCache from "../../Util/Services/serverCaching";
 import * as templateCache from "../../Util/Services/templateCaching";
 import * as userCache from "../../Util/Services/userCaching";
 
-const base = settings.website.url
+const base = settings.website.url;
 
 const url = (path: string, lang: string) =>
     `<url>
@@ -45,47 +45,63 @@ const url = (path: string, lang: string) =>
         <xhtml:link rel="alternate" hreflang="hu-hu" href="${base}/hu-HU${path}"/>
         <xhtml:link rel="alternate" hreflang="tr"    href="${base}/tr-TR${path}"/>
         <xhtml:link rel="alternate" hreflang="tr-tr" href="${base}/tr-TR${path}"/>
-    </url>`
+    </url>`;
 
-export const sitemapGenerator = async (req: Request, res: Response, next: () => void) => {
-    const lang = req.params.lang
-    const bots = await botCache.getAllBots()
-    const servers = await serverCache.getAllServers()
-    const templates = await templateCache.getAllTemplates()
-    const users = await userCache.getAllUsers()
-    res.set('Content-Type', 'text/xml')
-    
+export const sitemapGenerator = async (
+    req: Request,
+    res: Response,
+    next: () => void
+) => {
+    const lang = req.params.lang;
+    const bots = await botCache.getAllBots();
+    const servers = await serverCache.getAllServers();
+    const templates = await templateCache.getAllTemplates();
+    const users = await userCache.getAllUsers();
+    res.set("Content-Type", "text/xml");
+
     res.send(
-`<?xml version="1.0" encoding="UTF-8"?>
+        `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
-    ${url('', lang)}
-    ${url('/bots', lang)}
-    ${url('/servers', lang)}
-    ${url('/templates', lang)}
-    ${url('/search', lang)}
-    ${url('/widgetbot', lang)}
-    ${url('/docs', lang)}
-    ${url('/about', lang)}
-    ${url('/terms', lang)}
-    ${url('/privacy', lang)}
-    ${url('/cookies', lang)}
-    ${url('/guidelines', lang)}
-    ${bots.map(t => url(`/bots/${t.vanityUrl || t._id}`, lang)).join('\n    ')}
-    ${servers.map(t => url(`/servers/${t._id}`, lang)).join('\n    ')}
-    ${templates.map(t => url(`/templates/${t._id}`, lang)).join('\n    ')}
-    ${users.map(t => url(`/users/${t._id}`, lang)).join('\n    ')}
-</urlset>`)
+    ${url("", lang)}
+    ${url("/bots", lang)}
+    ${url("/servers", lang)}
+    ${url("/templates", lang)}
+    ${url("/search", lang)}
+    ${url("/widgetbot", lang)}
+    ${url("/docs", lang)}
+    ${url("/about", lang)}
+    ${url("/terms", lang)}
+    ${url("/privacy", lang)}
+    ${url("/cookies", lang)}
+    ${url("/guidelines", lang)}
+    ${bots
+        .map((t) => url(`/bots/${t.vanityUrl || t._id}`, lang))
+        .join("\n    ")}
+    ${servers.map((t) => url(`/servers/${t._id}`, lang)).join("\n    ")}
+    ${templates.map((t) => url(`/templates/${t._id}`, lang)).join("\n    ")}
+    ${users.map((t) => url(`/users/${t._id}`, lang)).join("\n    ")}
+</urlset>`
+    );
 };
 
-export const sitemapIndex = async (req: Request, res: Response, next: () => void) => {
-    res.set('Content-Type', 'text/xml')
-    
+export const sitemapIndex = async (
+    req: Request,
+    res: Response,
+    next: () => void
+) => {
+    res.set("Content-Type", "text/xml");
+
     res.send(
-`<?xml version="1.0" encoding="UTF-8"?>
+        `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    ${settings.website.locales.all.map(l => 
-    `<sitemap>
+    ${settings.website.locales.all
+        .map(
+            (l) =>
+                `<sitemap>
         <loc>${base}/${l}/sitemap.xml</loc>
-    </sitemap>`).join('\n     ')}
-</sitemapindex>`)
+    </sitemap>`
+        )
+        .join("\n     ")}
+</sitemapindex>`
+    );
 };

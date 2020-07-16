@@ -20,15 +20,47 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { Request, Response } from "express";
 import * as settings from "../../../settings.json";
 
-export const monacoIsStupid = (req: Request, res: Response, next: () => void) => {
-    if (req.originalUrl.includes("/vs/language/css/cssMode.js") && !req.originalUrl.includes(`${settings.website.url}packages/monaco-editor/min/vs/basic-languages/css/css.js`)) {
-        return res.redirect(`${settings.website.url}/packages/monaco-editor/min/vs/language/css/cssMode.js`);
-    } else if (req.originalUrl.includes("/vs/base/worker/workerMain.js") && !req.originalUrl.includes(`${settings.website.url}packages/monaco-editor/min/vs/base/worker/workerMain.js`)) {
-        return res.redirect(`${settings.website.url}/packages/monaco-editor/min/vs/base/worker/workerMain.js`);
-    } else if (req.originalUrl.includes("/vs/basic-languages/markdown/markdown.js") && !req.originalUrl.includes(`${settings.website.url}packages/monaco-editor/min/vs/basic-languages/markdown/markdown.js`)) {
-        return res.redirect(`${settings.website.url}/packages/monaco-editor/min/vs/basic-languages/markdown/markdown.js`);
-    } else if (req.originalUrl.includes("/vs/basic-languages/css/css.js") && !req.originalUrl.includes(`${settings.website.url}packages/monaco-editor/min/vs/basic-languages/css/css.js`)) {
-        return res.redirect(`${settings.website.url}/packages/monaco-editor/min/vs/basic-languages/css/css.js`);
+export const monacoIsStupid = (
+    req: Request,
+    res: Response,
+    next: () => void
+) => {
+    if (
+        req.originalUrl.includes("/vs/language/css/cssMode.js") &&
+        !req.originalUrl.includes(
+            `${settings.website.url}packages/monaco-editor/min/vs/basic-languages/css/css.js`
+        )
+    ) {
+        return res.redirect(
+            `${settings.website.url}/packages/monaco-editor/min/vs/language/css/cssMode.js`
+        );
+    } else if (
+        req.originalUrl.includes("/vs/base/worker/workerMain.js") &&
+        !req.originalUrl.includes(
+            `${settings.website.url}packages/monaco-editor/min/vs/base/worker/workerMain.js`
+        )
+    ) {
+        return res.redirect(
+            `${settings.website.url}/packages/monaco-editor/min/vs/base/worker/workerMain.js`
+        );
+    } else if (
+        req.originalUrl.includes("/vs/basic-languages/markdown/markdown.js") &&
+        !req.originalUrl.includes(
+            `${settings.website.url}packages/monaco-editor/min/vs/basic-languages/markdown/markdown.js`
+        )
+    ) {
+        return res.redirect(
+            `${settings.website.url}/packages/monaco-editor/min/vs/basic-languages/markdown/markdown.js`
+        );
+    } else if (
+        req.originalUrl.includes("/vs/basic-languages/css/css.js") &&
+        !req.originalUrl.includes(
+            `${settings.website.url}packages/monaco-editor/min/vs/basic-languages/css/css.js`
+        )
+    ) {
+        return res.redirect(
+            `${settings.website.url}/packages/monaco-editor/min/vs/basic-languages/css/css.js`
+        );
     } else {
         next();
     }

@@ -134,7 +134,10 @@ export async function postWebMetric(type: string) {
                 .toArray();
 
             settings.website.dev
-                ? metrics.gauge("del.website.dev.templateCount", templates.length)
+                ? metrics.gauge(
+                      "del.website.dev.templateCount",
+                      templates.length
+                  )
                 : metrics.gauge("del.website.templateCount", templates.length);
             break;
         case "user":

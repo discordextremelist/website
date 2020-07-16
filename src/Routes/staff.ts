@@ -137,7 +137,9 @@ router.get(
             .sort({ date: -1 })
             .toArray();
 
-        const logs = logsUnfiltered.filter(log => log.type !== "GAME_HIGHSCORE_UPDATE");
+        const logs = logsUnfiltered.filter(
+            (log) => log.type !== "GAME_HIGHSCORE_UPDATE"
+        );
 
         if (!req.query.page) req.query.page = "1";
 
@@ -882,8 +884,11 @@ router.get(
         if (req.params.id === req.user.id) return res.redirect("/staff");
 
         if (!req.query.token) return res.json({});
-        // @ts-ignore
-        const tokenCheck = await tokenManager.verifyToken(req.user.id, req.query.token);
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            // @ts-ignore
+            req.query.token
+        );
         if (tokenCheck === false) return res.json({});
 
         let user: delUser | undefined = await global.db

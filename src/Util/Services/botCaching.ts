@@ -25,7 +25,7 @@ export async function getBot(id: string): Promise<delBot> {
 
     const parsedBot = JSON.parse(bot);
     if (parsedBot.id) parsedBot._id = parsedBot.id;
-    
+
     return parsedBot;
 }
 

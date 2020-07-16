@@ -37,7 +37,7 @@ router.get("/", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.search");
 
     let search;
-    req.query.q ? search = req.query.q : search = "";
+    req.query.q ? (search = req.query.q) : (search = "");
 
     return res.render("templates/search", {
         title: res.__("common.search"),
@@ -92,7 +92,8 @@ router.post("/", variables, async (req: Request, res: Response) => {
             ...users
                 .filter(
                     ({ _id, fullUsername }) =>
-                        _id === query || fullUsername.toLowerCase().indexOf(query) >= 0
+                        _id === query ||
+                        fullUsername.toLowerCase().indexOf(query) >= 0
                 )
                 .map((user) => {
                     return ejs.renderFile(renderPath + "/cards/userCard.ejs", {

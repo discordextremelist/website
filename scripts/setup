@@ -216,30 +216,42 @@ const libraries = [
 setTimeout(async () => {
     console.log(`Adding ${libraries.length} libraries...`);
     for (const lib of libraries) {
-        const success = await global.db.collection("libraries").insertOne({
-            _id: lib.name,
-            language: lib.language,
-            links: {
-                docs: lib.links.docs,
-                repo: lib.links.repo
-            }
-        }).then(() => true).catch(() => false);
+        const success = await global.db
+            .collection("libraries")
+            .insertOne({
+                _id: lib.name,
+                language: lib.language,
+                links: {
+                    docs: lib.links.docs,
+                    repo: lib.links.repo
+                }
+            })
+            .then(() => true)
+            .catch(() => false);
     }
     console.log("Done!");
 
     console.log("Inserting default web options...");
-    await global.db.collection("webOptions").insertOne({
-        _id: "ddosMode",
-        active: false
-    }).then(() => true).catch(() => false);
+    await global.db
+        .collection("webOptions")
+        .insertOne({
+            _id: "ddosMode",
+            active: false
+        })
+        .then(() => true)
+        .catch(() => false);
 
-    await global.db.collection("webOptions").insertOne({
-        _id: "announcement",
-        active: false,
-        message: "",
-        colour: "",
-        foreground: ""
-    }).then(() => true).catch(() => false);
+    await global.db
+        .collection("webOptions")
+        .insertOne({
+            _id: "announcement",
+            active: false,
+            message: "",
+            colour: "",
+            foreground: ""
+        })
+        .then(() => true)
+        .catch(() => false);
 
     console.log("Done!");
     process.exit(0);

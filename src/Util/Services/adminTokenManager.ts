@@ -30,7 +30,7 @@ export async function tokenResetAll() {
         .findOne({ _id: "tokenRefreshing" });
 
     if (!tokenRefreshing) {
-        const validUntil = (Date.now() + 300000);
+        const validUntil = Date.now() + 300000;
 
         return await global.db.collection("webOptions").insertOne({
             _id: "tokenRefreshing",
@@ -40,7 +40,7 @@ export async function tokenResetAll() {
     }
 
     if (tokenRefreshing.validUntil <= Date.now()) {
-        const validUntil = (Date.now() + 300000);
+        const validUntil = Date.now() + 300000;
 
         await global.db.collection("webOptions").updateOne(
             { _id: "tokenRefreshing" },
@@ -61,7 +61,8 @@ export async function tokenResetAll() {
                 if (!token) {
                     await global.db.collection("adminTokens").insertOne({
                         _id: user._id,
-                        token: "DELadminKey_" +
+                        token:
+                            "DELadminKey_" +
                             crypto.randomBytes(16).toString("hex") +
                             `-${user._id}`,
                         lastUpdate: Date.now(),
@@ -72,7 +73,8 @@ export async function tokenResetAll() {
                         { _id: user._id },
                         {
                             $set: {
-                                token: "DELadminKey_" +
+                                token:
+                                    "DELadminKey_" +
                                     crypto.randomBytes(16).toString("hex") +
                                     `-${user._id}`,
                                 lastUpdate: Date.now(),
@@ -94,7 +96,8 @@ export async function tokenReset(id: string) {
     if (!token) {
         return await global.db.collection("adminTokens").insertOne({
             _id: id,
-            token: "DELadminKey_" +
+            token:
+                "DELadminKey_" +
                 crypto.randomBytes(16).toString("hex") +
                 `-${id}`,
             lastUpdate: Date.now()
@@ -104,7 +107,8 @@ export async function tokenReset(id: string) {
             { _id: id },
             {
                 $set: {
-                    token: "DELadminKey_" +
+                    token:
+                        "DELadminKey_" +
                         crypto.randomBytes(16).toString("hex") +
                         `-${id}`,
                     lastUpdate: Date.now()
@@ -116,14 +120,16 @@ export async function tokenReset(id: string) {
 
 export async function verifyToken(id: string, token: string) {
     const adminToken = await global.db
-            .collection("adminTokens")
-            .findOne({ _id: id });
-    
+        .collection("adminTokens")
+        .findOne({ _id: id });
+
     if (!adminToken) return false;
 
     let pass = false;
-    adminToken.token === token && adminToken._id === id ? pass = true : pass = false;
-    return pass
+    adminToken.token === token && adminToken._id === id
+        ? (pass = true)
+        : (pass = false);
+    return pass;
 }
 
 setInterval(async () => {

@@ -162,7 +162,9 @@ export const variables = async (
             );
         }
 
-        req.user.db.preferences.theme === 0 || !req.user.db.preferences.theme ? res.locals.preferredTheme = "black" : res.locals.preferredTheme = "dark";
+        req.user.db.preferences.theme === 0 || !req.user.db.preferences.theme
+            ? (res.locals.preferredTheme = "black")
+            : (res.locals.preferredTheme = "dark");
         if (res.locals.preferredTheme === "dark") {
             res.locals.siteThemeColour = "#131313";
             res.locals.siteThemeColourDarker = "#131313";
@@ -172,7 +174,9 @@ export const variables = async (
         if (isBanned) return res.status(403).render("banned", { req });
     }
 
-    req.session.logoutJust === true ? req.session.logoutJustCont = true : req.session.logoutJustCont = false;
+    req.session.logoutJust === true
+        ? (req.session.logoutJustCont = true)
+        : (req.session.logoutJustCont = false);
     req.session.logoutJust = false;
 
     next();

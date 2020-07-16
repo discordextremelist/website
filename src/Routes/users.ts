@@ -43,7 +43,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
                 req.session.logoutJustCont = false;
                 return res.redirect("/");
             }
-            
+
             return res.redirect("/auth/login");
         }
 
@@ -296,35 +296,54 @@ router.post(
     }
 );
 
-router.get("/:id/src", variables, permission.auth, permission.admin, async (req: Request, res: Response, next) => {
-    if (req.params.id === "@me") {
-        if (!req.user) return res.redirect("/auth/login");
-        req.params.id = req.user.id;
+router.get(
+    "/:id/src",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response, next) => {
+        if (req.params.id === "@me") {
+            if (!req.user) return res.redirect("/auth/login");
+            req.params.id = req.user.id;
+        }
+
+        if (!req.query.token) return res.json({});
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            // @ts-ignore
+            req.query.token
+        );
+        if (tokenCheck === false) return res.json({});
+
+        const cache: delUser | undefined = await userCache.getUser(
+            req.params.id
+        );
+
+        const db: delUser | undefined = await global.db
+            .collection("users")
+            .findOne({ _id: req.params.id });
+
+        return res.json({ cache: cache, db: db });
     }
+);
 
-    if (!req.query.token) return res.json({});
-    // @ts-ignore
-    const tokenCheck = await tokenManager.verifyToken(req.user.id, req.query.token);
-    if (tokenCheck === false) return res.json({});
-    
+router.get(
+    "/@me/src/session",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response, next) => {
+        if (!req.query.token) return res.json({});
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            // @ts-ignore
+            req.query.token
+        );
+        if (tokenCheck === false) return res.json({});
 
-    const cache: delUser | undefined = await userCache.getUser(req.params.id);
-
-    const db: delUser | undefined = await global.db
-        .collection("users")
-        .findOne({ _id: req.params.id });;
-
-    return res.json({ cache: cache, db: db });
-});
-
-router.get("/@me/src/session", variables, permission.auth, permission.admin, async (req: Request, res: Response, next) => {
-    if (!req.query.token) return res.json({});
-    // @ts-ignore
-    const tokenCheck = await tokenManager.verifyToken(req.user.id, req.query.token);
-    if (tokenCheck === false) return res.json({});
-
-    return res.json(req.user);
-});
+        return res.json(req.user);
+    }
+);
 
 router.get("/profile/:id", (req: Request, res: Response, next) => {
     res.redirect("/" + req.params.id);
@@ -505,10 +524,12 @@ router.get(
             title: res.__("common.nav.me.snakeLB"),
             subtitle: res.__("common.nav.me.snakeLB.subtitle", "25"),
             req,
-            users: (users.sort((a, b) => b.game.snakes.maxScore - a.game.snakes.maxScore)).splice(0, 25)
+            users: users
+                .sort((a, b) => b.game.snakes.maxScore - a.game.snakes.maxScore)
+                .splice(0, 25)
         });
     }
-)
+);
 
 router.get(
     "/profile/game/snakes",
@@ -618,7 +639,10 @@ router.post(
         let gamePreferences: boolean, experiments: boolean, theme: number;
 
         // Refer to docs/THEME.md in the root directory of this project.
-        req.body.theme === "black" || !["black", "dark"].includes(req.body.theme) ? theme = 0 : theme = 1;
+        req.body.theme === "black" ||
+        !["black", "dark"].includes(req.body.theme)
+            ? (theme = 0)
+            : (theme = 1);
 
         if (req.body.noGames === "on") {
             gamePreferences = false;

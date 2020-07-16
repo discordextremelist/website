@@ -24,10 +24,10 @@ import * as settings from "../../../settings.json";
 
 export const auth = (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {
-                req.session.logoutJust = false;
-                req.session.logoutJustCont = false;
-                return res.redirect("/");
-            }
+        req.session.logoutJust = false;
+        req.session.logoutJustCont = false;
+        return res.redirect("/");
+    }
 
     if (req.user) {
         next();
@@ -38,10 +38,10 @@ export const auth = (req: Request, res: Response, next: () => void) => {
 
 export const member = (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {
-                req.session.logoutJust = false;
-                req.session.logoutJustCont = false;
-                return res.redirect("/");
-            }
+        req.session.logoutJust = false;
+        req.session.logoutJustCont = false;
+        return res.redirect("/");
+    }
 
     if (
         !bot.guilds.cache
@@ -60,7 +60,7 @@ export const member = (req: Request, res: Response, next: () => void) => {
             headers: {
                 "Content-Type": "application/json",
                 "Content-Length": data.length,
-                "Authorization": "Bot " + settings.secrets.discord.token
+                Authorization: "Bot " + settings.secrets.discord.token
             }
         };
 
@@ -83,16 +83,16 @@ export const member = (req: Request, res: Response, next: () => void) => {
         msReq.write(data);
         msReq.end();
     }
-    
+
     next();
 };
 
 export const mod = (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {
-                req.session.logoutJust = false;
-                req.session.logoutJustCont = false;
-                return res.redirect("/");
-            }
+        req.session.logoutJust = false;
+        req.session.logoutJustCont = false;
+        return res.redirect("/");
+    }
 
     if (req.user) {
         if (req.user.db.rank.mod === true) {
@@ -111,10 +111,10 @@ export const mod = (req: Request, res: Response, next: () => void) => {
 
 export const assistant = (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {
-                req.session.logoutJust = false;
-                req.session.logoutJustCont = false;
-                return res.redirect("/");
-            }
+        req.session.logoutJust = false;
+        req.session.logoutJustCont = false;
+        return res.redirect("/");
+    }
 
     if (req.user) {
         if (req.user.db.rank.assistant === true) {
@@ -133,10 +133,10 @@ export const assistant = (req: Request, res: Response, next: () => void) => {
 
 export const admin = (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {
-                req.session.logoutJust = false;
-                req.session.logoutJustCont = false;
-                return res.redirect("/");
-            }
+        req.session.logoutJust = false;
+        req.session.logoutJustCont = false;
+        return res.redirect("/");
+    }
 
     if (req.user) {
         if (req.user.db.rank.admin === true) {

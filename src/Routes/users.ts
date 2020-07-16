@@ -485,6 +485,23 @@ router.get(
 );
 
 router.get(
+    "/game/snake/leaderboard",
+    variables,
+    async (req: Request, res: Response, next) => {
+        res.locals.premidPageInfo = res.__("premid.snake.lb");
+
+        const users = await userCache.getAllUsers();
+
+        res.render("templates/users/snakeLB", {
+            title: res.__("common.nav.me.snakeLB"),
+            subtitle: res.__("common.nav.me.snakeLB.subtitle", "25"),
+            req,
+            users: (users.sort((a, b) => b.game.snakes.maxScore - a.game.snakes.maxScore)).splice(0, 25)
+        });
+    }
+)
+
+router.get(
     "/profile/game/snakes",
     variables,
     permission.auth,

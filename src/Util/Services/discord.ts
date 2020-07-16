@@ -117,6 +117,20 @@ export async function postWebMetric(type: string) {
                 ? metrics.gauge("del.website.dev.botCount", bots.length)
                 : metrics.gauge("del.website.botCount", bots.length);
             break;
+        case "bot_unapproved":
+            const bots: delBot[] = await global.db
+                .collection("bots")
+                .find()
+                .toArray();
+            
+            const unapprovedBots = bots.filter(
+                    (b) => !b.status.approved && !b.status.archived
+                )
+            
+            settings.website.dev
+                ? metrics.gauge("del.website.dev.botCount.unapproved", unapprovedBots.length)
+                : metrics.gauge("del.website.botCount.unapproved", unapprovedBots.length);
+            break;
         case "server":
             const servers: delServer[] = await global.db
                 .collection("servers")

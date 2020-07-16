@@ -106,33 +106,47 @@ export async function postMetric() {
 }
 
 export async function postWebMetric(type: string) {
-    switch (type) {
-        case "bot":
-            const bots: delBot[] = await global.db
+    const bots: delBot[] = await global.db
                 .collection("bots")
                 .find()
                 .toArray();
-
+    
+    const servers: delServer[] = await global.db
+                .collection("servers")
+                .find()
+                .toArray();
+    
+    const templates: delTemplate[] = await global.db
+                .collection("templates")
+                .find()
+                .toArray();
+    
+    const users: delUser[] = await global.db
+                .collection("users")
+                .find()
+                .toArray();
+    
+    switch (type) {
+        case "bot":
             settings.website.dev
                 ? metrics.gauge("del.website.dev.botCount", bots.length)
                 : metrics.gauge("del.website.botCount", bots.length);
             break;
+        case "bot_unapproved":
+            const unapprovedBots = bots.filter(
+                    (b) => !b.status.approved && !b.status.archived
+                )
+            
+            settings.website.dev
+                ? metrics.gauge("del.website.dev.botCount.unapproved", unapprovedBots.length)
+                : metrics.gauge("del.website.botCount.unapproved", unapprovedBots.length);
+            break;
         case "server":
-            const servers: delServer[] = await global.db
-                .collection("servers")
-                .find()
-                .toArray();
-
             settings.website.dev
                 ? metrics.gauge("del.website.dev.serverCount", servers.length)
                 : metrics.gauge("del.website.serverCount", servers.length);
             break;
         case "template":
-            const templates: delTemplate[] = await global.db
-                .collection("templates")
-                .find()
-                .toArray();
-
             settings.website.dev
                 ? metrics.gauge(
                       "del.website.dev.templateCount",
@@ -141,11 +155,6 @@ export async function postWebMetric(type: string) {
                 : metrics.gauge("del.website.templateCount", templates.length);
             break;
         case "user":
-            const users: delUser[] = await global.db
-                .collection("users")
-                .find()
-                .toArray();
-
             settings.website.dev
                 ? metrics.gauge("del.website.dev.userCount", users.length)
                 : metrics.gauge("del.website.userCount", users.length);

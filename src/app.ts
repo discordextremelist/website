@@ -172,6 +172,12 @@ new Promise((resolve, reject) => {
         await ddosMode.updateCache();
         await botStatsUpdate();
         await tokenManager.tokenResetAll();
+    
+        await discord.postWebMetric("bot");
+        await discord.postWebMetric("bot_unapproved");
+        await discord.postWebMetric("server");
+        await discord.postWebMetric("template");
+        await discord.postWebMetric("user");
 
         setTimeout(async () => {
             await discord.postMetric();

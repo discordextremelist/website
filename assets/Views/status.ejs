@@ -38,7 +38,7 @@
                         <canvas class="snakeNormal" style="background-color: black;" width="400" height="400" id="game"></canvas>
                         <script>
                             addEventListener("keydown", function(e) {
-                                if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+                                if ([32, 37, 38, 39, 40, 87, 65, 83, 68].indexOf(e.keyCode) > -1) {
                                     e.preventDefault();
                                 }
                             }, false);
@@ -159,25 +159,29 @@
                                 });
                             }
                             document.addEventListener("keydown", function(e) {
-                                // left arrow key
-                                if (e.which === 37 && snake.dx === 0) {
-                                    snake.dx = -grid;
-                                    snake.dy = 0;
-                                }
-                                // up arrow key
-                                else if (e.which === 38 && snake.dy === 0) {
+                                // Go up
+                                // Arrow - 38, W - 87
+                                if ((e.which === 38 || e.which === 87) && snake.dy === 0) {
                                     snake.dy = -grid;
                                     snake.dx = 0;
                                 }
-                                // right arrow key
-                                else if (e.which === 39 && snake.dx === 0) {
-                                    snake.dx = grid;
+                                // Turn left
+                                // Arrow - 37, A - 65
+                                else if ((e.which === 37 || e.which === 65) && snake.dx === 0) {
+                                    snake.dx = -grid;
                                     snake.dy = 0;
                                 }
-                                // down arrow key
-                                else if (e.which === 40 && snake.dy === 0) {
+                                // Go down
+                                // Arrow - 40, S - 87
+                                else if ((e.which === 40 || e.which === 83) && snake.dy === 0) {
                                     snake.dy = grid;
                                     snake.dx = 0;
+                                }
+                                // Turn right
+                                // Arrow - 39, D - 68
+                                else if ((e.which === 39 || e.which === 68) && snake.dx === 0) {
+                                    snake.dx = grid;
+                                    snake.dy = 0;
                                 }
                             });
 

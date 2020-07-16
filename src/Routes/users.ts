@@ -37,7 +37,16 @@ const router = express.Router();
 
 router.get("/:id", variables, async (req: Request, res: Response, next) => {
     if (req.params.id === "@me") {
-        if (!req.user) return res.redirect("/auth/login");
+        if (!req.user) {
+            if (req.session.logoutJustCont === true) {
+                req.session.logoutJust = false;
+                req.session.logoutJustCont = false;
+                return res.redirect("/");
+            }
+            
+            return res.redirect("/auth/login");
+        }
+
         req.params.id = req.user.id;
     }
 

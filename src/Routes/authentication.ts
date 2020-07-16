@@ -209,6 +209,7 @@ router.get(
 
 router.get("/logout", async (req: Request, res: Response, next) => {
     if (!req.user.impersonator) {
+        req.session.logoutJust = true;
         if (req.user.db.admin) await tokenManager.tokenReset(req.user.id);
 
         await req.logout();

@@ -1,0 +1,5 @@
+<tr <% if (req.user && (req.user.id === user._id)) { %>class="has-text-default"<% } %>>
+    <td><a <% if (req.user && (req.user.id === user._id)) { %>class="has-text-default"<% } else { %>class="has-text-white"<% } %> href="/users/<%= user._id %>"><%= user.fullUsername %></a></td>
+    <td>#<%= user.position %></td>
+    <td><%= user.game.snakes.maxScore %></td>
+</tr>

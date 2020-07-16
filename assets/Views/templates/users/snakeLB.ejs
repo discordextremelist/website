@@ -8,6 +8,10 @@
         defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
         foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
     }
+
+    for (i = 0; i < users.length; i++) {
+        users[i].position = i + 1;
+    }
 %>
 <section class="hero is-black">
     <div class="hero-body">
@@ -32,11 +36,7 @@
                   <th>Place</th>
                   <th>Score</th>
                 </tr>
-                <%- users.map(user => `<tr>
-                    <td>${user.fullUsername}</td>
-                    <td>${user.position}</td>
-                    <td>${user.game.snakes.maxScore}</td>
-                </tr>`).join(''); %>
+                <%- users.map(user => include("./snakeLBtr.ejs", { user })).join(''); %>
               </table>
         </div>     
     </div>

@@ -23,6 +23,12 @@ import * as https from "https";
 import * as settings from "../../../settings.json";
 
 export const auth = (req: Request, res: Response, next: () => void) => {
+    if (req.session.logoutJustCont === true) {
+                req.session.logoutJust = false;
+                req.session.logoutJustCont = false;
+                return res.redirect("/");
+            }
+
     if (req.user) {
         next();
     } else {
@@ -31,6 +37,12 @@ export const auth = (req: Request, res: Response, next: () => void) => {
 };
 
 export const member = (req: Request, res: Response, next: () => void) => {
+    if (req.session.logoutJustCont === true) {
+                req.session.logoutJust = false;
+                req.session.logoutJustCont = false;
+                return res.redirect("/");
+            }
+
     if (
         !bot.guilds.cache
             .get(settings.guild.main)
@@ -76,6 +88,12 @@ export const member = (req: Request, res: Response, next: () => void) => {
 };
 
 export const mod = (req: Request, res: Response, next: () => void) => {
+    if (req.session.logoutJustCont === true) {
+                req.session.logoutJust = false;
+                req.session.logoutJustCont = false;
+                return res.redirect("/");
+            }
+
     if (req.user) {
         if (req.user.db.rank.mod === true) {
             next();
@@ -92,6 +110,12 @@ export const mod = (req: Request, res: Response, next: () => void) => {
 };
 
 export const assistant = (req: Request, res: Response, next: () => void) => {
+    if (req.session.logoutJustCont === true) {
+                req.session.logoutJust = false;
+                req.session.logoutJustCont = false;
+                return res.redirect("/");
+            }
+
     if (req.user) {
         if (req.user.db.rank.assistant === true) {
             next();
@@ -108,6 +132,12 @@ export const assistant = (req: Request, res: Response, next: () => void) => {
 };
 
 export const admin = (req: Request, res: Response, next: () => void) => {
+    if (req.session.logoutJustCont === true) {
+                req.session.logoutJust = false;
+                req.session.logoutJustCont = false;
+                return res.redirect("/");
+            }
+
     if (req.user) {
         if (req.user.db.rank.admin === true) {
             next();

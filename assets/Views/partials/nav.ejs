@@ -318,6 +318,12 @@
                                 </span>
                                 <span><%= __("common.nav.me.playSnake") %></span>
                             </a>
+                            <a class="navbar-item" href="<%= linkPrefix %>/users/game/snake/leaderboard" tabindex="0">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-podium-star" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("common.nav.me.snakeLB") %></span>
+                            </a>
                         <% } %>
                         <% if (mobile) { %>
                             <% if (ddosMode === true) { %>

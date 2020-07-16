@@ -172,5 +172,8 @@ export const variables = async (
         if (isBanned) return res.status(403).render("banned", { req });
     }
 
+    req.session.logoutJust === true ? req.session.logoutJustCont = true : req.session.logoutJustCont = false;
+    req.session.logoutJust = false;
+
     next();
 };

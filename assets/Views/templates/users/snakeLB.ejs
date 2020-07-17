@@ -29,7 +29,7 @@
     </div>
     </section>
     <div class="container">
-        <div style="text-align: center;" class="section content">
+        <div style="text-align: center;" class="section content" style="overflow: hidden;">
             <table style="width:100%">
                 <tr class="has-background-primary">
                   <th>Username</th>
@@ -40,4 +40,14 @@
               </table>
         </div>     
     </div>
+    <style>
+        table {
+            display: block;
+            width: 100%;
+            overflow: auto;
+            word-break: normal;
+            word-break: keep-all;
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
 <%- include("../../partials/footer.ejs") %>

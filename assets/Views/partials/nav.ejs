@@ -328,14 +328,14 @@
                         <% if (mobile) { %>
                             <% if (ddosMode === true) { %>
                                 <a class="navbar-item has-text-danger" title="<%= __("common.notice.ddosMode") %>" disabled tabindex="0">
-                                    <span class="icon">
+                                    <span class="icon iconalign">
                                         <i class="fad fa-sign-out" aria-hidden="true"></i>
                                     </span>
                                     <span><%= __("common.logout") %></span>
                                 </a>
                             <% } else { %>
                                 <a class="navbar-item has-text-danger" href="/auth/logout" tabindex="0">
-                                    <span class="icon">
+                                    <span class="icon iconalign">
                                         <i class="fad fa-sign-out" aria-hidden="true"></i>
                                     </span>
                                     <span><%= __("common.logout") %></span>
@@ -385,14 +385,14 @@
                 <% } else if (!req.user) { %>
                     <% if (ddosMode === true) { %>
                         <a class="has-text-blurple" title="<%= __("common.notice.ddosMode") %>" disabled>
-                            <span class="icon">
+                            <span class="icon iconalign">
                                 <i class="fab fa-discord" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.login") %></span>
                         </a>
                     <% } else { %>
                         <a class="has-text-blurple" href="/auth/login">
-                            <span class="icon">
+                            <span class="icon iconalign">
                                 <i class="fab fa-discord" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.login") %></span>

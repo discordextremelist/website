@@ -71,7 +71,7 @@ export const variables = async (
 
     req.session.redirectTo = req.originalUrl;
     req.del = releaseInfo;
-    req.del.node = "us-node"; // will be updated in a bit:tm: (*cough* spoiler)
+    req.del.node = "Unavailable"; // will be updated in a bit:tm: (*cough* spoiler)
     res.locals.colour = color;
     res.locals.premidPageInfo = "";
     res.locals.hideLogin = false;

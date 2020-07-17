@@ -74,6 +74,7 @@ export const sitemapGenerator = async (
     ${url("/privacy", lang)}
     ${url("/cookies", lang)}
     ${url("/guidelines", lang)}
+    ${url("/auth/login", lang)}
     ${bots
         .map((t) => url(`/bots/${t.vanityUrl || t._id}`, lang))
         .join("\n    ")}

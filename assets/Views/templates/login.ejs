@@ -1,0 +1,64 @@
+<%- include("../partials/header.ejs") %>
+<%- include("../partials/nav.ejs") %>
+<script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://discordextremelist.xyz/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Login",
+                "item": "https://discordextremelist.xyz/login"
+            }
+        ]
+    }
+</script>
+<section class="hero is-black">
+    <div class="hero-body">
+        <br />
+        <div class="container has-text-centered">
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-info-circle has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
+        </div>
+    </div>
+    </section>
+    <div class="container">
+        <div class="section">
+            <label class="checkbox">
+                <input id="joinGuild" type="checkbox" checked="checked">
+                <%= __("common.login.join") %>
+            </label>
+            <p style="padding-top: 15px; padding-bottom: 10px" class="has-text-info"><%= __("common.login.notice") %></p>
+            <a onclick="doLogin();" class="button is-success is-large is-fullwidth">
+                <span class="icon">
+                    <i aria-hidden="true" class="fad fa-login fa-1x"></i>
+                </span>
+                <span>
+                    <%= __("common.login.continue") %>
+                </span>
+            </a>
+        </div>
+    </div>
+    <script>
+        function doLogin() {
+            if (document.getElementById("joinGuild").checked) {
+                window.location = "/auth/login/continue?joinGuild=t";
+            } else {
+                window.location = "/auth/login/continue";
+            }
+        }
+    </script>
+<%- include("../partials/footer.ejs") %>

@@ -56,7 +56,7 @@ router.use(
     })
 );
 
-router.get("/login", passport.authenticate("discord"));
+router.get("/login/continue", passport.authenticate("discord"));
 
 router.get(
     "/login/callback",

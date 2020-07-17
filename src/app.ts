@@ -243,6 +243,16 @@ new Promise((resolve, reject) => {
 
         app.use(i18n.init);
 
+        app.get("/:lang/auth/login", languageHandler.globalHandler, variables, (req: Request, res: Response, next) => {
+            res.locals.premidPageInfo = res.__("premid.login");
+        
+            res.render("templates/login", {
+                title: res.__("common.login.short"),
+                subtitle: res.__("common.login.subtitle"),
+                req
+            });
+        });
+
         app.use("/auth", require("./Routes/authentication"));
 
         // Locale handler.

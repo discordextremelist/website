@@ -106,26 +106,23 @@ export async function postMetric() {
 }
 
 export async function postWebMetric(type: string) {
-    const bots: delBot[] = await global.db
-                .collection("bots")
-                .find()
-                .toArray();
-    
+    const bots: delBot[] = await global.db.collection("bots").find().toArray();
+
     const servers: delServer[] = await global.db
-                .collection("servers")
-                .find()
-                .toArray();
-    
+        .collection("servers")
+        .find()
+        .toArray();
+
     const templates: delTemplate[] = await global.db
-                .collection("templates")
-                .find()
-                .toArray();
-    
+        .collection("templates")
+        .find()
+        .toArray();
+
     const users: delUser[] = await global.db
-                .collection("users")
-                .find()
-                .toArray();
-    
+        .collection("users")
+        .find()
+        .toArray();
+
     switch (type) {
         case "bot":
             settings.website.dev
@@ -134,12 +131,18 @@ export async function postWebMetric(type: string) {
             break;
         case "bot_unapproved":
             const unapprovedBots = bots.filter(
-                    (b) => !b.status.approved && !b.status.archived
-                )
-            
+                (b) => !b.status.approved && !b.status.archived
+            );
+
             settings.website.dev
-                ? metrics.gauge("del.website.dev.botCount.unapproved", unapprovedBots.length)
-                : metrics.gauge("del.website.botCount.unapproved", unapprovedBots.length);
+                ? metrics.gauge(
+                      "del.website.dev.botCount.unapproved",
+                      unapprovedBots.length
+                  )
+                : metrics.gauge(
+                      "del.website.botCount.unapproved",
+                      unapprovedBots.length
+                  );
             break;
         case "server":
             settings.website.dev
@@ -162,8 +165,9 @@ export async function postWebMetric(type: string) {
     }
 }
 
-setTimeout(() => {
+setInterval(() => {
     postWebMetric("user");
+    postWebMetric("bot_unapproved");
 }, 5000);
 
 bot.login(settings.secrets.discord.token);

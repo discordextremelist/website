@@ -44,6 +44,42 @@ export const monacoIsStupid = (
             `${settings.website.url}/packages/monaco-editor/min/vs/base/worker/workerMain.js`
         );
     } else if (
+        req.originalUrl.includes("/vs/editor/editor.main.css") &&
+        !req.originalUrl.includes(
+            `${settings.website.url}packages/monaco-editor/min/vs/editor/editor.main.css`
+        )
+    ) {
+        return res.redirect(
+            `${settings.website.url}/packages/monaco-editor/min/vs/editor/editor.main.css`
+        );
+    } else if (
+        req.originalUrl.includes("/vs/editor/editor.main.js") &&
+        !req.originalUrl.includes(
+            `${settings.website.url}packages/monaco-editor/min/vs/editor/editor.main.js`
+        )
+    ) {
+        return res.redirect(
+            `${settings.website.url}/packages/monaco-editor/min/vs/editor/editor.main.js`
+        );
+    } else if (
+        req.originalUrl.includes("/vs/editor/editor.main.nls.js") &&
+        !req.originalUrl.includes(
+            `${settings.website.url}packages/monaco-editor/min/vs/editor/editor.main.nls.js`
+        )
+    ) {
+        return res.redirect(
+            `${settings.website.url}/packages/monaco-editor/min/vs/editor/editor.main.nls.js`
+        );
+    } else if (
+        req.originalUrl.includes("/vs/loader.js") &&
+        !req.originalUrl.includes(
+            `${settings.website.url}packages/monaco-editor/min/vs/loader.js`
+        )
+    ) {
+        return res.redirect(
+            `${settings.website.url}/packages/monaco-editor/min/vs/loader.js`
+        );
+    } else if (
         req.originalUrl.includes("/vs/basic-languages/markdown/markdown.js") &&
         !req.originalUrl.includes(
             `${settings.website.url}packages/monaco-editor/min/vs/basic-languages/markdown/markdown.js`

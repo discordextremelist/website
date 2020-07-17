@@ -104,11 +104,11 @@ router.post(
                     );
                 }
 
-                let invalidURL = 0;
-
                 if (req.body.website && !/^https:\/\//.test(req.body.website)) {
                     error = true;
-                    invalidURL = 1;
+                    errors.push(
+                        res.__("common.error.listing.arr.invalidURL.website")
+                    );
                 }
 
                 if (
@@ -116,13 +116,9 @@ router.post(
                     !/^https:\/\//.test(req.body.donationUrl)
                 ) {
                     error = true;
-                    invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
-                }
-
-                if (invalidURL === 1) {
-                    errors.push(res.__("common.error.listing.arr.invalidURL"));
-                } else if (invalidURL === 2) {
-                    errors.push(res.__("common.error.listing.arr.invalidURLs"));
+                    errors.push(
+                        res.__("common.error.listing.arr.invalidURL.donation")
+                    );
                 }
 
                 let tags: string[] = [];
@@ -467,22 +463,14 @@ router.post(
             }
         }
 
-        let invalidURL = 0;
-
         if (req.body.website && !/^https:\/\//.test(req.body.website)) {
             error = true;
-            invalidURL = 1;
+            errors.push(res.__("common.error.listing.arr.invalidURL.website"));
         }
 
         if (req.body.donationUrl && !/^https:\/\//.test(req.body.donationUrl)) {
             error = true;
-            invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
-        }
-
-        if (invalidURL === 1) {
-            errors.push(res.__("common.error.listing.arr.invalidURL"));
-        } else if (invalidURL === 2) {
-            errors.push(res.__("common.error.listing.arr.invalidURLs"));
+            errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
         }
 
         if (!req.body.longDescription) {

@@ -137,19 +137,23 @@ router.post(
                     }
                 }
 
-                let invalidURL = 0;
-
                 if (
                     req.body.supportServer &&
                     !/^https:\/\//.test(req.body.supportServer)
                 ) {
                     error = true;
-                    invalidURL = 1;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.invalidURL.supportServer"
+                        )
+                    );
                 }
 
                 if (req.body.website && !/^https:\/\//.test(req.body.website)) {
                     error = true;
-                    invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                    errors.push(
+                        res.__("common.error.listing.arr.invalidURL.website")
+                    );
                 }
 
                 if (
@@ -157,14 +161,16 @@ router.post(
                     !/^https:\/\//.test(req.body.donationUrl)
                 ) {
                     error = true;
-                    if (invalidURL !== 2)
-                        invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                    errors.push(
+                        res.__("common.error.listing.arr.invalidURL.donation")
+                    );
                 }
 
                 if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
                     error = true;
-                    if (invalidURL !== 2)
-                        invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                    errors.push(
+                        res.__("common.error.listing.arr.invalidURL.repo")
+                    );
                 }
 
                 if (
@@ -172,8 +178,11 @@ router.post(
                     !/^https:\/\//.test(req.body.privacyPolicy)
                 ) {
                     error = true;
-                    if (invalidURL !== 2)
-                        invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.invalidURL.privacyPolicy"
+                        )
+                    );
                 }
 
                 if (
@@ -188,14 +197,9 @@ router.post(
 
                 if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
                     error = true;
-                    if (invalidURL !== 2)
-                        invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
-                }
-
-                if (invalidURL === 1) {
-                    errors.push(res.__("common.error.listing.arr.invalidURL"));
-                } else if (invalidURL === 2) {
-                    errors.push(res.__("common.error.listing.arr.invalidURLs"));
+                    errors.push(
+                        res.__("common.error.listing.arr.invalidURL.banner")
+                    );
                 }
 
                 if (!req.body.id) {
@@ -876,31 +880,29 @@ router.post(
             }
         }
 
-        let invalidURL = 0;
-
         if (
             req.body.supportServer &&
             !/^https:\/\//.test(req.body.supportServer)
         ) {
             error = true;
-            invalidURL = 1;
+            errors.push(
+                res.__("common.error.listing.arr.invalidURL.supportServer")
+            );
         }
 
         if (req.body.website && !/^https:\/\//.test(req.body.website)) {
             error = true;
-            invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+            errors.push(res.__("common.error.listing.arr.invalidURL.website"));
         }
 
         if (req.body.donationUrl && !/^https:\/\//.test(req.body.donationUrl)) {
             error = true;
-            if (invalidURL !== 2)
-                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+            errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
         }
 
         if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
             error = true;
-            if (invalidURL !== 2)
-                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+            errors.push(res.__("common.error.listing.arr.invalidURL.repo"));
         }
 
         if (
@@ -908,20 +910,14 @@ router.post(
             !/^https:\/\//.test(req.body.privacyPolicy)
         ) {
             error = true;
-            if (invalidURL !== 2)
-                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+            errors.push(
+                res.__("common.error.listing.arr.invalidURL.privacyPolicy")
+            );
         }
 
         if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
             error = true;
-            if (invalidURL !== 2)
-                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
-        }
-
-        if (invalidURL === 1) {
-            errors.push(res.__("common.error.listing.arr.invalidURL"));
-        } else if (invalidURL === 2) {
-            errors.push(res.__("common.error.listing.arr.invalidURLs"));
+            errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
         }
 
         if (req.body.invite && req.body.invite.includes("&permissions=8")) {
@@ -1711,31 +1707,29 @@ router.post(
             }
         }
 
-        let invalidURL = 0;
-
         if (
             req.body.supportServer &&
             !/^https:\/\//.test(req.body.supportServer)
         ) {
             error = true;
-            invalidURL = 1;
+            errors.push(
+                res.__("common.error.listing.arr.invalidURL.supportServer")
+            );
         }
 
         if (req.body.website && !/^https:\/\//.test(req.body.website)) {
             error = true;
-            invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+            errors.push(res.__("common.error.listing.arr.invalidURL.website"));
         }
 
         if (req.body.donationUrl && !/^https:\/\//.test(req.body.donationUrl)) {
             error = true;
-            if (invalidURL !== 2)
-                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+            errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
         }
 
         if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
             error = true;
-            if (invalidURL !== 2)
-                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+            errors.push(res.__("common.error.listing.arr.invalidURL.repo"));
         }
 
         if (
@@ -1743,25 +1737,19 @@ router.post(
             !/^https:\/\//.test(req.body.privacyPolicy)
         ) {
             error = true;
-            if (invalidURL !== 2)
-                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+            errors.push(
+                res.__("common.error.listing.arr.invalidURL.privacyPolicy")
+            );
         }
 
         if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
             error = true;
-            if (invalidURL !== 2)
-                invalidURL === 1 ? (invalidURL = 2) : (invalidURL = 1);
+            errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
         }
 
         if (req.body.invite && req.body.invite.includes("&permissions=8")) {
             error = true;
             errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
-        }
-
-        if (invalidURL === 1) {
-            errors.push(res.__("common.error.listing.arr.invalidURL"));
-        } else if (invalidURL === 2) {
-            errors.push(res.__("common.error.listing.arr.invalidURLs"));
         }
 
         if (!req.body.shortDescription) {

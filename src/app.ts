@@ -244,7 +244,10 @@ new Promise((resolve, reject) => {
         app.use(i18n.init);
 
         app.get("/:lang/auth/login", languageHandler.globalHandler, variables, (req: Request, res: Response, next) => {
+            if (req.user) res.redirect("/");
+            
             res.locals.premidPageInfo = res.__("premid.login");
+            res.locals.hideLogin = true;
         
             res.render("templates/login", {
                 title: res.__("common.login.short"),

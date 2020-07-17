@@ -1,5 +1,120 @@
 <%- include("../partials/header.ejs") %>
 <%- include("../partials/nav.ejs") %>
+<%
+    let defaultColour = "#b114ff";
+    let foreground = "#ffffff";
+
+    if (req.user) {
+        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+    }
+%>
+<style type="text/css">
+    .button.is-default {
+    background-color: <%= defaultColour %>;
+    border-color: transparent;
+    color: <%= foreground %>;
+}
+.button.is-default.is-hovered,
+.button.is-default:hover {
+    background-color: <%= colour(`${defaultColour}`).darken(0.1); %>;
+    border-color: transparent;
+    color: <%= foreground %>;
+}
+.button.is-default.is-focused,
+.button.is-default:focus {
+    border-color: transparent;
+    color: <%= foreground %>;
+}
+.button.is-default.is-focused:not(:active),
+.button.is-default:focus:not(:active) {
+    box-shadow: 0 0 0 0.125em rgba(<%= colour(`${defaultColour}`).rgb %>,.25);
+}
+.button.is-default.is-active,
+.button.is-default:active {
+    background-color: <%= colour(`${defaultColour}`).darken(0.1); %>;
+    border-color: transparent;
+    color: <%= foreground %>;
+}
+.button.is-default[disabled],
+fieldset[disabled] .button.is-default {
+    background-color: <%= defaultColour %>;
+    border-color: transparent;
+    box-shadow: none;
+}
+.button.is-default.is-inverted {
+    background-color: <%= foreground %>;
+    color: <%= defaultColour %>;
+}
+.button.is-default.is-inverted.is-hovered,
+.button.is-default.is-inverted:hover {
+    background-color: #f2f2f2;
+}
+.button.is-default.is-inverted[disabled],
+fieldset[disabled] .button.is-default.is-inverted {
+    background-color: <%= foreground %>;
+    border-color: transparent;
+    box-shadow: none;
+    color: <%= defaultColour %>;
+}
+.button.is-default.is-loading::after {
+    border-color: transparent transparent <%= foreground %> <%= foreground %>!important;
+}
+.button.is-default.is-outlined {
+    background-color: transparent;
+    border-color: <%= defaultColour %>;
+    color: <%= defaultColour %>;
+}
+.button.is-default.is-outlined.is-focused,
+.button.is-default.is-outlined.is-hovered,
+.button.is-default.is-outlined:focus,
+.button.is-default.is-outlined:hover {
+    background-color: <%= defaultColour %>;
+    border-color: <%= defaultColour %>;
+    color: <%= foreground %>;
+}
+.button.is-default.is-outlined.is-loading::after {
+    border-color: transparent transparent <%= defaultColour %> <%= defaultColour %>!important;
+}
+.button.is-default.is-outlined.is-loading.is-focused::after,
+.button.is-default.is-outlined.is-loading.is-hovered::after,
+.button.is-default.is-outlined.is-loading:focus::after,
+.button.is-default.is-outlined.is-loading:hover::after {
+    border-color: transparent transparent <%= foreground %> <%= foreground %>!important;
+}
+.button.is-default.is-outlined[disabled],
+fieldset[disabled] .button.is-default.is-outlined {
+    background-color: transparent;
+    border-color: <%= defaultColour %>;
+    box-shadow: none;
+    color: <%= defaultColour %>;
+}
+.button.is-default.is-inverted.is-outlined {
+    background-color: transparent;
+    border-color: <%= foreground %>;
+    color: <%= foreground %>;
+}
+.button.is-default.is-inverted.is-outlined.is-focused,
+.button.is-default.is-inverted.is-outlined.is-hovered,
+.button.is-default.is-inverted.is-outlined:focus,
+.button.is-default.is-inverted.is-outlined:hover {
+    background-color: <%= foreground %>;
+    color: <%= defaultColour %>;
+}
+.button.is-default.is-inverted.is-outlined.is-loading.is-focused::after,
+.button.is-default.is-inverted.is-outlined.is-loading.is-hovered::after,
+.button.is-default.is-inverted.is-outlined.is-loading:focus::after,
+.button.is-default.is-inverted.is-outlined.is-loading:hover::after {
+    border-color: transparent transparent <%= defaultColour %> <%= defaultColour %>!important;
+}
+.button.is-default.is-inverted.is-outlined[disabled],
+fieldset[disabled] .button.is-default.is-inverted.is-outlined {
+    background-color: transparent;
+    border-color: <%= foreground %>;
+    box-shadow: none;
+    color: <%= foreground %>;
+}
+</style>
 <script type="application/ld+json">
     {
         "@context": "http://schema.org",
@@ -26,7 +141,7 @@
         <div class="container has-text-centered">
             <h1 class="title">
                 <span class="icon is-medium iconalign">
-                    <i aria-hidden="true" class="fad fa-info-circle has-text-default fa-1x"></i>
+                    <i aria-hidden="true" class="fad fa-sign-in-alt has-text-default fa-1x"></i>
                 </span>
                 <br />
                 <span><%= title %></span>
@@ -37,25 +152,27 @@
     </section>
     <div class="container">
         <div class="section">
-            <label class="checkbox">
-                <input id="joinGuild" type="checkbox" checked="checked">
-                <%= __("common.login.join") %>
-            </label>
-            <p style="padding-top: 15px; padding-bottom: 10px" class="has-text-info"><%= __("common.login.notice") %></p>
-            <a onclick="doLogin();" class="button is-success is-large is-fullwidth">
+            <a id="continueButton" onclick="doLogin();" class="button is-default is-large is-fullwidth">
                 <span class="icon">
-                    <i aria-hidden="true" class="fad fa-login fa-1x"></i>
+                    <i aria-hidden="true" class="fad fa-arrow-circle-right fa-1x"></i>
                 </span>
                 <span>
                     <%= __("common.login.continue") %>
                 </span>
             </a>
+            <p style="padding-top: 15px; padding-bottom: 10px" class="has-text-default"><%= __("common.login.notice") %>&nbsp;
+                <label class="checkbox">
+                    <input id="joinGuild" type="checkbox" checked="checked">
+                    <%= __("common.login.join") %>
+                </label>
+            </p>
         </div>
     </div>
     <script>
         function doLogin() {
+            document.getElementById("continueButton").classList.add("is-loading");
             if (document.getElementById("joinGuild").checked) {
-                window.location = "/auth/login/continue?joinGuild=t";
+                window.location = "/auth/login/joinGuild";
             } else {
                 window.location = "/auth/login/continue";
             }

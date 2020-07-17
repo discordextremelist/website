@@ -366,14 +366,14 @@
                             <% } %>
                         <% } else { %>
                             <% if (ddosMode === true) { %>
-                                <a class="button is-blurple" title="<%= __("common.notice.ddosMode") %>" disabled>
+                                <a class="button is-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> title="<%= __("common.notice.ddosMode") %>" disabled>
                                     <span class="icon">
                                         <i class="fab fa-discord" aria-hidden="true"></i>
                                     </span>
                                     <span><%= __("common.login") %></span>
                                 </a>
                             <% } else { %>
-                                <a class="button is-blurple" href="/auth/login">
+                                <a class="button is-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> href="/auth/login">
                                     <span class="icon">
                                         <i class="fab fa-discord" aria-hidden="true"></i>
                                     </span>
@@ -384,14 +384,14 @@
                     </div>
                 <% } else if (!req.user) { %>
                     <% if (ddosMode === true) { %>
-                        <a class="has-text-blurple" title="<%= __("common.notice.ddosMode") %>" disabled>
+                        <a class="has-text-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> title="<%= __("common.notice.ddosMode") %>" disabled>
                             <span class="icon iconalign">
                                 <i class="fab fa-discord" aria-hidden="true"></i>
                             </span>
                             <span><%= __("common.login") %></span>
                         </a>
                     <% } else { %>
-                        <a class="has-text-blurple" href="/auth/login">
+                        <a class="has-text-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> href="/auth/login">
                             <span class="icon iconalign">
                                 <i class="fab fa-discord" aria-hidden="true"></i>
                             </span>

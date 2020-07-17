@@ -74,6 +74,7 @@ export const variables = async (
     req.del.node = "us-node"; // will be updated in a bit:tm: (*cough* spoiler)
     res.locals.colour = color;
     res.locals.premidPageInfo = "";
+    res.locals.hideLogin = false;
 
     if (req.session.disableRTL && req.session.disableRTL === true) {
         res.locals.htmlDir = "ltr";

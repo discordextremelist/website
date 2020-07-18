@@ -58,18 +58,12 @@ Install all of the dependencies by running `npm i` command.
 
 ### Compiling
 
-#### First Start
-
-When you first start DEL you will need to run the following command: `npm run compile && npm run editor-compile`
-
-#### Making Changes
-
-Every time you make a change to any of the `.ts` files you will need to run the `npm run compile` command to ensure everything is up to date.
+When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run the `npm run compile` command.
 
 ### Production
 
-We reccomend when running DEL in production you use the `npm run pm2` command, however you can still run DEL using the standard `npm run start` command.
+We recommend when running DEL in production you use the `npm run pm2` command, however you can still run DEL using the standard `npm run start` command.
 
 ### Development/Testing
 
-We reccomend you run DEL using the `npm run start` command.
+We recommend you run DEL using the `npm run start` command.

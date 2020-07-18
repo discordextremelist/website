@@ -57,6 +57,7 @@ let dbReady: boolean = false;
 
 app.set("views", path.join(__dirname + "/../../assets/Views"));
 app.use(express.static(path.join(__dirname + "/../../assets/Public")));
+app.use('/packages/monaco-editor', express.static(path.join(__dirname + "/../../node_modules/monaco-editor")))
 
 app.get("*", (req: Request, res: Response, next: () => void) => {
     if (

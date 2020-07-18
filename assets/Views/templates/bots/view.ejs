@@ -36,7 +36,7 @@
 
     if (bot.theme && bot.theme.useCustomColour) {
         defaultColour = bot.theme.colour;
-        foreground = req.user.db.preferences.defaultForegroundColour;
+        foreground = functions.getForeground(bot.theme.colour);
     }
 %>
 <link href="/css/theme/<%= preferredTheme %>/listing.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />

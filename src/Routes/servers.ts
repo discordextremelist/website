@@ -216,7 +216,8 @@ router.post(
                 return res.status(200).json({
                     error: false,
                     status: 200,
-                    errors: []
+                    errors: [],
+                    id: fetchRes.jsonBody.guild.id
                 });
             })
             .catch(async (fetchRes) => {
@@ -599,7 +600,8 @@ router.post(
                 return res.status(200).json({
                     error: false,
                     status: 200,
-                    errors: []
+                    errors: [],
+                    id: fetchRes.jsonBody.guild.id
                 });
             })
             .catch(() => {

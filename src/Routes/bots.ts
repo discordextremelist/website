@@ -108,7 +108,7 @@ router.post(
                 }
 
                 if (req.body.invite === "") {
-                    invite = `https://discord.com/oauth2/authorize?client_id=${
+                    invite = `https://discord.com/api/oauth2/authorize?client_id=${
                         req.body.clientID || req.body.id
                     }&scope=bot`;
                 } else {
@@ -855,7 +855,7 @@ router.post(
         let invite: string;
 
         if (req.body.invite === "") {
-            invite = `https://discord.com/oauth2/authorize?client_id=${
+            invite = `https://discord.com/api/oauth2/authorize?client_id=${
                 req.body.clientID || req.body.id
             }&scope=bot`;
         } else {
@@ -1683,7 +1683,7 @@ router.post(
         let invite: string;
 
         if (req.body.invite === "") {
-            invite = `https://discord.com/oauth2/authorize?client_id=${
+            invite = `https://discord.com/api/oauth2/authorize?client_id=${
                 req.body.clientID || req.body.id
             }&scope=bot`;
         } else {

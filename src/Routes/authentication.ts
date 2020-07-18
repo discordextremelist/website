@@ -37,7 +37,7 @@ passport.use(
             clientSecret: settings.secrets.discord.secret,
             callbackURL: settings.website.url + settings.website.callback,
             scope: settings.website.authScopes,
-            authorizationURL: "https://discord.com/oauth2/authorize?prompt=none"
+            authorizationURL: "https://discord.com/api/oauth2/authorize?prompt=none"
         },
         (accessToken, refreshToken, profile, done) => {
             process.nextTick(() => {

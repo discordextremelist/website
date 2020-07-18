@@ -91,12 +91,6 @@ router.post(
                         );
                     }
 
-                    if (!req.body.longDescription) {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.listing.arr.longDescRequired")
-                        );
-                    }
                 } else {
                     error = true;
                     errors.push(
@@ -281,13 +275,6 @@ router.post(
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.shortDescRequired")
-                    );
-                }
-
-                if (!req.body.longDescription) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.longDescRequired")
                     );
                 }
 
@@ -496,11 +483,6 @@ router.post(
                 error = true;
                 errors.push(res.__("common.error.template.arr.invite.dnew."));
             }
-        }
-
-        if (!req.body.longDescription) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
 
         let linkToServerPage = false;

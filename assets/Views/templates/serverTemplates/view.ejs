@@ -1,6 +1,6 @@
 <%- include("../../partials/header.ejs") %>
 <link href="/css/theme/<%= preferredTheme %>/listing.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<% if (longDesc) { %><script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><% } %>
 <script type="application/ld+json">
     {
         "@context": "http://schema.org",
@@ -279,22 +279,24 @@
     <br />
     <div class="column is-12 tabs is-boxed">
         <ul>
-            <li style="direction: ltr;" class="is-active">
-                <a>
-                    <% if (htmlDir !== "rtl") { %>
-                        <span class="icon is-small">
-                            <i class="fas fa-align-center" aria-hidden="true"></i>
-                        </span>
-                    <% } %>
-                    <span><%= __("common.description") %></span>
-                    <% if (htmlDir === "rtl") { %>
-                        <span class="icon is-small">
-                            <i class="fas fa-align-center" aria-hidden="true"></i>
-                        </span>
-                    <% } %>
-                </a>
-            </li>
-            <li style="direction: ltr;">
+            <% if (longDesc) { %>
+                <li style="direction: ltr;" class="is-active">
+                    <a>
+                        <% if (htmlDir !== "rtl") { %>
+                            <span class="icon is-small">
+                                <i class="fas fa-align-center" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __("common.description") %></span>
+                        <% if (htmlDir === "rtl") { %>
+                            <span class="icon is-small">
+                                <i class="fas fa-align-center" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                    </a>
+                </li>
+            <% } %>
+            <li style="direction: ltr;" <% if (!longDesc) { %>class="is-active"<% } %>>
                 <a>
                     <% if (htmlDir !== "rtl") { %>
                         <span class="icon is-small">
@@ -312,10 +314,12 @@
         </ul>
         </div>
         <div class="column is-12 tabs-content">
-            <div class="tab-content is-active content" style="white-space: pre-wrap">
-                <%- longDesc %>
-            </div>
-            <div class="tab-content">
+            <% if (longDesc) { %>
+                <div class="tab-content is-active content" style="white-space: pre-wrap">
+                    <%- longDesc %>
+                </div>
+            <% } %>
+            <div class="tab-content <% if (!longDesc) { %>is-active<% } %>">
                 <div class="columns">
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
@@ -403,11 +407,11 @@
             </div>
         </footer>
     </div>
-    <script type="text/javascript">document.querySelector("a#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+    <script>document.querySelector("a#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
 </div>
 <% if (phone) { %>
     <!-- <style>#collapsibleBody1, #collapsibleBody2, #collapsibleBody3 { display: none }</style> -->
-    <script type="text/javascript">
+    <script>
         function collapseToggle(s, i) {
             s
                 .classList
@@ -434,6 +438,6 @@
     <style>.notification.is-default.animated{color:<%= foreground %>;background-color:<%= defaultColour %>;border-radius:3%}</style>
     <script>function copyToClipboard(t){const hideWB=document.createElement("style");hideWB.innerHTML="widgetbot-crate {display: none;}";document.body.appendChild(hideWB);const e=document.createElement("textarea");e.value=t,e.setAttribute("readonly",""),e.style={position:"absolute",left:"-9999px"},document.body.appendChild(e),e.select(),document.execCommand("copy"),document.body.removeChild(e),bulmaToast.toast({message:"Copied to clipboard",type:"is-default",position:"bottom-right",duration:2e3,opacity:.75,animate:{in:"fadeInRight",out:"fadeOutRight"}});setTimeout(()=>{hideWB.innerHTML="widgetbot-crate {display: block;}"},3000)}</script>
 <% } %>
-<script type="text/javascript">const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>
-<script type="text/javascript">$(".tabs").each(function(index){var $tabParent=$(this);var $tabs=$tabParent.find("li");var $contents=$tabParent.next(".tabs-content").find(".tab-content");$tabs.click(function(){var curIndex=$(this).index();$tabs.removeClass("is-active");$tabs.eq(curIndex).addClass("is-active");$contents.removeClass("is-active");$contents.eq(curIndex).addClass("is-active")})});</script>
+<script>const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>
+<% if (longDesc) { %><script>$(".tabs").each(function(index){var $tabParent=$(this);var $tabs=$tabParent.find("li");var $contents=$tabParent.next(".tabs-content").find(".tab-content");$tabs.click(function(){var curIndex=$(this).index();$tabs.removeClass("is-active");$tabs.eq(curIndex).addClass("is-active");$contents.removeClass("is-active");$contents.eq(curIndex).addClass("is-active")})});</script><% } %>
 <%- include("../../partials/footer.ejs") %>

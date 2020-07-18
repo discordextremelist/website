@@ -1256,7 +1256,8 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
         webUrl: settings.website.url,
         req: req,
         editors,
-        votes: bot.votes.positive.length - bot.votes.negative.length
+        votes: bot.votes.positive.length - bot.votes.negative.length,
+        functions
     });
 });
 

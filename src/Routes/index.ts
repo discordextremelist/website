@@ -128,7 +128,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
     );
 
     res.render("templates/bots/index", {
-        title: res.__("common.bots"),
+        title: res.__("common.bots.discord"),
         subtitle: res.__("common.bots.subtitle"),
         req,
         bots,
@@ -149,7 +149,7 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
     const servers = await serverCache.getAllServers();
 
     res.render("templates/servers/index", {
-        title: res.__("common.servers"),
+        title: res.__("common.servers.discord"),
         subtitle: res.__("common.servers.subtitle"),
         req,
         servers,
@@ -170,7 +170,7 @@ router.get("/templates", variables, async (req: Request, res: Response) => {
     const templates = await templateCache.getAllTemplates();
 
     res.render("templates/serverTemplates/index", {
-        title: res.__("common.templates"),
+        title: res.__("common.templates.discord"),
         subtitle: res.__("common.templates.subtitle"),
         req,
         templates,

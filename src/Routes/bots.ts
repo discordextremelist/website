@@ -187,7 +187,7 @@ router.post(
 
                 if (
                     req.body.invite &&
-                    req.body.invite.includes("&permissions=8")
+                    req.body.invite.includes("&permissions=8&")
                 ) {
                     error = true;
                     errors.push(
@@ -447,7 +447,7 @@ router.post(
 
                 if (
                     req.body.invite &&
-                    req.body.invite.includes("&permissions=8")
+                    req.body.invite.includes("&permissions=8&")
                 ) {
                     error = true;
                     errors.push(
@@ -920,7 +920,7 @@ router.post(
             errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
         }
 
-        if (req.body.invite && req.body.invite.includes("&permissions=8")) {
+        if (req.body.invite && req.body.invite.includes("&permissions=8&")) {
             error = true;
             errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
         }
@@ -1748,7 +1748,7 @@ router.post(
             errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
         }
 
-        if (req.body.invite && req.body.invite.includes("&permissions=8")) {
+        if (req.body.invite && req.body.invite.includes("&permissions=8&")) {
             error = true;
             errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
         }

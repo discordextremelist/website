@@ -2,6 +2,10 @@
 <link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script>
 <%- include("../../partials/nav.ejs") %>
+<%
+    let postURL = `${linkPrefix}/bots/${bot._id}/edit`;
+    if (resubmit) postURL = `${linkPrefix}/bots/${bot._id}/resubmit`;
+%>
 <section class="hero is-black">
     <div class="hero-body">
         <br>
@@ -377,7 +381,7 @@ function doSubmit() {
             modNotes = document.getElementById("modNotes").value
         <% } %> 
 
-        fetchPOST("<%= linkPrefix %>/bots/<%= bot._id %>/edit", {
+        fetchPOST("<%= postURL %>", {
             prefix: document.getElementById("form_prefix").value,
             library: document.getElementById("form_library").value,
             editors: document.getElementById("form_editors").value,

@@ -295,7 +295,7 @@
                 <textarea hidden name="longDescription" id="longDesc" required><%- longDesc %></textarea>
             </div>
             <br>
-            <% if (bot.archived === true) { %>
+            <% if (resubmit) { %>
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.bots.modNotes") %></label>
                     <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">

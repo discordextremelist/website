@@ -1950,7 +1950,7 @@ router.post(
                 })\` resubmitted bot **${functions.escapeFormatting(
                     bot.name
                 )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                    req.body.id
+                    bot._id
                 }>`
             )
             .catch((e) => {

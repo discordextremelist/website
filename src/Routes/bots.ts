@@ -1700,7 +1700,7 @@ router.post(
                     errors: [res.__("common.error.bot.arr.clientIDTooLong")]
                 });
             
-            await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
+            if(req.body.clientID !== req.body.id) await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
                 method: "GET",
                 headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
             }).then((fetchRes: fetchRes) => {

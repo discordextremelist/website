@@ -54,6 +54,11 @@
             <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.clientID") %> <% if (!resubmit) { %><span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span><% } %></label>
+                <% if (resubmit) { %>
+                    <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
+                        <%= __("page.bots.generalInfo.clientID.details") %>
+                    </p>
+                <% } %>
                 <p class="control has-icons-left" required>
                     <input id="form_clientID" class="input is-rounded" type="text" name="clientID" value="<%= bot.clientID || bot._id %>" <% if (!resubmit) { %>readonly<% } %>>
                     <span class="icon is-small is-left">
@@ -382,6 +387,7 @@ function doSubmit() {
         <% } %> 
 
         fetchPOST("<%= postURL %>", {
+            <% if (resubmit) { %>clientID: document.getElementById("clientID").value,<% } %>
             prefix: document.getElementById("form_prefix").value,
             library: document.getElementById("form_library").value,
             editors: document.getElementById("form_editors").value,

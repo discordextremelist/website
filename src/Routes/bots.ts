@@ -863,6 +863,34 @@ router.post(
         let error = false;
         let errors = [];
 
+        if(req.body.clientID) {
+            if (isNaN(req.body.clientID))
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: [res.__("common.error.bot.arr.invalidClientID")]
+                });
+
+            if (req.body.clientID && req.body.clientID.length > 32)
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: [res.__("common.error.bot.arr.clientIDTooLong")]
+                });
+            
+            if(req.body.clientID !== req.body.id) await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
+                method: "GET",
+                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
+            }).then((fetchRes: fetchRes) => {
+                if(fetchRes.status !== 404)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.clientIDIsUser")]
+                    });
+            })
+        }
+
         const botExists: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -1880,6 +1908,7 @@ router.post(
                     { _id: req.params.id },
                     {
                         $set: {
+                            clientID: req.body.clientID,
                             name: fetchRes.jsonBody.username,
                             prefix: req.body.prefix,
                             library: library,
@@ -1918,6 +1947,7 @@ router.post(
                     reason: "None specified.",
                     details: {
                         old: {
+                            clientID: botExists.clientID,
                             name: botExists.name,
                             prefix: botExists.prefix,
                             library: botExists.library,
@@ -1957,6 +1987,7 @@ router.post(
                             }
                         },
                         new: {
+                            clientID: req.body.clientID,
                             name: fetchRes.jsonBody.username,
                             prefix: req.body.prefix,
                             library: library,

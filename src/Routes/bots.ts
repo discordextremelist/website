@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import { Request, Response } from "express";
+import { Response as fetchRes } from "../../@types/fetch";
 
 import * as fetch from "node-fetch";
 import * as crypto from "crypto";
@@ -87,21 +88,70 @@ router.post(
                 errors: [res.__("common.error.bot.conflict")]
             });
 
+        if (!req.body.id)
+            return res.status(400).json({
+                error: true,
+                status: 400,
+                errors: [res.__("common.error.listing.arr.IDRequired")]
+            });
+        
+        if (isNaN(req.body.id))
+            return res.status(400).json({
+                error: true,
+                status: 400,
+                errors: [res.__("common.error.bot.arr.invalidID")]
+            });
+
+        if (req.body.id.length > 32)
+            return res.status(400).json({
+                error: true,
+                status: 400,
+                errors: [res.__("common.error.bot.arr.idTooLong")]
+            });
+        
+        if(req.body.clientID) {
+            if (isNaN(req.body.clientID))
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: [res.__("common.error.bot.arr.invalidClientID")]
+                });
+
+            if (req.body.clientID && req.body.clientID.length > 32)
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: [res.__("common.error.bot.arr.clientIDTooLong")]
+                });
+            
+            await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
+                method: "GET",
+                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
+            }).then((fetchRes: fetchRes) => {
+                if(fetchRes.status !== 404)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.clientIDIsUser")]
+                    });
+            })
+        }
+
         fetch(`https://discord.com/api/v6/users/${req.body.id}`, {
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
-            .then(async (fetchRes: any) => {
+            .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
-                if (req.body.id.length > 32 && req.body.id) {
-                    error = true;
-                    errors.push(res.__("common.error.bot.arr.idTooLong"));
-                } else if (
+                if (
                     fetchRes.jsonBody.message === "Unknown User" &&
                     req.body.id
                 ) {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.notFound"));
+                } else if (fetchRes.status === 400) {
+                    error = true;
+                    errors.push(`${res.__("common.error.bot.arr.fetchError")}: ${JSON.stringify(fetchRes.jsonBody)}`)
                 } else if (!fetchRes.jsonBody.bot && req.body.id) {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.isUser"));
@@ -200,11 +250,6 @@ router.post(
                     errors.push(
                         res.__("common.error.listing.arr.invalidURL.banner")
                     );
-                }
-
-                if (!req.body.id) {
-                    error = true;
-                    errors.push(res.__("common.error.listing.arr.IDRequired"));
                 }
 
                 if (!req.body.shortDescription) {
@@ -421,10 +466,6 @@ router.post(
                 });
             })
             .catch(async () => {
-                if (req.body.id.length > 32) {
-                    error = true;
-                    errors.push(res.__("common.error.bot.arr.idTooLong"));
-                }
 
                 if (req.body.invite !== "") {
                     if (typeof req.body.invite !== "string") {
@@ -453,11 +494,6 @@ router.post(
                     errors.push(
                         res.__("common.error.listing.arr.inviteHasAdmin")
                     );
-                }
-
-                if (!req.body.id) {
-                    error = true;
-                    errors.push(res.__("common.error.listing.arr.IDRequired"));
                 }
 
                 if (!req.body.shortDescription) {
@@ -984,12 +1020,13 @@ router.post(
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
-            .then(async (fetchRes) => {
+            .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
+                            clientID: req.body.clientID,
                             name: fetchRes.jsonBody.username,
                             prefix: req.body.prefix,
                             library: library,
@@ -1036,6 +1073,7 @@ router.post(
                     reason: "None specified.",
                     details: {
                         old: {
+                            clientID: botExists.clientID,
                             name: botExists.name,
                             prefix: botExists.prefix,
                             library: botExists.library,
@@ -1072,6 +1110,7 @@ router.post(
                             }
                         },
                         new: {
+                            clientID: req.body.clientID,
                             name: fetchRes.jsonBody.username,
                             prefix: req.body.prefix,
                             library: library,
@@ -1646,6 +1685,34 @@ router.post(
         let error = false;
         let errors = [];
 
+        if(req.body.clientID) {
+            if (isNaN(req.body.clientID))
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: [res.__("common.error.bot.arr.invalidClientID")]
+                });
+
+            if (req.body.clientID && req.body.clientID.length > 32)
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: [res.__("common.error.bot.arr.clientIDTooLong")]
+                });
+            
+            await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
+                method: "GET",
+                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
+            }).then((fetchRes: fetchRes) => {
+                if(fetchRes.status !== 404)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.clientIDIsUser")]
+                    });
+            })
+        }
+
         const botExists: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -1807,7 +1874,7 @@ router.post(
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
-            .then(async (fetchRes) => {
+            .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
@@ -2560,7 +2627,7 @@ router.get(
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
-            .then(async (fetchRes) => {
+            .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },

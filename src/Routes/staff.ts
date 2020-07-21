@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import { Request, Response } from "express";
+import { Response as fetchRes } from "../../@types/fetch";
 
 import * as fetch from "node-fetch";
 
@@ -899,7 +900,7 @@ router.get(
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
-            .then(async (fetchRes) => {
+            .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
                 if (!user) {

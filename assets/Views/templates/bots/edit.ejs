@@ -53,9 +53,9 @@
             </div>
             <br>
             <div class="field">
-                <label class="label has-text-default"><%= __("page.bots.generalInfo.clientID") %> <span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span></label>
+                <label class="label has-text-default"><%= __("page.bots.generalInfo.clientID") %> <% if (!resubmit) { %><span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span><% } %></label>
                 <p class="control has-icons-left" required>
-                    <input id="form_clientID" class="input is-rounded" type="text" name="clientID" value="<%= bot.clientID || bot._id %>" readonly>
+                    <input id="form_clientID" class="input is-rounded" type="text" name="clientID" value="<%= bot.clientID || bot._id %>" <% if (!resubmit) { %>readonly<% } %>>
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-hashtag"></i>
                     </span>

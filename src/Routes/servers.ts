@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import { Request, Response } from "express";
+import { Response as fetchRes } from "../../@types/fetch";
 
 import * as fetch from "node-fetch";
 import * as Discord from "discord.js";
@@ -68,7 +69,7 @@ router.post(
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
-            .then(async (fetchRes) => {
+            .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
                 if (fetchRes.jsonBody.code !== 10006) {
@@ -220,7 +221,7 @@ router.post(
                     id: fetchRes.jsonBody.guild.id
                 });
             })
-            .catch(async (fetchRes) => {
+            .catch(async (fetchRes: fetchRes) => {
                 if (!req.body.invite) {
                     error = true;
                     errors.push(
@@ -500,7 +501,7 @@ router.post(
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
-            .then(async (fetchRes) => {
+            .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
                 if (fetchRes.jsonBody.guild.id !== server._id) {
@@ -806,7 +807,7 @@ router.get(
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
-            .then(async (fetchRes) => {
+            .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
                 if (fetchRes.jsonBody.guild.id !== server._id) {

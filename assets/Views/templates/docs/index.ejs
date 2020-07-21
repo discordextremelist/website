@@ -11,13 +11,13 @@
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "https://discordextremelist.xyz/"
+                "item": "<%= baseURL %><%= linkPrefix %>"
             },
             {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Documentation",
-                "item": "https://discordextremelist.xyz/docs"
+                "item": "<%= baseURL %><%= linkPrefix %>/docs"
             }
         ]
     }
@@ -133,7 +133,7 @@
         crate.notify({
             content: "Feel free to send a message if you need community support!",
             timeout: 5000,
-            avatar: "https://discordextremelist.xyz/img/logo-128px.png"
+            avatar: "<%= baseURL %><%= linkPrefix %>/img/logo-128px.png"
         });
     </script>
     <style>

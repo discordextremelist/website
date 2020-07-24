@@ -224,6 +224,12 @@
                                         <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                     </div>
                                     <hr class="dropdown-divider">
+                                    <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/sync">
+                                        <span class="icon">
+                                            <i aria-hidden="true" class="fas fa-sync-alt"></i>
+                                        </span>
+                                        <span><%= __("common.sync") %></span>
+                                    </a>
                                     <% if (user.db.rank.assistant === true) { %>
                                         <% if (bot.status.premium === false) { %>
                                             <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/give-premium">
@@ -244,12 +250,6 @@
                                                 <span><%= __("page.bots.setVanity") %></span>
                                             </a>
                                         <% } %>
-                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/sync">
-                                            <span class="icon">
-                                                <i aria-hidden="true" class="fas fa-sync-alt"></i>
-                                            </span>
-                                            <span><%= __("common.sync") %></span>
-                                        </a>
                                         <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/edit">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-pencil"></i>

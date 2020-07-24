@@ -2640,19 +2640,7 @@ router.get(
                 errors: [res.__("common.error.bot.404")]
             });
 
-        res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
-
         const bot = botExists;
-        if (
-            bot.owner.id !== req.user.id &&
-            !bot.editors.includes(req.user.id) &&
-            req.user.db.mod === false
-        )
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                errors: [res.__("common.error.bot.perms.edit")]
-            });
 
         await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
             method: "GET",

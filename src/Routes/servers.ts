@@ -791,18 +791,6 @@ router.get(
                 req: req
             });
 
-        if (
-            server.owner.id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
-            return res.status(403).render("status", {
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.server.perms.edit"),
-                status: 403,
-                type: "Error",
-                req
-            });
-
         await fetch(`https://discord.com/api/v6/invites/${server.inviteCode}`, {
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }

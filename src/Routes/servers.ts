@@ -65,6 +65,13 @@ router.post(
         let error = false;
         let errors: string[] = [];
 
+        if (req.body.invite.includes(' '))
+            return res.status(400).json({
+                error: true,
+                status: 400,
+                errors: [res.__("common.error.listing.arr.invite.invalid")]
+            });
+
         fetch(`https://discord.com/api/v6/invites/${req.body.invite}`, {
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
@@ -450,7 +457,7 @@ router.post(
             error = true;
             errors.push(res.__("common.error.listing.arr.invite.invalid"));
         } else {
-            if (typeof req.body.invite !== "string") {
+            if (typeof req.body.invite !== "string" || req.body.invite.includes(' ')) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.invalid"));
             } else if (req.body.invite.length > 32) {

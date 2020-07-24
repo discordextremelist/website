@@ -95,7 +95,7 @@ router.post(
                 errors: [res.__("common.error.listing.arr.IDRequired")]
             });
         
-        if (isNaN(req.body.id))
+        if (isNaN(req.body.id) || req.body.id.includes(' '))
             return res.status(400).json({
                 error: true,
                 status: 400,
@@ -110,7 +110,7 @@ router.post(
             });
         
         if(req.body.clientID) {
-            if (isNaN(req.body.clientID))
+            if (isNaN(req.body.clientID) || req.body.clientID.includes(' '))
                 return res.status(400).json({
                     error: true,
                     status: 400,
@@ -864,7 +864,7 @@ router.post(
         let errors = [];
 
         if(req.body.clientID) {
-            if (isNaN(req.body.clientID))
+            if (isNaN(req.body.clientID) || req.body.clientID.includes(' '))
                 return res.status(400).json({
                     error: true,
                     status: 400,
@@ -1714,7 +1714,7 @@ router.post(
         let errors = [];
 
         if(req.body.clientID) {
-            if (isNaN(req.body.clientID))
+            if (isNaN(req.body.clientID) || req.body.clientID.includes(' '))
                 return res.status(400).json({
                     error: true,
                     status: 400,

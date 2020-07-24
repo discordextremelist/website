@@ -65,6 +65,13 @@ router.post(
         let error = false;
         let errors: string[] = [];
 
+        if (req.body.code.includes(' '))
+            return res.status(400).json({
+                error: true,
+                status: 400,
+                errors: [res.__("common.error.template.arr.invite.invalid")]
+            });
+
         fetch(`https://discord.com/api/v6/guilds/templates/${req.body.code}`, {
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
@@ -471,7 +478,7 @@ router.post(
             error = true;
             errors.push(res.__("common.error.template.arr.invite.invalid"));
         } else {
-            if (typeof req.body.code !== "string") {
+            if (typeof req.body.code !== "string" || req.body.code.includes(' ')) {
                 error = true;
                 errors.push(res.__("common.error.template.arr.invite.invalid"));
             } else if (req.body.code.length > 2000) {

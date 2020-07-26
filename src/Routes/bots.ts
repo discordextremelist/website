@@ -877,8 +877,8 @@ router.post(
                     status: 400,
                     errors: [res.__("common.error.bot.arr.clientIDTooLong")]
                 });
-            
-            if(req.body.clientID !== req.body.id) await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
+
+            if(req.body.clientID !== req.params.id) await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
                 method: "GET",
                 headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
             }).then((fetchRes: fetchRes) => {
@@ -920,7 +920,7 @@ router.post(
 
         if (req.body.invite === "") {
             invite = `https://discord.com/api/oauth2/authorize?client_id=${
-                req.body.clientID || req.body.id
+                req.body.clientID || req.params.id
             }&scope=bot`;
         } else {
             if (typeof req.body.invite !== "string") {
@@ -1728,7 +1728,7 @@ router.post(
                     errors: [res.__("common.error.bot.arr.clientIDTooLong")]
                 });
             
-            if(req.body.clientID !== req.body.id) await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
+            if(req.body.clientID !== req.params.id) await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
                 method: "GET",
                 headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
             }).then((fetchRes: fetchRes) => {
@@ -1779,7 +1779,7 @@ router.post(
 
         if (req.body.invite === "") {
             invite = `https://discord.com/api/oauth2/authorize?client_id=${
-                req.body.clientID || req.body.id
+                req.body.clientID || req.params.id
             }&scope=bot`;
         } else {
             if (typeof req.body.invite !== "string") {
@@ -1898,7 +1898,7 @@ router.post(
             editors = [];
         }
 
-        fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
+        await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
@@ -2427,7 +2427,7 @@ router.post(
             reason: req.body.reason || "None specified."
         });
 
-        await botCache.deleteBot(req.params.id);
+        await botCache.updateBot(req.params.id);
 
         (discord.bot.channels.cache.get(
             settings.channels.webLog

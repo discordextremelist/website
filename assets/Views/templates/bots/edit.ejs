@@ -321,7 +321,7 @@
                         </span>
                         <span><%= __("common.submit") %></span>
                     </a>
-                    <a href="<%= linkPrefix %>/bots/<%= bot._id %>" id="cancelButton" class="button is-danger">
+                    <a href="<%= resubmit ? `${linkPrefix}/bots/${bot._id}` : `${linkPrefix}/users/@me` %>" id="cancelButton" class="button is-danger">
                         <span class="icon">
                             <i aria-hidden="true" class="fas fa-times-circle"></i>
                         </span>
@@ -385,7 +385,7 @@ function doSubmit() {
         <% } %> 
 
         fetchPOST("<%= postURL %>", {
-            clientID: document.getElementById("clientID").value,
+            clientID: document.getElementById("form_clientID").value,
             prefix: document.getElementById("form_prefix").value,
             library: document.getElementById("form_library").value,
             editors: document.getElementById("form_editors").value,

@@ -25,23 +25,21 @@ import * as settings from "../../../settings.json";
 import * as releaseInfo from "../../../release-info.json";
 import * as announcementCache from "../Services/announcementCaching";
 import * as banList from "../Services/banned";
+import { URLSearchParams } from "url";
 
 export const variables = async (
     req: Request,
     res: Response,
     next: () => void
 ) => {
-    if (req.originalUrl.includes("?setLang=t")) {
-        return res.redirect(req.originalUrl.replace("?setLang=t", ""));
-    }
 
-    if (
-        req.originalUrl.includes("?localeLayout=rtl") ||
-        req.originalUrl.includes("?localeLayout=ltr")
-    ) {
-        let returnURL = req.originalUrl.replace("?localeLayout=rtl", "");
-        returnURL = returnURL.replace("?localeLayout=ltr", "");
-        return res.redirect(returnURL);
+    if (req.query.setLang || req.query.localeLayout) {
+        // @ts-expect-error
+        let params = new URLSearchParams(req.query)
+        params.delete('setLang')
+        params.delete('localeLayout')
+
+        return res.redirect(req.path + (params.toString() && `?${params}`));
     }
 
     req.browser = browser(req.headers["user-agent"]);

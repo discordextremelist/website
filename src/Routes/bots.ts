@@ -2301,7 +2301,7 @@ router.get(
                 type: "Error"
             });
 
-        global.db.collection("bots").updateOne(
+        await global.db.collection("bots").updateOne(
             { _id: req.params.id },
             {
                 $set: {

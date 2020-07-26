@@ -188,6 +188,10 @@ export function parseAudit(__, auditType: string) {
             returnType.name = __("page.staff.audit.type.MODIFY_PROFILE");
             returnType.icon = "far fa-user-edit has-text-warning";
             break;
+        case "SYNC_USER":
+            returnType.name = __("page.staff.audit.type.SYNC_USER");
+            returnType.icon = "far fa-sync-alt has-text-success";
+            break;
         case "APPROVE_BOT":
             returnType.name = __("page.staff.audit.type.APPROVE_BOT");
             returnType.icon = "far fa-check has-text-success";

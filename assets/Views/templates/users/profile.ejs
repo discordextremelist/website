@@ -111,7 +111,17 @@
                                 <% if (userProfile._id === user.id) { %>
                                     <%- 
                                         include("../../partials/button.ejs", { 
-                                            className: "button is-dark", 
+                                            className: "button is-success",
+                                            icon: "fas fa-sync-alt",
+                                            tag: "a",
+                                            message: __("common.sync"),
+                                            href: `${linkPrefix}/users/${userProfile._id}/sync`,
+                                            additional: ""
+                                        });
+                                    %>
+                                    <%- 
+                                        include("../../partials/button.ejs", { 
+                                            className: "button is-warning", 
                                             icon: "fas fa-pencil", 
                                             tag: "a", 
                                             message: __("common.edit"), 
@@ -120,8 +130,8 @@
                                         });
                                     %>
                                 <% } %>
-                                <% if (user.db.rank.assistant) { %>
-                                    <div class="dropdown">
+                                <% if (user.db.rank.mod) { %>
+                                    <div class="dropdown is-hoverable">
                                         <div class="dropdown-trigger">
                                             <%- 
                                                 include("../../partials/button.ejs", { 
@@ -140,13 +150,17 @@
                                                 <p class="has-text-danger <% if (mobile) { %>has-text-centered<% } %>"><%= __("common.staffManagement.warning") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
-                                            <% if (req.user && req.user.db.rank.assistant === true) { %>
-                                                <% if (req.user.id !== userProfile._id) { %>
-                                                    <a class="dropdown-item" href="<%= linkPrefix %>/users/profile/<%= userProfile._id %>/edit">
-                                                        <span class="icon"><i aria-hidden="true" class="fas fa-pen"></i></span>
-                                                        <span><%= __("common.edit") %></span>
-                                                    </a>
-                                                <% } %>
+                                            <a class="dropdown-item" href="<%= linkPrefix %>/users/<%= userProfile._id %>/sync">
+                                                <span class="icon">
+                                                    <i aria-hidden="true" class="fas fa-sync-alt"></i>
+                                                </span>
+                                                <span><%= __("common.sync") %></span>
+                                            </a>
+                                            <% if (user.db.rank.assistant === true) { %>
+                                                <a class="dropdown-item" href="<%= linkPrefix %>/users/profile/<%= userProfile._id %>/edit">
+                                                    <span class="icon"><i aria-hidden="true" class="fas fa-pen"></i></span>
+                                                    <span><%= __("common.edit") %></span>
+                                                </a>
                                                 <a class="dropdown-item" href="<%= linkPrefix %>/users/<%= userProfile._id %>/rank">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-crown"></i></span>
                                                     <span><%= __("page.users.modifyRank") %></span>

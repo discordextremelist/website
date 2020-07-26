@@ -30,6 +30,9 @@ import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
 import * as tokenManager from "../Util/Services/adminTokenManager";
+import * as fetch from "node-fetch";
+import { Response as fetchRes } from "../../@types/fetch";
+import * as settings from "../../settings.json";
 
 const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
@@ -492,6 +495,87 @@ router.post(
             }
         });
         await userCache.updateUser(req.params.id);
+
+        res.redirect(`/users/${req.params.id}`);
+    }
+);
+
+router.get(
+    "/:id/sync",
+    variables,
+    permission.auth,
+    permission.member,
+    async (req: Request, res: Response, next) => {
+
+        if (req.params.id === "@me") {
+            req.params.id = req.user.id;
+        }
+
+        const userProfile: delUser = await global.db
+            .collection("users")
+            .findOne({ _id: req.params.id });
+        if (!userProfile)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.user.404"),
+                req: req
+            });
+
+        await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
+            method: "GET",
+            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
+        })
+            .then(async (fetchRes: fetchRes) => {
+                fetchRes.jsonBody = await fetchRes.json();
+                await global.db.collection("users").updateOne(
+                    { _id: req.params.id },
+                    {
+                        $set: {
+                            name: fetchRes.jsonBody.username,
+                            flags: fetchRes.jsonBody.public_flags,
+                            avatar: {
+                                hash: fetchRes.jsonBody.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                            }
+                        } as delUser
+                    }
+                );
+
+                await global.db.collection("audit").insertOne({
+                    type: "SYNC_USER",
+                    executor: req.user.id,
+                    target: req.params.id,
+                    date: Date.now(),
+                    reason: "None specified.",
+                    details: {
+                        old: {
+                            name: userProfile.name,
+                            flags: userProfile.flags,
+                            avatar: {
+                                hash: userProfile.avatar.hash,
+                                url: userProfile.avatar.url
+                            }
+                        },
+                        new: {
+                            name: fetchRes.jsonBody.username,
+                            flags: fetchRes.jsonBody.public_flags,
+                            avatar: {
+                                hash: fetchRes.jsonBody.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                            }
+                        }
+                    }
+                });
+                await userCache.updateUser(req.params.id);
+            })
+            .catch((_) => {
+                return res.status(502).json({
+                    error: true,
+                    status: 502,
+                    errors: [res.__("common.error.dapiFail")]
+                });
+            });
 
         res.redirect(`/users/${req.params.id}`);
     }

@@ -82,7 +82,7 @@
                             <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
                             <span><%= __("common.set") %></span>
                         </button>
-                        <a class="button is-danger" href="<%= linkPrefix %>/users/account/preferences/reset">
+                        <a class="button is-danger" href="<%= linkPrefix %>/staff/announce/reset" <% if (announcement.active === false) { %>disabled<% } %>>
                             <span class="icon"><i aria-hidden="true" class="fas fa-minus-circle"></i></span>
                             <span><%= __("page.staff.announcer.reset") %></span>
                         </a>

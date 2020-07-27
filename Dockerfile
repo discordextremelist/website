@@ -1,9 +1,9 @@
 FROM node:14-alpine
 WORKDIR /app
-RUN apk update && apk add git ca-certificates
+RUN apk update
 COPY . .
 RUN mv settings.example.json settings.json
-RUN npm i
+RUN npm i --production
 RUN npm run compile
 RUN rm -rf src/ @types/ settings.json
 CMD ["npm", "start"]

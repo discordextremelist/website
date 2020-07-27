@@ -2443,7 +2443,7 @@ router.post(
 
         const staffGuild = discord.bot.guilds.cache.get(settings.guild.staff);
 
-        const member = staffGuild.members.cache.get(req.body.id);
+        const member = staffGuild.members.cache.get(req.params.id);
 
         if (member) {
             await member.kick("Bot's listing has been declined.").catch((e) => {
@@ -2590,7 +2590,7 @@ router.post(
 
         const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
 
-        const member = mainGuild.members.cache.get(req.body.id);
+        const member = mainGuild.members.cache.get(req.params.id);
 
         if (member) {
             await member

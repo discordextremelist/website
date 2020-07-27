@@ -4,6 +4,6 @@ RUN apk update && apk add git ca-certificates
 COPY . .
 RUN mv settings.example.json settings.json
 RUN npm i --production
-RUN npm run compile
+RUN npm run compile-prod
 RUN rm -rf src/ @types/ settings.json
 CMD ["npm", "start"]

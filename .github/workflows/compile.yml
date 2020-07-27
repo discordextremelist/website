@@ -7,48 +7,6 @@ on:
   pull_request:
 
 jobs:
-  node10:
-    name: node v10 - tsc
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: install node v10
-        uses: actions/setup-node@v1
-        with:
-          node-version: 10
-      - name: snyk install
-        run: npm i -g snyk
-      - name: dependencies
-        run: npm install
-      - name: settings
-        run: cp settings.example.json settings.json
-      - name: tsc
-        uses: icrawl/action-tsc@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          job-name: tsc
-  node11:
-    name: node v11 - tsc
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: install node v11
-        uses: actions/setup-node@v1
-        with:
-          node-version: 11
-      - name: snyk install
-        run: npm i -g snyk
-      - name: dependencies
-        run: npm install
-      - name: settings
-        run: cp settings.example.json settings.json
-      - name: tsc
-        uses: icrawl/action-tsc@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          job-name: tsc
   node12:
     name: node v12 - tsc
     runs-on: ubuntu-latest

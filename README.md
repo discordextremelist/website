@@ -17,11 +17,9 @@ Licensing information viewable in the [LICENSE](https://github.com/discordextrem
 
 | Node Version        | Supported          |
 | ------------------- | ------------------ |
-| < v10               | 🔴 No Support      |
-| v10 Maintenance LTS | 🟡 Partial Support |
-| v11 End of Life     | 🟡 Partial Support |
+| < v12               | 🔴 No Support      |
 | v12 Active LTS      | 🟢 Full Support    |   
-| v13 Previous (EOL)  | 🟢 Full Support    |     
+| v13 Previous (EOL)  | 🟡 Partial Support |     
 | v14 Current         | 🟢 Full Support    |  
 
 | Name                    | Definition                                                                                                   |

@@ -63,7 +63,6 @@
   },
   "scripts": {
     "compile": "rm -rf dist/ && tsc",
-    "compile-prod": "rm -rf dist/ && tsc-transpile-only",
     "start": "node dist/src/app",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",
     "css-compile": "sh ./scripts/css_build.sh",

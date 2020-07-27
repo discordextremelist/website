@@ -27,12 +27,12 @@
                 "en-NZ",
                 "en-GB",
                 "en-US",
-                "en-UD",
                 "de-DE",
                 "es-ES",
                 "he-IL",
                 "hu-HU",
                 "it-IT",
+                "pt-PT",
                 "tr-TR"
             ],
             "isRTL": ["he-IL"],

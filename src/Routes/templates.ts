@@ -652,7 +652,7 @@ router.post(
                             fromGuild: template.fromGuild,
                             icon: {
                                 hash: template.icon.hash,
-                                url: `https://cdn.discordapp.com/icons/${template.fromGuild}/${template.icon.hash}`
+                                url: template.icon.url
                             },
                             links: {
                                 linkToServerPage: linkToServerPage,
@@ -943,7 +943,13 @@ router.get(
                             channels:
                                 fetchRes.jsonBody.serialized_source_guild
                                     .channels,
-                            usageCount: fetchRes.jsonBody.usage_count
+                            usageCount: fetchRes.jsonBody.usage_count,
+                            icon: {
+                                hash:
+                                    fetchRes.jsonBody.serialized_source_guild
+                                        .icon_hash,
+                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.source_guild_id}/${fetchRes.jsonBody.serialized_source_guild.icon_hash}`
+                            }
                         },
                         old: {
                             name: template.name,
@@ -956,7 +962,11 @@ router.get(
                             explicitContent: template.explicitContent,
                             roles: template.roles,
                             channels: template.channels,
-                            usageCount: template.usageCount
+                            usageCount: template.usageCount,
+                            icon: {
+                                hash: template.icon.hash,
+                                url: template.icon.url
+                            },
                         }
                     }
                 });

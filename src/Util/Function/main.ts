@@ -327,7 +327,7 @@ export async function auditUserIDParse(id: string) {
     return id;
 }
 
-export function shuffleArray(array) {
+export function shuffleArray(array: any[]) {
     let currentIndex = array.length,
         temporaryValue,
         randomIndex;

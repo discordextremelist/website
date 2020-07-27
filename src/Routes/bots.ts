@@ -2549,7 +2549,8 @@ router.post(
             {
                 $set: {
                     vanityUrl: "",
-                    "status.archived": true
+                    "status.archived": true,
+                    "status.approved": false
                 }
             }
         );
@@ -2574,7 +2575,7 @@ router.post(
             reason: req.body.reason || "None specified."
         });
 
-        await botCache.deleteBot(req.params.id);
+        await botCache.updateBot(req.params.id);
 
         (discord.bot.channels.cache.get(
             settings.channels.webLog

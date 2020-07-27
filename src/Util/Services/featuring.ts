@@ -36,7 +36,7 @@ export async function getFeaturedTemplates(): Promise<delTemplate[]> {
 }
 
 export async function updateFeaturedBots() {
-    const bots = functions
+    const bots = (functions
         .shuffleArray(
             (await global.db.collection("bots").find().toArray()).filter(
                 ({ _id, status }) =>
@@ -47,7 +47,7 @@ export async function updateFeaturedBots() {
                         .getStatus(_id)
                         .then((status) => status !== "offline")
             )
-        )
+        ) as delBot[])
         .slice(0, 6);
     await global.redis.set("featured_bots", JSON.stringify(bots));
 }

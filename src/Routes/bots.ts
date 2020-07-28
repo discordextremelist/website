@@ -2445,7 +2445,7 @@ router.post(
 
         const member = staffGuild.members.cache.get(req.params.id);
 
-        if (member) {
+        if (member && !settings.website.dev) {
             await member.kick("Bot's listing has been declined.").catch((e) => {
                 console.error(e);
             });
@@ -2593,7 +2593,7 @@ router.post(
 
         const member = mainGuild.members.cache.get(req.params.id);
 
-        if (member) {
+        if (member && !settings.website.dev) {
             await member
                 .kick("Bot has been removed from the website.")
                 .catch((e) => {

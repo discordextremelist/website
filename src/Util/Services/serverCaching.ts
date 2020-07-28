@@ -20,12 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 const prefix = "servers";
 
 export async function getServer(id: string): Promise<delServer> {
-    const server = await global.redis.hget(prefix, id);
+    const server = await global.redis?.hget(prefix, id);
     return JSON.parse(server);
 }
 
 export async function getAllServers(): Promise<delServer[]> {
-    const servers = await global.redis.hvals(prefix);
+    const servers = await global.redis?.hvals(prefix);
+    // @ts-ignore
     return servers.map(JSON.parse);
 }
 
@@ -34,7 +35,7 @@ export async function updateServer(id: string) {
         .collection("servers")
         .findOne({ _id: id });
     if (!data) return;
-    await global.redis.hmset(prefix, id, JSON.stringify(data));
+    await global.redis?.hmset(prefix, id, JSON.stringify(data));
 }
 
 export async function uploadServers() {
@@ -43,14 +44,14 @@ export async function uploadServers() {
         .find()
         .toArray();
     if (servers.length < 1) return;
-    await global.redis.hmset(
+    await global.redis?.hmset(
         prefix,
         ...servers.map((s: delServer) => [s._id, JSON.stringify(s)])
     );
 }
 
 export async function deleteServer(id: string) {
-    await global.redis.hdel(prefix, id);
+    await global.redis?.hdel(prefix, id);
 }
 
 setInterval(async () => {

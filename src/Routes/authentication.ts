@@ -144,18 +144,21 @@ router.get(
                         allTime: {
                             total: 0,
                             approved: 0,
+                            unapprove: 0,
                             declined: 0,
                             remove: 0
                         },
                         prevWeek: {
                             total: 0,
                             approved: 0,
+                            unapprove: 0,
                             declined: 0,
                             remove: 0
                         },
                         thisWeek: {
                             total: 0,
                             approved: 0,
+                            unapprove: 0,
                             declined: 0,
                             remove: 0
                         }
@@ -255,7 +258,7 @@ router.get(
 router.get("/logout", async (req: Request, res: Response, next) => {
     if (!req.user.impersonator) {
         req.session.logoutJust = true;
-        if (req.user.db.admin) await tokenManager.tokenReset(req.user.id);
+        if (req.user.db.rank.admin) await tokenManager.tokenReset(req.user.id);
 
         await req.logout();
         res.redirect(req.session.redirectTo || "/");

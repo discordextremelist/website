@@ -908,7 +908,7 @@ router.post(
         if (
             bot.owner.id !== req.user.id &&
             !bot.editors.includes(req.user.id) &&
-            req.user.db.mod === false
+            req.user.db.rank.mod === false
         )
             return res.status(403).json({
                 error: true,

@@ -41,7 +41,7 @@ bot.on("ready", async () => {
 });
 
 bot.on("presenceUpdate", async (oldPresence, newPresence) => {
-    await global.redis.hmset(
+    await global.redis?.hmset(
         prefix,
         newPresence.member.id,
         newPresence.status || "offline"
@@ -49,7 +49,7 @@ bot.on("presenceUpdate", async (oldPresence, newPresence) => {
 });
 
 bot.on("guildMemberAdd", async (member) => {
-    await global.redis.hmset(
+    await global.redis?.hmset(
         prefix,
         member.id,
         member.presence.status || "offline"
@@ -60,7 +60,7 @@ bot.on("guildMemberAdd", async (member) => {
 
 bot.on("guildMemberRemove", async (member) => {
     if (member.guild.id === settings.guild.main) {
-        await global.redis.hmset(prefix, member.id, "offline");
+        await global.redis?.hmset(prefix, member.id, "offline");
         await postMetric();
     }
 });
@@ -84,7 +84,7 @@ export function getMember(id: string): Discord.GuildMember | undefined {
 }
 
 export async function getStatus(id: string): Promise<string> {
-    const status: string = await global.redis.hget(prefix, id);
+    const status: string = await global.redis?.hget(prefix, id);
     return status || "offline";
 }
 
@@ -92,7 +92,7 @@ export async function uploadStatuses() {
     await Promise.all(
         bot.guilds.cache.map(
             async (g) =>
-                await global.redis.hmset(
+                await global.redis?.hmset(
                     prefix,
                     ...g.members.cache.map((m) => [m.id, m.presence.status])
                 )

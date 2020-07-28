@@ -20,22 +20,22 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import * as functions from "../Function/main";
 
 export async function getFeaturedBots(): Promise<delBot[]> {
-    const bots = await global.redis.get("featured_bots");
+    const bots = await global.redis?.get("featured_bots");
     return JSON.parse(bots);
 }
 
 export async function getFeaturedServers(): Promise<delServer[]> {
-    const servers = await global.redis.get("featured_servers");
+    const servers = await global.redis?.get("featured_servers");
     return JSON.parse(servers);
 }
 
 export async function getFeaturedTemplates(): Promise<delTemplate[]> {
-    const templates = await global.redis.get("featured_templates");
+    const templates = await global.redis?.get("featured_templates");
     return JSON.parse(templates);
 }
 
 export async function updateFeaturedBots() {
-    const statuses = await global.redis.hgetall('statuses')
+    const statuses = await global.redis?.hgetall('statuses')
     const bots = (functions
         .shuffleArray(
             (await global.db.collection("bots").find().toArray() as delBot[]).filter(
@@ -47,21 +47,25 @@ export async function updateFeaturedBots() {
             )
         ) as delBot[])
         .slice(0, 6);
-    await global.redis.set("featured_bots", JSON.stringify(bots));
+    await global.redis?.set("featured_bots", JSON.stringify(bots));
 }
 
 export async function updateFeaturedServers() {
-    const servers = functions
-        .shuffleArray(await global.db.collection("servers").find().toArray())
+    const servers = (functions
+        .shuffleArray(
+            (await global.db.collection("servers").find().toArray()).filter(
+                ({ status }) => status && !status.reviewRequired
+            )
+        ) as delServer[])
         .slice(0, 6);
-    await global.redis.set("featured_servers", JSON.stringify(servers));
+    await global.redis?.set("featured_servers", JSON.stringify(servers));
 }
 
 export async function updateFeaturedTemplates() {
     const templates = functions
         .shuffleArray(await global.db.collection("templates").find().toArray())
         .slice(0, 6);
-    await global.redis.set("featured_templates", JSON.stringify(templates));
+    await global.redis?.set("featured_templates", JSON.stringify(templates));
 }
 
 setInterval(async () => {

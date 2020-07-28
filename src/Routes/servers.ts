@@ -146,6 +146,12 @@ router.post(
                 if (req.body.fitHealth === true) tags.push("Fitness & Health");
                 if (req.body.finance === true) tags.push("Finance");
 
+                let reviewRequired = false;
+                if (req.body.lgbt === true) {
+                    tags.push("LGBT");
+                    reviewRequired = true;
+                }
+
                 if (error === true)
                     return res.status(400).json({
                         error: true,
@@ -171,6 +177,9 @@ router.post(
                         invite: `https://discord.gg/${req.body.invite}`,
                         website: req.body.website,
                         donation: req.body.donationUrl
+                    },
+                    status: {
+                        reviewRequired: reviewRequired
                     }
                 });
 
@@ -212,6 +221,9 @@ router.post(
                                 invite: `https://discord.gg/${req.body.invite}`,
                                 website: req.body.website,
                                 donation: req.body.donationUrl
+                            },
+                            status: {
+                                reviewRequired: reviewRequired
                             }
                         }
                     }
@@ -288,6 +300,7 @@ router.post(
                 if (req.body.travelCuis === true) tags.push("Travel & Food");
                 if (req.body.fitHealth === true) tags.push("Fitness & Health");
                 if (req.body.finance === true) tags.push("Finance");
+                if (req.body.lgbt === true) tags.push("LGBT");
 
                 return res.status(400).json({
                     error: true,
@@ -504,6 +517,12 @@ router.post(
         if (req.body.fitHealth === true) tags.push("Fitness & Health");
         if (req.body.finance === true) tags.push("Finance");
 
+        let reviewRequired = false;
+        if (req.body.lgbt === true) {
+            tags.push("LGBT");
+            if (!server.tags.includes("LGBT")) reviewRequired = true;
+        }
+
         fetch(`https://discord.com/api/v6/invites/${req.body.invite}`, {
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
@@ -542,6 +561,9 @@ router.post(
                                 invite: `https://discord.gg/${req.body.invite}`,
                                 website: req.body.website,
                                 donation: req.body.donationUrl
+                            },
+                            status: {
+                                reviewRequired: reviewRequired
                             }
                         }
                     }
@@ -582,6 +604,9 @@ router.post(
                                 invite: `https://discord.gg/${req.body.invite}`,
                                 website: req.body.website,
                                 donation: req.body.donationUrl
+                            },
+                            status: {
+                                reviewRequired: reviewRequired
                             }
                         },
                         old: {
@@ -598,6 +623,9 @@ router.post(
                                 invite: server.links.invite,
                                 website: server.links.website,
                                 donation: server.links.donation
+                            },
+                            status: {
+                                reviewRequired: server.status.reviewRequired
                             }
                         }
                     }

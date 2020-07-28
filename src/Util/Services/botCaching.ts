@@ -20,8 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 const prefix = "bots";
 
 export async function getBot(id: string): Promise<delBot> {
-    const bot = await global.redis.hget(prefix, id);
-    if (!bot) return bot;
+    const bot = await global.redis?.hget(prefix, id);
+    if (!bot) return;
 
     const parsedBot = JSON.parse(bot);
     if (parsedBot.id) parsedBot._id = parsedBot.id;
@@ -30,7 +30,8 @@ export async function getBot(id: string): Promise<delBot> {
 }
 
 export async function getAllBots(): Promise<delBot[]> {
-    const bots = await global.redis.hvals(prefix);
+    const bots = await global.redis?.hvals(prefix);
+    // @ts-ignore
     return bots.map(JSON.parse);
 }
 
@@ -39,7 +40,7 @@ export async function updateBot(id: string) {
         .collection("bots")
         .findOne({ _id: id });
     if (!data) return;
-    await global.redis.hmset(prefix, id, JSON.stringify(data));
+    await global.redis?.hmset(prefix, id, JSON.stringify(data));
 }
 
 export async function uploadBots() {
@@ -59,14 +60,14 @@ export async function uploadBots() {
         if (bot.id) bot._id = bot.id;
     }
 
-    await global.redis.hmset(
+    await global.redis?.hmset(
         prefix,
         ...botsDB.map((bot: delBot) => [bot._id, JSON.stringify(bot)])
     );
 }
 
 export async function deleteBot(id: string) {
-    await global.redis.hdel(prefix, id);
+    await global.redis?.hdel(prefix, id);
 }
 
 setInterval(async () => {

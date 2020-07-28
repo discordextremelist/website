@@ -59,6 +59,7 @@
         },
         "authScopes": ["identify", "guilds.join"],
         "url": "https://discordextremelist.xyz",
+        "lgbtSiteURL": "https://discordextremelist.gay",
         "dev": true,
         "callback": "/auth/login/callback",
         "gaID": "UA-165711322-1",

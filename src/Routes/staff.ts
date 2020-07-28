@@ -81,26 +81,6 @@ router.get(
     }
 );
 
-/* NOTICE: Use only in development. 
-
-router.get(
-    "/session",
-    variables,
-    permission.admin,
-    (req: Request, res: Response) => {
-        res.json(req.user);
-    }
-);
-
-router.get(
-    "/session/dbOnly",
-    variables,
-    permission.admin,
-    (req: Request, res: Response) => {
-        res.json(req.user.db);
-    }
-); */
-
 router.get(
     "/queue",
     variables,

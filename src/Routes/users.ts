@@ -767,7 +767,7 @@ router.post(
             details: {
                 old: {
                     preferences: {
-                        customGlobalCss: req.user.db.preferences.customCss,
+                        customGlobalCss: req.user.db.preferences.customGlobalCss,
                         defaultColour: req.user.db.preferences.defaultColour,
                         defaultForegroundColour:
                             req.user.db.preferences.defaultForegroundColour,

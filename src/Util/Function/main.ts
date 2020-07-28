@@ -26,7 +26,7 @@ export const escapeFormatting = (text: string) => {
     return escaped;
 };
 
-export function parseRegion(region: string) {
+export function parseRegion(region: string): string {
     let parsedRegion = `🏴 ${region}`;
 
     if (region === "us-west") parsedRegion = "US West";
@@ -52,7 +52,7 @@ export function parseRegion(region: string) {
     return parsedRegion;
 }
 
-export function regionIcon(region: string) {
+export function regionIcon(region: string): string {
     let icon = "81b90eae4fc67502d59808a7c219ee65";
 
     if (region === "us-west") icon = "e6d6b255259ac878d00819a9555072ad";
@@ -77,7 +77,7 @@ export function regionIcon(region: string) {
     return icon;
 }
 
-export function getForeground(inputColour: string) {
+export function getForeground(inputColour: string): string {
     const colour =
         inputColour.charAt(0) === "#"
             ? inputColour.substring(1, 7)
@@ -96,7 +96,7 @@ export function getForeground(inputColour: string) {
     return L > 0.179 ? "#000000" : "#FFFFFF";
 }
 
-export function standingParseEmoji(standing: string) {
+export function standingParseEmoji(standing: string): string {
     let result = "page.staff.manager.unavailable";
 
     if (standing === "Unmeasured")
@@ -110,7 +110,7 @@ export function standingParseEmoji(standing: string) {
     return result;
 }
 
-export function parseDate(__, locale: string, rawDate: number) {
+export function parseDate(__, locale: string, rawDate: number): string {
     if (rawDate === 0) return "???";
 
     const date = new Date(rawDate);
@@ -157,7 +157,7 @@ export function parseDate(__, locale: string, rawDate: number) {
     }
 }
 
-export function parseAudit(__, auditType: string) {
+export function parseAudit(__, auditType: string): auditType {
     let returnType = {
         name: `${__("page.staff.audit.type.UNKNOWN")}: ${auditType}`,
         icon: "far fa-question has-text-white"

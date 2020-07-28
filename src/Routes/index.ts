@@ -146,7 +146,10 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
 
     if (!req.query.page) req.query.page = "1";
 
-    const servers = await serverCache.getAllServers();
+    const servers = (await serverCache.getAllServers()).filter(
+        ({ _id, status }) =>
+            status && !status.reviewRequired
+    );
 
     res.render("templates/servers/index", {
         title: res.__("common.servers.discord"),

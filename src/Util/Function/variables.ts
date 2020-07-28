@@ -74,6 +74,8 @@ export const variables = async (
     res.locals.premidPageInfo = "";
     res.locals.hideLogin = false;
 
+    res.locals.lgbtWebURL = settings.website.lgbtSiteURL;
+
     if (req.session.disableRTL && req.session.disableRTL === true) {
         res.locals.htmlDir = "ltr";
     } else

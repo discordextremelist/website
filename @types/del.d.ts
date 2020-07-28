@@ -18,8 +18,26 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 interface authUser {
-    // todo - remember to add the rest of the shit here
-    user: delUser;
+    id: string;
+    username: string;
+    avatar: string;
+    discriminator: string;
+    public_flags: number;
+    flags: number;
+    email?: string;
+    verified: boolean;
+    locale: string;
+    mfa_enabled: boolean;
+    provider: string;
+    accessToken: string;
+    fetchedAt: string;
+    impersonator?: string;
+    db: delUser;
+}
+
+interface auditType {
+    name: string;
+    icon: string;
 }
 
 interface delUser {
@@ -40,6 +58,7 @@ interface delUser {
         defaultForegroundColour: string;
         enableGames: boolean;
         experiments: boolean;
+        theme: number;
     };
     profile: {
         bio: string;
@@ -92,18 +111,21 @@ interface delUser {
             allTime: {
                 total: number;
                 approved: number;
+                unapprove: number;
                 declined: number;
                 remove: number;
             };
             prevWeek: {
                 total: number;
                 approved: number;
+                unapprove: number;
                 declined: number;
                 remove: number;
             };
             thisWeek: {
                 total: number;
                 approved: number;
+                unapprove: number;
                 declined: number;
                 remove: number;
             };
@@ -186,6 +208,9 @@ interface delServer {
         invite: string;
         website: string;
         donation: string;
+    };
+    status: {
+        reviewRequired: boolean;
     };
 }
 

@@ -50,6 +50,7 @@ import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap";
 import i18n from "i18n";
 import * as settings from "../settings.json";
 import { MongoClient } from "mongodb";
+import { RedisOptions } from "ioredis";
 
 const app = express();
 
@@ -139,7 +140,8 @@ new Promise((resolve, reject) => {
                 .catch(() => false);
         }
 
-        let redisConfig;
+        let redisConfig: RedisOptions;
+        
         if (settings.secrets.redis.sentinels.length > 0) {
             redisConfig = {
                 sentinels: settings.secrets.redis.sentinels,
@@ -158,7 +160,7 @@ new Promise((resolve, reject) => {
 
         global.redis = new (require("ioredis"))(redisConfig);
 
-        global.redis.flushdb();
+        global.redis?.flushdb();
 
         console.time("Redis Cache & Core Refresh");
         await userCache.uploadUsers();
@@ -175,17 +177,14 @@ new Promise((resolve, reject) => {
 
         setTimeout(async () => {
             await featuredCache.updateFeaturedBots();
-        }, 5000);
+            await discord.postMetric();
+        }, 10000);
     
         await discord.postWebMetric("bot");
         await discord.postWebMetric("bot_unapproved");
         await discord.postWebMetric("server");
         await discord.postWebMetric("template");
         await discord.postWebMetric("user");
-
-        setTimeout(async () => {
-            await discord.postMetric();
-        }, 10000);
 
         await (async function discordBotUndefined() {
             if (

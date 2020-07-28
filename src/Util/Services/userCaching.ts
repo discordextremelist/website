@@ -20,12 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 const prefix = "users";
 
 export async function getUser(id: string): Promise<delUser> {
-    const user = await global.redis.hget(prefix, id);
+    const user = await global.redis?.hget(prefix, id);
     return JSON.parse(user);
 }
 
 export async function getAllUsers(): Promise<delUser[]> {
-    const users = await global.redis.hvals(prefix);
+    const users = await global.redis?.hvals(prefix);
+    // @ts-ignore
     return users.map(JSON.parse);
 }
 
@@ -34,7 +35,7 @@ export async function updateUser(id: string) {
         .collection("users")
         .findOne({ _id: id });
     if (!data) return;
-    await global.redis.hmset(prefix, id, JSON.stringify(data));
+    await global.redis?.hmset(prefix, id, JSON.stringify(data));
 }
 
 export async function uploadUsers() {
@@ -43,14 +44,14 @@ export async function uploadUsers() {
         .find()
         .toArray();
     if (usersDB.length < 1) return;
-    await global.redis.hmset(
+    await global.redis?.hmset(
         prefix,
         ...usersDB.map((u: delUser) => [u._id, JSON.stringify(u)])
     );
 }
 
 export async function deleteUser(id: string) {
-    await global.redis.hdel(prefix, id);
+    await global.redis?.hdel(prefix, id);
 }
 
 setInterval(async () => {

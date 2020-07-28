@@ -19,12 +19,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { BrowserDetectInfo } from "browser-detect/dist/types/browser-detect.interface";
 import { Db } from "mongodb";
+import { Redis } from "ioredis";
 export {};
 
 declare global {
     namespace NodeJS {
         interface Global {
-            redis: any;
+            redis: Redis;
             announcement: announcement;
             ddosMode: ddosMode;
             libs: library[];
@@ -52,7 +53,7 @@ declare module "discord.js" {
 declare module "express-serve-static-core" {
     interface Request {
         session: any;
-        user: any;
+        user: authUser;
         locale: any;
         setLocale(language: string): any;
         browser: BrowserDetectInfo;

@@ -39,7 +39,7 @@ export const variables = async (
         params.delete('setLang')
         params.delete('localeLayout')
 
-        return res.redirect(req.path + (params.toString() && `?${params}`));
+        return res.redirect(req.baseUrl + (req.path === '/' ? '' : req.path) + (params.toString() && `?${params}`));
     }
 
     req.browser = browser(req.headers["user-agent"]);

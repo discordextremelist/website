@@ -1243,10 +1243,10 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     res.locals.premidPageInfo = res.__("premid.bots.view", bot.name);
 
     if (bot.status.archived === true)
-        return res.status(404).render("status", {
+        return res.status(403).render("status", {
             title: res.__("common.error"),
-            status: 404,
-            subtitle: res.__("common.error.bot.404"),
+            status: 403,
+            subtitle: res.__("common.error.bot.archived"),
             type: "Error",
             req: req,
             pageType: { server: false, bot: false }

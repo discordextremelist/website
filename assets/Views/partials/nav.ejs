@@ -230,6 +230,14 @@
                         <% } %>
                         <span><%= __({ phrase: "common.nav.language.hu", locale: "hu-HU" }) %></span>
                     </a>
+                    <a class="navbar-item" <% if (req.locale !== "pt-PT") { %>href="<%= req.originalUrl.replace(req.locale, "pt-PT") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
+                        <% if (req.locale === "pt-PT") { %>
+                            <span title="Selected" href="<%= req.originalUrl.replace(req.locale, "pt-PT") %>" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.pt", locale: "pt-PT" }) %></span>
+                    </a>
                     <a class="navbar-item" <% if (req.locale !== "tr-TR") { %>href="<%= req.originalUrl.replace(req.locale, "tr-TR") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
                         <% if (req.locale === "tr-TR") { %>
                             <span title="Selected" class="icon has-text-success iconalign">

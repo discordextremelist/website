@@ -56,6 +56,12 @@ const app = express();
 
 let dbReady: boolean = false;
 
+app.use('/fonts/fa/webfonts/*', (req: Request, res: Response, next: () => void) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 app.set("views", path.join(__dirname + "/../../assets/Views"));
 app.use(express.static(path.join(__dirname + "/../../assets/Public")));
 app.use('/packages/monaco-editor', express.static(path.join(__dirname + "/../../node_modules/monaco-editor")))

@@ -167,12 +167,15 @@ new Promise((resolve, reject) => {
         await templateCache.uploadTemplates();
         await libCache.cacheLibs();
         await announcementCache.updateCache();
-        await featuredCache.updateFeaturedBots();
         await featuredCache.updateFeaturedServers();
         await featuredCache.updateFeaturedTemplates();
         await ddosMode.updateCache();
         await botStatsUpdate();
         await tokenManager.tokenResetAll();
+
+        setTimeout(async () => {
+            await featuredCache.updateFeaturedBots();
+        }, 5000);
     
         await discord.postWebMetric("bot");
         await discord.postWebMetric("bot_unapproved");

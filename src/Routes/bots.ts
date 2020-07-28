@@ -2359,10 +2359,10 @@ router.get(
         if (req.query.from && req.query.from === "queue")
             redirect = "/staff/queue";
 
-        res.render("templates/bots/staffActions/decline", {
+        res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.decline.title"),
+            icon: 'minus',
             subtitle: res.__("page.bots.decline.subtitle", bot.name),
-            decliningBot: bot,
             req,
             redirect
         });
@@ -2472,6 +2472,151 @@ router.post(
 );
 
 router.get(
+    "/:id/unapprove",
+    variables,
+    permission.auth,
+    permission.mod,
+    async (req: Request, res: Response, next) => {
+        const bot: delBot | undefined = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+
+        if (!bot)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.bot.404"),
+                req,
+                type: "Error"
+            });
+
+        if (!bot.status.approved)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.bot.alreadyNotApproved"),
+                req,
+                type: "Error"
+            });
+
+        res.locals.premidPageInfo = res.__("premid.bots.unapprove", bot.name);
+
+        res.render("templates/bots/staffActions/remove", {
+            title: res.__("page.bots.unapprove.title"),
+            icon: 'undo-alt',
+            subtitle: res.__("page.bots.unapprove.subtitle", bot.name),
+            req,
+            redirect: `/bots/${bot._id}`
+        });
+    }
+);
+
+router.post(
+    "/:id/unapprove",
+    variables,
+    permission.auth,
+    permission.mod,
+    async (req: Request, res: Response, next) => {
+        const bot: delBot | undefined = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+
+        if (!bot)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.bot.404"),
+                req,
+                type: "Error"
+            });
+
+        if (!bot.status.approved)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.bot.inQueue"),
+                req,
+                type: "Error"
+            });
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    vanityUrl: "",
+                    "status.approved": false,
+                    "date.approved": null
+                }
+            }
+        );
+
+        await global.db.collection("users").updateOne(
+            { _id: req.user.id },
+            {
+                $set: {
+                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
+                    "staffTracking.handledBots.allTime.unapprove": req.user.db.staffTracking.handledBots.allTime.unapprove += 1,
+                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+                    "staffTracking.handledBots.thisWeek.unapprove": req.user.db.staffTracking.handledBots.thisWeek.unapprove += 1
+                }
+            }
+        );
+
+        await global.db.collection("audit").insertOne({
+            type: "UNAPPROVE_BOT",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: req.body.reason || "None specified."
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel).send(
+            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${
+                req.user.id
+            })\` unapproved bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
+            })\`\n**Reason:** \`${req.body.reason}\``
+        );
+
+        const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
+
+        const member = mainGuild.members.cache.get(req.params.id);
+
+        if (member && !settings.website.dev) {
+            await member
+                .kick("Bot has been unapproved.")
+                .catch((e) => {
+                    console.error(e);
+                });
+        }
+
+        const owner = discord.bot.users.cache.get(bot.owner.id);
+        if (owner)
+            owner
+                .send(
+                    `${
+                        settings.emoji.botDeleted
+                    } **|** Your bot **${functions.escapeFormatting(
+                        bot.name
+                    )}** \`(${bot._id})\` has been unapproved!\n**Reason:** \`${
+                        req.body.reason
+                    }\``
+                )
+                .catch((e) => {
+                    console.error(e);
+                });
+
+        res.redirect("/staff/queue");
+    }
+);
+
+router.get(
     "/:id/remove",
     variables,
     permission.auth,
@@ -2501,17 +2646,12 @@ router.get(
 
         res.locals.premidPageInfo = res.__("premid.bots.remove", bot.name);
 
-        let redirect = `/bots/${bot._id}`;
-
-        if (req.query.from && req.query.from === "queue")
-            redirect = "/staff/queue";
-
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.remove.title"),
+            icon: 'trash',
             subtitle: res.__("page.bots.remove.subtitle", bot.name),
-            removingBot: bot,
             req,
-            redirect
+            redirect: `/bots/${bot._id}`
         });
     }
 );

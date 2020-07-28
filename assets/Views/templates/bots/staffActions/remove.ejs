@@ -7,7 +7,7 @@
         <div class="container has-text-centered">
             <h1 class="title">
                 <span class="icon is-medium iconalign">
-                    <i aria-hidden="true" class="fad fa-trash has-text-default"></i>
+                    <i aria-hidden="true" class="fad fa-<%= icon %> has-text-default"></i>
                 </span>
                 <br />
                 <span><%= title %></span>
@@ -22,9 +22,9 @@
     <div class="section">
         <form method="POST">
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Reason") %> <span class="has-text-danger">*</span></label>
+                <label class="label has-text-blurple"><%= __("common.reason") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input class="input is-rounded" type="text" id="reason" name="reason" placeholder="<%= __("Input a custom reason as to why you are removing this bot or use a template reason below.") %>">
+                    <input class="input is-rounded" type="text" id="reason" name="reason" placeholder="<%= __("page.remove.bots.placeholder") %>">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-comment-dots"></i>
                     </span>
@@ -32,7 +32,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Premade Reasons") %></label>
+                <label class="label has-text-blurple"><%= __("page.remove.premadeReasons") %></label>
                 <div class="buttons">
                     <button type="button" onclick="isClone();" class="button is-dark">
                         <span><%= __("page.remove.premadeReasons.clone") %></span>
@@ -72,7 +72,7 @@
                         <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
                         <span><%= __("common.submit") %></span>
                     </button>
-                    <a class="button is-danger" href="/bots/<%= removingBot._id %>">
+                    <a class="button is-danger" href="<%= redirect %>">
                         <span class="icon"><i aria-hidden="true" class="fas fa-times-circle"></i></span>
                         <span><%= __("common.cancel") %></span>
                     </a>

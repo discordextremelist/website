@@ -258,6 +258,10 @@
                                         </a>
                                     <% } %>
                                     <% if (bot.status.approved === true) { %>
+                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/unapprove">
+                                            <span class="icon"><i aria-hidden="true" class="fas fa-undo-alt"></i></span>
+                                            <span><%= __("common.staff.unapprove") %></span>
+                                        </a>
                                         <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/remove">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                             <span><%= __("common.staff.remove") %></span>

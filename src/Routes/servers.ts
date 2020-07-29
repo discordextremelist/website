@@ -651,6 +651,241 @@ router.post(
 );
 
 router.get(
+    "/:id/decline",
+    variables,
+    permission.auth,
+    permission.mod,
+    async (req: Request, res: Response, next) => {
+        const bot: delBot | undefined = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+
+        if (!bot)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.server.404"),
+                req,
+                type: "Error"
+            });
+
+        res.locals.premidPageInfo = res.__("premid.servers.decline", bot.name);
+
+        if (bot.status.approved === true)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.server.notInQueue"),
+                req,
+                type: "Error"
+            });
+
+        let redirect = `/servers/${bot._id}`;
+
+        if (req.query.from && req.query.from === "queue")
+            redirect = "/staff/bot_queue";
+
+        res.render("templates/bots/staffActions/remove", {
+            title: res.__("page.servers.decline.title"),
+            icon: 'minus',
+            subtitle: res.__("page.servers.decline.subtitle", bot.name),
+            req,
+            redirect
+        });
+    }
+);
+
+router.post(
+    "/:id/decline",
+    variables,
+    permission.auth,
+    permission.mod,
+    async (req: Request, res: Response, next) => {
+        const server: delServer | undefined = await global.db
+            .collection("servers")
+            .findOne({ _id: req.params.id });
+
+        if (!server)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.server.404"),
+                req,
+                type: "Error"
+            });
+
+        if (!server.status || !server.status.reviewRequired)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.server.notInQueue"),
+                req,
+                type: "Error"
+            });
+
+        const tags = new Set(server.tags);
+        tags.delete("LGBT");
+
+        await global.db.collection("servers").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    tags: [...tags],
+                    "status.reviewRequired": false
+                }
+            }
+        );
+
+        await global.db.collection("users").updateOne(
+            { _id: req.user.id },
+            {
+                $set: {
+                    "staffTracking.handledServers.allTime.total": req.user.db.staffTracking.handledServers.allTime.total += 1,
+                    "staffTracking.handledServers.allTime.declined": req.user.db.staffTracking.handledServers.allTime.declined += 1,
+                    "staffTracking.handledServers.thisWeek.total": req.user.db.staffTracking.handledServers.thisWeek.total += 1,
+                    "staffTracking.handledServers.thisWeek.declined": req.user.db.staffTracking.handledServers.thisWeek.declined += 1
+                }
+            }
+        );
+
+        await global.db.collection("audit").insertOne({
+            type: "DECLINE_SERVER",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: req.body.reason || "None specified."
+        });
+
+        await serverCache.updateServer(req.params.id);
+
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel).send(
+            `${settings.emoji.cross} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${
+                req.user.id
+            })\` declined server **${functions.escapeFormatting(server.name)}** \`(${
+                server._id
+            })\`\nIt will still be shown as a normal server, it was declined from being listed as an LGBT community.\n**Reason:** \`${req.body.reason}\``
+        );
+
+        const owner = discord.bot.users.cache.get(server.owner.id);
+        if (owner)
+            owner
+                .send(
+                    `${
+                        settings.emoji.cross
+                    } **|** Your server **${functions.escapeFormatting(
+                        server.name
+                    )}** \`(${server._id})\` was declined from being listed as an LGBT community. It will still appear as a normal server.\n**Reason:** \`${
+                        req.body.reason
+                    }\``
+                )
+                .catch((e) => {
+                    console.error(e);
+                });
+
+        res.redirect("/staff/server_queue");
+    }
+);
+
+router.get(
+    "/:id/approve",
+    variables,
+    permission.auth,
+    permission.mod,
+    async (req: Request, res: Response, next) => {
+        const server: delServer | undefined = await global.db
+            .collection("servers")
+            .findOne({ _id: req.params.id });
+
+        if (!server)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.server.404"),
+                req,
+                type: "Error"
+            });
+
+        if (!server.status || !server.status.reviewRequired)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.server.notInQueue"),
+                req,
+                type: "Error"
+            });
+
+        await global.db.collection("servers").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    "status.reviewRequired": false
+                }
+            }
+        );
+
+        await global.db.collection("users").updateOne(
+            { _id: req.user.id },
+            {
+                $set: {
+                    "staffTracking.handledServers.allTime.total": req.user.db.staffTracking.handledServers.allTime.total += 1,
+                    "staffTracking.handledServers.allTime.approved": req.user.db.staffTracking.handledServers.allTime.approved += 1,
+                    "staffTracking.handledServers.thisWeek.total": req.user.db.staffTracking.handledServers.thisWeek.total += 1,
+                    "staffTracking.handledServers.thisWeek.approved": req.user.db.staffTracking.handledServers.thisWeek.approved += 1
+                }
+            }
+        );
+
+        await global.db.collection("audit").insertOne({
+            type: "APPROVE_SERVER",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: req.body.reason || "None specified."
+        });
+
+        await serverCache.updateServer(req.params.id);
+
+        (discord.bot.channels.cache.get(
+            settings.channels.webLog
+        ) as Discord.TextChannel)
+            .send(
+                `${settings.emoji.check} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` approved server **${functions.escapeFormatting(
+                    server.name
+                )}** \`(${server._id})\`\nTo be listed as an LGBT community.\n<${settings.website.url}/bots/${
+                    server._id
+                }>`
+            )
+            .catch((e) => {
+                console.error(e);
+            });
+
+        const owner = discord.bot.users.cache.get(server.owner.id);
+        if (owner)
+            owner
+                .send(
+                    `${
+                        settings.emoji.cross
+                    } **|** Your server **${functions.escapeFormatting(
+                        server.name
+                    )}** \`(${server._id})\` was approved as being listed as an LGBT community.`
+                )
+                .catch((e) => {
+                    console.error(e);
+                });
+
+        res.redirect("/staff/server_queue");
+    }
+);
+
+router.get(
     "/:id/delete",
     variables,
     permission.auth,

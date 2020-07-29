@@ -130,6 +130,46 @@ interface delUser {
                 remove: number;
             };
         };
+        handledServers: {
+            allTime: {
+                total: number;
+                approved: number;
+                declined: number;
+                remove: number;
+            };
+            prevWeek: {
+                total: number;
+                approved: number;
+                declined: number;
+                remove: number;
+            };
+            thisWeek: {
+                total: number;
+                approved: number;
+                declined: number;
+                remove: number;
+            };
+        };
+        handledTemplates: {
+            allTime: {
+                total: number;
+                approved: number;
+                declined: number;
+                remove: number;
+            };
+            prevWeek: {
+                total: number;
+                approved: number;
+                declined: number;
+                remove: number;
+            };
+            thisWeek: {
+                total: number;
+                approved: number;
+                declined: number;
+                remove: number;
+            };
+        };
     };
 }
 

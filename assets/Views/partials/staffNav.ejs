@@ -296,11 +296,17 @@
                             <span><%= __("common.nav.me.staffPanel.home.desktop") %></span>
                         <% } %>
                     </a>
-                    <a class="navbar-item" href="<%= linkPrefix %>/staff/queue">
+                    <a class="navbar-item" href="<%= linkPrefix %>/staff/bot_queue">
                         <span class="icon iconalign">
                             <i class="fad fa-list-ul" aria-hidden="true"></i>
                         </span>
                         <span><%= __("page.staff.queue") %></span>
+                    </a>
+                    <a class="navbar-item" href="<%= linkPrefix %>/staff/server_queue">
+                        <span class="icon iconalign">
+                            <i class="fad fa-list-ul" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("page.staff.server_queue") %></span>
                     </a>
                     <% if (req.user.db.rank.assistant === true) { %>  
                         <a class="navbar-item" href="<%= linkPrefix %>/staff/staff-manager">

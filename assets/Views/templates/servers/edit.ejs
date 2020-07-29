@@ -106,6 +106,10 @@
                             <input class="is-checkradio is-circle has-background-color is-orange" type="checkbox" id="finance" name="finance" <% if (server.tags && server.tags.includes("Finance")) { %>checked="checked"<% } %>>
                             <label class="has-text-orange" for="finance"><%= __("common.tags.finance") %></label>
                         </div>
+                        <div class="field">
+                            <input class="is-checkradio is-circle has-background-color is-danger" type="checkbox" id="lgbt" name="lgbt" <% if (server.tags && server.tags.includes("LGBT")) { %>checked="checked"<% } %>>
+                            <label class="has-text-danger" for="lgbt"><%= __("common.tags.lgbt") %></label>
+                        </div>
                     </div>
                     <div class="column is-one-quarter"></div>
                     <div class="column is-one-quarter"></div>

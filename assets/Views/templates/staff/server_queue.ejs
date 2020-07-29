@@ -1,0 +1,39 @@
+<%- include("../../partials/header.ejs") %>
+<%
+    let defaultColour = "#b114ff";
+    let foreground = "#ffffff";
+
+    if (req.user) {
+        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+    }
+%>
+<style type="text/css">.button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;color:<%= defaultColour %>}.button.is-default.is-outlined:hover,.button.is-default.is-outlined.is-hovered,.button.is-default.is-outlined:focus,.button.is-default.is-outlined.is-focused{background-color:<%= defaultColour %>;border-color:<%= defaultColour %>;color:<%= foreground %>}.button.is-default.is-outlined.is-loading::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-outlined.is-loading:hover::after,.button.is-default.is-outlined.is-loading.is-hovered::after,.button.is-default.is-outlined.is-loading:focus::after,.button.is-default.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= foreground %> <%= foreground %>!important}.button.is-default.is-outlined[disabled],fieldset[disabled] .button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;box-shadow:none;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;color:<%= foreground %>}.button.is-default.is-inverted.is-outlined:hover,.button.is-default.is-inverted.is-outlined.is-hovered,.button.is-default.is-inverted.is-outlined:focus,.button.is-default.is-inverted.is-outlined.is-focused{background-color:<%= foreground %>;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined.is-loading:hover::after,.button.is-default.is-inverted.is-outlined.is-loading.is-hovered::after,.button.is-default.is-inverted.is-outlined.is-loading:focus::after,.button.is-default.is-inverted.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-inverted.is-outlined[disabled],fieldset[disabled] .button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;box-shadow:none;color:<%= foreground %>}</style>
+<%- include("../../partials/staffNav.ejs") %>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <br />
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-list-ul has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="section">
+        <div class="columns is-multiline is-centered">
+            <% if (servers.length <= 0) { %>
+                <h2 class="is-size-3"><%= __("page.staff.queue.empty") %></h2>
+            <% } else { %>
+                <%- servers.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false, queue: true, archived: false, verificationApp: false, profile: false })).join("") %>
+            <% } %>
+        </div>
+    </div>
+</div>
+<%- include("../../partials/footer.ejs") %>

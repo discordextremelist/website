@@ -85,6 +85,15 @@ router.get(
     "/queue",
     variables,
     permission.mod,
+    (req: Request, res: Response) => {
+        res.redirect("/bot_queue");
+    }
+)
+
+router.get(
+    "/bot_queue",
+    variables,
+    permission.mod,
     async (req: Request, res: Response) => {
         const bots: delBot[] = await global.db
             .collection("bots")
@@ -103,6 +112,30 @@ router.get(
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff
+        });
+    }
+);
+
+router.get(
+    "/server_queue",
+    variables,
+    permission.mod,
+    async (req: Request, res: Response) => {
+        const servers: delServer[] = await global.db
+            .collection("servers")
+            .find()
+            .sort({ "date.submitted": -1 })
+            .toArray();
+
+        res.locals.premidPageInfo = res.__("premid.staff.server_queue");
+
+        res.render("templates/staff/server_queue", {
+            title: res.__("page.staff.server_queue"),
+            subtitle: res.__("page.staff.server_queue.subtitle"),
+            req,
+            servers: servers.filter(
+                ({ status }) => status && status.reviewRequired
+            )
         });
     }
 );

@@ -64,8 +64,9 @@ interface discordRole {
     name: string;
     color: number;
     hoist: boolean;
-    positon: number;
+    position: number;
     permissions: number;
+    permissions_new: string;
     managed: boolean;
     mentionable: boolean;
 }
@@ -74,5 +75,7 @@ interface discordOverwrites {
     id: string;
     type: string;
     allow: boolean;
+    allow_new: string;
     deny: boolean;
+    deny_new: string;
 }

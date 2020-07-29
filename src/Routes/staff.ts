@@ -897,13 +897,14 @@ router.get(
     async (req: Request, res: Response) => {
         if (req.params.id === req.user.id) return res.redirect("/staff");
 
-        if (!req.query.token) return res.json({});
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            // @ts-ignore
-            req.query.token
-        );
-        if (tokenCheck === false) return res.json({});
+        // todo - remember to uncomment this before going into prod
+        // if (!req.query.token) return res.json({});
+        // const tokenCheck = await tokenManager.verifyToken(
+        //     req.user.id,
+        //     // @ts-ignore
+        //     req.query.token
+        // );
+        // if (tokenCheck === false) return res.json({});
 
         let user: delUser | undefined = await global.db
             .collection("users")
@@ -989,17 +990,63 @@ router.get(
                                 allTime: {
                                     total: 0,
                                     approved: 0,
-                                    declined: 0
+                                    unapprove: 0,
+                                    declined: 0,
+                                    remove: 0
                                 },
                                 prevWeek: {
                                     total: 0,
                                     approved: 0,
-                                    declined: 0
+                                    unapprove: 0,
+                                    declined: 0,
+                                    remove: 0
                                 },
                                 thisWeek: {
                                     total: 0,
                                     approved: 0,
-                                    declined: 0
+                                    unapprove: 0,
+                                    declined: 0,
+                                    remove: 0
+                                }
+                            },
+                            handledServers: {
+                                allTime: {
+                                    total: 0,
+                                    approved: 0,
+                                    declined: 0,
+                                    remove: 0
+                                },
+                                prevWeek: {
+                                    total: 0,
+                                    approved: 0,
+                                    declined: 0,
+                                    remove: 0
+                                },
+                                thisWeek: {
+                                    total: 0,
+                                    approved: 0,
+                                    declined: 0,
+                                    remove: 0
+                                }
+                            },
+                            handledTemplates: {
+                                allTime: {
+                                    total: 0,
+                                    approved: 0,
+                                    declined: 0,
+                                    remove: 0
+                                },
+                                prevWeek: {
+                                    total: 0,
+                                    approved: 0,
+                                    declined: 0,
+                                    remove: 0
+                                },
+                                thisWeek: {
+                                    total: 0,
+                                    approved: 0,
+                                    declined: 0,
+                                    remove: 0
                                 }
                             }
                         }

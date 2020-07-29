@@ -162,6 +162,46 @@ router.get(
                             declined: 0,
                             remove: 0
                         }
+                    },
+                    handledServers: {
+                        allTime: {
+                            total: 0,
+                            approved: 0,
+                            declined: 0,
+                            remove: 0
+                        },
+                        prevWeek: {
+                            total: 0,
+                            approved: 0,
+                            declined: 0,
+                            remove: 0
+                        },
+                        thisWeek: {
+                            total: 0,
+                            approved: 0,
+                            declined: 0,
+                            remove: 0
+                        }
+                    },
+                    handledTemplates: {
+                        allTime: {
+                            total: 0,
+                            approved: 0,
+                            declined: 0,
+                            remove: 0
+                        },
+                        prevWeek: {
+                            total: 0,
+                            approved: 0,
+                            declined: 0,
+                            remove: 0
+                        },
+                        thisWeek: {
+                            total: 0,
+                            approved: 0,
+                            declined: 0,
+                            remove: 0
+                        }
                     }
                 }
             });

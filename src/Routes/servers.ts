@@ -344,6 +344,8 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
             .findOne({ _id: server.owner.id });
     }
 
+    console.log(server)
+
     res.locals.premidPageInfo = res.__("premid.servers.view", server.name);
 
     const dirty = entities.decode(md.render(server.longDesc));
@@ -656,11 +658,11 @@ router.get(
     permission.auth,
     permission.mod,
     async (req: Request, res: Response, next) => {
-        const bot: delBot | undefined = await global.db
-            .collection("bots")
+        const server: delServer | undefined = await global.db
+            .collection("servers")
             .findOne({ _id: req.params.id });
 
-        if (!bot)
+        if (!server)
             return res.status(404).render("status", {
                 title: res.__("common.error"),
                 status: 404,
@@ -669,9 +671,9 @@ router.get(
                 type: "Error"
             });
 
-        res.locals.premidPageInfo = res.__("premid.servers.decline", bot.name);
+        res.locals.premidPageInfo = res.__("premid.servers.decline", server.name);
 
-        if (bot.status.approved === true)
+        if (!server.status || !server.status.reviewRequired)
             return res.status(400).render("status", {
                 title: res.__("common.error"),
                 status: 400,
@@ -680,7 +682,7 @@ router.get(
                 type: "Error"
             });
 
-        let redirect = `/servers/${bot._id}`;
+        let redirect = `/servers/${server._id}`;
 
         if (req.query.from && req.query.from === "queue")
             redirect = "/staff/bot_queue";
@@ -688,7 +690,7 @@ router.get(
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.servers.decline.title"),
             icon: 'minus',
-            subtitle: res.__("page.servers.decline.subtitle", bot.name),
+            subtitle: res.__("page.servers.decline.subtitle", server.name),
             req,
             redirect
         });
@@ -859,7 +861,7 @@ router.get(
                     req.user.id
                 })\` approved server **${functions.escapeFormatting(
                     server.name
-                )}** \`(${server._id})\`\nTo be listed as an LGBT community.\n<${settings.website.url}/bots/${
+                )}** \`(${server._id})\` to be listed as an LGBT community.\n<${settings.website.url}/bots/${
                     server._id
                 }>`
             )

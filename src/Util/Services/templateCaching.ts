@@ -26,7 +26,7 @@ export async function getTemplate(id: string): Promise<delTemplate> {
 
 export async function getAllTemplates(): Promise<delTemplate[]> {
     const templates = await global.redis?.hvals(prefix);
-    // @ts-ignore
+    // @ts-expect-error
     return templates.map(JSON.parse);
 }
 

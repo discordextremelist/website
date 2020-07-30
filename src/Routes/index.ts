@@ -27,6 +27,7 @@ import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as discord from "../Util/Services/discord";
 import { variables } from "../Util/Function/variables";
+import { GuildMember } from "discord.js";
 
 const router = express.Router();
 
@@ -35,9 +36,9 @@ const nickSorter = (a, b) =>
 function sortAll() {
     let members = discord.bot.guilds.cache.get(settings.guild.main).members;
     if (!members) throw new Error("Fetching members failed!");
-    const staff = [],
-        donators = [],
-        contributors = [];
+    const staff: GuildMember[] = [],
+        donators: GuildMember[] = [],
+        contributors: GuildMember[] = [];
     for (const item of members.cache.filter((m) => !m.user.bot)) {
         const member = item[1];
         if (

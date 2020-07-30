@@ -313,8 +313,7 @@ router.get(
         if (!req.query.token) return res.json({});
         const tokenCheck = await tokenManager.verifyToken(
             req.user.id,
-            // @ts-ignore
-            req.query.token
+            req.query.token as string
         );
         if (tokenCheck === false) return res.json({});
 
@@ -339,8 +338,7 @@ router.get(
         if (!req.query.token) return res.json({});
         const tokenCheck = await tokenManager.verifyToken(
             req.user.id,
-            // @ts-ignore
-            req.query.token
+            req.query.token as string
         );
         if (tokenCheck === false) return res.json({});
 

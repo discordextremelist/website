@@ -211,7 +211,7 @@ new Promise((resolve, reject) => {
 
         app.use(
             logger(
-                // @ts-ignore
+                // @ts-expect-error
                 ':req[cf-connecting-ip] - [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
                 {
                     skip: (r: { url: string }) =>
@@ -289,7 +289,7 @@ new Promise((resolve, reject) => {
         app.use(variables);
 
         app.use((req: Request, res: Response, next: () => void) => {
-            // @ts-ignore
+            // @ts-expect-error
             next(createError(404));
         });
 

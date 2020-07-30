@@ -31,7 +31,7 @@ export async function getBot(id: string): Promise<delBot> {
 
 export async function getAllBots(): Promise<delBot[]> {
     const bots = await global.redis?.hvals(prefix);
-    // @ts-ignore
+    // @ts-expect-error
     return bots.map(JSON.parse);
 }
 
@@ -51,12 +51,8 @@ export async function uploadBots() {
     if (botsDB.length < 1) return;
 
     for (const bot of botsDB) {
-        /* 
-        Yes I know, don't do this (@ts-ignore)... it's because ID does not exist on delBot type and
-        I don't want to add it as this is a fix for a weird bug.
-        */
 
-        // @ts-ignore
+        // @ts-expect-error
         if (bot.id) bot._id = bot.id;
     }
 

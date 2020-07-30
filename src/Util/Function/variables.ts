@@ -34,8 +34,8 @@ export const variables = async (
 ) => {
 
     if (req.query.setLang || req.query.localeLayout) {
-        // @ts-expect-error
-        let params = new URLSearchParams(req.query)
+        let params = new URLSearchParams(req.query as {setLang?: 't'; localeLayout?: 'rtl' | 'ltr'}
+    )
         params.delete('setLang')
         params.delete('localeLayout')
 

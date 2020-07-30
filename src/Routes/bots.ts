@@ -1014,7 +1014,7 @@ router.post(
         let library = libraryCache.hasLib(req.body.library)
             ? req.body.library
             : "Other";
-        let tags = [];
+        let tags: string[] = [];
 
         if (req.body.fun === true) tags.push("Fun");
         if (req.body.social === true) tags.push("Social");
@@ -1343,8 +1343,7 @@ router.get(
 
         const tokenCheck = await tokenManager.verifyToken(
             req.user.id,
-            // @ts-expect-error
-            req.query.token
+            req.query.token as string
         );
 
         if (tokenCheck === false) return res.json({});
@@ -1873,7 +1872,7 @@ router.post(
         const library = libraryCache.hasLib(req.body.library)
             ? req.body.library
             : "Other";
-        let tags = [];
+        let tags: string[] = [];
         if (req.body.fun === true) tags.push("Fun");
         if (req.body.social === true) tags.push("Social");
         if (req.body.economy === true) tags.push("Economy");

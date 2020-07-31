@@ -1044,7 +1044,7 @@ router.post(
             editors = [];
         }
 
-        fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
+        await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
             method: "GET",
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })

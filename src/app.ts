@@ -98,6 +98,11 @@ new Promise((resolve, reject) => {
 })
     .then(async () => {
         dbReady = true;
+        await (async () => {
+            new Promise(resolve => {
+                discord.bot.once("ready", () => resolve());
+            });
+        })();
 
         for (const lib of require("../../assets/libraries.json")) {
             await global.db
@@ -147,7 +152,7 @@ new Promise((resolve, reject) => {
         }
 
         let redisConfig: RedisOptions;
-        
+
         if (settings.secrets.redis.sentinels.length > 0) {
             redisConfig = {
                 sentinels: settings.secrets.redis.sentinels,
@@ -185,7 +190,7 @@ new Promise((resolve, reject) => {
             await featuredCache.updateFeaturedBots();
             await discord.postMetric();
         }, 10000);
-    
+
         await discord.postWebMetric("bot");
         await discord.postWebMetric("bot_unapproved");
         await discord.postWebMetric("server");
@@ -254,10 +259,10 @@ new Promise((resolve, reject) => {
 
         app.get("/:lang/auth/login", languageHandler.globalHandler, variables, (req: Request, res: Response, next) => {
             if (req.user) res.redirect("/");
-            
+
             res.locals.premidPageInfo = res.__("premid.login");
             res.locals.hideLogin = true;
-        
+
             res.render("templates/login", {
                 title: res.__("common.login.short"),
                 subtitle: res.__("common.login.subtitle"),

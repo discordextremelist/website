@@ -205,6 +205,14 @@
                         <% } %>
                         <span><%= __({ phrase: "common.nav.language.es-ES", locale: "es-ES" }) %></span>
                     </a>
+                    <a class="navbar-item" <% if (req.locale !== "fr-FR") { %>href="<%= req.originalUrl.replace(req.locale, "fr-FR") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
+                        <% if (req.locale === "fr-FR") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.fr", locale: "fr-FR" }) %></span>
+                    </a>
                     <a class="navbar-item" <% if (req.locale !== "he-IL") { %>href="<%= req.originalUrl.replace(req.locale, "he-IL") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
                         <% if (req.locale === "he-IL") { %>
                             <span title="Selected" class="icon has-text-success iconalign">

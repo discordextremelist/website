@@ -98,11 +98,9 @@ new Promise((resolve, reject) => {
 })
     .then(async () => {
         dbReady = true;
-        await (async () => {
-            new Promise(resolve => {
-                discord.bot.once("ready", () => resolve());
-            });
-        })();
+        await new Promise(resolve => {
+            discord.bot.once("ready", () => resolve());
+        });
 
         for (const lib of require("../../assets/libraries.json")) {
             await global.db

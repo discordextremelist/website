@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@import "../functions.sass";
 
 $primary: #23272A;
 $primary-dark: #111112;
@@ -22,6 +23,53 @@ $title-color: $white;
 $subtitle-color: #d8d8d8;
 $body-background-color: $bg;
 $family-sans-serif: "Lexend Deca", sans-serif;
+
+// Custom Colours
+
+$orange: #f24405;
+$orange-invert: findColorInvert($orange);
+
+$magenta: #b114ff;
+$magenta-invert: findColorInvert($magenta);
+
+$red: #fc1616;
+$red-invert: findColorInvert($red);
+
+$gold: #ff8400;
+$gold-invert: findColorInvert($gold);
+
+$pink: #ff3370;
+$pink-invert: findColorInvert($pink);
+
+$blurple: #7289da;
+$blurple-invert: findColorInvert($blurple);
+
+$custom-colors: (
+    "orange": (
+        $orange,
+        $orange-invert
+    ),
+    "magenta": (
+        $magenta,
+        $magenta-invert
+    ),
+    "red": (
+        $red,
+        $red-invert
+    ),
+    "gold": (
+        $gold,
+        $gold-invert
+    ),
+    "pink": (
+        $pink,
+        $pink-invert
+    ),
+    "blurple": (
+        $blurple,
+        $blurple-invert
+    )
+);
 
 // Navbar
 

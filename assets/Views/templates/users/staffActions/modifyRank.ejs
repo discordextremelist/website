@@ -20,7 +20,7 @@
     <div class="section">
         <form method="POST">
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.users.modifyRank.primary") %></label>
+                <label class="label has-text-default"><%= __("page.users.modifyRank.primary") %></label>
                 <% if (req.user.db.rank.admin === true) { %>
                     <input class="is-checkradio is-circle has-background-color is-danger" id="admin" type="radio" value="admin" name="rank" <% if (targetUser.rank.mod === true && targetUser.rank.assistant === true && targetUser.rank.admin === true) { %>checked="checked"<% } %>>
                     <label for="admin" class="has-text-danger"><%= __("common.rank.admin.short") %></label>
@@ -34,25 +34,25 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.rank.translator") %></label>
+                <label class="label has-text-default"><%= __("common.rank.translator") %></label>
                 <input id="translatorSwitch" type="checkbox" name="translator" class="switch is-rounded is-info" <% if (targetUser.rank.translator === true) { %>checked="checked"<% } %>>
                 <label for="translatorSwitch"></label>
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.rank.tester") %></label>
+                <label class="label has-text-default"><%= __("common.rank.tester") %></label>
                 <input id="testerSwitch" type="checkbox" name="tester" class="switch is-rounded is-link" <% if (targetUser.rank.tester === true) { %>checked="checked"<% } %>>
                 <label for="testerSwitch"></label>
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.rank.covid") %></label>
+                <label class="label has-text-default"><%= __("common.rank.covid") %></label>
                 <input id="covidSwitch" type="checkbox" name="covid" class="switch is-rounded is-magenta" <% if (targetUser.rank.covid === true) { %>checked="checked"<% } %>>
                 <label for="covidSwitch"></label>
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.rank.donator") %></label>
+                <label class="label has-text-default"><%= __("common.rank.donator") %></label>
                 <input id="verifySwitch" type="checkbox" name="premium" class="switch is-rounded is-red" <% if (targetUser.rank.premium === true) { %>checked="checked"<% } %>>
                 <label for="verifySwitch"></label>
             </div>

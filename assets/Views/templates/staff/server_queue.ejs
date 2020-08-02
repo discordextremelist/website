@@ -31,7 +31,7 @@
             <% if (servers.length <= 0) { %>
                 <h2 class="is-size-3"><%= __("page.staff.queue.empty") %></h2>
             <% } else { %>
-                <%- servers.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false, queue: true, archived: false, verificationApp: false, profile: false })).join("") %>
+                <%- servers.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false, queue: true, profile: false })).join("") %>
             <% } %>
         </div>
     </div>

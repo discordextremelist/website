@@ -49,6 +49,11 @@
                 <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
                         <span id="serverName"><%= server.name %></span>
+                        <% if (server.status && server.status.reviewRequired === true) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.rank.reviewRequired") %>" class="icon is-medium is-size-3 iconalign">
+                                <i aria-hidden="true" class="fad fa-exclamation-triangle has-text-danger fa-1x"></i>
+                            </span>
+                        <% } %>
                     </h1>
                     <h2 class="subtitle <% if (mobile) { %>has-text-centered<% } %>"><%= server.shortDesc %></h2>
                     <% if (req.user) { %>
@@ -113,6 +118,16 @@
                                                 <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/edit">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
                                                     <span><%= __("common.edit") %></span>
+                                                </a>
+                                            <% } %>
+                                            <% if (server.status && server.status.reviewRequired === true) { %>
+                                                <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/approve">
+                                                    <span class="icon"><i aria-hidden="true" class="fas fa-check"></i></span>
+                                                    <span><%= __("common.staff.approve") %></span>
+                                                </a>
+                                                <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/decline">
+                                                    <span class="icon"><i aria-hidden="true" class="fas fa-minus"></i></span>
+                                                    <span><%= __("common.staff.decline") %></span>
                                                 </a>
                                             <% } %>
                                             <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/remove">

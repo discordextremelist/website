@@ -191,22 +191,6 @@
                         <span><%= __({ phrase: "common.nav.language.en-US", locale: "en-US" }) %></span>
                     </a>
                     <hr class="navbar-divider">
-                    <a class="navbar-item" <% if (req.locale !== "de-DE") { %>href="<%= req.originalUrl.replace(req.locale, "de-DE") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
-                        <% if (req.locale === "de-DE") { %>
-                            <span title="Selected" class="icon has-text-success iconalign">
-                                <i class="fad fa-check-circle" aria-hidden="true"></i>
-                            </span>
-                        <% } %>
-                        <span><%= __({ phrase: "common.nav.language.de", locale: "de-DE" }) %></span>
-                    </a>
-                    <a class="navbar-item" <% if (req.locale !== "es-ES") { %>href="<%= req.originalUrl.replace(req.locale, "es-ES") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
-                        <% if (req.locale === "es-ES") { %>
-                            <span title="Selected" class="icon has-text-success iconalign">
-                                <i class="fad fa-check-circle" aria-hidden="true"></i>
-                            </span>
-                        <% } %>
-                        <span><%= __({ phrase: "common.nav.language.es-ES", locale: "es-ES" }) %></span>
-                    </a>
                     <a class="navbar-item" <% if (req.locale !== "fr-FR") { %>href="<%= req.originalUrl.replace(req.locale, "fr-FR") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
                         <% if (req.locale === "fr-FR") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
@@ -214,6 +198,14 @@
                             </span>
                         <% } %>
                         <span><%= __({ phrase: "common.nav.language.fr", locale: "fr-FR" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "de-DE") { %>href="<%= req.originalUrl.replace(req.locale, "de-DE") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
+                        <% if (req.locale === "de-DE") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.de", locale: "de-DE" }) %></span>
                     </a>
                     <a class="navbar-item" <% if (req.locale !== "he-IL") { %>href="<%= req.originalUrl.replace(req.locale, "he-IL") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
                         <% if (req.locale === "he-IL") { %>
@@ -238,6 +230,14 @@
                             </span>
                         <% } %>
                         <span><%= __({ phrase: "common.nav.language.pt", locale: "pt-PT" }) %></span>
+                    </a>
+                    <a class="navbar-item" <% if (req.locale !== "es-ES") { %>href="<%= req.originalUrl.replace(req.locale, "es-ES") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
+                        <% if (req.locale === "es-ES") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.es-ES", locale: "es-ES" }) %></span>
                     </a>
                     <a class="navbar-item" <% if (req.locale !== "tr-TR") { %>href="<%= req.originalUrl.replace(req.locale, "tr-TR") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } %> rel="nofollow" tabindex="0">
                         <% if (req.locale === "tr-TR") { %>

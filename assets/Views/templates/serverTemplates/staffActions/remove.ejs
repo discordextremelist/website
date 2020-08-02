@@ -1,4 +1,5 @@
 <%- include("../../../partials/header.ejs") %>
+<%- include("../../../partials/nav.ejs") %>
 <link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><% - include("../../../partials/nav.ejs") %>
 <section class="hero is-black">
@@ -22,7 +23,7 @@
     <div class="section">
         <form method="POST">
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.reason") %> <span class="has-text-danger">*</span></label>
+                <label class="label has-text-default"><%= __("common.reason") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" id="reason" name="reason" placeholder="<%= __("Input a custom reason as to why you are removing this bot or use a template reason below.") %>">
                     <span class="icon is-small is-left">
@@ -32,7 +33,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("Premade Reasons") %></label>
+                <label class="label has-text-default"><%= __("Premade Reasons") %></label>
                 <div class="buttons">
                     <button type="button" onclick="isClone();" class="button is-dark">
                         <span><%= __("page.remove.premadeReasons.innapropriate") %></span>

@@ -24,7 +24,7 @@
     <div class="section">
         <form method="POST">
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.account.edit.bio") %></label>
+                <label class="label has-text-default"><%= __("page.account.edit.bio") %></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="bio" value="<%= userProfile.profile.bio %>" placeholder="<%= __("page.account.edit.bio.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -34,7 +34,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.website") %></label>
+                <label class="label has-text-default"><%= __("common.website") %></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="website" value="<%= userProfile.profile.links.website %>" placeholder="<%= __("page.account.edit.website.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -44,7 +44,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.social.github") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
+                <label class="label has-text-default"><%= __("common.social.github") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="github" value="<%= userProfile.profile.links.github %>" placeholder="<%= __("page.account.edit.social.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -54,7 +54,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.social.gitlab") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
+                <label class="label has-text-default"><%= __("common.social.gitlab") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="gitlab" value="<%= userProfile.profile.links.gitlab %>" placeholder="<%= __("page.account.edit.social.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -64,7 +64,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.social.twitter") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
+                <label class="label has-text-default"><%= __("common.social.twitter") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="twitter" value="<%= userProfile.profile.links.twitter %>" placeholder="<%= __("page.account.edit.social.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -74,7 +74,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.social.instagram") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
+                <label class="label has-text-default"><%= __("common.social.instagram") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="instagram" value="<%= userProfile.profile.links.instagram %>" placeholder="<%= __("page.account.edit.social.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -84,7 +84,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("common.social.snapchat") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
+                <label class="label has-text-default"><%= __("common.social.snapchat") %> <span class="has-text-default">(<%= __("page.account.edit.social.notice") %>)</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" name="snapchat" value="<%= userProfile.profile.links.snapchat %>" placeholder="<%= __("page.account.edit.social.placeholder") %>">
                     <span class="icon is-small is-left">
@@ -94,7 +94,7 @@
             </div>
             <br />
             <div class="field">
-                <label class="label has-text-blurple"><%= __("page.account.edit.customCSS") %> <span class="has-text-default">(<%= __("page.account.edit.customCSS.notice") %>)</span></label>
+                <label class="label has-text-default"><%= __("page.account.edit.customCSS") %> <span class="has-text-default">(<%= __("page.account.edit.customCSS.notice") %>)</span></label>
                 <% if (userProfile.rank.premium === true || userProfile.rank.mod === true) { %>
                     <div onkeyup="monacoToField();" id="profileCssEditor" class="editorBackdrop" style="width:99%;height:500px;" value="<%= userProfile.profile.css %>"></div>
                     <textarea hidden name="profileCss" id="profileCss"></textarea>

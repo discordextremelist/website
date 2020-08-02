@@ -297,7 +297,7 @@
                     <h2 class="is-size-3"><%= __("common.servers") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- serversOwner.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false, profile: true })).join("") %>
+                        <%- serversOwner.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false, profile: true, queue: false })).join("") %>
                     </div>
                 <% } %>
                 <br />

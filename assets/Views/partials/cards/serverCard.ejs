@@ -1,3 +1,7 @@
+<%
+    let viewURL = `${linkPrefix}/servers/${server._id}`;  
+    if (server.tags.includes("LGBT")) viewURL = `${lgbtWebURL}${linkPrefix}/servers/${server._id}`;
+%>
 <div class="column is-one-third" is-server-card>
     <div class="box has-background-primary" style="overflow: hidden; height: 100%;">
         <article class="media">
@@ -19,14 +23,39 @@
                 <div class="content-footer">
                     <div class="buttons">
                         <% if (search === true) { %>
-                            <a href="<%= linkPrefix %>/servers/<%= server._id %>" class="button is-default is-outlined">
+                            <a href="<%= viewURL %>" class="button is-default is-outlined">
                                 <span class="icon">
                                   <i class="fas fa-comments-alt"></i>
                                 </span>
                                 <span><%= __("common.view.server") %></span>
                             </a>
+                        <% } else if (queue === true) { %>
+                            <a href="<%= viewURL %>" class="button is-default is-outlined">
+                                <span class="icon">
+                                <i class="fas fa-eye"></i>
+                                </span>
+                                <span><%= __("common.view") %></span>
+                            </a>
+                            <a target="_blank" rel="noopener" href="<%= server.links.invite %>" class="button is-blurple is-outlined">
+                                <span class="icon">
+                                  <i class="fas fa-users-medical"></i>
+                                </span>
+                                <span><%= __("common.join") %></span>
+                            </a>
+                            <a href="<%= linkPrefix %>/servers/<%= server._id %>/approve" class="button is-success is-outlined">
+                                <span class="icon">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span><%= __("common.staff.approve") %></span>
+                            </a>
+                            <a href="<%= linkPrefix %>/servers/<%= server._id %>/decline" class="button is-danger is-outlined">
+                                <span class="icon">
+                                    <i class="fas fa-minus"></i>
+                                </span>
+                                <span><%= __("common.staff.decline") %></span>
+                            </a>
                         <% } else { %>
-                            <a href="<%= linkPrefix %>/servers/<%= server._id %>" class="button is-default is-outlined">
+                            <a href="<%= viewURL %>" class="button is-default is-outlined">
                                 <span class="icon">
                                 <i class="fas fa-eye"></i>
                                 </span>

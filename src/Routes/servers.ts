@@ -335,6 +335,8 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
             });
     }
 
+    if (server.tags.includes("LGBT")) res.redirect(`${settings.website.lgbtSiteURL}/servers/${server._id}`);
+
     let serverOwner: delUser | undefined = await userCache.getUser(
         server.owner.id
     );
@@ -343,8 +345,6 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
             .collection("users")
             .findOne({ _id: server.owner.id });
     }
-
-    console.log(server)
 
     res.locals.premidPageInfo = res.__("premid.servers.view", server.name);
 
@@ -686,10 +686,16 @@ router.get(
         if (req.query.from && req.query.from === "queue")
             redirect = "/staff/bot_queue";
 
-        res.render("templates/bots/staffActions/remove", {
+        res.locals.premidPageInfo = res.__(
+            "premid.servers.decline",
+            server.name
+        );
+
+        res.render("templates/servers/staffActions/remove", {
             title: res.__("page.servers.decline.title"),
             icon: 'minus',
             subtitle: res.__("page.servers.decline.subtitle", server.name),
+            removingServer: server,
             req,
             redirect
         });
@@ -970,6 +976,7 @@ router.get(
         res.render("templates/servers/staffActions/remove", {
             title: res.__("page.servers.remove.title"),
             subtitle: res.__("page.servers.remove.subtitle", server.name),
+            icon: 'trash',
             removingServer: server,
             req
         });

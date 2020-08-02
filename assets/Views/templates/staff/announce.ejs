@@ -23,7 +23,7 @@
         <div class="section">
             <form method="POST">
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("page.staff.announcer.message") %> <span class="has-text-danger">*</span></label>
+                    <label class="label has-text-default"><%= __("page.staff.announcer.message") %> <span class="has-text-danger">*</span></label>
                     <p class="control has-icons-left has-icons-right">
                         <input class="input is-rounded" type="text" name="message" value="<%= announcement.message %>" placeholder="<%= __("page.staff.announcer.message.placeholder") %>">
                         <span class="icon is-small is-left">
@@ -33,7 +33,7 @@
                 </div>
                 <br />
                 <div class="field">
-                    <label class="label has-text-blurple"><%= __("page.staff.announcer.colour") %> <span class="has-text-danger">*</span></label>
+                    <label class="label has-text-default"><%= __("page.staff.announcer.colour") %> <span class="has-text-danger">*</span></label>
                     <input onclick="hideCustom();" class="is-checkradio is-circle has-background-color is-link" id="link" type="radio" value="#3273dc" name="colour" <% if (announcement.colour === "#3273dc") { %>checked="checked"<% } %>>
                     <label for="link" class="has-text-link"><%= __("page.staff.announcer.colours.blue") %></label>
                     <input onclick="hideCustom();" class="is-checkradio is-circle has-background-color is-info" id="info" type="radio" value="#3298dc" name="colour" <% if (announcement.colour === "#3298dc") { %>checked="checked"<% } %>>
@@ -54,7 +54,7 @@
                 <div style="display: <% if (!announcement.default.includes(announcement.colour)) { %>block<% } else { %>none<% } %>;" id="colourPicker">
                     <br />
                     <div class="field">
-                        <label class="label has-text-blurple"><%= __("page.staff.announcer.colours.customPicker") %></label>
+                        <label class="label has-text-default"><%= __("page.staff.announcer.colours.customPicker") %></label>
                         <p class="control has-icons-left has-icons-right">
                             <input class="input is-rounded" type="color" name="customColour" <% if (announcement.colour === "none") { %>value="#FFFFFF"<% } else { %>value="<%= announcement.colour %>"<% } %>>
                             <span class="icon is-small is-left">

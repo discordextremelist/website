@@ -280,7 +280,7 @@
                         <h3 class="is-size-4"><%= __("common.owner") %></h3>
                         <br />
                         <div class="columns is-multiline is-centered">
-                            <%- botsOwner.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false, profile: true })).join("") %>
+                            <%- botsOwner.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, archived: false, verificationApp: false, profile: true })).join("") %>
                         </div>
                     <% } %>
                     <% if (botsEditor.length !== 0) { %>
@@ -288,7 +288,7 @@
                         <h3 class="is-size-4"><%= __("common.editor") %></h3>
                         <br />
                         <div class="columns is-multiline is-centered">
-                            <%- botsEditor.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false, profile: true })).join("") %>
+                            <%- botsEditor.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, archived: false, verificationApp: false, profile: true })).join("") %>
                         </div>
                     <% } %>
                 <% } %>
@@ -315,7 +315,7 @@
                     <h2 class="is-size-4"><%= __("page.users.listings.archivedBots") %></h2>
                     <br />
                     <div class="columns is-multiline is-centered">
-                        <%- archivedBots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: true, verificationApp: false, profile: false })).join("") %>
+                        <%- archivedBots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, archived: true, verificationApp: false, profile: false })).join("") %>
                     </div>
                 <% } %>
             <% } %>

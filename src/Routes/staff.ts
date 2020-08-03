@@ -30,6 +30,7 @@ import * as userCache from "../Util/Services/userCaching";
 import * as announcementCache from "../Util/Services/announcementCaching";
 import { variables } from "../Util/Function/variables";
 import * as tokenManager from "../Util/Services/adminTokenManager";
+import * as discord from "../Util/Services/discord";
 
 const router = express.Router();
 
@@ -136,6 +137,36 @@ router.get(
             servers: servers.filter(
                 ({ status }) => status && status.reviewRequired
             )
+        });
+    }
+);
+
+router.get(
+    "/invite_queue",
+    variables,
+    permission.assistant,
+    async (req: Request, res: Response) => {
+        const bots: delBot[] = await global.db
+            .collection("bots")
+            .find()
+            .sort({ "date.submitted": -1 })
+            .toArray();
+
+        for (const bot of bots) {
+            discord.bot.guilds.cache.get(settings.guild.main).members.cache.get(bot._id) ? bot.inServer = true : bot.inServer = false;
+        }
+
+        res.locals.premidPageInfo = res.__("premid.staff.invite_queue");
+
+        res.render("templates/staff/invite_queue", {
+            title: res.__("page.staff.invite_queue"),
+            subtitle: res.__("page.staff.invite_queue.subtitle"),
+            req,
+            bots: bots.filter(
+                ({ inServer, status }) => !inServer && !status.archived
+            ),
+            mainServer: settings.guild.main,
+            staffServer: settings.guild.staff
         });
     }
 );

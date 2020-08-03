@@ -184,6 +184,7 @@ interface delBot {
     vanityUrl: string;
     serverCount: number;
     shardCount: number;
+    inServer?: boolean;
     token: string;
     flags: number;
     shortDesc: string;

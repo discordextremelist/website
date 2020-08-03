@@ -127,7 +127,7 @@
                 <% if (botsPgArr.length === 0) { %>
                     <h2 class="is-size-3"><%= __("common.error.fetchFail.bots") %></h2>
                 <% } else { %>
-                    <%- botsPgArr.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, search: false, archived: false, verificationApp: false, profile: false })).join("") %>
+                    <%- botsPgArr.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, inviteQueue: false, search: false, archived: false, verificationApp: false, profile: false })).join("") %>
                 <% } %> 
             <% } %>
         </div>

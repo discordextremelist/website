@@ -80,6 +80,19 @@
                             </span>
                             <span><%= __("common.staff.decline") %></span>
                         </a>
+                    <% } else if (inviteQueue === true) { %>
+                        <a href="<%= linkPrefix %>/bots/<%= bot.vanityUrl ? bot.vanityUrl : (bot._id || bot.id) %>" class="button is-default is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                            <span><%= __("common.view") %></span>
+                        </a>
+                        <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= mainServer %>" target="_blank" rel="noopener" class="button is-blurple is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </span>
+                            <span><%= __("page.bots.invite.main") %></span>
+                        </a>
                     <% } else { %>
                         <a href="<%= linkPrefix %>/bots/<%= bot.vanityUrl ? bot.vanityUrl : (bot._id || bot.id) %>" class="button is-default is-outlined">
                             <span class="icon">

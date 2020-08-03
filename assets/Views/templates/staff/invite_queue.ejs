@@ -31,7 +31,7 @@
             <% if (bots.length <= 0) { %>
                 <h2 class="is-size-3"><%= __("page.staff.queue.empty") %></h2>
             <% } else { %>
-                <%- bots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: true, inviteQueue: false, archived: false, verificationApp: false, profile: false })).join("") %>
+                <%- bots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: true, archived: false, verificationApp: false, profile: false })).join("") %>
             <% } %>
         </div>
     </div>

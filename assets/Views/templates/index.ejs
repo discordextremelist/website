@@ -51,7 +51,7 @@
             </h2>
             <br />
             <div class="columns is-multiline is-centered">
-                <%- bots.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, archived: false, verificationApp: false, profile: false })).join("") %>
+                <%- bots.map(bot => include("../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, archived: false, verificationApp: false, profile: false })).join("") %>
             </div>
         <% } %>
     </div>

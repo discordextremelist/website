@@ -163,7 +163,7 @@ router.get(
             subtitle: res.__("page.staff.invite_queue.subtitle"),
             req,
             bots: bots.filter(
-                ({ inServer, status }) => !inServer && !status.archived
+                ({ inServer, status }) => !inServer && !status.archived && status.approved
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff

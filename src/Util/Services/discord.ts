@@ -169,5 +169,3 @@ setInterval(() => {
     postWebMetric("user");
     postWebMetric("bot_unapproved");
 }, 5000);
-
-bot.login(settings.secrets.discord.token);

@@ -6,7 +6,8 @@ These are the versions we currently support, note any version below v5 is closed
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 5.0.0   | 🟢 Full Support    |
+| 5.1.x   | 🟢 Supported       |
+| 5.0.x   | 🔴 No Support      |
 | 4.x.x   | 🔴 No Support      |
 | < 4.0   | 🔴 No Support      |
 

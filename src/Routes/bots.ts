@@ -2761,9 +2761,7 @@ router.get(
     variables,
     permission.auth,
     permission.member,
-    async (req: Request, res: Response, next) => {
-        let error = false;
-        let errors = [];
+    async (req: Request, res: Response) => {
 
         const botExists: delBot | undefined = await global.db
             .collection("bots")

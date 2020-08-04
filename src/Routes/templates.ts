@@ -845,7 +845,7 @@ router.get(
     variables,
     permission.auth,
     permission.mod,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });

@@ -570,7 +570,12 @@ router.post(
             .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
-                if (fetchRes.jsonBody.guild.id !== server._id) {
+                if(fetchRes.jsonBody.code === 10006) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.invite.invalid")
+                    );
+                } else if (fetchRes.jsonBody.guild.id !== server._id) {
                     error = true;
                     errors.push(
                         res.__("common.error.server.arr.invite.sameServer")
@@ -1094,9 +1099,7 @@ router.get(
     "/:id/sync",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
-        let error = false;
-        let errors: string[] = [];
+    async (req: Request, res: Response) => {
 
         const server: delServer | undefined = await global.db
             .collection("servers")
@@ -1118,22 +1121,23 @@ router.get(
             .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
-                if (fetchRes.jsonBody.guild.id !== server._id) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.server.arr.invite.sameServer")
-                    );
-                }
-
-                if (error === true) {
-                    return res.status(404).render("status", {
+                if(fetchRes.jsonBody.code === 10006)
+                    return res.status(400).render("status", {
                         title: res.__("common.error"),
-                        status: 404,
-                        subtitle: res.__("common.error.server.404"),
+                        status: 400,
+                        subtitle: res.__("common.error.listing.arr.invite.invalid"),
                         req,
                         type: "Error"
-                    });
-                }
+                    })
+                
+                if (fetchRes.jsonBody.guild.id !== server._id)
+                    return res.status(400).render("status", {
+                        title: res.__("common.error"),
+                        status: 404,
+                        subtitle: res.__("common.error.server.arr.invite.sameServer"),
+                        req,
+                        type: "Error"
+                    })
 
                 await global.db.collection("servers").updateOne(
                     { _id: req.params.id },

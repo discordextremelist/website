@@ -38,7 +38,7 @@
 %>
 <%- include("../../partials/nav.ejs") %>
 <style>.tag:not(body).is-default{background-color:<%= defaultColour %>;color:<%= foreground %>}</style>
-<style>code{background-color: <%= siteThemeColour %>;color: <%= defaultColour %> %>;border-radius: 5px;}pre {background-color: <%= siteThemeColour %>;color: <%= defaultColour %>;border-radius: .5em;}</style>
+<%- include("../../partials/isDefaultCSS/codeTag.ejs") %>
 <section class="hero is-primary">
     <div class="hero-body">
         <br>
@@ -435,7 +435,7 @@
 <% if (req.user && req.user.db.rank.mod === true) { %>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" integrity="sha384-OHBBOqpYHNsIqQy8hL1U+8OXf9hH6QRxi0+EODezv82DfnZoV7qoHAZDwMwEJvSw" crossorigin="anonymous">
     <script src="/js/bulma-toast.min.js" async></script>
-    <style>.notification.is-default.animated{color:<%= foreground %>;background-color:<%= defaultColour %>;border-radius:3%}</style>
+    <%- include("../../partials/isDefaultCSS/notification.ejs") %>
     <script>function copyToClipboard(t){const hideWB=document.createElement("style");hideWB.innerHTML="widgetbot-crate {display: none;}";document.body.appendChild(hideWB);const e=document.createElement("textarea");e.value=t,e.setAttribute("readonly",""),e.style={position:"absolute",left:"-9999px"},document.body.appendChild(e),e.select(),document.execCommand("copy"),document.body.removeChild(e),bulmaToast.toast({message:"Copied to clipboard",type:"is-default",position:"bottom-right",duration:2e3,opacity:.75,animate:{in:"fadeInRight",out:"fadeOutRight"}});setTimeout(()=>{hideWB.innerHTML="widgetbot-crate {display: block;}"},3000)}</script>
 <% } %>
 <script>const dropdowns=document.querySelectorAll(".dropdown:not(.is-hoverable)");function closeDropdowns(){dropdowns.forEach(function(o){o.classList.remove("is-active")})}dropdowns.length>0&&(dropdowns.forEach(function(o){o.addEventListener("click",function(n){n.stopPropagation(),o.classList.toggle("is-active")})}),document.addEventListener("click",function(o){closeDropdowns()})),document.addEventListener("keydown",function(o){let n=o||window.event;"Esc"!==n.key&&"Escape"!==n.key||closeDropdowns()});</script>

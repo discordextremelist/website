@@ -1,15 +1,7 @@
 <%- include("../../partials/header.ejs") %>
 <link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
 <%- include("../../partials/staffNav.ejs") %>
-<%
-    let defaultColour = "#b114ff";
-    let foreground = "#ffffff";
 
-    if (req.user) {
-        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
-        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
-    }
-%>
 <%- include("../../partials/isDefaultCSS/button.ejs") %>
 <style>
 .modal-card-head.is-warning {

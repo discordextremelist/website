@@ -181,5 +181,13 @@ export const variables = async (
         : (req.session.logoutJustCont = false);
     req.session.logoutJust = false;
 
+    res.locals.defaultColour = "#b114ff";
+    res.locals.foreground = "#ffffff";
+
+    if (req.user) {
+        res.locals.defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        res.locals.foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+    }
+
     next();
 };

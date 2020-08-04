@@ -31,15 +31,7 @@
         <%= userProfile.profile.css %>
     </style>
 <% } %>
-<%
-    let defaultColour = "#b114ff";
-    let foreground = "#ffffff";
 
-    if (req.user) {
-        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
-        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
-    }
-%>
 <%- include("../../partials/isDefaultCSS/button.ejs") %>
 <style>.tag:not(body){color: <%= foreground %>;background-color: <%= defaultColour %>;}</style>
 <section class="hero is-primary">

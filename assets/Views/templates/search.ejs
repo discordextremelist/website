@@ -19,15 +19,7 @@
     ]
 }
 </script>
-<%
-    let defaultColour = "#b114ff";
-    let foreground = "#ffffff";
 
-    if (req.user) {
-        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
-        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
-    }
-%>
 <link href="/css/theme/<%= preferredTheme %>/search.css" media="screen, print" rel="stylesheet" />
 <style>.is-checkradio[type="checkbox"].is-default.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked+label::after,.is-checkradio[type="checkbox"].is-default:checked+label:after{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::after,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:after{border-color:<%= foreground %> !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked+label{color:<%= foreground %>;border-color:<%= defaultColour %> !important;background:<%= defaultColour %>}.is-checkradio[type="checkbox"].is-default.is-block:checked+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked+label:after{border-color:<%= foreground %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label{background:#5e78d5}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:before{border-color:#f2f2f2 !important}</style><%- include("../partials/nav.ejs") %>
 <%- include("../partials/isDefaultCSS/button.ejs") %>

@@ -27,15 +27,7 @@
         ]
     }
 </script>
-<%
-    let defaultColour = "#b114ff";
-    let foreground = "#ffffff";
 
-    if (req.user) {
-        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
-        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
-    }
-%>
 <%- include("../../partials/nav.ejs") %>
 <style>.tag:not(body).is-default{background-color:<%= defaultColour %>;color:<%= foreground %>}</style>
 <%- include("../../partials/isDefaultCSS/codeTag.ejs") %>

@@ -67,7 +67,8 @@ export const variables = async (
         "preferred"
     ];
 
-    req.session.redirectTo = req.originalUrl;
+    if (!req.originalUrl.includes("/audio/") || !req.originalUrl.includes("/auth/") || !req.originalUrl.includes("/css/") || !req.originalUrl.includes("/fonts/") || !req.originalUrl.includes("/img/") || !req.originalUrl.includes("/js/")) req.session.redirectTo = req.originalUrl;
+    
     req.del = releaseInfo;
     req.del.node = "Unavailable"; // will be updated in a bit:tm: (*cough* spoiler)
     res.locals.colour = color;

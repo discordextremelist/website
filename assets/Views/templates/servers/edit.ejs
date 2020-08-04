@@ -1,17 +1,17 @@
 <%- include("../../partials/header.ejs") %>
 
-<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet"><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><style>.is-checkradio[type="checkbox"].is-default.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked+label::after,.is-checkradio[type="checkbox"].is-default:checked+label:after{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::after,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:after{border-color:<%= foreground %> !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked+label{color:<%= foreground %>;border-color:<%= defaultColour %> !important;background:<%= defaultColour %>}.is-checkradio[type="checkbox"].is-default.is-block:checked+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked+label:after{border-color:<%= foreground %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label{background:#5e78d5}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:before{border-color:#f2f2f2 !important}</style>
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
-        <br />
+        <br>
         <div class="container has-text-centered">
             <h1 class="title">
                 <span class="icon is-medium iconalign">
                     <i aria-hidden="true" class="fad fa-pen has-text-default"></i>
                 </span>
-                <br />
+                <br>
                 <span><%= title %></span>
             </h1>
             <h2 class="subtitle">
@@ -32,7 +32,7 @@
 
             <form method="POST">
                 <h3 class="is-size-3 has-text-default"><%= __("page.form.category.generalInfo") %></h3>
-                <br />
+                <br>
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.code") %> <span class="has-text-danger">*</span></label>
                     <div class="control">
@@ -48,7 +48,7 @@
                         </div>
                     </p>
                 </div>
-                <br />
+                <br>
                 <label class="label has-text-default"><%= __("common.tags") %></label>
                 <div class="columns">
                     <div class="column is-one-quarter">
@@ -106,10 +106,10 @@
                     <div class="column is-one-quarter"></div>
                     <div class="column is-one-quarter"></div>
                 </div>
-                <br />
-                <br />
+                <br>
+                <br>
                 <h3 class="is-size-3 has-text-default"><%= __("page.form.category.links") %></h3>
-                <br />
+                <br>
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.website") %></label>
                     <p class="control has-icons-left has-icons-right">
@@ -119,7 +119,7 @@
                         </span>
                     </p>
                 </div>
-                <br />
+                <br>
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.donate") %></label>
                     <p class="control has-icons-left has-icons-right">
@@ -129,10 +129,24 @@
                         </span>
                     </p>
                 </div>
-                <br />
-                <br />
+                <br>
+                <br>
+                <h3 class="is-size-3 has-text-default"><%= __("page.servers.preview") %></h3>
+                <p style="margin-bottom: .5em;"><%= __("page.servers.preview.details") %></span>
+                <h4 class="is-size-6" style="margin-bottom: .75em;"><a class="has-text-info" rel="noopener" target="_blank" onclick="inviteWB(window, 350, 600);"><%= __("common.widgetbot.invite") %></a></h4>
+                <div class="field">
+                    <label class="label has-text-default"><%= __("page.servers.preview.id") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
+                    <p class="control has-icons-left">
+                        <input id="form_previewChannel" class="input is-rounded" type="text" value="<%= server.previewChannel %>" placeholder="569679825988485130">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-hashtag"></i>
+                        </span>
+                    </p>
+                </div>
+                <br>
+                <br>
                 <h3 class="is-size-3 has-text-default"><%= __("page.form.category.descriptions") %></h3>
-                <br />
+                <br>
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.shortDesc") %> <span class="has-text-danger">*</span></label>
                     <p class="control has-icons-left has-icons-right">
@@ -142,13 +156,13 @@
                         </span>
                     </p>
                 </div>
-                <br />
+                <br>
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.longDesc") %> (<%= __("common.form.basicHtmlMarkdown") %>) <span class="has-text-danger">*</span></label>
                     <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:500px;"></div>
                     <textarea hidden name="longDescription" id="longDesc" required><%- server.longDesc %></textarea>
                 </div>
-                <br />
+                <br>
                 <div class="field is-grouped">
                     <div class="buttons">
                         <a id="submitButton" onclick="doSubmit();" class="button is-success">
@@ -167,7 +181,7 @@
                 </div>
             </form>    
         </div>
-        <br />
+        <br>
         <script>
     const require={paths:{"vs":"/packages/monaco-editor/min/vs"}}
     const warn = event => {
@@ -207,6 +221,7 @@
             invite: document.getElementById("form_inviteCode").value,
             website: document.getElementById("form_website").value,
             donationUrl: document.getElementById("form_donationUrl").value,
+            previewChannel: document.getElementById("form_previewChannel").value,
 
             gaming: document.getElementById("gaming").checked,
             music: document.getElementById("music").checked,
@@ -239,6 +254,7 @@
         <script src="/packages/monaco-editor/min/vs/loader.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
-        <script>var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"vs-dark",value:document.getElementById("longDesc").value,language:"markdown"});
+        <script>function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://discord.com/oauth2/authorize?client_id=543225764036870167&scope=bot&permissions=537218112&guild_id=<%= server._id %>","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}
+        var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"vs-dark",value:document.getElementById("longDesc").value,language:"markdown"});
         function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script>   
 <%- include("../../partials/footer.ejs") %>

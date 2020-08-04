@@ -865,30 +865,23 @@ router.post(
         let errors = [];
 
         if(req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(' '))
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [res.__("common.error.bot.arr.invalidClientID")]
-                });
-
-            if (req.body.clientID && req.body.clientID.length > 32)
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [res.__("common.error.bot.arr.clientIDTooLong")]
-                });
+            if (isNaN(req.body.clientID) || req.body.clientID.includes(' ')) {
+                error = true
+                errors.push(res.__("common.error.bot.arr.invalidClientID"))
+            }
+            if (req.body.clientID && req.body.clientID.length > 32) {
+                error = true
+                errors.push(res.__("common.error.bot.arr.clientIDTooLong"))
+            }
 
             if(req.body.clientID !== req.params.id) await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
                 method: "GET",
                 headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
             }).then((fetchRes: fetchRes) => {
-                if(fetchRes.status !== 404)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.clientIDIsUser")]
-                    });
+                if(fetchRes.status !== 404) {
+                    error = true
+                    errors.push(res.__("common.error.bot.arr.clientIDIsUser"))
+                }
             })
         }
 

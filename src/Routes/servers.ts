@@ -129,6 +129,27 @@ router.post(
                     );
                 }
 
+                if(req.body.previewChannel) {
+                    if (isNaN(req.body.previewChannel) || req.body.previewChannel.includes(' ')) {
+                        error = true
+                        errors.push(res.__("common.error.server.arr.previewChannel.invalid"))
+                    }
+                    if (req.body.previewChannel && req.body.previewChannel.length > 32) {
+                        error = true
+                        errors.push(res.__("common.error.server.arr.previewChannel.tooLong"))
+                    }
+                }
+        
+                if (!req.body.shortDescription) {
+                    error = true;
+                    errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+                }
+
+                if (!req.body.longDescription) {
+                    error = true;
+                    errors.push(res.__("common.error.listing.arr.longDescRequired"));
+                }
+
                 let tags: string[] = [];
 
                 if (req.body.gaming === true) tags.push("Gaming");
@@ -165,6 +186,7 @@ router.post(
                     name: fetchRes.jsonBody.guild.name,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
+                    previewChannel: req.body.previewChannel,
                     tags: tags,
                     owner: {
                         id: req.user.id
@@ -209,6 +231,7 @@ router.post(
                             name: fetchRes.jsonBody.guild.name,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
+                            previewChannel: req.body.previewChannel,
                             tags: tags,
                             owner: {
                                 id: req.user.id
@@ -496,6 +519,22 @@ router.post(
             errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
         }
 
+        if(req.body.previewChannel) {
+            if (isNaN(req.body.previewChannel) || req.body.previewChannel.includes(' ')) {
+                error = true
+                errors.push(res.__("common.error.server.arr.previewChannel.invalid"))
+            }
+            if (req.body.previewChannel && req.body.previewChannel.length > 32) {
+                error = true
+                errors.push(res.__("common.error.server.arr.previewChannel.tooLong"))
+            }
+        }
+
+        if (!req.body.shortDescription) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+        }
+        
         if (!req.body.longDescription) {
             error = true;
             errors.push(res.__("common.error.listing.arr.longDescRequired"));
@@ -553,6 +592,7 @@ router.post(
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             inviteCode: req.body.invite,
+                            previewChannel: req.body.previewChannel,
                             tags: tags,
                             icon: {
                                 hash: fetchRes.jsonBody.guild.icon,
@@ -596,6 +636,7 @@ router.post(
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             inviteCode: req.body.invite,
+                            previewChannel: req.body.previewChannel,
                             tags: tags,
                             icon: {
                                 hash: fetchRes.jsonBody.guild.icon,
@@ -615,6 +656,7 @@ router.post(
                             shortDesc: server.shortDesc,
                             longDesc: server.longDesc,
                             inviteCode: server.inviteCode,
+                            previewChannel: server.previewChannel,
                             tags: server.tags,
                             icon: {
                                 hash: server.icon.hash,

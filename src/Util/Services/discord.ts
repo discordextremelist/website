@@ -21,6 +21,7 @@ import * as Discord from "discord.js";
 import * as metrics from "datadog-metrics";
 
 import * as settings from "../../../settings.json";
+import moment from "moment";
 const prefix = "statuses";
 
 metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
@@ -128,6 +129,24 @@ export async function postWebMetric(type: string) {
             settings.website.dev
                 ? metrics.gauge("del.website.dev.botCount", bots.length)
                 : metrics.gauge("del.website.botCount", bots.length);
+
+            const todaysGrowth = await global.db.collection("webOptions").findOne({ _id: "todaysGrowth" });
+            if (todaysGrowth) {
+                await global.db.collection("webOptions").updateOne({ _id: "todaysGrowth" },
+                    {
+                        $set: {
+                            count: todaysGrowth.count += 1
+                        }
+                    }
+                );
+            } else {
+                await global.db.collection("webOptions").insertOne({
+                    _id: "todaysGrowth",
+                    count: 1,
+                    lastPosted: Date.now()
+                });
+            }
+
             break;
         case "bot_unapproved":
             const unapprovedBots = bots.filter(
@@ -165,9 +184,30 @@ export async function postWebMetric(type: string) {
     }
 }
 
-setInterval(() => {
+export async function postTodaysGrowth() {
+    const todaysGrowth: botsAddedToday = await global.db.collection("webOptions").findOne({ _id: "todaysGrowth" });
+    const date = moment().diff(moment(todaysGrowth.lastPosted), "days");
+
+    if (date >= 1) {
+        settings.website.dev
+                ? metrics.gauge("del.website.dev.addedBotsToday", todaysGrowth.count)
+                : metrics.gauge("del.website.addedBotsToday", todaysGrowth.count);
+
+        await global.db.collection("webOptions").updateOne({ _id: "todaysGrowth" },
+            {
+                $set: {
+                    count: 0,
+                    lastPosted: Date.now()
+                }
+            }
+        );
+    } else return;
+}
+
+setInterval(async() => {
     postWebMetric("user");
     postWebMetric("bot_unapproved");
+    await postTodaysGrowth();
 }, 5000);
 
 bot.login(settings.secrets.discord.token);

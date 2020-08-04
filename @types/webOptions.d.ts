@@ -35,3 +35,9 @@ interface botStats {
     id?: string;
     lastUpdate: number;
 }
+
+interface botsAddedToday {
+    _id: string;
+    count: number;
+    lastPosted: number;
+}

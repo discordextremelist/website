@@ -63,7 +63,7 @@
                             <span><%= __("page.bots.invite.staff") %></span>
                         </a>
                         <% if (req.user.db.rank.assistant) { %>
-                            <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= mainServer %>" target="_blank" rel="noopener" class="button is-blurple is-outlined">
+                            <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= mainServer %>" target="_blank" rel="noopener" class="button is-link is-outlined">
                                 <span class="icon">
                                     <i class="fas fa-shield-alt"></i>
                                 </span>
@@ -89,7 +89,7 @@
                             </span>
                             <span><%= __("common.view") %></span>
                         </a>
-                        <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= mainServer %>" target="_blank" rel="noopener" class="button is-blurple is-outlined">
+                        <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= mainServer %>" target="_blank" rel="noopener" class="button is-link is-outlined">
                             <span class="icon">
                                 <i class="fas fa-shield-alt"></i>
                             </span>

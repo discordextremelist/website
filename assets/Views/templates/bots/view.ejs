@@ -231,23 +231,23 @@
                                         <span><%= __("common.sync") %></span>
                                     </a>
                                     <% if (user.db.rank.assistant === true) { %>
+                                        <% if (req.user.id !== bot.owner.id) { %>
+                                            <a class="dropdown-item has-text-link" id="setVanity">
+                                                <span class="icon">
+                                                    <i aria-hidden="true" class="fas fa-link"></i>
+                                                </span>
+                                                <span><%= __("page.bots.setVanity") %></span>
+                                            </a>
+                                        <% } %>
                                         <% if (bot.status.premium === false) { %>
                                             <a class="dropdown-item has-text-magenta" href="<%= linkPrefix %>/bots/<%= bot._id %>/give-premium">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-heart"></i></span>
                                                 <span><%= __("common.staff.givePremium") %></span>
                                             </a>
                                         <% } else { %>
-                                            <a class="dropdown-item has-text-orange" href="<%= linkPrefix %>/bots/<%= bot._id %>/take-premium">
+                                            <a class="dropdown-item has-text-magenta" href="<%= linkPrefix %>/bots/<%= bot._id %>/take-premium">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-heart-broken"></i></span>
                                                 <span><%= __("common.staff.takePremium") %></span>
-                                            </a>
-                                        <% } %>
-                                        <% if (req.user.id !== bot.owner.id) { %>
-                                            <a class="dropdown-item has-text-info" id="setVanity">
-                                                <span class="icon">
-                                                    <i aria-hidden="true" class="fas fa-link"></i>
-                                                </span>
-                                                <span><%= __("page.bots.setVanity") %></span>
                                             </a>
                                         <% } %>
                                         <a class="dropdown-item has-text-warning" href="<%= linkPrefix %>/bots/<%= bot._id %>/edit">
@@ -276,6 +276,7 @@
                                             <span><%= __("common.staff.decline") %></span>
                                         </a>
                                     <% } %>
+                                    <hr class="dropdown-divider">
                                     <a class="dropdown-item has-text-success" target="_blank" href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= staffServer %>">
                                         <span class="icon"><i class="fas fa-vial"></i></span>
                                         <span><%= __("page.bots.invite.staff") %></span>

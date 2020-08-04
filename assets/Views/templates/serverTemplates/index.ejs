@@ -20,7 +20,7 @@
     }
 </script>
 <%- include("../../partials/nav.ejs") %>
-<% 
+<%
     let defaultColour = "#b114ff";
     let foreground = "#ffffff";
 
@@ -29,9 +29,9 @@
         foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
     }
 %>
-<style type="text/css">.pagination-link.is-current{background-color:<%= defaultColour %>;border-color:transparent;color:<%= foreground %>}.pagination-link:hover,.pagination-next:hover,.pagination-previous:hover{background-color:<%= defaultColour %>;border-color:transparent;color:<%= foreground %>}</style>
-<style type="text/css">.button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;color:<%= defaultColour %>}.button.is-default.is-outlined:hover,.button.is-default.is-outlined.is-hovered,.button.is-default.is-outlined:focus,.button.is-default.is-outlined.is-focused{background-color:<%= defaultColour %>;border-color:<%= defaultColour %>;color:<%= foreground %>}.button.is-default.is-outlined.is-loading::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-outlined.is-loading:hover::after,.button.is-default.is-outlined.is-loading.is-hovered::after,.button.is-default.is-outlined.is-loading:focus::after,.button.is-default.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= foreground %> <%= foreground %>!important}.button.is-default.is-outlined[disabled],fieldset[disabled] .button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;box-shadow:none;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;color:<%= foreground %>}.button.is-default.is-inverted.is-outlined:hover,.button.is-default.is-inverted.is-outlined.is-hovered,.button.is-default.is-inverted.is-outlined:focus,.button.is-default.is-inverted.is-outlined.is-focused{background-color:<%= foreground %>;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined.is-loading:hover::after,.button.is-default.is-inverted.is-outlined.is-loading.is-hovered::after,.button.is-default.is-inverted.is-outlined.is-loading:focus::after,.button.is-default.is-inverted.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-inverted.is-outlined[disabled],fieldset[disabled] .button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;box-shadow:none;color:<%= foreground %>}</style>
-<style type="text/css">.pagination-link[disabled],.pagination-next[disabled],.pagination-previous[disabled]{background-color:<%= siteThemeColourDarker %>;border-color:<%= siteThemeColour %>;box-shadow:none;color:#7a7a7a;opacity:0.5}.pagination-link[disabled]:hover,.pagination-next[disabled]:hover,.pagination-previous[disabled]:hover{background-color:<%= siteThemeColourDarker %>;border-color:<%= siteThemeColour %>;box-shadow:none;color:#7a7a7a;opacity:0.5}</style>
+<style>.pagination-link.is-current{background-color:<%= defaultColour %>;border-color:transparent;color:<%= foreground %>}.pagination-link:hover,.pagination-next:hover,.pagination-previous:hover{background-color:<%= defaultColour %>;border-color:transparent;color:<%= foreground %>}
+       .button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;color:<%= defaultColour %>}.button.is-default.is-outlined:hover,.button.is-default.is-outlined.is-hovered,.button.is-default.is-outlined:focus,.button.is-default.is-outlined.is-focused{background-color:<%= defaultColour %>;border-color:<%= defaultColour %>;color:<%= foreground %>}.button.is-default.is-outlined.is-loading::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-outlined.is-loading:hover::after,.button.is-default.is-outlined.is-loading.is-hovered::after,.button.is-default.is-outlined.is-loading:focus::after,.button.is-default.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= foreground %> <%= foreground %>!important}.button.is-default.is-outlined[disabled],fieldset[disabled] .button.is-default.is-outlined{background-color:transparent;border-color:<%= defaultColour %>;box-shadow:none;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;color:<%= foreground %>}.button.is-default.is-inverted.is-outlined:hover,.button.is-default.is-inverted.is-outlined.is-hovered,.button.is-default.is-inverted.is-outlined:focus,.button.is-default.is-inverted.is-outlined.is-focused{background-color:<%= foreground %>;color:<%= defaultColour %>}.button.is-default.is-inverted.is-outlined.is-loading:hover::after,.button.is-default.is-inverted.is-outlined.is-loading.is-hovered::after,.button.is-default.is-inverted.is-outlined.is-loading:focus::after,.button.is-default.is-inverted.is-outlined.is-loading.is-focused::after{border-color:transparent transparent <%= defaultColour %> <%= defaultColour %>!important}.button.is-default.is-inverted.is-outlined[disabled],fieldset[disabled] .button.is-default.is-inverted.is-outlined{background-color:transparent;border-color:<%= foreground %>;box-shadow:none;color:<%= foreground %>}
+       .pagination-link[disabled],.pagination-next[disabled],.pagination-previous[disabled]{background-color:<%= siteThemeColourDarker %>;border-color:<%= siteThemeColour %>;box-shadow:none;color:#7a7a7a;opacity:0.5}.pagination-link[disabled]:hover,.pagination-next[disabled]:hover,.pagination-previous[disabled]:hover{background-color:<%= siteThemeColourDarker %>;border-color:<%= siteThemeColour %>;box-shadow:none;color:#7a7a7a;opacity:0.5}</style>
 <section class="hero is-primary">
     <div class="hero-body">
         <div class="container has-text-centered">
@@ -44,6 +44,14 @@
                 <span><%= title %></span>
             </h1>
             <h2 class="subtitle"><%= subtitle %></h2>
+            <div class="buttons is-centered">
+                <a href="<%= linkPrefix %>/bots/submit" class="button is-info">
+                    <span class="icon">
+                        <i class="fas fa-plus"></i>
+                    </span>
+                    <span><%= __("common.nav.me.submitTemplate") %></span>
+                </a>
+            </div>
         </div>
     </div>
 </section>
@@ -57,14 +65,14 @@
                     <li>
                         <% if (Number(req.query.page) === 1) { %>
                             <a class="pagination-link is-current" aria-label="<%= __("common.pagination.page", "1") %>" aria-current="page">1</a>
-                        <% } else { %> 
+                        <% } else { %>
                             <a class="pagination-link" href="/templates?page=1" aria-label="<%= __("common.pagination.gotoPage", "1") %>">1</a>
                         <% } %>
                     </li>
                     <% if (2 <= pages) { %>
                         <% if (Number(req.query.page) === 2) { %>
                             <a class="pagination-link is-current" aria-label="<%= __("common.pagination.page", "2") %>" aria-current="page">2</a>
-                        <% } else { %> 
+                        <% } else { %>
                             <a class="pagination-link" href="/templates?page=2" aria-label="<%= __("common.pagination.gotoPage", "2") %>">2</a>
                         <% } %>
                     <% } %>
@@ -72,7 +80,7 @@
                         <li>
                             <% if (Number(req.query.page) === 3) { %>
                                 <a class="pagination-link is-current" aria-label="<%= __("common.pagination.page", "3") %>" aria-current="page">3</a>
-                            <% } else { %> 
+                            <% } else { %>
                                 <a class="pagination-link" href="/templates?page=3" aria-label="<%= __("common.pagination.gotoPage", "3") %>">3</a>
                             <% } %>
                         </li>
@@ -128,7 +136,7 @@
                     <h2 class="is-size-3"><%= __("common.error.fetchFail.templates") %></h2>
                 <% } else { %>
                     <%- templatesPgArr.map(template => include("../../partials/cards/templateCard.ejs", { template, search: false, profile: false })).join("") %>
-                <% } %> 
+                <% } %>
             <% } %>
         </div>
     </div>

@@ -1,6 +1,6 @@
 <%- include("../../../partials/header.ejs") %>
 <%- include("../../../partials/nav.ejs") %>
-<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><% - include("../../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
@@ -62,9 +62,9 @@
         </form>
     </div>
 </div>
-<script type="text/javascript">
+<script>
     function innapAvatarName() {
-        document.getElementById("reason").value = "This template contains an inappropriate avatar and/or name!";
+        document.getElementById("reason").value = "This server contains an inappropriate avatar and/or name!";
     }
     function discordTosViolation() {
         document.getElementById("reason").value = "Violating Discord's Terms of Use.";

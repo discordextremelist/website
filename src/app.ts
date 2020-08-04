@@ -97,6 +97,7 @@ new Promise((resolve, reject) => {
     );
 })
     .then(async () => {
+        discord.bot.login(settings.secrets.discord.token);
         dbReady = true;
         await new Promise(resolve => {
             discord.bot.once("ready", () => resolve());

@@ -1,5 +1,5 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><%- include("../../partials/nav.ejs") %>
 <section class="hero is-primary">
     <div class="hero-body">
@@ -130,5 +130,5 @@
 <script src="/packages/monaco-editor/min/vs/loader.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
-<script type="text/javascript">var longDescEditor=monaco.editor.create(document.getElementById("profileCssEditor"),{value:`<%= userProfile.profile.css %>`,language:"css"});function monacoToField(){var o=window.profileCssEditor.getValue();$("#profileCss").val(o)}monaco.editor.setTheme("vs-dark");</script type="text/javascript">   
+<script>var profileCssEditor=monaco.editor.create(document.getElementById("profileCssEditor"),{value:`<%= userProfile.profile.css %>`,language:"css"});function monacoToField(){var o=window.profileCssEditor.getValue();$("#profileCss").val(o)}monaco.editor.setTheme("vs-dark");</script>   
 <%- include("../../partials/footer.ejs") %>

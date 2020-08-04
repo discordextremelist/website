@@ -86,7 +86,7 @@
             <% } %>
         </section>
     </div>
-    <script type="text/javascript">document.querySelector("a#warningModal-<%= user._id %>").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".warningModal-<%= user._id %>");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+    <script>document.querySelector("a#warningModal-<%= user._id %>").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".warningModal-<%= user._id %>");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
 </div>
 <div class="modal strikeModal-<%= user._id %>">
     <div class="modal-background"></div>
@@ -102,7 +102,7 @@
             <% } %>
         </section>
     </div>
-    <script type="text/javascript">document.querySelector("a#strikeModal-<%= user._id %>").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".strikeModal-<%= user._id %>");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+    <script>document.querySelector("a#strikeModal-<%= user._id %>").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".strikeModal-<%= user._id %>");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
 </div>
 <div class="modal botStat-<%= user._id %>">
     <div class="modal-background"></div>
@@ -139,5 +139,5 @@
             <strong class="has-text-danger"><%= __("page.staff.manager.botStat.removed") %></strong> <span class="has-text-danger"><%= user.staffTracking.handledBots.allTime.remove %></span>
         </section>
     </div>
-    <script type="text/javascript">document.querySelector("a#botStat-<%= user._id %>").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".botStat-<%= user._id %>");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+    <script>document.querySelector("a#botStat-<%= user._id %>").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".botStat-<%= user._id %>");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
 </div>

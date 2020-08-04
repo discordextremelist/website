@@ -150,18 +150,18 @@
                                                 <p class="has-text-danger <% if (mobile) { %>has-text-centered<% } %>"><%= __("common.staffManagement.warning") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
-                                            <a class="dropdown-item" href="<%= linkPrefix %>/users/<%= userProfile._id %>/sync">
+                                            <a class="dropdown-item has-text-success" href="<%= linkPrefix %>/users/<%= userProfile._id %>/sync">
                                                 <span class="icon">
                                                     <i aria-hidden="true" class="fas fa-sync-alt"></i>
                                                 </span>
                                                 <span><%= __("common.sync") %></span>
                                             </a>
                                             <% if (user.db.rank.assistant === true) { %>
-                                                <a class="dropdown-item" href="<%= linkPrefix %>/users/profile/<%= userProfile._id %>/edit">
+                                                <a class="dropdown-item has-text-warning" href="<%= linkPrefix %>/users/profile/<%= userProfile._id %>/edit">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-pen"></i></span>
                                                     <span><%= __("common.edit") %></span>
                                                 </a>
-                                                <a class="dropdown-item" href="<%= linkPrefix %>/users/<%= userProfile._id %>/rank">
+                                                <a class="dropdown-item has-text-orange" href="<%= linkPrefix %>/users/<%= userProfile._id %>/rank">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-crown"></i></span>
                                                     <span><%= __("page.users.modifyRank") %></span>
                                                 </a>

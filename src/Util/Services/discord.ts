@@ -209,5 +209,3 @@ setInterval(async() => {
     postWebMetric("bot_unapproved");
     await postTodaysGrowth();
 }, 5000);
-
-bot.login(settings.secrets.discord.token);

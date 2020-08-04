@@ -186,6 +186,12 @@ export async function postWebMetric(type: string) {
 
 export async function postTodaysGrowth() {
     const todaysGrowth: botsAddedToday = await global.db.collection("webOptions").findOne({ _id: "todaysGrowth" });
+    if (!todaysGrowth) return await global.db.collection("webOptions").insertOne({
+        _id: "todaysGrowth",
+        count: 0,
+        lastPosted: Date.now()
+    });
+
     const date = moment().diff(moment(todaysGrowth.lastPosted), "days");
 
     if (date >= 1) {

@@ -130,14 +130,37 @@ router.post(
                 }
 
                 if(req.body.previewChannel) {
+                    let fetchChannel = true
+        
                     if (isNaN(req.body.previewChannel) || req.body.previewChannel.includes(' ')) {
                         error = true
                         errors.push(res.__("common.error.server.arr.previewChannel.invalid"))
+                        fetchChannel = false
                     }
                     if (req.body.previewChannel && req.body.previewChannel.length > 32) {
                         error = true
                         errors.push(res.__("common.error.server.arr.previewChannel.tooLong"))
+                        fetchChannel = false
                     }
+        
+                    if(fetchChannel) await fetch(`https://discord.com/api/v6/channels/${req.body.previewChannel}`, {
+                        headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
+                    }).then((fetchRes: fetchRes) => {
+                        if(fetchRes.status === 400 || fetchRes.status === 404) {
+                            error = true
+                            errors.push(res.__("common.error.server.arr.previewChannel.invalid"))
+                            fetchChannel = false
+                        }
+                    })
+        
+                    if(fetchChannel) await fetch(`https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`)
+                    .then(async (fetchRes: fetchRes) => {
+                        fetchRes.jsonBody = await fetchRes.json()
+                        if(!fetchRes.jsonBody.data.channel?.id) {
+                            error = true
+                            errors.push(res.__("common.error.listing.arr.widgetbot.channelNotFound"))
+                        }
+                    })
                 }
         
                 if (!req.body.shortDescription) {
@@ -520,14 +543,37 @@ router.post(
         }
 
         if(req.body.previewChannel) {
+            let fetchChannel = true
+
             if (isNaN(req.body.previewChannel) || req.body.previewChannel.includes(' ')) {
                 error = true
                 errors.push(res.__("common.error.server.arr.previewChannel.invalid"))
+                fetchChannel = false
             }
             if (req.body.previewChannel && req.body.previewChannel.length > 32) {
                 error = true
                 errors.push(res.__("common.error.server.arr.previewChannel.tooLong"))
+                fetchChannel = false
             }
+
+            if(fetchChannel) await fetch(`https://discord.com/api/v6/channels/${req.body.previewChannel}`, {
+                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
+            }).then((fetchRes: fetchRes) => {
+                if(fetchRes.status === 400 || fetchRes.status === 404) {
+                    error = true
+                    errors.push(res.__("common.error.server.arr.previewChannel.invalid"))
+                    fetchChannel = false
+                }
+            })
+
+            if(fetchChannel) await fetch(`https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`)
+            .then(async (fetchRes: fetchRes) => {
+                fetchRes.jsonBody = await fetchRes.json()
+                if(!fetchRes.jsonBody.data.channel?.id) {
+                    error = true
+                    errors.push(res.__("common.error.listing.arr.widgetbot.channelNotFound"))
+                }
+            })
         }
 
         if (!req.body.shortDescription) {

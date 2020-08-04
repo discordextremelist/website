@@ -434,6 +434,7 @@ router.post(
 
         let customCss: string = "";
         if (userProfile.rank.premium || userProfile.rank.mod || userProfile.rank.assistant || userProfile.rank.admin) {
+            
             customCss = req.body.profileCss;
         }
 

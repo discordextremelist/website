@@ -130,5 +130,5 @@
 <script src="/packages/monaco-editor/min/vs/loader.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
-<script>var longDescEditor=monaco.editor.create(document.getElementById("profileCssEditor"),{value:`<%= userProfile.profile.css %>`,language:"css"});function monacoToField(){var o=window.profileCssEditor.getValue();$("#profileCss").val(o)}monaco.editor.setTheme("vs-dark");</script>   
+<script>var profileCssEditor=monaco.editor.create(document.getElementById("profileCssEditor"),{value:`<%= userProfile.profile.css %>`,language:"css"});function monacoToField(){var o=window.profileCssEditor.getValue();$("#profileCss").val(o)}monaco.editor.setTheme("vs-dark");</script>   
 <%- include("../../partials/footer.ejs") %>

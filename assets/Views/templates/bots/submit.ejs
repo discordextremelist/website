@@ -21,7 +21,7 @@
     }]
 }
 </script>
-<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
@@ -374,7 +374,7 @@
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
 <script>var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{language:"markdown"});var modNotesEditor=monaco.editor.create(document.getElementById("modNotesEditor"));function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o);var y=window.modNotesEditor.getValue();$("#modNotes").val(y)}monaco.editor.setTheme("vs-dark");function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}</script>
-<script type="text/javascript">
+<script>
 function doSubmit() {
     monacoToField();
     document.getElementById("errors").style.display = "none";

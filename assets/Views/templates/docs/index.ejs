@@ -1,6 +1,6 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/theme/<%= preferredTheme %>/all.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
-<link href="/css/theme/<%= preferredTheme %>/prism.css" type="text/css" media="screen" rel="stylesheet" />
+<link href="/css/theme/<%= preferredTheme %>/all.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
+<link href="/css/theme/<%= preferredTheme %>/prism.css" media="screen" rel="stylesheet" />
 <%- include("../../partials/nav.ejs") %>
 <script type="application/ld+json">
     {
@@ -31,7 +31,7 @@
         foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
     }
 %>
-<style type="text/css">
+<style>
 .menu-list a.is-active {
     background-color: <%= defaultColour %>;
     color: <%= foreground %>;

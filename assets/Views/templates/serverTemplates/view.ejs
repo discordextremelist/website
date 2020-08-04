@@ -1,5 +1,5 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/theme/<%= preferredTheme %>/listing.css?v=<%= cssVersion %>" type="text/css" media="screen, print" rel="stylesheet" />
+<link href="/css/theme/<%= preferredTheme %>/listing.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
 <% if (longDesc) { %><script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><% } %>
 <script type="application/ld+json">
     {
@@ -37,7 +37,7 @@
     }
 %>
 <%- include("../../partials/nav.ejs") %>
-<style type="text/css">.tag:not(body).is-default{background-color:<%= defaultColour %>;color:<%= foreground %>}</style>
+<style>.tag:not(body).is-default{background-color:<%= defaultColour %>;color:<%= foreground %>}</style>
 <style>code{background-color: <%= siteThemeColour %>;color: <%= defaultColour %> %>;border-radius: 5px;}pre {background-color: <%= siteThemeColour %>;color: <%= defaultColour %>;border-radius: .5em;}</style>
 <section class="hero is-primary">
     <div class="hero-body">

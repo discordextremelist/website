@@ -258,6 +258,6 @@
                     <%= __("page.snake.desktopOnly") %>
                 </p>
             <% } %>
-<script type="text/javascript"><% if (type === "Error") { %>document.getElementById("premidPageInfo").innerText="<%= __("premid.error", status)%>";<% } else if (type === "Success") { %>document.getElementById("premidPageInfo").innerText="<%= __("premid.success", status)%>";<% } else if (type === "Information") { %>document.getElementById("premidPageInfo").innerText="<%= __("premid.information", status)%>";<% } %></script>
+<script><% if (type === "Error") { %>document.getElementById("premidPageInfo").innerText="<%= __("premid.error", status)%>";<% } else if (type === "Success") { %>document.getElementById("premidPageInfo").innerText="<%= __("premid.success", status)%>";<% } else if (type === "Information") { %>document.getElementById("premidPageInfo").innerText="<%= __("premid.information", status)%>";<% } %></script>
 </div>
 <%- include("./partials/footer.ejs") %>

@@ -110,27 +110,27 @@
                                                 <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
-                                            <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/sync">
+                                            <a class="dropdown-item has-text-success" href="<%= linkPrefix %>/servers/<%= server._id %>/sync">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-sync-alt"></i></span>
                                                 <span><%= __("common.sync") %></span>
                                             </a>
                                             <% if (req.user.db.rank.assistant === true) { %>
-                                                <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/edit">
+                                                <a class="dropdown-item has-text-warning" href="<%= linkPrefix %>/servers/<%= server._id %>/edit">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
                                                     <span><%= __("common.edit") %></span>
                                                 </a>
                                             <% } %>
                                             <% if (server.status && server.status.reviewRequired === true) { %>
-                                                <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/approve">
+                                                <a class="dropdown-item has-text-success" href="<%= linkPrefix %>/servers/<%= server._id %>/approve">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-check"></i></span>
                                                     <span><%= __("common.staff.approve") %></span>
                                                 </a>
-                                                <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/decline">
+                                                <a class="dropdown-item has-text-danger" href="<%= linkPrefix %>/servers/<%= server._id %>/decline">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-minus"></i></span>
                                                     <span><%= __("common.staff.decline") %></span>
                                                 </a>
                                             <% } %>
-                                            <a class="dropdown-item" href="<%= linkPrefix %>/servers/<%= server._id %>/remove">
+                                            <a class="dropdown-item has-text-danger" href="<%= linkPrefix %>/servers/<%= server._id %>/remove">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                                 <span><%= __("common.staff.remove") %></span>
                                             </a>

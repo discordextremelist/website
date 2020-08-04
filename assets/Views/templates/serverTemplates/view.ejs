@@ -106,17 +106,17 @@
                                                 <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                             </div>
                                             <hr class="dropdown-divider">
-                                            <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/sync">
+                                            <a class="dropdown-item has-text-success" href="<%= linkPrefix %>/templates/<%= template._id %>/sync">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-sync-alt"></i></span>
                                                 <span><%= __("common.sync") %></span>
                                             </a>
                                             <% if (req.user.db.rank.assistant === true) { %>
-                                                <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/edit">
+                                                <a class="dropdown-item has-text-warning" href="<%= linkPrefix %>/templates/<%= template._id %>/edit">
                                                     <span class="icon"><i aria-hidden="true" class="fas fa-pencil"></i></span>
                                                     <span><%= __("common.edit") %></span>
                                                 </a>
                                             <% } %>
-                                            <a class="dropdown-item" href="<%= linkPrefix %>/templates/<%= template._id %>/remove">
+                                            <a class="dropdown-item has-text-danger" href="<%= linkPrefix %>/templates/<%= template._id %>/remove">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                                 <span><%= __("common.staff.remove") %></span>
                                             </a>

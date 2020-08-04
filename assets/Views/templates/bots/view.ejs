@@ -224,7 +224,7 @@
                                         <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
                                     </div>
                                     <hr class="dropdown-divider">
-                                    <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/sync">
+                                    <a class="dropdown-item has-text-success" href="<%= linkPrefix %>/bots/<%= bot._id %>/sync">
                                         <span class="icon">
                                             <i aria-hidden="true" class="fas fa-sync-alt"></i>
                                         </span>
@@ -232,25 +232,25 @@
                                     </a>
                                     <% if (user.db.rank.assistant === true) { %>
                                         <% if (bot.status.premium === false) { %>
-                                            <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/give-premium">
+                                            <a class="dropdown-item has-text-magenta" href="<%= linkPrefix %>/bots/<%= bot._id %>/give-premium">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-heart"></i></span>
                                                 <span><%= __("common.staff.givePremium") %></span>
                                             </a>
                                         <% } else { %>
-                                            <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/take-premium">
+                                            <a class="dropdown-item has-text-orange" href="<%= linkPrefix %>/bots/<%= bot._id %>/take-premium">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-heart-broken"></i></span>
                                                 <span><%= __("common.staff.takePremium") %></span>
                                             </a>
                                         <% } %>
                                         <% if (req.user.id !== bot.owner.id) { %>
-                                            <a class="dropdown-item" id="setVanity">
+                                            <a class="dropdown-item has-text-info" id="setVanity">
                                                 <span class="icon">
                                                     <i aria-hidden="true" class="fas fa-link"></i>
                                                 </span>
                                                 <span><%= __("page.bots.setVanity") %></span>
                                             </a>
                                         <% } %>
-                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/edit">
+                                        <a class="dropdown-item has-text-warning" href="<%= linkPrefix %>/bots/<%= bot._id %>/edit">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-pencil"></i>
                                             </span>
@@ -258,30 +258,30 @@
                                         </a>
                                     <% } %>
                                     <% if (bot.status.approved === true) { %>
-                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/unapprove">
+                                        <a class="dropdown-item has-text-orange" href="<%= linkPrefix %>/bots/<%= bot._id %>/unapprove">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-undo-alt"></i></span>
                                             <span><%= __("common.staff.unapprove") %></span>
                                         </a>
-                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/remove">
+                                        <a class="dropdown-item has-text-danger" href="<%= linkPrefix %>/bots/<%= bot._id %>/remove">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                             <span><%= __("common.staff.remove") %></span>
                                         </a>
                                     <% } else { %>
-                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/approve">
+                                        <a class="dropdown-item has-text-success" href="<%= linkPrefix %>/bots/<%= bot._id %>/approve">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-check"></i></span>
                                             <span><%= __("common.staff.approve") %></span>
                                         </a>
-                                        <a class="dropdown-item" href="<%= linkPrefix %>/bots/<%= bot._id %>/decline">
+                                        <a class="dropdown-item has-text-danger" href="<%= linkPrefix %>/bots/<%= bot._id %>/decline">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-minus"></i></span>
                                             <span><%= __("common.staff.decline") %></span>
                                         </a>
                                     <% } %>
-                                    <a class="dropdown-item" target="_blank" href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= staffServer %>">
+                                    <a class="dropdown-item has-text-success" target="_blank" href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= staffServer %>">
                                         <span class="icon"><i class="fas fa-vial"></i></span>
                                         <span><%= __("page.bots.invite.staff") %></span>
                                     </a>
                                     <% if (req.user.db.rank.assistant) { %>
-                                        <a class="dropdown-item" target="_blank" href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= mainServer %>">
+                                        <a class="dropdown-item has-text-info" target="_blank" href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= mainServer %>">
                                             <span class="icon"><i class="fas fa-shield-alt"></i></span>
                                             <span><%= __("page.bots.invite.main") %></span>
                                         </a>

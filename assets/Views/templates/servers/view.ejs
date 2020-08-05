@@ -137,6 +137,16 @@
                         </div>
                     <% } %>
                     <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
+                        <%- 
+                            include("../../partials/button.ejs", { 
+                                className: "button is-info", 
+                                icon: "fas fa-users-medical", 
+                                tag: "a", 
+                                message: __("common.join"), 
+                                href: server.links.invite, 
+                                additional: "target=\"_blank\" rel=\"noopener\""
+                            });
+                        %>
                         <% if (server.links.website) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 
@@ -149,16 +159,6 @@
                                 });
                             %>
                         <% } %>
-                        <%- 
-                            include("../../partials/button.ejs", { 
-                                className: "button is-info", 
-                                icon: "fas fa-users-medical", 
-                                tag: "a", 
-                                message: __("common.join"), 
-                                href: server.links.invite, 
-                                additional: "target=\"_blank\" rel=\"noopener\""
-                            });
-                        %>
                         <% if (server.links.donation) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 

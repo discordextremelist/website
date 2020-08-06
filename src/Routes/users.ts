@@ -720,10 +720,20 @@ router.post(
         let gamePreferences: boolean, experiments: boolean, theme: number;
 
         // Refer to docs/THEME.md in the root directory of this project.
-        req.body.theme === "black" ||
-        !["black", "dark"].includes(req.body.theme)
-            ? (theme = 0)
-            : (theme = 1);
+        switch (req.body.theme) {
+            case "black":
+                theme = 0;
+                break;
+            case "dark":
+                theme = 1;
+                break;
+            case "light": 
+                theme = 2;
+                break;
+            default:
+                theme = 0;
+                break;
+        }
 
         if (req.body.noGames === "on") {
             gamePreferences = false;

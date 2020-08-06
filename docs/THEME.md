@@ -34,3 +34,7 @@ $grey: #9e9e9e;
 $dark: #616161;
 $darker: #424242;
 ```
+
+## TYPE `2`: Light Theme
+
+Colours not available.

@@ -22,15 +22,19 @@ read input
 if [ $input = 1 ]; then
     node-sass --omit-source-map-url assets/Sass/black/main.scss assets/Public/css/theme/black/standard.css --output-style compressed
     node-sass --omit-source-map-url assets/Sass/dark/main.scss assets/Public/css/theme/dark/standard.css --output-style compressed
+    node-sass --omit-source-map-url assets/Sass/light/main.scss assets/Public/css/theme/light/standard.css --output-style compressed
 elif [ $input = 2 ]; then
     node-sass --omit-source-map-url assets/Sass/black/form.scss assets/Public/css/theme/black/form.css --output-style compressed
     node-sass --omit-source-map-url assets/Sass/dark/form.scss assets/Public/css/theme/dark/form.css --output-style compressed
+    node-sass --omit-source-map-url assets/Sass/light/form.scss assets/Public/css/theme/light/form.css --output-style compressed
 elif [ $input = 3 ]; then
     node-sass --omit-source-map-url assets/Sass/black/search.scss assets/Public/css/theme/black/search.css --output-style compressed
     node-sass --omit-source-map-url assets/Sass/dark/search.scss assets/Public/css/theme/dark/search.css --output-style compressed
+    node-sass --omit-source-map-url assets/Sass/light/search.scss assets/Public/css/theme/light/search.css --output-style compressed
 elif [ $input = 4 ]; then
     node-sass --omit-source-map-url assets/Sass/black/listing.scss assets/Public/css/theme/black/listing.css --output-style compressed
     node-sass --omit-source-map-url assets/Sass/dark/listing.scss assets/Public/css/theme/dark/listing.css --output-style compressed
+    node-sass --omit-source-map-url assets/Sass/light/listing.scss assets/Public/css/theme/light/listing.css --output-style compressed
 else
     node-sass --omit-source-map-url assets/Sass/black/main.scss assets/Public/css/theme/black/standard.css --output-style compressed
     node-sass --omit-source-map-url assets/Sass/black/form.scss assets/Public/css/theme/black/form.css --output-style compressed
@@ -43,4 +47,10 @@ else
     node-sass --omit-source-map-url assets/Sass/dark/search.scss assets/Public/css/theme/dark/search.css --output-style compressed
     node-sass --omit-source-map-url assets/Sass/dark/listing.scss assets/Public/css/theme/dark/listing.css --output-style compressed
     node-sass --omit-source-map-url assets/Sass/dark/all.scss assets/Public/css/theme/dark/all.css --output-style compressed
+
+    node-sass --omit-source-map-url assets/Sass/light/main.scss assets/Public/css/theme/light/standard.css --output-style compressed
+    node-sass --omit-source-map-url assets/Sass/light/form.scss assets/Public/css/theme/light/form.css --output-style compressed
+    node-sass --omit-source-map-url assets/Sass/light/search.scss assets/Public/css/theme/light/search.css --output-style compressed
+    node-sass --omit-source-map-url assets/Sass/light/listing.scss assets/Public/css/theme/light/listing.css --output-style compressed
+    node-sass --omit-source-map-url assets/Sass/light/all.scss assets/Public/css/theme/light/all.css --output-style compressed
 fi

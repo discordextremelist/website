@@ -1,0 +1,91 @@
+@charset "UTF-8";
+@import "variables.scss";
+
+h1 {
+    font-size: 48px;
+}
+
+h2 {
+    font-size: 40px;
+}
+
+h3 {
+    font-size: 32px;
+}
+
+h4 {
+    font-size: 24px;
+}
+
+h5 {
+    font-size: 20px;
+}
+
+h6 {
+    font-size: 16px;
+}
+
+strong {
+    color: #fff;
+}
+
+code {
+    background-color: #1f1f1f;
+}
+
+pre {
+    color: #ff3860;
+    background-color: #1f1f1f;
+}
+
+table th {
+    color: #d2d2d2;
+}
+
+a:hover {
+    color: #1c5abd;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+    color: #fff;
+    font-weight: inherit;
+}
+
+table {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all;
+    -webkit-overflow-scrolling: touch;
+}
+
+blockquote {
+    background-color: transparent !important;
+}
+
+.tab-content {
+    display: none;
+
+    &.is-active {
+        display: block;
+    }
+}
+
+.infoColumn {
+    border-radius: 5px;
+    background-color: $primary;
+    padding: 15px;
+}
+
+@import "../../../node_modules/bulma/sass/utilities/_all.sass";
+@import "../../../node_modules/bulma/sass/base/_all.sass";
+@import "../../../node_modules/bulma/sass/components/message.sass";
+@import "../../../node_modules/bulma/sass/elements/content.sass";
+@import "../../../node_modules/bulma/sass/components/tabs.sass";
+@import "../../../node_modules/bulma/sass/components/message.sass";

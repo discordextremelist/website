@@ -255,6 +255,6 @@
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
         <script>function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://discord.com/oauth2/authorize?client_id=543225764036870167&scope=bot&permissions=537218112&guild_id=<%= server._id %>","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}
-        var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"vs-dark",value:document.getElementById("longDesc").value,language:"markdown"});
-        function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script>   
+        var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"<%= monacoTheme %>",value:document.getElementById("longDesc").value,language:"markdown"});
+        function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("<%= monacoTheme %>");</script>   
 <%- include("../../partials/footer.ejs") %>

@@ -1,0 +1,141 @@
+@charset "UTF-8";
+@import "../functions.sass";
+
+$primary: #ececec;
+$primary-dark: #c2c2c2;
+$white: #000000;
+$black: $primary;
+$bg: #FFFFFF;
+
+$grey: #9e9e9e;
+$dark: #616161;
+$darker: #424242;
+
+// Standard Variables
+
+$danger: #cd0930;
+$success: #0dbf04;
+
+$text: $white;
+$text-strong: $white;
+$label-color: $white;
+$title-color: $white;
+$subtitle-color: #d8d8d8;
+$body-background-color: $bg;
+$family-sans-serif: "Lexend Deca", sans-serif;
+
+// Custom Colours
+
+$orange: #f24405;
+$orange-invert: findColorInvert($orange);
+
+$magenta: #b114ff;
+$magenta-invert: findColorInvert($magenta);
+
+$red: #fc1616;
+$red-invert: findColorInvert($red);
+
+$gold: #ff8400;
+$gold-invert: findColorInvert($gold);
+
+$pink: #ff3370;
+$pink-invert: findColorInvert($pink);
+
+$blurple: #7289da;
+$blurple-invert: findColorInvert($blurple);
+
+$custom-colors: (
+    "orange": (
+        $orange,
+        $orange-invert
+    ),
+    "magenta": (
+        $magenta,
+        $magenta-invert
+    ),
+    "red": (
+        $red,
+        $red-invert
+    ),
+    "gold": (
+        $gold,
+        $gold-invert
+    ),
+    "pink": (
+        $pink,
+        $pink-invert
+    ),
+    "blurple": (
+        $blurple,
+        $blurple-invert
+    )
+);
+
+$warning: $gold;
+
+// Navbar
+
+$navbar-background-color: $primary;
+$navbar-item-hover-background-color: #e0e0e0;
+$navbar-dropdown-background-color: $black;
+$navbar-dropdown-item-hover-color: $white;
+$navbar-item-hover-color: $white;
+$navbar-item-color: $white;
+$navbar-burger-color: $white;
+$navbar-dropdown-arrow: $white;
+$navbar-divider-background-color: $white;
+$navbar-dropdown-border-top: 2px solid $white;
+$navbar-dropdown-item-hover-background-color: #e0e0e0;
+
+// Input
+
+$input-color: $white;
+$input-background-color: $primary;
+$input-border-color: $primary;
+$input-hover-border-color: $primary-dark;
+$input-border-colour: transparent;
+$input-icon-color: $white;
+$input-placeholder-color: $dark;
+
+// Modals
+
+$modal-card-head-background-color: $primary;
+$modal-card-footer-background-color: $primary;
+$modal-card-body-background-color: $primary;
+$modal-card-head-border-bottom: 1px solid $danger;
+$modal-card-foot-border-top: 1px solid $danger;
+
+// Dropdowns
+
+$dropdown-content-background-color: $primary;
+$dropdown-item-hover-color: $white;
+$dropdown-item-hover-background-color: #e0e0e0;
+$dropdown-divider-background-color: $white;
+
+// Static Buttons
+
+// $button-static-color: $
+$button-static-background-color: $darker;
+$button-static-border-color: $darker;
+
+// Pagination
+
+$pagination-color: $white;
+$pagination-border-color: $primary;
+$pagination-focus-color: $white;
+$pagination-hover-color: $white;
+$pagination-hover-border-color: $primary;
+$pagination-focus-border-color: $primary;
+
+// Tabs
+
+$tabs-boxed-link-hover-background-color: $primary;
+$tabs-boxed-link-hover-border-bottom-color: $white;
+$tabs-boxed-link-active-background-color: $primary;
+$tabs-boxed-link-active-border-bottom-color: $white;
+$tabs-border-bottom-color: $white;
+$tabs-boxed-link-active-border-color: $primary;
+$tabs-toggle-link-active-background-color: $white;
+$tabs-toggle-link-active-border-color: $white;
+$tabs-link-active-border-bottom-color: $white;
+$tabs-link-active-color: $white;

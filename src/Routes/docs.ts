@@ -32,7 +32,8 @@ router.get("/", variables, async (req: Request, res: Response, next) => {
         title: res.__("common.nav.more.docs"),
         subtitle: res.__("docs.subtitle"),
         req,
-        settings
+        settings,
+        tableTdThClr: res.locals.preferredTheme.includes("dark" || "black") ? "whitesmoke" : "#000000"
     });
 });
 

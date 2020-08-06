@@ -209,6 +209,6 @@
         <script src="/packages/monaco-editor/min/vs/loader.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
-        <script>var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"vs-dark",value:document.getElementById("longDesc").value,language:"markdown"});
-        function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("vs-dark");</script>   
+        <script>var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"<%= monacoTheme %>",value:document.getElementById("longDesc").value,language:"markdown"});
+        function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("<%= monacoTheme %>");</script>   
 <%- include("../../partials/footer.ejs") %>

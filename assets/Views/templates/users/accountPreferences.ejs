@@ -47,6 +47,7 @@
                                 <option disabled><%= __("common.select") %></option>
                                 <option value="black" <% if (req.user.db.preferences.theme === 0) { %>selected<% } %>><%= __("common.theme.black") %></option>
                                 <option value="dark" <% if (req.user.db.preferences.theme === 1) { %>selected<% } %>><%= __("common.theme.dark") %></option>
+                                <option value="light" <% if (req.user.db.preferences.theme === 2) { %>selected<% } %>><%= __("common.theme.light") %></option>
                             </select>
                         </div>
                         <div class="icon is-small is-left">
@@ -95,5 +96,5 @@
 <script src="/packages/monaco-editor/min/vs/loader.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
 <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
-<script>var profileCssEditor=monaco.editor.create(document.getElementById("profileCssEditor"),{value:document.getElementById("customGlobalCssDB").innerText,language:"css"});function monacoToField(){var o=window.profileCssEditor.getValue();$("#profileCss").val(o)}monaco.editor.setTheme("vs-dark");</script>   
+<script>var profileCssEditor=monaco.editor.create(document.getElementById("profileCssEditor"),{value:document.getElementById("customGlobalCssDB").innerText,language:"css"});function monacoToField(){var o=window.profileCssEditor.getValue();$("#profileCss").val(o)}monaco.editor.setTheme("<%= monacoTheme %>");</script>   
 <%- include("../../partials/footer.ejs") %>

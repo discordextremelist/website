@@ -22,11 +22,11 @@ Licensing information viewable in the [LICENSE](https://github.com/discordextrem
 | v13 Previous (EOL)  | 🟡 Partial Support |     
 | v14 Current         | 🟢 Full Support    |  
 
-| Name                    | Definition                                                                                                   |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------ |
-| 🟢 Full Support         | This code has been tested and is currently actively supported on this version.                               |
-| 🟡 Partial Support      | This code has is actively tested however support is deprecated and this could break in future.               |
-| 🔴 No Support           | This code has not been tested on this version and may break at any time or outright not work.                |     
+| Name                    | Definition                                                                                                        |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 🟢 Full Support         | This code has been tested and is currently actively supported on this version.                                    |
+| 🟡 Partial Support      | This code is actively tested however support is deprecated and it could break on this version in the near future. |
+| 🔴 No Support           | This code has not been tested on this version and may break at any time or outright not work.                     |     
 
 ### nodemon (Optional)
 

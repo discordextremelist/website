@@ -302,7 +302,7 @@
     </div>
 </section> 
 <div class="container" style="overflow: hidden;">
-    <% if (req.user.db.preferences.experiments === true && server.previewChannel) { %>
+    <% if (req.user?.db.preferences.experiments === true && server.previewChannel) { %>
         <div style="margin: 1.5em 1.5em 0">
             <widgetbot
                 server="<%= server._id %>"

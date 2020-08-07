@@ -130,20 +130,22 @@
                 </div>
                 <br>
                 <br>
-                <h3 class="is-size-3 has-text-default"><%= __("page.servers.preview") %></h3>
-                <p style="margin-bottom: .5em;"><%= __("page.servers.preview.details") %></span>
-                <h4 class="is-size-6" style="margin-bottom: .75em;"><a class="has-text-info" rel="noopener" target="_blank" onclick="inviteWB(window, 350, 600);"><%= __("common.widgetbot.invite") %></a></h4>
-                <div class="field">
-                    <label class="label has-text-default"><%= __("page.servers.preview.id") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
-                    <p class="control has-icons-left">
-                        <input id="form_previewChannel" class="input is-rounded" type="text" placeholder="569679825988485130">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-hashtag"></i>
-                        </span>
-                    </p>
-                </div>
-                <br>
-                <br>
+                <% if (req.user.db.preferences.experiments === true) { %>
+                    <h3 class="is-size-3 has-text-default"><%= __("page.servers.preview") %></h3>
+                    <p style="margin-bottom: .5em;"><%= __("page.servers.preview.details") %></span>
+                    <h4 class="is-size-6" style="margin-bottom: .75em;"><a class="has-text-info" rel="noopener" target="_blank" onclick="inviteWB(window, 350, 600);"><%= __("common.widgetbot.invite") %></a></h4>
+                    <div class="field">
+                        <label class="label has-text-default"><%= __("page.servers.preview.id") %> <span class="has-text-orange">* (<%= __("common.widgetbot.form.require") %>)</span></label>
+                        <p class="control has-icons-left">
+                            <input id="form_previewChannel" class="input is-rounded" type="text" placeholder="569679825988485130">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-hashtag"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <br>
+                    <br>
+                <% } %>
                 <h3 class="is-size-3 has-text-default"><%= __("page.form.category.descriptions") %></h3>
                 <br>
                 <div class="field">

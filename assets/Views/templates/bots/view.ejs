@@ -350,7 +350,7 @@
                                 });
                             %>
                         <% } %>
-                        <% if (bot.links.privacyPolicy) { %>
+                        <% if (bot.links.privacyPolicy && privacyIsURL) { %>
                             <%- 
                                 include("../../partials/button.ejs", { 
                                     className: "button is-warning",
@@ -412,6 +412,16 @@
                                 type: "multi"
                             });
                         %>
+                        <% if (bot.links.privacyPolicy && !privacyIsURL) { %>
+                            <%- 
+                                include("../../partials/tag.ejs", { 
+                                    contentColour: "is-warning",
+                                    title: __("common.nav.more.privacy"),
+                                    content: bot.links.privacyPolicy,
+                                    type: "multi"
+                                });
+                            %>
+                        <% } %>
                         <% if (bot.shardCount !== 0) { %>
                             <%- 
                                 include("../../partials/tag.ejs", { 

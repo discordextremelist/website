@@ -225,18 +225,6 @@ router.post(
                 }
 
                 if (
-                    req.body.privacyPolicy &&
-                    !/^https:\/\//.test(req.body.privacyPolicy)
-                ) {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.invalidURL.privacyPolicy"
-                        )
-                    );
-                }
-
-                if (
                     req.body.invite &&
                     Number(new URL(req.body.invite).searchParams.get('permissions')) & 8
                 ) {
@@ -963,16 +951,6 @@ router.post(
             errors.push(res.__("common.error.listing.arr.invalidURL.repo"));
         }
 
-        if (
-            req.body.privacyPolicy &&
-            !/^https:\/\//.test(req.body.privacyPolicy)
-        ) {
-            error = true;
-            errors.push(
-                res.__("common.error.listing.arr.invalidURL.privacyPolicy")
-            );
-        }
-
         if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
@@ -1318,7 +1296,8 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
         req: req,
         editors,
         votes: bot.votes.positive.length - bot.votes.negative.length,
-        functions
+        functions,
+        privacyIsURL: functions.isURL(bot.links.privacyPolicy)
     });
 });
 
@@ -1819,16 +1798,6 @@ router.post(
         if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.repo"));
-        }
-
-        if (
-            req.body.privacyPolicy &&
-            !/^https:\/\//.test(req.body.privacyPolicy)
-        ) {
-            error = true;
-            errors.push(
-                res.__("common.error.listing.arr.invalidURL.privacyPolicy")
-            );
         }
 
         if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {

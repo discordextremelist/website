@@ -11,17 +11,22 @@
     <% if (pageType.bot === true) { 
         let color = "#b114ff"
         if(req.user) color = req.user.db.preferences.defaultColour
-        if(bot.theme && bot.theme.useCustomColour) color = bot.theme.colour
+        if(bot.theme && bot.theme.useCustomColour) {
+            color = bot.theme.colour;
+            foreground = functions.getForeground(color);
+        }
     %>
     <style>
-        .has-text-default { color: <% if (req.user) { %><%= color %><% } else { %>#b114ff<% } %> !important; }
+        .has-text-default { color: <%= color || "#b114ff" %> !important; }
+        .select:not(.is-multiple):not(.is-loading)::after { border-color: <%= color || "#b114ff" %> !important; }
         .has-text-default:hover { color: <% if (req.user) { %><%= colour(`${req.user.db.preferences.defaultColour}`).darken(0.1) || colour("#b114ff").darken(0.1) %><% } else { %><%= colour("#b114ff").darken(0.1) %><% } %>; }
-        .has-background-default { background-color: <% if (req.user) { %><%= color %><% } else { %>#b114ff<% } %>; color: <% if (req.user) { %><%= req.user.db.preferences.defaultForegroundColour || "#ffffff" %><% } else { %>#ffffff<% } %>; }
-        ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<% if (req.user) { %><%= color %><% } else { %>#b114ff<% } %>}::-webkit-scrollbar-thumb:hover{background:<% if (req.user) { %><%= color %><% } else { %>#b114ff<% } %>}
+        .has-background-default { background-color: <%= color || "#b114ff" %>; color: <%= foreground || "#ffffff" %>; }
+        ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<%= color || "#b114ff" %>}::-webkit-scrollbar-thumb:hover{background:<%= color || "#b114ff" %>}
     </style>
     <% } else { %>
         <style>
             .has-text-default { color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %> !important; }
+            .select:not(.is-multiple):not(.is-loading)::after { border-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %> !important; }
             .has-text-default:hover { color: <% if (req.user) { %><%= colour(`${req.user.db.preferences.defaultColour}`).darken(0.1) || colour("#b114ff").darken(0.1) %><% } else { %><%= colour("#b114ff").darken(0.1) %><% } %>; }
             .has-background-default { background-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>; color: <% if (req.user) { %><%= req.user.db.preferences.defaultForegroundColour || "#ffffff" %><% } else { %>#ffffff<% } %>; }
             ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}::-webkit-scrollbar-thumb:hover{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}

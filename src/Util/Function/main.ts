@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import * as botCache from "../Services/botCaching";
 import * as userCache from "../Services/userCaching";
+import { URL } from "url";
 
 export const escapeFormatting = (text: string) => {
     const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
@@ -345,4 +346,14 @@ export function shuffleArray(array: any[]) {
     }
 
     return array;
+}
+
+export function isURL(string: string): boolean {
+    try {
+        new URL(string);
+    } catch (_) {
+        return false;  
+    }
+  
+    return true;
 }

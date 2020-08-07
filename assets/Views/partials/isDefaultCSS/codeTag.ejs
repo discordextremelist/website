@@ -1,1 +1,13 @@
-<style>code{background-color: <%= siteThemeColour %>;color: <%= defaultColour %> %>;border-radius: 5px;}pre {background-color: <%= siteThemeColour %>;color: <%= defaultColour %>;border-radius: .5em;}</style>
+<%
+    let color = "#b114ff";
+    let foreground = "#ffffff";
+    if(req.user) {
+        color = req.user.db.preferences.defaultColour;
+        foreground = req.user.db.preferences.foreground;
+    }
+    if (pageType.bot === true && bot.theme && bot.theme.useCustomColour) { 
+        color = bot.theme.colour;
+        foreground = functions.getForeground(color);
+    }
+%>
+<style>code{background-color: <%= siteThemeColour %>;color: <%= color %> %>;border-radius: 5px;}pre {background-color: <%= siteThemeColour %>;color: <%= color %>;border-radius: .5em;}</style>

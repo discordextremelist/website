@@ -1,5 +1,5 @@
 <!doctype HTML>
-<html lang="<%= req.locale || defaultLang %>" dir="<%= htmlDir %>">
+<html lang="<%= req.locale || defaultLang %>" dir="<%= htmlDir %>" class="theme-<% if (req.user.db.preferences.theme === 0) { %>black<% } %><% if (req.user.db.preferences.theme === 1) { %>dark<% } %><% if (req.user.db.preferences.theme === 2) { %>light<% } %>">
 <head>
     <meta charset="utf-8">
     

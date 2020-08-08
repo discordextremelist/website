@@ -561,7 +561,7 @@ router.post(
             }).then((fetchRes: fetchRes) => {
                 if(fetchRes.status === 400 || fetchRes.status === 404) {
                     error = true
-                    errors.push(res.__("common.error.server.arr.previewChannel.invalid"))
+                    errors.push(res.__("common.error.server.arr.previewChannel.nonexistent"))
                     fetchChannel = false
                 }
             })

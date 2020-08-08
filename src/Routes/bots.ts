@@ -1214,16 +1214,6 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
 
     res.locals.premidPageInfo = res.__("premid.bots.view", bot.name);
 
-    if (bot.status.archived === true)
-        return res.status(403).render("status", {
-            title: res.__("common.error"),
-            status: 403,
-            subtitle: res.__("common.error.bot.archived"),
-            type: "Error",
-            req: req,
-            pageType: { server: false, bot: false }
-        });
-
     let botOwner = await userCache.getUser(bot.owner.id);
     if (!botOwner) {
         botOwner = await global.db

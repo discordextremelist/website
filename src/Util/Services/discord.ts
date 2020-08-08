@@ -28,7 +28,8 @@ metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
 
 export const bot = new Discord.Client({
     allowedMentions: { parse: [] },
-    ws: { intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_PRESENCES"] }
+    ws: { intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_PRESENCES"] },
+    http: { api: 'https://discord.com/api' }
 });
 
 bot.on("ready", async () => {

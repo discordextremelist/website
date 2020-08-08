@@ -78,6 +78,12 @@
                                 <i aria-hidden="true" class="fad fa-exclamation-triangle has-text-danger fa-1x"></i>
                             </span>
                         <% } %>
+
+                        <% if (bot.status.archived === true) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.rank.archived") %>" class="icon is-medium is-size-3 iconalign">
+                                <i aria-hidden="true" class="fad fa-archive has-text-warning fa-1x"></i>
+                            </span>
+                        <% } %>
                     </h1>
                     <h2 class="subtitle"><%= bot.shortDesc %></h2>
                     <% if (htmlDir === "rtl") { %>

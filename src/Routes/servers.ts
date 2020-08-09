@@ -112,7 +112,7 @@ router.post(
                     );
                 }
 
-                if (req.body.website && !/^https:\/\//.test(req.body.website)) {
+                if (req.body.website && !functions.isURL(req.body.website)) {
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.invalidURL.website")
@@ -121,7 +121,7 @@ router.post(
 
                 if (
                     req.body.donationUrl &&
-                    !/^https:\/\//.test(req.body.donationUrl)
+                    !functions.isURL(req.body.donationUrl)
                 ) {
                     error = true;
                     errors.push(
@@ -303,7 +303,7 @@ router.post(
                         errors.push(
                             res.__("common.error.listing.arr.invite.tooLong")
                         );
-                    } else if (/^https:\/\//.test(req.body.invite)) {
+                    } else if (functions.isURL(req.body.invite)) {
                         error = true;
                         errors.push(
                             res.__("common.error.listing.arr.invite.isURL")
@@ -523,7 +523,7 @@ router.post(
             } else if (req.body.invite.length > 32) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (/^https:\/\//.test(req.body.invite)) {
+            } else if (functions.isURL(req.body.invite)) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.isURL"));
             } else if (req.body.invite.includes("discord.gg")) {
@@ -532,12 +532,12 @@ router.post(
             }
         }
 
-        if (req.body.website && !/^https:\/\//.test(req.body.website)) {
+        if (req.body.website && !functions.isURL(req.body.website)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.website"));
         }
 
-        if (req.body.donationUrl && !/^https:\/\//.test(req.body.donationUrl)) {
+        if (req.body.donationUrl && !functions.isURL(req.body.donationUrl)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
         }

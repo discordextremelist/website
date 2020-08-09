@@ -163,7 +163,7 @@
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.longDesc") %> (<%= __("common.form.basicHtmlMarkdown") %>) <span class="has-text-danger">*</span></label>
                     <div onkeyup="monacoToField();" id="longDescEditor" class="editorBackdrop" style="width:99%;height:500px;"></div>
-                    <textarea hidden name="longDescription" id="longDesc" required><%- server.longDesc %></textarea>
+                    <textarea hidden name="longDescription" id="longDesc" required><%- longDesc %></textarea>
                 </div>
                 <br>
                 <div class="field is-grouped">
@@ -186,78 +186,84 @@
         </div>
         <br>
         <script>
-    const require={paths:{"vs":"/packages/monaco-editor/min/vs"}}
-    const warn = event => {
-        event.preventDefault()
-        event.returnValue=''
-    }
-    addEventListener('beforeunload', warn)
-    document.querySelector('form').onsubmit = () => removeEventListener('beforeunload', warn)
-
-    function doSubmit() {
-        monacoToField();
-        document.getElementById("errors").style.display = "none";
-        document.getElementById("submitButton").classList.add("is-loading");
-        document.getElementById("cancelButton").setAttribute("disabled", true);
-        document.getElementById("cancelButton").removeAttribute("href");
-
-        async function fetchPOST(url = '', data = {}) {
-            const response = await fetch(url, {
-                method: "POST",
-                mode: "cors", 
-                cache: "no-cache", 
-                credentials: "same-origin",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                redirect: "follow",
-                referrerPolicy: "no-referrer",
-                body: JSON.stringify(data)
-            });
-
-            return response.json();
-        }
-
-        fetchPOST("<%= linkPrefix %>/servers/<%= server._id %>/edit", {
-            shortDescription: document.getElementById("form_shortDescription").value,
-            longDescription: document.getElementById("longDesc").value,
-            invite: document.getElementById("form_inviteCode").value,
-            website: document.getElementById("form_website").value,
-            donationUrl: document.getElementById("form_donationUrl").value,
-            previewChannel: document.getElementById("form_previewChannel").value,
-
-            gaming: document.getElementById("gaming").checked,
-            music: document.getElementById("music").checked,
-            mediaEntertain : document.getElementById("mediaEntertain").checked,
-            createArts: document.getElementById("createArts").checked,
-            sciTech: document.getElementById("sciTech").checked,
-            edu: document.getElementById("edu").checked, 
-            fashBeaut: document.getElementById("fashBeaut").checked,
-            relIdentity: document.getElementById("relIdentity").checked,
-            travelCuis: document.getElementById("travelCuis").checked,
-            fitHealth: document.getElementById("fitHealth").checked,
-            finance: document.getElementById("finance").checked,
-            lgbt: document.getElementById("lgbt").checked
-        })
-        .then(data => {
-            if (!data || data.error === true) {
-                document.getElementById("errors").style.display = "block";
-                document.getElementById("errorList").innerHTML = data.errors.map(err => `<li>${err}</li>`).join('');
-                scroll(0, 0);
-                document.getElementById("submitButton").classList.remove("is-loading");
-                document.getElementById("cancelButton").removeAttribute("disabled");
-                document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/servers/<%= server._id %>");
-            } else {
-                removeEventListener("beforeunload", warn);
-                window.location = "<%= linkPrefix %>/servers/<%= server._id %>";
+            function htmlDecode(input){
+                var e = document.createElement('textarea');
+                e.innerHTML = input;
+                return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
             }
-        });
-    }
-</script>
+
+            const require={paths:{"vs":"/packages/monaco-editor/min/vs"}}
+            const warn = event => {
+                event.preventDefault()
+                event.returnValue=''
+            }
+            addEventListener('beforeunload', warn)
+            document.querySelector('form').onsubmit = () => removeEventListener('beforeunload', warn)
+
+            function doSubmit() {
+                monacoToField();
+                document.getElementById("errors").style.display = "none";
+                document.getElementById("submitButton").classList.add("is-loading");
+                document.getElementById("cancelButton").setAttribute("disabled", true);
+                document.getElementById("cancelButton").removeAttribute("href");
+
+                async function fetchPOST(url = '', data = {}) {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        mode: "cors", 
+                        cache: "no-cache", 
+                        credentials: "same-origin",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        redirect: "follow",
+                        referrerPolicy: "no-referrer",
+                        body: JSON.stringify(data)
+                    });
+
+                    return response.json();
+                }
+
+                fetchPOST("<%= linkPrefix %>/servers/<%= server._id %>/edit", {
+                    shortDescription: document.getElementById("form_shortDescription").value,
+                    longDescription: document.getElementById("longDesc").value,
+                    invite: document.getElementById("form_inviteCode").value,
+                    website: document.getElementById("form_website").value,
+                    donationUrl: document.getElementById("form_donationUrl").value,
+                    previewChannel: document.getElementById("form_previewChannel").value,
+
+                    gaming: document.getElementById("gaming").checked,
+                    music: document.getElementById("music").checked,
+                    mediaEntertain : document.getElementById("mediaEntertain").checked,
+                    createArts: document.getElementById("createArts").checked,
+                    sciTech: document.getElementById("sciTech").checked,
+                    edu: document.getElementById("edu").checked, 
+                    fashBeaut: document.getElementById("fashBeaut").checked,
+                    relIdentity: document.getElementById("relIdentity").checked,
+                    travelCuis: document.getElementById("travelCuis").checked,
+                    fitHealth: document.getElementById("fitHealth").checked,
+                    finance: document.getElementById("finance").checked,
+                    lgbt: document.getElementById("lgbt").checked
+                })
+                .then(data => {
+                    if (!data || data.error === true) {
+                        document.getElementById("errors").style.display = "block";
+                        document.getElementById("errorList").innerHTML = data.errors.map(err => `<li>${err}</li>`).join('');
+                        scroll(0, 0);
+                        document.getElementById("submitButton").classList.remove("is-loading");
+                        document.getElementById("cancelButton").removeAttribute("disabled");
+                        document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/servers/<%= server._id %>");
+                    } else {
+                        removeEventListener("beforeunload", warn);
+                        window.location = "<%= linkPrefix %>/servers/<%= server._id %>";
+                    }
+                });
+            }
+        </script>
         <script src="/packages/monaco-editor/min/vs/loader.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
         <script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
         <script>function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://discord.com/oauth2/authorize?client_id=543225764036870167&scope=bot&permissions=537218112&guild_id=<%= server._id %>","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}
-        var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"<%= monacoTheme %>",value:document.getElementById("longDesc").value,language:"markdown"});
+        var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"<%= monacoTheme %>",value:htmlDecode(document.getElementById("longDesc").value),language:"markdown"});
         function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o)}monaco.editor.setTheme("<%= monacoTheme %>");</script>   
 <%- include("../../partials/footer.ejs") %>

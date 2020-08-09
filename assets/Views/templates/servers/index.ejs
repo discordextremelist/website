@@ -20,15 +20,6 @@
     }
 </script>
 <%- include("../../partials/nav.ejs") %>
-<% 
-    let defaultColour = "#b114ff";
-    let foreground = "#ffffff";
-
-    if (req.user) {
-        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
-        foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
-    }
-%>
 <%- include("../../partials/isDefaultCSS/button.ejs") %>
 <%- include("../../partials/isDefaultCSS/pagination.ejs") %>
 <section class="hero is-primary">

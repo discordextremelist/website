@@ -473,11 +473,19 @@ router.get(
 
         res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 
+        const clean = sanitizeHtml(server.longDesc, {
+            allowedTags: htmlRef.minimal.tags,
+            allowedAttributes: htmlRef.minimal.attributes,
+            allowVulnerableTags: true,
+            disallowedTagsMode: "escape"
+        });
+
         res.render("templates/servers/edit", {
             title: res.__("page.servers.edit.title"),
             subtitle: res.__("page.servers.edit.subtitle", server.name),
             req,
-            server
+            server,
+            longDesc: clean
         });
     }
 );

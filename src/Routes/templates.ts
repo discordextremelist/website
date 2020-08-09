@@ -430,11 +430,19 @@ router.get(
             template.name
         );
 
+        const clean = sanitizeHtml(template.longDesc, {
+            allowedTags: htmlRef.minimal.tags,
+            allowedAttributes: htmlRef.minimal.attributes,
+            allowVulnerableTags: true,
+            disallowedTagsMode: "escape"
+        });
+
         res.render("templates/serverTemplates/edit", {
             title: res.__("page.templates.edit.title"),
             subtitle: res.__("page.templates.edit.subtitle", template.name),
             req,
-            template
+            template,
+            longDesc: clean
         });
     }
 );

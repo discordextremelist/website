@@ -982,6 +982,14 @@ router.get(
                 type: "Error",
                 req
             });
+
+        const clean = sanitizeHtml(botExists.longDesc, {
+            allowedTags: htmlRef.standard.tags,
+            allowedAttributes: htmlRef.standard.attributes,
+            allowVulnerableTags: true,
+            disallowedTagsMode: "escape"
+        });
+        
         res.render("templates/bots/edit", {
             title: res.__("page.bots.edit.title"),
             subtitle: res.__("page.bots.edit.subtitle", botExists.name),
@@ -990,7 +998,7 @@ router.get(
             editors: botExists.editors ? botExists.editors.join(" ") : "",
             req,
             resubmit: false,
-            longDesc: botExists.longDesc
+            longDesc: clean
         });
     }
 );

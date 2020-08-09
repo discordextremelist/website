@@ -2833,7 +2833,7 @@ router.post(
         (discord.bot.channels.cache.get(
             settings.channels.webLog
         ) as Discord.TextChannel).send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+            `${settings.emoji.unapprove} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
@@ -2859,7 +2859,7 @@ router.post(
             owner
                 .send(
                     `${
-                        settings.emoji.botDeleted
+                        settings.emoji.unapprove
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been unapproved!\n**Reason:** \`${

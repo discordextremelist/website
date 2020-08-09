@@ -81,7 +81,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
             archivedBots.push(bot);
         } else if (bot.owner.id === req.params.id) {
             botsOwner.push(bot);
-        } else if (bot.editors.includes(req.params.id)) {
+        } else if (bot.editors.includes(req.params.id) && !bot.status.archived) {
             botsEditor.push(bot);
         }
     }

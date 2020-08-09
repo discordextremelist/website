@@ -266,7 +266,7 @@ router.post(
                         errors.push(
                             res.__("common.error.template.arr.invite.tooLong")
                         );
-                    } else if (/^https:\/\//.test(req.body.code)) {
+                    } else if (functions.isURL(req.body.code)) {
                         error = true;
                         errors.push(
                             res.__("common.error.template.arr.invite.isURL")
@@ -483,7 +483,7 @@ router.post(
             } else if (req.body.code.length > 2000) {
                 error = true;
                 errors.push(res.__("common.error.template.arr.invite.tooLong"));
-            } else if (/^https:\/\//.test(req.body.code)) {
+            } else if (functions.isURL(req.body.code)) {
                 error = true;
                 errors.push(res.__("common.error.template.arr.invite.isURL"));
             } else if (req.body.code.includes("discord.new")) {

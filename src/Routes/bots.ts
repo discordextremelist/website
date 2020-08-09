@@ -176,7 +176,7 @@ router.post(
                         errors.push(
                             res.__("common.error.listing.arr.invite.tooLong")
                         );
-                    } else if (!/^https:\/\//.test(req.body.invite)) {
+                    } else if (!functions.isURL(req.body.invite)) {
                         error = true;
                         errors.push(
                             res.__("common.error.listing.arr.invite.urlInvalid")
@@ -193,7 +193,7 @@ router.post(
 
                 if (
                     req.body.supportServer &&
-                    !/^https:\/\//.test(req.body.supportServer)
+                    !functions.isURL(req.body.supportServer)
                 ) {
                     error = true;
                     errors.push(
@@ -203,7 +203,7 @@ router.post(
                     );
                 }
 
-                if (req.body.website && !/^https:\/\//.test(req.body.website)) {
+                if (req.body.website && !functions.isURL(req.body.website)) {
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.invalidURL.website")
@@ -212,7 +212,7 @@ router.post(
 
                 if (
                     req.body.donationUrl &&
-                    !/^https:\/\//.test(req.body.donationUrl)
+                    !functions.isURL(req.body.donationUrl)
                 ) {
                     error = true;
                     errors.push(
@@ -220,7 +220,7 @@ router.post(
                     );
                 }
 
-                if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
+                if (req.body.repo && !functions.isURL(req.body.repo)) {
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.invalidURL.repo")
@@ -228,7 +228,7 @@ router.post(
                 }
 
                 if (
-                    req.body.invite &&
+                    req.body.invite && functions.isURL(req.body.invite) &&
                     Number(new URL(req.body.invite).searchParams.get('permissions')) & 8
                 ) {
                     error = true;
@@ -237,7 +237,7 @@ router.post(
                     );
                 }
 
-                if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
+                if (req.body.banner && !functions.isURL(req.body.banner)) {
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.invalidURL.banner")
@@ -546,7 +546,7 @@ router.post(
                         errors.push(
                             res.__("common.error.listing.arr.invite.tooLong")
                         );
-                    } else if (!/^https:\/\//.test(req.body.invite)) {
+                    } else if (!functions.isURL(req.body.invite)) {
                         error = true;
                         errors.push(res.__("Invite needs to be a valid URL."));
                     } else {
@@ -555,7 +555,7 @@ router.post(
                 }
 
                 if (
-                    req.body.invite &&
+                    req.body.invite && functions.isURL(req.body.invite) &&
                     Number(new URL(req.body.invite).searchParams.get('permissions')) & 8
                 ) {
                     error = true;
@@ -1063,7 +1063,7 @@ router.post(
             } else if (req.body.invite.length > 2000) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (!/^https:\/\//.test(req.body.invite)) {
+            } else if (!functions.isURL(req.body.invite)) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.invite.urlInvalid")
@@ -1080,7 +1080,7 @@ router.post(
 
         if (
             req.body.supportServer &&
-            !/^https:\/\//.test(req.body.supportServer)
+            !functions.isURL(req.body.supportServer)
         ) {
             error = true;
             errors.push(
@@ -1088,27 +1088,27 @@ router.post(
             );
         }
 
-        if (req.body.website && !/^https:\/\//.test(req.body.website)) {
+        if (req.body.website && !functions.isURL(req.body.website)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.website"));
         }
 
-        if (req.body.donationUrl && !/^https:\/\//.test(req.body.donationUrl)) {
+        if (req.body.donationUrl && !functions.isURL(req.body.donationUrl)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
         }
 
-        if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
+        if (req.body.repo && !functions.isURL(req.body.repo)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.repo"));
         }
 
-        if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
+        if (req.body.banner && !functions.isURL(req.body.banner)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
         }
 
-        if (req.body.invite && Number(new URL(req.body.invite).searchParams.get('permissions')) & 8) {
+        if (req.body.invite && functions.isURL(req.body.invite) && Number(new URL(req.body.invite).searchParams.get('permissions')) & 8) {
             error = true;
             errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
         }
@@ -1977,7 +1977,7 @@ router.post(
             } else if (req.body.invite.length > 2000) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (!/^https:\/\//.test(req.body.invite)) {
+            } else if (!functions.isURL(req.body.invite)) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.invite.urlInvalid")
@@ -1994,7 +1994,7 @@ router.post(
 
         if (
             req.body.supportServer &&
-            !/^https:\/\//.test(req.body.supportServer)
+            !functions.isURL(req.body.supportServer)
         ) {
             error = true;
             errors.push(
@@ -2002,27 +2002,27 @@ router.post(
             );
         }
 
-        if (req.body.website && !/^https:\/\//.test(req.body.website)) {
+        if (req.body.website && !functions.isURL(req.body.website)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.website"));
         }
 
-        if (req.body.donationUrl && !/^https:\/\//.test(req.body.donationUrl)) {
+        if (req.body.donationUrl && !functions.isURL(req.body.donationUrl)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
         }
 
-        if (req.body.repo && !/^https:\/\//.test(req.body.repo)) {
+        if (req.body.repo && !functions.isURL(req.body.repo)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.repo"));
         }
 
-        if (req.body.banner && !/^https:\/\//.test(req.body.banner)) {
+        if (req.body.banner && !functions.isURL(req.body.banner)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
         }
 
-        if (req.body.invite && Number(new URL(req.body.invite).searchParams.get('permissions')) & 8) {
+        if (req.body.invite && functions.isURL(req.body.invite) && Number(new URL(req.body.invite).searchParams.get('permissions')) & 8) {
             error = true;
             errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
         }

@@ -199,7 +199,7 @@ export function parseAudit(__, auditType: string): auditType {
             break;
         case "UNAPPROVE_BOT":
             returnType.name = __("page.staff.audit.type.UNAPPROVE_BOT");
-            returnType.icon = "far fa-undo-alt has-text-orange";
+            returnType.icon = "far fa-minus has-text-orange";
             break;
         case "DECLINE_BOT":
             returnType.name = __("page.staff.audit.type.DECLINE_BOT");

@@ -501,7 +501,6 @@ router.get(
     "/:id/sync",
     variables,
     permission.auth,
-    permission.member,
     async (req: Request, res: Response, next) => {
 
         if (req.params.id === "@me") {

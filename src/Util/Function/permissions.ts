@@ -66,12 +66,13 @@ export const member = (req: Request, res: Response, next: () => void) => {
 
         const msReq = https.request(options, (response) => {
             if (response.statusCode === 403 && !req.user.impersonator) {
-                return res.status(403).render("status", {
-                    title: res.__("common.error"),
-                    status: 403,
-                    subtitle: res.__("common.error.notMember"),
-                    req,
-                    type: "Error"
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: [res.__("common.error.failedJoin", {
+                        a: "<a href=\"https://discord.gg/WeCer3J\" rel=\"noopener\" target=\"_blank\">",
+                        ea: "</a>"
+                    })]
                 });
             } else next();
         });

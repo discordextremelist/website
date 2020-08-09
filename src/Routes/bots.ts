@@ -52,7 +52,6 @@ router.get(
     "/submit",
     variables,
     permission.auth,
-    permission.member,
     async (req: Request, res: Response, next) => {
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 
@@ -60,7 +59,11 @@ router.get(
             title: res.__("common.nav.me.submitBot"),
             subtitle: res.__("common.nav.me.submitBot.subtitle"),
             libraries: libraryCache.getLibs(),
-            req
+            req,
+            joinServerNotice: res.__("common.form.joinServer.full", {
+                a: "<a href=\"https://discord.gg/WeCer3J\" rel=\"noopener\" target=\"_blank\">",
+                ea: "</a>"
+            })
         });
     }
 );
@@ -730,7 +733,6 @@ router.get(
     "/:id/tokenreset",
     variables,
     permission.auth,
-    permission.member,
     async (req: Request, res: Response, next) => {
         const botExists = await global.db
             .collection("bots")
@@ -792,7 +794,6 @@ router.post(
     "/:id/setvanity",
     variables,
     permission.auth,
-    permission.member,
     async (req: Request, res: Response, next) => {
         const botExists = await global.db
             .collection("bots")
@@ -954,7 +955,6 @@ router.get(
     "/:id/edit",
     variables,
     permission.auth,
-    permission.member,
     async (req: Request, res: Response, next) => {
         const botExists = await global.db
             .collection("bots")
@@ -1841,7 +1841,6 @@ router.get(
     "/:id/resubmit",
     variables,
     permission.auth,
-    permission.member,
     async (req: Request, res: Response, next) => {
         const botExists = await global.db
             .collection("bots")
@@ -2619,7 +2618,7 @@ router.get(
 
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.decline.title"),
-            icon: 'minus',
+            icon: 'times',
             subtitle: res.__("page.bots.decline.subtitle", bot.name),
             req,
             redirect
@@ -2761,7 +2760,7 @@ router.get(
 
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.unapprove.title"),
-            icon: 'undo-alt',
+            icon: 'minus',
             subtitle: res.__("page.bots.unapprove.subtitle", bot.name),
             req,
             redirect: `/bots/${bot._id}`
@@ -3023,7 +3022,6 @@ router.get(
     "/:id/sync",
     variables,
     permission.auth,
-    permission.member,
     async (req: Request, res: Response) => {
 
         const botExists: delBot | undefined = await global.db

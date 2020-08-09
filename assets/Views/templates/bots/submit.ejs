@@ -334,7 +334,14 @@
                 <div onkeyup="monacoToField();" id="modNotesEditor" class="editorBackdrop" style="width:99%;height:300px;"></div>
                 <textarea hidden name="modNotes" id="modNotes"></textarea>
             </div>
-            <br>
+            <div style="padding-bottom: 10px;">
+                <span style="font-size: 12px;" class="has-text-default">
+                    <%- __("common.form.joinServer.full", {
+                        a: "",
+                        ea: ""
+                    }) %>
+                </span>
+            </div>
             <div class="field is-grouped">
                 <div class="buttons">
                     <a id="submitButton" onclick="doSubmit();" class="button is-success">

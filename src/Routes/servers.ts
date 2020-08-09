@@ -972,7 +972,7 @@ router.get(
             owner
                 .send(
                     `${
-                        settings.emoji.cross
+                        settings.emoji.check
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
                     )}** \`(${server._id})\` was approved as being listed as an LGBT community.`

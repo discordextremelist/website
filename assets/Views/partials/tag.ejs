@@ -4,7 +4,7 @@
             <div class="tags has-addons">
                 <% if (content === "insOwner-bot") { %>
                     <span class="tag <%= contentColour %>">
-                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a>
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= bot.owner.id %>"><%= botOwner ? botOwner.fullUsername : "Unknown#0000" %></a>
                     </span>
                 <% } else if (content === "insEditor-bot") { %>
                     <span class="tag <%= contentColour %>">
@@ -12,11 +12,11 @@
                     </span>
                 <% } else if (content === "insOwner-server") { %>
                     <span class="tag <%= contentColour %>">
-                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= server.owner.id %>"><%= serverOwner ? serverOwner.fullUsername : 'Unknown' %></a>
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= server.owner.id %>"><%= serverOwner ? serverOwner.fullUsername : "Unknown#0000" %></a>
                     </span>
                 <% } else if (content === "insOwner-template") { %>
                     <span class="tag <%= contentColour %>">
-                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.owner.id %>"><%= templateOwner.fullUsername %></a>
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.owner.id %>"><%= templateOwner ? templateOwner.fullUsername : "Unknown#0000" %></a>
                     </span>
                 <% } else { %>
                     <span class="tag <%= contentColour %>"><%= content %></span>
@@ -30,7 +30,7 @@
                 <span class="tag is-dark"><%= title %></span>
                 <% if (content === "insOwner-bot") { %>
                     <span class="tag <%= contentColour %>">
-                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= bot.owner.id %>"><%= botOwner.fullUsername %></a>
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= bot.owner.id %>"><%= botOwner ? botOwner.fullUsername : "Unknown#0000" %></a>
                     </span>
                 <% } else if (content === "insEditor-bot") { %>
                     <span class="tag <%= contentColour %>">
@@ -38,11 +38,11 @@
                     </span>
                 <% } else if (content === "insOwner-server") { %>
                     <span class="tag <%= contentColour %>">
-                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= server.owner.id %>"><%= serverOwner ? serverOwner.fullUsername : 'Unknown' %></a>
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= server.owner.id %>"><%= serverOwner ? serverOwner.fullUsername : "Unknown#0000" %></a>
                     </span>
                 <% } else if (content === "insOwner-template") { %>
                     <span class="tag <%= contentColour %>">
-                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.owner.id %>"><%= templateOwner.fullUsername %></a>
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.owner.id %>"><%= templateOwner ? templateOwner.fullUsername : "Unknown#0000" %></a>
                     </span>
                 <% } else { %>
                     <span class="tag <%= contentColour %>"><%= content %></span>

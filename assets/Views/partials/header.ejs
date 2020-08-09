@@ -89,7 +89,7 @@
         <meta itemprop="description" content="<%= bot.shortDesc %>">
         <meta itemprop="image" content="<%= bot.avatar.hash ? bot.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
     
-        <meta name="author" content="<%= botOwner.fullUsername %>">
+        <meta name="author" content="<%= botOwner ? botOwner.fullUsername : "Unknown#0000" %>">
         <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan">
     <% } else if (pageType.server === true || pageType.template === true) { %>
         <%

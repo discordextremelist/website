@@ -852,7 +852,6 @@ router.get(
     "/:id/sync",
     variables,
     permission.auth,
-    permission.mod,
     async (req: Request, res: Response) => {
         const template: delTemplate | undefined = await global.db
             .collection("templates")

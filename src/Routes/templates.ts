@@ -774,8 +774,8 @@ router.get(
         );
 
         res.render("templates/serverTemplates/staffActions/remove", {
-            title: res.__("page.servers.remove.title"),
-            subtitle: res.__("page.servers.remove.subtitle", template.name),
+            title: res.__("page.templates.remove.title"),
+            subtitle: res.__("page.templates.remove.subtitle", template.name),
             removingTemplate: template,
             req
         });

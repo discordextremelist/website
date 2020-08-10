@@ -32,14 +32,18 @@ export const variables = async (
     res: Response,
     next: () => void
 ) => {
-
     if (req.query.setLang || req.query.localeLayout) {
-        let params = new URLSearchParams(req.query as {setLang?: 't'; localeLayout?: 'rtl' | 'ltr'}
-    )
-        params.delete('setLang')
-        params.delete('localeLayout')
+        let params = new URLSearchParams(
+            req.query as { setLang?: "t"; localeLayout?: "rtl" | "ltr" }
+        );
+        params.delete("setLang");
+        params.delete("localeLayout");
 
-        return res.redirect(req.baseUrl + (req.path === '/' ? '' : req.path) + (params.toString() && `?${params}`));
+        return res.redirect(
+            req.baseUrl +
+                (req.path === "/" ? "" : req.path) +
+                (params.toString() && `?${params}`)
+        );
     }
 
     req.browser = browser(req.headers["user-agent"]);
@@ -67,8 +71,16 @@ export const variables = async (
         "preferred"
     ];
 
-    if (!req.originalUrl.includes("/audio/") || !req.originalUrl.includes("/auth/") || !req.originalUrl.includes("/css/") || !req.originalUrl.includes("/fonts/") || !req.originalUrl.includes("/img/") || !req.originalUrl.includes("/js/")) req.session.redirectTo = req.originalUrl;
-    
+    if (
+        !req.originalUrl.includes("/audio/") ||
+        !req.originalUrl.includes("/auth/") ||
+        !req.originalUrl.includes("/css/") ||
+        !req.originalUrl.includes("/fonts/") ||
+        !req.originalUrl.includes("/img/") ||
+        !req.originalUrl.includes("/js/")
+    )
+        req.session.redirectTo = req.originalUrl;
+
     req.del = releaseInfo;
     req.del.node = "Unavailable"; // will be updated in a bit:tm: (*cough* spoiler)
     res.locals.colour = color;
@@ -205,8 +217,10 @@ export const variables = async (
     res.locals.foreground = "#ffffff";
 
     if (req.user) {
-        res.locals.defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
-        res.locals.foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+        res.locals.defaultColour =
+            req.user.db.preferences.defaultColour || "#b114ff";
+        res.locals.foreground =
+            req.user.db.preferences.defaultForegroundColour || "#ffffff";
     }
 
     next();

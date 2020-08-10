@@ -56,15 +56,24 @@ const app = express();
 
 let dbReady: boolean = false;
 
-app.use('/fonts/fa/webfonts/*', (req: Request, res: Response, next: () => void) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+app.use(
+    "/fonts/fa/webfonts/*",
+    (req: Request, res: Response, next: () => void) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header(
+            "Access-Control-Allow-Headers",
+            "Origin, X-Requested-With, Content-Type, Accept"
+        );
+        next();
+    }
+);
 
 app.set("views", path.join(__dirname + "/../../assets/Views"));
 app.use(express.static(path.join(__dirname + "/../../assets/Public")));
-app.use('/packages/monaco-editor', express.static(path.join(__dirname + "/../../node_modules/monaco-editor")))
+app.use(
+    "/packages/monaco-editor",
+    express.static(path.join(__dirname + "/../../node_modules/monaco-editor"))
+);
 
 app.get("*", (req: Request, res: Response, next: () => void) => {
     if (
@@ -99,7 +108,7 @@ new Promise((resolve, reject) => {
     .then(async () => {
         discord.bot.login(settings.secrets.discord.token);
         dbReady = true;
-        await new Promise(resolve => {
+        await new Promise((resolve) => {
             discord.bot.once("ready", () => resolve());
         });
 
@@ -256,18 +265,23 @@ new Promise((resolve, reject) => {
 
         app.use(i18n.init);
 
-        app.get("/:lang/auth/login", languageHandler.globalHandler, variables, (req: Request, res: Response, next) => {
-            if (req.user) res.redirect("/");
+        app.get(
+            "/:lang/auth/login",
+            languageHandler.globalHandler,
+            variables,
+            (req: Request, res: Response, next) => {
+                if (req.user) res.redirect("/");
 
-            res.locals.premidPageInfo = res.__("premid.login");
-            res.locals.hideLogin = true;
+                res.locals.premidPageInfo = res.__("premid.login");
+                res.locals.hideLogin = true;
 
-            res.render("templates/login", {
-                title: res.__("common.login.short"),
-                subtitle: res.__("common.login.subtitle"),
-                req
-            });
-        });
+                res.render("templates/login", {
+                    title: res.__("common.login.short"),
+                    subtitle: res.__("common.login.subtitle"),
+                    req
+                });
+            }
+        );
 
         app.use("/auth", require("./Routes/authentication"));
 
@@ -324,7 +338,7 @@ new Promise((resolve, reject) => {
                     });
 
                 res.status(err.status || 500);
-                res.render("error", {__: res.__});
+                res.render("error", { __: res.__ });
             }
         );
 

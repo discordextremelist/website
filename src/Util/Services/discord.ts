@@ -29,7 +29,7 @@ metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
 export const bot = new Discord.Client({
     allowedMentions: { parse: [] },
     ws: { intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_PRESENCES"] },
-    http: { api: 'https://discord.com/api' }
+    http: { api: "https://discord.com/api" }
 });
 
 bot.on("ready", async () => {
@@ -131,9 +131,12 @@ export async function postWebMetric(type: string) {
                 ? metrics.gauge("del.website.dev.botCount", bots.length)
                 : metrics.gauge("del.website.botCount", bots.length);
 
-            const todaysGrowth = await global.db.collection("webOptions").findOne({ _id: "todaysGrowth" });
+            const todaysGrowth = await global.db
+                .collection("webOptions")
+                .findOne({ _id: "todaysGrowth" });
             if (todaysGrowth) {
-                await global.db.collection("webOptions").updateOne({ _id: "todaysGrowth" },
+                await global.db.collection("webOptions").updateOne(
+                    { _id: "todaysGrowth" },
                     {
                         $set: {
                             count: todaysGrowth.count += 1
@@ -186,21 +189,28 @@ export async function postWebMetric(type: string) {
 }
 
 export async function postTodaysGrowth() {
-    const todaysGrowth: botsAddedToday = await global.db.collection("webOptions").findOne({ _id: "todaysGrowth" });
-    if (!todaysGrowth) return await global.db.collection("webOptions").insertOne({
-        _id: "todaysGrowth",
-        count: 0,
-        lastPosted: Date.now()
-    });
+    const todaysGrowth: botsAddedToday = await global.db
+        .collection("webOptions")
+        .findOne({ _id: "todaysGrowth" });
+    if (!todaysGrowth)
+        return await global.db.collection("webOptions").insertOne({
+            _id: "todaysGrowth",
+            count: 0,
+            lastPosted: Date.now()
+        });
 
     const date = moment().diff(moment(todaysGrowth.lastPosted), "days");
 
     if (date >= 1) {
         settings.website.dev
-                ? metrics.gauge("del.website.dev.addedBotsToday", todaysGrowth.count)
-                : metrics.gauge("del.website.addedBotsToday", todaysGrowth.count);
+            ? metrics.gauge(
+                  "del.website.dev.addedBotsToday",
+                  todaysGrowth.count
+              )
+            : metrics.gauge("del.website.addedBotsToday", todaysGrowth.count);
 
-        await global.db.collection("webOptions").updateOne({ _id: "todaysGrowth" },
+        await global.db.collection("webOptions").updateOne(
+            { _id: "todaysGrowth" },
             {
                 $set: {
                     count: 0,
@@ -211,7 +221,7 @@ export async function postTodaysGrowth() {
     } else return;
 }
 
-setInterval(async() => {
+setInterval(async () => {
     postWebMetric("user");
     postWebMetric("bot_unapproved");
     await postTodaysGrowth();

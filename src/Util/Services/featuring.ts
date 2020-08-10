@@ -35,29 +35,29 @@ export async function getFeaturedTemplates(): Promise<delTemplate[]> {
 }
 
 export async function updateFeaturedBots() {
-    const statuses = await global.redis?.hgetall('statuses')
-    const bots = (functions
-        .shuffleArray(
-            (await global.db.collection("bots").find().toArray() as delBot[]).filter(
-                ({ _id, status }) =>
-                    status.approved &&
-                    !status.siteBot &&
-                    !status.archived &&
-                    statuses[_id] && statuses[_id] !== 'offline'
-            )
-        ) as delBot[])
-        .slice(0, 6);
+    const statuses = await global.redis?.hgetall("statuses");
+    const bots = (functions.shuffleArray(
+        ((await global.db
+            .collection("bots")
+            .find()
+            .toArray()) as delBot[]).filter(
+            ({ _id, status }) =>
+                status.approved &&
+                !status.siteBot &&
+                !status.archived &&
+                statuses[_id] &&
+                statuses[_id] !== "offline"
+        )
+    ) as delBot[]).slice(0, 6);
     await global.redis?.set("featured_bots", JSON.stringify(bots));
 }
 
 export async function updateFeaturedServers() {
-    const servers = (functions
-        .shuffleArray(
-            (await global.db.collection("servers").find().toArray()).filter(
-                ({ status }) => status && !status.reviewRequired
-            )
-        ) as delServer[])
-        .slice(0, 6);
+    const servers = (functions.shuffleArray(
+        (await global.db.collection("servers").find().toArray()).filter(
+            ({ status }) => status && !status.reviewRequired
+        )
+    ) as delServer[]).slice(0, 6);
     await global.redis?.set("featured_servers", JSON.stringify(servers));
 }
 

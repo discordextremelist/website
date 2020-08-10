@@ -61,7 +61,8 @@ router.get(
             libraries: libraryCache.getLibs(),
             req,
             joinServerNotice: res.__("common.form.joinServer.full", {
-                a: "<a href=\"https://discord.gg/WeCer3J\" rel=\"noopener\" target=\"_blank\">",
+                a:
+                    '<a href="https://discord.gg/WeCer3J" rel="noopener" target="_blank">',
                 ea: "</a>"
             })
         });
@@ -98,8 +99,8 @@ router.post(
                 status: 400,
                 errors: [res.__("common.error.listing.arr.IDRequired")]
             });
-        
-        if (isNaN(req.body.id) || req.body.id.includes(' '))
+
+        if (isNaN(req.body.id) || req.body.id.includes(" "))
             return res.status(400).json({
                 error: true,
                 status: 400,
@@ -112,9 +113,9 @@ router.post(
                 status: 400,
                 errors: [res.__("common.error.bot.arr.idTooLong")]
             });
-        
-        if(req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(' '))
+
+        if (req.body.clientID) {
+            if (isNaN(req.body.clientID) || req.body.clientID.includes(" "))
                 return res.status(400).json({
                     error: true,
                     status: 400,
@@ -127,18 +128,23 @@ router.post(
                     status: 400,
                     errors: [res.__("common.error.bot.arr.clientIDTooLong")]
                 });
-            
-            await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
-                method: "GET",
-                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-            }).then((fetchRes: fetchRes) => {
-                if(fetchRes.status !== 404)
+
+            await fetch(
+                `https://discord.com/api/v6/users/${req.body.clientID}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bot ${settings.secrets.discord.token}`
+                    }
+                }
+            ).then((fetchRes: fetchRes) => {
+                if (fetchRes.status !== 404)
                     return res.status(400).json({
                         error: true,
                         status: 400,
                         errors: [res.__("common.error.bot.arr.clientIDIsUser")]
                     });
-            })
+            });
         }
 
         fetch(`https://discord.com/api/v6/users/${req.body.id}`, {
@@ -155,7 +161,11 @@ router.post(
                     errors.push(res.__("common.error.bot.arr.notFound"));
                 } else if (fetchRes.status === 400) {
                     error = true;
-                    errors.push(`${res.__("common.error.bot.arr.fetchError")}: ${JSON.stringify(fetchRes.jsonBody)}`)
+                    errors.push(
+                        `${res.__(
+                            "common.error.bot.arr.fetchError"
+                        )}: ${JSON.stringify(fetchRes.jsonBody)}`
+                    );
                 } else if (!fetchRes.jsonBody.bot && req.body.id) {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.isUser"));
@@ -228,8 +238,11 @@ router.post(
                 }
 
                 if (
-                    req.body.invite && functions.isURL(req.body.invite) &&
-                    Number(new URL(req.body.invite).searchParams.get('permissions')) & 8
+                    req.body.invite &&
+                    functions.isURL(req.body.invite) &&
+                    Number(
+                        new URL(req.body.invite).searchParams.get("permissions")
+                    ) & 8
                 ) {
                     error = true;
                     errors.push(
@@ -246,78 +259,152 @@ router.post(
 
                 if (req.body.widgetServer && !req.body.widgetChannel) {
                     error = true;
-                    errors.push(res.__("common.error.listing.arr.widgetbot.serverButNotChannel"));
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.serverButNotChannel"
+                        )
+                    );
                 }
-        
+
                 if (req.body.widgetChannel && !req.body.widgetServer) {
                     error = true;
-                    errors.push(res.__("common.error.listing.arr.widgetbot.channelButNotServer"));
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.channelButNotServer"
+                        )
+                    );
                 }
-        
-                if(req.body.widgetServer && req.body.widgetChannel) {
-                    let fetchServer = true
-        
-                    if (isNaN(req.body.widgetServer) || req.body.widgetServer.includes(' ')) {
-                        error = true
-                        errors.push(res.__("common.error.listing.arr.widgetbot.serverID.invalid"))
-                        fetchServer = false
+
+                if (req.body.widgetServer && req.body.widgetChannel) {
+                    let fetchServer = true;
+
+                    if (
+                        isNaN(req.body.widgetServer) ||
+                        req.body.widgetServer.includes(" ")
+                    ) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.serverID.invalid"
+                            )
+                        );
+                        fetchServer = false;
                     }
-                    if (req.body.widgetServer && req.body.widgetServer.length > 32) {
-                        error = true
-                        errors.push(res.__("common.error.listing.arr.widgetbot.serverID.tooLong"))
-                        fetchServer = false
+                    if (
+                        req.body.widgetServer &&
+                        req.body.widgetServer.length > 32
+                    ) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.serverID.tooLong"
+                            )
+                        );
+                        fetchServer = false;
                     }
-        
-                    if(fetchServer) await fetch(`https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`, {
-                        headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-                    }).then((fetchRes: fetchRes) => {
-                        if(fetchRes.status === 400 || fetchRes.status === 404) {
-                            error = true
-                            errors.push(res.__("common.error.listing.arr.widgetbot.serverID.nonexistent"))
-                            fetchServer = false
-                        }
-                    })
-        
-                    if(fetchServer) await fetch(`https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`)
-                    .then(async (fetchRes: fetchRes) => {
-                        fetchRes.jsonBody = await fetchRes.json()
-                        if(!fetchRes.jsonBody.data.guild?.id) {
-                            error = true
-                            errors.push(res.__("common.error.listing.arr.widgetbot.guildNotFound"))
-                        }
-                    })
-                    
-                    let fetchChannel = true
-        
-                    if (isNaN(req.body.widgetChannel) || req.body.widgetChannel.includes(' ')) {
-                        error = true
-                        errors.push(res.__("common.error.listing.arr.widgetbot.channelID.invalid"))
-                        fetchChannel = false
+
+                    if (fetchServer)
+                        await fetch(
+                            `https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`,
+                            {
+                                headers: {
+                                    Authorization: `Bot ${settings.secrets.discord.token}`
+                                }
+                            }
+                        ).then((fetchRes: fetchRes) => {
+                            if (
+                                fetchRes.status === 400 ||
+                                fetchRes.status === 404
+                            ) {
+                                error = true;
+                                errors.push(
+                                    res.__(
+                                        "common.error.listing.arr.widgetbot.serverID.nonexistent"
+                                    )
+                                );
+                                fetchServer = false;
+                            }
+                        });
+
+                    if (fetchServer)
+                        await fetch(
+                            `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
+                        ).then(async (fetchRes: fetchRes) => {
+                            fetchRes.jsonBody = await fetchRes.json();
+                            if (!fetchRes.jsonBody.data.guild?.id) {
+                                error = true;
+                                errors.push(
+                                    res.__(
+                                        "common.error.listing.arr.widgetbot.guildNotFound"
+                                    )
+                                );
+                            }
+                        });
+
+                    let fetchChannel = true;
+
+                    if (
+                        isNaN(req.body.widgetChannel) ||
+                        req.body.widgetChannel.includes(" ")
+                    ) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelID.invalid"
+                            )
+                        );
+                        fetchChannel = false;
                     }
-                    if (req.body.widgetChannel && req.body.widgetChannel.length > 32) {
-                        error = true
-                        errors.push(res.__("common.error.listing.arr.widgetbot.channelID.tooLong"))
-                        fetchChannel = false
+                    if (
+                        req.body.widgetChannel &&
+                        req.body.widgetChannel.length > 32
+                    ) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelID.tooLong"
+                            )
+                        );
+                        fetchChannel = false;
                     }
-        
-                    if(fetchChannel) await fetch(`https://discord.com/api/v6/channels/${req.body.widgetChannel}`, {
-                        headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-                    }).then((fetchRes: fetchRes) => {
-                        if(fetchRes.status === 400 || fetchRes.status === 404) {
-                            error = true
-                            errors.push(res.__("common.error.listing.arr.widgetbot.channelID.nonexistent"))
-                            fetchChannel = false
-                        }
-                    })
-        
-                    if(fetchChannel) await fetch(`https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`)
-                    .then(async (fetchRes: fetchRes) => {
-                        fetchRes.jsonBody = await fetchRes.json()
-                        if(!fetchRes.jsonBody.data.channel?.id) {
-                            error = true
-                            errors.push(res.__("common.error.listing.arr.widgetbot.channelNotFound"))
-                        }
-                    })
+
+                    if (fetchChannel)
+                        await fetch(
+                            `https://discord.com/api/v6/channels/${req.body.widgetChannel}`,
+                            {
+                                headers: {
+                                    Authorization: `Bot ${settings.secrets.discord.token}`
+                                }
+                            }
+                        ).then((fetchRes: fetchRes) => {
+                            if (
+                                fetchRes.status === 400 ||
+                                fetchRes.status === 404
+                            ) {
+                                error = true;
+                                errors.push(
+                                    res.__(
+                                        "common.error.listing.arr.widgetbot.channelID.nonexistent"
+                                    )
+                                );
+                                fetchChannel = false;
+                            }
+                        });
+
+                    if (fetchChannel)
+                        await fetch(
+                            `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
+                        ).then(async (fetchRes: fetchRes) => {
+                            fetchRes.jsonBody = await fetchRes.json();
+                            if (!fetchRes.jsonBody.data.channel?.id) {
+                                error = true;
+                                errors.push(
+                                    res.__(
+                                        "common.error.listing.arr.widgetbot.channelNotFound"
+                                    )
+                                );
+                            }
+                        });
                 }
 
                 if (!req.body.shortDescription) {
@@ -534,7 +621,6 @@ router.post(
                 });
             })
             .catch(async () => {
-
                 if (req.body.invite !== "") {
                     if (typeof req.body.invite !== "string") {
                         error = true;
@@ -555,8 +641,11 @@ router.post(
                 }
 
                 if (
-                    req.body.invite && functions.isURL(req.body.invite) &&
-                    Number(new URL(req.body.invite).searchParams.get('permissions')) & 8
+                    req.body.invite &&
+                    functions.isURL(req.body.invite) &&
+                    Number(
+                        new URL(req.body.invite).searchParams.get("permissions")
+                    ) & 8
                 ) {
                     error = true;
                     errors.push(
@@ -566,78 +655,152 @@ router.post(
 
                 if (req.body.widgetServer && !req.body.widgetChannel) {
                     error = true;
-                    errors.push(res.__("common.error.listing.arr.widgetbot.serverButNotChannel"));
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.serverButNotChannel"
+                        )
+                    );
                 }
-        
+
                 if (req.body.widgetChannel && !req.body.widgetServer) {
                     error = true;
-                    errors.push(res.__("common.error.listing.arr.widgetbot.channelButNotServer"));
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.channelButNotServer"
+                        )
+                    );
                 }
-        
-                if(req.body.widgetServer && req.body.widgetChannel) {
-                    let fetchServer = true
-        
-                    if (isNaN(req.body.widgetServer) || req.body.widgetServer.includes(' ')) {
-                        error = true
-                        errors.push(res.__("common.error.listing.arr.widgetbot.serverID.invalid"))
-                        fetchServer = false
+
+                if (req.body.widgetServer && req.body.widgetChannel) {
+                    let fetchServer = true;
+
+                    if (
+                        isNaN(req.body.widgetServer) ||
+                        req.body.widgetServer.includes(" ")
+                    ) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.serverID.invalid"
+                            )
+                        );
+                        fetchServer = false;
                     }
-                    if (req.body.widgetServer && req.body.widgetServer.length > 32) {
-                        error = true
-                        errors.push(res.__("common.error.listing.arr.widgetbot.serverID.tooLong"))
-                        fetchServer = false
+                    if (
+                        req.body.widgetServer &&
+                        req.body.widgetServer.length > 32
+                    ) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.serverID.tooLong"
+                            )
+                        );
+                        fetchServer = false;
                     }
-        
-                    if(fetchServer) await fetch(`https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`, {
-                        headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-                    }).then((fetchRes: fetchRes) => {
-                        if(fetchRes.status === 400 || fetchRes.status === 404) {
-                            error = true
-                            errors.push(res.__("common.error.listing.arr.widgetbot.serverID.nonexistent"))
-                            fetchServer = false
-                        }
-                    })
-        
-                    if(fetchServer) await fetch(`https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`)
-                    .then(async (fetchRes: fetchRes) => {
-                        fetchRes.jsonBody = await fetchRes.json()
-                        if(!fetchRes.jsonBody.data.guild?.id) {
-                            error = true
-                            errors.push(res.__("common.error.listing.arr.widgetbot.guildNotFound"))
-                        }
-                    })
-                    
-                    let fetchChannel = true
-        
-                    if (isNaN(req.body.widgetChannel) || req.body.widgetChannel.includes(' ')) {
-                        error = true
-                        errors.push(res.__("common.error.listing.arr.widgetbot.channelID.invalid"))
-                        fetchChannel = false
+
+                    if (fetchServer)
+                        await fetch(
+                            `https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`,
+                            {
+                                headers: {
+                                    Authorization: `Bot ${settings.secrets.discord.token}`
+                                }
+                            }
+                        ).then((fetchRes: fetchRes) => {
+                            if (
+                                fetchRes.status === 400 ||
+                                fetchRes.status === 404
+                            ) {
+                                error = true;
+                                errors.push(
+                                    res.__(
+                                        "common.error.listing.arr.widgetbot.serverID.nonexistent"
+                                    )
+                                );
+                                fetchServer = false;
+                            }
+                        });
+
+                    if (fetchServer)
+                        await fetch(
+                            `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
+                        ).then(async (fetchRes: fetchRes) => {
+                            fetchRes.jsonBody = await fetchRes.json();
+                            if (!fetchRes.jsonBody.data.guild?.id) {
+                                error = true;
+                                errors.push(
+                                    res.__(
+                                        "common.error.listing.arr.widgetbot.guildNotFound"
+                                    )
+                                );
+                            }
+                        });
+
+                    let fetchChannel = true;
+
+                    if (
+                        isNaN(req.body.widgetChannel) ||
+                        req.body.widgetChannel.includes(" ")
+                    ) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelID.invalid"
+                            )
+                        );
+                        fetchChannel = false;
                     }
-                    if (req.body.widgetChannel && req.body.widgetChannel.length > 32) {
-                        error = true
-                        errors.push(res.__("common.error.listing.arr.widgetbot.channelID.tooLong"))
-                        fetchChannel = false
+                    if (
+                        req.body.widgetChannel &&
+                        req.body.widgetChannel.length > 32
+                    ) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelID.tooLong"
+                            )
+                        );
+                        fetchChannel = false;
                     }
-        
-                    if(fetchChannel) await fetch(`https://discord.com/api/v6/channels/${req.body.widgetChannel}`, {
-                        headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-                    }).then((fetchRes: fetchRes) => {
-                        if(fetchRes.status === 400 || fetchRes.status === 404) {
-                            error = true
-                            errors.push(res.__("common.error.listing.arr.widgetbot.channelID.nonexistent"))
-                            fetchChannel = false
-                        }
-                    })
-        
-                    if(fetchChannel) await fetch(`https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`)
-                    .then(async (fetchRes: fetchRes) => {
-                        fetchRes.jsonBody = await fetchRes.json()
-                        if(!fetchRes.jsonBody.data.channel?.id) {
-                            error = true
-                            errors.push(res.__("common.error.listing.arr.widgetbot.channelNotFound"))
-                        }
-                    })
+
+                    if (fetchChannel)
+                        await fetch(
+                            `https://discord.com/api/v6/channels/${req.body.widgetChannel}`,
+                            {
+                                headers: {
+                                    Authorization: `Bot ${settings.secrets.discord.token}`
+                                }
+                            }
+                        ).then((fetchRes: fetchRes) => {
+                            if (
+                                fetchRes.status === 400 ||
+                                fetchRes.status === 404
+                            ) {
+                                error = true;
+                                errors.push(
+                                    res.__(
+                                        "common.error.listing.arr.widgetbot.channelID.nonexistent"
+                                    )
+                                );
+                                fetchChannel = false;
+                            }
+                        });
+
+                    if (fetchChannel)
+                        await fetch(
+                            `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
+                        ).then(async (fetchRes: fetchRes) => {
+                            fetchRes.jsonBody = await fetchRes.json();
+                            if (!fetchRes.jsonBody.data.channel?.id) {
+                                error = true;
+                                errors.push(
+                                    res.__(
+                                        "common.error.listing.arr.widgetbot.channelNotFound"
+                                    )
+                                );
+                            }
+                        });
                 }
 
                 if (!req.body.shortDescription) {
@@ -989,7 +1152,7 @@ router.get(
             allowVulnerableTags: true,
             disallowedTagsMode: "escape"
         });
-        
+
         res.render("templates/bots/edit", {
             title: res.__("page.bots.edit.title"),
             subtitle: res.__("page.bots.edit.subtitle", botExists.name),
@@ -1012,25 +1175,33 @@ router.post(
         let error = false;
         let errors = [];
 
-        if(req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(' ')) {
-                error = true
-                errors.push(res.__("common.error.bot.arr.invalidClientID"))
+        if (req.body.clientID) {
+            if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
             if (req.body.clientID && req.body.clientID.length > 32) {
-                error = true
-                errors.push(res.__("common.error.bot.arr.clientIDTooLong"))
+                error = true;
+                errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
 
-            if(req.body.clientID !== req.params.id) await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
-                method: "GET",
-                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-            }).then((fetchRes: fetchRes) => {
-                if(fetchRes.status !== 404) {
-                    error = true
-                    errors.push(res.__("common.error.bot.arr.clientIDIsUser"))
-                }
-            })
+            if (req.body.clientID !== req.params.id)
+                await fetch(
+                    `https://discord.com/api/v6/users/${req.body.clientID}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bot ${settings.secrets.discord.token}`
+                        }
+                    }
+                ).then((fetchRes: fetchRes) => {
+                    if (fetchRes.status !== 404) {
+                        error = true;
+                        errors.push(
+                            res.__("common.error.bot.arr.clientIDIsUser")
+                        );
+                    }
+                });
         }
 
         const botExists: delBot | undefined = await global.db
@@ -1116,85 +1287,147 @@ router.post(
             errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
         }
 
-        if (req.body.invite && functions.isURL(req.body.invite) && Number(new URL(req.body.invite).searchParams.get('permissions')) & 8) {
+        if (
+            req.body.invite &&
+            functions.isURL(req.body.invite) &&
+            Number(new URL(req.body.invite).searchParams.get("permissions")) & 8
+        ) {
             error = true;
             errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
         }
 
         if (req.body.widgetServer && !req.body.widgetChannel) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.widgetbot.serverButNotChannel"));
+            errors.push(
+                res.__("common.error.listing.arr.widgetbot.serverButNotChannel")
+            );
         }
 
         if (req.body.widgetChannel && !req.body.widgetServer) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.widgetbot.channelButNotServer"));
+            errors.push(
+                res.__("common.error.listing.arr.widgetbot.channelButNotServer")
+            );
         }
 
-        if(req.body.widgetServer && req.body.widgetChannel) {
-            let fetchServer = true
+        if (req.body.widgetServer && req.body.widgetChannel) {
+            let fetchServer = true;
 
-            if (isNaN(req.body.widgetServer) || req.body.widgetServer.includes(' ')) {
-                error = true
-                errors.push(res.__("common.error.listing.arr.widgetbot.serverID.invalid"))
-                fetchServer = false
+            if (
+                isNaN(req.body.widgetServer) ||
+                req.body.widgetServer.includes(" ")
+            ) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.serverID.invalid"
+                    )
+                );
+                fetchServer = false;
             }
             if (req.body.widgetServer && req.body.widgetServer.length > 32) {
-                error = true
-                errors.push(res.__("common.error.listing.arr.widgetbot.serverID.tooLong"))
-                fetchServer = false
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.serverID.tooLong"
+                    )
+                );
+                fetchServer = false;
             }
 
-            if(fetchServer) await fetch(`https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`, {
-                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-            }).then((fetchRes: fetchRes) => {
-                if(fetchRes.status === 400 || fetchRes.status === 404) {
-                    error = true
-                    errors.push(res.__("common.error.listing.arr.widgetbot.serverID.nonexistent"))
-                    fetchServer = false
-                }
-            })
+            if (fetchServer)
+                await fetch(
+                    `https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`,
+                    {
+                        headers: {
+                            Authorization: `Bot ${settings.secrets.discord.token}`
+                        }
+                    }
+                ).then((fetchRes: fetchRes) => {
+                    if (fetchRes.status === 400 || fetchRes.status === 404) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.serverID.nonexistent"
+                            )
+                        );
+                        fetchServer = false;
+                    }
+                });
 
-            if(fetchServer) await fetch(`https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`)
-            .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json()
-                if(!fetchRes.jsonBody.data.guild?.id) {
-                    error = true
-                    errors.push(res.__("common.error.listing.arr.widgetbot.guildNotFound"))
-                }
-            })
-            
-            let fetchChannel = true
+            if (fetchServer)
+                await fetch(
+                    `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
+                ).then(async (fetchRes: fetchRes) => {
+                    fetchRes.jsonBody = await fetchRes.json();
+                    if (!fetchRes.jsonBody.data.guild?.id) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.guildNotFound"
+                            )
+                        );
+                    }
+                });
 
-            if (isNaN(req.body.widgetChannel) || req.body.widgetChannel.includes(' ')) {
-                error = true
-                errors.push(res.__("common.error.listing.arr.widgetbot.channelID.invalid"))
-                fetchChannel = false
+            let fetchChannel = true;
+
+            if (
+                isNaN(req.body.widgetChannel) ||
+                req.body.widgetChannel.includes(" ")
+            ) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.channelID.invalid"
+                    )
+                );
+                fetchChannel = false;
             }
             if (req.body.widgetChannel && req.body.widgetChannel.length > 32) {
-                error = true
-                errors.push(res.__("common.error.listing.arr.widgetbot.channelID.tooLong"))
-                fetchChannel = false
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.channelID.tooLong"
+                    )
+                );
+                fetchChannel = false;
             }
 
-            if(fetchChannel) await fetch(`https://discord.com/api/v6/channels/${req.body.widgetChannel}`, {
-                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-            }).then((fetchRes: fetchRes) => {
-                if(fetchRes.status === 400 || fetchRes.status === 404) {
-                    error = true
-                    errors.push(res.__("common.error.listing.arr.widgetbot.channelID.nonexistent"))
-                    fetchChannel = false
-                }
-            })
+            if (fetchChannel)
+                await fetch(
+                    `https://discord.com/api/v6/channels/${req.body.widgetChannel}`,
+                    {
+                        headers: {
+                            Authorization: `Bot ${settings.secrets.discord.token}`
+                        }
+                    }
+                ).then((fetchRes: fetchRes) => {
+                    if (fetchRes.status === 400 || fetchRes.status === 404) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelID.nonexistent"
+                            )
+                        );
+                        fetchChannel = false;
+                    }
+                });
 
-            if(fetchChannel) await fetch(`https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`)
-            .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json()
-                if(!fetchRes.jsonBody.data.channel?.id) {
-                    error = true
-                    errors.push(res.__("common.error.listing.arr.widgetbot.channelNotFound"))
-                }
-            })
+            if (fetchChannel)
+                await fetch(
+                    `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
+                ).then(async (fetchRes: fetchRes) => {
+                    fetchRes.jsonBody = await fetchRes.json();
+                    if (!fetchRes.jsonBody.data.channel?.id) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelNotFound"
+                            )
+                        );
+                    }
+                });
         }
 
         if (!req.body.shortDescription) {
@@ -1910,8 +2143,8 @@ router.post(
         let error = false;
         let errors = [];
 
-        if(req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(' '))
+        if (req.body.clientID) {
+            if (isNaN(req.body.clientID) || req.body.clientID.includes(" "))
                 return res.status(400).json({
                     error: true,
                     status: 400,
@@ -1924,18 +2157,26 @@ router.post(
                     status: 400,
                     errors: [res.__("common.error.bot.arr.clientIDTooLong")]
                 });
-            
-            if(req.body.clientID !== req.params.id) await fetch(`https://discord.com/api/v6/users/${req.body.clientID}`, {
-                method: "GET",
-                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-            }).then((fetchRes: fetchRes) => {
-                if(fetchRes.status !== 404)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.clientIDIsUser")]
-                    });
-            })
+
+            if (req.body.clientID !== req.params.id)
+                await fetch(
+                    `https://discord.com/api/v6/users/${req.body.clientID}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bot ${settings.secrets.discord.token}`
+                        }
+                    }
+                ).then((fetchRes: fetchRes) => {
+                    if (fetchRes.status !== 404)
+                        return res.status(400).json({
+                            error: true,
+                            status: 400,
+                            errors: [
+                                res.__("common.error.bot.arr.clientIDIsUser")
+                            ]
+                        });
+                });
         }
 
         const botExists: delBot | undefined = await global.db
@@ -2030,85 +2271,147 @@ router.post(
             errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
         }
 
-        if (req.body.invite && functions.isURL(req.body.invite) && Number(new URL(req.body.invite).searchParams.get('permissions')) & 8) {
+        if (
+            req.body.invite &&
+            functions.isURL(req.body.invite) &&
+            Number(new URL(req.body.invite).searchParams.get("permissions")) & 8
+        ) {
             error = true;
             errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
         }
 
         if (req.body.widgetServer && !req.body.widgetChannel) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.widgetbot.serverButNotChannel"));
+            errors.push(
+                res.__("common.error.listing.arr.widgetbot.serverButNotChannel")
+            );
         }
 
         if (req.body.widgetChannel && !req.body.widgetServer) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.widgetbot.channelButNotServer"));
+            errors.push(
+                res.__("common.error.listing.arr.widgetbot.channelButNotServer")
+            );
         }
 
-        if(req.body.widgetServer && req.body.widgetChannel) {
-            let fetchServer = true
+        if (req.body.widgetServer && req.body.widgetChannel) {
+            let fetchServer = true;
 
-            if (isNaN(req.body.widgetServer) || req.body.widgetServer.includes(' ')) {
-                error = true
-                errors.push(res.__("common.error.listing.arr.widgetbot.serverID.invalid"))
-                fetchServer = false
+            if (
+                isNaN(req.body.widgetServer) ||
+                req.body.widgetServer.includes(" ")
+            ) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.serverID.invalid"
+                    )
+                );
+                fetchServer = false;
             }
             if (req.body.widgetServer && req.body.widgetServer.length > 32) {
-                error = true
-                errors.push(res.__("common.error.listing.arr.widgetbot.serverID.tooLong"))
-                fetchServer = false
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.serverID.tooLong"
+                    )
+                );
+                fetchServer = false;
             }
 
-            if(fetchServer) await fetch(`https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`, {
-                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-            }).then((fetchRes: fetchRes) => {
-                if(fetchRes.status === 400 || fetchRes.status === 404) {
-                    error = true
-                    errors.push(res.__("common.error.listing.arr.widgetbot.serverID.nonexistent"))
-                    fetchServer = false
-                }
-            })
+            if (fetchServer)
+                await fetch(
+                    `https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`,
+                    {
+                        headers: {
+                            Authorization: `Bot ${settings.secrets.discord.token}`
+                        }
+                    }
+                ).then((fetchRes: fetchRes) => {
+                    if (fetchRes.status === 400 || fetchRes.status === 404) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.serverID.nonexistent"
+                            )
+                        );
+                        fetchServer = false;
+                    }
+                });
 
-            if(fetchServer) await fetch(`https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`)
-            .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json()
-                if(!fetchRes.jsonBody.data.guild?.id) {
-                    error = true
-                    errors.push(res.__("common.error.listing.arr.widgetbot.guildNotFound"))
-                }
-            })
-            
-            let fetchChannel = true
+            if (fetchServer)
+                await fetch(
+                    `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
+                ).then(async (fetchRes: fetchRes) => {
+                    fetchRes.jsonBody = await fetchRes.json();
+                    if (!fetchRes.jsonBody.data.guild?.id) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.guildNotFound"
+                            )
+                        );
+                    }
+                });
 
-            if (isNaN(req.body.widgetChannel) || req.body.widgetChannel.includes(' ')) {
-                error = true
-                errors.push(res.__("common.error.listing.arr.widgetbot.channelID.invalid"))
-                fetchChannel = false
+            let fetchChannel = true;
+
+            if (
+                isNaN(req.body.widgetChannel) ||
+                req.body.widgetChannel.includes(" ")
+            ) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.channelID.invalid"
+                    )
+                );
+                fetchChannel = false;
             }
             if (req.body.widgetChannel && req.body.widgetChannel.length > 32) {
-                error = true
-                errors.push(res.__("common.error.listing.arr.widgetbot.channelID.tooLong"))
-                fetchChannel = false
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.channelID.tooLong"
+                    )
+                );
+                fetchChannel = false;
             }
 
-            if(fetchChannel) await fetch(`https://discord.com/api/v6/channels/${req.body.widgetChannel}`, {
-                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-            }).then((fetchRes: fetchRes) => {
-                if(fetchRes.status === 400 || fetchRes.status === 404) {
-                    error = true
-                    errors.push(res.__("common.error.listing.arr.widgetbot.channelID.nonexistent"))
-                    fetchChannel = false
-                }
-            })
+            if (fetchChannel)
+                await fetch(
+                    `https://discord.com/api/v6/channels/${req.body.widgetChannel}`,
+                    {
+                        headers: {
+                            Authorization: `Bot ${settings.secrets.discord.token}`
+                        }
+                    }
+                ).then((fetchRes: fetchRes) => {
+                    if (fetchRes.status === 400 || fetchRes.status === 404) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelID.nonexistent"
+                            )
+                        );
+                        fetchChannel = false;
+                    }
+                });
 
-            if(fetchChannel) await fetch(`https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`)
-            .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json()
-                if(!fetchRes.jsonBody.data.channel?.id) {
-                    error = true
-                    errors.push(res.__("common.error.listing.arr.widgetbot.channelNotFound"))
-                }
-            })
+            if (fetchChannel)
+                await fetch(
+                    `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
+                ).then(async (fetchRes: fetchRes) => {
+                    fetchRes.jsonBody = await fetchRes.json();
+                    if (!fetchRes.jsonBody.data.channel?.id) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelNotFound"
+                            )
+                        );
+                    }
+                });
         }
 
         if (!req.body.shortDescription) {
@@ -2626,7 +2929,7 @@ router.get(
 
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.decline.title"),
-            icon: 'times',
+            icon: "times",
             subtitle: res.__("page.bots.decline.subtitle", bot.name),
             req,
             redirect
@@ -2661,7 +2964,7 @@ router.post(
                 req,
                 type: "Error"
             });
-        
+
         if (!req.body.reason && !req.user.db.rank.admin) {
             return res.status(400).render("status", {
                 title: res.__("common.error"),
@@ -2778,7 +3081,7 @@ router.get(
 
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.unapprove.title"),
-            icon: 'minus',
+            icon: "minus",
             subtitle: res.__("page.bots.unapprove.subtitle", bot.name),
             req,
             redirect: `/bots/${bot._id}`
@@ -2864,9 +3167,11 @@ router.post(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
-            })\` unapproved bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
-            })\`\n**Reason:** \`${req.body.reason || "None specified."}\``
+            })\` unapproved bot **${functions.escapeFormatting(
+                bot.name
+            )}** \`(${bot._id})\`\n**Reason:** \`${
+                req.body.reason || "None specified."
+            }\``
         );
 
         const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
@@ -2874,11 +3179,9 @@ router.post(
         const member = mainGuild.members.cache.get(req.params.id);
 
         if (member && !settings.website.dev) {
-            await member
-                .kick("Bot has been unapproved.")
-                .catch((e) => {
-                    console.error(e);
-                });
+            await member.kick("Bot has been unapproved.").catch((e) => {
+                console.error(e);
+            });
         }
 
         const owner = discord.bot.users.cache.get(bot.owner.id);
@@ -2933,7 +3236,7 @@ router.get(
 
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.remove.title"),
-            icon: 'trash',
+            icon: "trash",
             subtitle: res.__("page.bots.remove.subtitle", bot.name),
             req,
             redirect: `/bots/${bot._id}`
@@ -2969,15 +3272,15 @@ router.post(
                 type: "Error"
             });
 
-            if (!req.body.reason && !req.user.db.rank.admin) {
-                return res.status(400).render("status", {
-                    title: res.__("common.error"),
-                    status: 400,
-                    subtitle: res.__("common.error.reasonRequired"),
-                    req,
-                    type: "Error"
-                });
-            }
+        if (!req.body.reason && !req.user.db.rank.admin) {
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.reasonRequired"),
+                req,
+                type: "Error"
+            });
+        }
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
@@ -3061,7 +3364,6 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
-
         const botExists: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });

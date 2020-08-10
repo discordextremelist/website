@@ -69,10 +69,13 @@ export const member = (req: Request, res: Response, next: () => void) => {
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [res.__("common.error.failedJoin", {
-                        a: "<a href=\"https://discord.gg/WeCer3J\" rel=\"noopener\" target=\"_blank\">",
-                        ea: "</a>"
-                    })]
+                    errors: [
+                        res.__("common.error.failedJoin", {
+                            a:
+                                '<a href="https://discord.gg/WeCer3J" rel="noopener" target="_blank">',
+                            ea: "</a>"
+                        })
+                    ]
                 });
             } else next();
         });

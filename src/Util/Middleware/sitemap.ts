@@ -80,12 +80,12 @@ export const sitemapGenerator = async (
     ${url("/guidelines", lang)}
     ${url("/auth/login", lang)}
     ${bots
-        .filter(b => b.status.approved && !b.status.archived)
-        .map(b => url(`/bots/${b.vanityUrl || b._id}`, lang))
+        .filter((b) => b.status.approved && !b.status.archived)
+        .map((b) => url(`/bots/${b.vanityUrl || b._id}`, lang))
         .join("\n    ")}
-    ${servers.map(s => url(`/servers/${s._id}`, lang)).join("\n    ")}
-    ${templates.map(t => url(`/templates/${t._id}`, lang)).join("\n    ")}
-    ${users.map(u => url(`/users/${u._id}`, lang)).join("\n    ")}
+    ${servers.map((s) => url(`/servers/${s._id}`, lang)).join("\n    ")}
+    ${templates.map((t) => url(`/templates/${t._id}`, lang)).join("\n    ")}
+    ${users.map((u) => url(`/users/${u._id}`, lang)).join("\n    ")}
 </urlset>`
     );
 };

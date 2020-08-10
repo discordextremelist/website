@@ -1,0 +1,13 @@
+name: Add new issue/pr to Awaiting triage
+on: [issues, pull_request]
+jobs:
+  add-new-issues-to-project-column:
+    runs-on: ubuntu-latest
+    steps:
+    - name: add-new-issues-to-organization-based-project-column
+      uses: docker://takanabe/github-actions-automate-projects:v0.0.1
+      if: github.event_name == 'issues' && github.event.action == 'opened'
+      env:
+        GITHUB_TOKEN: ${{ secrets.DELLYBOT_SECRET }}
+        GITHUB_PROJECT_URL: https://github.com/orgs/discordextremelist/projects/1
+        GITHUB_PROJECT_COLUMN_NAME: Awaiting triage

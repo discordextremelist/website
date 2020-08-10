@@ -801,6 +801,16 @@ router.post(
                 type: "Error"
             });
 
+        if (!req.body.reason && !req.user.db.rank.admin) {
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.reasonRequired"),
+                req,
+                type: "Error"
+            });
+        }
+
         await global.db
             .collection("templates")
             .deleteOne({ _id: req.params.id });
@@ -823,7 +833,7 @@ router.post(
                 req.user.id
             })\` removed template **${functions.escapeFormatting(
                 template.name
-            )}** \`(${template._id})\`\n**Reason:** \`${req.body.reason}\``
+            )}** \`(${template._id})\`\n**Reason:** \`${req.body.reason || "None specified."}\``
         );
 
         const owner = discord.bot.users.cache.get(template.owner.id);
@@ -836,7 +846,7 @@ router.post(
                         template.name
                     )}** \`(${
                         template._id
-                    })\` has been removed!\n**Reason:** \`${req.body.reason}\``
+                    })\` has been removed!\n**Reason:** \`${req.body.reason || "None specified."}\``
                 )
                 .catch((e) => {
                     console.error(e);

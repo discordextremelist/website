@@ -2661,6 +2661,16 @@ router.post(
                 req,
                 type: "Error"
             });
+        
+        if (!req.body.reason && !req.user.db.rank.admin) {
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.reasonRequired"),
+                req,
+                type: "Error"
+            });
+        }
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
@@ -2703,7 +2713,7 @@ router.post(
                 req.user.id
             })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
-            })\`\n**Reason:** \`${req.body.reason}\``
+            })\`\n**Reason:** \`${req.body.reason || "None specified."}\``
         );
 
         const staffGuild = discord.bot.guilds.cache.get(settings.guild.staff);
@@ -2725,7 +2735,7 @@ router.post(
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been declined.\n**Reason:** \`${
-                        req.body.reason
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -2804,6 +2814,16 @@ router.post(
                 type: "Error"
             });
 
+        if (!req.body.reason && !req.user.db.rank.admin) {
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.reasonRequired"),
+                req,
+                type: "Error"
+            });
+        }
+
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
             {
@@ -2846,7 +2866,7 @@ router.post(
                 req.user.id
             })\` unapproved bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
-            })\`\n**Reason:** \`${req.body.reason}\``
+            })\`\n**Reason:** \`${req.body.reason || "None specified."}\``
         );
 
         const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
@@ -2870,7 +2890,7 @@ router.post(
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been unapproved!\n**Reason:** \`${
-                        req.body.reason
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -2949,6 +2969,16 @@ router.post(
                 type: "Error"
             });
 
+            if (!req.body.reason && !req.user.db.rank.admin) {
+                return res.status(400).render("status", {
+                    title: res.__("common.error"),
+                    status: 400,
+                    subtitle: res.__("common.error.reasonRequired"),
+                    req,
+                    type: "Error"
+                });
+            }
+
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
             {
@@ -2991,7 +3021,7 @@ router.post(
                 req.user.id
             })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
-            })\`\n**Reason:** \`${req.body.reason}\``
+            })\`\n**Reason:** \`${req.body.reason || "None specified."}\``
         );
 
         const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
@@ -3015,7 +3045,7 @@ router.post(
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
-                        req.body.reason
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {

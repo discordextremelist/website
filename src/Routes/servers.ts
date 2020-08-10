@@ -831,6 +831,16 @@ router.post(
                 type: "Error"
             });
 
+        if (!req.body.reason && !req.user.db.rank.admin) {
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.reasonRequired"),
+                req,
+                type: "Error"
+            });
+        }
+
         const tags = new Set(server.tags);
         tags.delete("LGBT");
 
@@ -875,7 +885,7 @@ router.post(
                 req.user.id
             })\` declined server **${functions.escapeFormatting(server.name)}** \`(${
                 server._id
-            })\`\nIt will still be shown as a normal server, it was declined from being listed as an LGBT community.\n**Reason:** \`${req.body.reason}\``
+            })\`\nIt will still be shown as a normal server, it was declined from being listed as an LGBT community.\n**Reason:** \`${req.body.reason || "None specified."}\``
         );
 
         const owner = discord.bot.users.cache.get(server.owner.id);
@@ -887,7 +897,7 @@ router.post(
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
                     )}** \`(${server._id})\` was declined from being listed as an LGBT community. It will still appear as a normal server.\n**Reason:** \`${
-                        req.body.reason
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -1103,6 +1113,16 @@ router.post(
                 type: "Error"
             });
 
+        if (!req.body.reason && !req.user.db.rank.admin) {
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.reasonRequired"),
+                req,
+                type: "Error"
+            });
+        }
+
         await global.db.collection("servers").deleteOne({ _id: req.params.id });
 
         await global.db.collection("audit").insertOne({
@@ -1124,7 +1144,7 @@ router.post(
                 req.user.id
             })\` removed server **${functions.escapeFormatting(
                 server.name
-            )}** \`(${server._id})\`\n**Reason:** \`${req.body.reason}\``
+            )}** \`(${server._id})\`\n**Reason:** \`${req.body.reason || "None specified."}\``
         );
 
         const owner = discord.bot.users.cache.get(server.owner.id);
@@ -1136,7 +1156,7 @@ router.post(
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
                     )}** \`(${server._id})\` has been removed!\n**Reason:** \`${
-                        req.body.reason
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e: string) => {

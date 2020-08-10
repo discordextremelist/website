@@ -928,13 +928,12 @@ router.get(
     async (req: Request, res: Response) => {
         if (req.params.id === req.user.id) return res.redirect("/staff");
 
-        // todo - remember to uncomment this before going into prod
-        // if (!req.query.token) return res.json({});
-        // const tokenCheck = await tokenManager.verifyToken(
-        //     req.user.id,
-        //     req.query.token as string
-        // );
-        // if (tokenCheck === false) return res.json({});
+        if (!req.query.token) return res.json({});
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            req.query.token as string
+        );
+        if (tokenCheck === false) return res.json({});
 
         let user: delUser | undefined = await global.db
             .collection("users")

@@ -55,7 +55,7 @@ import { RedisOptions } from "ioredis";
 
 const app = express();
 
-if (!settings.website.dev) Sentry.init({ dsn: settings.secrets.sentry });
+if (!settings.website.dev) Sentry.init({ dsn: settings.secrets.sentry, release: "website@" + process.env.npm_package_version });
 if (!settings.website.dev) app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
 
 let dbReady: boolean = false;

@@ -64,6 +64,7 @@
     "node-sass": "^4.14.1"
   },
   "scripts": {
+    "prod": "tsc-transpile-only",
     "compile": "rm -rf dist/ && tsc",
     "start": "node dist/src/app",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",

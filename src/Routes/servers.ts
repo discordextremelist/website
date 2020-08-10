@@ -1145,7 +1145,7 @@ router.post(
 
         await discord.postWebMetric("server");
 
-        res.redirect("/staff/queue");
+        res.redirect(`/servers/${server._id}`);
     }
 );
 

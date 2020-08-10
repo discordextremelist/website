@@ -2622,7 +2622,7 @@ router.get(
         let redirect = `/bots/${bot._id}`;
 
         if (req.query.from && req.query.from === "queue")
-            redirect = "/staff/queue";
+            redirect = "/staff/bot_queue";
 
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.decline.title"),
@@ -2732,7 +2732,7 @@ router.post(
                     console.error(e);
                 });
 
-        res.redirect("/staff/queue");
+        res.redirect("/staff/bot_queue");
     }
 );
 
@@ -2877,7 +2877,7 @@ router.post(
                     console.error(e);
                 });
 
-        res.redirect("/staff/queue");
+        res.redirect(`/bots/${bot._id}`);
     }
 );
 
@@ -3022,7 +3022,7 @@ router.post(
                     console.error(e);
                 });
 
-        res.redirect("/staff/queue");
+        res.redirect(`/bots/${bot._id}`);
     }
 );
 

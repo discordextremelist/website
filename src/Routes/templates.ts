@@ -844,7 +844,7 @@ router.post(
 
         await discord.postWebMetric("template");
 
-        res.redirect("/staff/queue");
+        res.redirect(`/templates/${template._id}`;
     }
 );
 

@@ -89,7 +89,7 @@ router.get(
     (req: Request, res: Response) => {
         res.redirect("/bot_queue");
     }
-)
+);
 
 router.get(
     "/bot_queue",
@@ -153,7 +153,11 @@ router.get(
             .toArray();
 
         for (const bot of bots) {
-            discord.bot.guilds.cache.get(settings.guild.main).members.cache.get(bot._id) ? bot.inServer = true : bot.inServer = false;
+            discord.bot.guilds.cache
+                .get(settings.guild.main)
+                .members.cache.get(bot._id)
+                ? (bot.inServer = true)
+                : (bot.inServer = false);
         }
 
         res.locals.premidPageInfo = res.__("premid.staff.invite_queue");
@@ -163,7 +167,8 @@ router.get(
             subtitle: res.__("page.staff.invite_queue.subtitle"),
             req,
             bots: bots.filter(
-                ({ inServer, status }) => !inServer && !status.archived && status.approved
+                ({ inServer, status }) =>
+                    !inServer && !status.archived && status.approved
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff
@@ -928,13 +933,12 @@ router.get(
     async (req: Request, res: Response) => {
         if (req.params.id === req.user.id) return res.redirect("/staff");
 
-        // todo - remember to uncomment this before going into prod
-        // if (!req.query.token) return res.json({});
-        // const tokenCheck = await tokenManager.verifyToken(
-        //     req.user.id,
-        //     req.query.token as string
-        // );
-        // if (tokenCheck === false) return res.json({});
+        if (!req.query.token) return res.json({});
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            req.query.token as string
+        );
+        if (tokenCheck === false) return res.json({});
 
         let user: delUser | undefined = await global.db
             .collection("users")

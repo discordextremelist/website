@@ -148,8 +148,7 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
     if (!req.query.page) req.query.page = "1";
 
     const servers = (await serverCache.getAllServers()).filter(
-        ({ _id, status }) =>
-            status && !status.reviewRequired
+        ({ _id, status }) => status && !status.reviewRequired
     );
 
     res.render("templates/servers/index", {
@@ -249,7 +248,9 @@ router.get("/about", variables, async (req: Request, res: Response) => {
         staff,
         donators,
         contributors,
-        aboutLinkColour: res.locals.preferredTheme.includes("dark" || "black") ? "#ffffff" : "#000000"
+        aboutLinkColour: res.locals.preferredTheme.includes("dark" || "black")
+            ? "#ffffff"
+            : "#000000"
     });
 });
 

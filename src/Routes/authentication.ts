@@ -37,7 +37,8 @@ passport.use(
             clientSecret: settings.secrets.discord.secret,
             callbackURL: settings.website.url + settings.website.callback,
             scope: settings.website.authScopes,
-            authorizationURL: "https://discord.com/api/oauth2/authorize?prompt=none"
+            authorizationURL:
+                "https://discord.com/api/oauth2/authorize?prompt=none"
         },
         (accessToken, refreshToken, profile, done) => {
             process.nextTick(() => {
@@ -254,11 +255,11 @@ router.get(
 
         if (req.session.joinGuild && req.session.joinGuild === true) {
             req.session.joinGuild = false;
-            
+
             const data = JSON.stringify({
                 access_token: req.user.accessToken
             });
-    
+
             const options = {
                 hostname: "discord.com",
                 port: 443,
@@ -270,7 +271,7 @@ router.get(
                     Authorization: "Bot " + settings.secrets.discord.token
                 }
             };
-    
+
             const msReq = https.request(options, (response) => {
                 if (response.statusCode === 403 && !req.user.impersonator) {
                     return res.status(403).render("status", {
@@ -282,11 +283,11 @@ router.get(
                     });
                 } else next();
             });
-    
+
             msReq.on("error", (e) => {
                 console.error(e);
             });
-    
+
             msReq.write(data);
             msReq.end();
         }

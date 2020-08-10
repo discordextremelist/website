@@ -48,7 +48,7 @@ router.get("/", variables, (req: Request, res: Response) => {
 });
 
 router.post("/", variables, async (req: Request, res: Response) => {
-    let { query, only }: { query: string, only: string[] } = req.body;
+    let { query, only }: { query: string; only: string[] } = req.body;
     if (!query)
         return res.status(400).json({
             error: true,
@@ -110,7 +110,10 @@ router.post("/", variables, async (req: Request, res: Response) => {
                     ({ _id, name }) =>
                         _id === query || name.toLowerCase().indexOf(query) >= 0
                 )
-                .filter(({ status }) => !status.archived && status.approved && !status.siteBot)
+                .filter(
+                    ({ status }) =>
+                        !status.archived && status.approved && !status.siteBot
+                )
                 .map((bot) => {
                     return ejs.renderFile(renderPath + "/cards/botCard.ejs", {
                         req,

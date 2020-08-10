@@ -51,7 +51,6 @@ export async function uploadBots() {
     if (botsDB.length < 1) return;
 
     for (const bot of botsDB) {
-
         // @ts-expect-error
         if (bot.id) bot._id = bot.id;
     }

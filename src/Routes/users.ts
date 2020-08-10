@@ -81,7 +81,10 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
             archivedBots.push(bot);
         } else if (bot.owner.id === req.params.id) {
             botsOwner.push(bot);
-        } else if (bot.editors.includes(req.params.id) && !bot.status.archived) {
+        } else if (
+            bot.editors.includes(req.params.id) &&
+            !bot.status.archived
+        ) {
             botsEditor.push(bot);
         }
     }
@@ -433,8 +436,12 @@ router.post(
             });
 
         let customCss: string = "";
-        if (userProfile.rank.premium || userProfile.rank.mod || userProfile.rank.assistant || userProfile.rank.admin) {
-            
+        if (
+            userProfile.rank.premium ||
+            userProfile.rank.mod ||
+            userProfile.rank.assistant ||
+            userProfile.rank.admin
+        ) {
             customCss = req.body.profileCss;
         }
 
@@ -502,7 +509,6 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response, next) => {
-
         if (req.params.id === "@me") {
             req.params.id = req.user.id;
         }
@@ -726,7 +732,7 @@ router.post(
             case "dark":
                 theme = 1;
                 break;
-            case "light": 
+            case "light":
                 theme = 2;
                 break;
             default:
@@ -773,7 +779,8 @@ router.post(
             details: {
                 old: {
                     preferences: {
-                        customGlobalCss: req.user.db.preferences.customGlobalCss,
+                        customGlobalCss:
+                            req.user.db.preferences.customGlobalCss,
                         defaultColour: req.user.db.preferences.defaultColour,
                         defaultForegroundColour:
                             req.user.db.preferences.defaultForegroundColour,

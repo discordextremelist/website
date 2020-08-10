@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 
+import * as Sentry from "@sentry/node";
 import * as path from "path";
 import * as device from "express-device";
 import cookieSession from "cookie-session";
@@ -54,17 +55,29 @@ import { RedisOptions } from "ioredis";
 
 const app = express();
 
+if (!settings.website.dev) Sentry.init({ dsn: settings.secrets.sentry, release: "website@" + process.env.npm_package_version });
+if (!settings.website.dev) app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
+
 let dbReady: boolean = false;
 
-app.use('/fonts/fa/webfonts/*', (req: Request, res: Response, next: () => void) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+app.use(
+    "/fonts/fa/webfonts/*",
+    (req: Request, res: Response, next: () => void) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header(
+            "Access-Control-Allow-Headers",
+            "Origin, X-Requested-With, Content-Type, Accept"
+        );
+        next();
+    }
+);
 
 app.set("views", path.join(__dirname + "/../../assets/Views"));
 app.use(express.static(path.join(__dirname + "/../../assets/Public")));
-app.use('/packages/monaco-editor', express.static(path.join(__dirname + "/../../node_modules/monaco-editor")))
+app.use(
+    "/packages/monaco-editor",
+    express.static(path.join(__dirname + "/../../node_modules/monaco-editor"))
+);
 
 app.get("*", (req: Request, res: Response, next: () => void) => {
     if (
@@ -99,7 +112,7 @@ new Promise((resolve, reject) => {
     .then(async () => {
         discord.bot.login(settings.secrets.discord.token);
         dbReady = true;
-        await new Promise(resolve => {
+        await new Promise((resolve) => {
             discord.bot.once("ready", () => resolve());
         });
 
@@ -256,18 +269,23 @@ new Promise((resolve, reject) => {
 
         app.use(i18n.init);
 
-        app.get("/:lang/auth/login", languageHandler.globalHandler, variables, (req: Request, res: Response, next) => {
-            if (req.user) res.redirect("/");
+        app.get(
+            "/:lang/auth/login",
+            languageHandler.globalHandler,
+            variables,
+            (req: Request, res: Response, next) => {
+                if (req.user) res.redirect("/");
 
-            res.locals.premidPageInfo = res.__("premid.login");
-            res.locals.hideLogin = true;
+                res.locals.premidPageInfo = res.__("premid.login");
+                res.locals.hideLogin = true;
 
-            res.render("templates/login", {
-                title: res.__("common.login.short"),
-                subtitle: res.__("common.login.subtitle"),
-                req
-            });
-        });
+                res.render("templates/login", {
+                    title: res.__("common.login.short"),
+                    subtitle: res.__("common.login.subtitle"),
+                    req
+                });
+            }
+        );
 
         app.use("/auth", require("./Routes/authentication"));
 
@@ -291,6 +309,8 @@ new Promise((resolve, reject) => {
         app.use("/:lang/staff", require("./Routes/staff"));
 
         app.use(variables);
+
+        if (!settings.website.dev) app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
         app.use((req: Request, res: Response, next: () => void) => {
             // @ts-expect-error
@@ -324,7 +344,7 @@ new Promise((resolve, reject) => {
                     });
 
                 res.status(err.status || 500);
-                res.render("error", {__: res.__});
+                res.render("error", { __: res.__ });
             }
         );
 

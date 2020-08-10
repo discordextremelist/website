@@ -65,7 +65,7 @@ router.post(
         let error = false;
         let errors: string[] = [];
 
-        if (req.body.invite.includes(' '))
+        if (req.body.invite.includes(" "))
             return res.status(400).json({
                 error: true,
                 status: 400,
@@ -129,48 +129,85 @@ router.post(
                     );
                 }
 
-                if(req.body.previewChannel) {
-                    let fetchChannel = true
-        
-                    if (isNaN(req.body.previewChannel) || req.body.previewChannel.includes(' ')) {
-                        error = true
-                        errors.push(res.__("common.error.server.arr.previewChannel.invalid"))
-                        fetchChannel = false
+                if (req.body.previewChannel) {
+                    let fetchChannel = true;
+
+                    if (
+                        isNaN(req.body.previewChannel) ||
+                        req.body.previewChannel.includes(" ")
+                    ) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.server.arr.previewChannel.invalid"
+                            )
+                        );
+                        fetchChannel = false;
                     }
-                    if (req.body.previewChannel && req.body.previewChannel.length > 32) {
-                        error = true
-                        errors.push(res.__("common.error.server.arr.previewChannel.tooLong"))
-                        fetchChannel = false
+                    if (
+                        req.body.previewChannel &&
+                        req.body.previewChannel.length > 32
+                    ) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.server.arr.previewChannel.tooLong"
+                            )
+                        );
+                        fetchChannel = false;
                     }
-        
-                    if(fetchChannel) await fetch(`https://discord.com/api/v6/channels/${req.body.previewChannel}`, {
-                        headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-                    }).then((fetchRes: fetchRes) => {
-                        if(fetchRes.status === 400 || fetchRes.status === 404) {
-                            error = true
-                            errors.push(res.__("common.error.server.arr.previewChannel.invalid"))
-                            fetchChannel = false
-                        }
-                    })
-        
-                    if(fetchChannel) await fetch(`https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`)
-                    .then(async (fetchRes: fetchRes) => {
-                        fetchRes.jsonBody = await fetchRes.json()
-                        if(!fetchRes.jsonBody.data.channel?.id) {
-                            error = true
-                            errors.push(res.__("common.error.listing.arr.widgetbot.channelNotFound"))
-                        }
-                    })
+
+                    if (fetchChannel)
+                        await fetch(
+                            `https://discord.com/api/v6/channels/${req.body.previewChannel}`,
+                            {
+                                headers: {
+                                    Authorization: `Bot ${settings.secrets.discord.token}`
+                                }
+                            }
+                        ).then((fetchRes: fetchRes) => {
+                            if (
+                                fetchRes.status === 400 ||
+                                fetchRes.status === 404
+                            ) {
+                                error = true;
+                                errors.push(
+                                    res.__(
+                                        "common.error.server.arr.previewChannel.invalid"
+                                    )
+                                );
+                                fetchChannel = false;
+                            }
+                        });
+
+                    if (fetchChannel)
+                        await fetch(
+                            `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`
+                        ).then(async (fetchRes: fetchRes) => {
+                            fetchRes.jsonBody = await fetchRes.json();
+                            if (!fetchRes.jsonBody.data.channel?.id) {
+                                error = true;
+                                errors.push(
+                                    res.__(
+                                        "common.error.listing.arr.widgetbot.channelNotFound"
+                                    )
+                                );
+                            }
+                        });
                 }
-        
+
                 if (!req.body.shortDescription) {
                     error = true;
-                    errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+                    errors.push(
+                        res.__("common.error.listing.arr.shortDescRequired")
+                    );
                 }
 
                 if (!req.body.longDescription) {
                     error = true;
-                    errors.push(res.__("common.error.listing.arr.longDescRequired"));
+                    errors.push(
+                        res.__("common.error.listing.arr.longDescRequired")
+                    );
                 }
 
                 let tags: string[] = [];
@@ -381,7 +418,8 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
             });
     }
 
-    if (server.tags.includes("LGBT")) res.redirect(`${settings.website.lgbtSiteURL}/servers/${server._id}`);
+    if (server.tags.includes("LGBT"))
+        res.redirect(`${settings.website.lgbtSiteURL}/servers/${server._id}`);
 
     let serverOwner: delUser | undefined = await userCache.getUser(
         server.owner.id
@@ -525,7 +563,10 @@ router.post(
             error = true;
             errors.push(res.__("common.error.listing.arr.invite.invalid"));
         } else {
-            if (typeof req.body.invite !== "string" || req.body.invite.includes(' ')) {
+            if (
+                typeof req.body.invite !== "string" ||
+                req.body.invite.includes(" ")
+            ) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.invalid"));
             } else if (req.body.invite.length > 32) {
@@ -550,45 +591,71 @@ router.post(
             errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
         }
 
-        if(req.body.previewChannel) {
-            let fetchChannel = true
+        if (req.body.previewChannel) {
+            let fetchChannel = true;
 
-            if (isNaN(req.body.previewChannel) || req.body.previewChannel.includes(' ')) {
-                error = true
-                errors.push(res.__("common.error.server.arr.previewChannel.invalid"))
-                fetchChannel = false
+            if (
+                isNaN(req.body.previewChannel) ||
+                req.body.previewChannel.includes(" ")
+            ) {
+                error = true;
+                errors.push(
+                    res.__("common.error.server.arr.previewChannel.invalid")
+                );
+                fetchChannel = false;
             }
-            if (req.body.previewChannel && req.body.previewChannel.length > 32) {
-                error = true
-                errors.push(res.__("common.error.server.arr.previewChannel.tooLong"))
-                fetchChannel = false
+            if (
+                req.body.previewChannel &&
+                req.body.previewChannel.length > 32
+            ) {
+                error = true;
+                errors.push(
+                    res.__("common.error.server.arr.previewChannel.tooLong")
+                );
+                fetchChannel = false;
             }
 
-            if(fetchChannel) await fetch(`https://discord.com/api/v6/channels/${req.body.previewChannel}`, {
-                headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-            }).then((fetchRes: fetchRes) => {
-                if(fetchRes.status === 400 || fetchRes.status === 404) {
-                    error = true
-                    errors.push(res.__("common.error.server.arr.previewChannel.nonexistent"))
-                    fetchChannel = false
-                }
-            })
+            if (fetchChannel)
+                await fetch(
+                    `https://discord.com/api/v6/channels/${req.body.previewChannel}`,
+                    {
+                        headers: {
+                            Authorization: `Bot ${settings.secrets.discord.token}`
+                        }
+                    }
+                ).then((fetchRes: fetchRes) => {
+                    if (fetchRes.status === 400 || fetchRes.status === 404) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.server.arr.previewChannel.nonexistent"
+                            )
+                        );
+                        fetchChannel = false;
+                    }
+                });
 
-            if(fetchChannel) await fetch(`https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`)
-            .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json()
-                if(!fetchRes.jsonBody.data.channel?.id) {
-                    error = true
-                    errors.push(res.__("common.error.listing.arr.widgetbot.channelNotFound"))
-                }
-            })
+            if (fetchChannel)
+                await fetch(
+                    `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`
+                ).then(async (fetchRes: fetchRes) => {
+                    fetchRes.jsonBody = await fetchRes.json();
+                    if (!fetchRes.jsonBody.data.channel?.id) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelNotFound"
+                            )
+                        );
+                    }
+                });
         }
 
         if (!req.body.shortDescription) {
             error = true;
             errors.push(res.__("common.error.listing.arr.shortDescRequired"));
         }
-        
+
         if (!req.body.longDescription) {
             error = true;
             errors.push(res.__("common.error.listing.arr.longDescRequired"));
@@ -624,7 +691,7 @@ router.post(
             .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
-                if(fetchRes.jsonBody.code === 10006) {
+                if (fetchRes.jsonBody.code === 10006) {
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.invite.invalid")
@@ -771,7 +838,10 @@ router.get(
                 type: "Error"
             });
 
-        res.locals.premidPageInfo = res.__("premid.servers.decline", server.name);
+        res.locals.premidPageInfo = res.__(
+            "premid.servers.decline",
+            server.name
+        );
 
         if (!server.status || !server.status.reviewRequired)
             return res.status(400).render("status", {
@@ -794,7 +864,7 @@ router.get(
 
         res.render("templates/servers/staffActions/remove", {
             title: res.__("page.servers.decline.title"),
-            icon: 'minus',
+            icon: "minus",
             subtitle: res.__("page.servers.decline.subtitle", server.name),
             removingServer: server,
             req,
@@ -883,9 +953,13 @@ router.post(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
-            })\` declined server **${functions.escapeFormatting(server.name)}** \`(${
+            })\` declined server **${functions.escapeFormatting(
+                server.name
+            )}** \`(${
                 server._id
-            })\`\nIt will still be shown as a normal server, it was declined from being listed as an LGBT community.\n**Reason:** \`${req.body.reason || "None specified."}\``
+            })\`\nIt will still be shown as a normal server, it was declined from being listed as an LGBT community.\n**Reason:** \`${
+                req.body.reason || "None specified."
+            }\``
         );
 
         const owner = discord.bot.users.cache.get(server.owner.id);
@@ -896,7 +970,9 @@ router.post(
                         settings.emoji.cross
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
-                    )}** \`(${server._id})\` was declined from being listed as an LGBT community. It will still appear as a normal server.\n**Reason:** \`${
+                    )}** \`(${
+                        server._id
+                    })\` was declined from being listed as an LGBT community. It will still appear as a normal server.\n**Reason:** \`${
                         req.body.reason || "None specified."
                     }\``
                 )
@@ -977,9 +1053,9 @@ router.get(
                     req.user.id
                 })\` approved server **${functions.escapeFormatting(
                     server.name
-                )}** \`(${server._id})\` to be listed as an LGBT community.\n<${settings.website.url}/bots/${
-                    server._id
-                }>`
+                )}** \`(${server._id})\` to be listed as an LGBT community.\n<${
+                    settings.website.url
+                }/bots/${server._id}>`
             )
             .catch((e) => {
                 console.error(e);
@@ -993,7 +1069,9 @@ router.get(
                         settings.emoji.check
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
-                    )}** \`(${server._id})\` was approved as being listed as an LGBT community.`
+                    )}** \`(${
+                        server._id
+                    })\` was approved as being listed as an LGBT community.`
                 )
                 .catch((e) => {
                     console.error(e);
@@ -1087,7 +1165,7 @@ router.get(
         res.render("templates/servers/staffActions/remove", {
             title: res.__("page.servers.remove.title"),
             subtitle: res.__("page.servers.remove.subtitle", server.name),
-            icon: 'trash',
+            icon: "trash",
             removingServer: server,
             req
         });
@@ -1144,7 +1222,9 @@ router.post(
                 req.user.id
             })\` removed server **${functions.escapeFormatting(
                 server.name
-            )}** \`(${server._id})\`\n**Reason:** \`${req.body.reason || "None specified."}\``
+            )}** \`(${server._id})\`\n**Reason:** \`${
+                req.body.reason || "None specified."
+            }\``
         );
 
         const owner = discord.bot.users.cache.get(server.owner.id);
@@ -1165,7 +1245,7 @@ router.post(
 
         await discord.postWebMetric("server");
 
-        res.redirect('/servers');
+        res.redirect("/servers");
     }
 );
 
@@ -1174,7 +1254,6 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
-
         const server: delServer | undefined = await global.db
             .collection("servers")
             .findOne({ _id: req.params.id });
@@ -1195,23 +1274,27 @@ router.get(
             .then(async (fetchRes: fetchRes) => {
                 fetchRes.jsonBody = await fetchRes.json();
 
-                if(fetchRes.jsonBody.code === 10006)
+                if (fetchRes.jsonBody.code === 10006)
                     return res.status(400).render("status", {
                         title: res.__("common.error"),
                         status: 400,
-                        subtitle: res.__("common.error.listing.arr.invite.invalid"),
+                        subtitle: res.__(
+                            "common.error.listing.arr.invite.invalid"
+                        ),
                         req,
                         type: "Error"
-                    })
-                
+                    });
+
                 if (fetchRes.jsonBody.guild.id !== server._id)
                     return res.status(400).render("status", {
                         title: res.__("common.error"),
                         status: 404,
-                        subtitle: res.__("common.error.server.arr.invite.sameServer"),
+                        subtitle: res.__(
+                            "common.error.server.arr.invite.sameServer"
+                        ),
                         req,
                         type: "Error"
-                    })
+                    });
 
                 await global.db.collection("servers").updateOne(
                     { _id: req.params.id },

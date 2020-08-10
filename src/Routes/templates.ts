@@ -65,7 +65,7 @@ router.post(
         let error = false;
         let errors: string[] = [];
 
-        if (req.body.code.includes(' '))
+        if (req.body.code.includes(" "))
             return res.status(400).json({
                 error: true,
                 status: 400,
@@ -98,7 +98,6 @@ router.post(
                             res.__("common.error.listing.arr.shortDescRequired")
                         );
                     }
-
                 } else {
                     error = true;
                     errors.push(
@@ -485,7 +484,10 @@ router.post(
             error = true;
             errors.push(res.__("common.error.template.arr.invite.invalid"));
         } else {
-            if (typeof req.body.code !== "string" || req.body.code.includes(' ')) {
+            if (
+                typeof req.body.code !== "string" ||
+                req.body.code.includes(" ")
+            ) {
                 error = true;
                 errors.push(res.__("common.error.template.arr.invite.invalid"));
             } else if (req.body.code.length > 2000) {
@@ -833,7 +835,9 @@ router.post(
                 req.user.id
             })\` removed template **${functions.escapeFormatting(
                 template.name
-            )}** \`(${template._id})\`\n**Reason:** \`${req.body.reason || "None specified."}\``
+            )}** \`(${template._id})\`\n**Reason:** \`${
+                req.body.reason || "None specified."
+            }\``
         );
 
         const owner = discord.bot.users.cache.get(template.owner.id);
@@ -846,7 +850,9 @@ router.post(
                         template.name
                     )}** \`(${
                         template._id
-                    })\` has been removed!\n**Reason:** \`${req.body.reason || "None specified."}\``
+                    })\` has been removed!\n**Reason:** \`${
+                        req.body.reason || "None specified."
+                    }\``
                 )
                 .catch((e) => {
                     console.error(e);
@@ -854,7 +860,7 @@ router.post(
 
         await discord.postWebMetric("template");
 
-        res.redirect('/templates');
+        res.redirect("/templates");
     }
 );
 
@@ -982,7 +988,7 @@ router.get(
                             icon: {
                                 hash: template.icon.hash,
                                 url: template.icon.url
-                            },
+                            }
                         }
                     }
                 });

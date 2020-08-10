@@ -1,0 +1,14 @@
+name: Move issue/pr to correct column when on hold label applied
+on:
+  issues:
+    types: [labeled]
+jobs:
+  Move_Labeled_Issue_On_Project_Board:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ secrets.DELLYBOT_SECRET }}"
+        project-url: "https://github.com/orgs/discordextremelist/projects/1"
+        column-name: "High Priority"
+        label-name: "high priority"

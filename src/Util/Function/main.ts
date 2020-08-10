@@ -352,8 +352,8 @@ export function isURL(string: string): boolean {
     try {
         new URL(string);
     } catch (_) {
-        return false;  
+        return false;
     }
-  
+
     return true;
 }

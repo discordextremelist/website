@@ -785,7 +785,7 @@ router.get(
         let redirect = `/servers/${server._id}`;
 
         if (req.query.from && req.query.from === "queue")
-            redirect = "/staff/bot_queue";
+            redirect = "/staff/server_queue";
 
         res.locals.premidPageInfo = res.__(
             "premid.servers.decline",
@@ -1145,7 +1145,7 @@ router.post(
 
         await discord.postWebMetric("server");
 
-        res.redirect(`/servers/${server._id}`);
+        res.redirect('/servers');
     }
 );
 

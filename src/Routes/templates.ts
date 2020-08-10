@@ -763,7 +763,7 @@ router.get(
             return res.status(404).render("status", {
                 title: res.__("common.error"),
                 status: 404,
-                subtitle: res.__("common.error.template.404t"),
+                subtitle: res.__("common.error.template.404"),
                 req,
                 type: "Error"
             });
@@ -844,7 +844,7 @@ router.post(
 
         await discord.postWebMetric("template");
 
-        res.redirect(`/templates/${template._id}`);
+        res.redirect('/templates');
     }
 );
 

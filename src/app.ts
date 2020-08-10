@@ -56,7 +56,7 @@ import { RedisOptions } from "ioredis";
 const app = express();
 
 if (!settings.website.dev) Sentry.init({ dsn: settings.secrets.sentry });
-if (!settings.website.dev) app.use(Sentry.Handlers.requestHandler());
+if (!settings.website.dev) app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
 
 let dbReady: boolean = false;
 
@@ -310,7 +310,7 @@ new Promise((resolve, reject) => {
 
         app.use(variables);
 
-        if (!settings.website.dev) app.use(Sentry.Handlers.errorHandler());
+        if (!settings.website.dev) app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
 
         app.use((req: Request, res: Response, next: () => void) => {
             // @ts-expect-error

@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 
+import * as Sentry from "@sentry/node";
 import * as path from "path";
 import * as device from "express-device";
 import cookieSession from "cookie-session";
@@ -53,6 +54,9 @@ import { MongoClient } from "mongodb";
 import { RedisOptions } from "ioredis";
 
 const app = express();
+
+if (!settings.website.dev) Sentry.init({ dsn: settings.secrets.sentry });
+if (!settings.website.dev) app.use(Sentry.Handlers.requestHandler());
 
 let dbReady: boolean = false;
 
@@ -305,6 +309,8 @@ new Promise((resolve, reject) => {
         app.use("/:lang/staff", require("./Routes/staff"));
 
         app.use(variables);
+
+        if (!settings.website.dev) app.use(Sentry.Handlers.errorHandler());
 
         app.use((req: Request, res: Response, next: () => void) => {
             // @ts-expect-error

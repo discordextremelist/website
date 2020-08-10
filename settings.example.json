@@ -18,7 +18,8 @@
             "secret": ""
         },
         "datadog": "",
-        "cookie": ""
+        "cookie": "",
+        "sentry": ""
     },
     "website": {
         "locales": {

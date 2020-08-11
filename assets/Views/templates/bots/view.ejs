@@ -72,7 +72,7 @@
                             </span>
                         <% } %>
 
-                        <% if (bot.status.approved === false) { %>
+                        <% if (bot.status.approved === false && !bot.status.archived) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.unapproved") %>" class="icon is-medium is-size-3 iconalign">
                                 <i aria-hidden="true" class="fad fa-exclamation-triangle has-text-danger fa-1x"></i>
                             </span>
@@ -242,7 +242,7 @@
                                         <span><%= __("common.sync") %></span>
                                     </a>
                                     <% if (user.db.rank.assistant === true) { %>
-                                        <% if (req.user.id !== bot.owner.id) { %>
+                                        <% if (req.user.id !== bot.owner.id && !bot.status.archived) { %>
                                             <a class="dropdown-item has-text-link" id="setVanity">
                                                 <span class="icon">
                                                     <i aria-hidden="true" class="fas fa-link"></i>
@@ -268,7 +268,7 @@
                                             <span><%= __("common.edit") %></span>
                                         </a>
                                     <% } %>
-                                    <% if (bot.status.approved === true) { %>
+                                    <% if (bot.status.approved === true && !bot.status.archived) { %>
                                         <a class="dropdown-item has-text-orange" href="<%= linkPrefix %>/bots/<%= bot._id %>/unapprove">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-minus"></i></span>
                                             <span><%= __("common.staff.unapprove") %></span>
@@ -277,7 +277,7 @@
                                             <span class="icon"><i aria-hidden="true" class="fas fa-trash"></i></span>
                                             <span><%= __("common.staff.remove") %></span>
                                         </a>
-                                    <% } else { %>
+                                    <% } else if (!bot.status.archived) { %>
                                         <a class="dropdown-item has-text-success" href="<%= linkPrefix %>/bots/<%= bot._id %>/approve">
                                             <span class="icon"><i aria-hidden="true" class="fas fa-check"></i></span>
                                             <span><%= __("common.staff.approve") %></span>

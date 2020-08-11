@@ -59,8 +59,7 @@
                 </div>
             <div class="column is-10<% if (mobile) { %> has-text-centered<% } %>">
                     <h1 class="is-size-1">
-                        <span id="botName"><%= bot.name %></span>
-
+                        <% if (!phone) { %><span id="botName"><%= bot.name %></span><% } %>
                         <% if (bot.status.premium === true) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.premium.bot") %>" class="icon is-medium is-size-3 iconalign">
                                 <i aria-hidden="true" class="fad fa-star has-text-warning fa-1x"></i>
@@ -82,6 +81,12 @@
                         <% if (bot.status.archived === true) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.archived") %>" class="icon is-medium is-size-3 iconalign">
                                 <i aria-hidden="true" class="fad fa-archive has-text-warning fa-1x"></i>
+                            </span>
+                        <% } %>
+                        <% if (phone) { %>
+                            <% if (bot.status.premium === true || bot.status.siteBot === true || bot.status.approved === false || bot.status.archived === true) { %><br /><% } %>
+                            <span id="botName">
+                                <%= bot.name %>
                             </span>
                         <% } %>
                     </h1>

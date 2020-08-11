@@ -51,7 +51,9 @@
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
-                        <span id="userName" style="overflow-wrap: break-word;"><%= userProfile.fullUsername %></span>
+                        <% if (!phone) { %>
+                            <span id="userName" style="overflow-wrap: break-word;"><%= userProfile.fullUsername %></span>
+                        <% } %>
                         <% if (userProfileIsBanned === true || userProfile.rank.tester === true || userProfile.rank.translator === true || userProfile.rank.premium === true || userProfile.rank.mod === true || userProfile.rank.admin === true) { %>
                             <% if (userProfileIsBanned === true) { %>
                                 <span style="vertical-align: middle;" title="<%= __("common.rank.banned") %>" class="icon is-medium is-size-3 iconalign">
@@ -94,7 +96,12 @@
                                     </span>
                                 <% } %>
                             <% } %>
+
+                            <% if (phone) { %><br /><% } %>
                         <% } %> 
+                        <% if (phone) { %>
+                            <span id="userName" style="overflow-wrap: break-word;"><%= userProfile.fullUsername %></span>
+                        <% } %>
                     </h1>
                     <h2 class="subtitle <% if (mobile) { %>has-text-centered<% } %>"><% if (userProfileIsBanned === false) { %><%= userProfile.profile.bio || __("page.users.bio.nil") %><% } else { %><%= __("page.users.bio.bio") %><% } %></h2>
                     <% if (userProfileIsBanned === false || user && user.db.rank.mod === true) { %>

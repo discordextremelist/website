@@ -40,10 +40,16 @@
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
-                        <span id="serverName"><%= server.name %></span>
+                        <% if (!phone) { %><span id="serverName"><%= server.name %></span><% } %>
                         <% if (server.status && server.status.reviewRequired === true) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.reviewRequired") %>" class="icon is-medium is-size-3 iconalign">
                                 <i aria-hidden="true" class="fad fa-exclamation-triangle has-text-danger fa-1x"></i>
+                            </span>
+                        <% } %>
+                        <% if (phone) { %>
+                            <% if (server.status && server.status.reviewRequired === true) { %><br /><% } %>
+                            <span id="serverName">
+                                <%= server.name %>
                             </span>
                         <% } %>
                     </h1>

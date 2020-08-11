@@ -1682,10 +1682,10 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     }
 
     if (bot.status.archived && (req.user.id !== bot.owner.id || !req.user.db.rank.mod))
-        return res.status(404).render("status", {
+        return res.status(403).render("status", {
             title: res.__("common.error"),
-            status: 404,
-            subtitle: res.__("common.error.bot.404"),
+            status: 403,
+            subtitle: res.__("common.error.bot.archived"),
             type: "Error",
             req: req,
             pageType: { server: false, bot: false }

@@ -1055,7 +1055,7 @@ router.get(
                     server.name
                 )}** \`(${server._id})\` to be listed as an LGBT community.\n<${
                     settings.website.url
-                }/bots/${server._id}>`
+                }/servers/${server._id}>`
             )
             .catch((e) => {
                 console.error(e);

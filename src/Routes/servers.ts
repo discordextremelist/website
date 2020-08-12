@@ -959,7 +959,9 @@ router.post(
                 server._id
             })\`\nIt will still be shown as a normal server, it was declined from being listed as an LGBT community.\n**Reason:** \`${
                 req.body.reason || "None specified."
-            }\``
+            }\`\n<${
+                settings.website.url
+            }/servers/${server._id}>`
         );
 
         const owner = discord.bot.users.cache.get(server.owner.id);

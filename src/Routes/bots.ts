@@ -3026,7 +3026,9 @@ router.post(
                 req.user.id
             })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
-            })\`\n**Reason:** \`${req.body.reason || "None specified."}\``
+            })\`\n**Reason:** \`${req.body.reason || "None specified."}\`\n<${
+                settings.website.url
+            }/bots/${bot._id}>`
         );
 
         const staffGuild = discord.bot.guilds.cache.get(settings.guild.staff);
@@ -3181,7 +3183,9 @@ router.post(
                 bot.name
             )}** \`(${bot._id})\`\n**Reason:** \`${
                 req.body.reason || "None specified."
-            }\``
+            }\`\n<${
+                settings.website.url
+            }/bots/${bot._id}>`
         );
 
         const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
@@ -3334,7 +3338,9 @@ router.post(
                 req.user.id
             })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
-            })\`\n**Reason:** \`${req.body.reason || "None specified."}\``
+            })\`\n**Reason:** \`${req.body.reason || "None specified."}\`\n<${
+                settings.website.url
+            }/bots/${bot._id}>`
         );
 
         const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);

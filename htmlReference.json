@@ -32,7 +32,8 @@
             "tr",
             "th",
             "td",
-            "pre"
+            "pre",
+            "span"
         ],
         "attributes": {
             "a": ["href", "target", "rel"],
@@ -76,7 +77,8 @@
             "pre",
             "iframe",
             "style",
-            "link"
+            "link",
+            "span"
         ],
         "attributes": {
             "*": [
@@ -151,7 +153,8 @@
             "style",
             "script",
             "noscript",
-            "link"
+            "link",
+            "span"
         ],
         "attributes": false
     }

@@ -103,7 +103,7 @@
                             <span id="userName" style="overflow-wrap: break-word;"><%= userProfile.fullUsername %></span>
                         <% } %>
                     </h1>
-                    <h2 class="subtitle <% if (mobile) { %>has-text-centered<% } %>"><% if (userProfileIsBanned === false) { %><%= userProfile.profile.bio || __("page.users.bio.nil") %><% } else { %><%= __("page.users.bio.bio") %><% } %></h2>
+                    <% if (userProfileIsBanned === false) { %><h2 class="subtitle <% if (mobile) { %>has-text-centered<% } %>"><%= userProfile.profile.bio || __("page.users.bio.nil") %></h2><% } %>
                     <% if (userProfileIsBanned === false || user && user.db.rank.mod === true) { %>
                         <% if (user && user.db.rank.mod === true || user && userProfile._id === user.id) { %>
                             <div class="buttons page <% if (mobile) { %>is-centered<% } %>">

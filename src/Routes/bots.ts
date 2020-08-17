@@ -438,6 +438,13 @@ router.post(
                     );
                 }
 
+                if (!req.body.privacyPolicy) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.privacyPolicyRequired")
+                    );
+                }
+
                 const library = libraryCache.hasLib(req.body.library)
                     ? req.body.library
                     : "Other";
@@ -831,6 +838,13 @@ router.post(
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.prefixRequired")
+                    );
+                }
+
+                if (!req.body.privacyPolicy) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.privacyPolicyRequired")
                     );
                 }
 
@@ -1450,6 +1464,11 @@ router.post(
         if (!req.body.prefix) {
             error = true;
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
+        }
+
+        if (!req.body.privacyPolicy) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
         }
 
         let library = libraryCache.hasLib(req.body.library)
@@ -2444,6 +2463,11 @@ router.post(
         if (!req.body.prefix) {
             error = true;
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
+        }
+
+        if (!req.body.privacyPolicy) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
         }
 
         const library = libraryCache.hasLib(req.body.library)

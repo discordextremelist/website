@@ -26,6 +26,9 @@ import * as fetch from "node-fetch";
 import * as settings from "../../settings.json";
 import * as permission from "../Util/Function/permissions";
 import * as functions from "../Util/Function/main";
+import * as botCache from "../Util/Services/botCaching";
+import * as serverCache from "../Util/Services/serverCaching";
+import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
 import * as announcementCache from "../Util/Services/announcementCaching";
 import { variables } from "../Util/Function/variables";
@@ -39,22 +42,10 @@ router.get(
     variables,
     permission.mod,
     async (req: Request, res: Response) => {
-        const bots: delBot[] = await global.db
-            .collection("bots")
-            .find()
-            .toArray();
-        const users: delUser[] = await global.db
-            .collection("users")
-            .find()
-            .toArray();
-        const servers: delServer[] = await global.db
-            .collection("servers")
-            .find()
-            .toArray();
-        const templates: delTemplate[] = await global.db
-            .collection("templates")
-            .find()
-            .toArray();
+        const bots = await botCache.getAllBots()
+        const users = await userCache.getAllUsers()
+        const servers = await serverCache.getAllServers()
+        const templates = await templateCache.getAllTemplates()
 
         res.locals.premidPageInfo = res.__("premid.staff.home");
 

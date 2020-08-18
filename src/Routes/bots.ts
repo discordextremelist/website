@@ -1700,7 +1700,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
         }
     }
 
-    if (bot.status.archived && (req.user.id !== bot.owner.id || !req.user.db.rank.mod))
+    if (bot.status.archived && req.user.id !== bot.owner.id && !req.user.db.rank.mod)
         return res.status(403).render("status", {
             title: res.__("common.error"),
             status: 403,

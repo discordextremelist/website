@@ -205,9 +205,9 @@
             </div>
             <br>
             <div class="field">
-                <label class="label has-text-default"><%= __("page.bots.privacyPolicy") %></label>
-                <p style="padding-bottom: 10px" class="is-size-7 has-text-orange">
-                    <%= __("page.bots.privacyPolicy.optional", "18") %>
+                <label class="label has-text-default"><%= __("page.bots.privacyPolicy") %> <span class="has-text-danger">*</span></label>
+                <p style="padding-bottom: 10px" class="is-size-7 has-text-default">
+                    <%= __("page.bots.privacyPolicy.required") %>
                 </p>
                 <p class="control has-icons-left">
                     <input id="form_privacyPolicy" class="input is-rounded" type="text" name="privacyPolicy" placeholder="!privacy or https://discord.bot/privacy">

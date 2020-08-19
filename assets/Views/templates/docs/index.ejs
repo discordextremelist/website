@@ -1,6 +1,5 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/theme/<%= preferredTheme %>/all.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
-<link href="/css/theme/<%= preferredTheme %>/prism.css" media="screen" rel="stylesheet" />
+<link href="/css/theme/<%= preferredTheme %>/all.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet">
 <%- include("../../partials/nav.ejs") %>
 <script type="application/ld+json">
     {
@@ -125,7 +124,7 @@
         crate.notify({
             content: "Feel free to send a message if you need community support!",
             timeout: 5000,
-            avatar: "<%= baseURL %><%= linkPrefix %>/img/logo-128px.png"
+            avatar: "<%= baseURL %>/img/logo-128px.png"
         });
     </script>
     <style>
@@ -184,10 +183,6 @@
 .content table td, .content table th {
 
     border: 1px solid transparent;
-        border-top-width: 1px;
-        border-right-width: 1px;
-        border-bottom-width: 1px;
-        border-left-width: 1px;
     border-width: 0 0 1px;
     padding: 0.5em 0.75em;
     vertical-align: top;

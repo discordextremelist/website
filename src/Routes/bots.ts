@@ -438,11 +438,22 @@ router.post(
                     );
                 }
 
-                if (!req.body.privacyPolicy) {
+                if (req.body.privacyPolicy) {
+                    if (req.body.privacyPolicy.includes('discord.bot/privacy')) {
+                        error = true;
+                        errors.push(res.__("common.error.listing.arr.privacyPolicy.placeholder"));
+                    }
+                    if (req.body.privacyPolicy.includes('discord.com/privacy')) {
+                        error = true;
+                        errors.push(res.__("common.error.listing.arr.privacyPolicy.discord"));
+                    }
+                    if (req.body.privacyPolicy.includes('!yardım')) {
+                        error = true;
+                        errors.push(res.__("common.error.listing.arr.privacyPolicy.yardim"));
+                    }
+                } else {
                     error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.privacyPolicyRequired")
-                    );
+                    errors.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
                 }
 
                 const library = libraryCache.hasLib(req.body.library)
@@ -841,11 +852,22 @@ router.post(
                     );
                 }
 
-                if (!req.body.privacyPolicy) {
+                if (req.body.privacyPolicy) {
+                    if (req.body.privacyPolicy.includes('discord.bot/privacy')) {
+                        error = true;
+                        errors.push(res.__("common.error.listing.arr.privacyPolicy.placeholder"));
+                    }
+                    if (req.body.privacyPolicy.includes('discord.com/privacy')) {
+                        error = true;
+                        errors.push(res.__("common.error.listing.arr.privacyPolicy.discord"));
+                    }
+                    if (req.body.privacyPolicy.includes('!yardım')) {
+                        error = true;
+                        errors.push(res.__("common.error.listing.arr.privacyPolicy.yardim"));
+                    }
+                } else {
                     error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.privacyPolicyRequired")
-                    );
+                    errors.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
                 }
 
                 return res.status(400).json({
@@ -1466,7 +1488,20 @@ router.post(
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
         }
 
-        if (!req.body.privacyPolicy) {
+        if (req.body.privacyPolicy) {
+            if (req.body.privacyPolicy.includes('discord.bot/privacy')) {
+                error = true;
+                errors.push(res.__("common.error.listing.arr.privacyPolicy.placeholder"));
+            }
+            if (req.body.privacyPolicy.includes('discord.com/privacy')) {
+                error = true;
+                errors.push(res.__("common.error.listing.arr.privacyPolicy.discord"));
+            }
+            if (req.body.privacyPolicy.includes('!yardım')) {
+                error = true;
+                errors.push(res.__("common.error.listing.arr.privacyPolicy.yardim"));
+            }
+        } else {
             error = true;
             errors.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
         }
@@ -2465,7 +2500,20 @@ router.post(
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
         }
 
-        if (!req.body.privacyPolicy) {
+        if (req.body.privacyPolicy) {
+            if (req.body.privacyPolicy.includes('discord.bot/privacy')) {
+                error = true;
+                errors.push(res.__("common.error.listing.arr.privacyPolicy.placeholder"));
+            }
+            if (req.body.privacyPolicy.includes('discord.com/privacy')) {
+                error = true;
+                errors.push(res.__("common.error.listing.arr.privacyPolicy.discord"));
+            }
+            if (req.body.privacyPolicy.includes('!yardım')) {
+                error = true;
+                errors.push(res.__("common.error.listing.arr.privacyPolicy.yardim"));
+            }
+        } else {
             error = true;
             errors.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
         }

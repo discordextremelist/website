@@ -247,10 +247,7 @@ router.get("/about", variables, async (req: Request, res: Response) => {
         req,
         staff,
         donators,
-        contributors,
-        aboutLinkColour: res.locals.preferredTheme.includes("dark" || "black")
-            ? "#ffffff"
-            : "#000000"
+        contributors
     });
 });
 

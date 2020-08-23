@@ -16,4 +16,3 @@ jobs:
           SENTRY_PROJECT: website
         with:
           tagName: ${{ github.ref }}
-          environment: qa

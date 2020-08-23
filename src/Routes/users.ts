@@ -19,6 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import { Request, Response } from "express";
+import { APIUser } from "discord-api-types"
+import { delBot, delServer, delTemplate, delUser } from "../../@types/del"
 
 import * as discord from "../Util/Services/discord";
 import * as banned from "../Util/Services/banned";
@@ -529,16 +531,16 @@ router.get(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const user = await fetchRes.json() as APIUser
                 await global.db.collection("users").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
-                            name: fetchRes.jsonBody.username,
-                            flags: fetchRes.jsonBody.public_flags,
+                            name: user.username,
+                            flags: user.public_flags,
                             avatar: {
-                                hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                                hash: user.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${user.avatar}`
                             }
                         } as delUser
                     }
@@ -560,11 +562,11 @@ router.get(
                             }
                         },
                         new: {
-                            name: fetchRes.jsonBody.username,
-                            flags: fetchRes.jsonBody.public_flags,
+                            name: user.username,
+                            flags: user.public_flags,
                             avatar: {
-                                hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                                hash: user.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${user.avatar}`
                             }
                         }
                     }

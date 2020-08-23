@@ -17,6 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { delServer } from "../../../@types/del"
+
 const prefix = "servers";
 
 export async function getServer(id: string): Promise<delServer> {

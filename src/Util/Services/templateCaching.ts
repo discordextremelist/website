@@ -17,6 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { delTemplate } from "../../../@types/del"
+
 const prefix = "templates";
 
 export async function getTemplate(id: string): Promise<delTemplate> {

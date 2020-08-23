@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import * as Discord from "discord.js";
 import * as metrics from "datadog-metrics";
 
+import { delBot, delServer, delTemplate, delUser } from "../../../@types/del"
 import * as settings from "../../../settings.json";
 import moment from "moment";
 const prefix = "statuses";

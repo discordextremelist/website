@@ -60,7 +60,6 @@ export class Response extends Body {
     statusText: string;
     type: ResponseType;
     url: string;
-    jsonBody: any;
 }
 
 export type ResponseType =

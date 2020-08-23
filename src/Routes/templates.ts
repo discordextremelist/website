@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
+import { delTemplate, delUser } from "../../@types/del"
 
 import * as fetch from "node-fetch";
 import * as Discord from "discord.js";
@@ -34,6 +35,7 @@ import * as userCache from "../Util/Services/userCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import { variables } from "../Util/Function/variables";
 import * as tokenManager from "../Util/Services/adminTokenManager";
+import { APITemplate } from "../../@types/discord";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -77,14 +79,15 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const template = await fetchRes.json() as APITemplate
 
-                if (fetchRes.jsonBody.code !== 10057) {
+                // @ts-expect-error
+                if (template.code !== 10057) {
                     const templateExists:
                         | delTemplate
                         | undefined = await global.db
                         .collection("templates")
-                        .findOne({ _id: fetchRes.jsonBody.code });
+                        .findOne({ _id: template.code });
                     if (templateExists)
                         return res.status(409).json({
                             error: true,
@@ -130,42 +133,42 @@ router.post(
                     });
 
                 await global.db.collection("templates").insertOne({
-                    _id: fetchRes.jsonBody.code,
-                    name: fetchRes.jsonBody.name,
-                    region: fetchRes.jsonBody.serialized_source_guild.region,
+                    _id: template.code,
+                    name: template.name,
+                    region: template.serialized_source_guild.region,
                     locale:
-                        fetchRes.jsonBody.serialized_source_guild
+                        template.serialized_source_guild
                             .preferred_locale,
                     afkTimeout:
-                        fetchRes.jsonBody.serialized_source_guild.afk_timeout,
+                        template.serialized_source_guild.afk_timeout,
                     verificationLevel:
-                        fetchRes.jsonBody.serialized_source_guild
+                        template.serialized_source_guild
                             .verification_level,
                     defaultMessageNotifications:
-                        fetchRes.jsonBody.serialized_source_guild
+                        template.serialized_source_guild
                             .default_message_notifications,
                     explicitContent:
-                        fetchRes.jsonBody.serialized_source_guild
+                        template.serialized_source_guild
                             .explicit_content_filter,
-                    roles: fetchRes.jsonBody.serialized_source_guild.roles,
+                    roles: template.serialized_source_guild.roles,
                     channels:
-                        fetchRes.jsonBody.serialized_source_guild.channels,
-                    usageCount: fetchRes.jsonBody.usage_count,
+                        template.serialized_source_guild.channels,
+                    usageCount: template.usage_count,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
                     tags: tags,
-                    fromGuild: fetchRes.jsonBody.source_guild_id,
+                    fromGuild: template.source_guild_id,
                     owner: {
                         id: req.user.id
                     },
                     icon: {
                         hash:
-                            fetchRes.jsonBody.serialized_source_guild.icon_hash,
-                        url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.source_guild_id}/${fetchRes.jsonBody.serialized_source_guild.icon_hash}`
+                            template.serialized_source_guild.icon_hash,
+                        url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                     },
                     links: {
                         linkToServerPage: false,
-                        template: `https://discord.new/${fetchRes.jsonBody.code}`
+                        template: `https://discord.new/${template.code}`
                     }
                 });
 
@@ -177,10 +180,10 @@ router.post(
                     )}** \`(${
                         req.user.id
                     })\` added template **${functions.escapeFormatting(
-                        fetchRes.jsonBody.name
-                    )}** \`(${fetchRes.jsonBody.code})\`\n<${
+                        template.name
+                    )}** \`(${template.code})\`\n<${
                         settings.website.url
-                    }/templates/${fetchRes.jsonBody.code}>`
+                    }/templates/${template.code}>`
                 );
 
                 await global.db.collection("audit").insertOne({
@@ -190,54 +193,54 @@ router.post(
                     reason: "None specified.",
                     details: {
                         new: {
-                            _id: fetchRes.jsonBody.code,
-                            name: fetchRes.jsonBody.name,
+                            _id: template.code,
+                            name: template.name,
                             region:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .region,
                             locale:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .preferred_locale,
                             afkTimeout:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .afk_timeout,
                             verificationLevel:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .verification_level,
                             defaultMessageNotifications:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .default_message_notifications,
                             explicitContent:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .explicit_content_filter,
                             roles:
-                                fetchRes.jsonBody.serialized_source_guild.roles,
+                                template.serialized_source_guild.roles,
                             channels:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .channels,
-                            usageCount: fetchRes.jsonBody.usage_count,
+                            usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             tags: tags,
-                            fromGuild: fetchRes.jsonBody.source_guild_id,
+                            fromGuild: template.source_guild_id,
                             owner: {
                                 id: req.user.id
                             },
                             icon: {
                                 hash:
-                                    fetchRes.jsonBody.serialized_source_guild
+                                    template.serialized_source_guild
                                         .icon_hash,
-                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.source_guild_id}/${fetchRes.jsonBody.serialized_source_guild.icon_hash}`
+                                url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             },
                             links: {
                                 linkToServerPage: false,
-                                template: `https://discord.new/${fetchRes.jsonBody.code}`
+                                template: `https://discord.new/${template.code}`
                             }
                         }
                     }
                 });
 
-                await templateCache.updateTemplate(fetchRes.jsonBody.code);
+                await templateCache.updateTemplate(template.code);
 
                 await discord.postWebMetric("template");
 
@@ -245,7 +248,7 @@ router.post(
                     error: false,
                     status: 200,
                     errors: [],
-                    id: fetchRes.jsonBody.code
+                    id: template.code
                 });
             })
             .catch(async (fetchRes: fetchRes) => {
@@ -454,11 +457,11 @@ router.post(
         let error = false;
         let errors = [];
 
-        const template: delTemplate | undefined = await global.db
+        const dbTemplate: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
 
-        if (!template)
+        if (!dbTemplate)
             return res.status(404).json({
                 error: true,
                 status: 404,
@@ -466,7 +469,7 @@ router.post(
             });
 
         if (
-            template.owner.id !== req.user.id &&
+            dbTemplate.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
             return res.status(403).json({
@@ -477,7 +480,7 @@ router.post(
 
         res.locals.premidPageInfo = res.__(
             "premid.templates.edit",
-            template.name
+            dbTemplate.name
         );
 
         if (!req.body.code) {
@@ -526,7 +529,7 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const template = await fetchRes.json() as APITemplate
 
                 if (error === true)
                     return res.status(400).json({
@@ -539,43 +542,43 @@ router.post(
                     { _id: req.params.id },
                     {
                         $set: {
-                            name: fetchRes.jsonBody.name,
+                            name: template.name,
                             region:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .region,
                             locale:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .preferred_locale,
                             afkTimeout:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .afk_timeout,
                             verificationLevel:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .verification_level,
                             defaultMessageNotifications:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .default_message_notifications,
                             explicitContent:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .explicit_content_filter,
                             roles:
-                                fetchRes.jsonBody.serialized_source_guild.roles,
+                                template.serialized_source_guild.roles,
                             channels:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .channels,
-                            usageCount: fetchRes.jsonBody.usage_count,
+                            usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             tags: tags,
                             icon: {
                                 hash:
-                                    fetchRes.jsonBody.serialized_source_guild
+                                    template.serialized_source_guild
                                         .icon_hash,
-                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.source_guild_id}/${fetchRes.jsonBody.serialized_source_guild.icon_hash}`
+                                url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             },
                             links: {
                                 linkToServerPage: linkToServerPage,
-                                template: `https://discord.new/${template._id}`
+                                template: `https://discord.new/${dbTemplate._id}`
                             }
                         }
                     }
@@ -589,10 +592,10 @@ router.post(
                     )}** \`(${
                         req.user.id
                     })\` edited template **${functions.escapeFormatting(
-                        fetchRes.jsonBody.name
-                    )}** \`(${fetchRes.jsonBody.code})\`\n<${
+                        template.name
+                    )}** \`(${template.code})\`\n<${
                         settings.website.url
-                    }/templates/${fetchRes.jsonBody.code}>`
+                    }/templates/${template.code}>`
                 );
 
                 await global.db.collection("audit").insertOne({
@@ -603,69 +606,69 @@ router.post(
                     reason: "None specified.",
                     details: {
                         new: {
-                            name: fetchRes.jsonBody.name,
+                            name: template.name,
                             region:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .region,
                             locale:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .preferred_locale,
                             afkTimeout:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .afk_timeout,
                             verificationLevel:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .verification_level,
                             defaultMessageNotifications:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .default_message_notifications,
                             explicitContent:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .explicit_content_filter,
                             roles:
-                                fetchRes.jsonBody.serialized_source_guild.roles,
+                                template.serialized_source_guild.roles,
                             channels:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .channels,
-                            usageCount: fetchRes.jsonBody.usage_count,
+                            usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             tags: tags,
-                            fromGuild: template.fromGuild,
+                            fromGuild: dbTemplate.fromGuild,
                             icon: {
                                 hash:
-                                    fetchRes.jsonBody.serialized_source_guild
+                                    template.serialized_source_guild
                                         .icon_hash,
-                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.source_guild_id}/${fetchRes.jsonBody.serialized_source_guild.icon_hash}`
+                                url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             },
                             links: {
                                 linkToServerPage: linkToServerPage,
-                                template: `https://discord.new/${template._id}`
+                                template: `https://discord.new/${dbTemplate._id}`
                             }
                         },
                         old: {
-                            name: template.name,
-                            region: template.region,
-                            locale: template.locale,
-                            afkTimeout: template.afkTimeout,
-                            verificationLevel: template.verificationLevel,
+                            name: dbTemplate.name,
+                            region: dbTemplate.region,
+                            locale: dbTemplate.locale,
+                            afkTimeout: dbTemplate.afkTimeout,
+                            verificationLevel: dbTemplate.verificationLevel,
                             defaultMessageNotifications:
-                                template.defaultMessageNotifications,
-                            explicitContent: template.explicitContent,
-                            roles: template.roles,
-                            channels: template.channels,
-                            usageCount: template.usageCount,
-                            shortDesc: template.shortDesc,
-                            longDesc: template.longDesc,
-                            tags: template.tags,
-                            fromGuild: template.fromGuild,
+                                dbTemplate.defaultMessageNotifications,
+                            explicitContent: dbTemplate.explicitContent,
+                            roles: dbTemplate.roles,
+                            channels: dbTemplate.channels,
+                            usageCount: dbTemplate.usageCount,
+                            shortDesc: dbTemplate.shortDesc,
+                            longDesc: dbTemplate.longDesc,
+                            tags: dbTemplate.tags,
+                            fromGuild: dbTemplate.fromGuild,
                             icon: {
-                                hash: template.icon.hash,
-                                url: template.icon.url
+                                hash: dbTemplate.icon.hash,
+                                url: dbTemplate.icon.url
                             },
                             links: {
                                 linkToServerPage: linkToServerPage,
-                                template: `https://discord.new/${template._id}`
+                                template: `https://discord.new/${dbTemplate._id}`
                             }
                         }
                     }
@@ -677,7 +680,7 @@ router.post(
                     error: false,
                     status: 200,
                     errors: [],
-                    id: fetchRes.jsonBody.code
+                    id: template.code
                 });
             })
             .catch(() => {
@@ -869,11 +872,11 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
-        const template: delTemplate | undefined = await global.db
+        const dbTemplate: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
 
-        if (!template)
+        if (!dbTemplate)
             return res.status(404).render("status", {
                 title: res.__("common.error"),
                 status: 404,
@@ -892,42 +895,42 @@ router.get(
             }
         )
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const template = await fetchRes.json() as APITemplate
 
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
-                            name: fetchRes.jsonBody.name,
+                            name: template.name,
                             region:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .region,
                             locale:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .preferred_locale,
                             afkTimeout:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .afk_timeout,
                             verificationLevel:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .verification_level,
                             defaultMessageNotifications:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .default_message_notifications,
                             explicitContent:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .explicit_content_filter,
                             roles:
-                                fetchRes.jsonBody.serialized_source_guild.roles,
+                                template.serialized_source_guild.roles,
                             channels:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .channels,
-                            usageCount: fetchRes.jsonBody.usage_count,
+                            usageCount: template.usage_count,
                             icon: {
                                 hash:
-                                    fetchRes.jsonBody.serialized_source_guild
+                                    template.serialized_source_guild
                                         .icon_hash,
-                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.source_guild_id}/${fetchRes.jsonBody.serialized_source_guild.icon_hash}`
+                                url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             }
                         }
                     }
@@ -941,53 +944,53 @@ router.get(
                     reason: "None specified.",
                     details: {
                         new: {
-                            name: fetchRes.jsonBody.name,
+                            name: template.name,
                             region:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .region,
                             locale:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .preferred_locale,
                             afkTimeout:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .afk_timeout,
                             verificationLevel:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .verification_level,
                             defaultMessageNotifications:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .default_message_notifications,
                             explicitContent:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .explicit_content_filter,
                             roles:
-                                fetchRes.jsonBody.serialized_source_guild.roles,
+                                template.serialized_source_guild.roles,
                             channels:
-                                fetchRes.jsonBody.serialized_source_guild
+                                template.serialized_source_guild
                                     .channels,
-                            usageCount: fetchRes.jsonBody.usage_count,
+                            usageCount: template.usage_count,
                             icon: {
                                 hash:
-                                    fetchRes.jsonBody.serialized_source_guild
+                                    template.serialized_source_guild
                                         .icon_hash,
-                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.source_guild_id}/${fetchRes.jsonBody.serialized_source_guild.icon_hash}`
+                                url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             }
                         },
                         old: {
-                            name: template.name,
-                            region: template.region,
-                            locale: template.locale,
-                            afkTimeout: template.afkTimeout,
-                            verificationLevel: template.verificationLevel,
+                            name: dbTemplate.name,
+                            region: dbTemplate.region,
+                            locale: dbTemplate.locale,
+                            afkTimeout: dbTemplate.afkTimeout,
+                            verificationLevel: dbTemplate.verificationLevel,
                             defaultMessageNotifications:
-                                template.defaultMessageNotifications,
-                            explicitContent: template.explicitContent,
-                            roles: template.roles,
-                            channels: template.channels,
-                            usageCount: template.usageCount,
+                                dbTemplate.defaultMessageNotifications,
+                            explicitContent: dbTemplate.explicitContent,
+                            roles: dbTemplate.roles,
+                            channels: dbTemplate.channels,
+                            usageCount: dbTemplate.usageCount,
                             icon: {
-                                hash: template.icon.hash,
-                                url: template.icon.url
+                                hash: dbTemplate.icon.hash,
+                                url: dbTemplate.icon.url
                             }
                         }
                     }

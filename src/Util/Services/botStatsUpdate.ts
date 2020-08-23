@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import moment from "moment";
+import { delUser } from "../../../@types/del"
 
 export async function botStatsUpdate() {
     const botStats: botStats = await global.db

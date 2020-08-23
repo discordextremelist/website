@@ -20,6 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
+import { APIUser } from "discord-api-types"
+import { delBot, delServer, delUser, auditLog } from "../../@types/del"
 
 import * as fetch from "node-fetch";
 
@@ -940,22 +942,22 @@ router.get(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const discordUser = await fetchRes.json() as APIUser
 
                 if (!user) {
                     await global.db.collection("users").insertOne({
                         _id: req.params.id,
                         token: "",
-                        name: fetchRes.jsonBody.username,
-                        discrim: fetchRes.jsonBody.discriminator,
+                        name: discordUser.username,
+                        discrim: discordUser.discriminator,
                         fullUsername:
-                            fetchRes.jsonBody.username +
+                            discordUser.username +
                             "#" +
-                            fetchRes.jsonBody.discriminator,
+                            discordUser.discriminator,
                         locale: "",
                         avatar: {
-                            hash: fetchRes.jsonBody.avatar,
-                            url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                            hash: discordUser.avatar,
+                            url: `https://cdn.discordapp.com/avatars/${req.params.id}/${discordUser.avatar}`
                         },
                         preferences: {
                             customGlobalCss: "",
@@ -1081,15 +1083,15 @@ router.get(
                         { _id: req.params.id },
                         {
                             $set: {
-                                name: fetchRes.jsonBody.username,
-                                discrim: fetchRes.jsonBody.discriminator,
+                                name: discordUser.username,
+                                discrim: discordUser.discriminator,
                                 fullUsername:
-                                    fetchRes.jsonBody.username +
+                                    discordUser.username +
                                     "#" +
-                                    fetchRes.jsonBody.discriminator,
+                                    discordUser.discriminator,
                                 avatar: {
-                                    hash: fetchRes.jsonBody.avatar,
-                                    url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                                    hash: discordUser.avatar,
+                                    url: `https://cdn.discordapp.com/avatars/${req.params.id}/${discordUser.avatar}`
                                 }
                             }
                         }

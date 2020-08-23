@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { BrowserDetectInfo } from "browser-detect/dist/types/browser-detect.interface";
 import { Db } from "mongodb";
 import { Redis } from "ioredis";
+import { library, authUser } from "./del"
 export {};
 
 declare global {

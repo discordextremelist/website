@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import * as functions from "../Function/main";
+import { delBot, delServer, delTemplate } from "../../../@types/del"
 
 export async function getFeaturedBots(): Promise<delBot[]> {
     const bots = await global.redis?.get("featured_bots");
@@ -36,7 +37,7 @@ export async function getFeaturedTemplates(): Promise<delTemplate[]> {
 
 export async function updateFeaturedBots() {
     const statuses = await global.redis?.hgetall("statuses");
-    const bots = (functions.shuffleArray(
+    const bots = functions.shuffleArray(
         ((await global.db
             .collection("bots")
             .find()
@@ -48,22 +49,22 @@ export async function updateFeaturedBots() {
                 statuses[_id] &&
                 statuses[_id] !== "offline"
         )
-    ) as delBot[]).slice(0, 6);
+    ).slice(0, 6);
     await global.redis?.set("featured_bots", JSON.stringify(bots));
 }
 
 export async function updateFeaturedServers() {
-    const servers = (functions.shuffleArray(
-        (await global.db.collection("servers").find().toArray()).filter(
+    const servers = functions.shuffleArray(
+        (await global.db.collection("servers").find().toArray() as delServer[]).filter(
             ({ status }) => status && !status.reviewRequired
         )
-    ) as delServer[]).slice(0, 6);
+    ).slice(0, 6);
     await global.redis?.set("featured_servers", JSON.stringify(servers));
 }
 
 export async function updateFeaturedTemplates() {
     const templates = functions
-        .shuffleArray(await global.db.collection("templates").find().toArray())
+        .shuffleArray(await global.db.collection("templates").find().toArray() as delTemplate[])
         .slice(0, 6);
     await global.redis?.set("featured_templates", JSON.stringify(templates));
 }

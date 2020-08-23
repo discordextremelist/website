@@ -20,6 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
+import { APIInvite } from "discord-api-types"
+import { delServer, delUser } from "../../@types/del"
 
 import * as fetch from "node-fetch";
 import * as Discord from "discord.js";
@@ -77,14 +79,15 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const invite = await fetchRes.json() as APIInvite
 
-                if (fetchRes.jsonBody.code !== 10006) {
+                // @ts-expect-error
+                if (invite.code !== 10006) {
                     const serverExists:
                         | delServer
                         | undefined = await global.db
                         .collection("servers")
-                        .findOne({ _id: fetchRes.jsonBody.guild.id });
+                        .findOne({ _id: invite.guild.id });
                     if (serverExists)
                         return res.status(409).json({
                             error: true,
@@ -184,8 +187,8 @@ router.post(
                         await fetch(
                             `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`
                         ).then(async (fetchRes: fetchRes) => {
-                            fetchRes.jsonBody = await fetchRes.json();
-                            if (!fetchRes.jsonBody.data.channel?.id) {
+                            const {data} = await fetchRes.json();
+                            if (!data.channel?.id) {
                                 error = true;
                                 errors.push(
                                     res.__(
@@ -241,9 +244,9 @@ router.post(
                     });
 
                 await global.db.collection("servers").insertOne({
-                    _id: fetchRes.jsonBody.guild.id,
+                    _id: invite.guild.id,
                     inviteCode: req.body.invite,
-                    name: fetchRes.jsonBody.guild.name,
+                    name: invite.guild.name,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
                     previewChannel: req.body.previewChannel,
@@ -252,8 +255,8 @@ router.post(
                         id: req.user.id
                     },
                     icon: {
-                        hash: fetchRes.jsonBody.guild.icon,
-                        url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                        hash: invite.guild.icon,
+                        url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
                     },
                     links: {
                         invite: `https://discord.gg/${req.body.invite}`,
@@ -273,10 +276,10 @@ router.post(
                     )}** \`(${
                         req.user.id
                     })\` added server **${functions.escapeFormatting(
-                        fetchRes.jsonBody.guild.name
-                    )}** \`(${fetchRes.jsonBody.guild.id})\`\n<${
+                        invite.guild.name
+                    )}** \`(${invite.guild.id})\`\n<${
                         settings.website.url
-                    }/servers/${fetchRes.jsonBody.guild.id}>`
+                    }/servers/${invite.guild.id}>`
                 );
 
                 await global.db.collection("audit").insertOne({
@@ -286,9 +289,9 @@ router.post(
                     reason: "None specified.",
                     details: {
                         new: {
-                            _id: fetchRes.jsonBody.guild.id,
+                            _id: invite.guild.id,
                             inviteCode: req.body.invite,
-                            name: fetchRes.jsonBody.guild.name,
+                            name: invite.guild.name,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             previewChannel: req.body.previewChannel,
@@ -297,8 +300,8 @@ router.post(
                                 id: req.user.id
                             },
                             icon: {
-                                hash: fetchRes.jsonBody.guild.icon,
-                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                                hash: invite.guild.icon,
+                                url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
                             },
                             links: {
                                 invite: `https://discord.gg/${req.body.invite}`,
@@ -312,7 +315,7 @@ router.post(
                     }
                 });
 
-                await serverCache.updateServer(fetchRes.jsonBody.guild.id);
+                await serverCache.updateServer(invite.guild.id);
 
                 await discord.postWebMetric("server");
 
@@ -320,7 +323,7 @@ router.post(
                     error: false,
                     status: 200,
                     errors: [],
-                    id: fetchRes.jsonBody.guild.id
+                    id: invite.guild.id
                 });
             })
             .catch(async (fetchRes: fetchRes) => {
@@ -639,8 +642,8 @@ router.post(
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
-                    fetchRes.jsonBody = await fetchRes.json();
-                    if (!fetchRes.jsonBody.data.channel?.id) {
+                    const {data} = await fetchRes.json();
+                    if (!data.channel?.id) {
                         error = true;
                         errors.push(
                             res.__(
@@ -689,14 +692,15 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const invite = await fetchRes.json() as APIInvite
 
-                if (fetchRes.jsonBody.code === 10006) {
+                // @ts-expect-error
+                if (invite.code === 10006) {
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.invite.invalid")
                     );
-                } else if (fetchRes.jsonBody.guild.id !== server._id) {
+                } else if (invite.guild.id !== server._id) {
                     error = true;
                     errors.push(
                         res.__("common.error.server.arr.invite.sameServer")
@@ -714,15 +718,15 @@ router.post(
                     { _id: req.params.id },
                     {
                         $set: {
-                            name: fetchRes.jsonBody.guild.name,
+                            name: invite.guild.name,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             inviteCode: req.body.invite,
                             previewChannel: req.body.previewChannel,
                             tags: tags,
                             icon: {
-                                hash: fetchRes.jsonBody.guild.icon,
-                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                                hash: invite.guild.icon,
+                                url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
                             },
                             links: {
                                 invite: `https://discord.gg/${req.body.invite}`,
@@ -744,10 +748,10 @@ router.post(
                     )}** \`(${
                         req.user.id
                     })\` edited server **${functions.escapeFormatting(
-                        fetchRes.jsonBody.guild.name
-                    )}** \`(${fetchRes.jsonBody.guild.id})\`\n<${
+                        invite.guild.name
+                    )}** \`(${invite.guild.id})\`\n<${
                         settings.website.url
-                    }/servers/${fetchRes.jsonBody.guild.id}>`
+                    }/servers/${invite.guild.id}>`
                 );
 
                 await global.db.collection("audit").insertOne({
@@ -758,15 +762,15 @@ router.post(
                     reason: "None specified.",
                     details: {
                         new: {
-                            name: fetchRes.jsonBody.guild.name,
+                            name: invite.guild.name,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             inviteCode: req.body.invite,
                             previewChannel: req.body.previewChannel,
                             tags: tags,
                             icon: {
-                                hash: fetchRes.jsonBody.guild.icon,
-                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                                hash: invite.guild.icon,
+                                url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
                             },
                             links: {
                                 invite: `https://discord.gg/${req.body.invite}`,
@@ -806,7 +810,7 @@ router.post(
                     error: false,
                     status: 200,
                     errors: [],
-                    id: fetchRes.jsonBody.guild.id
+                    id: invite.guild.id
                 });
             })
             .catch(() => {
@@ -1274,9 +1278,10 @@ router.get(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const invite = await fetchRes.json() as APIInvite
 
-                if (fetchRes.jsonBody.code === 10006)
+                // @ts-expect-error
+                if (invite.code === 10006)
                     return res.status(400).render("status", {
                         title: res.__("common.error"),
                         status: 400,
@@ -1287,7 +1292,7 @@ router.get(
                         type: "Error"
                     });
 
-                if (fetchRes.jsonBody.guild.id !== server._id)
+                if (invite.guild.id !== server._id)
                     return res.status(400).render("status", {
                         title: res.__("common.error"),
                         status: 404,
@@ -1302,10 +1307,10 @@ router.get(
                     { _id: req.params.id },
                     {
                         $set: {
-                            name: fetchRes.jsonBody.guild.name,
+                            name: invite.guild.name,
                             icon: {
-                                hash: fetchRes.jsonBody.guild.icon,
-                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                                hash: invite.guild.icon,
+                                url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
                             }
                         }
                     }
@@ -1319,10 +1324,10 @@ router.get(
                     reason: "None specified.",
                     details: {
                         new: {
-                            name: fetchRes.jsonBody.guild.name,
+                            name: invite.guild.name,
                             icon: {
-                                hash: fetchRes.jsonBody.guild.icon,
-                                url: `https://cdn.discordapp.com/icons/${fetchRes.jsonBody.guild.id}/${fetchRes.jsonBody.guild.icon}`
+                                hash: invite.guild.icon,
+                                url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
                             }
                         },
                         old: {

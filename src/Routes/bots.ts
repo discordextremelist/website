@@ -20,6 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
+import { APIUser } from "discord-api-types"
+import { delBot } from "../../@types/del"
 
 import * as fetch from "node-fetch";
 import * as crypto from "crypto";
@@ -152,9 +154,10 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const bot = await fetchRes.json() as APIUser
                 if (
-                    fetchRes.jsonBody.message === "Unknown User" &&
+                    // @ts-expect-error
+                    bot.message === "Unknown User" &&
                     req.body.id
                 ) {
                     error = true;
@@ -164,9 +167,9 @@ router.post(
                     errors.push(
                         `${res.__(
                             "common.error.bot.arr.fetchError"
-                        )}: ${JSON.stringify(fetchRes.jsonBody)}`
+                        )}: ${JSON.stringify(bot)}`
                     );
-                } else if (!fetchRes.jsonBody.bot && req.body.id) {
+                } else if (!bot.bot && req.body.id) {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.isUser"));
                 }
@@ -330,8 +333,8 @@ router.post(
                         await fetch(
                             `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
                         ).then(async (fetchRes: fetchRes) => {
-                            fetchRes.jsonBody = await fetchRes.json();
-                            if (!fetchRes.jsonBody.data.guild?.id) {
+                            const {data} = await fetchRes.json();
+                            if (!data.guild?.id) {
                                 error = true;
                                 errors.push(
                                     res.__(
@@ -395,8 +398,8 @@ router.post(
                         await fetch(
                             `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
                         ).then(async (fetchRes: fetchRes) => {
-                            fetchRes.jsonBody = await fetchRes.json();
-                            if (!fetchRes.jsonBody.data.channel?.id) {
+                            const {data} = await fetchRes.json();
+                            if (!data.channel?.id) {
                                 error = true;
                                 errors.push(
                                     res.__(
@@ -487,7 +490,7 @@ router.post(
                 await global.db.collection("bots").insertOne({
                     _id: req.body.id,
                     clientID: req.body.clientID,
-                    name: fetchRes.jsonBody.username,
+                    name: bot.username,
                     prefix: req.body.prefix,
                     library: library,
                     tags: tags,
@@ -498,7 +501,7 @@ router.post(
                         "DELAPI_" +
                         crypto.randomBytes(16).toString("hex") +
                         `-${req.body.id}`,
-                    flags: fetchRes.jsonBody.public_flags,
+                    flags: bot.public_flags,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
                     modNotes: req.body.modNotes,
@@ -507,8 +510,8 @@ router.post(
                         id: req.user.id
                     },
                     avatar: {
-                        hash: fetchRes.jsonBody.avatar,
-                        url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
+                        hash: bot.avatar,
+                        url: `https://cdn.discordapp.com/avatars/${req.body.id}/${bot.avatar}`
                     },
                     votes: {
                         positive: [],
@@ -556,7 +559,7 @@ router.post(
                     )}** \`(${
                         req.user.id
                     })\` added bot **${functions.escapeFormatting(
-                        fetchRes.jsonBody.username
+                        bot.username
                     )}** \`(${req.body.id})\`\n<${settings.website.url}/bots/${
                         req.body.id
                     }>`
@@ -571,11 +574,11 @@ router.post(
                     details: {
                         new: {
                             _id: req.body.id,
-                            name: fetchRes.jsonBody.username,
+                            name: bot.username,
                             prefix: req.body.prefix,
                             library: library,
                             tags: tags,
-                            flags: fetchRes.jsonBody.public_flags,
+                            flags: bot.public_flags,
                             vanityUrl: "",
                             serverCount: 0,
                             shardCount: 0,
@@ -591,8 +594,8 @@ router.post(
                                 id: req.user.id
                             },
                             avatar: {
-                                hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${fetchRes.jsonBody.avatar}`
+                                hash: bot.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${bot.avatar}`
                             },
                             votes: {
                                 positive: [],
@@ -744,8 +747,8 @@ router.post(
                         await fetch(
                             `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
                         ).then(async (fetchRes: fetchRes) => {
-                            fetchRes.jsonBody = await fetchRes.json();
-                            if (!fetchRes.jsonBody.data.guild?.id) {
+                            const {data} = await fetchRes.json();
+                            if (!data.guild?.id) {
                                 error = true;
                                 errors.push(
                                     res.__(
@@ -809,8 +812,8 @@ router.post(
                         await fetch(
                             `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
                         ).then(async (fetchRes: fetchRes) => {
-                            fetchRes.jsonBody = await fetchRes.json();
-                            if (!fetchRes.jsonBody.data.channel?.id) {
+                            const {data} = await fetchRes.json();
+                            if (!data.channel?.id) {
                                 error = true;
                                 errors.push(
                                     res.__(
@@ -1395,8 +1398,8 @@ router.post(
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
-                    fetchRes.jsonBody = await fetchRes.json();
-                    if (!fetchRes.jsonBody.data.guild?.id) {
+                    const {data} = await fetchRes.json();
+                    if (!data.guild?.id) {
                         error = true;
                         errors.push(
                             res.__(
@@ -1454,8 +1457,8 @@ router.post(
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
-                    fetchRes.jsonBody = await fetchRes.json();
-                    if (!fetchRes.jsonBody.data.channel?.id) {
+                    const {data} = await fetchRes.json();
+                    if (!data.channel?.id) {
                         error = true;
                         errors.push(
                             res.__(
@@ -1544,23 +1547,23 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const bot = await fetchRes.json() as APIUser
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
                             clientID: req.body.clientID,
-                            name: fetchRes.jsonBody.username,
+                            name: bot.username,
                             prefix: req.body.prefix,
                             library: library,
                             tags: tags,
-                            flags: fetchRes.jsonBody.public_flags,
+                            flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             editors: editors,
                             avatar: {
-                                hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                                hash: bot.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
                             },
                             links: {
                                 invite: invite,
@@ -1634,17 +1637,17 @@ router.post(
                         },
                         new: {
                             clientID: req.body.clientID,
-                            name: fetchRes.jsonBody.username,
+                            name: bot.username,
                             prefix: req.body.prefix,
                             library: library,
                             tags: tags,
-                            flags: fetchRes.jsonBody.public_flags,
+                            flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             editors: editors,
                             avatar: {
-                                hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                                hash: bot.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
                             },
                             links: {
                                 invite: invite,
@@ -2407,8 +2410,8 @@ router.post(
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
-                    fetchRes.jsonBody = await fetchRes.json();
-                    if (!fetchRes.jsonBody.data.guild?.id) {
+                    const {data} = await fetchRes.json();
+                    if (!data.guild?.id) {
                         error = true;
                         errors.push(
                             res.__(
@@ -2466,8 +2469,8 @@ router.post(
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
-                    fetchRes.jsonBody = await fetchRes.json();
-                    if (!fetchRes.jsonBody.data.channel?.id) {
+                    const {data} = await fetchRes.json();
+                    if (!data.channel?.id) {
                         error = true;
                         errors.push(
                             res.__(
@@ -2551,23 +2554,23 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const bot = await fetchRes.json() as APIUser
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
                             clientID: req.body.clientID,
-                            name: fetchRes.jsonBody.username,
+                            name: bot.username,
                             prefix: req.body.prefix,
                             library: library,
                             tags: tags,
-                            flags: fetchRes.jsonBody.public_flags,
+                            flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             editors: editors,
                             avatar: {
-                                hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                                hash: bot.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
                             },
                             links: {
                                 invite: invite,
@@ -2636,17 +2639,17 @@ router.post(
                         },
                         new: {
                             clientID: req.body.clientID,
-                            name: fetchRes.jsonBody.username,
+                            name: bot.username,
                             prefix: req.body.prefix,
                             library: library,
                             tags: tags,
-                            flags: fetchRes.jsonBody.public_flags,
+                            flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             editors: editors,
                             avatar: {
-                                hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                                hash: bot.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
                             },
                             links: {
                                 invite: invite,
@@ -3470,16 +3473,16 @@ router.get(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                fetchRes.jsonBody = await fetchRes.json();
+                const bot = await fetchRes.json() as APIUser
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
-                            name: fetchRes.jsonBody.username,
-                            flags: fetchRes.jsonBody.public_flags,
+                            name: bot.username,
+                            flags: bot.public_flags,
                             avatar: {
-                                hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                                hash: bot.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
                             }
                         }
                     }
@@ -3501,11 +3504,11 @@ router.get(
                             }
                         },
                         new: {
-                            name: fetchRes.jsonBody.username,
-                            flags: fetchRes.jsonBody.public_flags,
+                            name: bot.username,
+                            flags: bot.public_flags,
                             avatar: {
-                                hash: fetchRes.jsonBody.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${fetchRes.jsonBody.avatar}`
+                                hash: bot.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
                             }
                         }
                     }

@@ -17,65 +17,22 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-interface discordBan {
-    reason?: string;
-    user: discordUser;
+import { APIGuild, APIUser } from "discord-api-types"
+
+interface APITemplateGuild extends APIGuild {
+    icon_hash: string
 }
 
-interface discordUser {
-    id: string;
-    username: string;
-    discriminator: string;
-    avatar?: string;
-    bot?: boolean;
-    system?: boolean;
-    mfa_enabled?: boolean;
-    locale?: string;
-    verified?: boolean;
-    email?: string;
-    flags?: number;
-    premium_type?: number;
-    public_flags?: number;
-}
-
-interface discordChannel {
-    id: string;
-    type: number;
-    guild_id?: string;
-    position?: number;
-    permission_overwrites?: discordOverwrites[];
-    name?: string;
-    topic?: string;
-    nsfw?: boolean;
-    last_message_id?: string;
-    bitrate?: number;
-    user_limit?: number;
-    rate_limit_per_user?: number;
-    recipients?: discordUser[];
-    icon?: string;
-    owner_id?: string;
-    application_id?: string;
-    parent_id?: string;
-    last_pin_timestamp?: string;
-}
-
-interface discordRole {
-    id: string;
-    name: string;
-    color: number;
-    hoist: boolean;
-    position: number;
-    permissions: number;
-    permissions_new: string;
-    managed: boolean;
-    mentionable: boolean;
-}
-
-interface discordOverwrites {
-    id: string;
-    type: string;
-    allow: boolean;
-    allow_new: string;
-    deny: boolean;
-    deny_new: string;
+interface APITemplate {
+    code: string
+    name: string
+    description: string
+    usage_count: number
+    creator_id: string
+    creator: APIUser
+    created_at: string
+    updated_at: string
+    source_guild_id: string
+    serialized_source_guild: APITemplateGuild
+    is_dirty: boolean | null
 }

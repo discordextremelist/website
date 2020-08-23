@@ -58,8 +58,6 @@ const app = express();
 if (!settings.website.dev) Sentry.init({ dsn: settings.secrets.sentry, release: "website@" + process.env.npm_package_version, environment: "production" });
 if (!settings.website.dev) app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
 
-let dbReady: boolean = false;
-
 app.use(
     "/fonts/fa/webfonts/*",
     (req: Request, res: Response, next: () => void) => {
@@ -79,20 +77,6 @@ app.use(
     express.static(path.join(__dirname + "/../../node_modules/monaco-editor"))
 );
 
-app.get("*", (req: Request, res: Response, next: () => void) => {
-    if (
-        dbReady === false &&
-        !req.url.includes(".css") &&
-        !req.url.includes(".woff2")
-    ) {
-        return res
-            .status(503)
-            .sendFile(
-                path.join(__dirname + "/../../assets/Public/loading.html")
-            );
-    } else next();
-});
-
 new Promise((resolve, reject) => {
     console.time("Mongo TTL");
     MongoClient.connect(
@@ -111,7 +95,7 @@ new Promise((resolve, reject) => {
 })
     .then(async () => {
         discord.bot.login(settings.secrets.discord.token);
-        dbReady = true;
+        
         await new Promise((resolve) => {
             discord.bot.once("ready", () => resolve());
         });

@@ -17,15 +17,13 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { UserFlags, APIChannel, APIRole } from "discord-api-types";
-
 interface authUser {
     id: string;
     username: string;
     avatar: string;
     discriminator: string;
-    public_flags: UserFlags;
-    flags: UserFlags;
+    public_flags: import('discord-api-types/v6').UserFlags;
+    flags: import('discord-api-types/v6').UserFlags;
     email?: string;
     verified: boolean;
     locale: string;
@@ -49,7 +47,7 @@ interface delUser {
     discrim: string;
     fullUsername: string;
     locale: string;
-    flags: UserFlags;
+    flags: import('discord-api-types/v6').UserFlags;
     avatar: {
         hash: string;
         url: string;
@@ -188,7 +186,7 @@ interface delBot {
     shardCount: number;
     inServer?: boolean;
     token: string;
-    flags: UserFlags;
+    flags: import('discord-api-types/v6').UserFlags;
     shortDesc: string;
     longDesc: string;
     modNotes: string;
@@ -267,8 +265,8 @@ interface delTemplate {
     verificationLevel: number;
     defaultMessageNotifications: number;
     explicitContent: number;
-    roles: APIRole[];
-    channels: APIChannel[];
+    roles: import('discord-api-types/v6').APIRole[]; 
+    channels: import('discord-api-types/v6').APIChannel[];
     usageCount: number;
     shortDesc: string;
     longDesc: string;

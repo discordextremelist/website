@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import * as botCache from "../Services/botCaching";
 import * as userCache from "../Services/userCaching";
-import { delBot, delUser, auditType } from "../../../@types/del"
 import { URL } from "url";
 
 export const escapeFormatting = (text: string) => {

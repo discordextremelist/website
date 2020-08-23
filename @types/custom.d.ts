@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyrightt (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
 t
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -20,7 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { BrowserDetectInfo } from "browser-detect/dist/types/browser-detect.interface";
 import { Db } from "mongodb";
 import { Redis } from "ioredis";
-import { library, authUser } from "./del"
 export {};
 
 declare global {

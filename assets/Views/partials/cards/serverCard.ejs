@@ -7,7 +7,7 @@
         <article class="media">
             <div class="media-left">
                 <figure class="image is-64x64">
-                    <img class="is-rounded" loading="lazy" src="<%= server.icon.hash ? server.icon.url : `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=128" alt="<%= __("common.img.icon", server.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail", server._id) %>');" >
+                    <img width="64" height="64" class="is-rounded" loading="lazy" src="<%= server.icon.hash ? server.icon.url : `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=128" alt="<%= __("common.img.icon", server.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail", server._id) %>');" >
                 </figure>
             </div>
             <div style="overflow: hidden;" class="media-content">

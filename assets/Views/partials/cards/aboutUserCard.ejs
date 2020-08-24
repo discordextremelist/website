@@ -3,7 +3,7 @@
         <article class="media">
             <div class="media-left">
                 <figure class="image is-64x64">
-                    <img draggable="false" class="is-rounded" loading="lazy" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.<%= user.avatar?.startsWith('a_') ? 'gif' : imageFormat %>" alt="<%= __("common.img.profilePicture", `${user.username}#${user.discriminator}`) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail", user.id) %>');" draggable="false">
+                    <img width="64" height="64" class="is-rounded" loading="lazy" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.<%= user.avatar?.startsWith('a_') ? 'gif' : imageFormat %>" alt="<%= __("common.img.profilePicture", `${user.username}#${user.discriminator}`) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail", user.id) %>');" draggable="false">
                 </figure>
             </div>
             <div style="overflow: hidden;" class="media-content">

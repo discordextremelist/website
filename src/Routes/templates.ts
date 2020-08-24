@@ -20,7 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
-import { delTemplate, delUser } from "../../@types/del"
 
 import * as fetch from "node-fetch";
 import * as Discord from "discord.js";

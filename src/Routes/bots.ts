@@ -20,8 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
-import { APIUser } from "discord-api-types"
-import { delBot } from "../../@types/del"
+import { APIUser } from "discord-api-types/v6"
 
 import * as fetch from "node-fetch";
 import * as crypto from "crypto";

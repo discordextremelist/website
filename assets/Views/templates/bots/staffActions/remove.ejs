@@ -59,6 +59,15 @@
                     <button type="button" onclick="tosViolation();" class="button is-dark">
                         <span><%= __("page.remove.premadeReasons.del.tos") %></span>
                     </button>
+                    <button type="button" onclick="cantContactOwner();" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.cantContactOwner") %></span>
+                    </button>
+                    <button type="button" onclick="invalidPrivacyPolicy();" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.invalidPrivacyPolicy") %></span>
+                    </button>
+                    <button type="button" onclick="offline();" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.offline") %></span>
+                    </button>
                     <% if (req.user.db.rank.admin === true) { %>
                         <button type="button" onclick="shitBot();" class="button is-dark">
                             <span><%= __("page.remove.premadeReasons.shitBot") %></span>
@@ -84,7 +93,7 @@
 </div>
 <script>
     function isClone() {
-        document.getElementById("reason").value = "This bot is a clone of {BOT_NAME}, we don't accept clones!";
+        document.getElementById("reason").value = "This bot is a clone of BOT_NAME, we don't accept clones!";
     }
     function fixRefusal() {
         document.getElementById("reason").value = "The bot owner has refused to fix any issues we have pointed out.";
@@ -106,6 +115,15 @@
     }
     function tosViolation() {
         document.getElementById("reason").value = "Violating our Terms of Use.";
+    }
+    function cantContactOwner() {
+        document.getElementById("reason").value = "The bot owner is not in the DEL server so we could not contact them.";
+    }
+    function invalidPrivacyPolicy() {
+        document.getElementById("reason").value = "The provided privacy policy is invalid.";
+    }
+    function offline() {
+        document.getElementById("reason").value = "Bot has been offline for a prolonged period of time.";
     }
     function shitBot() {
         document.getElementById("reason").value = "This bot is just actual shit.";

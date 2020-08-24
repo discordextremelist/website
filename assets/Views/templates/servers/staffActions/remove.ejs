@@ -44,6 +44,12 @@
                     <button type="button" onclick="tosViolation();" class="button is-dark">
                         <span><%= __("page.remove.premadeReasons.del.tos") %></span>
                     </button>
+                    <button type="button" onclick="notLGBT();" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.notLGBT") %></span>
+                    </button>
+                    <button type="button" onclick="invalidInvite();" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.invalidInvite") %></span>
+                    </button>
                 </div>
             </div>
             <br />
@@ -71,6 +77,12 @@
     }
     function tosViolation() {
         document.getElementById("reason").value = "Violating our Terms of Use.";
+    }
+    function notLGBT() {
+        document.getElementById("reason").value = "This server does not appear to be an LGBT server, so we do not accept it to our LGBT server site.";
+    }
+    function invalidInvite() {
+        document.getElementById("reason").value = "The server's invite has expired.";
     }
 </script>
 <%- include("../../../partials/footer.ejs") %>

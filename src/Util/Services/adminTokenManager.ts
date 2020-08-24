@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import * as crypto from "crypto";
-import { delUser } from "../../../@types/del"
 
 export async function tokenResetAll() {
     const users: delUser[] = await global.db

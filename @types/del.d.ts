@@ -265,7 +265,7 @@ interface delTemplate {
     verificationLevel: number;
     defaultMessageNotifications: number;
     explicitContent: number;
-    roles: import('discord-api-types/v6').APIRole[]; 
+    roles: import('discord-api-types/v6').APIRole[];
     channels: import('discord-api-types/v6').APIChannel[];
     usageCount: number;
     shortDesc: string;

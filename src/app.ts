@@ -209,8 +209,6 @@ new Promise((resolve, reject) => {
         console.timeEnd("Redis Cache & Core Refresh");
 
         app.set("view engine", "ejs");
-        app.set("view cache", true);
-
 
         app.use(
             logger(

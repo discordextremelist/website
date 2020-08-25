@@ -30,6 +30,7 @@ import * as functions from "../Util/Function/main";
 import * as botCache from "../Util/Services/botCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
+import * as auditCache from "../Util/Services/auditCaching";
 import * as userCache from "../Util/Services/userCaching";
 import * as announcementCache from "../Util/Services/announcementCaching";
 import { variables } from "../Util/Function/variables";
@@ -173,16 +174,8 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const logsUnfiltered: auditLog[] = await global.db
-            .collection("audit")
-            .find()
-            .sort({ date: -1 })
-            .toArray();
-
-        const logs = logsUnfiltered.filter(
-            (log) => log.type !== "GAME_HIGHSCORE_UPDATE"
-        );
-
+        const logs: auditLog[] = await auditCache.getAllAuditLogs();
+        
         if (!req.query.page) req.query.page = "1";
 
         let iteratedLogs: auditLog[] = logs.slice(

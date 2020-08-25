@@ -286,6 +286,7 @@ interface delTemplate {
 }
 
 interface auditLog {
+    _id: string;
     type: string;
     executor: string;
     target: string;

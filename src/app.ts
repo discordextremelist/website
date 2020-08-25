@@ -32,6 +32,7 @@ import logger from "morgan";
 import * as botCache from "./Util/Services/botCaching";
 import * as serverCache from "./Util/Services/serverCaching";
 import * as templateCache from "./Util/Services/templateCaching";
+import * as auditCache from "./Util/Services/auditCaching";
 import * as userCache from "./Util/Services/userCaching";
 import * as libCache from "./Util/Services/libCaching";
 import * as announcementCache from "./Util/Services/announcementCaching";
@@ -174,6 +175,7 @@ new Promise((resolve, reject) => {
         await botCache.uploadBots();
         await serverCache.uploadServers();
         await templateCache.uploadTemplates();
+        await auditCache.uploadAuditLogs();
         await libCache.cacheLibs();
         await announcementCache.updateCache();
         await featuredCache.updateFeaturedServers();

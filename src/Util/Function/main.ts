@@ -137,7 +137,7 @@ export function parseDate(__, locale: string, rawDate: number): string {
             hours: hour,
             minutes: minute,
             dateInMonth: date.getUTCDate(),
-            monthNumber: date.getUTCMonth(),
+            monthNumber: date.getUTCMonth() + 1,
             amPM: amPM,
             year: date.getUTCFullYear()
         });
@@ -145,14 +145,14 @@ export function parseDate(__, locale: string, rawDate: number): string {
         let hour: any = date.getUTCHours();
         let minute: any = date.getUTCMinutes();
 
-        if (hour <= 11) hour = `0${hour}`;
+        if (hour <= 9) hour = `0${hour}`;
         if (minute <= 9) minute = `0${minute}`;
 
         return __("common.dateFormat", {
             hours: hour,
             minutes: minute,
             dateInMonth: date.getUTCDate(),
-            monthNumber: date.getUTCMonth(),
+            monthNumber: date.getUTCMonth() + 1,
             year: date.getUTCFullYear()
         });
     }

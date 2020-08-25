@@ -56,7 +56,7 @@ router.get(
             subtitle: res.__("common.nav.me.staffPanel.subtitle"),
             user: req.user,
             req,
-            stats: {
+            siteStats: {
                 botCount: bots.length,
                 serverCount: servers.length,
                 userCount: users.length,
@@ -64,12 +64,6 @@ router.get(
                 unapprovedBots: bots.filter(
                     (b) => !b.status.approved && !b.status.archived
                 ).length,
-                strikes: req.user.db.staffTracking.punishments.strikes.length,
-                warnings: req.user.db.staffTracking.punishments.warnings.length,
-                standing: req.user.db.staffTracking.details.standing,
-                away: req.user.db.staffTracking.details.away.status
-                    ? res.__("common.yes")
-                    : res.__("common.no")
             }
         });
     }

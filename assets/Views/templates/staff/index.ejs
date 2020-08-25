@@ -62,31 +62,31 @@
                 <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("page.staff.webStats.botCount") %></p>
-                        <p class="title"><%= stats.botCount %></p>
+                        <p class="title"><%= siteStats.botCount %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("page.staff.webStats.serverCount") %></p>
-                        <p class="title"><%= stats.serverCount %></p>
+                        <p class="title"><%= siteStats.serverCount %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("page.staff.webStats.templateCount") %></p>
-                        <p class="title"><%= stats.templateCount %></p>
+                        <p class="title"><%= siteStats.templateCount %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("page.staff.webStats.userCount") %></p>
-                        <p class="title"><%= stats.userCount %></p>
+                        <p class="title"><%= siteStats.userCount %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("page.staff.webStats.botCount.unapproved") %></p>
-                        <p class="title"><%= stats.unapprovedBots %></p>
+                        <p class="title"><%= siteStats.unapprovedBots %></p>
                     </div>
                 </div>
             </nav>
@@ -104,25 +104,25 @@
                 <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("page.staff.me.standing") %></p>
-                        <p class="title"><%= stats.standing %></p>
+                        <p class="title"><%= req.user.db.staffTracking.details.standing %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("page.staff.me.strikes") %></p>
-                        <p class="title"><%= stats.strikes %></p>
+                        <p class="title"><%= req.user.db.staffTracking.punishments.strikes.length %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("page.staff.me.warnings") %></p>
-                        <p class="title"><%= stats.warnings %></p>
+                        <p class="title"><%= req.user.db.staffTracking.punishments.warnings.length %></p>
                     </div>
                 </div>
                 <div class="level-item body-item has-text-centered">
                     <div>
                         <p class="heading"><%= __("page.staff.me.onLeave") %></p>
-                        <p class="title"><%= stats.away %></p>
+                        <p class="title"><%= req.user.db.staffTracking.details.away.status ? __("common.yes") : __("common.no") %></p>
                     </div>
                 </div>
             </nav>

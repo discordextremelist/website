@@ -131,20 +131,6 @@ export const variables = async (
         res.locals.tablet = false;
     }
 
-    if (
-        req.browser.name === "firefox" ||
-        (req.browser.name === "opera" &&
-            req.browser.os === "Android" &&
-            req.browser.versionNumber < 46) ||
-        (req.browser.name === "safari" &&
-            req.browser.versionNumber < 11.3 &&
-            req.get("User-Agent").toLowerCase().includes("kaios"))
-    ) {
-        res.locals.usePreload = false;
-    } else {
-        res.locals.usePreload = true;
-    }
-
     if (req.headers.accept && req.headers.accept.includes("image/webp")) {
         res.locals.imageFormat = "webp";
     } else {

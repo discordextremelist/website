@@ -94,7 +94,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
 
     const serversOwner: delServer[] = [];
 
-    for (const server of servers) {
+    for (const server of servers as delServer[]) {
         if (req.params.id === server.owner.id) {
             serversOwner.push(server);
         }

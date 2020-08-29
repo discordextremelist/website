@@ -78,7 +78,7 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const template = await fetchRes.json() as APITemplate
+                const template = (await fetchRes.json()) as APITemplate;
 
                 // @ts-expect-error
                 if (template.code !== 10057) {
@@ -135,14 +135,10 @@ router.post(
                     _id: template.code,
                     name: template.name,
                     region: template.serialized_source_guild.region,
-                    locale:
-                        template.serialized_source_guild
-                            .preferred_locale,
-                    afkTimeout:
-                        template.serialized_source_guild.afk_timeout,
+                    locale: template.serialized_source_guild.preferred_locale,
+                    afkTimeout: template.serialized_source_guild.afk_timeout,
                     verificationLevel:
-                        template.serialized_source_guild
-                            .verification_level,
+                        template.serialized_source_guild.verification_level,
                     defaultMessageNotifications:
                         template.serialized_source_guild
                             .default_message_notifications,
@@ -150,8 +146,7 @@ router.post(
                         template.serialized_source_guild
                             .explicit_content_filter,
                     roles: template.serialized_source_guild.roles,
-                    channels:
-                        template.serialized_source_guild.channels,
+                    channels: template.serialized_source_guild.channels,
                     usageCount: template.usage_count,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
@@ -161,8 +156,7 @@ router.post(
                         id: req.user.id
                     },
                     icon: {
-                        hash:
-                            template.serialized_source_guild.icon_hash,
+                        hash: template.serialized_source_guild.icon_hash,
                         url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                     },
                     links: {
@@ -194,15 +188,12 @@ router.post(
                         new: {
                             _id: template.code,
                             name: template.name,
-                            region:
-                                template.serialized_source_guild
-                                    .region,
+                            region: template.serialized_source_guild.region,
                             locale:
                                 template.serialized_source_guild
                                     .preferred_locale,
                             afkTimeout:
-                                template.serialized_source_guild
-                                    .afk_timeout,
+                                template.serialized_source_guild.afk_timeout,
                             verificationLevel:
                                 template.serialized_source_guild
                                     .verification_level,
@@ -212,11 +203,8 @@ router.post(
                             explicitContent:
                                 template.serialized_source_guild
                                     .explicit_content_filter,
-                            roles:
-                                template.serialized_source_guild.roles,
-                            channels:
-                                template.serialized_source_guild
-                                    .channels,
+                            roles: template.serialized_source_guild.roles,
+                            channels: template.serialized_source_guild.channels,
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
@@ -227,8 +215,7 @@ router.post(
                             },
                             icon: {
                                 hash:
-                                    template.serialized_source_guild
-                                        .icon_hash,
+                                    template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             },
                             links: {
@@ -528,7 +515,7 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const template = await fetchRes.json() as APITemplate
+                const template = (await fetchRes.json()) as APITemplate;
 
                 if (error === true)
                     return res.status(400).json({
@@ -542,15 +529,12 @@ router.post(
                     {
                         $set: {
                             name: template.name,
-                            region:
-                                template.serialized_source_guild
-                                    .region,
+                            region: template.serialized_source_guild.region,
                             locale:
                                 template.serialized_source_guild
                                     .preferred_locale,
                             afkTimeout:
-                                template.serialized_source_guild
-                                    .afk_timeout,
+                                template.serialized_source_guild.afk_timeout,
                             verificationLevel:
                                 template.serialized_source_guild
                                     .verification_level,
@@ -560,19 +544,15 @@ router.post(
                             explicitContent:
                                 template.serialized_source_guild
                                     .explicit_content_filter,
-                            roles:
-                                template.serialized_source_guild.roles,
-                            channels:
-                                template.serialized_source_guild
-                                    .channels,
+                            roles: template.serialized_source_guild.roles,
+                            channels: template.serialized_source_guild.channels,
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             tags: tags,
                             icon: {
                                 hash:
-                                    template.serialized_source_guild
-                                        .icon_hash,
+                                    template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             },
                             links: {
@@ -606,15 +586,12 @@ router.post(
                     details: {
                         new: {
                             name: template.name,
-                            region:
-                                template.serialized_source_guild
-                                    .region,
+                            region: template.serialized_source_guild.region,
                             locale:
                                 template.serialized_source_guild
                                     .preferred_locale,
                             afkTimeout:
-                                template.serialized_source_guild
-                                    .afk_timeout,
+                                template.serialized_source_guild.afk_timeout,
                             verificationLevel:
                                 template.serialized_source_guild
                                     .verification_level,
@@ -624,11 +601,8 @@ router.post(
                             explicitContent:
                                 template.serialized_source_guild
                                     .explicit_content_filter,
-                            roles:
-                                template.serialized_source_guild.roles,
-                            channels:
-                                template.serialized_source_guild
-                                    .channels,
+                            roles: template.serialized_source_guild.roles,
+                            channels: template.serialized_source_guild.channels,
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
@@ -636,8 +610,7 @@ router.post(
                             fromGuild: dbTemplate.fromGuild,
                             icon: {
                                 hash:
-                                    template.serialized_source_guild
-                                        .icon_hash,
+                                    template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             },
                             links: {
@@ -894,22 +867,19 @@ router.get(
             }
         )
             .then(async (fetchRes: fetchRes) => {
-                const template = await fetchRes.json() as APITemplate
+                const template = (await fetchRes.json()) as APITemplate;
 
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
                             name: template.name,
-                            region:
-                                template.serialized_source_guild
-                                    .region,
+                            region: template.serialized_source_guild.region,
                             locale:
                                 template.serialized_source_guild
                                     .preferred_locale,
                             afkTimeout:
-                                template.serialized_source_guild
-                                    .afk_timeout,
+                                template.serialized_source_guild.afk_timeout,
                             verificationLevel:
                                 template.serialized_source_guild
                                     .verification_level,
@@ -919,16 +889,12 @@ router.get(
                             explicitContent:
                                 template.serialized_source_guild
                                     .explicit_content_filter,
-                            roles:
-                                template.serialized_source_guild.roles,
-                            channels:
-                                template.serialized_source_guild
-                                    .channels,
+                            roles: template.serialized_source_guild.roles,
+                            channels: template.serialized_source_guild.channels,
                             usageCount: template.usage_count,
                             icon: {
                                 hash:
-                                    template.serialized_source_guild
-                                        .icon_hash,
+                                    template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             }
                         }
@@ -944,15 +910,12 @@ router.get(
                     details: {
                         new: {
                             name: template.name,
-                            region:
-                                template.serialized_source_guild
-                                    .region,
+                            region: template.serialized_source_guild.region,
                             locale:
                                 template.serialized_source_guild
                                     .preferred_locale,
                             afkTimeout:
-                                template.serialized_source_guild
-                                    .afk_timeout,
+                                template.serialized_source_guild.afk_timeout,
                             verificationLevel:
                                 template.serialized_source_guild
                                     .verification_level,
@@ -962,16 +925,12 @@ router.get(
                             explicitContent:
                                 template.serialized_source_guild
                                     .explicit_content_filter,
-                            roles:
-                                template.serialized_source_guild.roles,
-                            channels:
-                                template.serialized_source_guild
-                                    .channels,
+                            roles: template.serialized_source_guild.roles,
+                            channels: template.serialized_source_guild.channels,
                             usageCount: template.usage_count,
                             icon: {
                                 hash:
-                                    template.serialized_source_guild
-                                        .icon_hash,
+                                    template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             }
                         },

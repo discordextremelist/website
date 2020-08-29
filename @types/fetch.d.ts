@@ -1,6 +1,6 @@
 // taken and modified from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node-fetch/index.d.ts
 
-import FormData = require('form-data');
+import FormData = require("form-data");
 import { URLSearchParams } from "url";
 
 export class Headers implements Iterable<[string, string]> {
@@ -63,7 +63,7 @@ export class Response extends Body {
 }
 
 export type ResponseType =
-    "basic"
+    | "basic"
     | "cors"
     | "default"
     | "error"
@@ -82,7 +82,7 @@ export interface ResponseInit {
 export type HeadersInit = Headers | string[][] | { [key: string]: string };
 
 export type BodyInit =
-    ArrayBuffer
+    | ArrayBuffer
     | ArrayBufferView
     | NodeJS.ReadableStream
     | string

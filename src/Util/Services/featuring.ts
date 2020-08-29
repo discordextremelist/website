@@ -36,19 +36,21 @@ export async function getFeaturedTemplates(): Promise<delTemplate[]> {
 
 export async function updateFeaturedBots() {
     const statuses = await global.redis?.hgetall("statuses");
-    const bots = functions.shuffleArray(
-        ((await global.db
-            .collection("bots")
-            .find()
-            .toArray()) as delBot[]).filter(
-            ({ _id, status }) =>
-                status.approved &&
-                !status.siteBot &&
-                !status.archived &&
-                statuses[_id] &&
-                statuses[_id] !== "offline"
+    const bots = functions
+        .shuffleArray(
+            ((await global.db
+                .collection("bots")
+                .find()
+                .toArray()) as delBot[]).filter(
+                ({ _id, status }) =>
+                    status.approved &&
+                    !status.siteBot &&
+                    !status.archived &&
+                    statuses[_id] &&
+                    statuses[_id] !== "offline"
+            )
         )
-    ).slice(0, 6);
+        .slice(0, 6);
 
     for (const bot of bots as delBot[]) {
         delete bot.clientID;
@@ -79,11 +81,16 @@ export async function updateFeaturedBots() {
 }
 
 export async function updateFeaturedServers() {
-    const servers = functions.shuffleArray(
-        (await global.db.collection("servers").find().toArray() as delServer[]).filter(
-            ({ status }) => status && !status.reviewRequired
+    const servers = functions
+        .shuffleArray(
+            ((await global.db
+                .collection("servers")
+                .find()
+                .toArray()) as delServer[]).filter(
+                ({ status }) => status && !status.reviewRequired
+            )
         )
-    ).slice(0, 6);
+        .slice(0, 6);
 
     for (const server of servers as delServer[]) {
         delete server.inviteCode;
@@ -100,7 +107,12 @@ export async function updateFeaturedServers() {
 
 export async function updateFeaturedTemplates() {
     const templates = functions
-        .shuffleArray(await global.db.collection("templates").find().toArray() as delTemplate[])
+        .shuffleArray(
+            (await global.db
+                .collection("templates")
+                .find()
+                .toArray()) as delTemplate[]
+        )
         .slice(0, 6);
 
     for (const template of templates as delTemplate[]) {

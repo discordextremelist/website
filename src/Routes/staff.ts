@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
-import { APIUser } from "discord-api-types/v6"
+import { APIUser } from "discord-api-types/v6";
 
 import * as fetch from "node-fetch";
 
@@ -44,10 +44,10 @@ router.get(
     variables,
     permission.mod,
     async (req: Request, res: Response) => {
-        const bots = await botCache.getAllBots()
-        const users = await userCache.getAllUsers()
-        const servers = await serverCache.getAllServers()
-        const templates = await templateCache.getAllTemplates()
+        const bots = await botCache.getAllBots();
+        const users = await userCache.getAllUsers();
+        const servers = await serverCache.getAllServers();
+        const templates = await templateCache.getAllTemplates();
 
         res.locals.premidPageInfo = res.__("premid.staff.home");
 
@@ -63,7 +63,7 @@ router.get(
                 templateCount: templates.length,
                 unapprovedBots: bots.filter(
                     (b) => !b.status.approved && !b.status.archived
-                ).length,
+                ).length
             }
         });
     }
@@ -169,7 +169,7 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const logs: auditLog[] = await auditCache.getAllAuditLogs();
-        
+
         if (!req.query.page) req.query.page = "1";
 
         let iteratedLogs: auditLog[] = logs.slice(
@@ -928,7 +928,7 @@ router.get(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const discordUser = await fetchRes.json() as APIUser
+                const discordUser = (await fetchRes.json()) as APIUser;
 
                 if (!user) {
                     await global.db.collection("users").insertOne({

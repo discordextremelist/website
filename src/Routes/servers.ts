@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
-import { APIInvite } from "discord-api-types/v6"
+import { APIInvite } from "discord-api-types/v6";
 
 import * as fetch from "node-fetch";
 import * as Discord from "discord.js";
@@ -78,7 +78,7 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const invite = await fetchRes.json() as APIInvite
+                const invite = (await fetchRes.json()) as APIInvite;
 
                 // @ts-expect-error
                 if (invite.code !== 10006) {
@@ -186,7 +186,7 @@ router.post(
                         await fetch(
                             `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`
                         ).then(async (fetchRes: fetchRes) => {
-                            const {data} = await fetchRes.json();
+                            const { data } = await fetchRes.json();
                             if (!data.channel?.id) {
                                 error = true;
                                 errors.push(
@@ -641,7 +641,7 @@ router.post(
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
-                    const {data} = await fetchRes.json();
+                    const { data } = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
                         errors.push(
@@ -691,7 +691,7 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const invite = await fetchRes.json() as APIInvite
+                const invite = (await fetchRes.json()) as APIInvite;
 
                 // @ts-expect-error
                 if (invite.code === 10006) {
@@ -962,9 +962,7 @@ router.post(
                 server._id
             })\`\nIt will still be shown as a normal server, it was declined from being listed as an LGBT community.\n**Reason:** \`${
                 req.body.reason || "None specified."
-            }\`\n<${
-                settings.website.url
-            }/servers/${server._id}>`
+            }\`\n<${settings.website.url}/servers/${server._id}>`
         );
 
         const owner = discord.bot.users.cache.get(server.owner.id);
@@ -1277,7 +1275,7 @@ router.get(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const invite = await fetchRes.json() as APIInvite
+                const invite = (await fetchRes.json()) as APIInvite;
 
                 // @ts-expect-error
                 if (invite.code === 10006)

@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
-import { APIUser } from "discord-api-types/v6"
+import { APIUser } from "discord-api-types/v6";
 
 import * as fetch from "node-fetch";
 import * as crypto from "crypto";
@@ -153,7 +153,7 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const bot = await fetchRes.json() as APIUser
+                const bot = (await fetchRes.json()) as APIUser;
                 if (
                     // @ts-expect-error
                     bot.message === "Unknown User" &&
@@ -332,7 +332,7 @@ router.post(
                         await fetch(
                             `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
                         ).then(async (fetchRes: fetchRes) => {
-                            const {data} = await fetchRes.json();
+                            const { data } = await fetchRes.json();
                             if (!data.guild?.id) {
                                 error = true;
                                 errors.push(
@@ -397,7 +397,7 @@ router.post(
                         await fetch(
                             `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
                         ).then(async (fetchRes: fetchRes) => {
-                            const {data} = await fetchRes.json();
+                            const { data } = await fetchRes.json();
                             if (!data.channel?.id) {
                                 error = true;
                                 errors.push(
@@ -441,21 +441,39 @@ router.post(
                 }
 
                 if (req.body.privacyPolicy) {
-                    if (req.body.privacyPolicy.includes('discord.bot/privacy')) {
+                    if (
+                        req.body.privacyPolicy.includes("discord.bot/privacy")
+                    ) {
                         error = true;
-                        errors.push(res.__("common.error.listing.arr.privacyPolicy.placeholder"));
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.privacyPolicy.placeholder"
+                            )
+                        );
                     }
-                    if (req.body.privacyPolicy.includes('discord.com/privacy')) {
+                    if (
+                        req.body.privacyPolicy.includes("discord.com/privacy")
+                    ) {
                         error = true;
-                        errors.push(res.__("common.error.listing.arr.privacyPolicy.discord"));
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.privacyPolicy.discord"
+                            )
+                        );
                     }
-                    if (req.body.privacyPolicy.includes('!yardım')) {
+                    if (req.body.privacyPolicy.includes("!yardım")) {
                         error = true;
-                        errors.push(res.__("common.error.listing.arr.privacyPolicy.yardim"));
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.privacyPolicy.yardim"
+                            )
+                        );
                     }
                 } else {
                     error = true;
-                    errors.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
+                    errors.push(
+                        res.__("common.error.listing.arr.privacyPolicyRequired")
+                    );
                 }
 
                 const library = libraryCache.hasLib(req.body.library)
@@ -746,7 +764,7 @@ router.post(
                         await fetch(
                             `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
                         ).then(async (fetchRes: fetchRes) => {
-                            const {data} = await fetchRes.json();
+                            const { data } = await fetchRes.json();
                             if (!data.guild?.id) {
                                 error = true;
                                 errors.push(
@@ -811,7 +829,7 @@ router.post(
                         await fetch(
                             `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
                         ).then(async (fetchRes: fetchRes) => {
-                            const {data} = await fetchRes.json();
+                            const { data } = await fetchRes.json();
                             if (!data.channel?.id) {
                                 error = true;
                                 errors.push(
@@ -855,21 +873,39 @@ router.post(
                 }
 
                 if (req.body.privacyPolicy) {
-                    if (req.body.privacyPolicy.includes('discord.bot/privacy')) {
+                    if (
+                        req.body.privacyPolicy.includes("discord.bot/privacy")
+                    ) {
                         error = true;
-                        errors.push(res.__("common.error.listing.arr.privacyPolicy.placeholder"));
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.privacyPolicy.placeholder"
+                            )
+                        );
                     }
-                    if (req.body.privacyPolicy.includes('discord.com/privacy')) {
+                    if (
+                        req.body.privacyPolicy.includes("discord.com/privacy")
+                    ) {
                         error = true;
-                        errors.push(res.__("common.error.listing.arr.privacyPolicy.discord"));
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.privacyPolicy.discord"
+                            )
+                        );
                     }
-                    if (req.body.privacyPolicy.includes('!yardım')) {
+                    if (req.body.privacyPolicy.includes("!yardım")) {
                         error = true;
-                        errors.push(res.__("common.error.listing.arr.privacyPolicy.yardim"));
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.privacyPolicy.yardim"
+                            )
+                        );
                     }
                 } else {
                     error = true;
-                    errors.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
+                    errors.push(
+                        res.__("common.error.listing.arr.privacyPolicyRequired")
+                    );
                 }
 
                 return res.status(400).json({
@@ -1397,7 +1433,7 @@ router.post(
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
-                    const {data} = await fetchRes.json();
+                    const { data } = await fetchRes.json();
                     if (!data.guild?.id) {
                         error = true;
                         errors.push(
@@ -1456,7 +1492,7 @@ router.post(
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
-                    const {data} = await fetchRes.json();
+                    const { data } = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
                         errors.push(
@@ -1491,21 +1527,29 @@ router.post(
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.includes('discord.bot/privacy')) {
+            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
                 error = true;
-                errors.push(res.__("common.error.listing.arr.privacyPolicy.placeholder"));
+                errors.push(
+                    res.__("common.error.listing.arr.privacyPolicy.placeholder")
+                );
             }
-            if (req.body.privacyPolicy.includes('discord.com/privacy')) {
+            if (req.body.privacyPolicy.includes("discord.com/privacy")) {
                 error = true;
-                errors.push(res.__("common.error.listing.arr.privacyPolicy.discord"));
+                errors.push(
+                    res.__("common.error.listing.arr.privacyPolicy.discord")
+                );
             }
-            if (req.body.privacyPolicy.includes('!yardım')) {
+            if (req.body.privacyPolicy.includes("!yardım")) {
                 error = true;
-                errors.push(res.__("common.error.listing.arr.privacyPolicy.yardim"));
+                errors.push(
+                    res.__("common.error.listing.arr.privacyPolicy.yardim")
+                );
             }
         } else {
             error = true;
-            errors.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
+            errors.push(
+                res.__("common.error.listing.arr.privacyPolicyRequired")
+            );
         }
 
         let library = libraryCache.hasLib(req.body.library)
@@ -1546,7 +1590,7 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const bot = await fetchRes.json() as APIUser
+                const bot = (await fetchRes.json()) as APIUser;
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
@@ -1737,7 +1781,11 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
         }
     }
 
-    if (bot.status.archived && req.user?.id !== bot.owner.id && !req.user?.db.rank.mod)
+    if (
+        bot.status.archived &&
+        req.user?.id !== bot.owner.id &&
+        !req.user?.db.rank.mod
+    )
         return res.status(403).render("status", {
             title: res.__("common.error"),
             status: 403,
@@ -2409,7 +2457,7 @@ router.post(
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
-                    const {data} = await fetchRes.json();
+                    const { data } = await fetchRes.json();
                     if (!data.guild?.id) {
                         error = true;
                         errors.push(
@@ -2468,7 +2516,7 @@ router.post(
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
-                    const {data} = await fetchRes.json();
+                    const { data } = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
                         errors.push(
@@ -2503,21 +2551,29 @@ router.post(
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.includes('discord.bot/privacy')) {
+            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
                 error = true;
-                errors.push(res.__("common.error.listing.arr.privacyPolicy.placeholder"));
+                errors.push(
+                    res.__("common.error.listing.arr.privacyPolicy.placeholder")
+                );
             }
-            if (req.body.privacyPolicy.includes('discord.com/privacy')) {
+            if (req.body.privacyPolicy.includes("discord.com/privacy")) {
                 error = true;
-                errors.push(res.__("common.error.listing.arr.privacyPolicy.discord"));
+                errors.push(
+                    res.__("common.error.listing.arr.privacyPolicy.discord")
+                );
             }
-            if (req.body.privacyPolicy.includes('!yardım')) {
+            if (req.body.privacyPolicy.includes("!yardım")) {
                 error = true;
-                errors.push(res.__("common.error.listing.arr.privacyPolicy.yardim"));
+                errors.push(
+                    res.__("common.error.listing.arr.privacyPolicy.yardim")
+                );
             }
         } else {
             error = true;
-            errors.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
+            errors.push(
+                res.__("common.error.listing.arr.privacyPolicyRequired")
+            );
         }
 
         const library = libraryCache.hasLib(req.body.library)
@@ -2553,7 +2609,7 @@ router.post(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const bot = await fetchRes.json() as APIUser
+                const bot = (await fetchRes.json()) as APIUser;
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
@@ -3257,9 +3313,7 @@ router.post(
                 bot.name
             )}** \`(${bot._id})\`\n**Reason:** \`${
                 req.body.reason || "None specified."
-            }\`\n<${
-                settings.website.url
-            }/bots/${bot._id}>`
+            }\`\n<${settings.website.url}/bots/${bot._id}>`
         );
 
         const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
@@ -3472,7 +3526,7 @@ router.get(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const bot = await fetchRes.json() as APIUser
+                const bot = (await fetchRes.json()) as APIUser;
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {

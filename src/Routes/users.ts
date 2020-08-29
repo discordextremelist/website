@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import { Request, Response } from "express";
-import { APIUser } from "discord-api-types/v6"
+import { APIUser } from "discord-api-types/v6";
 
 import * as discord from "../Util/Services/discord";
 import * as banned from "../Util/Services/banned";
@@ -530,7 +530,7 @@ router.get(
             headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
         })
             .then(async (fetchRes: fetchRes) => {
-                const user = await fetchRes.json() as APIUser
+                const user = (await fetchRes.json()) as APIUser;
                 await global.db.collection("users").updateOne(
                     { _id: req.params.id },
                     {

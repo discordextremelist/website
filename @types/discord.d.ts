@@ -17,22 +17,22 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { APIGuild, APIUser } from "discord-api-types/v6"
+import { APIGuild, APIUser } from "discord-api-types/v6";
 
 interface APITemplateGuild extends APIGuild {
-    icon_hash: string
+    icon_hash: string;
 }
 
 interface APITemplate {
-    code: string
-    name: string
-    description: string
-    usage_count: number
-    creator_id: string
-    creator: APIUser
-    created_at: string
-    updated_at: string
-    source_guild_id: string
-    serialized_source_guild: APITemplateGuild
-    is_dirty: boolean | null
+    code: string;
+    name: string;
+    description: string;
+    usage_count: number;
+    creator_id: string;
+    creator: APIUser;
+    created_at: string;
+    updated_at: string;
+    source_guild_id: string;
+    serialized_source_guild: APITemplateGuild;
+    is_dirty: boolean | null;
 }

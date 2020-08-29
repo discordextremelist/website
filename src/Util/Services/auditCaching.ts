@@ -34,7 +34,9 @@ export async function uploadAuditLogs() {
         .collection("audit")
         .find()
         .sort({ date: -1 })
-        .toArray()) as auditLog[]).filter(({ type }) => type !== "GAME_HIGHSCORE_UPDATE");
+        .toArray()) as auditLog[]).filter(
+        ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
+    );
 
     if (logs.length < 1) return;
     await global.redis?.hmset(
@@ -42,11 +44,7 @@ export async function uploadAuditLogs() {
         ...logs.map((s: auditLog) => [s._id, JSON.stringify(s)])
     );
 
-    await global.redis?.hmset(
-        prefix,
-        "all",
-        JSON.stringify(logs)
-    )
+    await global.redis?.hmset(prefix, "all", JSON.stringify(logs));
 }
 
 setInterval(async () => {

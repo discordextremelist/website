@@ -22,8 +22,8 @@ interface authUser {
     username: string;
     avatar: string;
     discriminator: string;
-    public_flags: import('discord-api-types/v6').UserFlags;
-    flags: import('discord-api-types/v6').UserFlags;
+    public_flags: import("discord-api-types/v6").UserFlags;
+    flags: import("discord-api-types/v6").UserFlags;
     email?: string;
     verified: boolean;
     locale: string;
@@ -47,7 +47,7 @@ interface delUser {
     discrim: string;
     fullUsername: string;
     locale: string;
-    flags: import('discord-api-types/v6').UserFlags;
+    flags: import("discord-api-types/v6").UserFlags;
     avatar: {
         hash: string;
         url: string;
@@ -186,7 +186,7 @@ interface delBot {
     shardCount: number;
     inServer?: boolean;
     token: string;
-    flags: import('discord-api-types/v6').UserFlags;
+    flags: import("discord-api-types/v6").UserFlags;
     shortDesc: string;
     longDesc: string;
     modNotes: string;
@@ -217,7 +217,7 @@ interface delBot {
         useCustomColour: boolean;
         colour: string;
         banner: string;
-    }
+    };
     widgetbot: {
         channel: string;
         options: string;
@@ -265,8 +265,8 @@ interface delTemplate {
     verificationLevel: number;
     defaultMessageNotifications: number;
     explicitContent: number;
-    roles: import('discord-api-types/v6').APIRole[];
-    channels: import('discord-api-types/v6').APIChannel[];
+    roles: import("discord-api-types/v6").APIRole[];
+    channels: import("discord-api-types/v6").APIChannel[];
     usageCount: number;
     shortDesc: string;
     longDesc: string;

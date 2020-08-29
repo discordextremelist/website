@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import * as functions from "../Function/main";
-import { name } from "ejs";
 
 export async function getFeaturedBots(): Promise<delBot[]> {
     const bots = await global.redis?.get("featured_bots");

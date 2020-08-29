@@ -77,7 +77,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
     const botsEditor: delBot[] = [];
     const archivedBots: delBot[] = [];
 
-    for (const bot of bots) {
+    for (const bot of bots as delBot[]) {
         if (bot.status.archived === true && bot.owner.id === req.params.id) {
             archivedBots.push(bot);
         } else if (bot.owner.id === req.params.id) {

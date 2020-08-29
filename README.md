@@ -19,7 +19,7 @@ DEL requires Node.js 14.
 
 ### nodemon (Optional)
 
-nodemon is optional and allows you to use the `npm run dev` command which is ideal in development, nodemon auto restarts on file save.
+nodemon is optional and allows you to use the `npm run dev` command which is ideal in development, nodemon auto restarts and compiles on file save.
 
 ### PM2 (Optional)
 
@@ -45,12 +45,12 @@ Install all of the dependencies by running `npm i` command.
 
 ### Compiling
 
-When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run the `npm run compile` command.
+When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run the `npm run compile` command (unless using `npm run dev`).
 
 ### Production
 
-We recommend when running DEL in production you use the `npm run pm2` command, however you can still run DEL using the standard `npm run start` command.
+We recommend when running DEL in production you use the `npm run pm2` command, you can also still run DEL using the standard `npm run start` command.
 
 ### Development/Testing
 
-We recommend you run DEL using the `npm run start` command.
+We recommend you run DEL using the `npm run start` command, you can also run DEL using the `npm run dev` command but due to compiling on file save, this isn't *always* a good idea.

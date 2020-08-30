@@ -52,7 +52,7 @@ export async function updateFeaturedBots() {
         )
         .slice(0, 6);
 
-    for (const bot of bots as delBot[]) {
+    for (const bot of bots) {
         delete bot.clientID;
         delete bot.prefix;
         delete bot.library;
@@ -92,7 +92,7 @@ export async function updateFeaturedServers() {
         )
         .slice(0, 6);
 
-    for (const server of servers as delServer[]) {
+    for (const server of servers) {
         delete server.inviteCode;
         delete server.longDesc;
         delete server.previewChannel;
@@ -115,7 +115,7 @@ export async function updateFeaturedTemplates() {
         )
         .slice(0, 6);
 
-    for (const template of templates as delTemplate[]) {
+    for (const template of templates) {
         delete template.region;
         delete template.locale;
         delete template.afkTimeout;

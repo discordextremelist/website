@@ -155,7 +155,7 @@ router.get(
             req,
             bots: bots.filter(
                 ({ inServer, status }) =>
-                    !inServer && !status.archived && status.approved
+                    !inServer && !status.archived && status.approved && !status.siteBot
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff

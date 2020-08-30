@@ -139,14 +139,18 @@ router.post(
                     }
                 }
             ).then((fetchRes: fetchRes) => {
-                if (fetchRes.status !== 404)
+                if (fetchRes.status !== 404) {
+                    error = true
                     return res.status(400).json({
                         error: true,
                         status: 400,
                         errors: [res.__("common.error.bot.arr.clientIDIsUser")]
                     });
+                }
             });
         }
+
+        if(error) return
 
         fetch(`https://discord.com/api/v6/users/${req.body.id}`, {
             method: "GET",

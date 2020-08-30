@@ -50,7 +50,7 @@ export async function uploadBots() {
         .toArray();
     if (botsDB.length < 1) return;
 
-    for (const bot of botsDB as delBot[]) {
+    for (const bot of botsDB) {
         // @ts-expect-error
         if (bot.id) bot._id = bot.id;
     }

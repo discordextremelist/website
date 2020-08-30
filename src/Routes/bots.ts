@@ -1070,7 +1070,7 @@ router.post(
             });
 
         const bots = await botCache.getAllBots();
-        for (const bot of bots as delBot[]) {
+        for (const bot of bots) {
             if (req.body.vanity === bot.vanityUrl)
                 return res.status(409).render("status", {
                     title: res.__("common.error"),

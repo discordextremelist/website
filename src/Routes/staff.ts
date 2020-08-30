@@ -139,7 +139,7 @@ router.get(
             .sort({ "date.submitted": -1 })
             .toArray();
 
-        for (const bot of bots as delBot[]) {
+        for (const bot of bots) {
             discord.bot.guilds.cache
                 .get(settings.guild.main)
                 .members.cache.get(bot._id)

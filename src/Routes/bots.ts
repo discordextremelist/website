@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
-import { APIUser } from "discord-api-types/v6";
+import { APIUser, RESTJSONErrorCodes } from "discord-api-types/v6";
 
 import * as fetch from "node-fetch";
 import * as crypto from "crypto";
@@ -156,7 +156,7 @@ router.post(
                 const bot = (await fetchRes.json()) as APIUser;
                 if (
                     // @ts-expect-error
-                    bot.message === "Unknown User" &&
+                    bot.code === RESTJSONErrorCodes.UnknownUser &&
                     req.body.id
                 ) {
                     error = true;

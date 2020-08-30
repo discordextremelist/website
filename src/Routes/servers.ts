@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import { Request, Response } from "express";
 import { Response as fetchRes } from "../../@types/fetch";
-import { APIInvite } from "discord-api-types/v6";
+import { APIInvite, RESTJSONErrorCodes } from "discord-api-types/v6";
 
 import * as fetch from "node-fetch";
 import * as Discord from "discord.js";
@@ -81,7 +81,7 @@ router.post(
                 const invite = (await fetchRes.json()) as APIInvite;
 
                 // @ts-expect-error
-                if (invite.code !== 10006) {
+                if (invite.code !== RESTJSONErrorCodes.UnknownInvite) {
                     const serverExists:
                         | delServer
                         | undefined = await global.db
@@ -694,7 +694,7 @@ router.post(
                 const invite = (await fetchRes.json()) as APIInvite;
 
                 // @ts-expect-error
-                if (invite.code === 10006) {
+                if (invite.code === RESTJSONErrorCodes.UnknownInvite) {
                     error = true;
                     errors.push(
                         res.__("common.error.listing.arr.invite.invalid")
@@ -1278,7 +1278,7 @@ router.get(
                 const invite = (await fetchRes.json()) as APIInvite;
 
                 // @ts-expect-error
-                if (invite.code === 10006)
+                if (invite.code === RESTJSONErrorCodes.UnknownInvite)
                     return res.status(400).render("status", {
                         title: res.__("common.error"),
                         status: 400,

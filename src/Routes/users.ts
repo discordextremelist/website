@@ -104,7 +104,7 @@ router.get("/:id", variables, async (req: Request, res: Response, next) => {
 
     const templatesOwner: delTemplate[] = [];
 
-    for (const template of templates as delTemplate[]) {
+    for (const template of templates) {
         if (req.params.id === template.owner.id) {
             templatesOwner.push(template);
         }

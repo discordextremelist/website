@@ -437,6 +437,13 @@ router.post(
                     );
                 }
 
+                if (req.body.longDescription.includes("http://")) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.containsHttp")
+                    )
+                }
+
                 if (!req.body.prefix) {
                     error = true;
                     errors.push(
@@ -876,6 +883,13 @@ router.post(
                     );
                 }
 
+                if (req.body.longDescription.includes("http://")) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.containsHttp")
+                    )
+                }
+
                 if (!req.body.prefix) {
                     error = true;
                     errors.push(
@@ -894,6 +908,7 @@ router.post(
                             )
                         );
                     }
+
                     if (
                         req.body.privacyPolicy.includes("discord.com/privacy")
                     ) {
@@ -904,11 +919,22 @@ router.post(
                             )
                         );
                     }
-                    if (req.body.privacyPolicy.includes("!yardım")) {
+
+                    let test: string;
+                    if (["yardım", "yardim"].some(test.includes.bind(req.body.privacyPolicy))) {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.privacyPolicy.yardim"
+                            )
+                        );
+                    }
+
+                    if (req.body.privacyPolicy.includes("help")) {
+                        error = true;
+                        errors.push(
+                            res.__(
+                                "common.error.listing.arr.privacyPolicy.help"
                             )
                         );
                     }
@@ -1532,28 +1558,57 @@ router.post(
             );
         }
 
+        if (req.body.longDescription.includes("http://")) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.containsHttp")
+            )
+        }
+
         if (!req.body.prefix) {
             error = true;
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
+            if (
+                req.body.privacyPolicy.includes("discord.bot/privacy")
+            ) {
                 error = true;
                 errors.push(
-                    res.__("common.error.listing.arr.privacyPolicy.placeholder")
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.placeholder"
+                    )
                 );
             }
-            if (req.body.privacyPolicy.includes("discord.com/privacy")) {
+
+            if (
+                req.body.privacyPolicy.includes("discord.com/privacy")
+            ) {
                 error = true;
                 errors.push(
-                    res.__("common.error.listing.arr.privacyPolicy.discord")
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.discord"
+                    )
                 );
             }
-            if (req.body.privacyPolicy.includes("!yardım")) {
+
+            let test: string;
+            if (["yardım", "yardim"].some(test.includes.bind(req.body.privacyPolicy))) {
                 error = true;
                 errors.push(
-                    res.__("common.error.listing.arr.privacyPolicy.yardim")
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.yardim"
+                    )
+                );
+            }
+
+            if (req.body.privacyPolicy.includes("help")) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.help"
+                    )
                 );
             }
         } else {
@@ -2563,28 +2618,57 @@ router.post(
             );
         }
 
+        if (req.body.longDescription.includes("http://")) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.containsHttp")
+            )
+        }
+
         if (!req.body.prefix) {
             error = true;
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
+            if (
+                req.body.privacyPolicy.includes("discord.bot/privacy")
+            ) {
                 error = true;
                 errors.push(
-                    res.__("common.error.listing.arr.privacyPolicy.placeholder")
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.placeholder"
+                    )
                 );
             }
-            if (req.body.privacyPolicy.includes("discord.com/privacy")) {
+
+            if (
+                req.body.privacyPolicy.includes("discord.com/privacy")
+            ) {
                 error = true;
                 errors.push(
-                    res.__("common.error.listing.arr.privacyPolicy.discord")
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.discord"
+                    )
                 );
             }
-            if (req.body.privacyPolicy.includes("!yardım")) {
+
+            let test: string;
+            if (["yardım", "yardim"].some(test.includes.bind(req.body.privacyPolicy))) {
                 error = true;
                 errors.push(
-                    res.__("common.error.listing.arr.privacyPolicy.yardim")
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.yardim"
+                    )
+                );
+            }
+
+            if (req.body.privacyPolicy.includes("help")) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.help"
+                    )
                 );
             }
         } else {

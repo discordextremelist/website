@@ -492,20 +492,27 @@ router.post(
                 if (req.body.multipurpose === true) tags.push("Multipurpose");
                 if (req.body.music === true) tags.push("Music");
 
-                if (error === true) {
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: errors
-                    });
-                }
-
                 let editors: any[];
 
                 if (req.body.editors !== "") {
                     editors = [...new Set(req.body.editors.split(/\D+/g))];
                 } else {
                     editors = [];
+                }
+
+                if (editors.includes(req.user.id)) {
+                    error = true;
+                    errors.push(
+                        res.__("common.error.listing.arr.removeYourselfEditor")
+                    );
+                }
+
+                if (error === true) {
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: errors
+                    });
                 }
 
                 await global.db.collection("bots").insertOne({
@@ -1569,6 +1576,21 @@ router.post(
         if (req.body.multipurpose === true) tags.push("Multipurpose");
         if (req.body.music === true) tags.push("Music");
 
+        let editors: any[];
+
+        if (req.body.editors !== "") {
+            editors = [...new Set(req.body.editors.split(/\D+/g))];
+        } else {
+            editors = [];
+        }
+
+        if (editors.includes(req.user.id)) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.removeYourselfEditor")
+            );
+        }
+
         if (error === true) {
             req.body.status
                 ? (req.body.status.premium = botExists.status.premium)
@@ -1579,14 +1601,6 @@ router.post(
                 status: 400,
                 errors: errors
             });
-        }
-
-        let editors: any;
-
-        if (req.body.editors !== "") {
-            editors = [...new Set(req.body.editors.split(/\D+/g))];
-        } else {
-            editors = [];
         }
 
         await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
@@ -2592,20 +2606,27 @@ router.post(
         if (req.body.multipurpose === true) tags.push("Multipurpose");
         if (req.body.music === true) tags.push("Music");
 
+        let editors: any[];
+
+        if (req.body.editors !== "") {
+            editors = [...new Set(req.body.editors.split(/\D+/g))];
+        } else {
+            editors = [];
+        }
+
+        if (editors.includes(req.user.id)) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.removeYourselfEditor")
+            );
+        }
+
         if (error === true) {
             return res.status(400).json({
                 error: true,
                 status: 400,
                 errors: errors
             });
-        }
-
-        let editors: any;
-
-        if (req.body.editors !== "") {
-            editors = [...new Set(req.body.editors.split(/\D+/g))];
-        } else {
-            editors = [];
         }
 
         await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {

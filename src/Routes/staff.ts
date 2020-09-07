@@ -19,10 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import { Request, Response } from "express";
-import { Response as fetchRes } from "../../@types/fetch";
 import { APIUser } from "discord-api-types/v6";
-
-import * as fetch from "node-fetch";
 
 import * as settings from "../../settings.json";
 import * as permission from "../Util/Function/permissions";
@@ -923,13 +920,8 @@ router.get(
             .collection("users")
             .findOne({ _id: req.params.id });
 
-        fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
-            method: "GET",
-            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-        })
-            .then(async (fetchRes: fetchRes) => {
-                const discordUser = (await fetchRes.json()) as APIUser;
-
+        discord.bot.api.users(req.params.id).get()
+            .then(async (discordUser: APIUser) => {
                 if (!user) {
                     await global.db.collection("users").insertOne({
                         _id: req.params.id,

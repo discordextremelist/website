@@ -72,12 +72,13 @@ export const variables = async (
     ];
 
     if (
-        !req.originalUrl.includes("/audio/") ||
-        !req.originalUrl.includes("/auth/") ||
-        !req.originalUrl.includes("/css/") ||
-        !req.originalUrl.includes("/fonts/") ||
-        !req.originalUrl.includes("/img/") ||
-        !req.originalUrl.includes("/js/")
+        !req.originalUrl.includes("/audio/") &&
+        !req.originalUrl.includes("/auth/") &&
+        !req.originalUrl.includes("/css/") &&
+        !req.originalUrl.includes("/fonts/") &&
+        !req.originalUrl.includes("/img/") &&
+        !req.originalUrl.includes("/js/") &&
+        !req.originalUrl.includes("/auth/login")
     )
         req.session.redirectTo = req.originalUrl;
 

@@ -71,6 +71,11 @@ declare module "express-serve-static-core" {
     interface Response {
         session: any;
         user: any;
-        __: any;
+        /** get i18n string
+         * 
+         * https://github.com/discordextremelist/i18n/tree/master/website
+         * https://translate.discordextremelist.xyz
+         */
+        __(key: string, args?: any): string;
     }
 }

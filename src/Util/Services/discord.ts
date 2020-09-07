@@ -26,7 +26,21 @@ const prefix = "statuses";
 
 metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
 
-export const bot = new Discord.Client({
+// @ts-expect-error
+class Client extends Discord.Client {
+    readonly api: {
+        channels: any;
+        gateway: any;
+        guilds: any;
+        invites: any;
+        oauth2: any;
+        users: any;
+        voice: any;
+        webhooks: any;
+    }
+}
+
+export const bot = new Client({
     allowedMentions: { parse: [] },
     ws: { intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_PRESENCES"] }
 });

@@ -101,12 +101,12 @@
         const a = document.querySelector("input[type='checkbox']#bots");
         const b = document.querySelector("input[type='checkbox']#servers");
         const d = document.querySelector("input[type='checkbox']#templates");
-        const only = !((a && a.checked) && (b && b.checked) && (c && c.checked)) && [
-            c && c.checked && "users",
-            a && a.checked && "bots",
-            b && b.checked && "servers",
-            d && d.checked && "templates",
-        ].filter(a=>!!a);
+
+        const only = [];
+        a && a.checked ? only.push("bots") : false;
+        b && b.checked ? only.push("servers") : false;
+        c && c.checked ? only.push("users") : false;
+        d && d.checked ? only.push("templates") : false;
 
         async function fetchPOST(url = '', data = {}) {
             const response = await fetch(url, {

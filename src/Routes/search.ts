@@ -22,6 +22,7 @@ import { Request, Response } from "express";
 
 import chunk = require("chunk");
 import * as ejs from "ejs";
+import * as settings from "../../settings.json";
 
 import * as botCache from "../Util/Services/botCaching";
 import * as userCache from "../Util/Services/userCaching";
@@ -55,6 +56,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
             status: 400,
             message: "Missing body parameter 'query'"
         });
+    console.log(only)
     const originalQuery = query;
     query = query.toLowerCase();
     let isStaff = false;
@@ -102,6 +104,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
                         user,
                         imageFormat,
                         search: true,
+                        baseURL: settings.website.url,
                         __: res.locals.__
                     });
                 }),
@@ -123,6 +126,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
                         queue: false,
                         verificationApp: false,
                         search: true,
+                        baseURL: settings.website.url,
                         profile: false,
                         __: res.locals.__
                     });
@@ -141,6 +145,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
                             server,
                             imageFormat,
                             search: true,
+                            baseURL: settings.website.url,
                             profile: false,
                             __: res.locals.__
                         }
@@ -160,6 +165,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
                             template,
                             imageFormat,
                             search: true,
+                            baseURL: settings.website.url,
                             profile: false,
                             __: res.locals.__
                         }

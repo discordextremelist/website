@@ -19,8 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Request, Response } from "express";
 import { bot } from "../Services/discord";
-import * as https from "https";
 import * as settings from "../../../settings.json";
+import * as discord from "../Services/discord";
+import { DiscordAPIError } from "discord.js";
 
 export const auth = (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {
@@ -48,44 +49,22 @@ export const member = (req: Request, res: Response, next: () => void) => {
             .get(settings.guild.main)
             .members.cache.get(req.user.id)
     ) {
-        const data = JSON.stringify({
-            access_token: req.user.accessToken
-        });
-
-        const options = {
-            hostname: "discord.com",
-            port: 443,
-            path: `/api/v6/guilds/${settings.guild.main}/members/${req.user.id}`,
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Content-Length": data.length,
-                Authorization: "Bot " + settings.secrets.discord.token
-            }
-        };
-
-        const msReq = https.request(options, (response) => {
-            if (response.statusCode === 403 && !req.user.impersonator) {
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [
-                        res.__("common.error.failedJoin", {
-                            a:
-                                '<a href="https://discord.gg/WeCer3J" rel="noopener" target="_blank">',
-                            ea: "</a>"
-                        })
-                    ]
-                });
-            } else next();
-        });
-
-        msReq.on("error", (e) => {
-            console.error(e);
-        });
-
-        msReq.write(data);
-        msReq.end();
+        discord.bot.api.guilds(settings.guild.main).members(req.user.id).put({ data: { access_token: req.user.accessToken } })
+            .catch((error: DiscordAPIError) => {
+                if (error.httpStatus === 403 && !req.user.impersonator) {
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [
+                            res.__("common.error.failedJoin", {
+                                a:
+                                    '<a href="https://discord.gg/WeCer3J" rel="noopener" target="_blank">',
+                                ea: "</a>"
+                            })
+                        ]
+                    });
+                } else next();
+            });
     }
 
     next();

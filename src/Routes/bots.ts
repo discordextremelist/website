@@ -39,13 +39,14 @@ import * as userCache from "../Util/Services/userCaching";
 import * as libraryCache from "../Util/Services/libCaching";
 import * as tokenManager from "../Util/Services/adminTokenManager";
 import { URL } from "url";
+import { DiscordAPIError } from "discord.js";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
 const router = express.Router();
 
-router.get("/search", (req: Request, res: Response, next) => {
+router.get("/search", (req: Request, res: Response) => {
     res.redirect("/search");
 });
 
@@ -53,7 +54,7 @@ router.get(
     "/submit",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 
         res.render("templates/bots/submit", {
@@ -75,7 +76,7 @@ router.post(
     variables,
     permission.auth,
     permission.member,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 
         let error = false;
@@ -94,433 +95,383 @@ router.post(
                 errors: [res.__("common.error.bot.conflict")]
             });
 
-        if (!req.body.id)
-            return res.status(400).json({
-                error: true,
-                status: 400,
-                errors: [res.__("common.error.listing.arr.IDRequired")]
-            });
-
-        if (isNaN(req.body.id) || req.body.id.includes(" "))
-            return res.status(400).json({
-                error: true,
-                status: 400,
-                errors: [res.__("common.error.bot.arr.invalidID")]
-            });
-
-        if (req.body.id.length > 32)
-            return res.status(400).json({
-                error: true,
-                status: 400,
-                errors: [res.__("common.error.bot.arr.idTooLong")]
-            });
-
-        if (req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(" "))
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [res.__("common.error.bot.arr.invalidClientID")]
-                });
-
-            if (req.body.clientID && req.body.clientID.length > 32)
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [res.__("common.error.bot.arr.clientIDTooLong")]
-                });
-
-            await fetch(
-                `https://discord.com/api/v6/users/${req.body.clientID}`,
-                {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bot ${settings.secrets.discord.token}`
-                    }
-                }
-            ).then((fetchRes: fetchRes) => {
-                if (fetchRes.status !== 404) {
-                    error = true
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.clientIDIsUser")]
-                    });
-                }
-            });
+        if (!req.body.id) {
+            error = true
+            errors.push(res.__("common.error.listing.arr.IDRequired"))
         }
 
-        if(error) return
+        if (isNaN(req.body.id) || req.body.id.includes(" ")) {
+            error = true
+            errors.push(res.__("common.error.bot.arr.invalidID"))
+        }
 
-        fetch(`https://discord.com/api/v6/users/${req.body.id}`, {
-            method: "GET",
-            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-        })
-            .then(async (fetchRes: fetchRes) => {
-                const bot = (await fetchRes.json()) as APIUser;
-                if (
-                    // @ts-expect-error
-                    bot.code === RESTJSONErrorCodes.UnknownUser &&
-                    req.body.id
-                ) {
-                    error = true;
-                    errors.push(res.__("common.error.bot.arr.notFound"));
-                } else if (fetchRes.status === 400) {
-                    error = true;
-                    errors.push(
-                        `${res.__(
-                            "common.error.bot.arr.fetchError"
-                        )}: ${JSON.stringify(bot)}`
-                    );
-                } else if (!bot.bot && req.body.id) {
-                    error = true;
-                    errors.push(res.__("common.error.bot.arr.isUser"));
-                }
+        if (req.body.id.length > 32) {
+            error = true
+            errors.push(res.__("common.error.bot.arr.idTooLong"))
+        }
 
-                if (req.body.invite === "") {
-                    invite = `https://discord.com/api/oauth2/authorize?client_id=${
-                        req.body.clientID || req.body.id
-                    }&scope=bot`;
-                } else {
-                    if (typeof req.body.invite !== "string") {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.listing.arr.invite.invalid")
-                        );
-                    } else if (req.body.invite.length > 2000) {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.listing.arr.invite.tooLong")
-                        );
-                    } else if (!functions.isURL(req.body.invite)) {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.listing.arr.invite.urlInvalid")
-                        );
-                    } else if (req.body.invite.includes("discordapp.com")) {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.listing.arr.invite.discordapp")
-                        );
-                    } else {
-                        invite = req.body.invite;
-                    }
-                }
+        if (req.body.clientID) {
+            if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+                error = true
+                errors.push(res.__("common.error.bot.arr.invalidClientID"))
+            }
 
-                if (
-                    req.body.supportServer &&
-                    !functions.isURL(req.body.supportServer)
-                ) {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.invalidURL.supportServer"
-                        )
-                    );
-                }
+            if (req.body.clientID && req.body.clientID.length > 32) {
+                error = true
+                errors.push(res.__("common.error.bot.arr.clientIDTooLong"))
+            }
+            
+            discord.bot.api.users(req.body.clientID).get()
+                .then(() => {
+                    error = true
+                    errors.push(res.__("common.error.bot.arr.clientIDIsUser"))
+                })
+                .catch(() => {})
+        }
 
-                if (req.body.website && !functions.isURL(req.body.website)) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.invalidURL.website")
-                    );
-                }
+        if (req.body.invite === "") {
+            invite = `https://discord.com/api/oauth2/authorize?client_id=${
+                req.body.clientID || req.body.id
+            }&scope=bot`;
+        } else {
+            if (typeof req.body.invite !== "string") {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.invite.invalid")
+                );
+            } else if (req.body.invite.length > 2000) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.invite.tooLong")
+                );
+            } else if (!functions.isURL(req.body.invite)) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.invite.urlInvalid")
+                );
+            } else if (req.body.invite.includes("discordapp.com")) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.invite.discordapp")
+                );
+            } else {
+                invite = req.body.invite;
+            }
+        }
 
-                if (
-                    req.body.donationUrl &&
-                    !functions.isURL(req.body.donationUrl)
-                ) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.invalidURL.donation")
-                    );
-                }
+        if (
+            req.body.supportServer &&
+            !functions.isURL(req.body.supportServer)
+        ) {
+            error = true;
+            errors.push(
+                res.__(
+                    "common.error.listing.arr.invalidURL.supportServer"
+                )
+            );
+        }
 
-                if (req.body.repo && !functions.isURL(req.body.repo)) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.invalidURL.repo")
-                    );
-                }
+        if (req.body.website && !functions.isURL(req.body.website)) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.invalidURL.website")
+            );
+        }
 
-                if (
-                    req.body.invite &&
-                    functions.isURL(req.body.invite) &&
-                    Number(
-                        new URL(req.body.invite).searchParams.get("permissions")
-                    ) & 8
-                ) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.inviteHasAdmin")
-                    );
-                }
+        if (
+            req.body.donationUrl &&
+            !functions.isURL(req.body.donationUrl)
+        ) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.invalidURL.donation")
+            );
+        }
 
-                if (req.body.banner && !functions.isURL(req.body.banner)) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.invalidURL.banner")
-                    );
-                }
+        if (req.body.repo && !functions.isURL(req.body.repo)) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.invalidURL.repo")
+            );
+        }
 
-                if (req.body.widgetServer && !req.body.widgetChannel) {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.serverButNotChannel"
-                        )
-                    );
-                }
+        if (
+            req.body.invite &&
+            functions.isURL(req.body.invite) &&
+            Number(
+                new URL(req.body.invite).searchParams.get("permissions")
+            ) & 8
+        ) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.inviteHasAdmin")
+            );
+        }
 
-                if (req.body.widgetChannel && !req.body.widgetServer) {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.channelButNotServer"
-                        )
-                    );
-                }
+        if (req.body.banner && !functions.isURL(req.body.banner)) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.invalidURL.banner")
+            );
+        }
 
-                if (req.body.widgetServer && req.body.widgetChannel) {
-                    let fetchServer = true;
+        if (req.body.widgetServer && !req.body.widgetChannel) {
+            error = true;
+            errors.push(
+                res.__(
+                    "common.error.listing.arr.widgetbot.serverButNotChannel"
+                )
+            );
+        }
 
-                    if (
-                        isNaN(req.body.widgetServer) ||
-                        req.body.widgetServer.includes(" ")
-                    ) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.serverID.invalid"
-                            )
-                        );
-                        fetchServer = false;
-                    }
-                    if (
-                        req.body.widgetServer &&
-                        req.body.widgetServer.length > 32
-                    ) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.serverID.tooLong"
-                            )
-                        );
-                        fetchServer = false;
-                    }
+        if (req.body.widgetChannel && !req.body.widgetServer) {
+            error = true;
+            errors.push(
+                res.__(
+                    "common.error.listing.arr.widgetbot.channelButNotServer"
+                )
+            );
+        }
 
-                    if (fetchServer)
-                        await fetch(
-                            `https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`,
-                            {
-                                headers: {
-                                    Authorization: `Bot ${settings.secrets.discord.token}`
-                                }
-                            }
-                        ).then((fetchRes: fetchRes) => {
-                            if (
-                                fetchRes.status === 400 ||
-                                fetchRes.status === 404
-                            ) {
-                                error = true;
-                                errors.push(
-                                    res.__(
-                                        "common.error.listing.arr.widgetbot.serverID.nonexistent"
-                                    )
-                                );
-                                fetchServer = false;
-                            }
-                        });
+        if (req.body.widgetServer && req.body.widgetChannel) {
+            let fetchServer = true;
 
-                    if (fetchServer)
-                        await fetch(
-                            `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
-                        ).then(async (fetchRes: fetchRes) => {
-                            const { data } = await fetchRes.json();
-                            if (!data.guild?.id) {
-                                error = true;
-                                errors.push(
-                                    res.__(
-                                        "common.error.listing.arr.widgetbot.guildNotFound"
-                                    )
-                                );
-                            }
-                        });
-
-                    let fetchChannel = true;
-
-                    if (
-                        isNaN(req.body.widgetChannel) ||
-                        req.body.widgetChannel.includes(" ")
-                    ) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.channelID.invalid"
-                            )
-                        );
-                        fetchChannel = false;
-                    }
-                    if (
-                        req.body.widgetChannel &&
-                        req.body.widgetChannel.length > 32
-                    ) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.channelID.tooLong"
-                            )
-                        );
-                        fetchChannel = false;
-                    }
-
-                    if (fetchChannel)
-                        await fetch(
-                            `https://discord.com/api/v6/channels/${req.body.widgetChannel}`,
-                            {
-                                headers: {
-                                    Authorization: `Bot ${settings.secrets.discord.token}`
-                                }
-                            }
-                        ).then((fetchRes: fetchRes) => {
-                            if (
-                                fetchRes.status === 400 ||
-                                fetchRes.status === 404
-                            ) {
-                                error = true;
-                                errors.push(
-                                    res.__(
-                                        "common.error.listing.arr.widgetbot.channelID.nonexistent"
-                                    )
-                                );
-                                fetchChannel = false;
-                            }
-                        });
-
-                    if (fetchChannel)
-                        await fetch(
-                            `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
-                        ).then(async (fetchRes: fetchRes) => {
-                            const { data } = await fetchRes.json();
-                            if (!data.channel?.id) {
-                                error = true;
-                                errors.push(
-                                    res.__(
-                                        "common.error.listing.arr.widgetbot.channelNotFound"
-                                    )
-                                );
-                            }
-                        });
-                }
-
-                if (!req.body.shortDescription) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.shortDescRequired")
-                    );
-                }
-
-                if (!req.body.longDescription) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.longDescRequired")
-                    );
-                }
-
-                if (
-                    req.body.longDescription &&
-                    req.body.longDescription.length < 150
-                ) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.notAtMinChars", "150")
-                    );
-                }
-
-                if (req.body.longDescription.includes("http://")) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.containsHttp")
+            if (
+                isNaN(req.body.widgetServer) ||
+                req.body.widgetServer.includes(" ")
+            ) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.serverID.invalid"
                     )
-                }
+                );
+                fetchServer = false;
+            }
+            if (
+                req.body.widgetServer &&
+                req.body.widgetServer.length > 32
+            ) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.serverID.tooLong"
+                    )
+                );
+                fetchServer = false;
+            }
 
-                if (!req.body.prefix) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.prefixRequired")
-                    );
-                }
+            if (fetchServer)
+                await discord.bot.api.guilds(req.body.widgetServer).channels.get()
+                    .catch((e: DiscordAPIError) => {
+                        if([400, 404].includes(e.httpStatus)) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.serverID.nonexistent"
+                                )
+                            );
+                            fetchServer = false;
+                        }
+                    })
 
-                if (req.body.privacyPolicy) {
-                    if (
-                        req.body.privacyPolicy.includes("discord.bot/privacy")
-                    ) {
+            if (fetchServer)
+                await fetch(
+                    `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
+                ).then(async (fetchRes: fetchRes) => {
+                    const { data } = await fetchRes.json();
+                    if (data && !data.guild?.id) {
                         error = true;
                         errors.push(
                             res.__(
-                                "common.error.listing.arr.privacyPolicy.placeholder"
+                                "common.error.listing.arr.widgetbot.guildNotFound"
                             )
                         );
                     }
-                    if (
-                        req.body.privacyPolicy.includes("discord.com/privacy")
-                    ) {
+                });
+
+            let fetchChannel = true;
+
+            if (
+                isNaN(req.body.widgetChannel) ||
+                req.body.widgetChannel.includes(" ")
+            ) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.channelID.invalid"
+                    )
+                );
+                fetchChannel = false;
+            }
+            if (
+                req.body.widgetChannel &&
+                req.body.widgetChannel.length > 32
+            ) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.widgetbot.channelID.tooLong"
+                    )
+                );
+                fetchChannel = false;
+            }
+
+            if (fetchChannel)
+                await discord.bot.api.channels(req.body.widgetChannel).get()
+                    .catch((e: DiscordAPIError) => {
+                        if([400, 404].includes(e.httpStatus)) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.channelID.nonexistent"
+                                )
+                            );
+                            fetchChannel = false;
+                        }
+                    })
+
+            if (fetchChannel)
+                await fetch(
+                    `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
+                ).then(async (fetchRes: fetchRes) => {
+                    const { data } = await fetchRes.json();
+                    if (!data.channel?.id) {
                         error = true;
                         errors.push(
                             res.__(
-                                "common.error.listing.arr.privacyPolicy.discord"
+                                "common.error.listing.arr.widgetbot.channelNotFound"
                             )
                         );
                     }
-                    if (req.body.privacyPolicy.includes("!yardım")) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.privacyPolicy.yardim"
-                            )
-                        );
-                    }
-                } else {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.privacyPolicyRequired")
-                    );
-                }
+                });
+        }
 
-                const library = libraryCache.hasLib(req.body.library)
-                    ? req.body.library
-                    : "Other";
-                let tags: string[] = [];
-                if (req.body.fun === true) tags.push("Fun");
-                if (req.body.social === true) tags.push("Social");
-                if (req.body.economy === true) tags.push("Economy");
-                if (req.body.utility === true) tags.push("Utility");
-                if (req.body.moderation === true) tags.push("Moderation");
-                if (req.body.multipurpose === true) tags.push("Multipurpose");
-                if (req.body.music === true) tags.push("Music");
+        if (!req.body.shortDescription) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.shortDescRequired")
+            );
+        }
 
-                let editors: any[];
+        if (!req.body.longDescription) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.longDescRequired")
+            );
+        }
 
-                if (req.body.editors !== "") {
-                    editors = [...new Set(req.body.editors.split(/\D+/g))];
-                } else {
-                    editors = [];
-                }
+        if (
+            req.body.longDescription &&
+            req.body.longDescription.length < 150
+        ) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.notAtMinChars", "150")
+            );
+        }
 
-                if (editors.includes(req.user.id)) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.removeYourselfEditor")
-                    );
-                }
+        if (req.body.longDescription.includes("http://")) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.containsHttp")
+            )
+        }
 
-                if (error === true) {
+        if (!req.body.prefix) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.prefixRequired")
+            );
+        }
+
+        if (req.body.privacyPolicy) {
+            if (
+                req.body.privacyPolicy.includes("discord.bot/privacy")
+            ) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.placeholder"
+                    )
+                );
+            }
+            if (
+                req.body.privacyPolicy.includes("discord.com/privacy")
+            ) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.discord"
+                    )
+                );
+            }
+            if (/(yardım|yardim)/.test(req.body.privacyPolicy)) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.yardim"
+                    )
+                );
+            }
+            if (req.body.privacyPolicy.includes("help")) {
+                error = true;
+                errors.push(
+                    res.__(
+                        "common.error.listing.arr.privacyPolicy.help"
+                    )
+                );
+            }
+        } else {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.privacyPolicyRequired")
+            );
+        }
+
+        const library = libraryCache.hasLib(req.body.library)
+            ? req.body.library
+            : "Other";
+
+        let tags: string[] = [];
+        if (req.body.fun === true) tags.push("Fun");
+        if (req.body.social === true) tags.push("Social");
+        if (req.body.economy === true) tags.push("Economy");
+        if (req.body.utility === true) tags.push("Utility");
+        if (req.body.moderation === true) tags.push("Moderation");
+        if (req.body.multipurpose === true) tags.push("Multipurpose");
+        if (req.body.music === true) tags.push("Music");
+
+        let editors: any[];
+
+        if (req.body.editors !== "") {
+            editors = [...new Set(req.body.editors.split(/\D+/g))];
+        } else {
+            editors = [];
+        }
+
+        if (editors.includes(req.user.id)) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.removeYourselfEditor")
+            );
+        }
+
+        if (error === true)
+            return res.status(400).json({
+                error: true,
+                status: 400,
+                errors: errors
+            });
+
+        discord.bot.api.users(req.body.id).get()
+            .then(async (bot: APIUser) => {
+                if (!bot.bot)
                     return res.status(400).json({
                         error: true,
                         status: 400,
-                        errors: errors
+                        errors: [res.__("common.error.bot.arr.isUser")]
                     });
-                }
 
                 await global.db.collection("bots").insertOne({
                     _id: req.body.id,
@@ -584,7 +535,7 @@ router.post(
                         siteBot: false,
                         archived: false
                     }
-                });
+                } as delBot);
 
                 (discord.bot.channels.cache.get(
                     settings.channels.webLog
@@ -663,7 +614,7 @@ router.post(
                                 siteBot: false,
                                 archived: false
                             }
-                        }
+                        } as delBot
                     }
                 });
                 await botCache.updateBot(req.params.id);
@@ -676,286 +627,25 @@ router.post(
                     errors: []
                 });
             })
-            .catch(async () => {
-                if (req.body.invite !== "") {
-                    if (typeof req.body.invite !== "string") {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.listing.arr.invite.invalid")
-                        );
-                    } else if (req.body.invite.length > 2000) {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.listing.arr.invite.tooLong")
-                        );
-                    } else if (!functions.isURL(req.body.invite)) {
-                        error = true;
-                        errors.push(res.__("Invite needs to be a valid URL."));
-                    } else {
-                        invite = req.body.invite;
-                    }
-                }
-
-                if (
-                    req.body.invite &&
-                    functions.isURL(req.body.invite) &&
-                    Number(
-                        new URL(req.body.invite).searchParams.get("permissions")
-                    ) & 8
-                ) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.inviteHasAdmin")
-                    );
-                }
-
-                if (req.body.widgetServer && !req.body.widgetChannel) {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.serverButNotChannel"
-                        )
-                    );
-                }
-
-                if (req.body.widgetChannel && !req.body.widgetServer) {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.channelButNotServer"
-                        )
-                    );
-                }
-
-                if (req.body.widgetServer && req.body.widgetChannel) {
-                    let fetchServer = true;
-
-                    if (
-                        isNaN(req.body.widgetServer) ||
-                        req.body.widgetServer.includes(" ")
-                    ) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.serverID.invalid"
-                            )
-                        );
-                        fetchServer = false;
-                    }
-                    if (
-                        req.body.widgetServer &&
-                        req.body.widgetServer.length > 32
-                    ) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.serverID.tooLong"
-                            )
-                        );
-                        fetchServer = false;
-                    }
-
-                    if (fetchServer)
-                        await fetch(
-                            `https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`,
-                            {
-                                headers: {
-                                    Authorization: `Bot ${settings.secrets.discord.token}`
-                                }
-                            }
-                        ).then((fetchRes: fetchRes) => {
-                            if (
-                                fetchRes.status === 400 ||
-                                fetchRes.status === 404
-                            ) {
-                                error = true;
-                                errors.push(
-                                    res.__(
-                                        "common.error.listing.arr.widgetbot.serverID.nonexistent"
-                                    )
-                                );
-                                fetchServer = false;
-                            }
-                        });
-
-                    if (fetchServer)
-                        await fetch(
-                            `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
-                        ).then(async (fetchRes: fetchRes) => {
-                            const { data } = await fetchRes.json();
-                            if (!data.guild?.id) {
-                                error = true;
-                                errors.push(
-                                    res.__(
-                                        "common.error.listing.arr.widgetbot.guildNotFound"
-                                    )
-                                );
-                            }
-                        });
-
-                    let fetchChannel = true;
-
-                    if (
-                        isNaN(req.body.widgetChannel) ||
-                        req.body.widgetChannel.includes(" ")
-                    ) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.channelID.invalid"
-                            )
-                        );
-                        fetchChannel = false;
-                    }
-                    if (
-                        req.body.widgetChannel &&
-                        req.body.widgetChannel.length > 32
-                    ) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.channelID.tooLong"
-                            )
-                        );
-                        fetchChannel = false;
-                    }
-
-                    if (fetchChannel)
-                        await fetch(
-                            `https://discord.com/api/v6/channels/${req.body.widgetChannel}`,
-                            {
-                                headers: {
-                                    Authorization: `Bot ${settings.secrets.discord.token}`
-                                }
-                            }
-                        ).then((fetchRes: fetchRes) => {
-                            if (
-                                fetchRes.status === 400 ||
-                                fetchRes.status === 404
-                            ) {
-                                error = true;
-                                errors.push(
-                                    res.__(
-                                        "common.error.listing.arr.widgetbot.channelID.nonexistent"
-                                    )
-                                );
-                                fetchChannel = false;
-                            }
-                        });
-
-                    if (fetchChannel)
-                        await fetch(
-                            `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
-                        ).then(async (fetchRes: fetchRes) => {
-                            const { data } = await fetchRes.json();
-                            if (!data.channel?.id) {
-                                error = true;
-                                errors.push(
-                                    res.__(
-                                        "common.error.listing.arr.widgetbot.channelNotFound"
-                                    )
-                                );
-                            }
-                        });
-                }
-
-                if (!req.body.shortDescription) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.shortDescRequired")
-                    );
-                }
-
-                if (!req.body.longDescription) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.longDescRequired")
-                    );
-                }
-
-                if (
-                    req.body.longDescription &&
-                    req.body.longDescription.length < 150
-                ) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.notAtMinChars", "150")
-                    );
-                }
-
-                if (req.body.longDescription.includes("http://")) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.containsHttp")
-                    )
-                }
-
-                if (!req.body.prefix) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.prefixRequired")
-                    );
-                }
-
-                if (req.body.privacyPolicy) {
-                    if (
-                        req.body.privacyPolicy.includes("discord.bot/privacy")
-                    ) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.privacyPolicy.placeholder"
-                            )
-                        );
-                    }
-
-                    if (
-                        req.body.privacyPolicy.includes("discord.com/privacy")
-                    ) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.privacyPolicy.discord"
-                            )
-                        );
-                    }
-
-                    let test: string;
-                    if (["yardım", "yardim"].some(test.includes.bind(req.body.privacyPolicy))) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.privacyPolicy.yardim"
-                            )
-                        );
-                    }
-
-                    if (req.body.privacyPolicy.includes("help")) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.privacyPolicy.help"
-                            )
-                        );
-                    }
-                } else {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.privacyPolicyRequired")
-                    );
-                }
+            .catch((error: DiscordAPIError) => {
+                if(error.code === RESTJSONErrorCodes.UnknownUser)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.notFound")]
+                    });
 
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: errors
+                    errors: [res.__("common.error.bot.arr.fetchError"), `${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
                 });
             });
     }
 );
 
 /* TODO: Add preview for long description on edit & submit page
-router.post("/preview_post", async (req: Request, res: Response, next) => {
+router.post("/preview_post", async (req: Request, res: Response) => {
     const dirty = entities.decode(md.render(req.body.longDesc));
 
     const clean = sanitizeHtml(dirty, {
@@ -1007,7 +697,7 @@ router.get(
     "/:id/tokenreset",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const botExists = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -1068,7 +758,7 @@ router.post(
     "/:id/setvanity",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const botExists = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -1229,7 +919,7 @@ router.get(
     "/:id/edit",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const botExists = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -1282,7 +972,7 @@ router.post(
     variables,
     permission.auth,
     permission.member,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         let error = false;
         let errors = [];
 
@@ -1295,24 +985,15 @@ router.post(
                 error = true;
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
-
             if (req.body.clientID !== req.params.id)
-                await fetch(
-                    `https://discord.com/api/v6/users/${req.body.clientID}`,
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bot ${settings.secrets.discord.token}`
-                        }
-                    }
-                ).then((fetchRes: fetchRes) => {
-                    if (fetchRes.status !== 404) {
+                discord.bot.api.users(req.body.clientID).get()
+                    .then(() => {
                         error = true;
                         errors.push(
                             res.__("common.error.bot.arr.clientIDIsUser")
                         );
-                    }
-                });
+                    })
+                    .catch(() => {})
         }
 
         const botExists: delBot | undefined = await global.db
@@ -1447,31 +1128,25 @@ router.post(
             }
 
             if (fetchServer)
-                await fetch(
-                    `https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`,
-                    {
-                        headers: {
-                            Authorization: `Bot ${settings.secrets.discord.token}`
+                await discord.bot.api.guilds(req.body.widgetServer).channels.get()
+                    .catch((e: DiscordAPIError) => {
+                        if([400, 404].includes(e.httpStatus)) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.serverID.nonexistent"
+                                )
+                            );
+                            fetchServer = false;
                         }
-                    }
-                ).then((fetchRes: fetchRes) => {
-                    if (fetchRes.status === 400 || fetchRes.status === 404) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.serverID.nonexistent"
-                            )
-                        );
-                        fetchServer = false;
-                    }
-                });
+                    })
 
             if (fetchServer)
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
                     const { data } = await fetchRes.json();
-                    if (!data.guild?.id) {
+                    if (data && !data.guild?.id) {
                         error = true;
                         errors.push(
                             res.__(
@@ -1506,24 +1181,18 @@ router.post(
             }
 
             if (fetchChannel)
-                await fetch(
-                    `https://discord.com/api/v6/channels/${req.body.widgetChannel}`,
-                    {
-                        headers: {
-                            Authorization: `Bot ${settings.secrets.discord.token}`
+                await discord.bot.api.channels(req.body.widgetChannel).get()
+                    .catch((e: DiscordAPIError) => {
+                        if([400, 404].includes(e.httpStatus)) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.channelID.nonexistent"
+                                )
+                            );
+                            fetchChannel = false;
                         }
-                    }
-                ).then((fetchRes: fetchRes) => {
-                    if (fetchRes.status === 400 || fetchRes.status === 404) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.channelID.nonexistent"
-                            )
-                        );
-                        fetchChannel = false;
-                    }
-                });
+                    })
 
             if (fetchChannel)
                 await fetch(
@@ -1593,8 +1262,7 @@ router.post(
                 );
             }
 
-            let test: string;
-            if (["yardım", "yardim"].some(test.includes.bind(req.body.privacyPolicy))) {
+            if (/(yardım|yardim)/.test(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(
                     res.__(
@@ -1658,12 +1326,8 @@ router.post(
             });
         }
 
-        await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
-            method: "GET",
-            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-        })
-            .then(async (fetchRes: fetchRes) => {
-                const bot = (await fetchRes.json()) as APIUser;
+        discord.bot.api.users(req.params.id).get()
+            .then(async (bot: APIUser) => {
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
@@ -1750,7 +1414,7 @@ router.post(
                                 options: botExists.widgetbot.options,
                                 server: botExists.widgetbot.server
                             }
-                        },
+                        } as delBot,
                         new: {
                             clientID: req.body.clientID,
                             name: bot.username,
@@ -1786,16 +1450,23 @@ router.post(
                                 options: req.body.widgetOptions,
                                 server: req.body.widgetServer
                             }
-                        }
+                        } as delBot
                     }
                 });
                 await botCache.updateBot(req.params.id);
             })
-            .catch((_) => {
-                return res.status(502).json({
+            .catch((error: DiscordAPIError) => {
+                if(error.code === RESTJSONErrorCodes.UnknownUser)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.notFound")]
+                    });
+
+                return res.status(400).json({
                     error: true,
-                    status: 502,
-                    errors: [res.__("common.error.dapiFail")]
+                    status: 400,
+                    errors: [res.__("common.error.bot.arr.fetchError"), `${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
                 });
             });
 
@@ -1825,7 +1496,7 @@ router.post(
     }
 );
 
-router.get("/:id", variables, async (req: Request, res: Response, next) => {
+router.get("/:id", variables, async (req: Request, res: Response) => {
     res.locals.pageType = {
         server: false,
         bot: true,
@@ -1952,7 +1623,7 @@ router.get(
     variables,
     permission.auth,
     permission.admin,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         if (req.params.id === "@me") {
             if (!req.user) return res.redirect("/auth/login");
             req.params.id = req.user.id;
@@ -1980,7 +1651,7 @@ router.get(
     "/:id/upvote",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         let bot = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -2093,7 +1764,7 @@ router.get(
     "/:id/downvote",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         let bot = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -2206,7 +1877,7 @@ router.get(
     "/:id/delete",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         let bot = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -2269,7 +1940,7 @@ router.get(
     "/:id/resubmit",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const botExists = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -2326,7 +1997,7 @@ router.post(
     variables,
     permission.auth,
     permission.member,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         let error = false;
         let errors = [];
 
@@ -2346,24 +2017,16 @@ router.post(
                 });
 
             if (req.body.clientID !== req.params.id)
-                await fetch(
-                    `https://discord.com/api/v6/users/${req.body.clientID}`,
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bot ${settings.secrets.discord.token}`
-                        }
-                    }
-                ).then((fetchRes: fetchRes) => {
-                    if (fetchRes.status !== 404)
+                discord.bot.api.users(req.body.clientID).get()
+                    .then(() => {
+                        error = true
                         return res.status(400).json({
                             error: true,
                             status: 400,
-                            errors: [
-                                res.__("common.error.bot.arr.clientIDIsUser")
-                            ]
+                            errors: [res.__("common.error.bot.arr.clientIDIsUser")]
                         });
-                });
+                    })
+                    .catch(() => {})
         }
 
         const botExists: delBot | undefined = await global.db
@@ -2507,31 +2170,25 @@ router.post(
             }
 
             if (fetchServer)
-                await fetch(
-                    `https://discord.com/api/v6/guilds/${req.body.widgetServer}/channels`,
-                    {
-                        headers: {
-                            Authorization: `Bot ${settings.secrets.discord.token}`
+                await discord.bot.api.guilds(req.body.widgetServer).channels.get()
+                    .catch((e: DiscordAPIError) => {
+                        if([400, 404].includes(e.httpStatus)) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.serverID.nonexistent"
+                                )
+                            );
+                            fetchServer = false;
                         }
-                    }
-                ).then((fetchRes: fetchRes) => {
-                    if (fetchRes.status === 400 || fetchRes.status === 404) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.serverID.nonexistent"
-                            )
-                        );
-                        fetchServer = false;
-                    }
-                });
+                    })
 
             if (fetchServer)
                 await fetch(
                     `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
                 ).then(async (fetchRes: fetchRes) => {
                     const { data } = await fetchRes.json();
-                    if (!data.guild?.id) {
+                    if (data && !data.guild?.id) {
                         error = true;
                         errors.push(
                             res.__(
@@ -2566,24 +2223,18 @@ router.post(
             }
 
             if (fetchChannel)
-                await fetch(
-                    `https://discord.com/api/v6/channels/${req.body.widgetChannel}`,
-                    {
-                        headers: {
-                            Authorization: `Bot ${settings.secrets.discord.token}`
+                await discord.bot.api.channels(req.body.widgetChannel).get()
+                    .catch((e: DiscordAPIError) => {
+                        if([400, 404].includes(e.httpStatus)) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.channelID.nonexistent"
+                                )
+                            );
+                            fetchChannel = false;
                         }
-                    }
-                ).then((fetchRes: fetchRes) => {
-                    if (fetchRes.status === 400 || fetchRes.status === 404) {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.channelID.nonexistent"
-                            )
-                        );
-                        fetchChannel = false;
-                    }
-                });
+                    })
 
             if (fetchChannel)
                 await fetch(
@@ -2653,8 +2304,7 @@ router.post(
                 );
             }
 
-            let test: string;
-            if (["yardım", "yardim"].some(test.includes.bind(req.body.privacyPolicy))) {
+            if (/(yardım|yardim)/.test(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(
                     res.__(
@@ -2705,20 +2355,15 @@ router.post(
             );
         }
 
-        if (error === true) {
+        if (error === true)
             return res.status(400).json({
                 error: true,
                 status: 400,
                 errors: errors
             });
-        }
 
-        await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
-            method: "GET",
-            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-        })
-            .then(async (fetchRes: fetchRes) => {
-                const bot = (await fetchRes.json()) as APIUser;
+        discord.bot.api.users(req.params.id).get()
+            .then(async (bot: APIUser) => {
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
@@ -2800,7 +2445,7 @@ router.post(
                             status: {
                                 archived: true
                             }
-                        },
+                        } as delBot,
                         new: {
                             clientID: req.body.clientID,
                             name: bot.username,
@@ -2839,16 +2484,23 @@ router.post(
                             status: {
                                 archived: false
                             }
-                        }
+                        } as delBot
                     }
                 });
                 await botCache.updateBot(req.params.id);
             })
-            .catch((_) => {
-                return res.status(502).json({
+            .catch((error: DiscordAPIError) => {
+                if(error.code === RESTJSONErrorCodes.UnknownUser)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.notFound")]
+                    });
+
+                return res.status(400).json({
                     error: true,
-                    status: 502,
-                    errors: [res.__("common.error.dapiFail")]
+                    status: 400,
+                    errors: [res.__("common.error.bot.arr.fetchError"), `${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
                 });
             });
 
@@ -2883,7 +2535,7 @@ router.get(
     variables,
     permission.auth,
     permission.mod,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -3017,7 +2669,7 @@ router.get(
     variables,
     permission.auth,
     permission.assistant,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -3095,7 +2747,7 @@ router.get(
     variables,
     permission.auth,
     permission.assistant,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -3146,7 +2798,7 @@ router.get(
     variables,
     permission.auth,
     permission.mod,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -3191,7 +2843,7 @@ router.post(
     variables,
     permission.auth,
     permission.mod,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -3305,7 +2957,7 @@ router.get(
     variables,
     permission.auth,
     permission.mod,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -3345,7 +2997,7 @@ router.post(
     variables,
     permission.auth,
     permission.mod,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -3460,7 +3112,7 @@ router.get(
     variables,
     permission.auth,
     permission.mod,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -3500,7 +3152,7 @@ router.post(
     variables,
     permission.auth,
     permission.mod,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
             .collection("bots")
             .findOne({ _id: req.params.id });
@@ -3630,12 +3282,8 @@ router.get(
 
         const bot = botExists;
 
-        await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
-            method: "GET",
-            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-        })
-            .then(async (fetchRes: fetchRes) => {
-                const bot = (await fetchRes.json()) as APIUser;
+        discord.bot.api.users(req.params.id).get()
+            .then(async (bot: APIUser) => {
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
@@ -3646,7 +3294,7 @@ router.get(
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
                             }
-                        }
+                        } as delBot
                     }
                 );
 
@@ -3664,7 +3312,7 @@ router.get(
                                 hash: botExists.avatar.hash,
                                 url: botExists.avatar.url
                             }
-                        },
+                        } as delBot,
                         new: {
                             name: bot.username,
                             flags: bot.public_flags,
@@ -3672,16 +3320,23 @@ router.get(
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
                             }
-                        }
+                        } as delBot
                     }
                 });
                 await botCache.updateBot(req.params.id);
             })
-            .catch((_) => {
-                return res.status(502).json({
+            .catch((error: DiscordAPIError) => {
+                if(error.code === RESTJSONErrorCodes.UnknownUser)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.notFound")]
+                    });
+
+                return res.status(400).json({
                     error: true,
-                    status: 502,
-                    errors: [res.__("common.error.dapiFail")]
+                    status: 400,
+                    errors: [res.__("common.error.bot.arr.fetchError"), `${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
                 });
             });
 

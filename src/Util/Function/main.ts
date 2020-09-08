@@ -348,12 +348,12 @@ export function shuffleArray<T>(array: Array<T>) {
     return array;
 }
 
-export function isURL(string: string): boolean {
+export function isURL(string: string) {
     try {
-        new URL(string);
-    } catch (_) {
+        if (new URL(string).protocol === 'https:') {
+            return true
+        } else return false
+    } catch {
         return false;
     }
-
-    return true;
 }

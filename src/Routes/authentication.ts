@@ -22,8 +22,9 @@ import { Request, Response } from "express";
 
 import bodyParser from "body-parser";
 import passport from "passport";
-import * as https from "https";
 import { Strategy } from "passport-discord";
+import * as discord from "../Util/Services/discord";
+import { DiscordAPIError } from "discord.js";
 
 import * as settings from "../../settings.json";
 import * as tokenManager from "../Util/Services/adminTokenManager";
@@ -58,7 +59,7 @@ router.use(
     })
 );
 
-router.get("/login/joinGuild", (req: Request, res: Response, next) => {
+router.get("/login/joinGuild", (req: Request, res: Response) => {
     req.session.joinGuild = true;
     res.redirect("/auth/login/continue");
 });
@@ -256,47 +257,26 @@ router.get(
         if (req.session.joinGuild && req.session.joinGuild === true) {
             req.session.joinGuild = false;
 
-            const data = JSON.stringify({
-                access_token: req.user.accessToken
-            });
-
-            const options = {
-                hostname: "discord.com",
-                port: 443,
-                path: `/api/v6/guilds/${settings.guild.main}/members/${req.user.id}`,
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Content-Length": data.length,
-                    Authorization: "Bot " + settings.secrets.discord.token
-                }
-            };
-
-            const msReq = https.request(options, (response) => {
-                if (response.statusCode === 403 && !req.user.impersonator) {
-                    return res.status(403).render("status", {
-                        title: res.__("common.error"),
-                        status: 403,
-                        subtitle: res.__("common.error.notMember"),
-                        req,
-                        type: "Error"
-                    });
-                } else next();
-            });
-
-            msReq.on("error", (e) => {
-                console.error(e);
-            });
-
-            msReq.write(data);
-            msReq.end();
+            discord.bot.api.guilds(settings.guild.main).members(req.user.id).put({ data: { access_token: req.user.accessToken } })
+                .catch((error: DiscordAPIError) => {
+                    console.error(error)
+                    if (error.httpStatus === 403 && !req.user.impersonator) {
+                        return res.status(403).render("status", {
+                            title: res.__("common.error"),
+                            status: 403,
+                            subtitle: res.__("common.error.notMember"),
+                            req,
+                            type: "Error"
+                        });
+                    } else next();
+                });
         }
 
         res.redirect(req.session.redirectTo || "/");
     }
 );
 
-router.get("/logout", async (req: Request, res: Response, next) => {
+router.get("/logout", async (req: Request, res: Response) => {
     if (!req.user.impersonator) {
         req.session.logoutJust = true;
         if (req.user.db.rank.admin) await tokenManager.tokenReset(req.user.id);

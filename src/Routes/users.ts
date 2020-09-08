@@ -31,15 +31,13 @@ import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
 import * as tokenManager from "../Util/Services/adminTokenManager";
-import * as fetch from "node-fetch";
-import { Response as fetchRes } from "../../@types/fetch";
-import * as settings from "../../settings.json";
+import { DiscordAPIError } from "discord.js";
 
 const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
 const router = express.Router();
 
-router.get("/:id", variables, async (req: Request, res: Response, next) => {
+router.get("/:id", variables, async (req: Request, res: Response) => {
     if (req.params.id === "@me") {
         if (!req.user) {
             if (req.session.logoutJustCont === true) {
@@ -130,7 +128,7 @@ router.get(
     variables,
     permission.auth,
     permission.assistant,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const targetUser: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
@@ -179,7 +177,7 @@ router.post(
     variables,
     permission.auth,
     permission.assistant,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const targetUser: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.params.id });
@@ -308,7 +306,7 @@ router.get(
     variables,
     permission.auth,
     permission.admin,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         if (req.params.id === "@me") {
             if (!req.user) return res.redirect("/auth/login");
             req.params.id = req.user.id;
@@ -338,7 +336,7 @@ router.get(
     variables,
     permission.auth,
     permission.admin,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         if (!req.query.token) return res.json({});
         const tokenCheck = await tokenManager.verifyToken(
             req.user.id,
@@ -350,7 +348,7 @@ router.get(
     }
 );
 
-router.get("/profile/:id", (req: Request, res: Response, next) => {
+router.get("/profile/:id", (req: Request, res: Response) => {
     res.redirect("/" + req.params.id);
 });
 
@@ -358,7 +356,7 @@ router.get(
     "/profile/:id/edit",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         if (req.params.id === "@me") {
             req.params.id = req.user.id;
         }
@@ -408,7 +406,7 @@ router.post(
     "/profile/:id/edit",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         if (req.params.id === "@me") {
             req.params.id = req.user.id;
         }
@@ -509,7 +507,7 @@ router.get(
     "/:id/sync",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         if (req.params.id === "@me") {
             req.params.id = req.user.id;
         }
@@ -525,12 +523,8 @@ router.get(
                 req: req
             });
 
-        await fetch(`https://discord.com/api/v6/users/${req.params.id}`, {
-            method: "GET",
-            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-        })
-            .then(async (fetchRes: fetchRes) => {
-                const user = (await fetchRes.json()) as APIUser;
+        discord.bot.api.users(req.params.id).get()
+            .then(async (user: APIUser) => {
                 await global.db.collection("users").updateOne(
                     { _id: req.params.id },
                     {
@@ -559,7 +553,7 @@ router.get(
                                 hash: userProfile.avatar.hash,
                                 url: userProfile.avatar.url
                             }
-                        },
+                        } as delUser,
                         new: {
                             name: user.username,
                             flags: user.public_flags,
@@ -567,16 +561,18 @@ router.get(
                                 hash: user.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${user.avatar}`
                             }
-                        }
+                        } as delUser
                     }
                 });
                 await userCache.updateUser(req.params.id);
             })
-            .catch((_) => {
-                return res.status(502).json({
-                    error: true,
-                    status: 502,
-                    errors: [res.__("common.error.dapiFail")]
+            .catch((error: DiscordAPIError) => {
+                return res.status(400).render("status", {
+                    title: res.__("common.error"),
+                    status: 400,
+                    subtitle: `${error.name}: ${error.message} | ${error.httpStatus} ${error.method} ${error.path}`,
+                    req,
+                    type: "Error"
                 });
             });
 
@@ -588,7 +584,7 @@ router.get(
     "/game/snake",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         res.locals.premidPageInfo = res.__("premid.snake");
 
         res.render("templates/users/snake", {
@@ -602,7 +598,7 @@ router.get(
 router.get(
     "/game/snake/leaderboard",
     variables,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         res.locals.premidPageInfo = res.__("premid.snake.lb");
 
         const users = await userCache.getAllUsers();
@@ -622,7 +618,7 @@ router.get(
     "/profile/game/snakes",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const user: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.user.id });
@@ -639,7 +635,7 @@ router.post(
     "/profile/game/snakes",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         if (req.body.score <= req.user.db.game.snakes.maxScore)
             return res.status(202).json({
                 error: false,
@@ -704,7 +700,7 @@ router.get(
     "/account/preferences",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         res.locals.premidPageInfo = res.__("premid.preferences");
 
         res.render("templates/users/accountPreferences", {
@@ -722,7 +718,7 @@ router.post(
     "/account/preferences",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         let gamePreferences: boolean, experiments: boolean, theme: number;
 
         // Refer to docs/THEME.md in the root directory of this project.
@@ -813,7 +809,7 @@ router.get(
     "/account/preferences/reset",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
             {

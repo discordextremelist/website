@@ -19,10 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import { Request, Response } from "express";
-import { Response as fetchRes } from "../../@types/fetch";
 
-import * as fetch from "node-fetch";
-import * as Discord from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
 import * as settings from "../../settings.json";
@@ -35,6 +32,7 @@ import * as templateCache from "../Util/Services/templateCaching";
 import { variables } from "../Util/Function/variables";
 import * as tokenManager from "../Util/Services/adminTokenManager";
 import { APITemplate } from "../../@types/discord";
+import { TextChannel, DiscordAPIError } from "discord.js";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -45,7 +43,7 @@ router.get(
     "/submit",
     variables,
     permission.auth,
-    (req: Request, res: Response, next) => {
+    (req: Request, res: Response) => {
         res.locals.premidPageInfo = res.__("premid.templates.submit");
 
         res.render("templates/serverTemplates/submit", {
@@ -60,77 +58,85 @@ router.post(
     "/submit",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         res.locals.premidPageInfo = res.__("premid.templates.submit");
 
         let error = false;
         let errors: string[] = [];
 
-        if (req.body.code.includes(" "))
+        if (!req.body.code || typeof req.body.code !== "string" || req.body.code.includes(" ")) {
+            error = true;
+            errors.push(
+                res.__("common.error.template.arr.invite.invalid")
+            );
+        }
+
+        if (req.body.code.length > 2000) {
+            error = true;
+            errors.push(
+                res.__("common.error.template.arr.invite.tooLong")
+            );
+        }
+
+        if (functions.isURL(req.body.code)) {
+            error = true;
+            errors.push(
+                res.__("common.error.template.arr.invite.isURL")
+            );
+        }
+
+        if (req.body.code.includes("discord.new")) {
+            error = true;
+            errors.push(
+                res.__("common.error.template.arr.invite.dnew")
+            );
+        }
+
+        const templateExists:
+            | delTemplate
+            | undefined = await global.db
+            .collection("templates")
+            .findOne({ _id: req.body.code });
+        if (templateExists)
+            return res.status(409).json({
+                error: true,
+                status: 409,
+                errors: [res.__("common.error.template.conflict")]
+            });
+
+        if (!req.body.shortDescription) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.shortDescRequired")
+            );
+        }
+
+        let tags: string[] = [];
+
+        if (req.body.gaming === true) tags.push("Gaming");
+        if (req.body.music === true) tags.push("Music");
+        if (req.body.mediaEntertain === true)
+            tags.push("Media & Entertainment");
+        if (req.body.createArts === true) tags.push("Creative Arts");
+        if (req.body.sciTech === true) tags.push("Science & Tech");
+        if (req.body.edu === true) tags.push("Education");
+        if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
+
+        if (req.body.relIdentity === true)
+            tags.push("Relationships & Identity");
+        if (req.body.travelCuis === true) tags.push("Travel & Food");
+        if (req.body.fitHealth === true) tags.push("Fitness & Health");
+        if (req.body.finance === true) tags.push("Finance");
+
+        if (error === true)
             return res.status(400).json({
                 error: true,
                 status: 400,
-                errors: [res.__("common.error.template.arr.invite.invalid")]
+                errors: errors
             });
 
-        fetch(`https://discord.com/api/v6/guilds/templates/${req.body.code}`, {
-            method: "GET",
-            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-        })
-            .then(async (fetchRes: fetchRes) => {
-                const template = (await fetchRes.json()) as APITemplate;
-
-                // @ts-expect-error
-                if (template.code !== 10057) {
-                    const templateExists:
-                        | delTemplate
-                        | undefined = await global.db
-                        .collection("templates")
-                        .findOne({ _id: template.code });
-                    if (templateExists)
-                        return res.status(409).json({
-                            error: true,
-                            status: 409,
-                            errors: [res.__("common.error.template.conflict")]
-                        });
-
-                    if (!req.body.shortDescription) {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.listing.arr.shortDescRequired")
-                        );
-                    }
-                } else {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.template.arr.invite.invalid")
-                    );
-                }
-
-                let tags: string[] = [];
-
-                if (req.body.gaming === true) tags.push("Gaming");
-                if (req.body.music === true) tags.push("Music");
-                if (req.body.mediaEntertain === "on")
-                    tags.push("Media & Entertainment");
-                if (req.body.createArts === true) tags.push("Creative Arts");
-                if (req.body.sciTech === true) tags.push("Science & Tech");
-                if (req.body.edu === true) tags.push("Education");
-                if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
-
-                if (req.body.relIdentity === "on")
-                    tags.push("Relationships & Identity");
-                if (req.body.travelCuis === true) tags.push("Travel & Food");
-                if (req.body.fitHealth === true) tags.push("Fitness & Health");
-                if (req.body.finance === true) tags.push("Finance");
-
-                if (error === true)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: errors
-                    });
-
+        discord.bot.api.guilds.templates(req.body.code).get()
+            .then(async (template: APITemplate) => {
                 await global.db.collection("templates").insertOne({
                     _id: template.code,
                     name: template.name,
@@ -163,11 +169,11 @@ router.post(
                         linkToServerPage: false,
                         template: `https://discord.new/${template.code}`
                     }
-                });
+                } as delTemplate);
 
                 await (discord.bot.channels.cache.get(
                     settings.channels.webLog
-                ) as Discord.TextChannel).send(
+                ) as TextChannel).send(
                     `${settings.emoji.addBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -237,70 +243,24 @@ router.post(
                     id: template.code
                 });
             })
-            .catch(async (fetchRes: fetchRes) => {
-                if (!req.body.code) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.template.arr.invite.invalid")
-                    );
-                } else {
-                    if (typeof req.body.code !== "string") {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.template.arr.invite.invalid")
-                        );
-                    } else if (req.body.code.length > 2000) {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.template.arr.invite.tooLong")
-                        );
-                    } else if (functions.isURL(req.body.code)) {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.template.arr.invite.isURL")
-                        );
-                    } else if (req.body.code.includes("discord.new")) {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.template.arr.invite.dnew.")
-                        );
-                    }
-                }
-
-                if (!req.body.shortDescription) {
-                    error = true;
-                    errors.push(
-                        res.__("common.error.listing.arr.shortDescRequired")
-                    );
-                }
-
-                let tags: string[] = [];
-
-                if (req.body.gaming === true) tags.push("Gaming");
-                if (req.body.music === true) tags.push("Music");
-                if (req.body.mediaEntertain === "on")
-                    tags.push("Media & Entertainment");
-                if (req.body.createArts === true) tags.push("Creative Arts");
-                if (req.body.sciTech === true) tags.push("Science & Tech");
-                if (req.body.edu === true) tags.push("Education");
-                if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
-
-                if (req.body.relIdentity === "on")
-                    tags.push("Relationships & Identity");
-                if (req.body.travelCuis === true) tags.push("Travel & Food");
-                if (req.body.fitHealth === true) tags.push("Fitness & Health");
-                if (req.body.finance === true) tags.push("Finance");
+            .catch((error: DiscordAPIError) => {
+                if(error.code === 10057)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.template.arr.invite.invalid")]
+                    });
 
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: errors
+                    errors: [`${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
                 });
             });
     }
 );
 
-router.get("/:id", variables, async (req: Request, res: Response, next) => {
+router.get("/:id", variables, async (req: Request, res: Response) => {
     res.locals.pageType = {
         server: false,
         bot: false,
@@ -361,7 +321,7 @@ router.get(
     variables,
     permission.auth,
     permission.admin,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         if (req.params.id === "@me") {
             if (!req.user) return res.redirect("/auth/login");
             req.params.id = req.user.id;
@@ -387,7 +347,7 @@ router.get(
     "/:id/edit",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
@@ -439,7 +399,7 @@ router.post(
     "/:id/edit",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         let error = false;
         let errors = [];
 
@@ -510,20 +470,15 @@ router.post(
         if (req.body.fitHealth === true) tags.push("Fitness & Health");
         if (req.body.finance === true) tags.push("Finance");
 
-        fetch(`https://discord.com/api/v6/guilds/templates/${req.body.code}`, {
-            method: "GET",
-            headers: { Authorization: `Bot ${settings.secrets.discord.token}` }
-        })
-            .then(async (fetchRes: fetchRes) => {
-                const template = (await fetchRes.json()) as APITemplate;
+        if (error === true)
+            return res.status(400).json({
+                error: true,
+                status: 400,
+                errors: errors
+            });
 
-                if (error === true)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: errors
-                    });
-
+        discord.bot.api.guilds.templates(req.body.code).get()
+            .then(async (template: APITemplate) => {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
                     {
@@ -559,13 +514,13 @@ router.post(
                                 linkToServerPage: linkToServerPage,
                                 template: `https://discord.new/${dbTemplate._id}`
                             }
-                        }
+                        } as delTemplate
                     }
                 );
 
                 await (discord.bot.channels.cache.get(
                     settings.channels.webLog
-                ) as Discord.TextChannel).send(
+                ) as TextChannel).send(
                     `${settings.emoji.editBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -617,7 +572,7 @@ router.post(
                                 linkToServerPage: linkToServerPage,
                                 template: `https://discord.new/${dbTemplate._id}`
                             }
-                        },
+                        } as delTemplate,
                         old: {
                             name: dbTemplate.name,
                             region: dbTemplate.region,
@@ -642,7 +597,7 @@ router.post(
                                 linkToServerPage: linkToServerPage,
                                 template: `https://discord.new/${dbTemplate._id}`
                             }
-                        }
+                        } as delTemplate
                     }
                 });
 
@@ -655,11 +610,18 @@ router.post(
                     id: template.code
                 });
             })
-            .catch(() => {
-                return res.status(502).json({
+            .catch((error: DiscordAPIError) => {
+                if(error.code === 10057)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.template.arr.invite.invalid")]
+                    });
+
+                return res.status(400).json({
                     error: true,
-                    status: 502,
-                    errors: [res.__("common.error.dapiFail")]
+                    status: 400,
+                    errors: [`${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
                 });
             });
     }
@@ -669,7 +631,7 @@ router.get(
     "/:id/delete",
     variables,
     permission.auth,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
@@ -696,7 +658,7 @@ router.get(
 
         (discord.bot.channels.cache.get(
             settings.channels.webLog
-        ) as Discord.TextChannel).send(
+        ) as TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -731,7 +693,7 @@ router.get(
     variables,
     permission.auth,
     permission.mod,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
@@ -764,7 +726,7 @@ router.post(
     variables,
     permission.auth,
     permission.mod,
-    async (req: Request, res: Response, next) => {
+    async (req: Request, res: Response) => {
         const template: delTemplate | undefined = await global.db
             .collection("templates")
             .findOne({ _id: req.params.id });
@@ -803,7 +765,7 @@ router.post(
 
         (discord.bot.channels.cache.get(
             settings.channels.webLog
-        ) as Discord.TextChannel).send(
+        ) as TextChannel).send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -857,18 +819,8 @@ router.get(
                 type: "Error"
             });
 
-        await fetch(
-            `https://discord.com/api/v6/guilds/templates/${req.params.id}`,
-            {
-                method: "GET",
-                headers: {
-                    Authorization: `Bot ${settings.secrets.discord.token}`
-                }
-            }
-        )
-            .then(async (fetchRes: fetchRes) => {
-                const template = (await fetchRes.json()) as APITemplate;
-
+        discord.bot.api.guilds.templates(req.params.id).get()
+            .then(async (template: APITemplate) => {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
                     {
@@ -897,7 +849,7 @@ router.get(
                                     template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             }
-                        }
+                        } as delTemplate
                     }
                 );
 
@@ -933,7 +885,7 @@ router.get(
                                     template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             }
-                        },
+                        } as delTemplate,
                         old: {
                             name: dbTemplate.name,
                             region: dbTemplate.region,
@@ -950,19 +902,24 @@ router.get(
                                 hash: dbTemplate.icon.hash,
                                 url: dbTemplate.icon.url
                             }
-                        }
+                        } as delTemplate
                     }
                 });
 
                 await templateCache.updateTemplate(req.params.id);
             })
-            .catch(() => {
-                return res.status(404).render("status", {
-                    title: res.__("common.error"),
-                    status: 404,
-                    subtitle: res.__("common.error.dapiFail"),
-                    req,
-                    type: "Error"
+            .catch((error: DiscordAPIError) => {
+                if(error.code === 10057)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.template.arr.invite.invalid")]
+                    });
+
+                return res.status(400).json({
+                    error: true,
+                    status: 400,
+                    errors: [`${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
                 });
             });
 

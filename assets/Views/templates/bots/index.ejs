@@ -29,7 +29,7 @@
             <br />
             <h1 class="title">
                 <span class="icon is-medium iconalign">
-                    <i aria-hidden="true" class="fad fa-robot has-text-default fa-1x"></i>
+                    <i aria-hidden="true" class="fad <%= icon %> fa-1x"></i>
                 </span>
                 <br />
                 <span><%= title %></span>
@@ -42,6 +42,46 @@
                     </span>
                     <span><%= __("common.nav.me.submitBot") %></span>
                 </a>
+                <div class="dropdown is-hoverable">
+                    <div class="dropdown-trigger">
+                        <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
+                            <span class="icon">
+                                <i aria-hidden="true" class="fas fa-filter" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("common.filter") %></span>
+                            <span class="icon is-small">
+                                <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-item <% if (!mobile) { %>has-text-left<% } %>">
+                                <%= __("common.bots.filter.subtitle") %>
+                            </div>
+                            <hr class="dropdown-divider">
+                            <div class="dropdown-item">
+                                <div class="tags <% if (mobile) { %>has-text-centered<% } %>">
+                                    <a href="?tag=fun" class="tag is-link"><%= __("page.bots.tag.fun") %></a>
+                                    <a href="?tag=social" class="tag is-info"><%= __("page.bots.tag.social") %></a>
+                                    <a href="?tag=economy" class="tag is-success"><%= __("page.bots.tag.economy") %></a>
+                                    <a href="?tag=utility" class="tag is-orange"><%= __("page.bots.tag.utility") %></a>
+                                    <a href="?tag=moderation" class="tag is-danger"><%= __("page.bots.tag.moderation") %></a>
+                                    <a href="?tag=multipurpose" class="tag is-magenta"><%= __("page.bots.tag.multipurpose") %></a>
+                                    <a href="?tag=music" class="tag is-pink"><%= __("common.tags.music") %></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% if (req.query.tag) { %>
+                    <a href="<%= linkPrefix %>/bots" class="button is-dark">
+                        <span class="icon">
+                            <i class="fas fa-empty-set"></i>
+                        </span>
+                        <span><%= __("common.bots.filter.clear") %></span>
+                    </a>
+                <% } %>
             </div>
         </div>
     </div>

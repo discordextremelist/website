@@ -21,7 +21,8 @@
                 <% if (!req.user || req.user.db.preferences.enableGames === true) { %>
                     <div id="snake_game">
                         <p class="is-size-5 has-text-warning"><span><%= __("page.snake.highscore") %></span> <span id="highScore"><%= req.user.db.game.snakes.maxScore %></span></p>
-                        <p class="is-size-5"><span><%= __("page.snake.score") %></span> <span id="score"></span></p>
+                        <p class="is-size-5 has-text-success"><span><%= __("page.snake.score") %> </span><span id="score"></span></p>
+                        <p id="lastScore" style="display: none;" class="is-size-5 has-text-info"><span><%= __("page.snake.lastScore") %> </span><span id="lastScoreCount"></span></p>
                         <br />
                         <canvas class="snakeNormal" style="background-color: black;" width="400" height="400" id="game"></canvas>
                         <script>
@@ -125,6 +126,8 @@
         
                                         if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
                                             document.getElementById("game").className = "snakeDeath";
+                                            document.getElementById("lastScoreCount").innerHTML = `${snake.maxCells - 4}`;
+                                            document.getElementById("lastScore").style.display = "block";
                                             
                                             snake.x = 160;
                                             snake.y = 160;
@@ -135,6 +138,25 @@
                                             apple.y = getRandomInt(0, 25) * grid;
         
                                             document.getElementById("score").innerHTML = `${snake.maxCells - 4}`;
+
+                                            function highscoreRequest() {
+                                                this.get = function(callback) {
+                                                    xhr.onreadystatechange = () => {
+                                                        if (xhr.readyState === 4 && xhr.status === 200) callback(xhr.responseText);
+                                                    }
+
+                                                    xhr.open("GET", url, true);
+                                                    xhr.send(null);
+                                                }
+                                            }
+
+                                            const highscore = new highscoreRequest();
+
+                                            highscore.get(callback => {
+                                                console.log(callback);
+                                                document.getElementById("highScore").innerHTML = `${JSON.parse(callback).result}`;
+                                            });
+                            
                                             setTimeout(() => {
                                                 document.getElementById("game").className = "snakeNormal";
                                             }, 350);
@@ -206,28 +228,6 @@
                             });
         
                             requestAnimationFrame(loop);
-
-                            /* disabled for resource reasons
-                            function highscoreRequest() {
-                                this.get = function(callback) {
-                                    xhr.onreadystatechange = () => {
-                                        if (xhr.readyState === 4 && xhr.status === 200) callback(xhr.responseText);
-                                    }
-
-                                    xhr.open("GET", url, true);
-                                    xhr.send(null);
-                                }
-                            }
-
-                            const highscore = new highscoreRequest();
-
-                            setInterval(() => {
-                                highscore.get(callback => {
-                                    console.log(callback);
-                                    document.getElementById("highScore").innerHTML = `${JSON.parse(callback).result}`;
-                                });
-                            }, 1000)
-                            */
                         </script>
                     </div>
                 <% } else { %>

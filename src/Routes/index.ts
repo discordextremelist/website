@@ -103,7 +103,7 @@ function sortAll() {
 
 router.get("/", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.home");
-    if(Math.floor(Math.random() * 101)=69){
+    if(Math.floor(Math.random() * 101)===69){
         return res.redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
     }
     const bots = await featuring.getFeaturedBots();

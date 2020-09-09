@@ -164,20 +164,30 @@ export const variables = async (
             );
         }
 
-        switch (req.user.db.preferences.theme) {
-            case 0:
+        let theme = req.user.db.preferences.theme
+
+        enum themes {
+            black,
+            dark,
+            light
+        }
+
+        if (req.query.theme) theme = themes[req.query.theme as string]
+
+        switch (theme) {
+            case themes.black:
                 res.locals.preferredTheme = "black";
                 res.locals.siteThemeColour = "#0e0e0e";
                 res.locals.siteThemeColourDarker = "#000000";
                 res.locals.monacoTheme = "vs-dark";
                 break;
-            case 1:
+            case themes.dark:
                 res.locals.preferredTheme = "dark";
                 res.locals.siteThemeColour = "#131313";
                 res.locals.siteThemeColourDarker = "#131313";
                 res.locals.monacoTheme = "vs-dark";
                 break;
-            case 2:
+            case themes.light:
                 res.locals.preferredTheme = "light";
                 res.locals.siteThemeColour = "#ECECEC";
                 res.locals.siteThemeColourDarker = "#ECECEC";

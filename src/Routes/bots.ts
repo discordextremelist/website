@@ -1454,6 +1454,30 @@ router.post(
                     }
                 });
                 await botCache.updateBot(req.params.id);
+
+                (discord.bot.channels.cache.get(
+                    settings.channels.webLog
+                ) as Discord.TextChannel)
+                    .send(
+                        `${settings.emoji.editBot} **${functions.escapeFormatting(
+                            req.user.db.fullUsername
+                        )}** \`(${
+                            req.user.id
+                        })\` edited bot **${functions.escapeFormatting(
+                            bot.username
+                        )}** \`(${bot.id})\`\n<${settings.website.url}/bots/${
+                            req.params.id
+                        }>`
+                    )
+                    .catch((e) => {
+                        console.error(e);
+                    });
+        
+                return res.status(200).json({
+                    error: false,
+                    status: 200,
+                    errors: []
+                });
             })
             .catch((error: DiscordAPIError) => {
                 if(error.code === RESTJSONErrorCodes.UnknownUser)
@@ -1469,30 +1493,6 @@ router.post(
                     errors: [res.__("common.error.bot.arr.fetchError"), `${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
                 });
             });
-
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as Discord.TextChannel)
-            .send(
-                `${settings.emoji.editBot} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` edited bot **${functions.escapeFormatting(
-                    bot.name
-                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                    req.params.id
-                }>`
-            )
-            .catch((e) => {
-                console.error(e);
-            });
-
-        return res.status(200).json({
-            error: false,
-            status: 200,
-            errors: []
-        });
     }
 );
 
@@ -2488,6 +2488,30 @@ router.post(
                     }
                 });
                 await botCache.updateBot(req.params.id);
+
+                (discord.bot.channels.cache.get(
+                    settings.channels.webLog
+                ) as Discord.TextChannel)
+                    .send(
+                        `${settings.emoji.resubmitBot} **${functions.escapeFormatting(
+                            req.user.db.fullUsername
+                        )}** \`(${
+                            req.user.id
+                        })\` resubmitted bot **${functions.escapeFormatting(
+                            bot.username
+                        )}** \`(${bot.id})\`\n<${settings.website.url}/bots/${
+                            bot.id
+                        }>`
+                    )
+                    .catch((e) => {
+                        console.error(e);
+                    });
+        
+                return res.status(200).json({
+                    error: false,
+                    status: 200,
+                    errors: []
+                });
             })
             .catch((error: DiscordAPIError) => {
                 if(error.code === RESTJSONErrorCodes.UnknownUser)
@@ -2503,30 +2527,6 @@ router.post(
                     errors: [res.__("common.error.bot.arr.fetchError"), `${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
                 });
             });
-
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as Discord.TextChannel)
-            .send(
-                `${settings.emoji.resubmitBot} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` resubmitted bot **${functions.escapeFormatting(
-                    bot.name
-                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                    bot._id
-                }>`
-            )
-            .catch((e) => {
-                console.error(e);
-            });
-
-        return res.status(200).json({
-            error: false,
-            status: 200,
-            errors: []
-        });
     }
 );
 

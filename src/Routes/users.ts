@@ -723,17 +723,14 @@ router.post(
 
         // Refer to docs/THEME.md in the root directory of this project.
         switch (req.body.theme) {
-            case "black":
-                theme = 0;
-                break;
             case "dark":
-                theme = 1;
+                theme = themes.dark;
                 break;
             case "light":
-                theme = 2;
+                theme = themes.light;
                 break;
             default:
-                theme = 0;
+                theme = themes.black;
                 break;
         }
 

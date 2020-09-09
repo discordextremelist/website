@@ -42,46 +42,53 @@
                     </span>
                     <span><%= __("common.nav.me.submitBot") %></span>
                 </a>
-                <div class="dropdown is-hoverable">
-                    <div class="dropdown-trigger">
-                        <button class="button is-dark" aria-haspopup="true" aria-controls="dropdown-ui-actions">
-                            <span class="icon">
-                                <i aria-hidden="true" class="fas fa-filter" aria-hidden="true"></i>
-                            </span>
-                            <span><%= __("common.filter") %></span>
-                            <span class="icon is-small">
-                                <i aria-hidden="true" class="fas fa-angle-down" aria-hidden="true"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
-                        <div class="dropdown-content">
-                            <div class="dropdown-item <% if (!mobile) { %>has-text-left<% } %>">
-                                <%= __("common.bots.filter.subtitle") %>
-                            </div>
-                            <hr class="dropdown-divider">
-                            <div class="dropdown-item">
-                                <div class="tags <% if (mobile) { %>has-text-centered<% } %>">
-                                    <a href="?tag=fun" class="tag is-link"><%= __("page.bots.tag.fun") %></a>
-                                    <a href="?tag=social" class="tag is-info"><%= __("page.bots.tag.social") %></a>
-                                    <a href="?tag=economy" class="tag is-success"><%= __("page.bots.tag.economy") %></a>
-                                    <a href="?tag=utility" class="tag is-orange"><%= __("page.bots.tag.utility") %></a>
-                                    <a href="?tag=moderation" class="tag is-danger"><%= __("page.bots.tag.moderation") %></a>
-                                    <a href="?tag=multipurpose" class="tag is-magenta"><%= __("page.bots.tag.multipurpose") %></a>
-                                    <a href="?tag=music" class="tag is-pink"><%= __("common.tags.music") %></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <% if (req.query.tag) { %>
-                    <a href="<%= linkPrefix %>/bots" class="button is-dark">
-                        <span class="icon">
-                            <i class="fas fa-empty-set"></i>
-                        </span>
-                        <span><%= __("common.bots.filter.clear") %></span>
-                    </a>
-                <% } %>
+            </div>
+            <div class="buttons is-centered">
+                <a href="<%= linkPrefix %>/bots" class="button is-dark">
+                    <span><%= __("common.all") %></span>
+                </a>
+                <a href="?tag=fun" class="button is-link">
+                    <span class="icon">
+                        <i class="fas fa-grin-squint-tears"></i>
+                    </span>
+                    <span><%= __("page.bots.tag.fun") %></span>
+                </a>
+                <a href="?tag=social" class="button is-info">
+                    <span class="icon">
+                        <i class="fas fa-comments-alt"></i>
+                    </span>
+                    <span><%= __("page.bots.tag.social") %></span>
+                </a>
+                <a href="?tag=economy" class="button is-success">
+                    <span class="icon">
+                        <i class="fas fa-comments-dollar"></i>
+                    </span>
+                    <span><%= __("page.bots.tag.economy") %></span>
+                </a>
+                <a href="?tag=utility" class="button is-orange">
+                    <span class="icon">
+                        <i class="fas fa-cogs"></i>
+                    </span>
+                    <span><%= __("page.bots.tag.utility") %></span>
+                </a>
+                <a href="?tag=moderation" class="button is-danger">
+                    <span class="icon">
+                        <i class="fas fa-gavel"></i>
+                    </span>
+                    <span><%= __("page.bots.tag.moderation") %></span>
+                </a>
+                <a href="?tag=multipurpose" class="button is-magenta">
+                    <span class="icon">
+                        <i class="fas fa-ball-pile"></i>
+                    </span>
+                    <span><%= __("page.bots.tag.multipurpose") %></span>
+                </a>
+                <a href="?tag=music" class="button is-pink">
+                    <span class="icon">
+                        <i class="fas fa-comment-music"></i>
+                    </span>
+                    <span><%= __("common.tags.music") %></span>
+                </a>
             </div>
         </div>
     </div>
@@ -89,22 +96,22 @@
 <div class="container is-fluid">
     <div class="section is-fluid">
         <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-            <a class="pagination-previous" <% if (Number(req.query.page) <= 1) { %>disabled<% } else { %>href="/bots?page=<%= Number(req.query.page) - 1 %>"<% } %>><%= __("common.pagination.previous") %></a>
-            <a class="pagination-next" <% if (Number(req.query.page) >= pages) { %>disabled<% } else { %>href="/bots?page=<%= Number(req.query.page) + 1 %>"<% } %>><%= __("common.pagination.next") %></a>
+            <a class="pagination-previous" <% if (Number(req.query.page) <= 1) { %>disabled<% } else { %>href="<%= linkPrefix %>/bots<%= pageParam %><%= Number(req.query.page) - 1 %>"<% } %>><%= __("common.pagination.previous") %></a>
+            <a class="pagination-next" <% if (Number(req.query.page) >= pages) { %>disabled<% } else { %>href="<%= linkPrefix %>/bots<%= pageParam %><%= Number(req.query.page) + 1 %>"<% } %>><%= __("common.pagination.next") %></a>
             <ul class="pagination-list">
                 <% if (Number(req.query.page) <= 3) { %>
                     <li>
                         <% if (Number(req.query.page) === 1) { %>
                             <a class="pagination-link is-current" aria-label="<%= __("common.pagination.page", "1") %>" aria-current="page">1</a>
                         <% } else { %>
-                            <a class="pagination-link" href="/bots?page=1" aria-label="<%= __("common.pagination.gotoPage", "1") %>">1</a>
+                            <a class="pagination-link" href="<%= linkPrefix %>/bots<%= pageParam %>1" aria-label="<%= __("common.pagination.gotoPage", "1") %>">1</a>
                         <% } %>
                     </li>
                     <% if (2 <= pages) { %>
                         <% if (Number(req.query.page) === 2) { %>
                             <a class="pagination-link is-current" aria-label="<%= __("common.pagination.page", "2") %>" aria-current="page">2</a>
                         <% } else { %>
-                            <a class="pagination-link" href="/bots?page=2" aria-label="<%= __("common.pagination.gotoPage", "2") %>">2</a>
+                            <a class="pagination-link" href="<%= linkPrefix %>/bots<%= pageParam %>2" aria-label="<%= __("common.pagination.gotoPage", "2") %>">2</a>
                         <% } %>
                     <% } %>
                     <% if (3 <= pages) { %>
@@ -112,7 +119,7 @@
                             <% if (Number(req.query.page) === 3) { %>
                                 <a class="pagination-link is-current" aria-label="<%= __("common.pagination.page", "3") %>" aria-current="page">3</a>
                             <% } else { %>
-                                <a class="pagination-link" href="/bots?page=3" aria-label="<%= __("common.pagination.gotoPage", "3") %>">3</a>
+                                <a class="pagination-link" href="<%= linkPrefix %>/bots<%= pageParam %>3" aria-label="<%= __("common.pagination.gotoPage", "3") %>">3</a>
                             <% } %>
                         </li>
                     <% } %>
@@ -121,30 +128,30 @@
                             <span class="pagination-ellipsis">&hellip;</span>
                         </li>
                         <li>
-                            <a class="pagination-link" href="/bots?page=<%= pages %>" aria-label="<%= __("common.pagination.gotoPage", pages) %>"><%= pages %></a>
+                            <a class="pagination-link" href="<%= linkPrefix %>/bots<%= pageParam %><%= pages %>" aria-label="<%= __("common.pagination.gotoPage", pages) %>"><%= pages %></a>
                         </li>
                     <% } %>
                 <% } else { %>
                     <li>
-                        <a class="pagination-link" href="/bots?page=1" aria-label="<%= __("common.pagination.gotoPage", "1") %>">1</a>
+                        <a class="pagination-link" href="<%= linkPrefix %>/bots<%= pageParam %>1" aria-label="<%= __("common.pagination.gotoPage", "1") %>">1</a>
                     </li>
                     <li>
                         <span class="pagination-ellipsis">&hellip;</span>
                     </li>
                     <% if (Number(req.query.page) === pages) { %>
                         <li>
-                            <a class="pagination-link" href="/bots?page=<%= Number(req.query.page) - 2 %>" aria-label="<%= __("common.pagination.gotoPage", Number(req.query.page) - 2) %>"><%= Number(req.query.page) - 2 %></a>
+                            <a class="pagination-link" href="<%= linkPrefix %>/bots<%= pageParam %><%= Number(req.query.page) - 2 %>" aria-label="<%= __("common.pagination.gotoPage", Number(req.query.page) - 2) %>"><%= Number(req.query.page) - 2 %></a>
                         </li>
                     <% } %>
                     <li>
-                        <a class="pagination-link" href="/bots?page=<%= Number(req.query.page) - 1 %>" aria-label="<%= __("common.pagination.gotoPage", Number(req.query.page) - 1) %>"><%= Number(req.query.page) - 1 %></a>
+                        <a class="pagination-link" href="<%= linkPrefix %>/bots<%= pageParam %><%= Number(req.query.page) - 1 %>" aria-label="<%= __("common.pagination.gotoPage", Number(req.query.page) - 1) %>"><%= Number(req.query.page) - 1 %></a>
                     </li>
                     <li>
                         <a class="pagination-link is-current" aria-label="<%= __("common.pagination.page", req.query.page) %>" aria-current="page"><%= req.query.page %></a>
                     </li>
                     <% if (Number(req.query.page) !== pages) { %>
                         <li>
-                            <a class="pagination-link" href="/bots?page=<%= Number(req.query.page) + 1 %>" aria-label="<%= __("common.pagination.gotoPage", Number(req.query.page) + 1) %>"><%= Number(req.query.page) + 1 %></a>
+                            <a class="pagination-link" href="<%= linkPrefix %>/bots<%= pageParam %><%= Number(req.query.page) + 1 %>" aria-label="<%= __("common.pagination.gotoPage", Number(req.query.page) + 1) %>"><%= Number(req.query.page) + 1 %></a>
                         </li>
                     <% } %>
                     <% if (Number(req.query.page <= (pages - 2))) { %>
@@ -152,7 +159,7 @@
                             <span class="pagination-ellipsis">&hellip;</span>
                         </li>
                         <li>
-                            <a class="pagination-link" href="/bots?page=<%= pages %>" aria-label="<%= __("common.pagination.gotoPage", pages) %>"><%= pages %></a>
+                            <a class="pagination-link" href="<%= linkPrefix %>/bots<%= pageParam %><%= pages %>" aria-label="<%= __("common.pagination.gotoPage", pages) %>"><%= pages %></a>
                         </li>
                     <% } %>
                 <% } %>

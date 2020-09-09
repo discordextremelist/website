@@ -48,7 +48,7 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-2">
-                    <% 
+                    <%
                         let statusInfo;
                         if (botStatus === "online") statusInfo = __("page.bots.status.online")
                         if (botStatus === "idle") statusInfo = __("page.bots.status.idle")
@@ -136,8 +136,8 @@
                     <div class="buttons <% if (mobile) { %>is-centered<% } else { %>page<% } %>">
                         <% if (bot.owner.id === req.user.id) { %>
                             <% if (bot.status.approved !== false) { %>
-                                <%- 
-                                    include("../../partials/button.ejs", { 
+                                <%-
+                                    include("../../partials/button.ejs", {
                                         className: "button is-link",
                                         icon: "fas fa-link",
                                         tag: "a",
@@ -147,8 +147,8 @@
                                     });
                                 %>
                             <% } %>
-                            <%- 
-                                include("../../partials/button.ejs", { 
+                            <%-
+                                include("../../partials/button.ejs", {
                                     className: "button is-success",
                                     icon: "fas fa-sync-alt",
                                     tag: "a",
@@ -157,8 +157,8 @@
                                     additional: ""
                                 });
                             %>
-                            <%- 
-                                include("../../partials/button.ejs", { 
+                            <%-
+                                include("../../partials/button.ejs", {
                                     className: "button is-warning",
                                     icon: "fas fa-pencil",
                                     tag: "a",
@@ -169,8 +169,8 @@
                             %>
                             <div style="padding-right: .5em;" class="dropdown is-hoverable">
                                 <div class="dropdown-trigger">
-                                    <%- 
-                                        include("../../partials/button.ejs", { 
+                                    <%-
+                                        include("../../partials/button.ejs", {
                                             className: "button is-orange",
                                             icon: "fas fa-key",
                                             tag: "dropdownButton",
@@ -193,8 +193,8 @@
                                   </div>
                                 </div>
                             </div>
-                            <%- 
-                                include("../../partials/button.ejs", { 
+                            <%-
+                                include("../../partials/button.ejs", {
                                     className: "button is-danger",
                                     icon: "fas fa-trash",
                                     tag: "a",
@@ -204,8 +204,8 @@
                                 });
                             %>
                         <% } else if (bot.editors && bot.editors.includes(req.user.id)) { %>
-                            <%- 
-                                include("../../partials/button.ejs", { 
+                            <%-
+                                include("../../partials/button.ejs", {
                                     className: "button is-warning",
                                     icon: "fas fa-pencil",
                                     tag: "a",
@@ -218,8 +218,8 @@
                         <% if (user.db.rank.mod) { %>
                             <div class="dropdown is-hoverable">
                                 <div class="dropdown-trigger">
-                                    <%- 
-                                        include("../../partials/button.ejs", { 
+                                    <%-
+                                        include("../../partials/button.ejs", {
                                             className: "button is-dark",
                                             icon: "fas fa-cogs",
                                             tag: "dropdownButton",
@@ -315,8 +315,8 @@
                         </div>
                     <% } %>
                     <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
-                        <%- 
-                            include("../../partials/button.ejs", { 
+                        <%-
+                            include("../../partials/button.ejs", {
                                 className: "button is-magenta",
                                 icon: "fas fa-plus",
                                 tag: "a",
@@ -326,8 +326,8 @@
                             });
                         %>
                         <% if (bot.links.website) { %>
-                            <%- 
-                                include("../../partials/button.ejs", { 
+                            <%-
+                                include("../../partials/button.ejs", {
                                     className: "button is-link",
                                     icon: "fas fa-globe",
                                     tag: "a",
@@ -338,8 +338,8 @@
                             %>
                         <% } %>
                         <% if (bot.social && bot.social.twitter) { %>
-                            <%- 
-                                include("../../partials/button.ejs", { 
+                            <%-
+                                include("../../partials/button.ejs", {
                                     className: "button is-info",
                                     icon: "fab fa-twitter",
                                     tag: "a",
@@ -350,8 +350,8 @@
                             %>
                         <% } %>
                         <% if (bot.links.donation) { %>
-                            <%- 
-                                include("../../partials/button.ejs", { 
+                            <%-
+                                include("../../partials/button.ejs", {
                                     className: "button is-success",
                                     icon: "fas fa-dollar-sign",
                                     tag: "a",
@@ -362,8 +362,8 @@
                             %>
                         <% } %>
                         <% if (bot.links.privacyPolicy && privacyIsURL) { %>
-                            <%- 
-                                include("../../partials/button.ejs", { 
+                            <%-
+                                include("../../partials/button.ejs", {
                                     className: "button is-warning",
                                     icon: "fas fa-user-secret",
                                     tag: "a",
@@ -374,8 +374,8 @@
                             %>
                         <% } %>
                         <% if (bot.links.repo) { %>
-                            <%- 
-                                include("../../partials/button.ejs", { 
+                            <%-
+                                include("../../partials/button.ejs", {
                                     className: "button is-orange",
                                     icon: "fas fa-code",
                                     tag: "a",
@@ -386,8 +386,8 @@
                             %>
                         <% } %>
                         <% if (bot.links.support) { %>
-                            <%- 
-                                include("../../partials/button.ejs", { 
+                            <%-
+                                include("../../partials/button.ejs", {
                                     className: "button is-danger",
                                     icon: "fas fa-user-headset",
                                     tag: "a",
@@ -399,24 +399,24 @@
                         <% } %>
                     </div>
                     <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
-                        <%- 
-                            include("../../partials/tag.ejs", { 
+                        <%-
+                            include("../../partials/tag.ejs", {
                                 contentColour: "is-link",
                                 title: __("page.bots.generalInfo.prefix.view"),
                                 content: bot.prefix,
                                 type: "multi"
                             });
                         %>
-                        <%- 
-                            include("../../partials/tag.ejs", { 
+                        <%-
+                            include("../../partials/tag.ejs", {
                                 contentColour: "is-info",
                                 title: __("page.bots.generalInfo.library.view"),
                                 content: bot.library,
                                 type: "multi"
                             });
                         %>
-                        <%- 
-                            include("../../partials/tag.ejs", { 
+                        <%-
+                            include("../../partials/tag.ejs", {
                                 contentColour: "is-success",
                                 title: __("common.servers"),
                                 content: bot.serverCount === 0 ? "???" : bot.serverCount,
@@ -424,8 +424,8 @@
                             });
                         %>
                         <% if (bot.links.privacyPolicy && !privacyIsURL) { %>
-                            <%- 
-                                include("../../partials/tag.ejs", { 
+                            <%-
+                                include("../../partials/tag.ejs", {
                                     contentColour: "is-warning",
                                     title: __("common.nav.more.privacy"),
                                     content: bot.links.privacyPolicy,
@@ -434,8 +434,8 @@
                             %>
                         <% } %>
                         <% if (bot.shardCount !== 0) { %>
-                            <%- 
-                                include("../../partials/tag.ejs", { 
+                            <%-
+                                include("../../partials/tag.ejs", {
                                     contentColour: "is-orange",
                                     title: __("page.bots.shards"),
                                     content: bot.shardCount,
@@ -443,8 +443,8 @@
                                 });
                             %>
                         <% } %>
-                        <%- 
-                            include("../../partials/tag.ejs", { 
+                        <%-
+                            include("../../partials/tag.ejs", {
                                 contentColour: "is-danger",
                                 title: __("common.owner"),
                                 content: "insOwner-bot",
@@ -452,8 +452,8 @@
                             });
                         %>
                         <% if (bot.editors && editors) { %>
-                            <%- 
-                                include("../../partials/tag.ejs", { 
+                            <%-
+                                include("../../partials/tag.ejs", {
                                     contentColour: "is-magenta",
                                     title: __("common.editors"),
                                     content: "insEditor-bot",
@@ -465,72 +465,86 @@
                     <% if (bot.tags && bot.tags.length > 0) { %>
                         <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
                             <% if (bot.tags.includes("Fun")) { %>
-                                <%- 
-                                    include("../../partials/tag.ejs", { 
+                                <%-
+                                    include("../../partials/tag.ejs", {
+                                        tag: "fun",
+                                        icon: "grin-squint-tears",
                                         contentColour: "is-link",
                                         title: "",
                                         content: __("page.bots.tag.fun"),
-                                        type: "tag"
+                                        type: "botTag"
                                     });
                                 %>
                             <% } %>
                             <% if (bot.tags.includes("Social")) { %>
-                                <%- 
-                                    include("../../partials/tag.ejs", { 
+                                <%-
+                                    include("../../partials/tag.ejs", {
+                                        tag: "social",
+                                        icon: "comments-alt",
                                         contentColour: "is-info",
                                         title: "",
                                         content: __("page.bots.tag.social"),
-                                        type: "tag"
+                                        type: "botTag"
                                     });
                                 %>
                             <% } %>
                             <% if (bot.tags.includes("Economy")) { %>
-                                <%- 
-                                    include("../../partials/tag.ejs", { 
+                                <%-
+                                    include("../../partials/tag.ejs", {
+                                        tag: "economy",
+                                        icon: "comments-dollar",
                                         contentColour: "is-success",
                                         title: "",
                                         content: __("page.bots.tag.economy"),
-                                        type: "tag"
+                                        type: "botTag"
                                     });
                                 %>
                             <% } %>
                             <% if (bot.tags.includes("Utility")) { %>
-                                <%- 
-                                    include("../../partials/tag.ejs", { 
+                                <%-
+                                    include("../../partials/tag.ejs", {
+                                        tag: "utility",
+                                        icon: "cogs",
                                         contentColour: "is-orange",
                                         title: "",
                                         content: __("page.bots.tag.utility"),
-                                        type: "tag"
+                                        type: "botTag"
                                     });
                                 %>
                             <% } %>
                             <% if (bot.tags.includes("Moderation")) { %>
-                                <%- 
-                                    include("../../partials/tag.ejs", { 
+                                <%-
+                                    include("../../partials/tag.ejs", {
+                                        tag: "moderation",
+                                        icon: "gavel",
                                         contentColour: "is-danger",
                                         title: "",
                                         content: __("page.bots.tag.moderation"),
-                                        type: "tag"
+                                        type: "botTag"
                                     });
                                 %>
                             <% } %>
                             <% if (bot.tags.includes("Multipurpose")) { %>
-                                <%- 
-                                    include("../../partials/tag.ejs", { 
+                                <%-
+                                    include("../../partials/tag.ejs", {
+                                        tag: "multipurpose",
+                                        icon: "ball-pile",
                                         contentColour: "is-magenta",
                                         title: "",
                                         content: __("page.bots.tag.multipurpose"),
-                                        type: "tag"
+                                        type: "botTag"
                                     });
                                 %>
                             <% } %>
                             <% if (bot.tags.includes("Music")) { %>
-                                <%- 
-                                    include("../../partials/tag.ejs", { 
+                                <%-
+                                    include("../../partials/tag.ejs", {
+                                        tag: "music",
+                                        icon: "comment-music",
                                         contentColour: "is-pink",
                                         title: "",
                                         content: __("common.tags.music"),
-                                        type: "tag"
+                                        type: "botTag"
                                     });
                                 %>
                             <% } %>

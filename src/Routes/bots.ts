@@ -1401,7 +1401,7 @@ router.post(
                                 privacyPolicy: botExists.links.privacyPolicy
                             },
                             social: {
-                                twitter: botExists.social.twitter
+                                twitter: botExists.social?.twitter
                             },
                             theme: {
                                 useCustomColour:
@@ -2429,7 +2429,7 @@ router.post(
                                 privacyPolicy: botExists.links.privacyPolicy
                             },
                             social: {
-                                twitter: botExists.social.twitter
+                                twitter: botExists.social?.twitter
                             },
                             theme: {
                                 useCustomColour:

@@ -166,6 +166,9 @@ router.post(
             errors.push(
                 res.__("common.error.listing.arr.shortDescRequired")
             );
+        } else if (req.body.shortDescription.length > 200) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
@@ -572,7 +575,12 @@ router.post(
 
         if (!req.body.shortDescription) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+            errors.push(
+                res.__("common.error.listing.arr.shortDescRequired")
+            );
+        } else if (req.body.shortDescription.length > 200) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {

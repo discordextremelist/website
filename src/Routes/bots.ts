@@ -347,11 +347,19 @@ router.post(
                 });
         }
 
+        if (req.body.twitter?.length > 15) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.twitterInvalid"))
+        }
+
         if (!req.body.shortDescription) {
             error = true;
             errors.push(
                 res.__("common.error.listing.arr.shortDescRequired")
             );
+        } else if (req.body.shortDescription.length > 200) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
@@ -359,23 +367,20 @@ router.post(
             errors.push(
                 res.__("common.error.listing.arr.longDescRequired")
             );
-        }
+        } else {
+            if (req.body.longDescription.length < 150) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.notAtMinChars", "150")
+                );
+            }
 
-        if (
-            req.body.longDescription &&
-            req.body.longDescription.length < 150
-        ) {
-            error = true;
-            errors.push(
-                res.__("common.error.listing.arr.notAtMinChars", "150")
-            );
-        }
-
-        if (req.body.longDescription.includes("http://")) {
-            error = true;
-            errors.push(
-                res.__("common.error.listing.arr.containsHttp")
-            )
+            if (req.body.longDescription.includes("http://")) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.containsHttp")
+                )
+            }
         }
 
         if (!req.body.prefix) {
@@ -383,9 +388,16 @@ router.post(
             errors.push(
                 res.__("common.error.listing.arr.prefixRequired")
             );
+        } else if (req.body.prefix.length > 32) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
         }
 
         if (req.body.privacyPolicy) {
+            if (req.body.privacyPolicy.length > 75) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.privacyTooLong"))
+            }
             if (
                 req.body.privacyPolicy.includes("discord.bot/privacy")
             ) {
@@ -1210,36 +1222,57 @@ router.post(
                 });
         }
 
+        if (req.body.twitter?.length > 15) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.twitterInvalid"))
+        }
+
         if (!req.body.shortDescription) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+            errors.push(
+                res.__("common.error.listing.arr.shortDescRequired")
+            );
+        } else if (req.body.shortDescription.length > 200) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.longDescRequired"));
-        }
-
-        if (req.body.longDescription && req.body.longDescription.length < 150) {
-            error = true;
             errors.push(
-                res.__("common.error.listing.arr.notAtMinChars", "150")
+                res.__("common.error.listing.arr.longDescRequired")
             );
-        }
+        } else {
+            if (req.body.longDescription.length < 150) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.notAtMinChars", "150")
+                );
+            }
 
-        if (req.body.longDescription.includes("http://")) {
-            error = true;
-            errors.push(
-                res.__("common.error.listing.arr.containsHttp")
-            )
+            if (req.body.longDescription.includes("http://")) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.containsHttp")
+                )
+            }
         }
 
         if (!req.body.prefix) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.prefixRequired"));
+            errors.push(
+                res.__("common.error.listing.arr.prefixRequired")
+            );
+        } else if (req.body.prefix.length > 32) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
         }
 
         if (req.body.privacyPolicy) {
+            if (req.body.privacyPolicy.length > 75) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.privacyTooLong"))
+            }
             if (
                 req.body.privacyPolicy.includes("discord.bot/privacy")
             ) {
@@ -2252,36 +2285,53 @@ router.post(
                 });
         }
 
+        if (req.body.twitter?.length > 15) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.twitterInvalid"))
+        }
+
         if (!req.body.shortDescription) {
             error = true;
             errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+        } else if (req.body.shortDescription.length > 200) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.longDescRequired"));
-        }
-
-        if (req.body.longDescription && req.body.longDescription.length < 150) {
-            error = true;
             errors.push(
-                res.__("common.error.listing.arr.notAtMinChars", "150")
+                res.__("common.error.listing.arr.longDescRequired")
             );
-        }
+        } else {
+            if (req.body.longDescription.length < 150) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.notAtMinChars", "150")
+                );
+            }
 
-        if (req.body.longDescription.includes("http://")) {
-            error = true;
-            errors.push(
-                res.__("common.error.listing.arr.containsHttp")
-            )
+            if (req.body.longDescription.includes("http://")) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.containsHttp")
+                )
+            }
         }
 
         if (!req.body.prefix) {
             error = true;
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
+        } else if (req.body.prefix.length > 32) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
         }
 
         if (req.body.privacyPolicy) {
+            if (req.body.privacyPolicy.length > 75) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.privacyTooLong"))
+            }
             if (
                 req.body.privacyPolicy.includes("discord.bot/privacy")
             ) {

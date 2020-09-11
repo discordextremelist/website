@@ -139,7 +139,7 @@ export const variables = async (
         res.locals.imageFormat = "png";
     }
 
-    let theme = req.user?.db.preferences.theme
+    let theme = req.user?.db?.preferences?.theme
 
     if (req.query.theme) theme = themes[req.query.theme as string]
 

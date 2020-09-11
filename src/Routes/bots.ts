@@ -121,7 +121,7 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"))
             }
             
-            discord.bot.api.users(req.body.clientID).get()
+            await discord.bot.api.users(req.body.clientID).get()
                 .then(() => {
                     error = true
                     errors.push(res.__("common.error.bot.arr.clientIDIsUser"))
@@ -998,7 +998,7 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
             if (req.body.clientID !== req.params.id)
-                discord.bot.api.users(req.body.clientID).get()
+                await discord.bot.api.users(req.body.clientID).get()
                     .then(() => {
                         error = true;
                         errors.push(
@@ -2050,7 +2050,7 @@ router.post(
                 });
 
             if (req.body.clientID !== req.params.id)
-                discord.bot.api.users(req.body.clientID).get()
+                await discord.bot.api.users(req.body.clientID).get()
                     .then(() => {
                         error = true
                         return res.status(400).json({

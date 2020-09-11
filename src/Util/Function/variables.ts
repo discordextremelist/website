@@ -26,6 +26,7 @@ import * as releaseInfo from "../../../release-info.json";
 import * as announcementCache from "../Services/announcementCaching";
 import * as banList from "../Services/banned";
 import { URLSearchParams } from "url";
+import { themes } from "../../../@types/enums";
 
 export const variables = async (
     req: Request,

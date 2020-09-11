@@ -321,9 +321,3 @@ interface library {
         repo: string;
     };
 }
-
-declare enum themes {
-    black,
-    dark,
-    light
-}

@@ -53,7 +53,7 @@ declare module "discord.js" {
 declare module "express-serve-static-core" {
     interface Request {
         session: any;
-        user: authUser;
+        user?: authUser;
         locale: any;
         setLocale(language: string): any;
         browser: BrowserDetectInfo;

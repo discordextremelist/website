@@ -32,6 +32,7 @@ import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
 import * as tokenManager from "../Util/Services/adminTokenManager";
 import { DiscordAPIError } from "discord.js";
+import { themes } from "../../@types/enums";
 
 const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();

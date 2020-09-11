@@ -207,7 +207,10 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.privacyPolicy") %> <span class="has-text-danger">*</span></label>
                 <p style="padding-bottom: 10px" class="is-size-7 has-text-default">
-                    <%= __("page.bots.privacyPolicy.required") %>
+                    <%- __("page.bots.privacyPolicy.required", {
+                        a: '<a class="has-text-info" target="blank" rel="noopener" href="https://gist.github.com/advaith1/58c61df8f4c7ba984fc72945f0aa5f9c">',
+                        ea: "</a>"
+                    }) %>
                 </p>
                 <p class="control has-icons-left">
                     <input id="form_privacyPolicy" class="input is-rounded" type="text" name="privacyPolicy" placeholder="!privacy or https://discord.bot/privacy">

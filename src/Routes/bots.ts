@@ -55,11 +55,17 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
+
+        const bots = await botCache.getAllBots();
+
+        const showResubmitNote = bots.filter(bot => bot.status.archived && bot.owner.id === req.user.id).length > 0
+
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 
         res.render("templates/bots/submit", {
             title: res.__("common.nav.me.submitBot"),
             subtitle: res.__("common.nav.me.submitBot.subtitle"),
+            showResubmitNote,
             libraries: libraryCache.getLibs(),
             req,
             joinServerNotice: res.__("common.form.joinServer.full", {
@@ -986,7 +992,7 @@ router.post(
     permission.member,
     async (req: Request, res: Response) => {
         let error = false;
-        let errors = [];
+        let errors: string[] = [];
 
         if (req.body.clientID) {
             if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
@@ -2032,32 +2038,24 @@ router.post(
     permission.member,
     async (req: Request, res: Response) => {
         let error = false;
-        let errors = [];
+        let errors: string[] = [];
 
         if (req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(" "))
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [res.__("common.error.bot.arr.invalidClientID")]
-                });
+            if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.invalidClientID"));
+            }
 
-            if (req.body.clientID && req.body.clientID.length > 32)
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [res.__("common.error.bot.arr.clientIDTooLong")]
-                });
+            if (req.body.clientID && req.body.clientID.length > 32) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
+            }
 
             if (req.body.clientID !== req.params.id)
                 await discord.bot.api.users(req.body.clientID).get()
                     .then(() => {
                         error = true
-                        return res.status(400).json({
-                            error: true,
-                            status: 400,
-                            errors: [res.__("common.error.bot.arr.clientIDIsUser")]
-                        });
+                        errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
                     })
                     .catch(() => {})
         }

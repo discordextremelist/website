@@ -21,7 +21,7 @@
     }]
 }
 </script>
-<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
+<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet"><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><%- include("../../partials/nav.ejs") %>
 <section class="hero is-black">
     <div class="hero-body">
@@ -29,14 +29,22 @@
         <div class="container has-text-centered">
             <h1 class="title">
                 <span class="icon is-medium iconalign">
-            <i aria-hidden="true" class="fas fa-plus has-text-default"></i>
-        </span>
+                    <i aria-hidden="true" class="fas fa-plus has-text-default"></i>
+                </span>
                 <br>
                 <span><%= title %></span>
             </h1>
             <h2 class="subtitle">
                 <%= subtitle %>
             </h2>
+            <% if (showResubmitNote) { %>
+                <p class="subtitle is-6">
+                    <%- __("page.bots.submit.resubmitNote", {
+                        a: `<a href="${linkPrefix}/users/@me#archived-bots" class="has-text-info">`,
+                        ea: '</a>'
+                    }) %>
+                </p>
+            <% } %>
         </div>
     </div>
 </section>

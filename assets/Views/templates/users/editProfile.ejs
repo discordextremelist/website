@@ -1,6 +1,8 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><%- include("../../partials/nav.ejs") %>
+<%- include("../../partials/nav.ejs") %>
+<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet">
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/editor/editor.main.min.css" integrity="sha512-XjO5XYWl8u7tYF3CItEHgoWh8rtQmDeSzPJq4+4PIrbak7TiqeKbWv/4ZwHZ1HAf5dIWHXoguA/jobn2psKZ7w==" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha512-/DXTXr6nQodMUiq+IUJYCt2PPOUjrHJ9wFrqpJ3XkgPNOZVfMok7cRw6CSxyCQxXn6ozlESsSh1/sMCTF1rL/g==" crossorigin="anonymous" async></script>
 <section class="hero is-primary">
     <div class="hero-body">
         <div class="container has-text-centered">
@@ -119,16 +121,16 @@
     </div>
 </div>
 <script>
-    const require={paths:{"vs":"/packages/monaco-editor/min/vs"}}
     const warn = event => {
         event.preventDefault()
         event.returnValue=''
     }
     addEventListener('beforeunload', warn)
     document.querySelector('form').onsubmit = () => removeEventListener('beforeunload', warn)
+    MonacoEnvironment = {getWorkerUrl: () => '/js/monaco.js'}
 </script>
-<script src="/packages/monaco-editor/min/vs/loader.js"></script>
-<script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
-<script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js" integrity="sha512-gWqaPfGsZiCkYB6e5mNN4SMRpEvLGItLBqgOAoyLSKtDxWS2O1YPcOeGTy8d8l00gqc8rVue9ae/ncZqhmfj4g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/editor/editor.main.nls.min.js" integrity="sha512-4XY3/LL6Plkq2tXMnatY+se07ZhwFMkZehD5Z68HrKoSL3BTyLDjwFomhUWixKu8VUw6jWe/8RXT1WtH95lLFg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/editor/editor.main.min.js" integrity="sha512-CK3czr9gLG2z/ygdSM+gNenkN9AShfpW4gMjVyY06VgFHLoc4OCoO92Z8UkcBwVX0ufoYbJw3IVs1mHfXQeI3g==" crossorigin="anonymous"></script>
 <script>var profileCssEditor=monaco.editor.create(document.getElementById("profileCssEditor"),{value:`<%= userProfile.profile.css %>`,language:"css"});function monacoToField(){var o=window.profileCssEditor.getValue();$("#profileCss").val(o)}monaco.editor.setTheme("<%= monacoTheme %>");</script>   
 <%- include("../../partials/footer.ejs") %>

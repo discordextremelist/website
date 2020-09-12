@@ -29,7 +29,6 @@
     "ioredis": "^4.17.3",
     "markdown-it": "^10.0.0",
     "moment": "^2.26.0",
-    "monaco-editor": "^0.20.0",
     "mongodb": "~3.5.11",
     "morgan": "~1.10.0",
     "node-fetch": "^2.6.1",

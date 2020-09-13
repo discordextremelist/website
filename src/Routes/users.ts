@@ -107,6 +107,8 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             templatesOwner.push(template);
         }
     }
+    
+    res.locals.pageType.user = true;
 
     res.render("templates/users/profile", {
         title: res.__("page.users.profile.title", delUser.fullUsername),

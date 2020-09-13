@@ -1,6 +1,7 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script>
+<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet">
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/editor/editor.main.min.css" integrity="sha512-XjO5XYWl8u7tYF3CItEHgoWh8rtQmDeSzPJq4+4PIrbak7TiqeKbWv/4ZwHZ1HAf5dIWHXoguA/jobn2psKZ7w==" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha512-/DXTXr6nQodMUiq+IUJYCt2PPOUjrHJ9wFrqpJ3XkgPNOZVfMok7cRw6CSxyCQxXn6ozlESsSh1/sMCTF1rL/g==" crossorigin="anonymous" async></script>
 <%- include("../../partials/nav.ejs") %>
 <%
     let postURL = `${linkPrefix}/bots/${bot._id}/edit`;
@@ -79,7 +80,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.prefix") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left" required>
-                    <input id="form_prefix" class="input is-rounded" type="text" value="<%= bot.prefix %>" name="prefix" placeholder="!">
+                    <input id="form_prefix" class="input is-rounded" type="text" value="<%= bot.prefix %>" name="prefix" placeholder="!" maxlength="32">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-paper-plane"></i>
                     </span>
@@ -188,10 +189,13 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.privacyPolicy") %> <span class="has-text-danger">*</span></label>
                 <p style="padding-bottom: 10px" class="is-size-7 has-text-default">
-                    <%= __("page.bots.privacyPolicy.required") %>
+                    <%- __("page.bots.privacyPolicy.required", {
+                        a: '<a class="has-text-info" target="blank" rel="noopener" href="https://gist.github.com/advaith1/58c61df8f4c7ba984fc72945f0aa5f9c">',
+                        ea: "</a>"
+                    }) %>
                 </p>
                 <p class="control has-icons-left">
-                    <input id="form_privacyPolicy" class="input is-rounded" type="text" name="privacyPolicy" value="<%= bot.links.privacyPolicy %>" placeholder="!privacy or https://discord.bot/privacy">
+                    <input id="form_privacyPolicy" class="input is-rounded" type="text" name="privacyPolicy" value="<%= bot.links.privacyPolicy %>" placeholder="!privacy or https://discord.bot/privacy" maxlength="75">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-user-secret"></i>
                     </span>
@@ -204,7 +208,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("common.social.twitter") %></label>
                 <p class="control has-icons-left">
-                    <input id="form_twitter" class="input is-rounded" type="text" name="twitter" value="<%= bot.social && bot.social.twitter %>" placeholder="bestbot">
+                    <input id="form_twitter" class="input is-rounded" type="text" name="twitter" value="<%= bot.social && bot.social.twitter %>" placeholder="bestbot" maxlength="15">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="far fa-at"></i>
                     </span>
@@ -286,7 +290,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.shortDesc") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left">
-                    <input id="form_shortDescription" class="input is-rounded" type="text" name="shortDescription" value="<%= bot.shortDesc %>" placeholder="<%= __("page.bots.shortDesc.placeholder") %>" required>
+                    <input id="form_shortDescription" class="input is-rounded" type="text" name="shortDescription" value="<%= bot.shortDesc %>" placeholder="<%= __("page.bots.shortDesc.placeholder") %>" required maxlength="200">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-comment-dots"></i>
                     </span>
@@ -354,16 +358,16 @@
             customColor.style.display = 'inherit'
         } else customColor.style.display = 'none'
     })
-    const require={paths:{"vs":"/packages/monaco-editor/min/vs"}}
     const warn = event => {
         event.preventDefault()
         event.returnValue=''
     }
     addEventListener('beforeunload', warn)
+    MonacoEnvironment = {getWorkerUrl: () => '/js/monaco.js'}
 </script>
-<script src="/packages/monaco-editor/min/vs/loader.js"></script>
-<script src="/packages/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
-<script src="/packages/monaco-editor/min/vs/editor/editor.main.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js" integrity="sha512-gWqaPfGsZiCkYB6e5mNN4SMRpEvLGItLBqgOAoyLSKtDxWS2O1YPcOeGTy8d8l00gqc8rVue9ae/ncZqhmfj4g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/editor/editor.main.nls.min.js" integrity="sha512-4XY3/LL6Plkq2tXMnatY+se07ZhwFMkZehD5Z68HrKoSL3BTyLDjwFomhUWixKu8VUw6jWe/8RXT1WtH95lLFg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/editor/editor.main.min.js" integrity="sha512-CK3czr9gLG2z/ygdSM+gNenkN9AShfpW4gMjVyY06VgFHLoc4OCoO92Z8UkcBwVX0ufoYbJw3IVs1mHfXQeI3g==" crossorigin="anonymous"></script>
 <script>function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}
 function htmlDecode(input){
     var e = document.createElement('textarea');
@@ -371,7 +375,7 @@ function htmlDecode(input){
     return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
 }
 var longDescEditor=monaco.editor.create(document.getElementById("longDescEditor"),{theme:"<%= monacoTheme %>",value:htmlDecode(document.getElementById("longDesc").value),language:"markdown"});
-var modNotesEditor=monaco.editor.create(document.getElementById("modNotesEditor"), {theme:"<%= monacoTheme %>"});
+<% if (resubmit) { %>var modNotesEditor=monaco.editor.create(document.getElementById("modNotesEditor"), {theme:"<%= monacoTheme %>"});<% } %>
 function monacoToField(){var o=window.longDescEditor.getValue();$("#longDesc").val(o);<% if (resubmit) { %>var y=window.modNotesEditor.getValue();$("#modNotes").val(y);<% } %>}monaco.editor.setTheme("<%= monacoTheme %>");
 function inviteWB(win,w,h){const y=win.top.outerHeight/2+win.top.screenY-(h/2);const x=win.top.outerWidth/2+win.top.screenX-(w/2);return win.open("https://add.widgetbot.io/","Invite WidgetBot",`toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${ w }, height=${ h }, top=${ y }, left=${ x }`)}
 function doSubmit() {

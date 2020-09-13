@@ -82,11 +82,17 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
+
+        const bots = await botCache.getAllBots();
+
+        const showResubmitNote = bots.filter(bot => bot.status.archived && bot.owner.id === req.user.id).length > 0
+
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 
         res.render("templates/bots/submit", {
             title: res.__("common.nav.me.submitBot"),
             subtitle: res.__("common.nav.me.submitBot.subtitle"),
+            showResubmitNote,
             libraries: libraryCache.getLibs(),
             req,
             joinServerNotice: res.__("common.form.joinServer.full", {
@@ -147,10 +153,8 @@ router.post(
                 error = true;
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
-
-            discord.bot.api
-                .users(req.body.clientID)
-                .get()
+            
+            await discord.bot.api.users(req.body.clientID).get()
                 .then(() => {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
@@ -349,35 +353,60 @@ router.post(
                 });
         }
 
+        if (req.body.twitter?.length > 15) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.twitterInvalid"))
+        }
+
         if (!req.body.shortDescription) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+            errors.push(
+                res.__("common.error.listing.arr.shortDescRequired")
+            );
+        } else if (req.body.shortDescription.length > 200) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.longDescRequired"));
-        }
-
-        if (req.body.longDescription && req.body.longDescription.length < 150) {
-            error = true;
             errors.push(
-                res.__("common.error.listing.arr.notAtMinChars", "150")
+                res.__("common.error.listing.arr.longDescRequired")
             );
-        }
+        } else {
+            if (req.body.longDescription.length < 150) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.notAtMinChars", "150")
+                );
+            }
 
-        if (req.body.longDescription.includes("http://")) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.containsHttp"));
+            if (req.body.longDescription.includes("http://")) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.containsHttp")
+                )
+            }
         }
 
         if (!req.body.prefix) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.prefixRequired"));
+            errors.push(
+                res.__("common.error.listing.arr.prefixRequired")
+            );
+        } else if (req.body.prefix.length > 32) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
+            if (req.body.privacyPolicy.length > 75) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.privacyTooLong"))
+            }
+            if (
+                req.body.privacyPolicy.includes("discord.bot/privacy")
+            ) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.placeholder")
@@ -959,7 +988,7 @@ router.post(
     permission.member,
     async (req: Request, res: Response) => {
         let error = false;
-        let errors = [];
+        let errors: string[] = [];
 
         if (req.body.clientID) {
             if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
@@ -971,9 +1000,7 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
             if (req.body.clientID !== req.params.id)
-                discord.bot.api
-                    .users(req.body.clientID)
-                    .get()
+                await discord.bot.api.users(req.body.clientID).get()
                     .then(() => {
                         error = true;
                         errors.push(
@@ -1201,35 +1228,60 @@ router.post(
                 });
         }
 
+        if (req.body.twitter?.length > 15) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.twitterInvalid"))
+        }
+
         if (!req.body.shortDescription) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+            errors.push(
+                res.__("common.error.listing.arr.shortDescRequired")
+            );
+        } else if (req.body.shortDescription.length > 200) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.longDescRequired"));
-        }
-
-        if (req.body.longDescription && req.body.longDescription.length < 150) {
-            error = true;
             errors.push(
-                res.__("common.error.listing.arr.notAtMinChars", "150")
+                res.__("common.error.listing.arr.longDescRequired")
             );
-        }
+        } else {
+            if (req.body.longDescription.length < 150) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.notAtMinChars", "150")
+                );
+            }
 
-        if (req.body.longDescription.includes("http://")) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.containsHttp"));
+            if (req.body.longDescription.includes("http://")) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.containsHttp")
+                )
+            }
         }
 
         if (!req.body.prefix) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.prefixRequired"));
+            errors.push(
+                res.__("common.error.listing.arr.prefixRequired")
+            );
+        } else if (req.body.prefix.length > 32) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
+            if (req.body.privacyPolicy.length > 75) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.privacyTooLong"))
+            }
+            if (
+                req.body.privacyPolicy.includes("discord.bot/privacy")
+            ) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.placeholder")
@@ -1380,7 +1432,7 @@ router.post(
                                 privacyPolicy: botExists.links.privacyPolicy
                             },
                             social: {
-                                twitter: botExists.social.twitter
+                                twitter: botExists.social?.twitter
                             },
                             theme: {
                                 useCustomColour:
@@ -1433,6 +1485,30 @@ router.post(
                     }
                 });
                 await botCache.updateBot(req.params.id);
+
+                (discord.bot.channels.cache.get(
+                    settings.channels.webLog
+                ) as Discord.TextChannel)
+                    .send(
+                        `${settings.emoji.editBot} **${functions.escapeFormatting(
+                            req.user.db.fullUsername
+                        )}** \`(${
+                            req.user.id
+                        })\` edited bot **${functions.escapeFormatting(
+                            bot.username
+                        )}** \`(${bot.id})\`\n<${settings.website.url}/bots/${
+                            req.params.id
+                        }>`
+                    )
+                    .catch((e) => {
+                        console.error(e);
+                    });
+        
+                return res.status(200).json({
+                    error: false,
+                    status: 200,
+                    errors: []
+                });
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownUser)
@@ -1452,30 +1528,6 @@ router.post(
                     ]
                 });
             });
-
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as Discord.TextChannel)
-            .send(
-                `${settings.emoji.editBot} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` edited bot **${functions.escapeFormatting(
-                    bot.name
-                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                    req.params.id
-                }>`
-            )
-            .catch((e) => {
-                console.error(e);
-            });
-
-        return res.status(200).json({
-            error: false,
-            status: 200,
-            errors: []
-        });
     }
 );
 
@@ -1982,36 +2034,24 @@ router.post(
     permission.member,
     async (req: Request, res: Response) => {
         let error = false;
-        let errors = [];
+        let errors: string[] = [];
 
         if (req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(" "))
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [res.__("common.error.bot.arr.invalidClientID")]
-                });
+            if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.invalidClientID"));
+            }
 
-            if (req.body.clientID && req.body.clientID.length > 32)
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [res.__("common.error.bot.arr.clientIDTooLong")]
-                });
+            if (req.body.clientID && req.body.clientID.length > 32) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
+            }
 
             if (req.body.clientID !== req.params.id)
-                discord.bot.api
-                    .users(req.body.clientID)
-                    .get()
+                await discord.bot.api.users(req.body.clientID).get()
                     .then(() => {
-                        error = true;
-                        return res.status(400).json({
-                            error: true,
-                            status: 400,
-                            errors: [
-                                res.__("common.error.bot.arr.clientIDIsUser")
-                            ]
-                        });
+                        error = true
+                        errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
                     })
                     .catch(() => {});
         }
@@ -2243,35 +2283,56 @@ router.post(
                 });
         }
 
+        if (req.body.twitter?.length > 15) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.twitterInvalid"))
+        }
+
         if (!req.body.shortDescription) {
             error = true;
             errors.push(res.__("common.error.listing.arr.shortDescRequired"));
+        } else if (req.body.shortDescription.length > 200) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.longDescRequired"));
-        }
-
-        if (req.body.longDescription && req.body.longDescription.length < 150) {
-            error = true;
             errors.push(
-                res.__("common.error.listing.arr.notAtMinChars", "150")
+                res.__("common.error.listing.arr.longDescRequired")
             );
-        }
+        } else {
+            if (req.body.longDescription.length < 150) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.notAtMinChars", "150")
+                );
+            }
 
-        if (req.body.longDescription.includes("http://")) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.containsHttp"));
+            if (req.body.longDescription.includes("http://")) {
+                error = true;
+                errors.push(
+                    res.__("common.error.listing.arr.containsHttp")
+                )
+            }
         }
 
         if (!req.body.prefix) {
             error = true;
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
+        } else if (req.body.prefix.length > 32) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
+            if (req.body.privacyPolicy.length > 75) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.privacyTooLong"))
+            }
+            if (
+                req.body.privacyPolicy.includes("discord.bot/privacy")
+            ) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.placeholder")
@@ -2408,7 +2469,7 @@ router.post(
                                 privacyPolicy: botExists.links.privacyPolicy
                             },
                             social: {
-                                twitter: botExists.social.twitter
+                                twitter: botExists.social?.twitter
                             },
                             theme: {
                                 useCustomColour:
@@ -2467,6 +2528,30 @@ router.post(
                     }
                 });
                 await botCache.updateBot(req.params.id);
+
+                (discord.bot.channels.cache.get(
+                    settings.channels.webLog
+                ) as Discord.TextChannel)
+                    .send(
+                        `${settings.emoji.resubmitBot} **${functions.escapeFormatting(
+                            req.user.db.fullUsername
+                        )}** \`(${
+                            req.user.id
+                        })\` resubmitted bot **${functions.escapeFormatting(
+                            bot.username
+                        )}** \`(${bot.id})\`\n<${settings.website.url}/bots/${
+                            bot.id
+                        }>`
+                    )
+                    .catch((e) => {
+                        console.error(e);
+                    });
+        
+                return res.status(200).json({
+                    error: false,
+                    status: 200,
+                    errors: []
+                });
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownUser)
@@ -2486,30 +2571,6 @@ router.post(
                     ]
                 });
             });
-
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as Discord.TextChannel)
-            .send(
-                `${settings.emoji.resubmitBot} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` resubmitted bot **${functions.escapeFormatting(
-                    bot.name
-                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                    bot._id
-                }>`
-            )
-            .catch((e) => {
-                console.error(e);
-            });
-
-        return res.status(200).json({
-            error: false,
-            status: 200,
-            errors: []
-        });
     }
 );
 

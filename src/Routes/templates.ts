@@ -125,6 +125,9 @@ router.post(
             errors.push(
                 res.__("common.error.listing.arr.shortDescRequired")
             );
+        } else if (req.body.shortDescription.length > 200) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
         }
 
         let tags: string[] = [];
@@ -469,6 +472,16 @@ router.post(
 
         let linkToServerPage = false;
         if (req.body.ltsp === "on") linkToServerPage = true;
+
+        if (!req.body.shortDescription) {
+            error = true;
+            errors.push(
+                res.__("common.error.listing.arr.shortDescRequired")
+            );
+        } else if (req.body.shortDescription.length > 200) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
+        }
 
         let tags: string[] = [];
         if (req.body.gaming === true) tags.push("Gaming");

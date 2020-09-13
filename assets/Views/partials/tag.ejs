@@ -50,6 +50,26 @@
             </div>
         </div>
     <% } %> 
+<% } else if (type === "botTag") { %>
+    <% if (htmlDir === "rtl") { %>
+        <div class="control">
+            <a class="tag <%= contentColour %>" href="<%= linkPrefix %>/bots?tag=<%= tag %>">
+                <span><%= content %></span>
+                <span class="icon">
+                    <i aria-hidden="true" class="fas fa-<%= icon %>"></i>
+                </span>
+            </a>
+        </div>
+    <% } else { %>
+        <div class="control">
+            <a class="tag <%= contentColour %>" href="<%= linkPrefix %>/bots?tag=<%= tag %>">
+                <span class="icon">
+                    <i aria-hidden="true" class="fas fa-<%= icon %>"></i>
+                </span>
+                <span><%= content %></span>
+            </a>
+        </div>
+    <% } %>
 <% } else if (type === "tag") { %>
     <% if (htmlDir === "rtl") { %>
         <div class="control">
@@ -69,5 +89,5 @@
                 <span><%= content %></span>
             </p>
         </div>
-    <% } %> 
+    <% } %>
 <% } %>

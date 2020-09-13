@@ -46,7 +46,7 @@ import * as languageHandler from "./Util/Middleware/languageHandler";
 
 import { botStatsUpdate } from "./Util/Services/botStatsUpdate";
 import { variables } from "./Util/Function/variables";
-import { monacoIsStupid } from "./Util/Middleware/monacoIsStupid";
+import { monacoRedirect } from "./Util/Middleware/monacoRedirect";
 import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap";
 
 import i18n from "i18n";
@@ -73,10 +73,6 @@ app.use(
 
 app.set("views", path.join(__dirname + "/../../assets/Views"));
 app.use(express.static(path.join(__dirname + "/../../assets/Public")));
-app.use(
-    "/packages/monaco-editor",
-    express.static(path.join(__dirname + "/../../node_modules/monaco-editor"))
-);
 
 new Promise((resolve, reject) => {
     console.time("Mongo TTL");
@@ -286,7 +282,7 @@ new Promise((resolve, reject) => {
         app.use("/:lang/search", require("./Routes/search"));
         app.use("/:lang/docs", require("./Routes/docs"));
 
-        app.use("*", monacoIsStupid);
+        app.use("*", monacoRedirect);
 
         app.use("/:lang/bots", require("./Routes/bots"));
         app.use("/:lang/servers", require("./Routes/servers"));

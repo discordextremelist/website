@@ -123,62 +123,73 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
 
     if (!req.query.page) req.query.page = "1";
 
-    let bots: delBot[];
-    let subtitle = res.__("common.bots.subtitle");
     let icon = "fa-robot has-text-default";
+    let title = res.__("common.bots.discord")
+    let subtitle = res.__("common.bots.subtitle");
+    let bots: delBot[];
+    let pageParam = '?page='
     
     if (req.query.tag) {
+        pageParam = `?tag=${req.query.tag}&page=`
+
         switch ((req.query.tag as string).toLowerCase()) {
-            case "fun": 
-                icon = "fa-tag has-text-link";
+            case "fun":
+                icon = "fa-grin-squint-tears has-text-link";
+                title = res.__("common.bots.title.fun")
                 subtitle = res.__("common.bots.subtitle.filter.fun");
                 bots = (await botCache.getAllBots()).filter(
                     ({ _id, status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Fun")
                 );
                 break;
-            case "social": 
-                icon = "fa-tag has-text-info";
+            case "social":
+                icon = "fa-comments-alt has-text-info";
+                title = res.__("common.bots.title.social")
                 subtitle = res.__("common.bots.subtitle.filter.social");
                 bots = (await botCache.getAllBots()).filter(
                     ({ _id, status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Social")
                 );
                 break;
-            case "economy":  
-                icon = "fa-tag has-text-success";
+            case "economy":
+                icon = "fa-comments-dollar has-text-success";
+                title = res.__("common.bots.title.economy")
                 subtitle = res.__("common.bots.subtitle.filter.economy");
                 bots = (await botCache.getAllBots()).filter(
                     ({ _id, status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Economy")
                 );
                 break;
-            case "utility": 
-                icon = "fa-tag has-text-orange";
+            case "utility":
+                icon = "fa-cogs has-text-orange";
+                title = res.__("common.bots.title.utility")
                 subtitle = res.__("common.bots.subtitle.filter.utility");
                 bots = (await botCache.getAllBots()).filter(
                     ({ _id, status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Utility")
                 );
                 break;
-            case "moderation": 
-                icon = "fa-tag has-text-danger";
+            case "moderation":
+                icon = "fa-gavel has-text-danger";
+                title = res.__("common.bots.title.moderation")
                 subtitle = res.__("common.bots.subtitle.filter.moderation");
                 bots = (await botCache.getAllBots()).filter(
                     ({ _id, status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Moderation")
                 );
                 break;
-            case "multipurpose": 
-                icon = "fa-tag has-text-magenta";
+            case "multipurpose":
+                icon = "fa-ball-pile has-text-magenta";
+                title = res.__("common.bots.title.multipurpose")
                 subtitle = res.__("common.bots.subtitle.filter.multipurpose");
                 bots = (await botCache.getAllBots()).filter(
                     ({ _id, status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Multipurpose")
                 );
                 break;
-            case "music": 
-                icon = "fa-tag has-text-pink";
+            case "music":
+                icon = "fa-comment-music has-text-pink";
+                title = res.__("common.bots.title.music")
                 subtitle = res.__("common.bots.subtitle.filter.music");
                 bots = (await botCache.getAllBots()).filter(
                     ({ _id, status, tags }) =>
@@ -197,11 +208,12 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
     );
 
     res.render("templates/bots/index", {
-        title: res.__("common.bots.discord"),
-        subtitle: subtitle,
+        title,
+        subtitle,
         req,
         bots,
         icon: icon,
+        pageParam,
         botsPgArr: bots.slice(
             15 * Number(req.query.page) - 15,
             15 * Number(req.query.page)

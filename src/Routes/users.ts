@@ -32,6 +32,7 @@ import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
 import * as tokenManager from "../Util/Services/adminTokenManager";
 import { DiscordAPIError } from "discord.js";
+import { themes } from "../../@types/enums";
 
 const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
@@ -725,17 +726,14 @@ router.post(
 
         // Refer to docs/THEME.md in the root directory of this project.
         switch (req.body.theme) {
-            case "black":
-                theme = 0;
-                break;
             case "dark":
-                theme = 1;
+                theme = themes.dark;
                 break;
             case "light":
-                theme = 2;
+                theme = themes.light;
                 break;
             default:
-                theme = 0;
+                theme = themes.black;
                 break;
         }
 

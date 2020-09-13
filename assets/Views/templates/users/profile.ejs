@@ -97,7 +97,7 @@
                                 <% } %>
                             <% } %>
 
-                            <% if (phone) { %><br /><% } %>
+                            <% if (phone) { %><br><% } %>
                         <% } %> 
                         <% if (phone) { %>
                             <span id="userName" style="overflow-wrap: break-word;"><%= userProfile.fullUsername %></span>
@@ -275,34 +275,34 @@
                 <% if (botsOwner.length !== 0 || botsEditor.length !== 0) { %>
                     <h2 class="is-size-3"><%= __("common.bots") %></h2>
                     <% if (botsOwner.length !== 0) { %>
-                        <br />
+                        <br>
                         <h3 class="is-size-4"><%= __("common.owner") %></h3>
-                        <br />
+                        <br>
                         <div class="columns is-multiline is-centered">
                             <%- botsOwner.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, archived: false, verificationApp: false, profile: true })).join("") %>
                         </div>
                     <% } %>
                     <% if (botsEditor.length !== 0) { %>
-                        <br />
+                        <br>
                         <h3 class="is-size-4"><%= __("common.editor") %></h3>
-                        <br />
+                        <br>
                         <div class="columns is-multiline is-centered">
                             <%- botsEditor.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, archived: false, verificationApp: false, profile: true })).join("") %>
                         </div>
                     <% } %>
                 <% } %>
-                <br />
+                <br>
                 <% if (serversOwner.length !== 0) { %>
                     <h2 class="is-size-3"><%= __("common.servers") %></h2>
-                    <br />
+                    <br>
                     <div class="columns is-multiline is-centered">
                         <%- serversOwner.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false, profile: true, queue: false })).join("") %>
                     </div>
                 <% } %>
-                <br />
+                <br>
                 <% if (templatesOwner.length !== 0) { %>
                     <h2 class="is-size-3"><%= __("common.templates") %></h2>
-                    <br />
+                    <br>
                     <div class="columns is-multiline is-centered">
                         <%- templatesOwner.map(template => include("../../partials/cards/templateCard.ejs", { template, search: false, profile: true })).join("") %>
                     </div>
@@ -310,9 +310,9 @@
             <% } %>
             <% if (user && user.id === userProfile._id) { %>
                 <% if (archivedBots.length > 0) { %>
-                    <br />
-                    <h2 class="is-size-4"><%= __("page.users.listings.archivedBots") %></h2>
-                    <br />
+                    <br>
+                    <h2 id="archived-bots" class="is-size-4"><%= __("page.users.listings.archivedBots") %></h2>
+                    <br>
                     <div class="columns is-multiline is-centered">
                         <%- archivedBots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, archived: true, verificationApp: false, profile: false })).join("") %>
                     </div>

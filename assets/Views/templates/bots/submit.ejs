@@ -106,7 +106,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.prefix") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right" required>
-                    <input id="form_prefix" class="input is-rounded" type="text" name="prefix" placeholder="!">
+                    <input id="form_prefix" class="input is-rounded" type="text" name="prefix" placeholder="!" maxlength="32">
                     <span class="icon is-small is-left">
                 <i aria-hidden="true" class="fas fa-paper-plane"></i>
             </span>
@@ -222,7 +222,7 @@
                     }) %>
                 </p>
                 <p class="control has-icons-left">
-                    <input id="form_privacyPolicy" class="input is-rounded" type="text" name="privacyPolicy" placeholder="!privacy or https://discord.bot/privacy">
+                    <input id="form_privacyPolicy" class="input is-rounded" type="text" name="privacyPolicy" placeholder="!privacy or https://discord.bot/privacy" maxlength="75">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="fas fa-user-secret"></i>
                     </span>
@@ -235,7 +235,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("common.social.twitter") %></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input id="form_twitter" class="input is-rounded" type="text" name="twitter" placeholder="bestbot">
+                    <input id="form_twitter" class="input is-rounded" type="text" name="twitter" placeholder="bestbot" maxlength="15">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="far fa-at"></i>
                     </span>
@@ -325,7 +325,7 @@
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.shortDesc") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
-                    <input id="form_shortDescription" class="input is-rounded" type="text" name="shortDescription" placeholder="<%= __("page.bots.shortDesc.placeholder") %>" required>
+                    <input id="form_shortDescription" class="input is-rounded" type="text" name="shortDescription" placeholder="<%= __("page.bots.shortDesc.placeholder") %>" required maxlength="200">
                     <span class="icon is-small is-left">
                 <i aria-hidden="true" class="fas fa-comment-dots"></i>
             </span>

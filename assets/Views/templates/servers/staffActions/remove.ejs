@@ -1,5 +1,6 @@
 <%- include("../../../partials/header.ejs") %>
 <%- include("../../../partials/nav.ejs") %>
+<%- include("../../../partials/isDefaultCSS/button.ejs") %>
 <link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><% - include("../../../partials/nav.ejs") %>
 <section class="hero is-black">
@@ -23,6 +24,30 @@
     <div class="section">
         <form method="POST">
             <div class="field">
+                <label class="label has-text-default"><%= __("page.remove.reasonType") %> <span class="has-text-danger">*</span></label>
+                <div class="buttons" id="typeButtons">
+                    <button type="button" id="innapAvatarName" onclick="premadeReason('innapAvatarName');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.inappropriate") %></span>
+                    </button>
+                    <button type="button" id="discordTosViolation" onclick="premadeReason('discordTosViolation');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.discord.tos") %></span>
+                    </button>
+                    <button type="button" id="tosViolation" onclick="premadeReason('tosViolation');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.del.tos") %></span>
+                    </button>
+                    <button type="button" id="notLGBT" onclick="premadeReason('notLGBT');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.notLGBT") %></span>
+                    </button>
+                    <button type="button" id="invalidInvite" onclick="premadeReason('invalidInvite');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.invalidInvite") %></span>
+                    </button>
+                    <button type="button" id="other" onclick="premadeReason('other');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.other") %></span>
+                    </button>
+                </div>
+            </div>
+            <br />
+            <div class="field">
                 <label class="label has-text-default"><%= __("common.reason") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" id="reason" name="reason" placeholder="<%= __("page.remove.servers.placeholder") %>">
@@ -32,27 +57,7 @@
                 </p>
             </div>
             <br />
-            <div class="field">
-                <label class="label has-text-default"><%= __("page.remove.premadeReasons") %></label>
-                <div class="buttons">
-                    <button type="button" onclick="innapAvatarName();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.inappropriate") %></span>
-                    </button>
-                    <button type="button" onclick="discordTosViolation();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.discord.tos") %></span>
-                    </button>
-                    <button type="button" onclick="tosViolation();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.del.tos") %></span>
-                    </button>
-                    <button type="button" onclick="notLGBT();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.notLGBT") %></span>
-                    </button>
-                    <button type="button" onclick="invalidInvite();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.invalidInvite") %></span>
-                    </button>
-                </div>
-            </div>
-            <br />
+            <input id="type" name="type" hidden>
             <div class="field is-grouped">
                 <div class="buttons">
                     <button class="button is-success">
@@ -69,20 +74,42 @@
     </div>
 </div>
 <script>
-    function innapAvatarName() {
-        document.getElementById("reason").value = "This server contains an inappropriate avatar and/or name!";
-    }
-    function discordTosViolation() {
-        document.getElementById("reason").value = "Violating Discord's Terms of Use.";
-    }
-    function tosViolation() {
-        document.getElementById("reason").value = "Violating our Terms of Use.";
-    }
-    function notLGBT() {
-        document.getElementById("reason").value = "This server does not appear to be an LGBT server, so we do not accept it to our LGBT server site.";
-    }
-    function invalidInvite() {
-        document.getElementById("reason").value = "The server's invite has expired.";
+    function premadeReason(type) {
+        for (const button of document.getElementById("typeButtons").getElementsByTagName("button")) {
+            button.classList.remove("is-default");
+        }
+
+        switch (type) {
+            case "other":
+                document.getElementById("type").value = 0;
+                document.getElementById("other").classList.add("is-default");
+                break;
+            case "innapAvatarName":
+                document.getElementById("reason").value = "This server contains an inappropriate avatar and/or name!";
+                document.getElementById("innapAvatarName").classList.add("is-default");
+                document.getElementById("type").value = 1;
+                break;
+            case "discordTosViolation": 
+                document.getElementById("reason").value = "Violating Discord's Terms of Use.";
+                document.getElementById("discordTosViolation").classList.add("is-default");
+                document.getElementById("type").value = 2;
+                break;
+            case "tosViolation":
+                document.getElementById("reason").value = "Violating our Terms of Use.";    
+                document.getElementById("tosViolation").classList.add("is-default");
+                document.getElementById("type").value = 3;
+                break;
+            case "notLGBT":
+                document.getElementById("reason").value = "This server does not appear to be an LGBT server, so we do not accept it to our LGBT server site."; 
+                document.getElementById("notLGBT").classList.add("is-default");
+                document.getElementById("type").value = 4;
+                break;
+            case "invalidInvite":
+                document.getElementById("reason").value = "The server's invite has expired.";
+                document.getElementById("invalidInvite").classList.add("is-default");
+                document.getElementById("type").value = 5;
+                break;
+        }
     }
 </script>
 <%- include("../../../partials/footer.ejs") %>

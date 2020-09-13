@@ -1,5 +1,6 @@
 <%- include("../../../partials/header.ejs") %>
 <%- include("../../../partials/nav.ejs") %>
+<%- include("../../../partials/isDefaultCSS/button.ejs") %>
 <link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" /><link rel="stylesheet" data-name="vs/editor/editor.main" href="/packages/monaco-editor/min/vs/editor/editor.main.css">
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous" async></script><% - include("../../../partials/nav.ejs") %>
 <section class="hero is-black">
@@ -23,6 +24,62 @@
     <div class="section">
         <form method="POST">
             <div class="field">
+                <label class="label has-text-default"><%= __("page.remove.reasonType") %> <span class="has-text-danger">*</span></label>
+                <div class="buttons" id="typeButtons">
+                    <button type="button" id="isClone" onclick="premadeReason('isClone');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.clone") %></span>
+                    </button>
+                    <button type="button" id="fixRefusal" onclick="premadeReason('fixRefusal');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.fixRefusal") %></span>
+                    </button>
+                    <button type="button" id="fixNoResponse" onclick="premadeReason('fixNoResponse');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.fixNoResponse") %></span>
+                    </button>
+                    <button type="button" id="notFixed" onclick="premadeReason('notFixed');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.notFixed") %></span>
+                    </button>
+                    <button type="button" id="errOnInvite" onclick="premadeReason('errOnInvite');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.errorWhilstInviting") %></span>
+                    </button>
+                    <button type="button" id="tokenLeak" onclick="premadeReason('tokenLeak');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.tokenLeak") %></span>
+                    </button>
+                    <button type="button" id="massDM" onclick="premadeReason('massDM');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.massDM") %></span>
+                    </button>
+                    <button type="button" id="discordTosViolation" onclick="premadeReason('discordTosViolation');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.discord.tos") %></span>
+                    </button>
+                    <button type="button" id="tosViolation" onclick="premadeReason('tosViolation');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.del.tos") %></span>
+                    </button>
+                    <button type="button" id="cantContactOwner" onclick="premadeReason('cantContactOwner');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.cantContactOwner") %></span>
+                    </button>
+                    <button type="button" id="invalidPrivacyPolicy" onclick="premadeReason('invalidPrivacyPolicy');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.invalidPrivacyPolicy") %></span>
+                    </button>
+                    <button type="button" id="discontinuted" onclick="premadeReason('discontinuted');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.discontinued") %></span>
+                    </button>
+                    <button type="button" id="invalidDesc" onclick="premadeReason('invalidDesc');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.invalidDesc") %></span>
+                    </button>
+                    <button type="button" id="offline" onclick="premadeReason('offline');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.offline") %></span>
+                    </button>
+                    <% if (req.user.db.rank.admin === true) { %>
+                        <button type="button" id="shitBot" onclick="premadeReason('shitBot');" class="button is-dark">
+                            <span><%= __("page.remove.premadeReasons.shitBot") %></span>
+                        </button>
+                    <% } %> 
+                    <button type="button" id="other" onclick="premadeReason('other');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.other") %></span>
+                    </button>
+                </div>
+            </div>
+            <br />
+            <div class="field">
                 <label class="label has-text-default"><%= __("common.reason") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" id="reason" name="reason" placeholder="<%= __("page.remove.bots.placeholder") %>">
@@ -32,50 +89,7 @@
                 </p>
             </div>
             <br />
-            <div class="field">
-                <label class="label has-text-default"><%= __("page.remove.premadeReasons") %></label>
-                <div class="buttons">
-                    <button type="button" onclick="isClone();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.clone") %></span>
-                    </button>
-                    <button type="button" onclick="fixRefusal();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.fixRefusal") %></span>
-                    </button>
-                    <button type="button" onclick="fixNoResponse();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.fixNoResponse") %></span>
-                    </button>
-                    <button type="button" onclick="errOnInvite();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.errorWhilstInviting") %></span>
-                    </button>
-                    <button type="button" onclick="tokenLeak();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.tokenLeak") %></span>
-                    </button>
-                    <button type="button" onclick="massDM();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.massDM") %></span>
-                    </button>
-                    <button type="button" onclick="discordTosViolation();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.discord.tos") %></span>
-                    </button>
-                    <button type="button" onclick="tosViolation();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.del.tos") %></span>
-                    </button>
-                    <button type="button" onclick="cantContactOwner();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.cantContactOwner") %></span>
-                    </button>
-                    <button type="button" onclick="invalidPrivacyPolicy();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.invalidPrivacyPolicy") %></span>
-                    </button>
-                    <button type="button" onclick="offline();" class="button is-dark">
-                        <span><%= __("page.remove.premadeReasons.offline") %></span>
-                    </button>
-                    <% if (req.user.db.rank.admin === true) { %>
-                        <button type="button" onclick="shitBot();" class="button is-dark">
-                            <span><%= __("page.remove.premadeReasons.shitBot") %></span>
-                        </button>
-                    <% } %> 
-                </div>
-            </div>
-            <br />
+            <input id="type" name="type" hidden>
             <div class="field is-grouped">
                 <div class="buttons">
                     <button class="button is-success">
@@ -92,41 +106,92 @@
     </div>
 </div>
 <script>
-    function isClone() {
-        document.getElementById("reason").value = "This bot is a clone of BOT_NAME, we don't accept clones!";
-    }
-    function fixRefusal() {
-        document.getElementById("reason").value = "The bot owner has refused to fix any issues we have pointed out.";
-    }
-    function fixNoResponse() {
-        document.getElementById("reason").value = "The bot owner hasn't responded to us for awhile.";
-    }
-    function errOnInvite() {
-        document.getElementById("reason").value = "Bot is deleted or an UNKNOWN_ERROR when inviting.";
-    }
-    function tokenLeak() {
-        document.getElementById("reason").value = "Security issues, please contact a Moderator privately.";
-    }
-    function massDM() {
-        document.getElementById("reason").value = "Sending Mass DMs.";
-    }
-    function discordTosViolation() {
-        document.getElementById("reason").value = "Violating Discord's Terms of Use.";
-    }
-    function tosViolation() {
-        document.getElementById("reason").value = "Violating our Terms of Use.";
-    }
-    function cantContactOwner() {
-        document.getElementById("reason").value = "The bot owner is not in the DEL server so we could not contact them.";
-    }
-    function invalidPrivacyPolicy() {
-        document.getElementById("reason").value = "The provided privacy policy is invalid.";
-    }
-    function offline() {
-        document.getElementById("reason").value = "Bot has been offline for a prolonged period of time.";
-    }
-    function shitBot() {
-        document.getElementById("reason").value = "This bot is just actual shit.";
+    function premadeReason(type) {
+        for (const button of document.getElementById("typeButtons").getElementsByTagName("button")) {
+            button.classList.remove("is-default");
+        }
+
+        switch (type) {
+            case "other":
+                document.getElementById("type").value = 0;
+                document.getElementById("other").classList.add("is-default");
+                break;
+            case "isClone":
+                document.getElementById("reason").value = "This bot is a clone of BOT_NAME, we don't accept clones!";
+                document.getElementById("isClone").classList.add("is-default");
+                document.getElementById("type").value = 1;
+                break;
+            case "fixRefusal": 
+                document.getElementById("reason").value = "The bot owner has refused to fix any issues we have pointed out.";
+                document.getElementById("fixRefusal").classList.add("is-default");
+                document.getElementById("type").value = 2;
+                break;
+            case "fixNoResponse":
+                document.getElementById("reason").value = "The bot owner did not respond within 48 hours or has ceased contact with us.";
+                document.getElementById("fixNoResponse").classList.add("is-default");
+                document.getElementById("type").value = 3;
+                break;
+            case "notFixed":
+                document.getElementById("reason").value = "Issues preventing the bot from being approved were not fixed within the allocated 48 hours.";
+                document.getElementById("notFixed").classList.add("is-default");
+                document.getElementById("type").value = 4;
+                break;
+            case "errOnInvite":
+                document.getElementById("reason").value = "Bot is deleted or an UNKNOWN_ERROR when inviting.";
+                document.getElementById("errOnInvite").classList.add("is-default");
+                document.getElementById("type").value = 5;
+                break;
+            case "tokenLeak":
+                document.getElementById("reason").value = "Victim of it's token being leaked.";
+                document.getElementById("tokenLeak").classList.add("is-default");
+                document.getElementById("type").value = 6;
+                break;
+            case "massDM":
+                document.getElementById("reason").value = "Sending Mass DMs.";
+                document.getElementById("massDM").classList.add("is-default");
+                document.getElementById("type").value = 7;
+                break;
+            case "discordTosViolation":
+                document.getElementById("reason").value = "Violating Discord's Terms of Use.";
+                document.getElementById("discordTosViolation").classList.add("is-default");
+                document.getElementById("type").value = 8;
+                break;
+            case "tosViolation":
+                document.getElementById("reason").value = "Violating our Terms of Use.";
+                document.getElementById("tosViolation").classList.add("is-default");
+                document.getElementById("type").value = 9;
+                break;
+            case "cantContactOwner":
+                document.getElementById("reason").value = "The bot owner is not in the DEL server so we could not contact them.";
+                document.getElementById("cantContactOwner").classList.add("is-default");
+                document.getElementById("type").value = 10;
+                break;
+            case "invalidPrivacyPolicy":
+                document.getElementById("reason").value = "The provided privacy policy is invalid.";
+                document.getElementById("invalidPrivacyPolicy").classList.add("is-default");
+                document.getElementById("type").value = 11;
+                break;
+            case "invalidDesc": 
+                document.getElementById("reason").value = "The bot description is invalid and/or does not meet our requirements, please improve it.";
+                document.getElementById("invalidDesc").classList.add("is-default");
+                document.getElementById("type").value = 12;
+                break;
+            case "offline":
+                document.getElementById("reason").value = "Bot has been offline for a prolonged period of time.";
+                document.getElementById("offline").classList.add("is-default");
+                document.getElementById("type").value = 13;
+                break;
+            case "discontinuted":
+                document.getElementById("reason").value = "Bot owner has discontinued the bot.";
+                document.getElementById("discontinuted").classList.add("is-default");
+                document.getElementById("type").value = 14;
+                break;
+            case "shitBot":
+                document.getElementById("reason").value = "This bot is just actual shit.";
+                document.getElementById("shitBot").classList.add("is-default");
+                document.getElementById("type").value = 15;
+                break;
+        }
     }
 </script>
 <%- include("../../../partials/footer.ejs") %>

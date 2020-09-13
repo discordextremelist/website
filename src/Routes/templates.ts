@@ -39,6 +39,21 @@ const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
 const router = express.Router();
 
+function templateType(bodyType: string): number {
+    let type = parseInt(bodyType);
+
+    switch (type) {
+        case 0:
+        case 1:
+        case 3:
+            break;
+        default:
+            type = 0;
+    }
+
+    return type;
+}
+
 router.get(
     "/submit",
     variables,
@@ -753,13 +768,16 @@ router.post(
         await global.db
             .collection("templates")
             .deleteOne({ _id: req.params.id });
+        
+        const type = templateType(req.body.type);
 
         await global.db.collection("audit").insertOne({
             type: "REMOVE_TEMPLATE",
             executor: req.user.id,
             target: req.params.id,
             date: Date.now(),
-            reason: req.body.reason || "None specified."
+            reason: req.body.reason || "None specified.",
+            reasonType: type
         });
         await templateCache.deleteTemplate(req.params.id);
 

@@ -41,6 +41,23 @@ const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
 const router = express.Router();
 
+function serverType(bodyType: string): number {
+    let type = parseInt(bodyType);
+
+    switch (type) {
+        case 0:
+        case 1:
+        case 3:
+        case 4:
+        case 5:
+            break;
+        default:
+            type = 0;
+    }
+
+    return type;
+}
+
 router.get(
     "/submit",
     variables,
@@ -851,13 +868,16 @@ router.post(
                 }
             }
         );
+        
+        const type = serverType(req.body.type);
 
         await global.db.collection("audit").insertOne({
             type: "DECLINE_SERVER",
             executor: req.user.id,
             target: req.params.id,
             date: Date.now(),
-            reason: req.body.reason || "None specified."
+            reason: req.body.reason || "None specified.",
+            reasonType: type
         });
 
         await serverCache.updateServer(req.params.id);
@@ -1118,13 +1138,16 @@ router.post(
         }
 
         await global.db.collection("servers").deleteOne({ _id: req.params.id });
+        
+        const type = serverType(req.body.type);
 
         await global.db.collection("audit").insertOne({
             type: "REMOVE_SERVER",
             executor: req.user.id,
             target: req.params.id,
             date: Date.now(),
-            reason: req.body.reason || "None specified."
+            reason: req.body.reason || "None specified.",
+            reasonType: type
         });
 
         await serverCache.deleteServer(req.params.id);

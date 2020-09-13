@@ -46,6 +46,33 @@ const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
 const router = express.Router();
 
+function botType(bodyType: string): number {
+    let type = parseInt(bodyType);
+
+    switch (type) {
+        case 0:
+        case 1:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+            break;
+        default:
+            type = 0;
+    }
+
+    return type;
+}
+
 router.get("/search", (req: Request, res: Response) => {
     res.redirect("/search");
 });
@@ -2897,13 +2924,16 @@ router.post(
                 }
             }
         );
+        
+        const type = botType(req.body.type);
 
         await global.db.collection("audit").insertOne({
             type: "DECLINE_BOT",
             executor: req.user.id,
             target: req.params.id,
             date: Date.now(),
-            reason: req.body.reason || "None specified."
+            reason: req.body.reason || "None specified.",
+            reasonType: type
         });
 
         await botCache.updateBot(req.params.id);
@@ -3030,6 +3060,8 @@ router.post(
             });
         }
 
+        const type = botType(req.body.type);
+
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
             {
@@ -3058,7 +3090,8 @@ router.post(
             executor: req.user.id,
             target: req.params.id,
             date: Date.now(),
-            reason: req.body.reason || "None specified."
+            reason: req.body.reason || "None specified.",
+            reasonType: type
         });
 
         await botCache.updateBot(req.params.id);
@@ -3208,12 +3241,15 @@ router.post(
             }
         );
 
+        const type = botType(req.body.type);
+
         await global.db.collection("audit").insertOne({
             type: "REMOVE_BOT",
             executor: req.user.id,
             target: req.params.id,
             date: Date.now(),
-            reason: req.body.reason || "None specified."
+            reason: req.body.reason || "None specified.",
+            reasonType: type
         });
 
         await botCache.updateBot(req.params.id);

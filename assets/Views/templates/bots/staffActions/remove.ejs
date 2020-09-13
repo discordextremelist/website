@@ -57,7 +57,7 @@
                     <button type="button" id="invalidPrivacyPolicy" onclick="premadeReason('invalidPrivacyPolicy');" class="button is-dark">
                         <span><%= __("page.remove.premadeReasons.invalidPrivacyPolicy") %></span>
                     </button>
-                    <button type="button" id="discontinuted" onclick="premadeReason('discontinuted');" class="button is-dark">
+                    <button type="button" id="discontinued" onclick="premadeReason('discontinued');" class="button is-dark">
                         <span><%= __("page.remove.premadeReasons.discontinued") %></span>
                     </button>
                     <button type="button" id="invalidDesc" onclick="premadeReason('invalidDesc');" class="button is-dark">
@@ -179,9 +179,9 @@
                 document.getElementById("offline").classList.add("is-default");
                 document.getElementById("type").value = 13;
                 break;
-            case "discontinuted":
+            case "discontinued":
                 document.getElementById("reason").value = "Bot owner has discontinued the bot.";
-                document.getElementById("discontinuted").classList.add("is-default");
+                document.getElementById("discontinued").classList.add("is-default");
                 document.getElementById("type").value = 14;
                 break;
             case "shitBot":

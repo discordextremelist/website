@@ -40,6 +40,7 @@ import * as libraryCache from "../Util/Services/libCaching";
 import * as tokenManager from "../Util/Services/adminTokenManager";
 import { URL } from "url";
 import { DiscordAPIError } from "discord.js";
+import { botReasons } from "../../@types/enums";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -47,7 +48,7 @@ const entities = new Entities();
 const router = express.Router();
 
 function botType(bodyType: string): number {
-    let type = parseInt(bodyType);
+    let type: botReasons = parseInt(bodyType);
 
     switch (type) {
         case 0:

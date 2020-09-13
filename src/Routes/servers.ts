@@ -36,6 +36,7 @@ import * as serverCache from "../Util/Services/serverCaching";
 import { variables } from "../Util/Function/variables";
 import * as tokenManager from "../Util/Services/adminTokenManager";
 import { MessageEmbed } from "discord.js";
+import { serverReasons } from "../../@types/enums";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -43,7 +44,7 @@ const entities = new Entities();
 const router = express.Router();
 
 function serverType(bodyType: string): number {
-    let type = parseInt(bodyType);
+    let type: serverReasons = parseInt(bodyType);
 
     switch (type) {
         case 0:

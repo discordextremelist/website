@@ -34,6 +34,7 @@ import * as tokenManager from "../Util/Services/adminTokenManager";
 import { APITemplate } from "../../@types/discord";
 import { TextChannel, DiscordAPIError } from "discord.js";
 import { MessageEmbed } from "discord.js";
+import { templateReasons } from "../../@types/enums";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -41,7 +42,7 @@ const entities = new Entities();
 const router = express.Router();
 
 function templateType(bodyType: string): number {
-    let type = parseInt(bodyType);
+    let type: templateReasons = parseInt(bodyType);
 
     switch (type) {
         case 0:

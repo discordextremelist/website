@@ -35,6 +35,7 @@ import * as userCache from "../Util/Services/userCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import { variables } from "../Util/Function/variables";
 import * as tokenManager from "../Util/Services/adminTokenManager";
+import { MessageEmbed } from "discord.js";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -882,6 +883,13 @@ router.post(
 
         await serverCache.updateServer(req.params.id);
 
+        const embed = new MessageEmbed();
+        embed.setColor(0x2f3136);
+        embed.setTitle("Reason");
+        embed.setDescription(req.body.reason);
+        embed.setURL(`${settings.website.url}/bots/${server._id}`);
+        embed.setFooter("It will still be shown as a normal server, it was declined from being listed as an LGBT community.");
+
         (discord.bot.channels.cache.get(
             settings.channels.webLog
         ) as TextChannel).send(
@@ -893,9 +901,8 @@ router.post(
                 server.name
             )}** \`(${
                 server._id
-            })\`\nIt will still be shown as a normal server, it was declined from being listed as an LGBT community.\n**Reason:** \`${
-                req.body.reason || "None specified."
-            }\`\n<${settings.website.url}/servers/${server._id}>`
+            })\``,
+            { embed: embed }
         );
 
         const owner = discord.bot.users.cache.get(server.owner.id);
@@ -1152,6 +1159,12 @@ router.post(
 
         await serverCache.deleteServer(req.params.id);
 
+        const embed = new MessageEmbed();
+        embed.setColor(0x2f3136);
+        embed.setTitle("Reason");
+        embed.setDescription(req.body.reason);
+        embed.setURL(`${settings.website.url}/bots/${server._id}`);
+
         (discord.bot.channels.cache.get(
             settings.channels.webLog
         ) as TextChannel).send(
@@ -1161,9 +1174,8 @@ router.post(
                 req.user.id
             })\` removed server **${functions.escapeFormatting(
                 server.name
-            )}** \`(${server._id})\`\n**Reason:** \`${
-                req.body.reason || "None specified."
-            }\``
+            )}** \`(${server._id})\``,
+            { embed: embed }
         );
 
         const owner = discord.bot.users.cache.get(server.owner.id);

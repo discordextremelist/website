@@ -33,6 +33,7 @@ import { variables } from "../Util/Function/variables";
 import * as tokenManager from "../Util/Services/adminTokenManager";
 import { APITemplate } from "../../@types/discord";
 import { TextChannel, DiscordAPIError } from "discord.js";
+import { MessageEmbed } from "discord.js";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -779,7 +780,14 @@ router.post(
             reason: req.body.reason || "None specified.",
             reasonType: type
         });
+
         await templateCache.deleteTemplate(req.params.id);
+
+        const embed = new MessageEmbed();
+        embed.setColor(0x2f3136);
+        embed.setTitle("Reason");
+        embed.setDescription(req.body.reason);
+        embed.setURL(`${settings.website.url}/bots/${template._id}`);
 
         (discord.bot.channels.cache.get(
             settings.channels.webLog
@@ -790,9 +798,7 @@ router.post(
                 req.user.id
             })\` removed template **${functions.escapeFormatting(
                 template.name
-            )}** \`(${template._id})\`\n**Reason:** \`${
-                req.body.reason || "None specified."
-            }\``
+            )}** \`(${template._id})\``
         );
 
         const owner = discord.bot.users.cache.get(template.owner.id);

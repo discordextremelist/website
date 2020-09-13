@@ -123,37 +123,39 @@ router.post(
             });
 
         if (!req.body.id) {
-            error = true
-            errors.push(res.__("common.error.listing.arr.IDRequired"))
+            error = true;
+            errors.push(res.__("common.error.listing.arr.IDRequired"));
         }
 
         if (isNaN(req.body.id) || req.body.id.includes(" ")) {
-            error = true
-            errors.push(res.__("common.error.bot.arr.invalidID"))
+            error = true;
+            errors.push(res.__("common.error.bot.arr.invalidID"));
         }
 
         if (req.body.id.length > 32) {
-            error = true
-            errors.push(res.__("common.error.bot.arr.idTooLong"))
+            error = true;
+            errors.push(res.__("common.error.bot.arr.idTooLong"));
         }
 
         if (req.body.clientID) {
             if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
-                error = true
-                errors.push(res.__("common.error.bot.arr.invalidClientID"))
+                error = true;
+                errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
 
             if (req.body.clientID && req.body.clientID.length > 32) {
-                error = true
-                errors.push(res.__("common.error.bot.arr.clientIDTooLong"))
+                error = true;
+                errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
-            
-            discord.bot.api.users(req.body.clientID).get()
+
+            discord.bot.api
+                .users(req.body.clientID)
+                .get()
                 .then(() => {
-                    error = true
-                    errors.push(res.__("common.error.bot.arr.clientIDIsUser"))
+                    error = true;
+                    errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
                 })
-                .catch(() => {})
+                .catch(() => {});
         }
 
         if (req.body.invite === "") {
@@ -163,14 +165,10 @@ router.post(
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.invite.invalid")
-                );
+                errors.push(res.__("common.error.listing.arr.invite.invalid"));
             } else if (req.body.invite.length > 2000) {
                 error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.invite.tooLong")
-                );
+                errors.push(res.__("common.error.listing.arr.invite.tooLong"));
             } else if (!functions.isURL(req.body.invite)) {
                 error = true;
                 errors.push(
@@ -192,71 +190,50 @@ router.post(
         ) {
             error = true;
             errors.push(
-                res.__(
-                    "common.error.listing.arr.invalidURL.supportServer"
-                )
+                res.__("common.error.listing.arr.invalidURL.supportServer")
             );
         }
 
         if (req.body.website && !functions.isURL(req.body.website)) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.invalidURL.website")
-            );
+            errors.push(res.__("common.error.listing.arr.invalidURL.website"));
         }
 
-        if (
-            req.body.donationUrl &&
-            !functions.isURL(req.body.donationUrl)
-        ) {
+        if (req.body.donationUrl && !functions.isURL(req.body.donationUrl)) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.invalidURL.donation")
-            );
+            errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
         }
 
         if (req.body.repo && !functions.isURL(req.body.repo)) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.invalidURL.repo")
-            );
+            errors.push(res.__("common.error.listing.arr.invalidURL.repo"));
         }
 
         if (
             req.body.invite &&
             functions.isURL(req.body.invite) &&
-            Number(
-                new URL(req.body.invite).searchParams.get("permissions")
-            ) & 8
+            Number(new URL(req.body.invite).searchParams.get("permissions")) & 8
         ) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.inviteHasAdmin")
-            );
+            errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
         }
 
         if (req.body.banner && !functions.isURL(req.body.banner)) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.invalidURL.banner")
-            );
+            errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
         }
 
         if (req.body.widgetServer && !req.body.widgetChannel) {
             error = true;
             errors.push(
-                res.__(
-                    "common.error.listing.arr.widgetbot.serverButNotChannel"
-                )
+                res.__("common.error.listing.arr.widgetbot.serverButNotChannel")
             );
         }
 
         if (req.body.widgetChannel && !req.body.widgetServer) {
             error = true;
             errors.push(
-                res.__(
-                    "common.error.listing.arr.widgetbot.channelButNotServer"
-                )
+                res.__("common.error.listing.arr.widgetbot.channelButNotServer")
             );
         }
 
@@ -275,10 +252,7 @@ router.post(
                 );
                 fetchServer = false;
             }
-            if (
-                req.body.widgetServer &&
-                req.body.widgetServer.length > 32
-            ) {
+            if (req.body.widgetServer && req.body.widgetServer.length > 32) {
                 error = true;
                 errors.push(
                     res.__(
@@ -289,9 +263,11 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.api.guilds(req.body.widgetServer).channels.get()
+                await discord.bot.api
+                    .guilds(req.body.widgetServer)
+                    .channels.get()
                     .catch((e: DiscordAPIError) => {
-                        if([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(e.httpStatus)) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -300,7 +276,7 @@ router.post(
                             );
                             fetchServer = false;
                         }
-                    })
+                    });
 
             if (fetchServer)
                 await fetch(
@@ -331,10 +307,7 @@ router.post(
                 );
                 fetchChannel = false;
             }
-            if (
-                req.body.widgetChannel &&
-                req.body.widgetChannel.length > 32
-            ) {
+            if (req.body.widgetChannel && req.body.widgetChannel.length > 32) {
                 error = true;
                 errors.push(
                     res.__(
@@ -345,9 +318,11 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api.channels(req.body.widgetChannel).get()
+                await discord.bot.api
+                    .channels(req.body.widgetChannel)
+                    .get()
                     .catch((e: DiscordAPIError) => {
-                        if([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(e.httpStatus)) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -356,7 +331,7 @@ router.post(
                             );
                             fetchChannel = false;
                         }
-                    })
+                    });
 
             if (fetchChannel)
                 await fetch(
@@ -376,22 +351,15 @@ router.post(
 
         if (!req.body.shortDescription) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.shortDescRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.longDescRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
 
-        if (
-            req.body.longDescription &&
-            req.body.longDescription.length < 150
-        ) {
+        if (req.body.longDescription && req.body.longDescription.length < 150) {
             error = true;
             errors.push(
                 res.__("common.error.listing.arr.notAtMinChars", "150")
@@ -400,53 +368,37 @@ router.post(
 
         if (req.body.longDescription.includes("http://")) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.containsHttp")
-            )
+            errors.push(res.__("common.error.listing.arr.containsHttp"));
         }
 
         if (!req.body.prefix) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.prefixRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.prefixRequired"));
         }
 
         if (req.body.privacyPolicy) {
-            if (
-                req.body.privacyPolicy.includes("discord.bot/privacy")
-            ) {
+            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.placeholder"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.placeholder")
                 );
             }
-            if (
-                req.body.privacyPolicy.includes("discord.com/privacy")
-            ) {
+            if (req.body.privacyPolicy.includes("discord.com/privacy")) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.discord"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.discord")
                 );
             }
             if (/(yardım|yardim)/.test(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.yardim"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.yardim")
                 );
             }
             if (req.body.privacyPolicy.includes("help")) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.help"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.help")
                 );
             }
         } else {
@@ -491,7 +443,9 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api.users(req.body.id).get()
+        discord.bot.api
+            .users(req.body.id)
+            .get()
             .then(async (bot: APIUser) => {
                 if (!bot.bot)
                     return res.status(400).json({
@@ -655,7 +609,7 @@ router.post(
                 });
             })
             .catch((error: DiscordAPIError) => {
-                if(error.code === RESTJSONErrorCodes.UnknownUser)
+                if (error.code === RESTJSONErrorCodes.UnknownUser)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -665,7 +619,11 @@ router.post(
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [res.__("common.error.bot.arr.fetchError"), `${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
+                    errors: [
+                        res.__("common.error.bot.arr.fetchError"),
+                        `${error.name}: ${error.message}`,
+                        `${error.httpStatus} ${error.method} ${error.path}`
+                    ]
                 });
             });
     }
@@ -1013,14 +971,16 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
             if (req.body.clientID !== req.params.id)
-                discord.bot.api.users(req.body.clientID).get()
+                discord.bot.api
+                    .users(req.body.clientID)
+                    .get()
                     .then(() => {
                         error = true;
                         errors.push(
                             res.__("common.error.bot.arr.clientIDIsUser")
                         );
                     })
-                    .catch(() => {})
+                    .catch(() => {});
         }
 
         const botExists: delBot | undefined = await global.db
@@ -1155,9 +1115,11 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.api.guilds(req.body.widgetServer).channels.get()
+                await discord.bot.api
+                    .guilds(req.body.widgetServer)
+                    .channels.get()
                     .catch((e: DiscordAPIError) => {
-                        if([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(e.httpStatus)) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -1166,7 +1128,7 @@ router.post(
                             );
                             fetchServer = false;
                         }
-                    })
+                    });
 
             if (fetchServer)
                 await fetch(
@@ -1208,9 +1170,11 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api.channels(req.body.widgetChannel).get()
+                await discord.bot.api
+                    .channels(req.body.widgetChannel)
+                    .get()
                     .catch((e: DiscordAPIError) => {
-                        if([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(e.httpStatus)) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -1219,7 +1183,7 @@ router.post(
                             );
                             fetchChannel = false;
                         }
-                    })
+                    });
 
             if (fetchChannel)
                 await fetch(
@@ -1256,9 +1220,7 @@ router.post(
 
         if (req.body.longDescription.includes("http://")) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.containsHttp")
-            )
+            errors.push(res.__("common.error.listing.arr.containsHttp"));
         }
 
         if (!req.body.prefix) {
@@ -1267,43 +1229,31 @@ router.post(
         }
 
         if (req.body.privacyPolicy) {
-            if (
-                req.body.privacyPolicy.includes("discord.bot/privacy")
-            ) {
+            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.placeholder"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.placeholder")
                 );
             }
 
-            if (
-                req.body.privacyPolicy.includes("discord.com/privacy")
-            ) {
+            if (req.body.privacyPolicy.includes("discord.com/privacy")) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.discord"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.discord")
                 );
             }
 
             if (/(yardım|yardim)/.test(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.yardim"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.yardim")
                 );
             }
 
             if (req.body.privacyPolicy.includes("help")) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.help"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.help")
                 );
             }
         } else {
@@ -1353,7 +1303,9 @@ router.post(
             });
         }
 
-        discord.bot.api.users(req.params.id).get()
+        discord.bot.api
+            .users(req.params.id)
+            .get()
             .then(async (bot: APIUser) => {
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
@@ -1483,7 +1435,7 @@ router.post(
                 await botCache.updateBot(req.params.id);
             })
             .catch((error: DiscordAPIError) => {
-                if(error.code === RESTJSONErrorCodes.UnknownUser)
+                if (error.code === RESTJSONErrorCodes.UnknownUser)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -1493,7 +1445,11 @@ router.post(
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [res.__("common.error.bot.arr.fetchError"), `${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
+                    errors: [
+                        res.__("common.error.bot.arr.fetchError"),
+                        `${error.name}: ${error.message}`,
+                        `${error.httpStatus} ${error.method} ${error.path}`
+                    ]
                 });
             });
 
@@ -2044,16 +2000,20 @@ router.post(
                 });
 
             if (req.body.clientID !== req.params.id)
-                discord.bot.api.users(req.body.clientID).get()
+                discord.bot.api
+                    .users(req.body.clientID)
+                    .get()
                     .then(() => {
-                        error = true
+                        error = true;
                         return res.status(400).json({
                             error: true,
                             status: 400,
-                            errors: [res.__("common.error.bot.arr.clientIDIsUser")]
+                            errors: [
+                                res.__("common.error.bot.arr.clientIDIsUser")
+                            ]
                         });
                     })
-                    .catch(() => {})
+                    .catch(() => {});
         }
 
         const botExists: delBot | undefined = await global.db
@@ -2197,9 +2157,11 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.api.guilds(req.body.widgetServer).channels.get()
+                await discord.bot.api
+                    .guilds(req.body.widgetServer)
+                    .channels.get()
                     .catch((e: DiscordAPIError) => {
-                        if([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(e.httpStatus)) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -2208,7 +2170,7 @@ router.post(
                             );
                             fetchServer = false;
                         }
-                    })
+                    });
 
             if (fetchServer)
                 await fetch(
@@ -2250,9 +2212,11 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api.channels(req.body.widgetChannel).get()
+                await discord.bot.api
+                    .channels(req.body.widgetChannel)
+                    .get()
                     .catch((e: DiscordAPIError) => {
-                        if([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(e.httpStatus)) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -2261,7 +2225,7 @@ router.post(
                             );
                             fetchChannel = false;
                         }
-                    })
+                    });
 
             if (fetchChannel)
                 await fetch(
@@ -2298,9 +2262,7 @@ router.post(
 
         if (req.body.longDescription.includes("http://")) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.containsHttp")
-            )
+            errors.push(res.__("common.error.listing.arr.containsHttp"));
         }
 
         if (!req.body.prefix) {
@@ -2309,43 +2271,31 @@ router.post(
         }
 
         if (req.body.privacyPolicy) {
-            if (
-                req.body.privacyPolicy.includes("discord.bot/privacy")
-            ) {
+            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.placeholder"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.placeholder")
                 );
             }
 
-            if (
-                req.body.privacyPolicy.includes("discord.com/privacy")
-            ) {
+            if (req.body.privacyPolicy.includes("discord.com/privacy")) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.discord"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.discord")
                 );
             }
 
             if (/(yardım|yardim)/.test(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.yardim"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.yardim")
                 );
             }
 
             if (req.body.privacyPolicy.includes("help")) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.listing.arr.privacyPolicy.help"
-                    )
+                    res.__("common.error.listing.arr.privacyPolicy.help")
                 );
             }
         } else {
@@ -2389,7 +2339,9 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api.users(req.params.id).get()
+        discord.bot.api
+            .users(req.params.id)
+            .get()
             .then(async (bot: APIUser) => {
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
@@ -2517,7 +2469,7 @@ router.post(
                 await botCache.updateBot(req.params.id);
             })
             .catch((error: DiscordAPIError) => {
-                if(error.code === RESTJSONErrorCodes.UnknownUser)
+                if (error.code === RESTJSONErrorCodes.UnknownUser)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -2527,7 +2479,11 @@ router.post(
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [res.__("common.error.bot.arr.fetchError"), `${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
+                    errors: [
+                        res.__("common.error.bot.arr.fetchError"),
+                        `${error.name}: ${error.message}`,
+                        `${error.httpStatus} ${error.method} ${error.path}`
+                    ]
                 });
             });
 
@@ -2924,7 +2880,7 @@ router.post(
                 }
             }
         );
-        
+
         const type = botType(req.body.type);
 
         await global.db.collection("audit").insertOne({
@@ -2938,6 +2894,12 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
+        const embed = new Discord.MessageEmbed();
+        embed.setColor(0x2f3136);
+        embed.setTitle("Reason");
+        embed.setDescription(req.body.reason);
+        embed.setURL(`${settings.website.url}/bots/${bot._id}`);
+
         (discord.bot.channels.cache.get(
             settings.channels.webLog
         ) as Discord.TextChannel).send(
@@ -2947,9 +2909,8 @@ router.post(
                 req.user.id
             })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
-            })\`\n**Reason:** \`${req.body.reason || "None specified."}\`\n<${
-                settings.website.url
-            }/bots/${bot._id}>`
+            })\``,
+            { embed: embed }
         );
 
         const staffGuild = discord.bot.guilds.cache.get(settings.guild.staff);
@@ -3096,6 +3057,12 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
+        const embed = new Discord.MessageEmbed();
+        embed.setColor(0x2f3136);
+        embed.setTitle("Reason");
+        embed.setDescription(req.body.reason);
+        embed.setURL(`${settings.website.url}/bots/${bot._id}`);
+
         (discord.bot.channels.cache.get(
             settings.channels.webLog
         ) as Discord.TextChannel).send(
@@ -3105,9 +3072,8 @@ router.post(
                 req.user.id
             })\` unapproved bot **${functions.escapeFormatting(
                 bot.name
-            )}** \`(${bot._id})\`\n**Reason:** \`${
-                req.body.reason || "None specified."
-            }\`\n<${settings.website.url}/bots/${bot._id}>`
+            )}** \`(${bot._id})\``,
+            { embed: embed }
         );
 
         const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
@@ -3254,6 +3220,12 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
+        const embed = new Discord.MessageEmbed();
+        embed.setColor(0x2f3136);
+        embed.setTitle("Reason");
+        embed.setDescription(req.body.reason);
+        embed.setURL(`${settings.website.url}/bots/${bot._id}`);
+
         (discord.bot.channels.cache.get(
             settings.channels.webLog
         ) as Discord.TextChannel).send(
@@ -3263,9 +3235,8 @@ router.post(
                 req.user.id
             })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
-            })\`\n**Reason:** \`${req.body.reason || "None specified."}\`\n<${
-                settings.website.url
-            }/bots/${bot._id}>`
+            })\``,
+            { embed: embed }
         );
 
         const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
@@ -3318,7 +3289,9 @@ router.get(
 
         const bot = botExists;
 
-        discord.bot.api.users(req.params.id).get()
+        discord.bot.api
+            .users(req.params.id)
+            .get()
             .then(async (bot: APIUser) => {
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
@@ -3362,7 +3335,7 @@ router.get(
                 await botCache.updateBot(req.params.id);
             })
             .catch((error: DiscordAPIError) => {
-                if(error.code === RESTJSONErrorCodes.UnknownUser)
+                if (error.code === RESTJSONErrorCodes.UnknownUser)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -3372,7 +3345,11 @@ router.get(
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [res.__("common.error.bot.arr.fetchError"), `${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
+                    errors: [
+                        res.__("common.error.bot.arr.fetchError"),
+                        `${error.name}: ${error.message}`,
+                        `${error.httpStatus} ${error.method} ${error.path}`
+                    ]
                 });
             });
 

@@ -60,31 +60,31 @@
             <div class="column is-10<% if (mobile) { %> has-text-centered<% } %>">
                     <h1 class="is-size-1">
                         <% if (!phone) { %><span id="botName"><%= bot.name %></span><% } %>
-                        <% if (bot.status.premium === true) { %>
+                        <% if (bot.status.premium) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.premium.bot") %>" class="icon is-medium is-size-3 iconalign">
                                 <i aria-hidden="true" class="fad fa-star has-text-warning fa-1x"></i>
                             </span>
                         <% } %>
 
-                        <% if (bot.status.siteBot === true) { %>
+                        <% if (bot.status.siteBot) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.siteBot") %>" class="icon is-size-3 is-medium iconalign">
                                 <i aria-hidden="true" class="fad fa-cogs has-text-grey-lighter fa-1x"></i>
                             </span>
                         <% } %>
 
-                        <% if (bot.status.approved === false && !bot.status.archived) { %>
+                        <% if (!bot.status.approved && !bot.status.archived) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.unapproved") %>" class="icon is-medium is-size-3 iconalign">
                                 <i aria-hidden="true" class="fad fa-exclamation-triangle has-text-danger fa-1x"></i>
                             </span>
                         <% } %>
 
-                        <% if (bot.status.archived === true) { %>
+                        <% if (bot.status.archived) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.archived") %>" class="icon is-medium is-size-3 iconalign">
                                 <i aria-hidden="true" class="fad fa-archive has-text-warning fa-1x"></i>
                             </span>
                         <% } %>
                         <% if (phone) { %>
-                            <% if (bot.status.premium === true || bot.status.siteBot === true || bot.status.approved === false || bot.status.archived === true) { %><br /><% } %>
+                            <% if (bot.status.premium || bot.status.siteBot || !bot.status.approved || bot.status.archived) { %><br /><% } %>
                             <span id="botName">
                                 <%= bot.name %>
                             </span>

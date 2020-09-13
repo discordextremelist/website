@@ -11,12 +11,22 @@
                     <p>
                     <span class="is-size-4 title has-text-default is-mobile">
                         <span><%= bot.name %></span>
-                        <% if (bot.status.premium === true) { %>
+                        <% if (bot.status.archived) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.rank.archived") %>" class="icon iconalign">
+                                <i aria-hidden="true" class="fad fa-archive has-text-warning fa-1x"></i>
+                            </span>
+                        <% } %>
+                        <% if (!bot.status.approved) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.rank.unapproved") %>" class="icon iconalign">
+                                <i aria-hidden="true" class="fad fa-exclamation-triangle has-text-danger fa-1x"></i>
+                            </span>
+                        <% } %>
+                        <% if (bot.status.premium) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.premium.bot") %>" class="icon iconalign">
                                 <i aria-hidden="true" class="fad fa-star has-text-warning fa-1x"></i>
                             </span>
                         <% } %>
-                        <% if (bot.status.siteBot === true) { %>
+                        <% if (bot.status.siteBot) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.siteBot") %>" class="icon iconalign">
                                 <i aria-hidden="true" class="fad fa-cogs has-text-grey-lighter fa-1x"></i>
                             </span>

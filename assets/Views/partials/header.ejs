@@ -154,10 +154,10 @@
         <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan">
 
         <% if (pageType.user) { %>
-            <meta property="twitter:image" content="<%= bot.avatar.hash ? bot.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
+            <meta property="twitter:image" content="<%= user.avatar.hash ? user.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
             <meta property="twitter:image:alt" content="DEL's Logo">
             
-            <meta property="og:image" content="<%= bot.avatar.hash ? bot.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
+            <meta property="og:image" content="<%= user.avatar.hash ? user.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
             <meta property="og:image:alt" content="DEL's Logo">
             
             <meta itemprop="image" content="<%= user.avatar.hash ? user.avatar.url : `${baseURL}/img/defaultavatar` %>.png">

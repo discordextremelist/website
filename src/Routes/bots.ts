@@ -401,7 +401,7 @@ router.post(
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.length > 75) {
+            if (req.body.privacyPolicy.length > 32 && !functions.isURL(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.privacyTooLong"))
             }
@@ -1276,7 +1276,7 @@ router.post(
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.length > 75) {
+            if (req.body.privacyPolicy.length > 32 && !functions.isURL(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.privacyTooLong"))
             }
@@ -2327,7 +2327,7 @@ router.post(
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.length > 75) {
+            if (req.body.privacyPolicy.length > 32 && !functions.isURL(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.privacyTooLong"))
             }

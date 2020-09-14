@@ -38,8 +38,8 @@
                     </button>
                 </div>
             </div>
-            <br />
-            <div class="field">
+            <br id="reasonInputBR" style="display: none;" />
+            <div id="reasonInput" style="display: none;" class="field">
                 <label class="label has-text-default"><%= __("common.reason") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right">
                     <input class="input is-rounded" type="text" id="reason" name="reason" placeholder="<%= __("page.remove.templates.placeholder") %>">
@@ -70,6 +70,9 @@
         for (const button of document.getElementById("typeButtons").getElementsByTagName("button")) {
             button.classList.remove("is-default");
         }
+        
+        document.getElementById("reasonInputBR").style.display = "block";
+        document.getElementById("reasonInput").style.display = "block";
         
         switch (type) {
             case "other":

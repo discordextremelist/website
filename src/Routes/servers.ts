@@ -893,7 +893,7 @@ router.post(
         await serverCache.updateServer(req.params.id);
 
         const embed = new MessageEmbed();
-        embed.setColor(0x2f3136);
+        embed.setColor(0xffffff);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${server._id}`);
@@ -1169,7 +1169,7 @@ router.post(
         await serverCache.deleteServer(req.params.id);
 
         const embed = new MessageEmbed();
-        embed.setColor(0x2f3136);
+        embed.setColor(0xffffff);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${server._id}`);

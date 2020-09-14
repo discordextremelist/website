@@ -798,7 +798,7 @@ router.post(
         await templateCache.deleteTemplate(req.params.id);
 
         const embed = new MessageEmbed();
-        embed.setColor(0x2f3136);
+        embed.setColor(0xffffff);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${template._id}`);

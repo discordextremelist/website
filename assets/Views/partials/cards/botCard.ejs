@@ -16,7 +16,7 @@
                                 <i aria-hidden="true" class="fad fa-archive has-text-warning fa-1x"></i>
                             </span>
                         <% } %>
-                        <% if (!bot.status.approved) { %>
+                        <% if (!bot.status.approved && !bot.status.archived) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.unapproved") %>" class="icon iconalign">
                                 <i aria-hidden="true" class="fad fa-exclamation-triangle has-text-danger fa-1x"></i>
                             </span>

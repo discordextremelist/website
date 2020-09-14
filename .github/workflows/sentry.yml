@@ -15,4 +15,5 @@ jobs:
           SENTRY_ORG: discord-extreme-list
           SENTRY_PROJECT: website
         with:
-          tagName: ${{ GITHUB_REF#refs/tags/ }}
+          tagName: ${{ github.ref }}
+          environment: qa

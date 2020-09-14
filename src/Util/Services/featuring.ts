@@ -74,7 +74,6 @@ export async function updateFeaturedBots() {
         delete bot.social;
         delete bot.theme;
         delete bot.widgetbot;
-        delete bot.status.approved;
     }
 
     await global.redis?.set("featured_bots", JSON.stringify(bots));

@@ -53,6 +53,7 @@ export const variables = async (
     res.locals.cssVersion = releaseInfo.cssVersion;
     res.locals.ddosMode = false; //ddosMode.getDDOSMode().active;
     res.locals.gaID = settings.website.gaID;
+    res.locals.arcID = settings.website.arcID;
 
     res.locals.linkPrefix = `/${
         req.locale || settings.website.locales.default

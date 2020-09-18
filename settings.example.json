@@ -65,6 +65,7 @@
         "dev": true,
         "callback": "/auth/login/callback",
         "gaID": "UA-165711322-1",
+        "arcID": "1mwUgGa4",
         "bannedVanityURLs": []
     },
     "guild": {

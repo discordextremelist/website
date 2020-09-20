@@ -37,22 +37,7 @@
                 "pt-PT",
                 "tr-TR"
             ],
-            "isRTL": ["he-IL"],
-            "isntLocale": [
-                "search",
-                "auth",
-                "bots",
-                "servers",
-                "templates",
-                "users",
-                "staff",
-                "terms",
-                "privacy",
-                "guidelines",
-                "widgetbot",
-                "about",
-                "docs"
-            ]
+            "isRTL": ["he-IL"]
         },
         "ssl": false,
         "port": {

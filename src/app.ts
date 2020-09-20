@@ -42,7 +42,7 @@ import * as banned from "./Util/Services/banned";
 import * as discord from "./Util/Services/discord";
 import * as tokenManager from "./Util/Services/adminTokenManager";
 
-import * as languageHandler from "./Util/Middleware/languageHandler";
+import languageHandler from "./Util/Middleware/languageHandler";
 
 import { botStatsUpdate } from "./Util/Services/botStatsUpdate";
 import { variables } from "./Util/Function/variables";
@@ -253,7 +253,7 @@ new Promise((resolve, reject) => {
 
         app.get(
             "/:lang/auth/login",
-            languageHandler.globalHandler,
+            languageHandler,
             variables,
             (req: Request, res: Response, next) => {
                 if (req.user) res.redirect("/");
@@ -273,8 +273,7 @@ new Promise((resolve, reject) => {
 
         // Locale handler.
         // Don't put anything below here that you don't want it's locale to be checked whatever (broken english kthx)
-        app.use(["/:lang", "/"], languageHandler.homeHandler);
-        app.use("/:lang/*", languageHandler.globalHandler);
+        app.use(["/:lang", "/"], languageHandler);
 
         app.use("/:lang/sitemap.xml", sitemapGenerator);
 

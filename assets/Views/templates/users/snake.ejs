@@ -41,6 +41,7 @@
                             var context = canvas.getContext("2d");
                             var grid = 16;
                             var count = 0;
+                            var changing_direction = false;
         
                             var snake = {
                                 x: 160,
@@ -66,6 +67,7 @@
                                     return;
                                 }
                                 count = 0;
+                                changing_direction = false;
                                 context.clearRect(0,0,canvas.width,canvas.height);
                                 snake.x += snake.dx;
                                 snake.y += snake.dy;
@@ -94,14 +96,57 @@
                                 context.fillRect(apple.x, apple.y, grid-1, grid-1);
         
                                 context.fillStyle = "green";
-                                snake.cells.forEach(function(cell, index) {
-        
+                                
+                                for (var i = 4; i < snake.cells.length; i++) {
+
+                                    if (snake.cells[i].x === snake.cells[0].x && snake.cells[i].y === snake.cells[0].y) {
+                                        document.getElementById("game").className = "snakeDeath";
+                                        document.getElementById("lastScoreCount").innerHTML = `${snake.maxCells - 4}`;
+                                        document.getElementById("lastScore").style.display = "block";
+
+                                        snake.x = 160;
+                                        snake.y = 160;
+                                        snake.cells = [];
+                                        snake.maxCells = 4;
+                                        snake.dx = grid;
+                                        snake.dy = 0;
+                                        apple.x = getRandomInt(0, 25) * grid;
+                                        apple.y = getRandomInt(0, 25) * grid;
+
+                                        document.getElementById("score").innerHTML = `${snake.maxCells - 4}`;
+
+                                        function highscoreRequest() {
+                                            this.get = function(callback) {
+                                                xhr.onreadystatechange = () => {
+                                                    if (xhr.readyState === 4 && xhr.status === 200) callback(xhr.responseText);
+                                                }
+
+                                                xhr.open("GET", url, true);
+                                                xhr.send(null);
+                                            }
+                                        }
+
+                                        const highscore = new highscoreRequest();
+
+                                        highscore.get(callback => {
+                                            console.log(callback);
+                                            document.getElementById("highScore").innerHTML = `${JSON.parse(callback).result}`;
+                                        });
+
+                                        setTimeout(() => {
+                                            document.getElementById("game").className = "snakeNormal";
+                                        }, 350);
+                                    }
+                                }
+
+                                snake.cells.forEach(function(cell) {
+
                                     context.fillRect(cell.x, cell.y, grid-1, grid-1);
                                     if (cell.x === apple.x && cell.y === apple.y) {
                                         snake.maxCells++;
                                         document.getElementById("game").className = "snakePoint";
                                         document.getElementById("score").innerHTML = `${snake.maxCells - 4}`;
-        
+
                                         xhr.open("POST", url, true);
                                         xhr.setRequestHeader("Content-Type", "application/json");
                                         xhr.onreadystatechange = function() {
@@ -110,62 +155,24 @@
                                                 console.log(json);
                                             }
                                         };
-        
+
                                         score = snake.maxCells - 4;
                                         data = JSON.stringify({ "score": score });
                                         xhr.send(data);
-        
+
                                         apple.x = getRandomInt(0, 25) * grid;
                                         apple.y = getRandomInt(0, 25) * grid;
                                         setTimeout(() => {
                                             document.getElementById("game").className = "snakeNormal";
                                         }, 350);
                                     }
-        
-                                    for (var i = index + 1; i < snake.cells.length; i++) {
-        
-                                        if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
-                                            document.getElementById("game").className = "snakeDeath";
-                                            document.getElementById("lastScoreCount").innerHTML = `${snake.maxCells - 4}`;
-                                            document.getElementById("lastScore").style.display = "block";
-                                            
-                                            snake.x = 160;
-                                            snake.y = 160;
-                                            snake.cells = [];
-                                            snake.maxCells = 4;
-                                            snake.dx = grid;
-                                            snake.dy = 0;
-                                            apple.x = getRandomInt(0, 25) * grid;
-                                            apple.y = getRandomInt(0, 25) * grid;
-        
-                                            document.getElementById("score").innerHTML = `${snake.maxCells - 4}`;
-
-                                            function highscoreRequest() {
-                                                this.get = function(callback) {
-                                                    xhr.onreadystatechange = () => {
-                                                        if (xhr.readyState === 4 && xhr.status === 200) callback(xhr.responseText);
-                                                    }
-
-                                                    xhr.open("GET", url, true);
-                                                    xhr.send(null);
-                                                }
-                                            }
-
-                                            const highscore = new highscoreRequest();
-
-                                            highscore.get(callback => {
-                                                console.log(callback);
-                                                document.getElementById("highScore").innerHTML = `${JSON.parse(callback).result}`;
-                                            });
-                            
-                                            setTimeout(() => {
-                                                document.getElementById("game").className = "snakeNormal";
-                                            }, 350);
-                                        }
-                                    }
                                 });
                             }
+
                             document.addEventListener("keydown", function(e) {
+                                if (changing_direction) return;
+                                changing_direction = true;
+
                                 // Go up
                                 // Arrow - 38, W - 87
                                 if ((e.which === 38 || e.which === 87) && snake.dy === 0) {

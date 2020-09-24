@@ -425,7 +425,7 @@ router.post(
                     res.__("common.error.listing.arr.privacyPolicy.yardim")
                 );
             }
-            if (req.body.privacyPolicy.includes("help")) {
+            if (req.body.privacyPolicy.includes("help") && !functions.isURL(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.help")
@@ -1303,7 +1303,7 @@ router.post(
                 );
             }
 
-            if (req.body.privacyPolicy.includes("help")) {
+            if (req.body.privacyPolicy.includes("help") && !functions.isURL(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.help")
@@ -2354,7 +2354,7 @@ router.post(
                 );
             }
 
-            if (req.body.privacyPolicy.includes("help")) {
+            if (req.body.privacyPolicy.includes("help") && !functions.isURL(req.body.privacyPolicy)) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.help")

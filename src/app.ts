@@ -74,7 +74,7 @@ app.use(
 app.set("views", path.join(__dirname + "/../../assets/Views"));
 app.use(express.static(path.join(__dirname + "/../../assets/Public")));
 
-new Promise((resolve, reject) => {
+new Promise<void>((resolve, reject) => {
     console.time("Mongo TTL");
     MongoClient.connect(
         settings.secrets.mongo.uri,
@@ -93,7 +93,7 @@ new Promise((resolve, reject) => {
     .then(async () => {
         discord.bot.login(settings.secrets.discord.token);
         
-        await new Promise((resolve) => {
+        await new Promise<void>((resolve) => {
             discord.bot.once("ready", () => resolve());
         });
 

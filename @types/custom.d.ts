@@ -20,6 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { BrowserDetectInfo } from "browser-detect/dist/types/browser-detect.interface";
 import { Db } from "mongodb";
 import { Redis } from "ioredis";
+import { Keys } from "./keys"
+import strings from "del-i18n/website/en-NZ.json"
 export {};
 
 declare global {
@@ -76,6 +78,6 @@ declare module "express-serve-static-core" {
          * https://github.com/discordextremelist/i18n/tree/master/website
          * https://translate.discordextremelist.xyz
          */
-        __(key: string, args?: any): string;
+        __(key: Keys<typeof strings>, args?: any): string;
     }
 }

@@ -187,7 +187,7 @@ router.post(
             );
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
@@ -599,7 +599,7 @@ router.post(
             );
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {

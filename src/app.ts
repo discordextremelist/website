@@ -255,7 +255,7 @@ new Promise<void>((resolve, reject) => {
             "/:lang/auth/login",
             languageHandler,
             variables,
-            (req: Request, res: Response, next) => {
+            (req: Request, res: Response) => {
                 if (req.user) res.redirect("/");
 
                 res.locals.premidPageInfo = res.__("premid.login");

@@ -135,7 +135,7 @@ export const variables = async (
     }
 
     if (
-        req.browser.name === "firefox" ||
+        (req.browser.name === "firefox" && req.browser.versionNumber < 82) ||
         (req.browser.name === "opera" &&
             req.browser.os === "Android" &&
             req.browser.versionNumber < 46) ||

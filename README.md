@@ -9,48 +9,35 @@
 
 Licensing information viewable in the [LICENSE](https://github.com/discordextremelist/website/blob/master/LICENSE) file.
 
+We welcome contributions to DEL! If you need any help contributing, please talk to us in our Discord server.
+
+Note that we do not support running public clones: you are allowed to do it if you follow the license, but we will not provide any support. The following instructions are only for users running DEL in development to contribute.
+
 # Setup
 
 ## Requirements
 
 ### Node.js
 
-DEL requires Node.js 14.
-
-### nodemon (Optional)
-
-nodemon is optional and allows you to use the `npm run dev` command which is ideal in development, nodemon auto restarts and compiles on file save.
-
-### PM2 (Optional)
-
-PM2 is optional and allows you to use the `npm run pm2` command which is ideal if you wish to run DEL in production.
+DEL requires [Node.js](https://nodejs.org) 14+.
 
 ### MongoDB
 
-A MongoDB instance is required - it must match the configuration in the `settings.json` file.
+A [MongoDB](https://mongodb.com) instance is required - it must match the configuration in the `settings.json` file.
 
 ### Redis
 
-Redis must be installed for caching to work, the site will not function correctly without it - it must match the configuration in the `settings.json` file.
+[Redis](https://redis.io) or [Memurai](https://memurai.com) must be installed and running - it must match the configuration in the `settings.json` file.
 
 ### NPM Packages
-Install all of the dependencies by running `npm i` command.
+Install all of the dependencies by running `npm i`.
 
 ## Configuration
 
-1. Rename `settings.example.json` to `settings.json` and fill it out appropriately, changing anything you need to change.
-2. (Optional) In addition to this you may wish to change some of the things in the `variables.ts` file located in `src/Util/Function`.
+Rename `settings.example.json` to `settings.json` and fill it out appropriately, changing anything you need to change.
 
 ## Running DEL
 
-### Compiling
+When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run `npm run compile`.
 
-When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run the `npm run compile` command (unless using `npm run dev`).
-
-### Production
-
-We recommend when running DEL in production you use the `npm run pm2` command, you can also still run DEL using the standard `npm run start` command.
-
-### Development/Testing
-
-We recommend you run DEL using the `npm run start` command, you can also run DEL using the `npm run dev` command but due to compiling on file save, this isn't *always* a good idea.
+Run `npm start` to start DEL.

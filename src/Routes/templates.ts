@@ -128,7 +128,7 @@ router.post(
             );
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
         }
 
         let tags: string[] = [];
@@ -467,7 +467,7 @@ router.post(
                 errors.push(res.__("common.error.template.arr.invite.isURL"));
             } else if (req.body.code.includes("discord.new")) {
                 error = true;
-                errors.push(res.__("common.error.template.arr.invite.dnew."));
+                errors.push(res.__("common.error.template.arr.invite.dnew"));
             }
         }
 
@@ -481,7 +481,7 @@ router.post(
             );
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
         }
 
         let tags: string[] = [];
@@ -678,9 +678,7 @@ router.get(
         if (template.owner.id !== req.user.id)
             return res.status(403).render("status", {
                 title: res.__("common.error"),
-                subtitle: res.__(
-                    "You do not have the required permission(s) to delete this template."
-                ),
+                subtitle: res.__("common.error.template.perms.delete"),
                 status: 403,
                 type: "Error",
                 req
@@ -765,7 +763,7 @@ router.post(
             return res.status(404).render("status", {
                 title: res.__("common.error"),
                 status: 404,
-                subtitle: res.__("common.error.template.404t"),
+                subtitle: res.__("common.error.template.404"),
                 req,
                 type: "Error"
             });

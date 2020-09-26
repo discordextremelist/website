@@ -366,7 +366,7 @@ router.post(
             );
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
@@ -1241,7 +1241,7 @@ router.post(
             );
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
@@ -2294,7 +2294,7 @@ router.post(
             errors.push(res.__("common.error.listing.arr.shortDescRequired"));
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
         }
 
         if (!req.body.longDescription) {
@@ -2589,7 +2589,7 @@ router.get(
             return res.status(404).render("status", {
                 title: res.__("common.error"),
                 status: 404,
-                subtitle: res.__("common.bot.error.404"),
+                subtitle: res.__("common.error.bot.404"),
                 req,
                 type: "Error"
             });
@@ -2723,7 +2723,7 @@ router.get(
             return res.status(404).render("status", {
                 title: res.__("common.error"),
                 status: 404,
-                subtitle: res.__("common.bot.error.404"),
+                subtitle: res.__("common.error.bot.404"),
                 req,
                 type: "Error"
             });

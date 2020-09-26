@@ -166,8 +166,8 @@ router.get(
             });
 
         res.render("templates/users/staffActions/modifyRank", {
-            title: res.__("Modify Rank"),
-            subtitle: res.__("Modifiying rank of %s", targetUser.fullUsername),
+            title: res.__("page.users.modifyRank"),
+            subtitle: res.__("page.users.modifyRank.subtitle", targetUser.fullUsername),
             user: req.user,
             req: req,
             targetUser: targetUser

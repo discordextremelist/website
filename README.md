@@ -41,3 +41,9 @@ Rename `settings.example.json` to `settings.json` and fill it out appropriately,
 When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run `npm run compile`.
 
 Run `npm start` to start DEL.
+
+Contribution
+
+If you see any errors in my website content or feel you could make improvements then please feel free to open an issue or raise a pull request. Or if you wish just leave a comment on the relevant page.
+
+If you notice any bugs relating to the theme or display of the website please raise an issue with me.

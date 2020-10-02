@@ -1,3 +1,5 @@
+An Amazing Website
+
 # Discord Extreme List version 5.x.x
 
 [![Compile](https://github.com/discordextremelist/website/workflows/Compile/badge.svg)](https://github.com/discordextremelist/website/actions?query=workflow%3ACompile)

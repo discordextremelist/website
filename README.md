@@ -41,3 +41,8 @@ Rename `settings.example.json` to `settings.json` and fill it out appropriately,
 When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run `npm run compile`.
 
 Run `npm start` to start DEL.
+
+# WHAT IS DISCORD?
+
+Discord lets friends chat with each other either one to oe or as a group via server. You can use it to send direct messages to friends, have video calls with them, voice chat and even screen share.... It is very helpful for gamers.
+

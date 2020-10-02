@@ -7,9 +7,9 @@
 [![Code style](https://img.shields.io/badge/code%20style-prettier-ff69b4?logo=prettier&logoColor=white)](https://prettier.io)
 [![Crowdin](https://badges.crowdin.net/delly/localized.svg)](https://translate.discordextremelist.xyz/project/delly)  
 
-Licensing information viewable in the [LICENSE](https://github.com/discordextremelist/website/blob/master/LICENSE) file.
+# Licensing information viewable in the [LICENSE](https://github.com/discordextremelist/website/blob/master/LICENSE) file.
 
-We welcome contributions to DEL! If you need any help contributing, please talk to us in our Discord server.
+# We welcome contributions to DEL! If you need any help contributing, please talk to us in our Discord server.
 
 Note that we do not support running public clones: you are allowed to do it if you follow the license, but we will not provide any support. The following instructions are only for users running DEL in development to contribute.
 

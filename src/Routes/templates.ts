@@ -171,8 +171,8 @@ router.post(
                     explicitContent:
                         template.serialized_source_guild
                             .explicit_content_filter,
-                    roles: template.serialized_source_guild.roles,
-                    channels: template.serialized_source_guild.channels,
+                    roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
+                    channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
                     usageCount: template.usage_count,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
@@ -229,8 +229,8 @@ router.post(
                             explicitContent:
                                 template.serialized_source_guild
                                     .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles,
-                            channels: template.serialized_source_guild.channels,
+                            roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
+                            channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
@@ -529,8 +529,8 @@ router.post(
                             explicitContent:
                                 template.serialized_source_guild
                                     .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles,
-                            channels: template.serialized_source_guild.channels,
+                            roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
+                            channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
@@ -586,8 +586,8 @@ router.post(
                             explicitContent:
                                 template.serialized_source_guild
                                     .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles,
-                            channels: template.serialized_source_guild.channels,
+                            roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
+                            channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
@@ -877,8 +877,8 @@ router.get(
                             explicitContent:
                                 template.serialized_source_guild
                                     .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles,
-                            channels: template.serialized_source_guild.channels,
+                            roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
+                            channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
                             usageCount: template.usage_count,
                             icon: {
                                 hash:
@@ -913,8 +913,8 @@ router.get(
                             explicitContent:
                                 template.serialized_source_guild
                                     .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles,
-                            channels: template.serialized_source_guild.channels,
+                            roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
+                            channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
                             usageCount: template.usage_count,
                             icon: {
                                 hash:

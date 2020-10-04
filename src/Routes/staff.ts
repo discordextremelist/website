@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import type { APIUser } from "discord-api-types/v8";
 
 import * as settings from "../../settings.json";

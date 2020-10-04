@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import type { APIUser } from "discord-api-types/v8";
 
 import * as discord from "../Util/Services/discord";
@@ -31,7 +31,7 @@ import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
 import * as tokenManager from "../Util/Services/adminTokenManager";
-import { DiscordAPIError } from "discord.js";
+import type { DiscordAPIError } from "discord.js";
 import { themes } from "../../@types/enums";
 
 const Entities = require("html-entities").XmlEntities;

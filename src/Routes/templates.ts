@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import sanitizeHtml from "sanitize-html";
 
@@ -31,10 +31,10 @@ import * as userCache from "../Util/Services/userCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import { variables } from "../Util/Function/variables";
 import * as tokenManager from "../Util/Services/adminTokenManager";
-import { APITemplate } from "../../@types/discord";
-import { TextChannel, DiscordAPIError } from "discord.js";
+import type { APITemplate } from "../../@types/discord";
+import type { TextChannel, DiscordAPIError } from "discord.js";
 import { MessageEmbed } from "discord.js";
-import { templateReasons } from "../../@types/enums";
+import type { templateReasons } from "../../@types/enums";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;

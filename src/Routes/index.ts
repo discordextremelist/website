@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import * as settings from "../../settings.json";
 import * as featuring from "../Util/Services/featuring";
@@ -27,7 +27,7 @@ import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as discord from "../Util/Services/discord";
 import { variables } from "../Util/Function/variables";
-import { GuildMember } from "discord.js";
+import type { GuildMember } from "discord.js";
 
 const router = express.Router();
 

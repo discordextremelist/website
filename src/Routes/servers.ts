@@ -18,13 +18,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import { Request, Response } from "express";
-import { Response as fetchRes } from "../../@types/fetch";
+import type { Request, Response } from "express";
+import type { Response as fetchRes } from "../../@types/fetch";
 import type { APIInvite } from "discord-api-types/v8";
 import { RESTJSONErrorCodes } from "discord-api-types/v8"
 
 import * as fetch from "node-fetch";
-import { TextChannel, DiscordAPIError } from "discord.js";
+import type { TextChannel, DiscordAPIError } from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
 import * as settings from "../../settings.json";
@@ -37,7 +37,7 @@ import * as serverCache from "../Util/Services/serverCaching";
 import { variables } from "../Util/Function/variables";
 import * as tokenManager from "../Util/Services/adminTokenManager";
 import { MessageEmbed } from "discord.js";
-import { serverReasons } from "../../@types/enums";
+import type { serverReasons } from "../../@types/enums";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;

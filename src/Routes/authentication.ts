@@ -18,13 +18,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import bodyParser from "body-parser";
 import passport from "passport";
 import { Strategy } from "passport-discord";
 import * as discord from "../Util/Services/discord";
-import { DiscordAPIError } from "discord.js";
+import type { DiscordAPIError } from "discord.js";
 
 import * as settings from "../../settings.json";
 import * as tokenManager from "../Util/Services/adminTokenManager";

@@ -21,7 +21,6 @@ import { BrowserDetectInfo } from "browser-detect/dist/types/browser-detect.inte
 import { Db } from "mongodb";
 import { Redis } from "ioredis";
 import strings from "del-i18n/website/en-NZ.json"
-export {};
 
 declare global {
     namespace NodeJS {

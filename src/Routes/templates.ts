@@ -799,7 +799,6 @@ router.post(
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
-        embed.setURL(`${settings.website.url}/bots/${template._id}`);
 
         (discord.bot.channels.cache.get(
             settings.channels.webLog

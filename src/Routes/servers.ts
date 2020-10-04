@@ -897,7 +897,7 @@ router.post(
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
-        embed.setURL(`${settings.website.url}/bots/${server._id}`);
+        embed.setURL(`${settings.website.url}/servers/${server._id}`);
         embed.setFooter("It will still be shown as a normal server, it was declined from being listed as an LGBT community.");
 
         (discord.bot.channels.cache.get(
@@ -1173,7 +1173,6 @@ router.post(
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
-        embed.setURL(`${settings.website.url}/bots/${server._id}`);
 
         (discord.bot.channels.cache.get(
             settings.channels.webLog

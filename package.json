@@ -18,7 +18,7 @@
     "datadog-metrics": "^0.8.1",
     "debug": "~2.6.9",
     "del-i18n": "github:discordextremelist/i18n",
-    "discord-api-types": "^0.2.0",
+    "discord-api-types": "^0.6.0",
     "discord.js": "^12.3.1",
     "ejs": "^3.1.5",
     "express": "~4.17.1",

@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import { Request, Response } from "express";
-import { APIUser } from "discord-api-types/v6";
+import type { APIUser } from "discord-api-types/v8";
 
 import * as discord from "../Util/Services/discord";
 import * as banned from "../Util/Services/banned";

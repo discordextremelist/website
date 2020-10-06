@@ -17,6 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { PresenceUpdateStatus } from "discord-api-types/v8";
 import * as functions from "../Function/main";
 
 export async function getFeaturedBots(): Promise<delBot[]> {
@@ -35,7 +36,7 @@ export async function getFeaturedTemplates(): Promise<delTemplate[]> {
 }
 
 export async function updateFeaturedBots() {
-    const statuses = await global.redis?.hgetall("statuses");
+    const statuses = await global.redis?.hgetall("statuses") as Record<string, PresenceUpdateStatus>;
     const bots = functions
         .shuffleArray(
             ((await global.db
@@ -47,7 +48,7 @@ export async function updateFeaturedBots() {
                     !status.siteBot &&
                     !status.archived &&
                     statuses[_id] &&
-                    statuses[_id] !== "offline"
+                    statuses[_id] !== PresenceUpdateStatus.Offline
             )
         )
         .slice(0, 6);

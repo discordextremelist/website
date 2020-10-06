@@ -22,6 +22,7 @@ import * as metrics from "datadog-metrics";
 
 import * as settings from "../../../settings.json";
 import moment from "moment";
+import { PresenceUpdateStatus } from "discord-api-types/v8";
 const prefix = "statuses";
 
 metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
@@ -60,7 +61,7 @@ bot.on("presenceUpdate", async (oldPresence, newPresence) => {
     await global.redis?.hmset(
         prefix,
         newPresence.member.id,
-        newPresence.status || "offline"
+        newPresence.status || PresenceUpdateStatus.Offline
     );
 });
 
@@ -68,7 +69,7 @@ bot.on("guildMemberAdd", async (member) => {
     await global.redis?.hmset(
         prefix,
         member.id,
-        member.presence.status || "offline"
+        member.presence.status || PresenceUpdateStatus.Offline
     );
 
     if (member.guild.id === settings.guild.main) await postMetric();
@@ -76,7 +77,7 @@ bot.on("guildMemberAdd", async (member) => {
 
 bot.on("guildMemberRemove", async (member) => {
     if (member.guild.id === settings.guild.main) {
-        await global.redis?.hmset(prefix, member.id, "offline");
+        await global.redis?.hmset(prefix, member.id, PresenceUpdateStatus.Offline);
         await postMetric();
     }
 });
@@ -104,9 +105,9 @@ export async function getStaffGuildMember(id: string) {
     } else return undefined;
 }
 
-export async function getStatus(id: string): Promise<string> {
-    const status: string = await global.redis?.hget(prefix, id);
-    return status || "offline";
+export async function getStatus(id: string) {
+    const status = await global.redis?.hget(prefix, id) as PresenceUpdateStatus;
+    return status || PresenceUpdateStatus.Offline;
 }
 
 export async function uploadStatuses() {

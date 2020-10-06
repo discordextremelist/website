@@ -88,14 +88,19 @@ export const alertsChannel = bot.channels.cache.get(
     settings.channels.alerts
 ) as Discord.TextChannel;
 
-export function getMember(id: string): Discord.GuildMember | undefined {
+export async function getMember(id: string) {
     const mainGuild = bot.guilds.cache.get(settings.guild.main);
 
     if (mainGuild) {
-        const member:
-            | Discord.GuildMember
-            | undefined = mainGuild.members.cache.get(id);
-        return member;
+        return await mainGuild.members.fetch(id).catch(() => {});
+    } else return undefined;
+}
+
+export async function getStaffGuildMember(id: string) {
+    const staffGuild = bot.guilds.cache.get(settings.guild.staff);
+
+    if (staffGuild) {
+        return await staffGuild.members.fetch(id).catch(() => {});
     } else return undefined;
 }
 

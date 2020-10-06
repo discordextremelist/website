@@ -2644,7 +2644,7 @@ router.get(
                 console.error(e);
             });
 
-        const owner = discord.bot.users.cache.get(bot.owner.id);
+        const owner = await discord.getMember(bot.owner.id);
         if (owner)
             owner
                 .send(
@@ -2660,10 +2660,7 @@ Your bot will be added to our server within the next 24 hours.`
                     console.error(e);
                 });
 
-        const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
-        const staffGuild = discord.bot.guilds.cache.get(settings.guild.staff);
-
-        const mainGuildOwner = mainGuild.members.cache.get(bot.owner.id);
+        const mainGuildOwner = await discord.getMember(bot.owner.id);
         if (mainGuildOwner)
             mainGuildOwner.roles
                 .add(settings.roles.developer, "User's bot was just approved.")
@@ -2674,7 +2671,7 @@ Your bot will be added to our server within the next 24 hours.`
                     );
                 });
 
-        const mainGuildBot = mainGuild.members.cache.get(bot._id);
+        const mainGuildBot = await discord.getMember(bot._id);
         if (mainGuildBot)
             mainGuildBot.roles
                 .add(settings.roles.bot, "Bot was approved on the website.")
@@ -2685,7 +2682,7 @@ Your bot will be added to our server within the next 24 hours.`
                     );
                 });
 
-        const botStaffServer = staffGuild.members.cache.get(bot._id);
+        const botStaffServer = await discord.getStaffGuildMember(bot._id);
         if (botStaffServer)
             botStaffServer
                 .kick("Bot was approved on the website.")
@@ -2738,10 +2735,8 @@ router.get(
                 type: "Error"
             });
 
-        const mainGuild = await discord.bot.guilds.cache.get(
-            settings.guild.main
-        );
-        const botMember = await mainGuild.members.cache.get(bot._id);
+
+        const botMember = await discord.getMember(bot._id);
 
         if (botMember)
             botMember.roles
@@ -2978,7 +2973,7 @@ router.post(
 
         const staffGuild = discord.bot.guilds.cache.get(settings.guild.staff);
 
-        const member = staffGuild.members.cache.get(req.params.id);
+        const member = await discord.getStaffGuildMember(req.params.id);
 
         if (member && !settings.website.dev) {
             await member.kick("Bot's listing has been declined.").catch((e) => {
@@ -2986,7 +2981,7 @@ router.post(
             });
         }
 
-        const owner = discord.bot.users.cache.get(bot.owner.id);
+        const owner = await discord.getMember(bot.owner.id);
         if (owner)
             owner
                 .send(
@@ -3139,9 +3134,8 @@ router.post(
             { embed: embed }
         );
 
-        const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
 
-        const member = mainGuild.members.cache.get(req.params.id);
+        const member = await discord.getMember(req.params.id);
 
         if (member && !settings.website.dev) {
             await member.kick("Bot has been unapproved.").catch((e) => {
@@ -3149,7 +3143,7 @@ router.post(
             });
         }
 
-        const owner = discord.bot.users.cache.get(bot.owner.id);
+        const owner = await discord.getMember(bot.owner.id);
         if (owner)
             owner
                 .send(
@@ -3302,9 +3296,8 @@ router.post(
             { embed: embed }
         );
 
-        const mainGuild = discord.bot.guilds.cache.get(settings.guild.main);
 
-        const member = mainGuild.members.cache.get(req.params.id);
+        const member = await discord.getMember(req.params.id);
 
         if (member && !settings.website.dev) {
             await member
@@ -3314,7 +3307,7 @@ router.post(
                 });
         }
 
-        const owner = discord.bot.users.cache.get(bot.owner.id);
+        const owner = await discord.getMember(bot.owner.id);
         if (owner)
             owner
                 .send(

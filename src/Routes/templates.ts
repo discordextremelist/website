@@ -812,7 +812,7 @@ router.post(
             )}** \`(${template._id})\``
         );
 
-        const owner = discord.bot.users.cache.get(template.owner.id);
+        const owner = await discord.getMember(template.owner.id);
         if (owner)
             owner
                 .send(

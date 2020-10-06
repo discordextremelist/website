@@ -915,7 +915,7 @@ router.post(
             { embed: embed }
         );
 
-        const owner = discord.bot.users.cache.get(server.owner.id);
+        const owner = await discord.getMember(server.owner.id);
         if (owner)
             owner
                 .send(
@@ -1014,7 +1014,7 @@ router.get(
                 console.error(e);
             });
 
-        const owner = discord.bot.users.cache.get(server.owner.id);
+        const owner = await discord.getMember(server.owner.id);
         if (owner)
             owner
                 .send(
@@ -1187,7 +1187,7 @@ router.post(
             { embed: embed }
         );
 
-        const owner = discord.bot.users.cache.get(server.owner.id);
+        const owner = await discord.getMember(server.owner.id);
         if (owner)
             owner
                 .send(

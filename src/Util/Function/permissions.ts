@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { Request, Response } from "express";
-import { bot } from "../Services/discord";
+import { bot, getMember } from "../Services/discord";
 import * as settings from "../../../settings.json";
 import * as discord from "../Services/discord";
 import { DiscordAPIError } from "discord.js";
@@ -37,18 +37,14 @@ export const auth = (req: Request, res: Response, next: () => void) => {
     }
 };
 
-export const member = (req: Request, res: Response, next: () => void) => {
+export const member = async (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {
         req.session.logoutJust = false;
         req.session.logoutJustCont = false;
         return res.redirect("/");
     }
 
-    if (
-        !bot.guilds.cache
-            .get(settings.guild.main)
-            .members.cache.get(req.user.id)
-    ) {
+    if (!await getMember(req.body.id)) {
         discord.bot.api.guilds(settings.guild.main).members(req.user.id).put({ data: { access_token: req.user.accessToken } })
             .catch((error: DiscordAPIError) => {
                 if (error.httpStatus === 403 && !req.user.impersonator) {

@@ -987,7 +987,6 @@ router.post(
     "/:id/edit",
     variables,
     permission.auth,
-    permission.member,
     async (req: Request, res: Response) => {
         let error = false;
         let errors: string[] = [];

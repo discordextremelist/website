@@ -1338,7 +1338,7 @@ router.post(
             editors = [];
         }
 
-        if (editors.includes(req.user.id)) {
+        if (editors.includes(req.user.id) && bot.owner.id === req.user.id) {
             error = true;
             errors.push(
                 res.__("common.error.listing.arr.removeYourselfEditor")
@@ -2388,7 +2388,7 @@ router.post(
             editors = [];
         }
 
-        if (editors.includes(req.user.id)) {
+        if (editors.includes(req.user.id) && bot.owner.id === req.user.id) {
             error = true;
             errors.push(
                 res.__("common.error.listing.arr.removeYourselfEditor")

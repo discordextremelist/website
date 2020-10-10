@@ -46,21 +46,7 @@ export const member = async (req: Request, res: Response, next: () => void) => {
 
     if (!await getMember(req.body.id)) {
         discord.bot.api.guilds(settings.guild.main).members(req.user.id).put({ data: { access_token: req.user.accessToken } })
-            .catch((error: DiscordAPIError) => {
-                if (error.httpStatus === 403 && !req.user.impersonator) {
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [
-                            res.__("common.error.failedJoin", {
-                                a:
-                                    '<a href="https://discord.gg/WeCer3J" rel="noopener" target="_blank">',
-                                ea: "</a>"
-                            })
-                        ]
-                    });
-                } else next();
-            });
+            .catch(() => {});
     }
 
     next();

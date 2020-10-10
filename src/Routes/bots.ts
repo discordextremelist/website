@@ -1438,9 +1438,9 @@ router.post(
                             },
                             theme: {
                                 useCustomColour:
-                                    botExists.theme.useCustomColour,
-                                colour: botExists.theme.colour,
-                                banner: botExists.theme.banner
+                                    botExists.theme?.useCustomColour,
+                                colour: botExists.theme?.colour,
+                                banner: botExists.theme?.banner
                             },
                             widgetbot: {
                                 channel: botExists.widgetbot.channel,
@@ -2475,9 +2475,9 @@ router.post(
                             },
                             theme: {
                                 useCustomColour:
-                                    botExists.theme.useCustomColour,
-                                colour: botExists.theme.colour,
-                                banner: botExists.theme.banner
+                                    botExists.theme?.useCustomColour,
+                                colour: botExists.theme?.colour,
+                                banner: botExists.theme?.banner
                             },
                             widgetbot: {
                                 channel: botExists.widgetbot.channel,

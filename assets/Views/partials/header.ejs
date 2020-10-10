@@ -11,7 +11,7 @@
     <% if (pageType.bot === true) { 
         let color = "#b114ff"
         if(req.user) color = req.user.db.preferences.defaultColour
-        if(bot.theme && bot.theme.useCustomColour) {
+        if(bot.theme?.useCustomColour) {
             color = bot.theme.colour;
             foreground = functions.getForeground(color);
         }
@@ -61,7 +61,7 @@
     <meta name="distribution" content="global">
     <meta name="revisit-after" content="1 day">
 
-    <meta name="theme-color" content="<%= (pageType.bot === true && bot.theme && bot.theme.useCustomColour) ? bot.theme.colour : req.user ? req.user.db.preferences.defaultColour || "#b114ff" : "#b114ff" %>">
+    <meta name="theme-color" content="<%= (pageType.bot === true && bot.theme?.useCustomColour) ? bot.theme.colour : req.user ? req.user.db.preferences.defaultColour || "#b114ff" : "#b114ff" %>">
 
     <% if (dev === true) { %>
         <meta name="robots" content="noindex">

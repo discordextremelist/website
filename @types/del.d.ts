@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { UserFlags, APIChannel, APIRole } from 'discord-api-types/v8'
+import { UserFlags, APIChannel, APIRole, APIUser } from 'discord-api-types/v8'
 
 declare global {
     interface authUser {
@@ -278,6 +278,7 @@ declare global {
         owner: {
             id: string;
         };
+        creator: Pick<APIUser, "id" | "username" | "discriminator">;
         icon: {
             hash: string;
             url: string;

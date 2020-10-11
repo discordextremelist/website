@@ -140,8 +140,16 @@
                             });
                         %>
                         <%- 
+                        include("../../partials/tag.ejs", { 
+                            contentColour: "is-info", 
+                            title: __("common.creator"),
+                            content: "insCreator-template",
+                            type: "multi"
+                        });
+                    %>
+                        <%- 
                             include("../../partials/tag.ejs", { 
-                                contentColour: "is-info", 
+                                contentColour: "is-success", 
                                 title: __("page.templates.used"),
                                 content: __("page.templates.used.times", template.usageCount),
                                 type: "multi"

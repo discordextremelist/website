@@ -181,6 +181,11 @@ router.post(
                     owner: {
                         id: req.user.id
                     },
+                    creator: {
+                        id: template.creator.id,
+                        username: template.creator.username,
+                        discriminator: template.creator.discriminator
+                    },
                     icon: {
                         hash: template.serialized_source_guild.icon_hash,
                         url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
@@ -237,6 +242,11 @@ router.post(
                             owner: {
                                 id: req.user.id
                             },
+                            creator: {
+                                id: template.creator.id,
+                                username: template.creator.username,
+                                discriminator: template.creator.discriminator
+                            },
                             icon: {
                                 hash:
                                     template.serialized_source_guild.icon_hash,
@@ -246,7 +256,7 @@ router.post(
                                 linkToServerPage: false,
                                 template: `https://discord.new/${template.code}`
                             }
-                        }
+                        } as delTemplate
                     }
                 });
 
@@ -328,6 +338,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         template,
         longDesc: clean,
         templateOwner,
+        creatorHasProfile: !!(template.creator && await userCache.getUser(template.creator.id)),
         webUrl: settings.website.url,
         req,
         functions
@@ -533,6 +544,11 @@ router.post(
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             tags: tags,
+                            creator: {
+                                id: template.creator.id,
+                                username: template.creator.username,
+                                discriminator: template.creator.discriminator
+                            },
                             icon: {
                                 hash:
                                     template.serialized_source_guild.icon_hash,
@@ -589,6 +605,11 @@ router.post(
                             longDesc: req.body.longDescription,
                             tags: tags,
                             fromGuild: dbTemplate.fromGuild,
+                            creator: {
+                                id: template.creator.id,
+                                username: template.creator.username,
+                                discriminator: template.creator.discriminator
+                            },
                             icon: {
                                 hash:
                                     template.serialized_source_guild.icon_hash,
@@ -615,6 +636,11 @@ router.post(
                             longDesc: dbTemplate.longDesc,
                             tags: dbTemplate.tags,
                             fromGuild: dbTemplate.fromGuild,
+                            creator: {
+                                id: template.creator.id,
+                                username: template.creator.username,
+                                discriminator: template.creator.discriminator
+                            },
                             icon: {
                                 hash: dbTemplate.icon.hash,
                                 url: dbTemplate.icon.url
@@ -846,7 +872,7 @@ router.get(
                 type: "Error"
             });
 
-        discord.bot.api.guilds.templates(req.params.id).get()
+        await discord.bot.api.guilds.templates(req.params.id).get()
             .then(async (template: APITemplate) => {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
@@ -871,6 +897,11 @@ router.get(
                             roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
                             channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
                             usageCount: template.usage_count,
+                            creator: {
+                                id: template.creator.id,
+                                username: template.creator.username,
+                                discriminator: template.creator.discriminator
+                            },
                             icon: {
                                 hash:
                                     template.serialized_source_guild.icon_hash,
@@ -907,6 +938,11 @@ router.get(
                             roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
                             channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
                             usageCount: template.usage_count,
+                            creator: {
+                                id: template.creator.id,
+                                username: template.creator.username,
+                                discriminator: template.creator.discriminator
+                            },
                             icon: {
                                 hash:
                                     template.serialized_source_guild.icon_hash,
@@ -925,6 +961,11 @@ router.get(
                             roles: dbTemplate.roles,
                             channels: dbTemplate.channels,
                             usageCount: dbTemplate.usageCount,
+                            creator: {
+                                id: template.creator.id,
+                                username: template.creator.username,
+                                discriminator: template.creator.discriminator
+                            },
                             icon: {
                                 hash: dbTemplate.icon.hash,
                                 url: dbTemplate.icon.url

@@ -18,6 +18,10 @@
                     <span class="tag <%= contentColour %>">
                         <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.owner.id %>"><%= templateOwner ? templateOwner.fullUsername : "Unknown#0000" %></a>
                     </span>
+                <% } else if (content === "insCreator-template") { %>
+                    <span class="tag <%= contentColour %>">
+                        <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.creator.id %>"><%= template.creator ? `${template.creator.username}#${template.creator.discriminator}` : "Unknown#0000" %></a>
+                    </span>
                 <% } else { %>
                     <span class="tag <%= contentColour %>"><%= content %></span>
                 <% } %> 
@@ -43,6 +47,20 @@
                 <% } else if (content === "insOwner-template") { %>
                     <span class="tag <%= contentColour %>">
                         <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.owner.id %>"><%= templateOwner ? templateOwner.fullUsername : "Unknown#0000" %></a>
+                    </span>
+                <% } else if (content === "insCreator-template") { %>
+                    <span class="tag <%= contentColour %>">
+                        <% if (template.creator) { %>
+                            <% if (creatorHasProfile) { %>
+                                <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.creator.id %>">
+                            <% } %>
+                            <%= template.creator.username %>#<%=template.creator.discriminator %>
+                            <% if (creatorHasProfile) { %>
+                                </a>
+                            <% } %>
+                        <% } else { %>
+                            Unknown#0000
+                        <% } %> 
                     </span>
                 <% } else { %>
                     <span class="tag <%= contentColour %>"><%= content %></span>

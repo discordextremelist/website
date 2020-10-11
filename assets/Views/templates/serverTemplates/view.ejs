@@ -342,7 +342,11 @@
                             </h4>
                             <div id="rolesListBody" class="is-hidden-mobile">
                                 <div>
-                                    <%- template.roles.reverse().filter(r => r.name !== '@everyone').map(role => include("../../partials/roles.ejs", { role })).join("") %>
+                                    <% if (template.roles.length === 1) { %>
+                                        None
+                                    <% } else { %>
+                                        <%- template.roles.reverse().filter(r => r.name !== '@everyone').map(role => include("../../partials/roles.ejs", { role })).join("") %>
+                                    <% } %>
                                 </div>
                             </div>
                         </div>

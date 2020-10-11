@@ -147,6 +147,8 @@
                                     });
                                 %>
                             <% } %>
+                        <% } %>
+                        <% if (bot.owner.id === req.user.id || bot.editors?.includes(req.user.id)) { %>
                             <%-
                                 include("../../partials/button.ejs", {
                                     className: "button is-success",
@@ -167,6 +169,8 @@
                                     additional: ""
                                 });
                             %>
+                        <% } %>
+                        <% if (bot.owner.id === req.user.id) { %>
                             <div style="padding-right: .5em;" class="dropdown is-hoverable">
                                 <div class="dropdown-trigger">
                                     <%-
@@ -201,17 +205,6 @@
                                     message: __("common.delete"),
                                     href: "",
                                     additional: "id=\"deleteModal\""
-                                });
-                            %>
-                        <% } else if (bot.editors && bot.editors.includes(req.user.id)) { %>
-                            <%-
-                                include("../../partials/button.ejs", {
-                                    className: "button is-warning",
-                                    icon: "fas fa-pencil",
-                                    tag: "a",
-                                    message: __("common.edit"),
-                                    href: `${linkPrefix}/bots/${bot._id}/edit`,
-                                    additional: ""
                                 });
                             %>
                         <% } %>

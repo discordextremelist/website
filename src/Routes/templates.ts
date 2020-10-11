@@ -32,7 +32,7 @@ import * as templateCache from "../Util/Services/templateCaching";
 import { variables } from "../Util/Function/variables";
 import * as tokenManager from "../Util/Services/adminTokenManager";
 import type { APITemplate } from "../../@types/discord";
-import type { TextChannel, DiscordAPIError } from "discord.js";
+import type { DiscordAPIError } from "discord.js";
 import { MessageEmbed } from "discord.js";
 import type { templateReasons } from "../../@types/enums";
 
@@ -191,9 +191,7 @@ router.post(
                     }
                 } as delTemplate);
 
-                await (discord.bot.channels.cache.get(
-                    settings.channels.webLog
-                ) as TextChannel).send(
+                discord.channels.logs.send(
                     `${settings.emoji.addBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -548,9 +546,7 @@ router.post(
                     }
                 );
 
-                await (discord.bot.channels.cache.get(
-                    settings.channels.webLog
-                ) as TextChannel).send(
+                discord.channels.logs.send(
                     `${settings.emoji.editBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -684,9 +680,7 @@ router.get(
                 req
             });
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as TextChannel).send(
+        discord.channels.logs.send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -800,9 +794,7 @@ router.post(
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as TextChannel).send(
+        discord.channels.logs.send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${

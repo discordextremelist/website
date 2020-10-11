@@ -82,25 +82,25 @@ bot.on("guildMemberRemove", async (member) => {
     }
 });
 
-export const logsChannel = bot.channels.cache.get(
-    settings.channels.webLog
-) as Discord.TextChannel;
-export const alertsChannel = bot.channels.cache.get(
-    settings.channels.alerts
-) as Discord.TextChannel;
+export const channels = {
+    get logs() { return bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel },
+    get alerts() { return bot.channels.cache.get(settings.channels.alerts) as Discord.TextChannel }
+}
 
-export const mainGuild = bot.guilds.cache.get(settings.guild.main);
-export const staffGuild = bot.guilds.cache.get(settings.guild.staff);
+export const guilds = {
+    get main() { return bot.guilds.cache.get(settings.guild.main) },
+    get testing() { return bot.guilds.cache.get(settings.guild.staff) },
+}
 
 export async function getMember(id: string) {
-    if (mainGuild) {
-        return await mainGuild.members.fetch(id).catch(() => {});
+    if (guilds.main) {
+        return await guilds.main.members.fetch(id).catch(() => {});
     } else return undefined;
 }
 
-export async function getStaffGuildMember(id: string) {
-    if (staffGuild) {
-        return await staffGuild.members.fetch(id).catch(() => {});
+export async function getTestingGuildMember(id: string) {
+    if (guilds.testing) {
+        return await guilds.testing.members.fetch(id).catch(() => {});
     } else return undefined;
 }
 
@@ -122,7 +122,7 @@ export async function uploadStatuses() {
 }
 
 export async function postMetric() {
-    const guild = bot.guilds.cache.get(settings.guild.main);
+    const guild = guilds.main;
     if (guild) metrics.gauge("del.server.memberCount", guild.memberCount);
 }
 

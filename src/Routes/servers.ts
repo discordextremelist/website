@@ -24,7 +24,7 @@ import type { APIInvite } from "discord-api-types/v8";
 import { RESTJSONErrorCodes } from "discord-api-types/v8"
 
 import * as fetch from "node-fetch";
-import type { TextChannel, DiscordAPIError } from "discord.js";
+import type { DiscordAPIError } from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
 import * as settings from "../../settings.json";
@@ -267,9 +267,7 @@ router.post(
                     }
                 } as delServer);
 
-                (discord.bot.channels.cache.get(
-                    settings.channels.webLog
-                ) as TextChannel).send(
+                discord.channels.logs.send(
                     `${settings.emoji.addBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -673,9 +671,7 @@ router.post(
                     }
                 );
 
-                (discord.bot.channels.cache.get(
-                    settings.channels.webLog
-                ) as TextChannel).send(
+                discord.channels.logs.send(
                     `${settings.emoji.editBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -900,9 +896,7 @@ router.post(
         embed.setURL(`${settings.website.url}/servers/${server._id}`);
         embed.setFooter("It will still be shown as a normal server, it was declined from being listed as an LGBT community.");
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as TextChannel).send(
+        discord.channels.logs.send(
             `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -996,10 +990,7 @@ router.get(
 
         await serverCache.updateServer(req.params.id);
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as TextChannel)
-            .send(
+        discord.channels.logs.send(
                 `${settings.emoji.check} **${functions.escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${
@@ -1061,9 +1052,7 @@ router.get(
                 req
             });
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as TextChannel).send(
+        discord.channels.logs.send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1174,9 +1163,7 @@ router.post(
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as TextChannel).send(
+        discord.channels.logs.send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${

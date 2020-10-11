@@ -17,8 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { guild } from "../../../settings.json";
-import { bot } from "./discord.js";
+import { guilds } from "./discord";
 
 export async function check(user: string): Promise<boolean> {
     const ban = await global.redis?.hget("bans", user);
@@ -26,7 +25,7 @@ export async function check(user: string): Promise<boolean> {
 }
 
 export async function updateBanlist() {
-    const bans = await bot.guilds.cache.get(guild.main).fetchBans();
+    const bans = await guilds.main.fetchBans();
     await global.redis?.hmset(
         "bans",
         ...bans.map((ban) => [ban.user.id, true])

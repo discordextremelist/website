@@ -549,9 +549,7 @@ router.post(
                     }
                 } as delBot);
 
-                (discord.bot.channels.cache.get(
-                    settings.channels.webLog
-                ) as Discord.TextChannel).send(
+                discord.channels.logs.send(
                     `${settings.emoji.addBot} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -1487,10 +1485,7 @@ router.post(
                 });
                 await botCache.updateBot(req.params.id);
 
-                (discord.bot.channels.cache.get(
-                    settings.channels.webLog
-                ) as Discord.TextChannel)
-                    .send(
+                discord.channels.logs.send(
                         `${settings.emoji.editBot} **${functions.escapeFormatting(
                             req.user.db.fullUsername
                         )}** \`(${
@@ -1942,9 +1937,7 @@ router.get(
                 req: req
             });
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as Discord.TextChannel).send(
+        discord.channels.logs.send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -2530,10 +2523,7 @@ router.post(
                 });
                 await botCache.updateBot(req.params.id);
 
-                (discord.bot.channels.cache.get(
-                    settings.channels.webLog
-                ) as Discord.TextChannel)
-                    .send(
+                discord.channels.logs.send(
                         `${settings.emoji.resubmitBot} **${functions.escapeFormatting(
                             req.user.db.fullUsername
                         )}** \`(${
@@ -2625,10 +2615,7 @@ router.get(
             }
         );
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as Discord.TextChannel)
-            .send(
+        discord.channels.logs.send(
                 `${settings.emoji.check} **${functions.escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${
@@ -2665,7 +2652,7 @@ Your bot will be added to our server within the next 24 hours.`
                 .add(settings.roles.developer, "User's bot was just approved.")
                 .catch((e) => {
                     console.error(e);
-                    discord.alertsChannel.send(
+                    discord.channels.alerts.send(
                         `${settings.emoji.error} Failed giving <@${bot.owner.id}> \`${bot.owner.id}\` the role **Bot Developer** upon one of their bots being approved.`
                     );
                 });
@@ -2676,19 +2663,19 @@ Your bot will be added to our server within the next 24 hours.`
                 .add(settings.roles.bot, "Bot was approved on the website.")
                 .catch((e) => {
                     console.error(e);
-                    discord.alertsChannel.send(
+                    discord.channels.alerts.send(
                         `${settings.emoji.error} Failed giving <@${bot._id}> \`${bot._id}\` the role **Bot** upon being approved on the website.`
                     );
                 });
 
-        const botStaffServer = await discord.getStaffGuildMember(bot._id);
+        const botStaffServer = await discord.getTestingGuildMember(bot._id);
         if (botStaffServer)
             botStaffServer
                 .kick("Bot was approved on the website.")
                 .catch((e) => {
                     console.error(e);
-                    discord.alertsChannel.send(
-                        `${settings.emoji.error} Failed kicking <@${bot._id}> \`${bot._id}\` from the Staff Server on approval.`
+                    discord.channels.alerts.send(
+                        `${settings.emoji.error} Failed kicking <@${bot._id}> \`${bot._id}\` from the Testing Server on approval.`
                     );
                 });
 
@@ -2745,7 +2732,7 @@ router.get(
                 )
                 .catch((e) => {
                     console.error(e);
-                    discord.alertsChannel.send(
+                    discord.channels.alerts.send(
                         `${settings.emoji.error} Failed giving <@${botMember.id}> \`${botMember.id}\` the role **Premium Bot** upon being given premium on the website.`
                     );
                 });
@@ -2957,9 +2944,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as Discord.TextChannel).send(
+        discord.channels.logs.send(
             `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -2970,9 +2955,7 @@ router.post(
             { embed: embed }
         );
 
-        const staffGuild = discord.bot.guilds.cache.get(settings.guild.staff);
-
-        const member = await discord.getStaffGuildMember(req.params.id);
+        const member = await discord.getTestingGuildMember(req.params.id);
 
         if (member && !settings.website.dev) {
             await member.kick("Bot's listing has been declined.").catch((e) => {
@@ -3120,9 +3103,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as Discord.TextChannel).send(
+        discord.channels.logs.send(
             `${settings.emoji.unapprove} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -3282,9 +3263,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        (discord.bot.channels.cache.get(
-            settings.channels.webLog
-        ) as Discord.TextChannel).send(
+        discord.channels.logs.send(
             `${settings.emoji.botDeleted} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${

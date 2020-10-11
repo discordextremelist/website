@@ -194,7 +194,7 @@ new Promise<void>((resolve, reject) => {
         await (async function discordBotUndefined() {
             if (
                 typeof discord.bot.guilds !== "undefined" &&
-                typeof discord.bot.guilds.cache.get(settings.guild.main) !==
+                typeof discord.guilds.main !==
                     "undefined"
             ) {
                 await banned.updateBanlist();

@@ -167,10 +167,10 @@
         </nav>
         <br />
         <div class="columns is-multiline is-centered">
-            <% if (bots.length === 0) { %>
+            <% if (!bots || bots.length === 0) { %>
                 <h2 class="is-size-3"><%= __("common.error.fetchFail.bots") %></h2>
             <% } else { %>
-                <% if (botsPgArr.length === 0) { %>
+                <% if (!botsPgArr || botsPgArr.length === 0) { %>
                     <h2 class="is-size-3"><%= __("common.error.fetchFail.bots") %></h2>
                 <% } else { %>
                     <%- botsPgArr.map(bot => include("../../partials/cards/botCard.ejs", { bot, queue: false, inviteQueue: false, search: false, archived: false, verificationApp: false, profile: false })).join("") %>

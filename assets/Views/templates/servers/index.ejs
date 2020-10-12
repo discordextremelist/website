@@ -124,10 +124,10 @@
         </nav>
         <br />
         <div class="columns is-multiline is-centered">
-            <% if (servers.length === 0) { %>
+            <% if (!servers || servers.length === 0) { %>
                 <h2 class="is-size-3"><%= __("common.error.fetchFail.servers") %></h2>
             <% } else { %>
-                <% if (serversPgArr.length === 0) { %>
+                <% if (!serversPgArr || serversPgArr.length === 0) { %>
                     <h2 class="is-size-3"><%= __("common.error.fetchFail.servers") %></h2>
                 <% } else { %>
                     <%- serversPgArr.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false, profile: false, queue: false })).join("") %>

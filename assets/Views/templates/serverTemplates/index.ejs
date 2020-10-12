@@ -120,10 +120,10 @@
         </nav>
         <br />
         <div class="columns is-multiline is-centered">
-            <% if (templates.length === 0) { %>
+            <% if (!templates || templates.length === 0) { %>
                 <h2 class="is-size-3"><%= __("common.error.fetchFail.templates") %></h2>
             <% } else { %>
-                <% if (templatesPgArr.length === 0) { %>
+                <% if (!templatesPgArr || templatesPgArr.length === 0) { %>
                     <h2 class="is-size-3"><%= __("common.error.fetchFail.templates") %></h2>
                 <% } else { %>
                     <%- templatesPgArr.map(template => include("../../partials/cards/templateCard.ejs", { template, search: false, profile: false })).join("") %>

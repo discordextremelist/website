@@ -48,7 +48,7 @@
         <% } %>
     </div>
     <div class="section">
-        <% if (servers.length === 0) { %>
+        <% if (!servers || servers.length === 0) { %>
             <h2 class="is-size-3"><%= __("common.error.fetchFail.servers") %></h2>
         <% } else { %>
             <h2 class="is-size-3 has-text-centered has-text-default">
@@ -64,7 +64,7 @@
         <% } %>
     </div>
     <div class="section">
-        <% if (templates.length === 0) { %>
+        <% if (!templates || templates.length === 0) { %>
             <h2 class="is-size-3"><%= __("common.error.fetchFail.templates") %></h2>
         <% } else { %>
             <h2 class="is-size-3 has-text-centered has-text-default">

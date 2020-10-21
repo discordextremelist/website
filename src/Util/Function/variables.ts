@@ -24,6 +24,7 @@ import color from "color";
 import * as settings from "../../../settings.json";
 import * as releaseInfo from "../../../release-info.json";
 import * as announcementCache from "../Services/announcementCaching";
+import * as userCache from "../Services/userCaching";
 import * as banList from "../Services/banned";
 import { URLSearchParams } from "url";
 import { themes } from "../../../@types/enums";
@@ -180,9 +181,12 @@ export const variables = async (
     }
 
     if (req.user) {
-        const user = await global.db
-            .collection("users")
-            .findOne({ _id: req.user.id });
+        let user: delUser;
+        user = await userCache.getUser(req.user.id);
+
+        if (!user) 
+            user = await global.db.collection("users").findOne({ _id: req.user.id });
+        
         req.user.db = user;
 
         if (

@@ -9,6 +9,7 @@ Creating releases patching security issues.
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 5.3.x   | 🟢 Supported       |
 | 5.2.x   | 🟢 Supported       |
 | 5.1.x   | 🔴 No Support      |
 | 5.0.x   | 🔴 No Support      |
@@ -20,9 +21,10 @@ Security issues we will disclose and provide instructions on how to patch them, 
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 5.3.x   | 🟢 Supported       |
 | 5.2.x   | 🟢 Supported       |
 | 5.1.x   | 🟢 Supported       |
-| 5.0.x   | 🟢 Supported       |
+| 5.0.x   | 🟠 Deprecated      |
 | 4.x.x   | 🔴 No Support      |
 | < 4.0   | 🔴 No Support      |
 

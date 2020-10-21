@@ -978,16 +978,20 @@ router.get(
             })
             .catch((error: DiscordAPIError) => {
                 if(error.code === 10057)
-                    return res.status(400).json({
-                        error: true,
+                    return res.status(400).render("status", {
+                        title: res.__("common.error"),
                         status: 400,
-                        errors: [res.__("common.error.template.arr.invite.invalid")]
+                        subtitle: res.__("common.error.template.arr.invite.invalid"),
+                        req,
+                        type: "Error"
                     });
-
-                return res.status(400).json({
-                    error: true,
+                
+                return res.status(400).render("status", {
+                    title: res.__("common.error"),
                     status: 400,
-                    errors: [`${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
+                    subtitle: `${error.name}: ${error.message} | ${error.httpStatus} ${error.method} ${error.path}`,
+                    req,
+                    type: "Error"
                 });
             });
 

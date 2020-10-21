@@ -91,12 +91,6 @@ new Promise<void>((resolve, reject) => {
     );
 })
     .then(async () => {
-        discord.bot.login(settings.secrets.discord.token);
-        
-        await new Promise<void>((resolve) => {
-            discord.bot.once("ready", () => resolve());
-        });
-
         for (const lib of require("../../assets/libraries.json")) {
             await global.db
                 .collection("libraries")
@@ -179,6 +173,12 @@ new Promise<void>((resolve, reject) => {
         await ddosMode.updateCache();
         await botStatsUpdate();
         await tokenManager.tokenResetAll();
+
+        discord.bot.login(settings.secrets.discord.token);
+        
+        await new Promise<void>((resolve) => {
+            discord.bot.once("ready", () => resolve());
+        });
 
         setTimeout(async () => {
             await featuredCache.updateFeaturedBots();

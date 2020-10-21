@@ -23,6 +23,8 @@ import * as metrics from "datadog-metrics";
 import * as settings from "../../../settings.json";
 import moment from "moment";
 import { PresenceUpdateStatus } from "discord-api-types/v8";
+import * as botCache from "./botCaching";
+
 const prefix = "statuses";
 
 metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
@@ -55,6 +57,14 @@ bot.on("ready", async () => {
     }
 
     await uploadStatuses();
+
+    botCache.getAllBots().then(bots => {
+        const botsToFetch = []
+        bots.forEach(bot => {
+            if (!guilds.main.members.cache.has(bot._id)) botsToFetch.push(bot._id)
+        })
+        guilds.main.members.fetch({user: botsToFetch})
+    })
 });
 
 bot.on("presenceUpdate", async (oldPresence, newPresence) => {

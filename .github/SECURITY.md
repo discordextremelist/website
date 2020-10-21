@@ -10,7 +10,7 @@ Creating releases patching security issues.
 | Version | Supported          |
 | ------- | ------------------ |
 | 5.3.x   | 🟢 Supported       |
-| 5.2.x   | 🟢 Supported       |
+| 5.2.x   | 🔴 No Support      |
 | 5.1.x   | 🔴 No Support      |
 | 5.0.x   | 🔴 No Support      |
 | 4.x.x   | 🔴 No Support      |

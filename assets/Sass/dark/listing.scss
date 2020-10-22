@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@import "../../../node_modules/bulma/sass/utilities/_all.sass";
 @import "variables.scss";
 
 h1 {
@@ -42,7 +43,7 @@ table th {
     color: #d2d2d2;
 }
 
-a:hover {
+.content a:hover {
     color: #1c5abd;
 }
 
@@ -69,6 +70,37 @@ blockquote {
     background-color: transparent !important;
 }
 
+.tag.hover:hover {
+    text-decoration: none;
+    &.is-link {
+        background-color: bulmaDarken($link, 2.5%);
+    }
+    
+    &.is-info {
+        background-color: bulmaDarken($info, 2.5%);
+    }
+    
+    &.is-success {
+        background-color: bulmaDarken($success, 2.5%);
+    }
+    
+    &.is-orange {
+        background-color: bulmaDarken($orange, 2.5%);
+    }
+    
+    &.is-danger {
+        background-color: bulmaDarken($danger, 2.5%);
+    }
+    
+    &.is-magenta {
+        background-color: bulmaDarken($magenta, 2.5%);
+    }
+    
+    &.is-pink {
+        background-color: bulmaDarken($pink, 2.5%);
+    }
+}
+
 .tab-content {
     display: none;
 
@@ -83,7 +115,6 @@ blockquote {
     padding: 15px;
 }
 
-@import "../../../node_modules/bulma/sass/utilities/_all.sass";
 @import "../../../node_modules/bulma/sass/base/_all.sass";
 @import "../../../node_modules/bulma/sass/components/message.sass";
 @import "../../../node_modules/bulma/sass/elements/content.sass";

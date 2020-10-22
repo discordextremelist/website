@@ -71,7 +71,7 @@
 <% } else if (type === "botTag") { %>
     <% if (htmlDir === "rtl") { %>
         <div class="control">
-            <a class="tag <%= contentColour %>" href="<%= linkPrefix %>/bots?tag=<%= tag %>">
+            <a class="tag hover <%= contentColour %>" href="<%= linkPrefix %>/bots?tag=<%= tag %>">
                 <span><%= content %></span>
                 <span class="icon">
                     <i aria-hidden="true" class="fas fa-<%= icon %>"></i>
@@ -80,7 +80,7 @@
         </div>
     <% } else { %>
         <div class="control">
-            <a class="tag <%= contentColour %>" href="<%= linkPrefix %>/bots?tag=<%= tag %>">
+            <a class="tag hover <%= contentColour %>" href="<%= linkPrefix %>/bots?tag=<%= tag %>">
                 <span class="icon">
                     <i aria-hidden="true" class="fas fa-<%= icon %>"></i>
                 </span>

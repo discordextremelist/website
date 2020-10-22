@@ -2957,7 +2957,7 @@ router.post(
 
         const member = await discord.getTestingGuildMember(req.params.id);
 
-        if (member && !settings.website.dev) {
+        if (member) {
             await member.kick("Bot's listing has been declined.").catch((e) => {
                 console.error(e);
             });

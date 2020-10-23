@@ -376,7 +376,7 @@ router.post(
                 res.__("common.error.listing.arr.longDescRequired")
             );
         } else {
-            if (req.body.longDescription.length < 150) {
+            if (req.body.longDescription.length < 150 && !req.body.longDescription.includes("<iframe ")) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.notAtMinChars", "150")
@@ -1248,7 +1248,7 @@ router.post(
                 res.__("common.error.listing.arr.longDescRequired")
             );
         } else {
-            if (req.body.longDescription.length < 150) {
+            if (req.body.longDescription.length < 150 && !req.body.longDescription.includes("<iframe ")) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.notAtMinChars", "150")
@@ -2296,7 +2296,7 @@ router.post(
                 res.__("common.error.listing.arr.longDescRequired")
             );
         } else {
-            if (req.body.longDescription.length < 150) {
+            if (req.body.longDescription.length < 150 && !req.body.longDescription.includes("<iframe ")) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.notAtMinChars", "150")

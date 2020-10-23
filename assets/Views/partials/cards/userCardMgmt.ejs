@@ -23,9 +23,9 @@
                             }
                         %>
                         <br />
-                        <strong><%= __("page.staff.manager.strikes") %></strong> <a class="has-text-white" id="strikeModal-<%= user._id %>"><%= user.staffTracking.punishments.strikes.length %></a>  
+                        <strong><%= __("page.staff.manager.strikes") %></strong> <a class="has-text-info" id="strikeModal-<%= user._id %>"><%= user.staffTracking.punishments.strikes.length %></a>  
                         <br />
-                        <strong><%= __("page.staff.manager.warnings") %></strong> <a class="has-text-white" id="warningModal-<%= user._id %>"><%= user.staffTracking.punishments.warnings.length %></a>
+                        <strong><%= __("page.staff.manager.warnings") %></strong> <a class="has-text-info" id="warningModal-<%= user._id %>"><%= user.staffTracking.punishments.warnings.length %></a>
                         <br />
                         <strong><%= __("page.staff.manager.onLeave") %></strong> <%= user.staffTracking.details.away.status ? __("page.staff.manager.onLeave.yes") : __("page.staff.manager.onLeave.no") %>
                         <br />
@@ -116,7 +116,9 @@
             <br />
             <strong class="has-text-success"><%= __("page.staff.manager.botStat.approved") %></strong> <span class="has-text-success"><%= user.staffTracking.handledBots.thisWeek.approved %></span>
             <br />
-            <strong class="has-text-orange"><%= __("page.staff.manager.botStat.declined") %></strong> <span class="has-text-orange"><%= user.staffTracking.handledBots.thisWeek.declined %></span>
+            <strong class="has-text-warning"><%= __("page.staff.manager.botStat.declined") %></strong> <span class="has-text-warning"><%= user.staffTracking.handledBots.thisWeek.declined %></span>
+            <br />
+            <strong class="has-text-orange"><%= __("page.staff.manager.botStat.unapproved") %></strong> <span class="has-text-orange"><%= user.staffTracking.handledBots.thisWeek.unapprove %></span>
             <br />
             <strong class="has-text-danger"><%= __("page.staff.manager.botStat.removed") %></strong> <span class="has-text-danger"><%= user.staffTracking.handledBots.thisWeek.remove %></span>
             
@@ -125,7 +127,9 @@
             <br />
             <strong class="has-text-success"><%= __("page.staff.manager.botStat.approved") %></strong> <span class="has-text-success"><%= user.staffTracking.handledBots.prevWeek.approved %></span>
             <br />
-            <strong class="has-text-orange"><%= __("page.staff.manager.botStat.declined") %></strong> <span class="has-text-orange"><%= user.staffTracking.handledBots.prevWeek.declined %></span>
+            <strong class="has-text-warning"><%= __("page.staff.manager.botStat.declined") %></strong> <span class="has-text-warning"><%= user.staffTracking.handledBots.prevWeek.declined %></span>
+            <br />
+            <strong class="has-text-orange"><%= __("page.staff.manager.botStat.unapproved") %></strong> <span class="has-text-orange"><%= user.staffTracking.handledBots.prevWeek.unapprove %></span>
             <br />
             <strong class="has-text-danger"><%= __("page.staff.manager.botStat.removed") %></strong> <span class="has-text-danger"><%= user.staffTracking.handledBots.prevWeek.remove %></span>
 
@@ -134,7 +138,9 @@
             <br />
             <strong class="has-text-success"><%= __("page.staff.manager.botStat.approved") %></strong> <span class="has-text-success"><%= user.staffTracking.handledBots.allTime.approved %></span>
             <br />
-            <strong class="has-text-orange"><%= __("page.staff.manager.botStat.declined") %></strong> <span class="has-text-orange"><%= user.staffTracking.handledBots.allTime.declined %></span>
+            <strong class="has-text-warning"><%= __("page.staff.manager.botStat.declined") %></strong> <span class="has-text-warning"><%= user.staffTracking.handledBots.allTime.declined %></span>
+            <br />
+            <strong class="has-text-orange"><%= __("page.staff.manager.botStat.unapproved") %></strong> <span class="has-text-orange"><%= user.staffTracking.handledBots.allTime.unapprove %></span>
             <br />
             <strong class="has-text-danger"><%= __("page.staff.manager.botStat.removed") %></strong> <span class="has-text-danger"><%= user.staffTracking.handledBots.allTime.remove %></span>
         </section>

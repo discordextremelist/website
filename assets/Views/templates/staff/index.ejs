@@ -127,6 +127,36 @@
                 </div>
             </nav>
         </div>
+        <br>
+        <div class="stats has-background-primary">
+            <nav class="level stats-header">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading main"><%= __("page.staff.manager.botStat") %></p>
+                    </div>
+                </div>
+            </nav>
+            <nav class="level">
+                <div class="level-item body-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("page.staff.manager.botStat.thisWeek") %></p>
+                        <%- include("../../partials/botHandlingStats.ejs", { user: req.user.db, range: "thisWeek" }) %>
+                    </div>
+                </div>
+                <div class="level-item body-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("page.staff.manager.botStat.previousWeek") %></p>
+                        <%- include("../../partials/botHandlingStats.ejs", { user: req.user.db, range: "prevWeek" }) %>
+                    </div>
+                </div>
+                <div class="level-item body-item has-text-centered">
+                    <div>
+                        <p class="heading"><%= __("page.staff.manager.botStat.allTime") %></p>
+                        <%- include("../../partials/botHandlingStats.ejs", { user: req.user.db, range: "allTime" }) %>
+                    </div>
+                </div>
+            </nav>
+        </div>
     </div>
 </div>
 <%- include("../../partials/footer.ejs") %>

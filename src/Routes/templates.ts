@@ -333,7 +333,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     });
 
     res.render("templates/serverTemplates/view", {
-        title: template.name,
+        title: `${template.name} - ${res.__("common.templates.discord")}`,
         subtitle: template.shortDesc,
         template,
         longDesc: clean,

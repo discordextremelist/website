@@ -387,7 +387,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     });
 
     res.render("templates/servers/view", {
-        title: server.name,
+        title: `${server.name} - ${res.__("common.servers.discord")}`,
         subtitle: server.shortDesc,
         server,
         longDesc: clean,

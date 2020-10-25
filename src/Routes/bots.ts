@@ -1632,7 +1632,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     }
 
     res.render("templates/bots/view", {
-        title: bot.name,
+        title: `${bot.name} - ${res.__("common.bots.discord")}`,
         subtitle: bot.shortDesc,
         bot: bot,
         longDesc: clean,

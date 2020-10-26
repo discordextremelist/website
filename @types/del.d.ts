@@ -193,6 +193,7 @@ declare global {
         shortDesc: string;
         longDesc: string;
         modNotes: string;
+        reviewNotes: reviewNote[];
         editors: string[];
         owner: {
             id: string;
@@ -324,5 +325,11 @@ declare global {
             docs: string;
             repo: string;
         };
+    }
+
+    interface reviewNote {
+        note: string;
+        author: string;
+        date: number;
     }
 }

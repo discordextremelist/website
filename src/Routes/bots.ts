@@ -503,6 +503,7 @@ router.post(
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
                     modNotes: req.body.modNotes,
+                    reviewNotes: [],
                     editors: editors,
                     owner: {
                         id: req.user.id

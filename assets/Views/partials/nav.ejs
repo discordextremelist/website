@@ -147,61 +147,63 @@
         </div>
 
         <div class="navbar-end">
-            <div class="navbar-item has-dropdown is-hoverable">
-                <div class="navbar-link" tabindex="0">
-                    <span class="icon iconalign">
-                        <i class="fad fa-cogs" aria-hidden="true"></i>
-                    </span>
-                    <span id="staffPanelDropdownTitle"><%= __("common.nav.me.staffPanel") %></span>
-                </div>
-    
-                <div id="moreDropdown" class="navbar-dropdown is-hidden-mobile">
-                    <a class="navbar-item" href="<%= linkPrefix %>/staff">
+            <% if (req.user && req.user.db.rank.mod) { %>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <div class="navbar-link" tabindex="0">
                         <span class="icon iconalign">
-                            <i class="fad fa-house" aria-hidden="true"></i>
+                            <i class="fad fa-cogs" aria-hidden="true"></i>
                         </span>
-                        <span><%= __("page.staff.home") %></span>
-                    </a>
-                    <a class="navbar-item" href="<%= linkPrefix %>/staff/bot_queue">
-                        <span class="icon iconalign">
-                            <i class="fad fa-list-ul" aria-hidden="true"></i>
-                        </span>
-                        <span><%= __("page.staff.queue") %></span>
-                    </a>
-                    <a class="navbar-item" href="<%= linkPrefix %>/staff/server_queue">
-                        <span class="icon iconalign">
-                            <i class="fad fa-list-ul" aria-hidden="true"></i>
-                        </span>
-                        <span><%= __("page.staff.server_queue") %></span>
-                    </a>
-                    <% if (req.user.db.rank.assistant === true) { %>  
-                        <a class="navbar-item" href="<%= linkPrefix %>/staff/invite_queue">
+                        <span id="staffPanelDropdownTitle"><%= __("common.nav.me.staffPanel") %></span>
+                    </div>
+
+                    <div id="moreDropdown" class="navbar-dropdown is-hidden-mobile">
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff">
+                            <span class="icon iconalign">
+                                <i class="fad fa-house" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("page.staff.home") %></span>
+                        </a>
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/bot_queue">
                             <span class="icon iconalign">
                                 <i class="fad fa-list-ul" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("page.staff.invite_queue") %></span>
+                            <span><%= __("page.staff.queue") %></span>
                         </a>
-                        <a class="navbar-item" href="<%= linkPrefix %>/staff/staff-manager">
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/server_queue">
                             <span class="icon iconalign">
-                                <i class="fad fa-users-cog" aria-hidden="true"></i>
+                                <i class="fad fa-list-ul" aria-hidden="true"></i>
                             </span>
-                            <span><%= __("page.staff.manager") %></span>
+                            <span><%= __("page.staff.server_queue") %></span>
                         </a>
-                        <a class="navbar-item" href="<%= linkPrefix %>/staff/audit">
-                            <span class="icon iconalign">
-                                <i class="fad fa-archive" aria-hidden="true"></i>
-                            </span>
-                            <span><%= __("page.staff.audit") %></span>
-                        </a>
-                        <a class="navbar-item" href="<%= linkPrefix %>/staff/announce">
-                            <span class="icon iconalign">
-                                <i class="fad fa-megaphone" aria-hidden="true"></i>
-                            </span>
-                            <span><%= __("page.staff.announcer") %></span>
-                        </a>
-                    <% } %>
+                        <% if (req.user.db.rank.assistant === true) { %>  
+                            <a class="navbar-item" href="<%= linkPrefix %>/staff/invite_queue">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-list-ul" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("page.staff.invite_queue") %></span>
+                            </a>
+                            <a class="navbar-item" href="<%= linkPrefix %>/staff/staff-manager">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-users-cog" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("page.staff.manager") %></span>
+                            </a>
+                            <a class="navbar-item" href="<%= linkPrefix %>/staff/audit">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-archive" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("page.staff.audit") %></span>
+                            </a>
+                            <a class="navbar-item" href="<%= linkPrefix %>/staff/announce">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-megaphone" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("page.staff.announcer") %></span>
+                            </a>
+                        <% } %>
+                    </div>
                 </div>
-            </div>
+            <% } %>
             <div class="navbar-item has-dropdown is-hoverable">
                 <div class="navbar-link" tabindex="0">
                     <span class="icon iconalign">

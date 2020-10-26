@@ -19,7 +19,7 @@
     "debug": "~2.6.9",
     "del-i18n": "github:discordextremelist/i18n",
     "discord-api-types": "^0.7.0",
-    "discord.js": "^12.4.0",
+    "discord.js": "^12.4.1",
     "ejs": "^3.1.5",
     "express": "~4.17.1",
     "express-device": "^0.4.2",
@@ -64,7 +64,6 @@
     "node-sass": "^4.14.1"
   },
   "scripts": {
-    "prod": "tsc-transpile-only",
     "compile": "rm -rf dist/ && tsc",
     "start": "node dist/src/app",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",

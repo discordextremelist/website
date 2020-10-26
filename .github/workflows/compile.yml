@@ -19,7 +19,7 @@ jobs:
       - name: snyk install
         run: npm i -g snyk
       - name: dependencies
-        run: npm install
+        run: npm ci
       - name: settings
         run: cp settings.example.json settings.json
       - name: tsc

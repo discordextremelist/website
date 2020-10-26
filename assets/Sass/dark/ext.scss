@@ -196,3 +196,25 @@ iframe {
 .transform > .emoji {
     transform: rotate(180deg);
 }
+
+#logoutMobileViewButton {
+    display: none;
+}
+
+@media only screen and (max-width: 1311px) {
+    @media only screen and (min-width: 1024px) {
+        #staffPanelDropdownTitle {
+            display: none;
+        }
+        #localeDropdownTitle {
+            display: none;
+        }
+    }
+
+    #authButtons {
+        display: none;
+    }
+    #logoutMobileViewButton {
+        display: block;
+    }
+}

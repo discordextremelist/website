@@ -78,17 +78,12 @@
                 <span><%= __("common.search") %></span>
             </a>
 
-            <div <% if (phone) { %>onclick="display(document.getElementById('moreDropdown'), document.getElementById('moreDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
-                <div class="navbar-link <% if (phone) { %>is-arrowless<% } %>" tabindex="0">
+            <div class="navbar-item has-dropdown is-hoverable">
+                <div class="navbar-link" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-sitemap" aria-hidden="true"></i>
                     </span>
                     <span><%= __("common.nav.more") %></span>
-                    <% if (phone) { %>
-                        <span>
-                            <i id="moreDropdownArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
-                        </span>
-                    <% } %>
                 </div>
 
                 <div id="moreDropdown" class="navbar-dropdown is-hidden-mobile">
@@ -152,17 +147,67 @@
         </div>
 
         <div class="navbar-end">
-            <div <% if (phone) { %>onclick="display(document.getElementById('localeDropdown'), document.getElementById('localeDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
-                <div class="navbar-link <% if (phone) { %>is-arrowless<% } %>" tabindex="0">
+            <div class="navbar-item has-dropdown is-hoverable">
+                <div class="navbar-link" tabindex="0">
+                    <span class="icon iconalign">
+                        <i class="fad fa-cogs" aria-hidden="true"></i>
+                    </span>
+                    <span id="staffPanelDropdownTitle"><%= __("common.nav.me.staffPanel") %></span>
+                </div>
+    
+                <div id="moreDropdown" class="navbar-dropdown is-hidden-mobile">
+                    <a class="navbar-item" href="<%= linkPrefix %>/staff">
+                        <span class="icon iconalign">
+                            <i class="fad fa-house" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("page.staff.home") %></span>
+                    </a>
+                    <a class="navbar-item" href="<%= linkPrefix %>/staff/bot_queue">
+                        <span class="icon iconalign">
+                            <i class="fad fa-list-ul" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("page.staff.queue") %></span>
+                    </a>
+                    <a class="navbar-item" href="<%= linkPrefix %>/staff/server_queue">
+                        <span class="icon iconalign">
+                            <i class="fad fa-list-ul" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("page.staff.server_queue") %></span>
+                    </a>
+                    <% if (req.user.db.rank.assistant === true) { %>  
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/invite_queue">
+                            <span class="icon iconalign">
+                                <i class="fad fa-list-ul" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("page.staff.invite_queue") %></span>
+                        </a>
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/staff-manager">
+                            <span class="icon iconalign">
+                                <i class="fad fa-users-cog" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("page.staff.manager") %></span>
+                        </a>
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/audit">
+                            <span class="icon iconalign">
+                                <i class="fad fa-archive" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("page.staff.audit") %></span>
+                        </a>
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/announce">
+                            <span class="icon iconalign">
+                                <i class="fad fa-megaphone" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("page.staff.announcer") %></span>
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <div class="navbar-link" tabindex="0">
                     <span class="icon iconalign">
                         <i class="fad fa-language" aria-hidden="true"></i>
                     </span>
-                    <span><%= __("common.nav.language") %></span>
-                    <% if (phone) { %>
-                        <span>
-                            <i id="localeDropdownArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
-                        </span>
-                    <% } %>
+                    <span id="localeDropdownTitle"><%= __("common.nav.language") %></span>
                 </div>
 
                 <div id="localeDropdown" class="navbar-dropdown is-hidden-mobile">
@@ -276,15 +321,10 @@
             </div>
 
             <% if (req.user) { %>
-                <div <% if (phone) { %>onclick="display(document.getElementById('userDropdown'), document.getElementById('userDropdownArrow'));"<% } %> class="navbar-item has-dropdown is-hoverable">
-                    <div class="navbar-link <% if (phone) { %>is-arrowless<% } %>" tabindex="0">
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <div class="navbar-link" tabindex="0">
                         <img width="28" height="28" style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.hash ? req.user.db.avatar.url : `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=64" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>" draggable="false">
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
-                        <% if (phone) { %>
-                            <span>
-                                <i id="userDropdownArrow" class="fas fa-chevron-left dropdown-arrow" aria-hidden="true"></i>
-                            </span>
-                        <% } %>
                     </div>
 
                     <div id="userDropdown" class="navbar-dropdown is-hidden-mobile is-right">
@@ -300,14 +340,6 @@
                             </span>
                             <span><%= __("common.nav.me.preferences") %></span>
                         </a>
-                        <% if (req.user.db.rank.mod === true) { %>
-                            <a class="navbar-item" href="<%= linkPrefix %>/staff" tabindex="0">
-                                <span class="icon iconalign">
-                                    <i class="fad fa-cogs" aria-hidden="true"></i>
-                                </span>
-                                <span><%= __("common.nav.me.staffPanel") %></span>
-                            </a>
-                        <% } %>
                         <a class="navbar-item" href="<%= linkPrefix %>/bots/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-robot" aria-hidden="true"></i>
@@ -341,80 +373,60 @@
                                 <span><%= __("common.nav.me.snakeLB") %></span>
                             </a>
                         <% } %>
-                        <% if (mobile) { %>
-                            <% if (ddosMode === true) { %>
-                                <a class="navbar-item has-text-danger" title="<%= __("common.notice.ddosMode") %>" disabled tabindex="0">
-                                    <span class="icon iconalign">
-                                        <i class="fad fa-sign-out" aria-hidden="true"></i>
-                                    </span>
-                                    <span><%= __("common.logout") %></span>
-                                </a>
-                            <% } else { %>
-                                <a class="navbar-item has-text-danger" href="/auth/logout" tabindex="0">
-                                    <span class="icon iconalign">
-                                        <i class="fad fa-sign-out" aria-hidden="true"></i>
-                                    </span>
-                                    <span><%= __("common.logout") %></span>
-                                </a>
-                            <% } %>
+                        <% if (ddosMode === true) { %>
+                            <a id="logoutMobileViewButton" class="navbar-item has-text-danger" title="<%= __("common.notice.ddosMode") %>" disabled tabindex="0">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("common.logout") %></span>
+                            </a>
+                        <% } else { %>
+                            <a id="logoutMobileViewButton" class="navbar-item has-text-danger" href="/auth/logout" tabindex="0">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("common.logout") %></span>
+                            </a>
                         <% } %>
                     </div>
                 </div>
             <% } %>
             <div class="navbar-item" id="authButtons">
-                <% if (!mobile) { %>
-                    <div class="buttons">
-                        <% if (req.user) { %>
-                            <% if (ddosMode === true) { %>
-                                <a class="button is-danger" title="<%= __("common.notice.ddosMode") %>" disabled>
-                                    <span class="icon">
-                                        <i class="fad fa-sign-out" aria-hidden="true"></i>
-                                    </span>
-                                    <span><%= __("common.logout") %></span>
-                                </a>
-                            <% } else { %>
-                                <a class="button is-danger" href="/auth/logout">
-                                    <span class="icon">
-                                        <i class="fad fa-sign-out" aria-hidden="true"></i>
-                                    </span>
-                                    <span><%= __("common.logout") %></span>
-                                </a>
-                            <% } %>
+                <div class="buttons">
+                    <% if (req.user) { %>
+                        <% if (ddosMode === true) { %>
+                            <a class="button is-danger" title="<%= __("common.notice.ddosMode") %>" disabled>
+                                <span class="icon">
+                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("common.logout") %></span>
+                            </a>
                         <% } else { %>
-                            <% if (ddosMode === true) { %>
-                                <a class="button is-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> title="<%= __("common.notice.ddosMode") %>" disabled>
-                                    <span class="icon">
-                                        <i class="fab fa-discord" aria-hidden="true"></i>
-                                    </span>
-                                    <span><%= __("common.login") %></span>
-                                </a>
-                            <% } else { %>
-                                <a class="button is-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> href="/auth/login">
-                                    <span class="icon">
-                                        <i class="fab fa-discord" aria-hidden="true"></i>
-                                    </span>
-                                    <span><%= __("common.login") %></span>
-                                </a>
-                            <% } %>
+                            <a class="button is-danger" href="/auth/logout">
+                                <span class="icon">
+                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("common.logout") %></span>
+                            </a>
                         <% } %>
-                    </div>
-                <% } else if (!req.user) { %>
-                    <% if (ddosMode === true) { %>
-                        <a class="has-text-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> title="<%= __("common.notice.ddosMode") %>" disabled>
-                            <span class="icon iconalign">
-                                <i class="fab fa-discord" aria-hidden="true"></i>
-                            </span>
-                            <span><%= __("common.login") %></span>
-                        </a>
                     <% } else { %>
-                        <a class="has-text-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> href="/auth/login">
-                            <span class="icon iconalign">
-                                <i class="fab fa-discord" aria-hidden="true"></i>
-                            </span>
-                            <span><%= __("common.login") %></span>
-                        </a>
+                        <% if (ddosMode === true) { %>
+                            <a class="button is-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> title="<%= __("common.notice.ddosMode") %>" disabled>
+                                <span class="icon">
+                                    <i class="fab fa-discord" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("common.login") %></span>
+                            </a>
+                        <% } else { %>
+                            <a class="button is-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> href="/auth/login">
+                                <span class="icon">
+                                    <i class="fab fa-discord" aria-hidden="true"></i>
+                                </span>
+                                <span><%= __("common.login") %></span>
+                            </a>
+                        <% } %>
                     <% } %>
-                <% } %>
+                </div>
             </div>
         </div>
     </div>

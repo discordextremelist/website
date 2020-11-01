@@ -86,7 +86,7 @@
                     <span><%= __("common.nav.more") %></span>
                 </div>
 
-                <div id="moreDropdown" class="navbar-dropdown is-hidden-mobile">
+                <div id="moreDropdown" class="navbar-dropdown is-hidden-touch">
                     <a class="navbar-item" href="<%= discordServer %>" target="_blank" rel="noopener" tabindex="0">
                         <span class="icon iconalign">
                             <i class="fab fa-discord" aria-hidden="true"></i>
@@ -156,7 +156,7 @@
                         <span id="staffPanelDropdownTitle"><%= __("common.nav.me.staffPanel") %></span>
                     </div>
 
-                    <div id="moreDropdown" class="navbar-dropdown is-hidden-mobile">
+                    <div id="moreDropdown" class="navbar-dropdown is-hidden-touch">
                         <a class="navbar-item" href="<%= linkPrefix %>/staff">
                             <span class="icon iconalign">
                                 <i class="fad fa-house" aria-hidden="true"></i>
@@ -212,7 +212,7 @@
                     <span id="localeDropdownTitle"><%= __("common.nav.language") %></span>
                 </div>
 
-                <div id="localeDropdown" class="navbar-dropdown is-hidden-mobile">
+                <div id="localeDropdown" class="navbar-dropdown is-hidden-touch">
                     <<% if (req.locale !== "en-NZ") { %>a href="<%= req.originalUrl.replace(req.locale, "en-NZ") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } else { %>div<% } %> class="navbar-item" rel="nofollow" tabindex="0">
                         <% if (req.locale === "en-NZ") { %>
                             <span title="Selected" class="icon has-text-success iconalign">
@@ -329,7 +329,7 @@
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
                     </div>
 
-                    <div id="userDropdown" class="navbar-dropdown is-hidden-mobile is-right">
+                    <div id="userDropdown" class="navbar-dropdown is-hidden-touch is-right">
                         <a class="navbar-item" href="<%= linkPrefix %>/users/@me" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-user fa-swap-opacity" aria-hidden="true"></i>
@@ -375,60 +375,38 @@
                                 <span><%= __("common.nav.me.snakeLB") %></span>
                             </a>
                         <% } %>
-                        <% if (ddosMode === true) { %>
-                            <a id="logoutMobileViewButton" class="navbar-item has-text-danger" title="<%= __("common.notice.ddosMode") %>" disabled tabindex="0">
-                                <span class="icon iconalign">
-                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
-                                </span>
-                                <span><%= __("common.logout") %></span>
-                            </a>
-                        <% } else { %>
-                            <a id="logoutMobileViewButton" class="navbar-item has-text-danger" href="/auth/logout" tabindex="0">
-                                <span class="icon iconalign">
-                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
-                                </span>
-                                <span><%= __("common.logout") %></span>
-                            </a>
-                        <% } %>
-                    </div>
+                        <a id="logoutDropdown" class="navbar-item has-text-danger" href="/auth/logout" tabindex="0">
+                            <span class="icon iconalign">
+                                <i class="fad fa-sign-out" aria-hidden="true"></i>
+                            </span>
+                            <span><%= __("common.logout") %></span>
+                        </a>
                 </div>
+                </div>
+            <% } else { %>
+                <a class="navbar-item has-text-blurple is-hidden-desktop" href="/auth/login" tabindex="0">
+                    <span class="icon iconalign">
+                        <i class="fab fa-discord" aria-hidden="true"></i>
+                    </span>
+                    <span><%= __("common.login") %></span>
+                </a>
             <% } %>
-            <div class="navbar-item" id="authButtons">
-                <div class="buttons">
-                    <% if (req.user) { %>
-                        <% if (ddosMode === true) { %>
-                            <a class="button is-danger" title="<%= __("common.notice.ddosMode") %>" disabled>
-                                <span class="icon">
-                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
-                                </span>
-                                <span><%= __("common.logout") %></span>
-                            </a>
-                        <% } else { %>
-                            <a class="button is-danger" href="/auth/logout">
-                                <span class="icon">
-                                    <i class="fad fa-sign-out" aria-hidden="true"></i>
-                                </span>
-                                <span><%= __("common.logout") %></span>
-                            </a>
-                        <% } %>
-                    <% } else { %>
-                        <% if (ddosMode === true) { %>
-                            <a class="button is-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> title="<%= __("common.notice.ddosMode") %>" disabled>
-                                <span class="icon">
-                                    <i class="fab fa-discord" aria-hidden="true"></i>
-                                </span>
-                                <span><%= __("common.login") %></span>
-                            </a>
-                        <% } else { %>
-                            <a class="button is-blurple" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> href="/auth/login">
-                                <span class="icon">
-                                    <i class="fab fa-discord" aria-hidden="true"></i>
-                                </span>
-                                <span><%= __("common.login") %></span>
-                            </a>
-                        <% } %>
-                    <% } %>
-                </div>
+            <div class="navbar-item buttons">
+                <% if (req.user) { %>
+                    <a id="logoutButton" class="button is-danger" href="/auth/logout">
+                        <span class="icon">
+                            <i class="fad fa-sign-out" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("common.logout") %></span>
+                        </a>
+                <% } else { %>
+                    <a class="button is-blurple is-hidden-touch" <% if (hideLogin && hideLogin === true) { %>style="display: none;"<% } %> href="/auth/login">
+                        <span class="icon">
+                            <i class="fab fa-discord" aria-hidden="true"></i>
+                        </span>
+                        <span><%= __("common.login") %></span>
+                    </a>
+                <% } %>
             </div>
         </div>
     </div>

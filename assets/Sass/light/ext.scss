@@ -209,7 +209,7 @@ iframe {
     transform: rotate(180deg);
 }
 
-#logoutMobileViewButton {
+#logoutDropdown {
     display: none;
 }
 
@@ -223,10 +223,10 @@ iframe {
         }
     }
 
-    #authButtons {
+    #logoutButton {
         display: none;
     }
-    #logoutMobileViewButton {
+    #logoutDropdown {
         display: block;
     }
 }

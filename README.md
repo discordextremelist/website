@@ -7,12 +7,6 @@
 [![Code style](https://img.shields.io/badge/code%20style-prettier-ff69b4?logo=prettier&logoColor=white)](https://prettier.io)
 [![Crowdin](https://badges.crowdin.net/delly/localized.svg)](https://translate.discordextremelist.xyz/project/delly)  
 
-## Contributor notice
-
-**We accept and welcome legitimate Hacktoberfest contributions! However, due to an influx of spam PRs, we have added org-wide interaction limits for new GitHub users. If you are having issues making legitimate contributions, please [talk to us on Discord](https://discord.gg/5uJtkUQ).**
-
----
-
 Licensing information viewable in the [LICENSE](https://github.com/discordextremelist/website/blob/master/LICENSE) file.
 
 We welcome contributions to DEL! If you need any help contributing, please talk to us in our Discord server.

@@ -22,6 +22,7 @@ import { Request, Response } from "express";
 import browser from "browser-detect";
 import color from "color";
 import * as settings from "../../../settings.json";
+import { version } from "../../../package.json"
 import * as releaseInfo from "../../../release-info.json";
 import * as announcementCache from "../Services/announcementCaching";
 import * as userCache from "../Services/userCaching";
@@ -85,8 +86,12 @@ export const variables = async (
     )
         req.session.redirectTo = req.originalUrl;
 
-    req.del = releaseInfo;
-    req.del.node = "Unavailable"; // will be updated in a bit:tm: (*cough* spoiler)
+    req.del = {
+        version,
+        ...releaseInfo,
+        node: "Unavailable"
+    }
+    
     res.locals.colour = color;
     res.locals.premidPageInfo = "";
     res.locals.hideLogin = false;

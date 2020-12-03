@@ -64,7 +64,7 @@ declare module "express-serve-static-core" {
             version: string;
             channel: string;
             cssVersion: string;
-            node?: string;
+            node: string;
         };
     }
 

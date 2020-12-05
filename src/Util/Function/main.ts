@@ -27,58 +27,60 @@ export const escapeFormatting = (text: string) => {
     return escaped;
 };
 
-export function parseRegion(region: string): string {
-    let parsedRegion = `🏴 ${region}`;
-
-    if (region === "us-west") parsedRegion = "US West";
-    if (region === "us-east") parsedRegion = "US East";
-    if (region === "us-central") parsedRegion = "US Central";
-    if (region === "us-south") parsedRegion = "US South";
-    if (region === "singapore") parsedRegion = "Singapore";
-    if (region === "southafrica") parsedRegion = "South Africa";
-    if (region === "sydney") parsedRegion = "Sydney";
-    if (region === "europe") parsedRegion = "Europe";
-    if (region === "hongkong") parsedRegion = "Hong Kong";
-    if (region === "russia") parsedRegion = "Russia";
-    if (region === "japan") parsedRegion = "Japan";
-    if (region === "india") parsedRegion = "India";
-    if (region === "dubai") parsedRegion = "Dubai";
-    if (region === "amsterdam") parsedRegion = "Amsterdam";
-    if (region === "london") parsedRegion = "London";
-    if (region === "frankfurt") parsedRegion = "Frankfurt";
-    if (region === "eu-central") parsedRegion = "Central Europe";
-    if (region === "eu-west") parsedRegion = "Western Europe";
-    if (region === "south-korea") parsedRegion = "South Korea";
-
-    return parsedRegion;
+const regions = {
+    "us-west": "US West",
+    "us-east": "US East",
+    "us-central": "US Central",
+    "us-south": "US South",
+    "singapore": "Singapore",
+    "southafrica": "South Africa",
+    "sydney": "Sydney",
+    "europe": "Europe",
+    "brazil": "Brazil",
+    "hongkong": "Hong Kong",
+    "russia": "Russia",
+    "japan": "Japan",
+    "india": "India",
+    "dubai": "Dubai",
+    "amsterdam": "Amsterdam",
+    "london": "London",
+    "frankfurt": "Frankfurt",
+    "eu-central": "Central Europe",
+    "eu-west": "Western Europe",
+    "south-korea": "South Korea"
 }
 
-export function regionIcon(region: string): string {
+export const parseRegion = (region: keyof typeof regions) => regions[region] || region
+
+export function regionIcon(region: keyof typeof regions) {
     let icon = "81b90eae4fc67502d59808a7c219ee65";
 
-    if (region === "us-west") icon = "e6d6b255259ac878d00819a9555072ad";
-    if (region === "us-east") icon = "e6d6b255259ac878d00819a9555072ad";
-    if (region === "us-central") icon = "e6d6b255259ac878d00819a9555072ad";
-    if (region === "us-south") icon = "e6d6b255259ac878d00819a9555072ad";
-    if (region === "singapore") icon = "92cd1f9eabd48ec32dc2ecef617f706b";
-    if (region === "southafrica") icon = "3a3ec02f3c9193e85bda10f5d2a42574";
-    if (region === "sydney") icon = "1d8d4e2b3fd0e542b6d37cbfa156d55e";
-    if (region === "europe") icon = "554a8e1a41c2e30cdb946396d3d336f2";
-    if (region === "hongkong") icon = "a92f116201fa7ff2b4acbb39f144ec60";
-    if (region === "russia") icon = "64f37efd5319b9b581557604864f042a";
-    if (region === "japan") icon = "f23c5c28c4429691f7c54af93876d661";
-    if (region === "india") icon = "716d569d0bca379a84578572c6efc7ac";
-    if (region === "dubai") icon = "0113e92896135807e30f5de869074733";
-    if (region === "amsterdam") icon = "c9f51873ae719a6b4b8c6724362e999e";
-    if (region === "london") icon = "3a79cdd1d4af225247f2ba574b97ae78";
-    if (region === "frankfurt") icon = "7fa2adf98f26db34178bb30a63dabe8c";
-    if (region === "eu-central") icon = "554a8e1a41c2e30cdb946396d3d336f2";
-    if (region === "eu-west") icon = "554a8e1a41c2e30cdb946396d3d336f2";
+    switch (region) {
+        case "us-west":
+        case "us-east":
+        case "us-central":
+        case "us-south": icon = "e6d6b255259ac878d00819a9555072ad"; break;
+        case "singapore": icon = "92cd1f9eabd48ec32dc2ecef617f706b"; break;
+        case "southafrica": icon = "3a3ec02f3c9193e85bda10f5d2a42574"; break;
+        case "sydney": icon = "1d8d4e2b3fd0e542b6d37cbfa156d55e"; break;
+        case "europe":
+        case "eu-central":
+        case "eu-west": icon = "554a8e1a41c2e30cdb946396d3d336f2"; break;
+        case "brazil": icon = "7beab7b17eaa9ff7ceed3e5b1af274c2"; break;
+        case "hongkong": icon = "a92f116201fa7ff2b4acbb39f144ec60"; break;
+        case "russia": icon = "64f37efd5319b9b581557604864f042a"; break;
+        case "japan": icon = "f23c5c28c4429691f7c54af93876d661"; break;
+        case "india": icon = "716d569d0bca379a84578572c6efc7ac"; break;
+        case "dubai": icon = "0113e92896135807e30f5de869074733"; break;
+        case "amsterdam": icon = "c9f51873ae719a6b4b8c6724362e999e"; break;
+        case "london": icon = "3a79cdd1d4af225247f2ba574b97ae78"; break;
+        case "frankfurt": icon = "7fa2adf98f26db34178bb30a63dabe8c"; break;
+    }
 
     return icon;
 }
 
-export function getForeground(inputColour: string): string {
+export function getForeground(inputColour: string) {
     const colour =
         inputColour.charAt(0) === "#"
             ? inputColour.substring(1, 7)
@@ -97,7 +99,7 @@ export function getForeground(inputColour: string): string {
     return L > 0.179 ? "#000000" : "#FFFFFF";
 }
 
-export function standingParseEmoji(standing: string): string {
+export function standingParseEmoji(standing: string) {
     let result = "page.staff.manager.unavailable";
 
     if (standing === "Unmeasured")
@@ -350,9 +352,7 @@ export function shuffleArray<T>(array: T[]) {
 
 export function isURL(string: string) {
     try {
-        if (new URL(string).protocol === 'https:') {
-            return true
-        } else return false
+        new URL(string).protocol === 'https:'
     } catch {
         return false;
     }

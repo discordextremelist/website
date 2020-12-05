@@ -52,7 +52,7 @@
     "@types/http-errors": "^1.8.0",
     "@types/i18n": "^0.8.8",
     "@types/ioredis": "^4.17.8",
-    "@types/mongodb": "^3.6.0",
+    "@types/mongodb": "^3.6.1",
     "@types/morgan": "^1.9.2",
     "@types/node": "^14.14.10",
     "@types/passport": "^1.0.4",

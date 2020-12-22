@@ -55,7 +55,7 @@
                         if (botStatus === "dnd") statusInfo = __("page.bots.status.dnd")
                         if (botStatus === "offline") statusInfo = __("page.bots.status.offline")
                     %>
-                    <img class="image" title="<%= statusInfo %>" style="margin: auto; width: 128px; border-radius: 50%; animation: <%= botStatus %> 2s infinite !important;" src="<%= bot.avatar.hash ? bot.avatar.url : `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=512" alt="<%= __('common.img.avatar', bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');">
+                    <img class="image" <% if (!bot.scopes || bot.scopes.bot) { %>title="<%= statusInfo %>"<% } %> style="margin: auto; width: 128px; border-radius: 50%; <% if (!bot.scopes || bot.scopes.bot) { %>animation: <%= botStatus %> 2s infinite !important;<% } %>" src="<%= bot.avatar.hash ? bot.avatar.url : `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=512" alt="<%= __('common.img.avatar', bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');">
                 </div>
             <div class="column is-10<% if (mobile) { %> has-text-centered<% } %>">
                     <h1 class="is-size-1">
@@ -281,11 +281,11 @@
                                         </a>
                                     <% } %>
                                     <hr class="dropdown-divider">
-                                    <a class="dropdown-item has-text-success" target="_blank" href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= staffServer %>">
+                                    <a class="dropdown-item has-text-success" target="_blank" href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=<%= scopes %>&guild_id=<%= staffServer %>">
                                         <span class="icon"><i class="fas fa-vial"></i></span>
                                         <span><%= __("page.bots.invite.staff") %></span>
                                     </a>
-                                    <% if (req.user.db.rank.assistant) { %>
+                                    <% if (req.user.db.rank.assistant && (!bot.scopes || bot.scopes.bot)) { %>
                                         <a class="dropdown-item has-text-info" target="_blank" href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= mainServer %>">
                                             <span class="icon"><i class="fas fa-shield-alt"></i></span>
                                             <span><%= __("page.bots.invite.main") %></span>
@@ -392,14 +392,16 @@
                         <% } %>
                     </div>
                     <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
-                        <%-
-                            include("../../partials/tag.ejs", {
-                                contentColour: "is-link",
-                                title: __("page.bots.generalInfo.prefix.view"),
-                                content: bot.prefix,
-                                type: "multi"
-                            });
-                        %>
+                        <% if (!bot.scopes || bot.scopes.bot) { %>
+                            <%-
+                                include("../../partials/tag.ejs", {
+                                    contentColour: "is-link",
+                                    title: __("page.bots.generalInfo.prefix.view"),
+                                    content: bot.prefix,
+                                    type: "multi"
+                                });
+                            %>
+                        <% } %>
                         <%-
                             include("../../partials/tag.ejs", {
                                 contentColour: "is-info",
@@ -408,30 +410,32 @@
                                 type: "multi"
                             });
                         %>
-                        <%-
-                            include("../../partials/tag.ejs", {
-                                contentColour: "is-success",
-                                title: __("common.servers"),
-                                content: bot.serverCount === 0 ? "???" : bot.serverCount,
-                                type: "multi"
-                            });
-                        %>
+                        <% if (!bot.scopes || bot.scopes.bot) { %>
+                            <%-
+                                include("../../partials/tag.ejs", {
+                                    contentColour: "is-success",
+                                    title: __("common.servers"),
+                                    content: bot.serverCount === 0 ? "???" : bot.serverCount,
+                                    type: "multi"
+                                });
+                            %>
+                            <% if (bot.shardCount !== 0) { %>
+                                <%-
+                                    include("../../partials/tag.ejs", {
+                                        contentColour: "is-orange",
+                                        title: __("page.bots.shards"),
+                                        content: bot.shardCount,
+                                        type: "multi"
+                                    });
+                                %>
+                            <% } %>
+                        <% } %>
                         <% if (bot.links.privacyPolicy && !privacyIsURL) { %>
                             <%-
                                 include("../../partials/tag.ejs", {
                                     contentColour: "is-warning",
                                     title: __("common.nav.more.privacy"),
                                     content: bot.links.privacyPolicy,
-                                    type: "multi"
-                                });
-                            %>
-                        <% } %>
-                        <% if (bot.shardCount !== 0) { %>
-                            <%-
-                                include("../../partials/tag.ejs", {
-                                    contentColour: "is-orange",
-                                    title: __("page.bots.shards"),
-                                    content: bot.shardCount,
                                     type: "multi"
                                 });
                             %>
@@ -455,8 +459,20 @@
                             %>
                         <% } %>
                     </div>
-                    <% if (bot.tags && bot.tags.length > 0) { %>
+                    <% if (bot.tags && bot.tags.length > 0 || bot.scopes?.slashCommands) { %>
                         <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
+                            <% if (bot.scopes?.slashCommands) { %>
+                                <%-
+                                    include("../../partials/tag.ejs", {
+                                        tag: "slashcommands",
+                                        icon: "slash fa-flip-horizontal",
+                                        contentColour: "is-blurple",
+                                        title: "",
+                                        content: __("common.slashCommands"),
+                                        type: "botTag"
+                                    });
+                                %>
+                            <% } %>
                             <% if (bot.tags.includes("Fun")) { %>
                                 <%-
                                     include("../../partials/tag.ejs", {

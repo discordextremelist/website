@@ -31,6 +31,7 @@
             .has-background-default { background-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>; color: <% if (req.user) { %><%= req.user.db.preferences.defaultForegroundColour || "#ffffff" %><% } else { %>#ffffff<% } %>; }
             ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}::-webkit-scrollbar-thumb:hover{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}
             <% if (req.user) { %>.editorBackdrop { filter: drop-shadow(0px 1px 2px <%= req.user.db.preferences.defaultColour || "#b114ff" %>) }<% } %>
+            .is-checkradio[type="checkbox"].is-default.has-background-color+label::before { background-color: <%= req.user?.db.preferences.defaultColour || "#b114ff" %> !important }
         </style>
     <% } %>
     <% if (req.user) { %><style><%= req.user.db.preferences.customGlobalCss %></style><% } %>

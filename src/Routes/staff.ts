@@ -96,7 +96,8 @@ router.get(
                 ({ status }) => !status.approved && !status.archived
             ),
             mainServer: settings.guild.main,
-            staffServer: settings.guild.staff
+            staffServer: settings.guild.staff,
+            parseScopes: functions.parseScopes
         });
     }
 );
@@ -149,8 +150,8 @@ router.get(
             subtitle: res.__("page.staff.invite_queue.subtitle"),
             req,
             bots: bots.filter(
-                ({ inServer, status }) =>
-                    !inServer && !status.archived && status.approved && !status.siteBot
+                ({ inServer, status, scopes }) =>
+                    !inServer && !status.archived && status.approved && !status.siteBot && (!scopes || scopes.bot)
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff

@@ -130,6 +130,11 @@ router.post(
                 errors: [res.__("common.error.bot.conflict")]
             });
 
+        if (!req.body.bot && !req.body.slashCommands) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.noScopes"));
+        }
+
         if (!req.body.id) {
             error = true;
             errors.push(res.__("common.error.listing.arr.IDRequired"));
@@ -165,9 +170,7 @@ router.post(
         }
 
         if (req.body.invite === "") {
-            invite = `https://discord.com/api/oauth2/authorize?client_id=${
-                req.body.clientID || req.body.id
-            }&scope=bot`;
+            invite = `https://discord.com/api/oauth2/authorize?client_id=${req.body.clientID || req.body.id}&scope=${functions.parseScopes(req.body)}`;
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
@@ -391,12 +394,12 @@ router.post(
             }
         }
 
-        if (!req.body.prefix) {
+        if (!req.body.prefix && req.body.bot) {
             error = true;
             errors.push(
                 res.__("common.error.listing.arr.prefixRequired")
             );
-        } else if (req.body.prefix.length > 32) {
+        } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"))
         }
@@ -516,6 +519,10 @@ router.post(
                         positive: [],
                         negative: []
                     },
+                    scopes: {
+                        bot: req.body.bot,
+                        slashCommands: req.body.slashCommands
+                    },
                     links: {
                         invite: invite,
                         support: req.body.supportServer,
@@ -597,6 +604,10 @@ router.post(
                             votes: {
                                 positive: [],
                                 negative: []
+                            },
+                            scopes: {
+                                bot: req.body.bot,
+                                slashCommands: req.body.slashCommands
                             },
                             links: {
                                 invite: invite,
@@ -990,6 +1001,11 @@ router.post(
         let error = false;
         let errors: string[] = [];
 
+        if (!req.body.bot && !req.body.slashCommands) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.noScopes"));
+        }
+
         if (req.body.clientID) {
             if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
                 error = true;
@@ -1038,9 +1054,7 @@ router.post(
         let invite: string;
 
         if (req.body.invite === "") {
-            invite = `https://discord.com/api/oauth2/authorize?client_id=${
-                req.body.clientID || req.params.id
-            }&scope=bot`;
+            invite = `https://discord.com/api/oauth2/authorize?client_id=${req.body.clientID || req.params.id}&scope=${functions.parseScopes(req.body)}`;
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
@@ -1264,12 +1278,12 @@ router.post(
             }
         }
 
-        if (!req.body.prefix) {
+        if (!req.body.prefix && req.body.bot) {
             error = true;
             errors.push(
                 res.__("common.error.listing.arr.prefixRequired")
             );
-        } else if (req.body.prefix.length > 32) {
+        } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"))
         }
@@ -1376,6 +1390,10 @@ router.post(
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
                             },
+                            scopes: {
+                                bot: req.body.bot,
+                                slashCommands: req.body.slashCommands
+                            },
                             links: {
                                 invite: invite,
                                 support: req.body.supportServer,
@@ -1423,6 +1441,10 @@ router.post(
                                 hash: botExists.avatar.hash,
                                 url: botExists.avatar.url
                             },
+                            scopes: {
+                                bot: req.body.bot,
+                                slashCommands: req.body.slashCommands
+                            },
                             links: {
                                 invite: botExists.links.invite,
                                 support: botExists.links.support,
@@ -1459,6 +1481,10 @@ router.post(
                             avatar: {
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
+                            },
+                            scopes: {
+                                bot: req.body.bot,
+                                slashCommands: req.body.slashCommands
                             },
                             links: {
                                 invite: invite,
@@ -1646,7 +1672,8 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         editors,
         votes: bot.votes.positive.length - bot.votes.negative.length,
         functions,
-        privacyIsURL: functions.isURL(bot.links.privacyPolicy)
+        privacyIsURL: functions.isURL(bot.links.privacyPolicy),
+        scopes: functions.parseScopes(bot.scopes)
     });
 });
 
@@ -1931,9 +1958,10 @@ router.get(
 
         if (!req.user || req.user.id !== bot.owner.id)
             return res.status(403).render("status", {
-                title: "Error",
+                title: res.__("common.error"),
                 status: 403,
-                message: res.__("common.error.bot.perms.notOwner"),
+                subtitle: res.__("common.error.bot.perms.notOwner"),
+                type: "Error",
                 user: req.user,
                 req: req
             });
@@ -2031,6 +2059,11 @@ router.post(
         let error = false;
         let errors: string[] = [];
 
+        if (!req.body.bot && !req.body.slashCommands) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.noScopes"));
+        }
+        
         if (req.body.clientID) {
             if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
                 error = true;
@@ -2088,9 +2121,7 @@ router.post(
         let invite: string;
 
         if (req.body.invite === "") {
-            invite = `https://discord.com/api/oauth2/authorize?client_id=${
-                req.body.clientID || req.params.id
-            }&scope=bot`;
+            invite = `https://discord.com/api/oauth2/authorize?client_id=${req.body.clientID || req.params.id}&scope=${functions.parseScopes(req.body)}`;
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
@@ -2312,10 +2343,10 @@ router.post(
             }
         }
 
-        if (!req.body.prefix) {
+        if (!req.body.prefix && req.body.bot) {
             error = true;
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
-        } else if (req.body.prefix.length > 32) {
+        } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"))
         }
@@ -2416,6 +2447,10 @@ router.post(
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
                             },
+                            scopes: {
+                                bot: req.body.bot,
+                                slashCommands: req.body.slashCommands
+                            },
                             links: {
                                 invite: invite,
                                 support: req.body.supportServer,
@@ -2454,6 +2489,10 @@ router.post(
                             avatar: {
                                 hash: botExists.avatar.hash,
                                 url: botExists.avatar.url
+                            },
+                            scopes: {
+                                bot: req.body.bot,
+                                slashCommands: req.body.slashCommands
                             },
                             links: {
                                 invite: botExists.links.invite,
@@ -2494,6 +2533,10 @@ router.post(
                             avatar: {
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
+                            },
+                            scopes: {
+                                bot: req.body.bot,
+                                slashCommands: req.body.slashCommands
                             },
                             links: {
                                 invite: invite,

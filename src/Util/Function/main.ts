@@ -352,8 +352,17 @@ export function shuffleArray<T>(array: T[]) {
 
 export function isURL(string: string) {
     try {
-        new URL(string).protocol === 'https:'
+        return new URL(string).protocol === 'https:'
     } catch {
         return false;
     }
+}
+
+export function parseScopes(scopes: delBot["scopes"]) {
+    if (!scopes) return 'bot'
+    if (scopes.bot && scopes.slashCommands) {
+        return 'bot+applications.commands'
+    } else if (scopes.slashCommands) {
+        return 'applications.commands'
+    } else return 'bot'
 }

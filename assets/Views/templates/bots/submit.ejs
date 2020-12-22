@@ -64,6 +64,19 @@
                 <%= __("page.form.category.generalInfo") %>
             </h3>
             <br>
+            <label class="label has-text-default"><%= __("page.bots.generalInfo.scopes") %> <span class="has-text-danger">*</span></label>
+            <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
+                <%= __("page.bots.generalInfo.scopes.details") %>
+            </p>
+            <div class="field">
+                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="bot" name="bot">
+                <label class="has-text-default" for="bot"><%= __("common.bot") %></label>
+            </div>
+            <div class="field">
+                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="slashcommands" name="slashcommands">
+                <label class="has-text-default" for="slashcommands"><%= __("common.slashCommands") %></label>
+            </div>
+            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.id") %> <span class="has-text-danger">*</span></label>
                 <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
@@ -77,7 +90,7 @@
                 </p>
             </div>
             <br>
-            <div class="field">
+            <div class="field" id="clientIDBlock" style="display: none">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.clientID") %></label>
                 <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
                     <%= __("page.bots.generalInfo.clientID.details") %>
@@ -88,8 +101,8 @@
                         <i aria-hidden="true" class="fas fa-hashtag"></i>
                     </span>
                 </p>
+                <br>
             </div>
-            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.editors") %> <span class="has-text-default">(<%= __("common.form.spaceSeparated") %>)</span></label>
                 <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
@@ -103,16 +116,16 @@
                 </p>
             </div>
             <br>
-            <div class="field">
+            <div class="field" id="prefixBlock">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.prefix") %> <span class="has-text-danger">*</span></label>
                 <p class="control has-icons-left has-icons-right" required>
                     <input id="form_prefix" class="input is-rounded" type="text" name="prefix" placeholder="!" maxlength="32">
                     <span class="icon is-small is-left">
-                <i aria-hidden="true" class="fas fa-paper-plane"></i>
-            </span>
+                        <i aria-hidden="true" class="fas fa-paper-plane"></i>
+                    </span>
                 </p>
+                <br>
             </div>
-            <br>
             <div class="field">
                 <label class="label has-text-default"><%= __("page.bots.generalInfo.library") %> <span class="has-text-danger">*</span></label>
                 <div class="control has-icons-left">
@@ -374,6 +387,32 @@
     </div>
 </div>
 <script>
+    const bot = document.querySelector('#bot')
+    const slashcommands = document.querySelector('#slashcommands')
+    const prefixBlock = document.querySelector('#prefixBlock')
+    const clientIDBlock = document.querySelector('#clientIDBlock')
+
+    const onScopeChange = () => {
+        clientIDDisplayCheck()
+        if (!bot.checked && slashcommands.checked) {
+            prefixBlock.style.display = 'none'
+        } else {
+            prefixBlock.style.display = 'inherit'
+        }
+    }
+
+    const clientIDDisplayCheck = () => {
+        if (bot.checked && id.value > 0 && BigInt(id.value) < 234395307759108106n) {
+            clientIDBlock.style.display = 'inherit'
+        } else clientIDBlock.style.display = 'none'
+    }
+
+    const id = document.querySelector('#id')
+    id.addEventListener('change', clientIDDisplayCheck)
+
+    bot.addEventListener('change', onScopeChange)
+    slashcommands.addEventListener('change', onScopeChange)
+
     const useCustomColour = document.querySelector('#form_customColourSwitch')
     const customColour = document.querySelector('#customColor')
     useCustomColour.addEventListener('change', () => {
@@ -421,6 +460,9 @@ function doSubmit() {
         let modNotes = document.getElementById("modNotes").value;
 
         fetchPOST("<%= linkPrefix %>/bots/submit", {
+            bot: document.getElementById("bot").checked,
+            slashCommands: document.getElementById("slashcommands").checked,
+
             id: document.getElementById("id").value,
             clientID: document.getElementById("clientID").value,
 

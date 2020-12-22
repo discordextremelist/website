@@ -47,7 +47,7 @@
                         if (userStatus === "dnd") statusInfo = __("page.users.status.dnd")
                         if (userStatus === "offline") statusInfo = __("page.users.status.offline")
                     %> 
-                    <img class="image" title="<%= statusInfo %>" style="margin: auto; width: 128px; border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.hash ? userProfile.avatar.url : `${baseURL}/img/defaultavatar` %>.<% if (userProfile.avatar.hash) { %><%= userProfile.avatar.hash.startsWith('a_') ? 'gif' : imageFormat %><% } else { %><%= imageFormat %><% } %>?size=128" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" >
+                    <img class="image" title="<%= statusInfo %>" style="margin: auto; width: 128px; border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.hash ? userProfile.avatar.url : `${baseURL}/img/defaultavatar` %>.<% if (userProfile.avatar.hash) { %><%= userProfile.avatar.hash.startsWith('a_') ? 'gif' : imageFormat %><% } else { %><%= imageFormat %><% } %>?size=256" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" >
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">

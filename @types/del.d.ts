@@ -206,6 +206,10 @@ declare global {
             positive: string[];
             negative: string[];
         };
+        scopes: {
+            bot: boolean;
+            slashCommands: boolean;
+        };
         links: {
             invite: string;
             support: string;

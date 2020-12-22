@@ -34,7 +34,7 @@
                 <br />
                 <span><%= title %></span>
             </h1>
-            <h2 class="subtitle"><%= subtitle %></h2>
+            <h2 class="subtitle"><%- subtitle %></h2>
             <div class="buttons is-centered">
                 <a href="<%= linkPrefix %>/bots/submit" class="button is-default">
                     <span class="icon">
@@ -46,6 +46,12 @@
             <div class="buttons is-centered">
                 <a href="<%= linkPrefix %>/bots" class="button is-dark">
                     <span><%= __("common.all") %></span>
+                </a>
+                <a href="?tag=slashcommands" class="button is-blurple">
+                    <span class="icon">
+                        <i class="fas fa-slash fa-flip-horizontal"></i>
+                    </span>
+                    <span><%= __("common.slashCommands") %></span>
                 </a>
                 <a href="?tag=fun" class="button is-link">
                     <span class="icon">

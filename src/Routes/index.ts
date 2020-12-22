@@ -133,12 +133,21 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
         pageParam = `?tag=${req.query.tag}&page=`
 
         switch ((req.query.tag as string).toLowerCase()) {
+            case "slashcommands":
+                icon = "fa-slash fa-flip-horizontal has-text-blurple";
+                title = res.__("common.bots.title.slashcommands")
+                subtitle = res.__("common.bots.subtitle.filter.slashcommands", {a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">', ea: "</a>"})
+                bots = (await botCache.getAllBots()).filter(
+                    ({ status, scopes }) =>
+                        status.approved && !status.siteBot && !status.archived && scopes?.slashCommands
+                );
+                break;
             case "fun":
                 icon = "fa-grin-squint-tears has-text-link";
                 title = res.__("common.bots.title.fun")
                 subtitle = res.__("common.bots.subtitle.filter.fun");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ _id, status, tags }) =>
+                    ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Fun")
                 );
                 break;
@@ -147,7 +156,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.social")
                 subtitle = res.__("common.bots.subtitle.filter.social");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ _id, status, tags }) =>
+                    ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Social")
                 );
                 break;
@@ -156,7 +165,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.economy")
                 subtitle = res.__("common.bots.subtitle.filter.economy");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ _id, status, tags }) =>
+                    ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Economy")
                 );
                 break;
@@ -165,7 +174,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.utility")
                 subtitle = res.__("common.bots.subtitle.filter.utility");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ _id, status, tags }) =>
+                    ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Utility")
                 );
                 break;
@@ -174,7 +183,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.moderation")
                 subtitle = res.__("common.bots.subtitle.filter.moderation");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ _id, status, tags }) =>
+                    ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Moderation")
                 );
                 break;
@@ -183,7 +192,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.multipurpose")
                 subtitle = res.__("common.bots.subtitle.filter.multipurpose");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ _id, status, tags }) =>
+                    ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Multipurpose")
                 );
                 break;
@@ -192,7 +201,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.music")
                 subtitle = res.__("common.bots.subtitle.filter.music");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ _id, status, tags }) =>
+                    ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && tags.includes("Music")
                 );
                 break;

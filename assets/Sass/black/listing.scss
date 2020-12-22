@@ -99,6 +99,10 @@ blockquote {
     &.is-pink {
         background-color: bulmaDarken($pink, 2.5%);
     }
+
+    &.is-blurple {
+        background-color: bulmaDarken($blurple, 2.5%);
+    }
 }
 
 .tab-content {

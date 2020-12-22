@@ -158,9 +158,10 @@ new Promise<void>((resolve, reject) => {
 
         global.redis = new (require("ioredis"))(redisConfig);
 
-        global.redis?.flushdb();
+        /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems.
+         - Ice*/
 
-        console.time("Redis Cache & Core Refresh");
+        console.time("Redis");
         await userCache.uploadUsers();
         await botCache.uploadBots();
         await serverCache.uploadServers();
@@ -171,11 +172,15 @@ new Promise<void>((resolve, reject) => {
         await featuredCache.updateFeaturedServers();
         await featuredCache.updateFeaturedTemplates();
         await ddosMode.updateCache();
-        await botStatsUpdate();
         await tokenManager.tokenResetAll();
+        console.timeEnd("Redis");
 
-        discord.bot.login(settings.secrets.discord.token);
-        
+        console.time("Bot stats update");
+        await botStatsUpdate();
+        console.timeEnd("Bot stats update");
+
+        await discord.bot.login(settings.secrets.discord.token);
+
         await new Promise<void>((resolve) => {
             discord.bot.once("ready", () => resolve());
         });
@@ -203,8 +208,6 @@ new Promise<void>((resolve, reject) => {
                 setTimeout(discordBotUndefined, 250);
             }
         })();
-
-        console.timeEnd("Redis Cache & Core Refresh");
 
         app.set("view engine", "ejs");
 

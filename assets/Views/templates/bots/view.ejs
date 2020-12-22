@@ -392,7 +392,7 @@
                         <% } %>
                     </div>
                     <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
-                        <% if (!bot.scopes || bot.scopes.bot) { %>
+                        <% if (bot.prefix) { %>
                             <%-
                                 include("../../partials/tag.ejs", {
                                     contentColour: "is-link",

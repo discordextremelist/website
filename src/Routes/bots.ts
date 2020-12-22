@@ -394,7 +394,7 @@ router.post(
             }
         }
 
-        if (!req.body.prefix && req.body.bot) {
+        if (!req.body.prefix && !req.body.slashCommands) {
             error = true;
             errors.push(
                 res.__("common.error.listing.arr.prefixRequired")
@@ -1072,6 +1072,12 @@ router.post(
                 errors.push(
                     res.__("common.error.listing.arr.invite.discordapp")
                 );
+            } else if (req.body.invite.includes("discord.com") &&
+            (req.body.bot && !req.body.invite.includes('bot') || req.body.slashCommands && !req.body.invite.includes('applications.commands'))) {
+                error = true;
+                errors.push(
+                    res.__("common.error.bot.arr.scopesNotInInvite")
+                );
             } else {
                 invite = req.body.invite;
             }
@@ -1278,7 +1284,7 @@ router.post(
             }
         }
 
-        if (!req.body.prefix && req.body.bot) {
+        if (!req.body.prefix && !req.body.slashCommands) {
             error = true;
             errors.push(
                 res.__("common.error.listing.arr.prefixRequired")
@@ -2343,7 +2349,7 @@ router.post(
             }
         }
 
-        if (!req.body.prefix && req.body.bot) {
+        if (!req.body.prefix && !req.body.slashCommands) {
             error = true;
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
         } else if (req.body.prefix?.length > 32) {

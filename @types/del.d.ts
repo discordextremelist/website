@@ -181,12 +181,12 @@ declare global {
         _cacheID?: string;
         clientID: string;
         name: string;
-        prefix: string;
+        prefix?: string;
         library: string;
         tags: string[];
         vanityUrl: string;
-        serverCount: number;
-        shardCount: number;
+        serverCount?: number;
+        shardCount?: number;
         inServer?: boolean;
         token: string;
         flags: UserFlags;
@@ -206,7 +206,7 @@ declare global {
             positive: string[];
             negative: string[];
         };
-        scopes: {
+        scopes?: {
             bot: boolean;
             slashCommands: boolean;
         };

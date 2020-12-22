@@ -91,7 +91,7 @@
             </div>
             <br>
             <div class="field" id="prefixBlock" <% if (bot.scopes && !bot.scopes.bot) { %> style="display: none" <% } %>>
-                <label class="label has-text-default"><%= __("page.bots.generalInfo.prefix") %> <span class="has-text-danger">*</span></label>
+                <label class="label has-text-default"><%= __("page.bots.generalInfo.prefix") %></label>
                 <p class="control has-icons-left" required>
                     <input id="form_prefix" class="input is-rounded" type="text" value="<%= bot.prefix %>" name="prefix" placeholder="!" maxlength="32">
                     <span class="icon is-small is-left">

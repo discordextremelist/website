@@ -43,12 +43,10 @@ export async function updateFeaturedBots() {
                 .collection("bots")
                 .find()
                 .toArray()) as delBot[]).filter(
-                ({ _id, status }) =>
-                    status.approved &&
-                    !status.siteBot &&
-                    !status.archived &&
-                    statuses[_id] &&
-                    statuses[_id] !== PresenceUpdateStatus.Offline
+                ({ _id, status, scopes }) =>
+                    status.approved && !status.siteBot && !status.archived &&
+                    ((statuses[_id] && statuses[_id] !== PresenceUpdateStatus.Offline) ||
+                    (!scopes || scopes.bot))
             )
         )
         .slice(0, 6);

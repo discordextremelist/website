@@ -17,7 +17,7 @@
     "cookie-session": "^1.4.0",
     "datadog-metrics": "^0.8.2",
     "debug": "~2.6.9",
-    "del-i18n": "github:discordextremelist/i18n",
+    "del-i18n": "git+https://github.com:discordextremelist/i18n",
     "discord-api-types": "^0.7.0",
     "discord.js": "^12.5.1",
     "ejs": "^3.1.5",

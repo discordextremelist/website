@@ -10,5 +10,5 @@ jobs:
       with:
         action-token: "${{ secrets.DELLYBOT_SECRET }}"
         project-url: "https://github.com/orgs/discordextremelist/projects/1"
-        column-name: "Medium Priority"
-        label-name: "medium priority"
+        column-name: "Moderate Priority"
+        label-name: "moderate priority"

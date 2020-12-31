@@ -23,7 +23,7 @@
                         <a class="has-text-white" href="<%= linkPrefix %>/users/<%= template.creator.id %>"><%= template.creator ? `${template.creator.username}#${template.creator.discriminator}` : "Unknown#0000" %></a>
                     </span>
                 <% } else { %>
-                    <span class="tag <%= contentColour %>"><%= content %></span>
+                    <span class="tag <%= contentColour %>" <% if (locals.id) { %>id="<%= id %>"<% } %>><%= content %></span>
                 <% } %> 
                 <span class="tag is-dark"><%= title %></span>
             </div>
@@ -63,7 +63,7 @@
                         <% } %> 
                     </span>
                 <% } else { %>
-                    <span class="tag <%= contentColour %>"><%= content %></span>
+                    <span class="tag <%= contentColour %>" <% if (locals.id) { %>id="<%= id %>"<% } %>><%= content %></span>
                 <% } %> 
             </div>
         </div>

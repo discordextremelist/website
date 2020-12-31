@@ -156,7 +156,8 @@
                                 contentColour: "is-success", 
                                 title: __("page.templates.used"),
                                 content: __("page.templates.used.times", template.usageCount),
-                                type: "multi"
+                                type: "multi",
+                                id: 'uses'
                             });
                         %>
                     </div>
@@ -415,7 +416,15 @@
             </div>
         </footer>
     </div>
-    <script>document.querySelector("a#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+    <script>
+        document.querySelector("a#deleteModal")?.addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})});
+        (async () => {
+            const template = await (await fetch('https://discord.com/api/v8/guilds/templates/<%= template._id %>')).json()
+            if (!template.name) return
+            document.querySelector('#templateName').innerText = template.name
+            document.querySelector('#uses').innerText = '<%= __("page.templates.used.times") %>'.replace('%s', template.usage_count)
+        })()
+    </script>
 </div>
 <% if (phone) { %>
     <!-- <style>#collapsibleBody1, #collapsibleBody2, #collapsibleBody3 { display: none }</style> -->

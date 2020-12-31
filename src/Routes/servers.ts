@@ -406,6 +406,13 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
 });
 
 router.get(
+    "/:id/exists",
+    permission.auth,
+    async (req, res) => {
+        res.send(String(await global.redis?.hexists("servers", req.params.id)))
+})
+
+router.get(
     "/:id/src",
     variables,
     permission.auth,

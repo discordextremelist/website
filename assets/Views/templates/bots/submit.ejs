@@ -408,7 +408,22 @@
     }
 
     const id = document.querySelector('#id')
-    id.addEventListener('change', clientIDDisplayCheck)
+    id.addEventListener('change', async () => {
+        clientIDDisplayCheck()
+        if (isNaN(id.value) || id.value.includes(' ')) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerText = '<%= __("common.error.bot.arr.invalidID") %>'
+            scroll(0, 0);
+        } else if (id.value.length > 32) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerHTML = '<%= __("common.error.bot.arr.idTooLong") %>'
+            scroll(0, 0);
+        } else if (id.value && await (await fetch(`./${id.value}/exists`)).json()) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerText = '<%= __("common.error.bot.conflict") %>'
+            scroll(0, 0);
+        } else document.getElementById("errors").style.display = "none";
+    })
 
     bot.addEventListener('change', onScopeChange)
     slashcommands.addEventListener('change', onScopeChange)

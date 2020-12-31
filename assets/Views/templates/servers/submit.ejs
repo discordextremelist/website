@@ -38,16 +38,18 @@
                 <div class="field">
                     <label class="label has-text-default"><%= __("page.servers.code") %> <span class="has-text-danger">*</span></label>
                     <div class="control">
-                    <div class="field has-addons <% if (htmlDir === "rtl") { %>has-addons-right<% } %>" style="direction: ltr;">
-                        <p class="control" aria-hidden="true">
-                            <a class="button is-rounded is-static">
-                                https://discord.gg/
-                            </a>
-                        </p>
-                        <p class="control" required>
-                            <input id="form_inviteCode" class="input is-rounded" type="text" name="invite" placeholder="WeCer3J" onpaste="setTimeout(() => this.value = this.value.replace('https:/\/discord.gg/', ''), 0)">
-                        </p>
+                        <div class="field has-addons <% if (htmlDir === "rtl") { %>has-addons-right<% } %>" style="direction: ltr;">
+                            <p class="control" aria-hidden="true">
+                                <a class="button is-rounded is-static">
+                                    https://discord.gg/
+                                </a>
+                            </p>
+                            <p class="control" required>
+                                <input id="form_inviteCode" class="input is-rounded" type="text" name="invite" placeholder="WeCer3J" onpaste="setTimeout(() => this.value = this.value.replace('https:/\/discord.gg/', ''), 0)">
+                            </p>
+                        </div>
                     </div>
+                    <p id="serverName" style="margin-top: 10px;" class="is-size-7 has-text-default"></p>
                 </div>
                 <br>
                 <label class="label has-text-default"><%= __("common.tags") %></label>
@@ -186,6 +188,47 @@
         </div>
         <br>
         <script>
+    const code = document.querySelector('#form_inviteCode')
+    const shortDesc = document.querySelector('#form_shortDescription')
+    const name = document.querySelector('#serverName')
+    code.addEventListener('change', async () => {
+        if (!code.value) return name.innerText = ""
+
+        if (code.value.includes(' ')) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerText = '<%= __("common.error.listing.arr.invite.invalid") %>'
+            scroll(0, 0);
+        } else if (code.value.length > 32) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerHTML = '<%= __("common.error.listing.arr.invite.tooLong") %>'
+            scroll(0, 0);
+        } else if (code.value.includes('discord.gg')) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerHTML = '<%= __("common.error.server.arr.invite.dgg") %>'
+            scroll(0, 0);
+        } else document.getElementById("errors").style.display = "none";
+
+        const invite = await (await fetch(`https://discord.com/api/v8/invites/${code.value}`)).json()
+        if (!invite.guild) return
+
+        name.innerText = invite.guild.name
+
+        if (await (await fetch(`./${invite.guild.id}/exists`)).json()) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerText = '<%= __("common.error.server.conflict") %>'
+            scroll(0, 0);
+        } else {
+            document.getElementById("errors").style.display = "none";
+            if (!shortDesc.value) {
+                if (invite.guild.description) {
+                    shortDesc.value = invite.guild.description
+                } else if (invite.guild.welcome_screen.description) {
+                    shortDesc.value = invite.guild.welcome_screen.description
+                }
+            }
+        }
+    })
+            
     const warn = event => {
         event.preventDefault()
         event.returnValue=''

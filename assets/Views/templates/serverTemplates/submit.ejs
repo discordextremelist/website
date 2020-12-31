@@ -48,6 +48,7 @@
                                 <input id="form_useCode" class="input is-rounded" type="text" name="code" placeholder="aUe6qZZgnhGh" onpaste="setTimeout(() => this.value = this.value.replace('https:/\/discord.new/', ''), 0)">
                             </p>
                         </div>
+                        <p id="templateName" style="margin-top: 10px;" class="is-size-7 has-text-default"></p>
                     </p>
                 </div>
                 <br />
@@ -144,6 +145,41 @@
         </div>
         <br />
         <script>
+    const code = document.querySelector('#form_useCode')
+    const shortDesc = document.querySelector('#form_shortDescription')
+    const name = document.querySelector('#templateName')
+    code.addEventListener('change', async () => {
+        if (!code.value) return name.innerText = ""
+
+        if (code.value.includes(' ')) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerText = '<%= __("common.error.template.arr.invite.invalid") %>'
+            scroll(0, 0);
+        } else if (code.value.length > 2000) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerHTML = '<%= __("common.error.template.arr.invite.tooLong") %>'
+            scroll(0, 0);
+        } else if (code.value.includes('discord.new')) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerHTML = '<%= __("common.error.template.arr.invite.dnew") %>'
+            scroll(0, 0);
+        } else document.getElementById("errors").style.display = "none";
+
+        const template = await (await fetch(`https://discord.com/api/v8/guilds/templates/${code.value}`)).json()
+        if (!template.name) return
+
+        name.innerText = template.name
+
+        if (await (await fetch(`./${code.value}/exists`)).json()) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerText = '<%= __("common.error.template.conflict") %>'
+            scroll(0, 0);
+        } else {
+            document.getElementById("errors").style.display = "none";
+            if (!shortDesc.value && template.description) shortDesc.value = template.description
+        }
+    })
+
     const warn = event => {
         event.preventDefault()
         event.returnValue=''

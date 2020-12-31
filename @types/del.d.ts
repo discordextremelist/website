@@ -247,6 +247,10 @@ declare global {
         longDesc: string;
         tags: string[];
         previewChannel: string;
+        counts: {
+            online: number;
+            members: number;
+        }
         owner: {
             id: string;
         };

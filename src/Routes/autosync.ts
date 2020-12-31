@@ -22,7 +22,7 @@ import * as discord from "../Util/Services/discord";
 import * as botCache from "../Util/Services/botCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
-import { APIUser, APIInvite, APITemplate } from "discord-api-types/v8";
+import { APIUser, APIInvite, APITemplate, RESTGetAPIInviteQuery } from "discord-api-types/v8";
 import * as settings from "../../settings.json";
 
 const router = express.Router();
@@ -86,11 +86,11 @@ router.get('/servers', async (req, res) => {
     if (!id) id = ids[0]
 
     const server: delServer = await global.db
-            .collection("servers")
-            .findOne({ _id: id });
+        .collection("servers")
+        .findOne({ _id: id });
 
     if (server) try {
-        const invite = await discord.bot.api.invites(server.inviteCode).get() as APIInvite
+        const invite = await discord.bot.api.invites(server.inviteCode).get({query: {with_counts: true} as RESTGetAPIInviteQuery}) as APIInvite
 
         if (invite.guild.id !== server._id) throw 'Invite points to a different server'
         
@@ -99,6 +99,10 @@ router.get('/servers', async (req, res) => {
             {
                 $set: {
                     name: invite.guild.name,
+                    counts: {
+                        online: invite.approximate_presence_count,
+                        members: invite.approximate_member_count
+                    },
                     icon: {
                         hash: invite.guild.icon,
                         url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`

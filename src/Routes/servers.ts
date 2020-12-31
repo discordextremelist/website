@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import type { Response as fetchRes } from "../../@types/fetch";
-import type { APIInvite } from "discord-api-types/v8";
+import type { APIInvite, RESTGetAPIInviteQuery } from "discord-api-types/v8";
 import { RESTJSONErrorCodes } from "discord-api-types/v8"
 
 import * as fetch from "node-fetch";
@@ -228,7 +228,7 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api.invites(req.body.invite).get()
+        discord.bot.api.invites(req.body.invite).get({query: {with_counts: true} as RESTGetAPIInviteQuery})
             .then(async (invite: APIInvite) => {
                 const serverExists:
                     | delServer
@@ -250,6 +250,10 @@ router.post(
                     longDesc: req.body.longDescription,
                     previewChannel: req.body.previewChannel,
                     tags: tags,
+                    counts: {
+                        online: invite.approximate_presence_count,
+                        members: invite.approximate_member_count
+                    },
                     owner: {
                         id: req.user.id
                     },
@@ -295,6 +299,10 @@ router.post(
                             tags: tags,
                             owner: {
                                 id: req.user.id
+                            },
+                            counts: {
+                                online: invite.approximate_presence_count,
+                                members: invite.approximate_member_count
                             },
                             icon: {
                                 hash: invite.guild.icon,
@@ -636,7 +644,7 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api.invites(req.body.invite).get()
+        discord.bot.api.invites(req.body.invite).get({query: {with_counts: true} as RESTGetAPIInviteQuery})
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).json({
@@ -655,6 +663,10 @@ router.post(
                             inviteCode: req.body.invite,
                             previewChannel: req.body.previewChannel,
                             tags: tags,
+                            counts: {
+                                online: invite.approximate_presence_count,
+                                members: invite.approximate_member_count
+                            },
                             icon: {
                                 hash: invite.guild.icon,
                                 url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
@@ -697,6 +709,10 @@ router.post(
                             inviteCode: req.body.invite,
                             previewChannel: req.body.previewChannel,
                             tags: tags,
+                            counts: {
+                                online: invite.approximate_presence_count,
+                                members: invite.approximate_member_count
+                            },
                             icon: {
                                 hash: invite.guild.icon,
                                 url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
@@ -717,6 +733,10 @@ router.post(
                             inviteCode: server.inviteCode,
                             previewChannel: server.previewChannel,
                             tags: server.tags,
+                            counts: {
+                                online: server.counts.online,
+                                members: server.counts.members
+                            },
                             icon: {
                                 hash: server.icon.hash,
                                 url: server.icon.url
@@ -1214,7 +1234,7 @@ router.get(
                 req: req
             });
 
-        discord.bot.api.invites(server.inviteCode).get()
+        discord.bot.api.invites(server.inviteCode).get({query: {with_counts: true} as RESTGetAPIInviteQuery})
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).render("status", {
@@ -1232,6 +1252,10 @@ router.get(
                     {
                         $set: {
                             name: invite.guild.name,
+                            counts: {
+                                online: invite.approximate_presence_count,
+                                members: invite.approximate_member_count
+                            },
                             icon: {
                                 hash: invite.guild.icon,
                                 url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
@@ -1249,6 +1273,10 @@ router.get(
                     details: {
                         new: {
                             name: invite.guild.name,
+                            counts: {
+                                online: invite.approximate_presence_count,
+                                members: invite.approximate_member_count
+                            },
                             icon: {
                                 hash: invite.guild.icon,
                                 url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
@@ -1256,6 +1284,10 @@ router.get(
                         } as delServer,
                         old: {
                             name: server.name,
+                            counts: {
+                                online: server.counts.online,
+                                members: server.counts.members
+                            },
                             icon: {
                                 hash: server.icon.hash,
                                 url: server.icon.url

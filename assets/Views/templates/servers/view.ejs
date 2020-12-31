@@ -187,6 +187,24 @@
                                 type: "multi"
                             });
                         %>
+                        <% if (server.counts) { %>
+                            <%- 
+                                include("../../partials/tag.ejs", { 
+                                    contentColour: "is-info", 
+                                    title: __("common.members"),
+                                    content: server.counts.members,
+                                    type: "multi"
+                                });
+                            %>
+                            <%- 
+                                include("../../partials/tag.ejs", { 
+                                    contentColour: "is-success", 
+                                    title: __("common.online"),
+                                    content: server.counts.online,
+                                    type: "multi"
+                                });
+                            %>
+                        <% } %>
                     </div>
                     <% if (server.tags && server.tags.length > 0) { %>
                         <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">

@@ -301,6 +301,10 @@
                                             <span><%= __("page.bots.copyClientID") %></span>
                                         </a>
                                     <% } %>
+                                    <a class="dropdown-item" onclick="copyToClipboard('<%= bot.owner.id %>');">
+                                        <span class="icon"><i aria-hidden="true" class="fas fa-copy"></i></span>
+                                        <span><%= __("common.copyOwnerID") %></span>
+                                    </a>
                                   </div>
                                 </div>
                             </div>

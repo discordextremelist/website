@@ -274,6 +274,8 @@ new Promise<void>((resolve, reject) => {
 
         app.use("/auth", require("./Routes/authentication"));
 
+        app.use("/autosync", require("./Routes/autosync"))
+
         // Locale handler.
         // Don't put anything below here that you don't want it's locale to be checked whatever (broken english kthx)
         app.use(["/:lang", "/"], languageHandler);

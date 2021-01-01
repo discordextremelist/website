@@ -236,6 +236,8 @@ declare global {
             premium: boolean;
             siteBot: boolean;
             archived: boolean;
+            hidden: boolean;
+            modHidden: boolean;
         };
     }
 

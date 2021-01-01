@@ -83,6 +83,13 @@
                                 <i aria-hidden="true" class="fad fa-archive has-text-warning fa-1x"></i>
                             </span>
                         <% } %>
+
+                        <% if (bot.status.hidden || bot.status.modHidden) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.rank.hidden") %>" class="icon is-medium is-size-3 iconalign">
+                                <i aria-hidden="true" class="fad fa-eye-slash has-text-white fa-1x"></i>
+                            </span>
+                        <% } %>
+
                         <% if (phone) { %>
                             <% if (bot.status.premium || bot.status.siteBot || !bot.status.approved || bot.status.archived) { %><br /><% } %>
                             <span id="botName">
@@ -197,14 +204,26 @@
                                   </div>
                                 </div>
                             </div>
+                            <% if (bot.status.hidden) { %>
+                                <%-
+                                    include("../../partials/button.ejs", {
+                                        className: "button is-white",
+                                        icon: "fas fa-eye",
+                                        tag: "a",
+                                        message: __("common.unhide"),
+                                        href: `${linkPrefix}/bots/${bot._id}/unhide`,
+                                        additional: 'style="background-color: #b5b5b5"'
+                                    });
+                                %>
+                            <% } %>
                             <%-
                                 include("../../partials/button.ejs", {
                                     className: "button is-danger",
                                     icon: "fas fa-trash",
-                                    tag: "a",
+                                    tag: "button",
                                     message: __("common.delete"),
                                     href: "",
-                                    additional: "id=\"deleteModal\""
+                                    additional: 'id="deleteModal"'
                                 });
                             %>
                         <% } %>
@@ -259,6 +278,21 @@
                                                 <i aria-hidden="true" class="fas fa-pencil"></i>
                                             </span>
                                             <span><%= __("common.edit") %></span>
+                                        </a>
+                                    <% } %>
+                                    <% if (!bot.status.modHidden) { %>
+                                        <a class="dropdown-item has-text-grey-light" href="<%= linkPrefix %>/bots/<%= bot._id %>/modhide">
+                                            <span class="icon">
+                                                <i aria-hidden="true" class="fas fa-eye-slash"></i>
+                                            </span>
+                                            <span><%= __("common.hide") %></span>
+                                        </a>
+                                    <% } else { %>
+                                        <a class="dropdown-item has-text-grey-light" href="<%= linkPrefix %>/bots/<%= bot._id %>/modunhide">
+                                            <span class="icon">
+                                                <i aria-hidden="true" class="fas fa-eye"></i>
+                                            </span>
+                                            <span><%= __("common.unhide") %></span>
                                         </a>
                                     <% } %>
                                     <% if (bot.status.approved === true && !bot.status.archived) { %>
@@ -600,13 +634,25 @@
         </section>
         <footer class="modal-card-foot">
             <div class="buttons">
-                <a class="button is-success" href="<%= linkPrefix %>/bots/<%= bot._id %>/delete">
+                <a class="button is-danger" href="<%= linkPrefix %>/bots/<%= bot._id %>/delete">
                     <span class="icon">
-                        <i aria-hidden="true" class="fas fa-check-circle"></i>
+                        <i aria-hidden="true" class="fas fa-trash"></i>
                     </span>
                     <span><%= __("common.delete") %></span>
                 </a>
-                <button class="button is-danger" id="close-modal">
+                <a class="button is-warning" <% if (!bot.status.archived) { %>href="<%= linkPrefix %>/bots/<%= bot._id %>/archive"<% } else { %>disabled<% } %>>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-archive"></i>
+                    </span>
+                    <span><%= __("common.archive") %></span>
+                </a>
+                <a class="button is-white" style="background-color: #b5b5b5" <% if (!bot.status.hidden && !bot.status.modHidden) { %>href="<%= linkPrefix %>/bots/<%= bot._id %>/hide"<% } else { %>disabled<% } %>>
+                    <span class="icon">
+                        <i aria-hidden="true" class="fas fa-eye-slash"></i>
+                    </span>
+                    <span><%= __("common.hide") %></span>
+                </a>
+                <button class="button is-dark" id="close-modal">
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-times-circle"></i>
                     </span>
@@ -615,7 +661,7 @@
             </div>
         </footer>
     </div>
-    <script>document.querySelector("a#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+    <script>document.querySelector("#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
 </div>
 <div class="modal setVanity">
     <div class="modal-background" id="vanityModalBg"></div>

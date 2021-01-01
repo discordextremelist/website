@@ -44,9 +44,9 @@ export async function updateFeaturedBots() {
                 .find()
                 .toArray()) as delBot[]).filter(
                 ({ _id, status, scopes }) =>
-                    status.approved && !status.siteBot && !status.archived &&
+                    status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden &&
                     ((statuses[_id] && statuses[_id] !== PresenceUpdateStatus.Offline) ||
-                    (!scopes || scopes.bot))
+                    scopes?.slashCommands)
             )
         )
         .slice(0, 6);

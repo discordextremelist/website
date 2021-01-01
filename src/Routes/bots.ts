@@ -553,7 +553,9 @@ router.post(
                         approved: false,
                         premium: false,
                         siteBot: false,
-                        archived: false
+                        archived: false,
+                        hidden: false,
+                        modHidden: false
                     }
                 } as delBot);
 
@@ -1952,7 +1954,7 @@ router.get(
     async (req: Request, res: Response) => {
         let bot = await global.db
             .collection("bots")
-            .findOne({ _id: req.params.id });
+            .findOne({ _id: req.params.id }) as delBot;
 
         if (!bot) {
             bot = await global.db
@@ -2004,6 +2006,208 @@ router.get(
         await discord.postWebMetric("bot");
 
         res.redirect("/users/@me");
+    }
+);
+
+router.get(
+    "/:id/archive",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response) => {
+        let bot = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id }) as delBot;
+
+        if (!bot) {
+            bot = await global.db
+                .collection("bots")
+                .findOne({ vanityUrl: req.params.id });
+
+            if (!bot)
+                return res.status(404).render("status", {
+                    title: res.__("common.error"),
+                    status: 404,
+                    subtitle: res.__("common.error.bot.404"),
+                    type: "Error",
+                    req: req
+                });
+        }
+
+        if (!req.user || req.user.id !== bot.owner.id)
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                status: 403,
+                subtitle: res.__("common.error.bot.perms.notOwner"),
+                type: "Error",
+                user: req.user,
+                req: req
+            });
+
+        discord.channels.logs.send(
+            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${
+                req.user.id
+            })\` archived bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
+            })\``
+        );
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    "status.archived": true,
+                    "status.approved": false
+                }
+            }
+        );
+
+        await global.db.collection("audit").insertOne({
+            type: "ARCHIVE_BOT",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: "None specified."
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        res.redirect("/users/@me");
+    }
+);
+
+router.get(
+    "/:id/hide",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response) => {
+        let bot = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id }) as delBot;
+
+        if (!bot) {
+            bot = await global.db
+                .collection("bots")
+                .findOne({ vanityUrl: req.params.id });
+
+            if (!bot)
+                return res.status(404).render("status", {
+                    title: res.__("common.error"),
+                    status: 404,
+                    subtitle: res.__("common.error.bot.404"),
+                    type: "Error",
+                    req: req
+                });
+        }
+
+        if (!req.user || req.user.id !== bot.owner.id)
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                status: 403,
+                subtitle: res.__("common.error.bot.perms.notOwner"),
+                type: "Error",
+                user: req.user,
+                req: req
+            });
+
+        discord.channels.logs.send(
+            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${
+                req.user.id
+            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
+            })\``
+        );
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    "status.hidden": true
+                }
+            }
+        );
+
+        await global.db.collection("audit").insertOne({
+            type: "HIDE_BOT",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: "None specified."
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        res.redirect(`/bots/${bot._id}`);
+    }
+);
+
+router.get(
+    "/:id/unhide",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response) => {
+        let bot = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id }) as delBot;
+
+        if (!bot) {
+            bot = await global.db
+                .collection("bots")
+                .findOne({ vanityUrl: req.params.id });
+
+            if (!bot)
+                return res.status(404).render("status", {
+                    title: res.__("common.error"),
+                    status: 404,
+                    subtitle: res.__("common.error.bot.404"),
+                    type: "Error",
+                    req: req
+                });
+        }
+
+        if (!req.user || req.user.id !== bot.owner.id)
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                status: 403,
+                subtitle: res.__("common.error.bot.perms.notOwner"),
+                type: "Error",
+                user: req.user,
+                req: req
+            });
+
+        discord.channels.logs.send(
+            `${settings.emoji.check} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${
+                req.user.id
+            })\` unhid bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
+            })\``
+        );
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    "status.hidden": false
+                }
+            }
+        );
+
+        await global.db.collection("audit").insertOne({
+            type: "UNHIDE_BOT",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: "None specified."
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        res.redirect(`/bots/${bot._id}`);
     }
 );
 
@@ -3359,6 +3563,234 @@ router.post(
                 });
 
         res.redirect(`/bots/${bot._id}`);
+    }
+);
+
+router.get(
+    "/:id/modhide",
+    variables,
+    permission.auth,
+    permission.mod,
+    async (req: Request, res: Response) => {
+        const bot: delBot | undefined = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+
+        if (!bot)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.bot.404"),
+                req,
+                type: "Error"
+            });
+
+        res.locals.premidPageInfo = res.__("premid.bots.hide", bot.name);
+
+        res.render("templates/bots/staffActions/remove", {
+            title: res.__("page.bots.hide.title"),
+            icon: "eye-slash",
+            subtitle: res.__("page.bots.hide.subtitle", bot.name),
+            req,
+            redirect: `/bots/${bot._id}`
+        });
+    }
+);
+
+router.post(
+    "/:id/modhide",
+    variables,
+    permission.auth,
+    permission.mod,
+    async (req: Request, res: Response) => {
+        const bot: delBot | undefined = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+
+        if (!bot)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.bot.404"),
+                req,
+                type: "Error"
+            });
+
+        if (bot.status.approved === false)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.bot.inQueue"),
+                req,
+                type: "Error"
+            });
+
+        if (!req.body.reason && !req.user.db.rank.admin) {
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.reasonRequired"),
+                req,
+                type: "Error"
+            });
+        }
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    "status.modHidden": true
+                }
+            }
+        );
+
+        await global.db.collection("users").updateOne(
+            { _id: req.user.id },
+            {
+                $set: {
+                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
+                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+                }
+            }
+        );
+
+        const type = botType(req.body.type);
+
+        await global.db.collection("audit").insertOne({
+            type: "MOD_HIDE_BOT",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: req.body.reason || "None specified.",
+            reasonType: type
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        const embed = new Discord.MessageEmbed();
+        embed.setColor(0x2f3136);
+        embed.setTitle("Reason");
+        embed.setDescription(req.body.reason);
+        embed.setURL(`${settings.website.url}/bots/${bot._id}`);
+
+        discord.channels.logs.send(
+            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${
+                req.user.id
+            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
+            })\``,
+            { embed: embed }
+        );
+
+        const owner = await discord.getMember(bot.owner.id);
+        if (owner)
+            owner
+                .send(
+                    `${
+                        settings.emoji.botDeleted
+                    } **|** Your bot **${functions.escapeFormatting(
+                        bot.name
+                    )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${
+                        req.body.reason || "None specified."
+                    }\``
+                )
+                .catch((e) => {
+                    console.error(e);
+                });
+
+        res.redirect(`/bots/${bot._id}`);
+    }
+);
+
+router.get(
+    "/:id/modunhide",
+    variables,
+    permission.auth,
+    permission.mod,
+    async (req: Request, res: Response) => {
+        const bot: delBot | undefined = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+
+        if (!bot)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.bot.404"),
+                req,
+                type: "Error"
+            });
+
+        if (!bot.status.modHidden)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.bot.notHidden"),
+                req,
+                type: "Error"
+            });
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    "status.modHidden": false
+                }
+            }
+        );
+
+        await global.db.collection("users").updateOne(
+            { _id: req.user.id },
+            {
+                $set: {
+                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
+                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+                }
+            }
+        );
+
+        discord.channels.logs.send(
+                `${settings.emoji.check} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` unhid bot **${functions.escapeFormatting(
+                    bot.name
+                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
+                    bot._id
+                }>`
+            )
+            .catch((e) => {
+                console.error(e);
+            });
+
+        const owner = await discord.getMember(bot.owner.id);
+        if (owner)
+            owner
+                .send(
+                    `${
+                        settings.emoji.check
+                    } **|** Your bot **${functions.escapeFormatting(
+                        bot.name
+                    )}** \`(${bot._id})\` has been unhidden on the website!`
+                )
+                .catch((e) => {
+                    console.error(e);
+                });
+
+        global.db.collection("audit").insertOne({
+            type: "MOD_UNHIDE_BOT",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: "None specified."
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        res.redirect(`/bots/${req.params.id}`);
     }
 );
 

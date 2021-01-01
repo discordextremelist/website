@@ -211,6 +211,26 @@ export function parseAudit(__, auditType: string): auditType {
             returnType.name = __("page.staff.audit.type.DELETE_BOT");
             returnType.icon = "far fa-trash has-text-danger";
             break;
+        case "ARCHIVE_BOT":
+            returnType.name = __("page.staff.audit.type.ARCHIVE_BOT");
+            returnType.icon = "far fa-archive has-text-warning";
+            break;
+        case "HIDE_BOT":
+            returnType.name = __("page.staff.audit.type.HIDE_BOT");
+            returnType.icon = "far fa-eye-slash has-text-white";
+            break;
+        case "UNHIDE_BOT":
+            returnType.name = __("page.staff.audit.type.UNHIDE_BOT");
+            returnType.icon = "far fa-eye has-text-white";
+            break;
+        case "MOD_HIDE_BOT":
+            returnType.name = __("page.staff.audit.type.MOD_HIDE_BOT");
+            returnType.icon = "far fa-eye-slash has-text-white";
+            break;
+        case "MOD_UNHIDE_BOT":  
+            returnType.name = __("page.staff.audit.type.MOD_UNHIDE_BOT");
+            returnType.icon = "far fa-eye has-text-white";
+            break;
         case "REMOVE_BOT":
             returnType.name = __("page.staff.audit.type.REMOVE_BOT");
             returnType.icon = "far fa-trash has-text-danger";

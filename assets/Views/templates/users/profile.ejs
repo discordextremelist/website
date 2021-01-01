@@ -309,6 +309,14 @@
                 <% } %>
             <% } %>
             <% if (user && user.id === userProfile._id) { %>
+                <% if (hiddenBots.length > 0) { %>
+                    <br>
+                    <h2 id="archived-bots" class="is-size-4"><%= __("page.users.listings.hiddenBots") %></h2>
+                    <br>
+                    <div class="columns is-multiline is-centered">
+                        <%- hiddenBots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, hidden: true, verificationApp: false, profile: false })).join("") %>
+                    </div>
+                <% } %>
                 <% if (archivedBots.length > 0) { %>
                     <br>
                     <h2 id="archived-bots" class="is-size-4"><%= __("page.users.listings.archivedBots") %></h2>

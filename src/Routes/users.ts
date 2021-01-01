@@ -75,10 +75,13 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     const botsOwner: delBot[] = [];
     const botsEditor: delBot[] = [];
     const archivedBots: delBot[] = [];
+    const hiddenBots: delBot[] = [];
 
     for (const bot of bots) {
         if (bot.status.archived === true && bot.owner.id === req.params.id) {
             archivedBots.push(bot);
+        } else if (bot.status.hidden || bot.status.modHidden && bot.owner.id === req.params.id) {
+            hiddenBots.push(bot);
         } else if (bot.owner.id === req.params.id) {
             botsOwner.push(bot);
         } else if (
@@ -121,6 +124,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         botsOwner,
         botsEditor,
         archivedBots,
+        hiddenBots,
         serversOwner,
         templatesOwner
     });

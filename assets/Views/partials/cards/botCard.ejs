@@ -11,16 +11,6 @@
                     <p>
                     <span class="is-size-4 title has-text-default is-mobile">
                         <span><%= bot.name %></span>
-                        <% if (bot.status.archived) { %>
-                            <span style="vertical-align: middle;" title="<%= __("common.rank.archived") %>" class="icon iconalign">
-                                <i aria-hidden="true" class="fad fa-archive has-text-warning fa-1x"></i>
-                            </span>
-                        <% } %>
-                        <% if (!bot.status.approved && !bot.status.archived) { %>
-                            <span style="vertical-align: middle;" title="<%= __("common.rank.unapproved") %>" class="icon iconalign">
-                                <i aria-hidden="true" class="fad fa-exclamation-triangle has-text-danger fa-1x"></i>
-                            </span>
-                        <% } %>
                         <% if (bot.status.premium) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.premium.bot") %>" class="icon iconalign">
                                 <i aria-hidden="true" class="fad fa-star has-text-warning fa-1x"></i>
@@ -31,6 +21,21 @@
                                 <i aria-hidden="true" class="fad fa-cogs has-text-grey-lighter fa-1x"></i>
                             </span>
                         <% } %>
+                        <% if (!bot.status.approved && !bot.status.archived) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.rank.unapproved") %>" class="icon iconalign">
+                                <i aria-hidden="true" class="fad fa-exclamation-triangle has-text-danger fa-1x"></i>
+                            </span>
+                        <% } %>
+                        <% if (bot.status.archived) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.rank.archived") %>" class="icon iconalign">
+                                <i aria-hidden="true" class="fad fa-archive has-text-warning fa-1x"></i>
+                            </span>
+                        <% } %>
+                        <% if (bot.status.hidden) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.rank.hidden") %>" class="icon iconalign">
+                                <i aria-hidden="true" class="fad fa-eye-slash has-text-white fa-1x"></i>
+                            </span>
+                        <% } %>
                     </span>
                         <br />
                         <%= bot.shortDesc.length >= 64 ? bot.shortDesc.slice(0, 64)+'\u2026' : bot.shortDesc %>
@@ -39,6 +44,12 @@
                 <div class="content-footer">
                     <div class="buttons">
                     <% if (bot.status.archived === true) { %>
+                        <a href="<%= linkPrefix %>/bots/<%= bot.vanityUrl ? bot.vanityUrl : (bot._id || bot.id) %>" class="button is-default is-outlined">
+                            <span class="icon">
+                              <i class="fas fa-eye"></i>
+                            </span>
+                            <span><%= __("common.view") %></span>
+                        </a>
                         <a href="<%= linkPrefix %>/bots/<%= bot._id || bot.id %>/resubmit" class="button is-default is-outlined">
                             <span class="icon">
                               <i class="fas fa-redo-alt"></i>

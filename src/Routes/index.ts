@@ -139,7 +139,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 subtitle = res.__("common.bots.subtitle.filter.slashcommands", {a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">', ea: "</a>"})
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, scopes }) =>
-                        status.approved && !status.siteBot && !status.archived && scopes?.slashCommands
+                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && scopes?.slashCommands
                 );
                 break;
             case "fun":
@@ -148,7 +148,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 subtitle = res.__("common.bots.subtitle.filter.fun");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && tags.includes("Fun")
+                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Fun")
                 );
                 break;
             case "social":
@@ -157,7 +157,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 subtitle = res.__("common.bots.subtitle.filter.social");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && tags.includes("Social")
+                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Social")
                 );
                 break;
             case "economy":
@@ -166,7 +166,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 subtitle = res.__("common.bots.subtitle.filter.economy");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && tags.includes("Economy")
+                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Economy")
                 );
                 break;
             case "utility":
@@ -175,7 +175,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 subtitle = res.__("common.bots.subtitle.filter.utility");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && tags.includes("Utility")
+                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Utility")
                 );
                 break;
             case "moderation":
@@ -184,7 +184,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 subtitle = res.__("common.bots.subtitle.filter.moderation");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && tags.includes("Moderation")
+                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Moderation")
                 );
                 break;
             case "multipurpose":
@@ -193,7 +193,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 subtitle = res.__("common.bots.subtitle.filter.multipurpose");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && tags.includes("Multipurpose")
+                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Multipurpose")
                 );
                 break;
             case "music":
@@ -202,18 +202,18 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 subtitle = res.__("common.bots.subtitle.filter.music");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && tags.includes("Music")
+                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Music")
                 );
                 break;
             default: 
                 bots = (await botCache.getAllBots()).filter(
-                    ({ _id, status }) =>
-                        status.approved && !status.siteBot && !status.archived
+                    ({ status }) =>
+                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden
                 );
         }
     } else bots = (await botCache.getAllBots()).filter(
-        ({ _id, status }) =>
-            status.approved && !status.siteBot && !status.archived
+        ({ status }) =>
+            status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden
     );
 
     res.render("templates/bots/index", {

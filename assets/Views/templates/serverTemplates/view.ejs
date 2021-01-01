@@ -155,7 +155,7 @@
                             include("../../partials/tag.ejs", { 
                                 contentColour: "is-success", 
                                 title: __("page.templates.used"),
-                                content: __("page.templates.used.times", template.usageCount),
+                                content: __("page.templates.used.times", template.usageCount.toLocaleString(locale)),
                                 type: "multi",
                                 id: 'uses'
                             });
@@ -422,7 +422,7 @@
             const template = await (await fetch('https://discord.com/api/v8/guilds/templates/<%= template._id %>')).json()
             if (!template.name) return
             document.querySelector('#templateName').innerText = template.name
-            document.querySelector('#uses').innerText = '<%= __("page.templates.used.times") %>'.replace('%s', template.usage_count)
+            document.querySelector('#uses').innerText = '<%= __("page.templates.used.times") %>'.replace('%s', template.usage_count.toLocaleString("<%= locale %>"))
         })()
     </script>
 </div>

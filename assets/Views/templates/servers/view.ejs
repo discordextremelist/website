@@ -196,7 +196,7 @@
                                 include("../../partials/tag.ejs", { 
                                     contentColour: "is-info", 
                                     title: __("common.members"),
-                                    content: server.counts.members,
+                                    content: server.counts.members.toLocaleString(locale),
                                     type: "multi",
                                     id: "members"
                                 });
@@ -205,7 +205,7 @@
                                 include("../../partials/tag.ejs", { 
                                     contentColour: "is-success", 
                                     title: __("common.online"),
-                                    content: server.counts.online,
+                                    content: server.counts.online.toLocaleString(locale),
                                     type: "multi",
                                     id: "online"
                                 });
@@ -377,8 +377,8 @@
             const invite = await (await fetch('https://discord.com/api/v8/invites/<%= server.inviteCode %>?with_counts=true')).json()
             if (!invite.channel) return
             document.querySelector('#serverName').innerText = invite.guild.name
-            document.querySelector('#members').innerText = invite.approximate_member_count
-            document.querySelector('#online').innerText = invite.approximate_presence_count
+            document.querySelector('#members').innerText = invite.approximate_member_count.toLocaleString("<%= locale %>")
+            document.querySelector('#online').innerText = invite.approximate_presence_count.toLocaleString("<%= locale %>")
         })()
     </script>
 </div>

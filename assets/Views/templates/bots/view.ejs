@@ -419,7 +419,7 @@
                                 include("../../partials/tag.ejs", {
                                     contentColour: "is-success",
                                     title: __("common.servers"),
-                                    content: bot.serverCount === 0 ? "???" : bot.serverCount,
+                                    content: bot.serverCount === 0 ? "???" : bot.serverCount.toLocaleString(locale),
                                     type: "multi"
                                 });
                             %>
@@ -428,7 +428,7 @@
                                     include("../../partials/tag.ejs", {
                                         contentColour: "is-orange",
                                         title: __("page.bots.shards"),
-                                        content: bot.shardCount,
+                                        content: bot.shardCount.toLocaleString(locale),
                                         type: "multi"
                                     });
                                 %>

@@ -1,6 +1,6 @@
 {
   "name": "del-website",
-  "version": "v5.3.15-Release",
+  "version": "v5.4.0-Release",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
   "main": "dist/src/app.js",
   "directories": {

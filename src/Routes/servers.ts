@@ -1198,7 +1198,7 @@ router.post(
             })\` removed server **${functions.escapeFormatting(
                 server.name
             )}** \`(${server._id})\``,
-            { embed: embed }
+            { embed }
         );
 
         const owner = await discord.getMember(server.owner.id);

@@ -834,7 +834,8 @@ router.post(
                 req.user.id
             })\` removed template **${functions.escapeFormatting(
                 template.name
-            )}** \`(${template._id})\``
+            )}** \`(${template._id})\``,
+            { embed }
         );
 
         const owner = await discord.getMember(template.owner.id);

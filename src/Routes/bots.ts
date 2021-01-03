@@ -2899,9 +2899,9 @@ router.get(
                         settings.emoji.check
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been approved on the website!
-
-Your bot will be added to our server within the next 24 hours.`
+                    )}** \`(${bot._id})\` has been approved on the website!${
+                        !bot.scopes || bot.scopes.bot ? '\n\nYour bot will be added to our server within the next 24 hours.' : ''
+                    }`
                 )
                 .catch((e) => {
                     console.error(e);

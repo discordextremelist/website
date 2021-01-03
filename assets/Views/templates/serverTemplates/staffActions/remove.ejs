@@ -33,6 +33,9 @@
                     <button type="button" id="tosViolation" onclick="premadeReason('tosViolation');" class="button is-dark">
                         <span><%= __("page.remove.premadeReasons.del.tos") %></span>
                     </button>
+                    <button type="button" id="templateDeleted" onclick="premadeReason('templateDeleted');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.templateDeleted") %></span>
+                    </button>
                     <button type="button" id="other" onclick="premadeReason('other');" class="button is-dark">
                         <span><%= __("page.remove.premadeReasons.other") %></span>
                     </button>
@@ -93,6 +96,11 @@
                 document.getElementById("reason").value = "Violating our Terms of Use.";    
                 document.getElementById("tosViolation").classList.add("is-default");
                 document.getElementById("type").value = 3;
+                break;
+            case "templateDeleted":
+                document.getElementById("reason").value = "The template has been deleted from Discord.";    
+                document.getElementById("templateDeleted").classList.add("is-default");
+                document.getElementById("type").value = 4;
                 break;
         }
     }

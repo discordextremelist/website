@@ -18,12 +18,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import type { Request, Response } from "express";
-
 import bodyParser from "body-parser";
 import passport from "passport";
 import { Strategy } from "passport-discord";
+import type { VerifyCallback } from "passport-oauth2"
+import refresh from "passport-oauth2-refresh"
 import * as discord from "../Util/Services/discord";
+import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v8";
 import type { DiscordAPIError } from "discord.js";
 
 import * as settings from "../../settings.json";
@@ -31,23 +32,22 @@ import * as tokenManager from "../Util/Services/adminTokenManager";
 
 const router = express.Router();
 
-passport.use(
-    new Strategy(
-        {
-            clientID: settings.secrets.discord.id,
-            clientSecret: settings.secrets.discord.secret,
-            callbackURL: settings.website.url + settings.website.callback,
-            scope: settings.website.authScopes,
-            authorizationURL:
-                "https://discord.com/api/oauth2/authorize?prompt=none"
-        },
-        (accessToken, refreshToken, profile, done) => {
-            process.nextTick(() => {
-                return done(null, profile);
-            });
-        }
-    )
-);
+const strategy = new Strategy(
+    {
+        clientID: settings.secrets.discord.id,
+        clientSecret: settings.secrets.discord.secret,
+        callbackURL: settings.website.url + settings.website.callback,
+        scope: settings.website.authScopes
+    },
+    (accessToken: string, refreshToken: string, params: RESTPostOAuth2AccessTokenResult, profile: Strategy.Profile, done: VerifyCallback) => {
+        process.nextTick(() => {
+            return done(null, {...profile, refreshToken, ...params});
+        })
+    }
+)
+
+passport.use(strategy);
+refresh.use(strategy);
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
@@ -59,17 +59,20 @@ router.use(
     })
 );
 
-router.get("/login/joinGuild", (req: Request, res: Response) => {
-    req.session.joinGuild = true;
-    res.redirect("/auth/login/continue");
-});
+const authOptions = { failureRedirect: "/auth/login", prompt: "none" };
 
-router.get("/login/continue", passport.authenticate("discord"));
+router.get("/login/joinGuild", 
+    passport.authenticate("discord", authOptions),
+    (req, res) => {
+        req.session.joinGuild = true;
+        res.redirect("/auth/login/callback");
+    }
+);
 
 router.get(
     "/login/callback",
-    passport.authenticate("discord", { failureRedirect: "/auth/login" }),
-    async (req: Request, res: Response, next) => {
+    passport.authenticate("discord", authOptions),
+    async (req, res, next) => {
         const user: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.user.id });
@@ -77,7 +80,11 @@ router.get(
         if (!user) {
             await global.db.collection("users").insertOne({
                 _id: req.user.id,
-                token: req.user.accessToken,
+                auth: {
+                    accessToken: req.user.accessToken,
+                    refreshToken: req.user.refreshToken,
+                    expires: Date.now() + req.user.expires_in*1000
+                },
                 name: req.user.username,
                 discrim: req.user.discriminator,
                 fullUsername: req.user.username + "#" + req.user.discriminator,
@@ -213,7 +220,11 @@ router.get(
                     { _id: req.user.id },
                     {
                         $set: {
-                            token: req.user.accessToken,
+                            auth: {
+                                accessToken: req.user.accessToken,
+                                refreshToken: req.user.refreshToken,
+                                expires: Date.now() + req.user.expires_in*1000
+                            },
                             name: req.user.username,
                             discrim: req.user.discriminator,
                             fullUsername:
@@ -235,7 +246,11 @@ router.get(
                     { _id: req.user.id },
                     {
                         $set: {
-                            token: req.user.accessToken,
+                            auth: {
+                                accessToken: req.user.accessToken,
+                                refreshToken: req.user.refreshToken,
+                                expires: Date.now() + req.user.expires_in*1000
+                            },
                             name: req.user.username,
                             discrim: req.user.discriminator,
                             fullUsername:
@@ -276,7 +291,7 @@ router.get(
     }
 );
 
-router.get("/logout", async (req: Request, res: Response) => {
+router.get("/logout", async (req, res) => {
     if (!req.user.impersonator) {
         req.session.logoutJust = true;
         if (req.user.db.rank.admin) await tokenManager.tokenReset(req.user.id);

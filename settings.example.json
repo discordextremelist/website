@@ -44,7 +44,7 @@
             "value": 3000,
             "agressive": true
         },
-        "authScopes": ["identify", "guilds.join"],
+        "authScopes": ["identify", "guilds.join", "applications.commands.update"],
         "url": "https://discordextremelist.xyz",
         "lgbtSiteURL": "https://discordextremelist.gay",
         "dev": true,

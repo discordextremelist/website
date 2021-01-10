@@ -623,6 +623,20 @@
 <div class="container" style="overflow: hidden;">
     <div id="content" class="section content"><%- longDesc %></div>
 </div>
+<% if (bot.commands?.length > 0) { %>
+    <div class="container commands">
+        <div class="section" style="padding-top: 1rem">
+            <h1 class="title"><%= __("common.slashCommands") %></h1>
+            <ul>
+                <% bot.commands?.sort((a, b) => a.name.localeCompare(b.name)).map(c => { %>
+                    <li class="command-<%= c.id %> command-<%= c.name %>">
+                        <%- include("../../partials/command.ejs", {c}) %>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+    </div>
+<% } %>
 <div class="modal deleteModal">
     <div class="modal-background"></div>
     <div class="modal-card">

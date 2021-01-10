@@ -18,11 +18,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
+import fetch from "node-fetch";
+import refresh from "passport-oauth2-refresh";
 import * as discord from "../Util/Services/discord";
 import * as botCache from "../Util/Services/botCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
-import { APIUser, APIInvite, APITemplate, RESTGetAPIInviteQuery } from "discord-api-types/v8";
+import * as userCache from "../Util/Services/userCaching";
+import { APIUser, APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand } from "discord-api-types/v8";
 import * as settings from "../../settings.json";
 
 const router = express.Router();
@@ -52,6 +55,35 @@ router.get('/bots', async (req, res) => {
 
     if (botExists) try {
         const bot = await discord.bot.api.users(id).get() as APIUser
+
+        let commands: APIApplicationCommand[] = botExists.commands || []
+        
+        if (botExists.scopes?.slashCommands) {
+            const owner = await userCache.getUser(botExists.owner.id)
+
+            if (owner.auth && Date.now() > owner.auth.expires) {
+                await refresh.requestNewAccessToken('discord', owner.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
+                    if (!err) {
+                        await global.db.collection("users").updateOne(
+                            { _id: owner._id },
+                            {
+                                $set: {
+                                    auth: {
+                                        accessToken,
+                                        refreshToken,
+                                        expires: Date.now() + result.expires_in*1000
+                                    }
+                                }
+                            }
+                        );
+                        await userCache.updateUser(owner._id)
+                    }
+                })
+            }
+
+            const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${bot.id}/commands`, {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            if (Array.isArray(receivedCommands)) commands = receivedCommands;
+        }
         
         await global.db.collection("bots").updateOne(
             { _id: id },
@@ -62,7 +94,8 @@ router.get('/bots', async (req, res) => {
                     avatar: {
                         hash: bot.avatar,
                         url: `https://cdn.discordapp.com/avatars/${id}/${bot.avatar}`
-                    }
+                    },
+                    commands
                 } as delBot
             }
         );
@@ -181,8 +214,6 @@ router.get('/templates', async (req, res) => {
     await global.redis?.hset("autosync", "nextTemplate", getNext(ids, id))
 
     res.sendStatus(200)
-
-    console.log(`autosynced template ${dbTemplate.name}`)
 })
 
 export = router

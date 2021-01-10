@@ -119,6 +119,19 @@ blockquote {
     padding: 15px;
 }
 
+.command {
+    outline: none;
+    margin-bottom: .5rem;
+    &:hover, &:active, &:focus {
+        opacity: .9;
+    }
+}
+
+.option {
+    padding: 0 .5rem !important;
+    height: 1.4rem !important;
+}
+
 @import "../../../node_modules/bulma/sass/base/_all.sass";
 @import "../../../node_modules/bulma/sass/components/message.sass";
 @import "../../../node_modules/bulma/sass/elements/content.sass";

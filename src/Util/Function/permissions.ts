@@ -43,7 +43,7 @@ export const member = async (req: Request, res: Response, next: () => void) => {
     }
 
     if (!await discord.getMember(req.body.id)) {
-        discord.bot.api.guilds(settings.guild.main).members(req.user.id).put({ data: { access_token: req.user.accessToken } })
+        discord.bot.api.guilds(settings.guild.main).members(req.user.id).put({ data: { access_token: req.user.db.auth.accessToken } })
             .catch(() => {});
     }
 

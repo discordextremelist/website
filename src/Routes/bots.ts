@@ -20,13 +20,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import type { Response as fetchRes } from "../../@types/fetch";
-import type { APIUser } from "discord-api-types/v8";
+import type { APIApplicationCommand, APIUser, RESTPostOAuth2AccessTokenResult } from "discord-api-types/v8";
 import { RESTJSONErrorCodes } from "discord-api-types/v8"
 
 import * as fetch from "node-fetch";
 import * as crypto from "crypto";
 import * as Discord from "discord.js";
 import sanitizeHtml from "sanitize-html";
+import refresh from "passport-oauth2-refresh";
 
 import * as settings from "../../settings.json";
 import * as htmlRef from "../../htmlReference.json";
@@ -470,6 +471,36 @@ router.post(
             );
         }
 
+        let commands: APIApplicationCommand[] = []
+
+        if (req.body.slashCommands && req.user.db.auth) {
+            if (Date.now() > req.user.db.auth.expires) {
+                await refresh.requestNewAccessToken('discord', req.user.db.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
+                    if (err) {
+                        error = true;
+                        errors.push(`${err.statusCode} ${err.data}`);
+                    } else {
+                        await global.db.collection("users").updateOne(
+                            { _id: req.user.id },
+                            {
+                                $set: {
+                                    auth: {
+                                        accessToken,
+                                        refreshToken,
+                                        expires: Date.now() + result.expires_in*1000
+                                    }
+                                }
+                            }
+                        );
+                        await userCache.updateUser(req.user.id)
+                    }
+                })
+            }
+
+            const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${req.body.id}/commands`, {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            if (Array.isArray(receivedCommands)) commands = receivedCommands;
+        }
+
         if (error === true)
             return res.status(400).json({
                 error: true,
@@ -493,8 +524,8 @@ router.post(
                     clientID: req.body.clientID,
                     name: bot.username,
                     prefix: req.body.prefix,
-                    library: library,
-                    tags: tags,
+                    library,
+                    tags,
                     vanityUrl: "",
                     serverCount: 0,
                     shardCount: 0,
@@ -507,7 +538,8 @@ router.post(
                     longDesc: req.body.longDescription,
                     modNotes: req.body.modNotes,
                     reviewNotes: [],
-                    editors: editors,
+                    editors,
+                    commands,
                     owner: {
                         id: req.user.id
                     },
@@ -582,8 +614,8 @@ router.post(
                             _id: req.body.id,
                             name: bot.username,
                             prefix: req.body.prefix,
-                            library: library,
-                            tags: tags,
+                            library,
+                            tags,
                             flags: bot.public_flags,
                             vanityUrl: "",
                             serverCount: 0,
@@ -595,7 +627,8 @@ router.post(
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             modNotes: req.body.modNotes,
-                            editors: editors,
+                            editors,
+                            commands,
                             owner: {
                                 id: req.user.id
                             },
@@ -1365,6 +1398,36 @@ router.post(
             );
         }
 
+        let commands: APIApplicationCommand[] = bot.commands || []
+
+        if (req.body.slashCommands && req.user.db.auth) {
+            if (Date.now() > req.user.db.auth.expires) {
+                await refresh.requestNewAccessToken('discord', req.user.db.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
+                    if (err) {
+                        error = true;
+                        errors.push(`${err.statusCode} ${err.data}`);
+                    } else {
+                        await global.db.collection("users").updateOne(
+                            { _id: req.user.id },
+                            {
+                                $set: {
+                                    auth: {
+                                        accessToken,
+                                        refreshToken,
+                                        expires: Date.now() + result.expires_in*1000
+                                    }
+                                }
+                            }
+                        );
+                        await userCache.updateUser(req.user.id)
+                    }
+                })
+            }
+
+            const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${bot._id}/commands`, {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            if (Array.isArray(receivedCommands)) commands = receivedCommands;
+        }
+
         if (error === true) {
             req.body.status
                 ? (req.body.status.premium = botExists.status.premium)
@@ -1388,12 +1451,13 @@ router.post(
                             clientID: req.body.clientID,
                             name: bot.username,
                             prefix: req.body.prefix,
-                            library: library,
-                            tags: tags,
+                            library,
+                            tags,
                             flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
-                            editors: editors,
+                            editors,
+                            commands,
                             avatar: {
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
@@ -1445,6 +1509,7 @@ router.post(
                             shortDesc: botExists.shortDesc,
                             longDesc: botExists.longDesc,
                             editors: botExists.editors,
+                            commands: botExists.commands,
                             avatar: {
                                 hash: botExists.avatar.hash,
                                 url: botExists.avatar.url
@@ -1480,12 +1545,13 @@ router.post(
                             clientID: req.body.clientID,
                             name: bot.username,
                             prefix: req.body.prefix,
-                            library: library,
-                            tags: tags,
+                            library,
+                            tags,
                             flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
-                            editors: editors,
+                            editors,
+                            commands,
                             avatar: {
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
@@ -2636,6 +2702,36 @@ router.post(
             );
         }
 
+        let commands: APIApplicationCommand[] = bot.commands || []
+
+        if (req.body.slashCommands && req.user.db.auth) {
+            if (Date.now() > req.user.db.auth.expires) {
+                await refresh.requestNewAccessToken('discord', req.user.db.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
+                    if (err) {
+                        error = true;
+                        errors.push(`${err.statusCode} ${err.data}`);
+                    } else {
+                        await global.db.collection("users").updateOne(
+                            { _id: req.user.id },
+                            {
+                                $set: {
+                                    auth: {
+                                        accessToken,
+                                        refreshToken,
+                                        expires: Date.now() + result.expires_in*1000
+                                    }
+                                }
+                            }
+                        );
+                        await userCache.updateUser(req.user.id)
+                    }
+                })
+            }
+
+            const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${bot._id}/commands`, {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            if (Array.isArray(receivedCommands)) commands = receivedCommands;
+        }
+
         if (error === true)
             return res.status(400).json({
                 error: true,
@@ -2654,12 +2750,13 @@ router.post(
                             clientID: req.body.clientID,
                             name: bot.username,
                             prefix: req.body.prefix,
-                            library: library,
-                            tags: tags,
+                            library,
+                            tags,
                             flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
-                            editors: editors,
+                            editors,
+                            commands,
                             avatar: {
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
@@ -2703,6 +2800,7 @@ router.post(
                             shortDesc: botExists.shortDesc,
                             longDesc: botExists.longDesc,
                             editors: botExists.editors,
+                            commands: botExists.commands,
                             avatar: {
                                 hash: botExists.avatar.hash,
                                 url: botExists.avatar.url
@@ -2741,12 +2839,13 @@ router.post(
                             clientID: req.body.clientID,
                             name: bot.username,
                             prefix: req.body.prefix,
-                            library: library,
-                            tags: tags,
+                            library,
+                            tags,
                             flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
-                            editors: editors,
+                            editors,
+                            commands,
                             avatar: {
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
@@ -3812,6 +3911,39 @@ router.get(
 
         const bot = botExists;
 
+        let commands: APIApplicationCommand[] = bot.commands || []
+
+        if (bot.scopes?.slashCommands && req.user.db.auth) {
+            if (Date.now() > req.user.db.auth.expires) {
+                await refresh.requestNewAccessToken('discord', req.user.db.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
+                    if (err) {
+                        return res.status(500).json({
+                            error: true,
+                            status: 500,
+                            errors: [err.statusCode, err.data]
+                        });
+                    } else {
+                        await global.db.collection("users").updateOne(
+                            { _id: req.user.id },
+                            {
+                                $set: {
+                                    auth: {
+                                        accessToken,
+                                        refreshToken,
+                                        expires: Date.now() + result.expires_in*1000
+                                    }
+                                }
+                            }
+                        );
+                        await userCache.updateUser(req.user.id)
+                    }
+                })
+            }
+
+            const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${bot._id}/commands`, {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            if (Array.isArray(receivedCommands)) commands = receivedCommands;
+        }
+
         discord.bot.api
             .users(req.params.id)
             .get()
@@ -3825,7 +3957,8 @@ router.get(
                             avatar: {
                                 hash: bot.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
-                            }
+                            },
+                            commands
                         } as delBot
                     }
                 );

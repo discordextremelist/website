@@ -17,23 +17,22 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { UserFlags, APIChannel, APIRole, APIUser } from 'discord-api-types/v8'
+import type { UserFlags, APIChannel, APIRole, APIUser, APIApplicationCommand, RESTPostOAuth2AccessTokenResult, OAuth2Scopes } from 'discord-api-types/v8'
 
 declare global {
-    interface authUser {
+    interface authUser extends RESTPostOAuth2AccessTokenResult {
         id: string;
         username: string;
-        avatar: string;
         discriminator: string;
-        public_flags: UserFlags;
-        flags: UserFlags;
-        email?: string;
-        verified: boolean;
-        locale: string;
+        avatar: string;
         mfa_enabled: boolean;
-        provider: string;
+        locale: string;
+        flags: UserFlags;
+        public_flags: UserFlags;
+        provider: "discord";
         accessToken: string;
         fetchedAt: string;
+        refreshToken: string;
         impersonator?: string;
         db: delUser;
     }
@@ -45,7 +44,11 @@ declare global {
 
     interface delUser {
         _id: string;
-        token: string;
+        auth: {
+            accessToken: string;
+            refreshToken: string;
+            expires: number;
+        };
         name: string;
         discrim: string;
         fullUsername: string;
@@ -195,6 +198,7 @@ declare global {
         modNotes: string;
         reviewNotes: reviewNote[];
         editors: string[];
+        commands: APIApplicationCommand[];
         owner: {
             id: string;
         };

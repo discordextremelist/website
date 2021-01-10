@@ -1,0 +1,30 @@
+<% if (c.options) { %>
+    <% if (c.options[0].type < 3) { %>
+        <!-- iterate through subcommands/subcommand groups -->
+        <% c.options.map(sc => { %> <%- include("./command.ejs", {c: {...sc, name: `${c.name} ${sc.name}`}}) %> <% }) %>
+    <% } else { %>
+        <!-- expandable command with options -->
+        <details style="margin-bottom: 1rem">
+            <summary class="command">
+                /<%= c.name %>
+                <%- c.options?.filter(o => o.required).map(o => `<span class="tag option is-dark">${o.name}</span>`).join(' ') %>
+                <%- c.options?.filter(o => !o.required).length > 0 ? `<span class="has-text-grey-${preferredTheme !== 'light' ? 'light' : 'dark'}"> | <span style="text-transform: uppercase;font-size: .9rem;">${__("common.optional")}</span> </span>`+c.options?.filter(o => !o.required).map(o => `<span class="tag option is-dark">${o.name}</span>`).join(' ') : '' %>
+                <br>
+                <%= c.description %>
+            </summary>
+            <ul style="margin-left: 2rem; list-style: disc">
+                <% c.options.map(o => { %>
+                    <li>
+                        <span class="tag option is-dark"><%= o.name %></span>: <%= o.description %>
+                    </li>
+                <% }) %>
+            </ul>
+        </details>
+    <% } %>
+<% } else { %>
+    <!-- simple command -->
+    <p style="margin-bottom: 1rem">
+        /<%= c.name %><br>
+        <%= c.description %>
+    </p>
+<% } %>

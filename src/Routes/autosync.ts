@@ -61,28 +61,30 @@ router.get('/bots', async (req, res) => {
         if (botExists.scopes?.slashCommands) {
             const owner = await userCache.getUser(botExists.owner.id)
 
-            if (owner.auth && Date.now() > owner.auth.expires) {
-                await refresh.requestNewAccessToken('discord', owner.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
-                    if (!err) {
-                        await global.db.collection("users").updateOne(
-                            { _id: owner._id },
-                            {
-                                $set: {
-                                    auth: {
-                                        accessToken,
-                                        refreshToken,
-                                        expires: Date.now() + result.expires_in*1000
+            if (owner.auth) {
+                if (Date.now() > owner.auth.expires) {
+                    await refresh.requestNewAccessToken('discord', owner.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
+                        if (!err) {
+                            await global.db.collection("users").updateOne(
+                                { _id: owner._id },
+                                {
+                                    $set: {
+                                        auth: {
+                                            accessToken,
+                                            refreshToken,
+                                            expires: Date.now() + result.expires_in*1000
+                                        }
                                     }
                                 }
-                            }
-                        );
-                        await userCache.updateUser(owner._id)
-                    }
-                })
+                            );
+                            await userCache.updateUser(owner._id)
+                        }
+                    })
+                }
+    
+                const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${bot.id}/commands`, {headers: {authorization: `Bearer ${owner.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+                if (Array.isArray(receivedCommands)) commands = receivedCommands;
             }
-
-            const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${bot.id}/commands`, {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
-            if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
         
         await global.db.collection("bots").updateOne(

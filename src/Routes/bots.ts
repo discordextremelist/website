@@ -21,7 +21,7 @@ import express from "express";
 import type { Request, Response } from "express";
 import type { Response as fetchRes } from "../../@types/fetch";
 import type { APIApplicationCommand, APIUser, RESTPostOAuth2AccessTokenResult } from "discord-api-types/v8";
-import { RESTJSONErrorCodes } from "discord-api-types/v8"
+import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord-api-types/v8"
 
 import * as fetch from "node-fetch";
 import * as crypto from "crypto";
@@ -84,6 +84,7 @@ router.get(
     "/submit",
     variables,
     permission.auth,
+    permission.scopes([OAuth2Scopes.GuildsJoin, OAuth2Scopes.ApplicationsCommandsUpdate]),
     async (req: Request, res: Response) => {
 
         const bots = await botCache.getAllBots();
@@ -497,7 +498,7 @@ router.post(
                 })
             }
 
-            const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${req.body.id}/commands`, {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(Routes.applicationCommands(req.body.id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
@@ -980,6 +981,7 @@ router.get(
     "/:id/edit",
     variables,
     permission.auth,
+    permission.scopes([OAuth2Scopes.ApplicationsCommandsUpdate]),
     async (req: Request, res: Response) => {
         const botExists = await global.db
             .collection("bots")
@@ -1108,7 +1110,7 @@ router.post(
                     res.__("common.error.listing.arr.invite.discordapp")
                 );
             } else if (req.body.invite.includes("discord.com") &&
-            (req.body.bot && !req.body.invite.includes('bot') || req.body.slashCommands && !req.body.invite.includes('applications.commands'))) {
+            (req.body.bot && !req.body.invite.includes(OAuth2Scopes.Bot) || req.body.slashCommands && !req.body.invite.includes(OAuth2Scopes.ApplicationsCommands))) {
                 error = true;
                 errors.push(
                     res.__("common.error.bot.arr.scopesNotInInvite")
@@ -1424,7 +1426,7 @@ router.post(
                 })
             }
 
-            const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${bot._id}/commands`, {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
@@ -2281,6 +2283,7 @@ router.get(
     "/:id/resubmit",
     variables,
     permission.auth,
+    permission.scopes([OAuth2Scopes.GuildsJoin, OAuth2Scopes.ApplicationsCommandsUpdate]),
     async (req: Request, res: Response) => {
         const botExists = await global.db
             .collection("bots")
@@ -2728,7 +2731,7 @@ router.post(
                 })
             }
 
-            const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${bot._id}/commands`, {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
@@ -3897,6 +3900,7 @@ router.get(
     "/:id/sync",
     variables,
     permission.auth,
+    permission.scopes([OAuth2Scopes.ApplicationsCommandsUpdate]),
     async (req: Request, res: Response) => {
         const botExists: delBot | undefined = await global.db
             .collection("bots")
@@ -3940,7 +3944,7 @@ router.get(
                 })
             }
 
-            const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${bot._id}/commands`, {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 

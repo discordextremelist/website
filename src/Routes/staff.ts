@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import type { APIUser } from "discord-api-types/v8";
+import type { APIUser, Snowflake } from "discord-api-types/v8";
 
 import * as settings from "../../settings.json";
 import * as permission from "../Util/Function/permissions";
@@ -1079,7 +1079,7 @@ router.get(
                     .collection("users")
                     .findOne({ _id: req.params.id });
                 if (!req.user.impersonator) req.user.impersonator = req.user.id;
-                req.user.id = req.params.id;
+                req.user.id = req.params.id as Snowflake;
                 req.user.db = user;
                 res.redirect("/");
             })

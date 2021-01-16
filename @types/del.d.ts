@@ -17,11 +17,11 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import type { UserFlags, APIChannel, APIRole, APIUser, APIApplicationCommand, RESTPostOAuth2AccessTokenResult, OAuth2Scopes } from 'discord-api-types/v8'
+import type { UserFlags, APIChannel, APIRole, APIUser, APIApplicationCommand, RESTPostOAuth2AccessTokenResult, OAuth2Scopes, Snowflake } from 'discord-api-types/v8'
 
 declare global {
     interface authUser extends RESTPostOAuth2AccessTokenResult {
-        id: string;
+        id: Snowflake;
         username: string;
         discriminator: string;
         avatar: string;
@@ -33,7 +33,7 @@ declare global {
         accessToken: string;
         fetchedAt: string;
         refreshToken: string;
-        impersonator?: string;
+        impersonator?: Snowflake;
         db: delUser;
     }
 
@@ -43,11 +43,12 @@ declare global {
     }
 
     interface delUser {
-        _id: string;
+        _id: Snowflake;
         auth: {
             accessToken: string;
             refreshToken: string;
             expires: number;
+            scopes: OAuth2Scopes[];
         };
         name: string;
         discrim: string;
@@ -180,9 +181,9 @@ declare global {
     }
 
     interface delBot {
-        _id: string;
+        _id: Snowflake;
         _cacheID?: string;
-        clientID: string;
+        clientID: Snowflake;
         name: string;
         prefix?: string;
         library: string;
@@ -200,7 +201,7 @@ declare global {
         editors: string[];
         commands: APIApplicationCommand[];
         owner: {
-            id: string;
+            id: Snowflake;
         };
         avatar: {
             hash: string;
@@ -246,7 +247,7 @@ declare global {
     }
 
     interface delServer {
-        _id: string;
+        _id: Snowflake;
         inviteCode: string;
         name: string;
         shortDesc: string;
@@ -258,7 +259,7 @@ declare global {
             members: number;
         }
         owner: {
-            id: string;
+            id: Snowflake;
         };
         icon: {
             hash: string;
@@ -291,7 +292,7 @@ declare global {
         tags: string[];
         fromGuild: string;
         owner: {
-            id: string;
+            id: Snowflake;
         };
         creator: Pick<APIUser, "id" | "username" | "discriminator">;
         icon: {

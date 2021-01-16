@@ -25,7 +25,7 @@ import * as botCache from "../Util/Services/botCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
-import { APIUser, APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand } from "discord-api-types/v8";
+import { APIUser, APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes } from "discord-api-types/v8";
 import * as settings from "../../settings.json";
 
 const router = express.Router();
@@ -61,7 +61,7 @@ router.get('/bots', async (req, res) => {
         if (botExists.scopes?.slashCommands) {
             const owner = await userCache.getUser(botExists.owner.id)
 
-            if (owner.auth) {
+            if (owner.auth?.scopes?.includes(OAuth2Scopes.ApplicationsCommandsUpdate)) {
                 if (Date.now() > owner.auth.expires) {
                     await refresh.requestNewAccessToken('discord', owner.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
                         if (!err) {
@@ -82,7 +82,7 @@ router.get('/bots', async (req, res) => {
                     })
                 }
     
-                const receivedCommands = await (await fetch(`https://discord.com/api/v8/applications/${bot.id}/commands`, {headers: {authorization: `Bearer ${owner.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+                const receivedCommands = await (await fetch(Routes.applicationCommands(bot.id), {headers: {authorization: `Bearer ${owner.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
                 if (Array.isArray(receivedCommands)) commands = receivedCommands;
             }
         }

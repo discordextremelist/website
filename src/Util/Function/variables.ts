@@ -82,7 +82,7 @@ export const variables = async (
         !req.originalUrl.includes("/fonts/") &&
         !req.originalUrl.includes("/img/") &&
         !req.originalUrl.includes("/js/") &&
-        !req.originalUrl.includes("/auth/login")
+        !req.originalUrl.includes("/favicon.ico")
     )
         req.session.redirectTo = req.originalUrl;
 

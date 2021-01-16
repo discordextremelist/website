@@ -17,6 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { OAuth2Scopes } from "discord-api-types/v8";
 import { Request, Response } from "express";
 import * as settings from "../../../settings.json";
 import * as discord from "../Services/discord";
@@ -32,6 +33,22 @@ export const auth = (req: Request, res: Response, next: () => void) => {
         next();
     } else {
         res.redirect("/auth/login");
+    }
+};
+
+export const scopes = (scopes: OAuth2Scopes[]) => (req: Request, res: Response, next: () => void) => {
+    if (req.session.logoutJustCont === true) {
+        req.session.logoutJust = false;
+        req.session.logoutJustCont = false;
+        console.log('logoutJustCont')
+        return res.redirect("/");
+    }
+
+
+    if (!scopes.every(scope => req.user.db.auth?.scopes?.includes(scope))) {
+        res.redirect(`/auth/login/callback?scope=${scopes.join(' ')}`)
+    } else {
+        next()
     }
 };
 

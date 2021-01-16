@@ -25,7 +25,10 @@ import type { VerifyCallback } from "passport-oauth2"
 import refresh from "passport-oauth2-refresh"
 import * as discord from "../Util/Services/discord";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v8";
+import { OAuth2Scopes } from "discord-api-types/v8"
 import type { DiscordAPIError } from "discord.js";
+import fetch from "node-fetch";
+import * as userCache from "../Util/Services/userCaching"
 
 import * as settings from "../../settings.json";
 import * as tokenManager from "../Util/Services/adminTokenManager";
@@ -36,8 +39,7 @@ const strategy = new Strategy(
     {
         clientID: settings.secrets.discord.id,
         clientSecret: settings.secrets.discord.secret,
-        callbackURL: settings.website.url + settings.website.callback,
-        scope: settings.website.authScopes
+        callbackURL: settings.website.url + settings.website.callback
     },
     (accessToken: string, refreshToken: string, params: RESTPostOAuth2AccessTokenResult, profile: Strategy.Profile, done: VerifyCallback) => {
         process.nextTick(() => {
@@ -59,23 +61,28 @@ router.use(
     })
 );
 
-const authOptions = { failureRedirect: "/auth/login", prompt: "none" };
-
 router.get("/login/joinGuild", 
-    passport.authenticate("discord", authOptions),
     (req, res) => {
         req.session.joinGuild = true;
-        res.redirect("/auth/login/callback");
+        res.redirect(`/auth/login/callback?scope=${OAuth2Scopes.Identify} ${OAuth2Scopes.GuildsJoin}`);
     }
 );
 
 router.get(
     "/login/callback",
-    passport.authenticate("discord", authOptions),
+    (req, res, next) =>
+        passport.authenticate("discord", {
+            failureRedirect: "/auth/login",
+            prompt: "none",
+            scope: (req.query.scope as string) || OAuth2Scopes.Identify
+        })(req, res, next),
+
     async (req, res, next) => {
         const user: delUser = await global.db
             .collection("users")
             .findOne({ _id: req.user.id });
+
+        const { scopes } = await (await fetch("https://discord.com/api/v8/oauth2/@me", {headers: {authorization: `Bearer ${req.user.accessToken}`}})).json() as {scopes: OAuth2Scopes[]}
 
         if (!user) {
             await global.db.collection("users").insertOne({
@@ -83,7 +90,8 @@ router.get(
                 auth: {
                     accessToken: req.user.accessToken,
                     refreshToken: req.user.refreshToken,
-                    expires: Date.now() + req.user.expires_in*1000
+                    expires: Date.now() + req.user.expires_in*1000,
+                    scopes
                 },
                 name: req.user.username,
                 discrim: req.user.discriminator,
@@ -223,7 +231,8 @@ router.get(
                             auth: {
                                 accessToken: req.user.accessToken,
                                 refreshToken: req.user.refreshToken,
-                                expires: Date.now() + req.user.expires_in*1000
+                                expires: Date.now() + req.user.expires_in*1000,
+                                scopes
                             },
                             name: req.user.username,
                             discrim: req.user.discriminator,
@@ -249,7 +258,8 @@ router.get(
                             auth: {
                                 accessToken: req.user.accessToken,
                                 refreshToken: req.user.refreshToken,
-                                expires: Date.now() + req.user.expires_in*1000
+                                expires: Date.now() + req.user.expires_in*1000,
+                                scopes
                             },
                             name: req.user.username,
                             discrim: req.user.discriminator,
@@ -268,6 +278,8 @@ router.get(
                 );
             }
         }
+
+        await userCache.updateUser(req.user.id)
 
         if (req.session.joinGuild && req.session.joinGuild === true) {
             req.session.joinGuild = false;

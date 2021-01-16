@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import * as botCache from "../Services/botCaching";
 import * as userCache from "../Services/userCaching";
 import { URL } from "url";
+import { OAuth2Scopes } from "discord-api-types/v8";
 
 export const escapeFormatting = (text: string) => {
     const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
@@ -378,11 +379,11 @@ export function isURL(string: string) {
     }
 }
 
-export function parseScopes(scopes: delBot["scopes"]) {
-    if (!scopes) return 'bot'
+export function parseScopes(scopes: delBot["scopes"]): OAuth2Scopes | `${OAuth2Scopes}+${OAuth2Scopes}` {
+    if (!scopes) return OAuth2Scopes.Bot
     if (scopes.bot && scopes.slashCommands) {
-        return 'bot+applications.commands'
+        return `${OAuth2Scopes.Bot}+${OAuth2Scopes.ApplicationsCommands}`
     } else if (scopes.slashCommands) {
-        return 'applications.commands'
-    } else return 'bot'
+        return OAuth2Scopes.ApplicationsCommands
+    } else return OAuth2Scopes.Bot
 }

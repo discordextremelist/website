@@ -49,6 +49,8 @@ const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
 const router = express.Router();
 
+const DAPI = 'https://discord.com/api/v8'
+
 function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);
 
@@ -498,7 +500,7 @@ router.post(
                 })
             }
 
-            const receivedCommands = await (await fetch(Routes.applicationCommands(req.body.id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(DAPI+Routes.applicationCommands(req.body.id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
@@ -1426,7 +1428,7 @@ router.post(
                 })
             }
 
-            const receivedCommands = await (await fetch(Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(DAPI+Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
@@ -2731,7 +2733,7 @@ router.post(
                 })
             }
 
-            const receivedCommands = await (await fetch(Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(DAPI+Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
@@ -3944,7 +3946,7 @@ router.get(
                 })
             }
 
-            const receivedCommands = await (await fetch(Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(DAPI+Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 

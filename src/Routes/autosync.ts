@@ -82,7 +82,7 @@ router.get('/bots', async (req, res) => {
                     })
                 }
     
-                const receivedCommands = await (await fetch(Routes.applicationCommands(bot.id), {headers: {authorization: `Bearer ${owner.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+                const receivedCommands = await (await fetch('https://discord.com/api/v8'+Routes.applicationCommands(bot.id), {headers: {authorization: `Bearer ${owner.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
                 if (Array.isArray(receivedCommands)) commands = receivedCommands;
             }
         }

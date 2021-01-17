@@ -329,21 +329,16 @@
                     <textarea hidden name="modNotes" id="modNotes"></textarea>
                 </div>
             <% } %>
-            <div style="padding-bottom: 10px;">
-                <span style="font-size: 12px;" class="has-text-default">
-                    <% if (resubmit) { %>
-                        <%- __("common.form.joinServer.full", {
-                            a: "",
-                            ea: ""
-                        }) %>
-                    <% } else { %>
-                        <%- __("common.form.joinServer", {
-                            a: "",
-                            ea: ""
-                        }) %>
-                    <% } %>
-                </span>
-            </div>
+            <% if (resubmit) { %>
+                <div style="padding-bottom: 10px;">
+                    <span style="font-size: 12px;" class="has-text-default">
+                            <%- __("common.form.joinServer.full", {
+                                a: "",
+                                ea: ""
+                            }) %>
+                    </span>
+                </div>
+            <% } %>
             <div class="field is-grouped">
                 <div class="buttons">
                     <a onclick="doSubmit();" id="submitButton" class="button is-success">

@@ -5,7 +5,8 @@
 [![DeepScan grade](https://deepscan.io/api/teams/8370/projects/12889/branches/206397/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=8370&pid=12889&bid=206397)
 [![Snyk vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/discordextremelist/website?logo=snyk)](https://snyk.io/test/github/discordextremelist/website)
 [![Code style](https://img.shields.io/badge/code%20style-prettier-ff69b4?logo=prettier&logoColor=white)](https://prettier.io)
-[![Crowdin](https://badges.crowdin.net/delly/localized.svg)](https://translate.discordextremelist.xyz/project/delly)  
+[![Crowdin](https://badges.crowdin.net/delly/localized.svg)](https://translate.discordextremelist.xyz/project/delly) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdiscordextremelist%2Fwebsite.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdiscordextremelist%2Fwebsite?ref=badge_shield)
+ 
 
 Licensing information viewable in the [LICENSE](https://github.com/discordextremelist/website/blob/master/LICENSE) file.
 
@@ -41,3 +42,7 @@ Rename `settings.example.json` to `settings.json` and fill it out appropriately,
 When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run `npm run compile`.
 
 Run `npm start` to start DEL.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdiscordextremelist%2Fwebsite.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdiscordextremelist%2Fwebsite?ref=badge_large)

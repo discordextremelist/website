@@ -80,7 +80,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     for (const bot of bots) {
         if (bot.status.archived === true && bot.owner.id === req.params.id) {
             archivedBots.push(bot);
-        } else if (bot.status.hidden || bot.status.modHidden && bot.owner.id === req.params.id) {
+        } else if ((bot.status.hidden || bot.status.modHidden) && bot.owner.id === req.params.id) {
             hiddenBots.push(bot);
         } else if (bot.owner.id === req.params.id) {
             botsOwner.push(bot);

@@ -3753,7 +3753,9 @@ router.post(
             {
                 $set: {
                     "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
+                    "staffTracking.handledBots.allTime.modHidden": req.user.db.staffTracking.handledBots.allTime.modHidden += 1,
                     "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+                    "staffTracking.handledBots.thisWeek.modHidden": req.user.db.staffTracking.handledBots.thisWeek.modHidden += 1
                 }
             }
         );

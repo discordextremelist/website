@@ -121,6 +121,7 @@ declare global {
                     unapprove: number;
                     declined: number;
                     remove: number;
+                    modHidden: number;
                 };
                 prevWeek: {
                     total: number;
@@ -128,6 +129,7 @@ declare global {
                     unapprove: number;
                     declined: number;
                     remove: number;
+                    modHidden: number;
                 };
                 thisWeek: {
                     total: number;
@@ -135,6 +137,7 @@ declare global {
                     unapprove: number;
                     declined: number;
                     remove: number;
+                    modHidden: number;
                 };
             };
             handledServers: {

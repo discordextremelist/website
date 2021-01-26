@@ -45,18 +45,25 @@ export async function botStatsUpdate() {
                         $set: {
                             "staffTracking.handledBots.thisWeek.total": 0,
                             "staffTracking.handledBots.thisWeek.approved": 0,
+                            "staffTracking.handledBots.thisWeek.unapprove": 0,
                             "staffTracking.handledBots.thisWeek.declined": 0,
                             "staffTracking.handledBots.thisWeek.remove": 0,
+                            "staffTracking.handledBots.thisWeek.modHidden": 0,
                             "staffTracking.handledBots.prevWeek.total":
                                 user.staffTracking.handledBots.thisWeek.total,
                             "staffTracking.handledBots.prevWeek.approved":
                                 user.staffTracking.handledBots.thisWeek
                                     .approved,
+                            "staffTracking.handledBots.prevWeek.unapprove":
+                                user.staffTracking.handledBots.thisWeek
+                                    .unapprove,
                             "staffTracking.handledBots.prevWeek.declined":
                                 user.staffTracking.handledBots.thisWeek
                                     .declined,
                             "staffTracking.handledBots.prevWeek.remove":
-                                user.staffTracking.handledBots.thisWeek.remove
+                                user.staffTracking.handledBots.thisWeek.remove,
+                            "staffTracking.handledBots.prevWeek.modHidden":
+                                user.staffTracking.handledBots.thisWeek.modHidden
                         }
                     }
                 );

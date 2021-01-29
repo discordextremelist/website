@@ -52,6 +52,10 @@
         "arcID": "1mwUgGa4",
         "bannedVanityURLs": []
     },
+    "widgetbot": {
+        "backend": "stonks.widgetbot.io",
+        "frontend": "e.widgetbot.io"
+    },
     "guild": {
         "main": "568567800910839811",
         "staff": "632908146305925129"

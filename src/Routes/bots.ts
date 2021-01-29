@@ -292,9 +292,13 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(
-                    `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
-                ).then(async (fetchRes: fetchRes) => {
+            await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                method: 'post',
+                body:    JSON.stringify({
+                    query: `{guild(id:"${req.body.widgetServer}"){id}}`
+                }),
+                headers: { 'Content-Type': 'application/json' },
+            }).then(async (fetchRes: fetchRes) => {
                     const { data } = await fetchRes.json();
                     if (data && !data.guild?.id) {
                         error = true;
@@ -347,9 +351,13 @@ router.post(
                     });
 
             if (fetchChannel)
-                await fetch(
-                    `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
-                ).then(async (fetchRes: fetchRes) => {
+                await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                    method: 'post',
+                    body:    JSON.stringify({
+                        query: `{channel(id:"${req.body.widgetChannel}"){id}}`
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                }).then(async (fetchRes: fetchRes) => {
                     const { data } = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
@@ -1023,6 +1031,7 @@ router.get(
             title: res.__("page.bots.edit.title"),
             subtitle: res.__("page.bots.edit.subtitle", botExists.name),
             libraries: libraryCache.getLibs(),
+            settings,
             bot: botExists,
             editors: botExists.editors ? botExists.editors.join(" ") : "",
             req,
@@ -1217,9 +1226,13 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(
-                    `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
-                ).then(async (fetchRes: fetchRes) => {
+                await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                    method: 'post',
+                    body:    JSON.stringify({
+                        query: `{guild(id:"${req.body.widgetServer}"){id}}`
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                }).then(async (fetchRes: fetchRes) => {
                     const { data } = await fetchRes.json();
                     if (data && !data.guild?.id) {
                         error = true;
@@ -1272,9 +1285,13 @@ router.post(
                     });
 
             if (fetchChannel)
-                await fetch(
-                    `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
-                ).then(async (fetchRes: fetchRes) => {
+            await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                    method: 'post',
+                    body:    JSON.stringify({
+                        query: `{channel(id:"${req.body.widgetChannel}"){id}}`
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                }).then(async (fetchRes: fetchRes) => {
                     const { data } = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
@@ -2329,6 +2346,7 @@ router.get(
             title: res.__("page.bots.resubmit.title"),
             subtitle: res.__("page.bots.resubmit.subtitle", botExists.name),
             libraries: libraryCache.getLibs(),
+            settings,
             bot: botExists,
             editors: botExists.editors ? botExists.editors.join(" ") : "",
             req,
@@ -2527,9 +2545,13 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(
-                    `https://stonks.widgetbot.io/api/graphql?query={guild(id:"${req.body.widgetServer}"){id}}`
-                ).then(async (fetchRes: fetchRes) => {
+                await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                    method: 'post',
+                    body:    JSON.stringify({
+                        query: `{guild(id:"${req.body.widgetServer}"){id}}`
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                }).then(async (fetchRes: fetchRes) => {
                     const { data } = await fetchRes.json();
                     if (data && !data.guild?.id) {
                         error = true;
@@ -2582,9 +2604,13 @@ router.post(
                     });
 
             if (fetchChannel)
-                await fetch(
-                    `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.widgetChannel}"){id}}`
-                ).then(async (fetchRes: fetchRes) => {
+            await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                method: 'post',
+                body:    JSON.stringify({
+                    query: `{channel(id:"${req.body.widgetChannel}"){id}}`
+                }),
+                headers: { 'Content-Type': 'application/json' },
+            }).then(async (fetchRes: fetchRes) => {
                     const { data } = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;

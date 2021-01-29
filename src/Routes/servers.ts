@@ -166,9 +166,13 @@ router.post(
                     })
 
             if (fetchChannel)
-                await fetch(
-                    `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`
-                ).then(async (fetchRes: fetchRes) => {
+            await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                method: 'post',
+                body:    JSON.stringify({
+                    query: `{channel(id:"${req.body.previewChannel}"){id}}`
+                }),
+                headers: { 'Content-Type': 'application/json' },
+            }).then(async (fetchRes: fetchRes) => {
                     const { data } = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
@@ -591,9 +595,13 @@ router.post(
                     })
 
             if (fetchChannel)
-                await fetch(
-                    `https://stonks.widgetbot.io/api/graphql?query={channel(id:"${req.body.previewChannel}"){id}}`
-                ).then(async (fetchRes: fetchRes) => {
+                await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                    method: 'post',
+                    body:    JSON.stringify({
+                        query: `{channel(id:"${req.body.previewChannel}"){id}}`
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                }).then(async (fetchRes: fetchRes) => {
                     const { data } = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;

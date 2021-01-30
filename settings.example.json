@@ -54,7 +54,10 @@
     },
     "widgetbot": {
         "backend": "stonks.widgetbot.io",
-        "frontend": "e.widgetbot.io"
+        "frontend": "e.widgetbot.io",
+        "v3": {
+            "frontend": "e.widgetbot.io"
+        }
     },
     "guild": {
         "main": "568567800910839811",

@@ -86,7 +86,7 @@ router.get(
     "/submit",
     variables,
     permission.auth,
-    permission.scopes([OAuth2Scopes.GuildsJoin, OAuth2Scopes.ApplicationsCommandsUpdate]),
+    permission.scopes([OAuth2Scopes.GuildsJoin]),
     async (req: Request, res: Response) => {
 
         const bots = await botCache.getAllBots();
@@ -983,7 +983,6 @@ router.get(
     "/:id/edit",
     variables,
     permission.auth,
-    permission.scopes([OAuth2Scopes.ApplicationsCommandsUpdate]),
     async (req: Request, res: Response) => {
         const botExists = await global.db
             .collection("bots")
@@ -2285,7 +2284,7 @@ router.get(
     "/:id/resubmit",
     variables,
     permission.auth,
-    permission.scopes([OAuth2Scopes.GuildsJoin, OAuth2Scopes.ApplicationsCommandsUpdate]),
+    permission.scopes([OAuth2Scopes.GuildsJoin]),
     async (req: Request, res: Response) => {
         const botExists = await global.db
             .collection("bots")
@@ -3904,7 +3903,6 @@ router.get(
     "/:id/sync",
     variables,
     permission.auth,
-    permission.scopes([OAuth2Scopes.ApplicationsCommandsUpdate]),
     async (req: Request, res: Response) => {
         const botExists: delBot | undefined = await global.db
             .collection("bots")

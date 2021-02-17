@@ -49,7 +49,7 @@ const Entities = require("html-entities").XmlEntities;
 const entities = new Entities();
 const router = express.Router();
 
-const DAPI = 'https://discord.com/api/v8'
+const DAPI = "https://discord.com/api/v8";
 
 function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);

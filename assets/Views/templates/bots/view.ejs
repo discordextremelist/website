@@ -728,9 +728,9 @@
 <% } %>
 <% if (bot.widgetbot && bot.widgetbot.server !== "" && bot.widgetbot.channel !== "") { %>
     <% if (bot.widgetbot.options !== "") { %>
-        <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer>const additionalOptions = JSON.parse(<%- JSON.stringify(bot.widgetbot.options) %>);const crate = new Crate({server:"<%= bot.widgetbot.server %>",channel:"<%= bot.widgetbot.channel %>",shard:"https://e.widgetbot.io",...additionalOptions});</script>
+        <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer>const additionalOptions = JSON.parse(<%- JSON.stringify(bot.widgetbot.options) %>);const crate = new Crate({server:"<%= bot.widgetbot.server %>",channel:"<%= bot.widgetbot.channel %>",...additionalOptions});</script>
     <% } else { %>
-        <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer>const crate = new Crate({server:"<%= bot.widgetbot.server %>",channel:"<%= bot.widgetbot.channel %>",shard:"https://e.widgetbot.io"});</script>
+        <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer>const crate = new Crate({server:"<%= bot.widgetbot.server %>",channel:"<%= bot.widgetbot.channel %>"});</script>
     <% } %>
 <% } %>
 <%- include("../../partials/footer.ejs") %>

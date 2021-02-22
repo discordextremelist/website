@@ -292,9 +292,9 @@ router.post(
                     });
 
             if (fetchServer)
-            await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+            await fetch(`https://stonks.widgetbot.io/api/graphql`, {
                 method: 'post',
-                body:    JSON.stringify({
+                body: JSON.stringify({
                     query: `{guild(id:"${req.body.widgetServer}"){id}}`
                 }),
                 headers: { 'Content-Type': 'application/json' },
@@ -351,9 +351,9 @@ router.post(
                     });
 
             if (fetchChannel)
-                await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
                     method: 'post',
-                    body:    JSON.stringify({
+                    body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
                     }),
                     headers: { 'Content-Type': 'application/json' },
@@ -1226,9 +1226,9 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
                     method: 'post',
-                    body:    JSON.stringify({
+                    body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
                     }),
                     headers: { 'Content-Type': 'application/json' },
@@ -1285,9 +1285,9 @@ router.post(
                     });
 
             if (fetchChannel)
-            await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+            await fetch(`https://stonks.widgetbot.io/api/graphql`, {
                     method: 'post',
-                    body:    JSON.stringify({
+                    body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
                     }),
                     headers: { 'Content-Type': 'application/json' },
@@ -2545,9 +2545,9 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
                     method: 'post',
-                    body:    JSON.stringify({
+                    body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
                     }),
                     headers: { 'Content-Type': 'application/json' },
@@ -2604,9 +2604,9 @@ router.post(
                     });
 
             if (fetchChannel)
-            await fetch(`https://${settings.widgetbot.backend}/api/graphql`, {
+            await fetch(`https://stonks.widgetbot.io/api/graphql`, {
                 method: 'post',
-                body:    JSON.stringify({
+                body: JSON.stringify({
                     query: `{channel(id:"${req.body.widgetChannel}"){id}}`
                 }),
                 headers: { 'Content-Type': 'application/json' },

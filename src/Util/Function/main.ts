@@ -382,7 +382,7 @@ export function isURL(string: string) {
 export function parseScopes(scopes: delBot["scopes"]): OAuth2Scopes | `${OAuth2Scopes}+${OAuth2Scopes}` {
     if (!scopes) return OAuth2Scopes.Bot
     if (scopes.bot && scopes.slashCommands) {
-        return `${OAuth2Scopes.Bot}+${OAuth2Scopes.ApplicationsCommands}`
+        return `${OAuth2Scopes.Bot}+${OAuth2Scopes.ApplicationsCommands}` as const
     } else if (scopes.slashCommands) {
         return OAuth2Scopes.ApplicationsCommands
     } else return OAuth2Scopes.Bot

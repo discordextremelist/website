@@ -35,12 +35,19 @@
             "pre",
             "span",
             "details",
-            "summary"
+            "summary",
+            "audio",
+            "video",
+            "picture",
+            "source"
         ],
         "attributes": {
             "a": ["href", "target", "rel"],
             "img": ["src"],
-            "*": ["style", "title", "alt"]
+            "audio": ["src", "controls", "loop", "muted", "preload"],
+            "video": ["controls", "src", "poster"],
+            "source": ["srcset", "media", "type", "sizes", "src"],
+            "*": ["style", "title", "alt", "width", "height"]
         }
     },
     "standard": {
@@ -80,9 +87,14 @@
             "iframe",
             "style",
             "link",
+            "loop",
             "span",
             "details",
-            "summary"
+            "summary",
+            "audio",
+            "video",
+            "picture",
+            "source"
         ],
         "attributes": {
             "*": [
@@ -100,6 +112,7 @@
                 "id",
                 "label",
                 "media",
+                "muted",
                 "name",
                 "poster",
                 "preload",
@@ -107,12 +120,15 @@
                 "reversed",
                 "rowspan",
                 "shape",
+                "sizes",
                 "src",
+                "srcset",
                 "start",
                 "style",
                 "target",
                 "title",
                 "translate",
+                "type",
                 "usemap",
                 "value",
                 "width"
@@ -160,7 +176,11 @@
             "link",
             "span",
             "details",
-            "summary"
+            "summary",
+            "audio",
+            "video",
+            "picture",
+            "source"
         ],
         "attributes": false
     }

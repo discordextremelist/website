@@ -43,20 +43,7 @@
         <form id="form" method="POST">
             <h3 class="is-size-3 has-text-default"><%= __("page.form.category.generalInfo") %></h3>
             <br>
-            <div class="field">
-                <label class="label has-text-default"><%= __("page.bots.generalInfo.id") %> <span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span></label>
-                <p class="control has-icons-left" required>
-                    <input id="form_id" class="input is-rounded" type="text" name="id" value="<%= bot._id %>" placeholder="568254611354419211" readonly>
-                    <span class="icon is-small is-left">
-                        <i aria-hidden="true" class="fas fa-hashtag"></i>
-                    </span>
-                </p>
-            </div>
-            <br>
             <label class="label has-text-default"><%= __("page.bots.generalInfo.scopes") %> <span class="has-text-danger">*</span></label>
-            <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
-                <%= __("page.bots.generalInfo.scopes.details") %>
-            </p>
             <div class="field">
                 <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="bot" name="bot" <% if (bot.scopes?.bot) { %> checked <% } %>>
                 <label class="has-text-default" for="bot"><%= __("common.bot") %></label>
@@ -64,6 +51,16 @@
             <div class="field">
                 <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="slashcommands" name="slashcommands" <% if (bot.scopes?.slashCommands) { %> checked <% } %>>
                 <label class="has-text-default" for="slashcommands"><%= __("common.slashCommands") %></label>
+            </div>
+            <br>
+            <div class="field">
+                <label class="label has-text-default"><span id="idText"><%= __("page.bots.generalInfo.clientID") %></span> <span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span></label>
+                <p class="control has-icons-left" required>
+                    <input id="form_id" class="input is-rounded" type="text" name="id" value="<%= bot._id %>" placeholder="568254611354419211" readonly>
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fas fa-hashtag"></i>
+                    </span>
+                </p>
             </div>
             <br>
             <div class="field" id="clientIDBlock" style="display: none">
@@ -364,6 +361,7 @@
     const prefixBlock = document.querySelector('#prefixBlock')
     const clientIDBlock = document.querySelector('#clientIDBlock')
     const id = document.querySelector('#form_id')
+    const idText = document.querySelector('#idText')
 
     const onScopeChange = () => {
         clientIDDisplayCheck()
@@ -377,7 +375,11 @@
     const clientIDDisplayCheck = () => {
         if (bot.checked && id.value > 0 && BigInt(id.value) < 234395307759108106n) {
             clientIDBlock.style.display = 'inherit'
-        } else clientIDBlock.style.display = 'none'
+            idText.innerText = '<%= __("page.bots.generalInfo.id") %>'
+        } else {
+            clientIDBlock.style.display = 'none'
+            idText.innerText = '<%= __("page.bots.generalInfo.clientID") %>'
+        }
     }
 
     clientIDDisplayCheck()

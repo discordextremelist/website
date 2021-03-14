@@ -64,23 +64,7 @@
                 <%= __("page.form.category.generalInfo") %>
             </h3>
             <br>
-            <div class="field">
-                <label class="label has-text-default"><%= __("page.bots.generalInfo.id") %> <span class="has-text-danger">*</span></label>
-                <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
-                    <%= __("page.bots.generalInfo.id.details") %>
-                </p>
-                <p class="control has-icons-left has-icons-right" required>
-                    <input id="id" class="input is-rounded" type="text" name="id" placeholder="568254611354419211">
-                    <span class="icon is-small is-left">
-                        <i aria-hidden="true" class="fas fa-hashtag"></i>
-                    </span>
-                </p>
-            </div>
-            <br>
             <label class="label has-text-default"><%= __("page.bots.generalInfo.scopes") %> <span class="has-text-danger">*</span></label>
-            <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
-                <%= __("page.bots.generalInfo.scopes.details") %>
-            </p>
             <div class="field">
                 <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="bot" name="bot">
                 <label class="has-text-default" for="bot"><%= __("common.bot") %></label>
@@ -88,6 +72,20 @@
             <div class="field">
                 <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="slashcommands" name="slashcommands">
                 <label class="has-text-default" for="slashcommands"><%= __("common.slashCommands") %></label>
+            </div>
+            <br>
+            <div class="field">
+                <label class="label has-text-default"><span id="idText"><%= __("page.bots.generalInfo.clientID") %></span> <span class="has-text-danger">*</span></label>
+                <p id="idDetails" style="padding-bottom: 10px;" class="is-size-7 has-text-default">
+                    <%= __("page.bots.generalInfo.clientID.detailsEdit") %>
+                </p>
+                <p class="control has-icons-left has-icons-right" required>
+                    <input id="id" class="input is-rounded" type="text" name="id" placeholder="568254611354419211">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="fas fa-hashtag"></i>
+                    </span>
+                </p>
+                <p id="appName" style="margin-top: 10px;" class="is-size-7 has-text-default"></p>
             </div>
             <br>
             <div class="field" id="clientIDBlock" style="display: none">
@@ -391,6 +389,14 @@
     const slashcommands = document.querySelector('#slashcommands')
     const prefixBlock = document.querySelector('#prefixBlock')
     const clientIDBlock = document.querySelector('#clientIDBlock')
+    const id = document.querySelector('#id')
+    const idText = document.querySelector('#idText')
+    const idDetails = document.querySelector('#idDetails')
+    const clientID = document.querySelector('#clientID')
+    const name = document.querySelector('#appName')
+    const botScope = document.querySelector('#bot').checked
+    const shortDesc = document.querySelector('#form_shortDescription')
+    const privacy = document.querySelector('#form_privacyPolicy')
 
     const onScopeChange = () => {
         clientIDDisplayCheck()
@@ -404,12 +410,20 @@
     const clientIDDisplayCheck = () => {
         if (bot.checked && id.value > 0 && BigInt(id.value) < 234395307759108106n) {
             clientIDBlock.style.display = 'inherit'
-        } else clientIDBlock.style.display = 'none'
+            idText.innerText = '<%= __("page.bots.generalInfo.id") %>'
+            idDetails.innerText = "<%- __('page.bots.generalInfo.id.details') %>"
+        } else {
+            clientIDBlock.style.display = 'none'
+            idText.innerText = '<%= __("page.bots.generalInfo.clientID") %>'
+            idDetails.innerText = '<%= __("page.bots.generalInfo.clientID.detailsEdit") %>'
+        }
     }
 
-    const id = document.querySelector('#id')
     id.addEventListener('change', async () => {
         clientIDDisplayCheck()
+
+        if (!id.value) return name.innerText = ""
+
         if (isNaN(id.value) || id.value.includes(' ')) {
             document.getElementById("errors").style.display = "block";
             document.getElementById("errorList").innerText = '<%= __("common.error.bot.arr.invalidID") %>'
@@ -418,11 +432,48 @@
             document.getElementById("errors").style.display = "block";
             document.getElementById("errorList").innerHTML = '<%= __("common.error.bot.arr.idTooLong") %>'
             scroll(0, 0);
-        } else if (id.value && await (await fetch(`./${id.value}/exists`)).json()) {
+        } else if (await (await fetch(`./${id.value}/exists`)).json()) {
             document.getElementById("errors").style.display = "block";
             document.getElementById("errorList").innerText = '<%= __("common.error.bot.conflict") %>'
             scroll(0, 0);
         } else document.getElementById("errors").style.display = "none";
+
+        getApp(id.value)
+    })
+
+    const getApp = async id => {
+        const app = await (await fetch(`https://discord.com/api/v8/applications/${id}/rpc`)).json()
+        if (!app.id) return
+
+        name.innerText = app.name
+
+        if (app.bot_public === false) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerText = '<%- __("common.error.bot.arr.notPublic") %>'
+            scroll(0, 0);
+        } else if (botScope && !('bot_public' in app)) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerText = '<%= __("common.error.bot.arr.noBot") %>'
+            scroll(0, 0);
+        } else {
+            document.getElementById("errors").style.display = "none";
+            if (!shortDesc.value && app.description) shortDesc.value = app.description
+            if (!privacy.value && app.privacy_policy_url) privacy.value = app.privacy_policy_url
+        }
+    }
+
+    clientID.addEventListener('change', async () => {
+        if (isNaN(clientID.value) || clientID.value.includes(' ')) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerText = '<%= __("common.error.bot.arr.invalidClientID") %>'
+            scroll(0, 0);
+        } else if (clientID.value.length > 32) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerHTML = '<%= __("common.error.bot.arr.clientIDTooLong") %>'
+            scroll(0, 0);
+        } else document.getElementById("errors").style.display = "none";
+
+        getApp(clientID.value)
     })
 
     bot.addEventListener('change', onScopeChange)

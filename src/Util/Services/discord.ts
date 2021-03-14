@@ -32,6 +32,7 @@ metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
 // @ts-expect-error
 class Client extends Discord.Client {
     readonly api: {
+        applications: any;
         channels: any;
         gateway: any;
         guilds: any;

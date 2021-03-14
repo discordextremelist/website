@@ -77,7 +77,7 @@
         <meta name="twitter:creator" content="@ExtremeList">
         <meta name="twitter:title" content="<%= title || "Page" %> | Discord Extreme List">
         <meta name="twitter:description" content="<%= bot.shortDesc %>">
-        <meta property="twitter:image" content="<%= bot.avatar.hash ? bot.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
+        <meta property="twitter:image" content="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.png">
         <meta property="twitter:image:alt" content="DEL's Logo">
 
         <meta property="og:type" content="website">
@@ -85,12 +85,12 @@
         <meta property="og:title" content="<%= title || "Page" %> | Discord Extreme List">
         <meta property="og:url" content="<%= baseURL %><%= linkPrefix %>/bots/<%= bot.vanityUrl || bot._id %>">
         <meta property="og:description" content="<%= bot.shortDesc %>">
-        <meta property="og:image" content="<%= bot.avatar.hash ? bot.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
+        <meta property="og:image" content="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.png">
         <meta property="og:image:alt" content="DEL's Logo">
 
         <meta itemprop="name" content="<%= title || "Page" %> | Discord Extreme List">
         <meta itemprop="description" content="<%= bot.shortDesc %>">
-        <meta itemprop="image" content="<%= bot.avatar.hash ? bot.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
+        <meta itemprop="image" content="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.png">
     
         <meta name="author" content="<%= botOwner ? botOwner.fullUsername : "Unknown#0000" %>">
         <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan">
@@ -121,7 +121,7 @@
         <meta name="twitter:creator" content="@ExtremeList">
         <meta name="twitter:title" content="<%= title || "Page" %> | Discord Extreme List">
         <meta name="twitter:description" content="<%= listing.shortDesc %>">
-        <meta property="twitter:image" content="<%= listing.icon.hash ? listing.icon.url : `${baseURL}/img/defaultavatar` %>.png">
+        <meta property="twitter:image" content="<%= listing.icon.url || `${baseURL}/img/defaultavatar` %>.png">
         <meta property="twitter:image:alt" content="DEL's Logo">
 
         <meta property="og:type" content="website">
@@ -129,12 +129,12 @@
         <meta property="og:title" content="<%= title || "Page" %> | Discord Extreme List">
         <meta property="og:url" content="<%= baseURL %><%= linkPrefix %>/<%= folder %>/<%= listing._id %>">
         <meta property="og:description" content="<%= listing.shortDesc %>">
-        <meta property="og:image" content="<%= listing.icon.hash ? listing.icon.url : `${baseURL}/img/defaultavatar` %>.png">
+        <meta property="og:image" content="<%= listing.icon.url || `${baseURL}/img/defaultavatar` %>.png">
         <meta property="og:image:alt" content="DEL's Logo">
 
         <meta itemprop="name" content="<%= title || "Page" %> | Discord Extreme List">
         <meta itemprop="description" content="<%= listing.shortDesc %>">
-        <meta itemprop="image" content="<%= listing.icon.hash ? listing.icon.url : `${baseURL}/img/defaultavatar` %>.png">
+        <meta itemprop="image" content="<%= listing.icon.url || `${baseURL}/img/defaultavatar` %>.png">
     
         <meta name="author" content="<%= listingOwner ? listingOwner.fullUsername : 'Unknown' %>">
         <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan">
@@ -159,13 +159,13 @@
         <meta name="copyright" content="Cairo Mitchell-Acason, John Burke, Advaith Jagathesan">
 
         <% if (pageType.user) { %>
-            <meta property="twitter:image" content="<%= userProfile.avatar.hash ? userProfile.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
+            <meta property="twitter:image" content="<%= userProfile.avatar.url || `${baseURL}/img/defaultavatar` %>.png">
             <meta property="twitter:image:alt" content="DEL's Logo">
             
-            <meta property="og:image" content="<%= userProfile.avatar.hash ? userProfile.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
+            <meta property="og:image" content="<%= userProfile.avatar.url || `${baseURL}/img/defaultavatar` %>.png">
             <meta property="og:image:alt" content="DEL's Logo">
             
-            <meta itemprop="image" content="<%= userProfile.avatar.hash ? userProfile.avatar.url : `${baseURL}/img/defaultavatar` %>.png">
+            <meta itemprop="image" content="<%= userProfile.avatar.url || `${baseURL}/img/defaultavatar` %>.png">
         <% } else { %>
             <meta property="twitter:image" content="<%= baseURL %>/img/logo.png">
             <meta property="twitter:image:alt" content="DEL's Logo">

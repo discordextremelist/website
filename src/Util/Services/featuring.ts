@@ -59,7 +59,6 @@ export async function updateFeaturedBots() {
         delete bot.serverCount;
         delete bot.shardCount;
         delete bot.token;
-        delete bot.flags;
         delete bot.longDesc;
         delete bot.modNotes;
         delete bot.editors;

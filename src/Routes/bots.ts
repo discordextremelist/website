@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import type { Response as fetchRes } from "../../@types/fetch";
-import type { APIApplicationCommand, APIUser, RESTPostOAuth2AccessTokenResult } from "discord-api-types/v8";
+import type { APIApplication, APIApplicationCommand, RESTPostOAuth2AccessTokenResult } from "discord-api-types/v8";
 import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord-api-types/v8"
 
 import * as fetch from "node-fetch";
@@ -422,7 +422,7 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.privacyTooLong"))
             }
             if (
-                req.body.privacyPolicy.includes("discord.bot/privacy")
+                ['discord.bot', 'my-cool-app.com'].some(s => req.body.privacyPolicy.includes(s))
             ) {
                 error = true;
                 errors.push(
@@ -520,20 +520,27 @@ router.post(
             });
 
         discord.bot.api
-            .users(req.body.id)
+            .applications(req.body.clientID || req.body.id).rpc
             .get()
-            .then(async (bot: APIUser) => {
-                if (!bot.bot)
+            .then(async (app: APIApplication) => {
+                if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
                         error: true,
                         status: 400,
-                        errors: [res.__("common.error.bot.arr.isUser")]
+                        errors: [res.__("common.error.bot.arr.notPublic")]
                     });
 
+                if (req.body.bot && !('bot_public' in app))
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.noBot")]
+                    });
+                
                 await global.db.collection("bots").insertOne({
                     _id: req.body.id,
                     clientID: req.body.clientID,
-                    name: bot.username,
+                    name: app.name,
                     prefix: req.body.prefix,
                     library,
                     tags,
@@ -544,7 +551,6 @@ router.post(
                         "DELAPI_" +
                         crypto.randomBytes(16).toString("hex") +
                         `-${req.body.id}`,
-                    flags: bot.public_flags,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
                     modNotes: req.body.modNotes,
@@ -554,9 +560,9 @@ router.post(
                     owner: {
                         id: req.user.id
                     },
-                    avatar: {
-                        hash: bot.avatar,
-                        url: `https://cdn.discordapp.com/avatars/${req.body.id}/${bot.avatar}`
+                    icon: {
+                        hash: app.icon,
+                        url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                     },
                     votes: {
                         positive: [],
@@ -608,7 +614,7 @@ router.post(
                     )}** \`(${
                         req.user.id
                     })\` added bot **${functions.escapeFormatting(
-                        bot.username
+                        app.name
                     )}** \`(${req.body.id})\`\n<${settings.website.url}/bots/${
                         req.body.id
                     }>`
@@ -623,11 +629,10 @@ router.post(
                     details: {
                         new: {
                             _id: req.body.id,
-                            name: bot.username,
+                            name: app.name,
                             prefix: req.body.prefix,
                             library,
                             tags,
-                            flags: bot.public_flags,
                             vanityUrl: "",
                             serverCount: 0,
                             shardCount: 0,
@@ -643,9 +648,9 @@ router.post(
                             owner: {
                                 id: req.user.id
                             },
-                            avatar: {
-                                hash: bot.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.body.id}/${bot.avatar}`
+                            icon: {
+                                hash: app.icon,
+                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                             },
                             votes: {
                                 positive: [],
@@ -696,7 +701,7 @@ router.post(
                 });
             })
             .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownUser)
+                if (error.code === RESTJSONErrorCodes.UnknownApplication)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -1461,26 +1466,32 @@ router.post(
         }
 
         discord.bot.api
-            .users(req.params.id)
+            .applications(req.body.clientID || req.params.id).rpc
             .get()
-            .then(async (bot: APIUser) => {
+            .then(async (app: APIApplication) => {
+                if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.notPublic")]
+                    });
+                
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
                             clientID: req.body.clientID,
-                            name: bot.username,
+                            name: app.name,
                             prefix: req.body.prefix,
                             library,
                             tags,
-                            flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             editors,
                             commands,
-                            avatar: {
-                                hash: bot.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
+                            icon: {
+                                hash: app.icon,
+                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                             },
                             scopes: {
                                 bot: req.body.bot,
@@ -1525,14 +1536,13 @@ router.post(
                             prefix: botExists.prefix,
                             library: botExists.library,
                             tags: botExists.tags,
-                            flags: botExists.flags,
                             shortDesc: botExists.shortDesc,
                             longDesc: botExists.longDesc,
                             editors: botExists.editors,
                             commands: botExists.commands,
-                            avatar: {
-                                hash: botExists.avatar.hash,
-                                url: botExists.avatar.url
+                            icon: {
+                                hash: botExists.icon.hash,
+                                url: botExists.icon.url
                             },
                             scopes: {
                                 bot: req.body.bot,
@@ -1563,18 +1573,17 @@ router.post(
                         } as delBot,
                         new: {
                             clientID: req.body.clientID,
-                            name: bot.username,
+                            name: app.name,
                             prefix: req.body.prefix,
                             library,
                             tags,
-                            flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             editors,
                             commands,
-                            avatar: {
-                                hash: bot.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
+                            icon: {
+                                hash: app.icon,
+                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                             },
                             scopes: {
                                 bot: req.body.bot,
@@ -1612,8 +1621,8 @@ router.post(
                         )}** \`(${
                             req.user.id
                         })\` edited bot **${functions.escapeFormatting(
-                            bot.username
-                        )}** \`(${bot.id})\`\n<${settings.website.url}/bots/${
+                            app.name
+                        )}** \`(${app.id})\`\n<${settings.website.url}/bots/${
                             req.params.id
                         }>`
                     )
@@ -1628,7 +1637,7 @@ router.post(
                 });
             })
             .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownUser)
+                if (error.code === RESTJSONErrorCodes.UnknownApplication)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -2770,26 +2779,32 @@ router.post(
             });
 
         discord.bot.api
-            .users(req.params.id)
+            .applications(req.body.clientID || req.params.id).rpc
             .get()
-            .then(async (bot: APIUser) => {
+            .then(async (app: APIApplication) => {
+                if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.notPublic")]
+                    });
+                
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
                             clientID: req.body.clientID,
-                            name: bot.username,
+                            name: app.name,
                             prefix: req.body.prefix,
                             library,
                             tags,
-                            flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             editors,
                             commands,
-                            avatar: {
-                                hash: bot.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
+                            icon: {
+                                hash: app.icon,
+                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                             },
                             scopes: {
                                 bot: req.body.bot,
@@ -2826,14 +2841,13 @@ router.post(
                             prefix: botExists.prefix,
                             library: botExists.library,
                             tags: botExists.tags,
-                            flags: botExists.flags,
                             shortDesc: botExists.shortDesc,
                             longDesc: botExists.longDesc,
                             editors: botExists.editors,
                             commands: botExists.commands,
-                            avatar: {
-                                hash: botExists.avatar.hash,
-                                url: botExists.avatar.url
+                            icon: {
+                                hash: botExists.icon.hash,
+                                url: botExists.icon.url
                             },
                             scopes: {
                                 bot: req.body.bot,
@@ -2867,18 +2881,17 @@ router.post(
                         } as delBot,
                         new: {
                             clientID: req.body.clientID,
-                            name: bot.username,
+                            name: app.name,
                             prefix: req.body.prefix,
                             library,
                             tags,
-                            flags: bot.public_flags,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             editors,
                             commands,
-                            avatar: {
-                                hash: bot.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
+                            icon: {
+                                hash: app.icon,
+                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                             },
                             scopes: {
                                 bot: req.body.bot,
@@ -2919,9 +2932,9 @@ router.post(
                         )}** \`(${
                             req.user.id
                         })\` resubmitted bot **${functions.escapeFormatting(
-                            bot.username
-                        )}** \`(${bot.id})\`\n<${settings.website.url}/bots/${
-                            bot.id
+                            app.name
+                        )}** \`(${app.id})\`\n<${settings.website.url}/bots/${
+                            app.id
                         }>`
                     )
                     .catch((e) => {
@@ -2935,7 +2948,7 @@ router.post(
                 });
             })
             .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownUser)
+                if (error.code === RESTJSONErrorCodes.UnknownApplication)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -3977,18 +3990,24 @@ router.get(
         }
 
         discord.bot.api
-            .users(req.params.id)
+            .applications(botExists.clientID || req.params.id).rpc
             .get()
-            .then(async (bot: APIUser) => {
+            .then(async (app: APIApplication) => {
+                if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.bot.arr.notPublic")]
+                    });
+                
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
                         $set: {
-                            name: bot.username,
-                            flags: bot.public_flags,
-                            avatar: {
-                                hash: bot.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
+                            name: app.name,
+                            icon: {
+                                hash: app.icon,
+                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                             },
                             commands
                         } as delBot
@@ -4004,26 +4023,26 @@ router.get(
                     details: {
                         old: {
                             name: botExists.name,
-                            flags: botExists.flags,
-                            avatar: {
-                                hash: botExists.avatar.hash,
-                                url: botExists.avatar.url
-                            }
+                            icon: {
+                                hash: botExists.icon.hash,
+                                url: botExists.icon.url
+                            },
+                            commands: botExists.commands
                         } as delBot,
                         new: {
-                            name: bot.username,
-                            flags: bot.public_flags,
-                            avatar: {
-                                hash: bot.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${bot.avatar}`
-                            }
+                            name: app.name,
+                            icon: {
+                                hash: app.icon,
+                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
+                            },
+                            commands
                         } as delBot
                     }
                 });
                 await botCache.updateBot(req.params.id);
             })
             .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownUser)
+                if (error.code === RESTJSONErrorCodes.UnknownApplication)
                     return res.status(400).json({
                         error: true,
                         status: 400,

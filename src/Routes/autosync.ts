@@ -25,7 +25,7 @@ import * as botCache from "../Util/Services/botCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
-import { APIUser, APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes } from "discord-api-types/v8";
+import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication } from "discord-api-types/v8";
 import * as settings from "../../settings.json";
 
 const router = express.Router();
@@ -54,7 +54,7 @@ router.get('/bots', async (req, res) => {
         .findOne({ _id: id });
 
     if (botExists) try {
-        const bot = await discord.bot.api.users(id).get() as APIUser
+        const app = await discord.bot.api.applications(botExists.clientID || id).rpc.get() as APIApplication
 
         let commands: APIApplicationCommand[] = botExists.commands || []
         
@@ -82,7 +82,7 @@ router.get('/bots', async (req, res) => {
                     })
                 }
     
-                const receivedCommands = await (await fetch('https://discord.com/api/v8'+Routes.applicationCommands(bot.id), {headers: {authorization: `Bearer ${owner.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+                const receivedCommands = await (await fetch('https://discord.com/api/v8'+Routes.applicationCommands(app.id), {headers: {authorization: `Bearer ${owner.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
                 if (Array.isArray(receivedCommands)) commands = receivedCommands;
             }
         }
@@ -91,11 +91,10 @@ router.get('/bots', async (req, res) => {
             { _id: id },
             {
                 $set: {
-                    name: bot.username,
-                    flags: bot.public_flags,
-                    avatar: {
-                        hash: bot.avatar,
-                        url: `https://cdn.discordapp.com/avatars/${id}/${bot.avatar}`
+                    name: app.name,
+                    icon: {
+                        hash: app.icon,
+                        url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                     },
                     commands
                 } as delBot
@@ -103,6 +102,8 @@ router.get('/bots', async (req, res) => {
         );
 
         await botCache.updateBot(id);
+
+        if (app.bot_public === false) throw 'Bot is not public'
     } catch (e) {
         discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`)
     }

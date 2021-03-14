@@ -184,9 +184,11 @@ declare global {
     }
 
     interface delBot {
+        /** The client id, or the bot id if different */
         _id: Snowflake;
         _cacheID?: string;
-        clientID: Snowflake;
+        /** The client id if different from the bot id */
+        clientID?: Snowflake;
         name: string;
         prefix?: string;
         library: string;
@@ -196,7 +198,6 @@ declare global {
         shardCount?: number;
         inServer?: boolean;
         token: string;
-        flags: UserFlags;
         shortDesc: string;
         longDesc: string;
         modNotes: string;
@@ -206,7 +207,13 @@ declare global {
         owner: {
             id: Snowflake;
         };
-        avatar: {
+        /** app icon */
+        icon?: {
+            hash: string;
+            url: string;
+        }
+        /** @deprecated bot avatar - fallback for `icon` */
+        avatar?: {
             hash: string;
             url: string;
         };

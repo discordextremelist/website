@@ -55,7 +55,7 @@
                         if (botStatus === "dnd") statusInfo = __("page.bots.status.dnd")
                         if (botStatus === "offline") statusInfo = __("page.bots.status.offline")
                     %>
-                    <img class="image" <% if (!bot.scopes || bot.scopes.bot) { %>title="<%= statusInfo %>"<% } %> style="margin: auto; width: 128px; border-radius: 50%; <% if (!bot.scopes || bot.scopes.bot) { %>animation: <%= botStatus %> 2s infinite !important;<% } %>" src="<%= bot.avatar.hash ? bot.avatar.url : `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=512" alt="<%= __('common.img.avatar', bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');">
+                    <img class="image" <% if (!bot.scopes || bot.scopes.bot) { %>title="<%= statusInfo %>"<% } %> style="margin: auto; width: 128px; border-radius: 50%; <% if (!bot.scopes || bot.scopes.bot) { %>animation: <%= botStatus %> 2s infinite !important;<% } %>" src="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=512" alt="<%= __('common.img.avatar', bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');">
                 </div>
             <div class="column is-10<% if (mobile) { %> has-text-centered<% } %>">
                     <h1 class="is-size-1">

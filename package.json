@@ -15,7 +15,7 @@
     "connect-redis": "^4.0.4",
     "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
-    "datadog-metrics": "^0.8.2",
+    "datadog-metrics": "^0.9.3",
     "debug": "~2.6.9",
     "del-i18n": "github:discordextremelist/i18n",
     "discord-api-types": "^0.12.1",

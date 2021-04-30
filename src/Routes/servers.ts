@@ -232,7 +232,7 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api.invites(req.body.invite).get({query: {with_counts: true} as RESTGetAPIInviteQuery})
+        discord.bot.api.invites(req.body.invite).get({query: {with_counts: true, with_expiration: true} as RESTGetAPIInviteQuery})
             .then(async (invite: APIInvite) => {
                 const serverExists:
                     | delServer
@@ -244,6 +244,13 @@ router.post(
                         error: true,
                         status: 409,
                         errors: [res.__("common.error.server.conflict")]
+                    });
+
+                if (invite.expires_at)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.server.invite.expires")]
                     });
 
                 await global.db.collection("servers").insertOne({
@@ -659,13 +666,20 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api.invites(req.body.invite).get({query: {with_counts: true} as RESTGetAPIInviteQuery})
+        discord.bot.api.invites(req.body.invite).get({query: {with_counts: true, with_expiration: true} as RESTGetAPIInviteQuery})
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).json({
                         error: true,
                         status: 400,
                         errors: [res.__("common.error.server.arr.invite.sameServer")]
+                    });
+
+                if (invite.expires_at)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.server.invite.expires")]
                     });
 
                 await global.db.collection("servers").updateOne(
@@ -1249,7 +1263,7 @@ router.get(
                 req: req
             });
 
-        discord.bot.api.invites(server.inviteCode).get({query: {with_counts: true} as RESTGetAPIInviteQuery})
+        discord.bot.api.invites(server.inviteCode).get({query: {with_counts: true, with_expiration: true} as RESTGetAPIInviteQuery})
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).render("status", {
@@ -1260,6 +1274,13 @@ router.get(
                         ),
                         req,
                         type: "Error"
+                    });
+
+                if (invite.expires_at)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [res.__("common.error.server.invite.expires")]
                     });
 
                 await global.db.collection("servers").updateOne(

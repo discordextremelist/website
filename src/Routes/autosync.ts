@@ -126,9 +126,11 @@ router.get('/servers', async (req, res) => {
         .findOne({ _id: id });
 
     if (server) try {
-        const invite = await discord.bot.api.invites(server.inviteCode).get({query: {with_counts: true} as RESTGetAPIInviteQuery}) as APIInvite
+        const invite = await discord.bot.api.invites(server.inviteCode).get({query: {with_counts: true, with_expiration: true} as RESTGetAPIInviteQuery}) as APIInvite
 
         if (invite.guild.id !== server._id) throw 'Invite points to a different server'
+
+        if (invite.expires_at) throw 'This invite is set to expire'
         
         await global.db.collection("servers").updateOne(
             { _id: id },

@@ -79,3 +79,19 @@ declare module "express-serve-static-core" {
         __(key: keyof typeof strings, args?: any): string;
     }
 }
+
+// https://github.com/discordjs/discord-api-types/pull/127
+declare module "discord-api-types" {
+    interface APIInvite {
+        /**
+         * The expiration date of this invite, returned from the `GET /invites/<code>` endpoint when `with_expiration` is `true`
+         */
+        expires_at?: string | null;
+    }
+    interface RESTGetAPIInviteQuery {
+        /**
+         * Whether the invite should contain the expiration date
+         */
+        with_expiration?: boolean;
+    }
+}

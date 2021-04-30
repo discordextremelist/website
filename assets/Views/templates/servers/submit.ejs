@@ -208,10 +208,16 @@
             scroll(0, 0);
         } else document.getElementById("errors").style.display = "none";
 
-        const invite = await (await fetch(`https://discord.com/api/v8/invites/${code.value}`)).json()
+        const invite = await (await fetch(`https://discord.com/api/v8/invites/${code.value}?with_expiration=true`)).json()
         if (!invite.guild) return
 
         name.innerText = invite.guild.name
+
+        if (invite.expires_at) {
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errorList").innerHTML = '<%= __("common.error.server.invite.expires") %>'
+            return scroll(0, 0)
+        }
 
         if (await (await fetch(`./${invite.guild.id}/exists`)).json()) {
             document.getElementById("errors").style.display = "block";

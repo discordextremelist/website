@@ -8,26 +8,19 @@
         }
     },
     {
-
-        "name": "D++",
-
-        "language": "C++",
-
-        "links": {
-
-            "docs": "https://dpp.brainbox.cc/",
-
-            "repo": "https://github.com/brainboxdotcc/dpp"
-
-        }
-
-    },
-    {
         "name": "aegis.cpp",
         "language": "C++",
         "links": {
             "docs": "https://docs.aegisbot.io/",
             "repo": "https://github.com/zeroxs/aegis.cpp"
+        }
+    },
+    {
+        "name": "D++",
+        "language": "C++",
+        "links": {
+            "docs": "https://dpp.brainbox.cc/",
+            "repo": "https://github.com/brainboxdotcc/dpp"
         }
     },
     {

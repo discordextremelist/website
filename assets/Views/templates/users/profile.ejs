@@ -308,7 +308,7 @@
                     </div>
                 <% } %>
             <% } %>
-            <% if (user && user.id === userProfile._id) { %>
+            <% if (user && (user.id === userProfile._id || user.db.rank.mod)) { %>
                 <% if (hiddenBots.length > 0) { %>
                     <br>
                     <h2 id="archived-bots" class="is-size-4"><%= __("page.users.listings.hiddenBots") %></h2>

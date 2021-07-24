@@ -175,7 +175,7 @@ router.get('/templates', async (req, res) => {
         const template = await discord.bot.api.guilds.templates(id).get() as APITemplate
         
         await global.db.collection("templates").updateOne(
-            { _id: req.params.id },
+            { _id: id },
             {
                 $set: {
                     name: template.name,

@@ -24,6 +24,14 @@
         }
     },
     {
+        "name": "Sleepy Discord",
+        "language": "C++",
+        "links": {
+            "docs": "https://yourwaifu.dev/sleepy-discord/",
+            "repo": "https://github.com/yourWaifu/sleepy-discord"
+        }
+    },
+    {
         "name": "discordcr",
         "language": "Crystal",
         "links": {
@@ -32,11 +40,19 @@
         }
     },
     {
+        "name": "Remora.Discord",
+        "language": "C#",
+        "links": {
+            "docs": "https://nihlus.github.io/Remora.Discord/",
+            "repo": "https://github.com/Nihlus/Remora.Discord"
+        }
+    },
+    {
         "name": "Discord.Net",
         "language": "C#",
         "links": {
             "docs": "https://discord.foxbot.me/",
-            "repo": "https://github.com/RogueException/Discord.Net"
+            "repo": "https://github.com/discord-net/Discord.Net"
         }
     },
     {
@@ -48,11 +64,19 @@
         }
     },
     {
-        "name": "dscord",
-        "language": "D",
+        "name": "coxir",
+        "language": "Elixir",
         "links": {
-            "docs": "https://b1naryth1ef.github.io/dscord/",
-            "repo": "https://github.com/b1naryth1ef/dscord"
+            "docs": "https://satom.me/coxir/introduction.html",
+            "repo": "https://github.com/satom99/coxir"
+        }
+    },
+    {
+        "name": "Nostrum",
+        "language": "Elixir",
+        "links": {
+            "docs": "https://kraigie.github.io/nostrum/intro.html",
+            "repo": "https://github.com/Kraigie/nostrum"
         }
     },
     {
@@ -136,6 +160,14 @@
         }
     },
     {
+        "name": "Dimscord",
+        "language": "Nim",
+        "links": {
+            "docs": "https://krisppurg.github.io/dimscord/dimscord.html",
+            "repo": "https://github.com/krisppurg/dimscord"
+        }
+    },
+    {
         "name": "discordnim",
         "language": "Nim",
         "links": {
@@ -144,7 +176,15 @@
         }
     },
     {
-        "name": "Restcord",
+        "name": "DiscordPHP",
+        "language": "PHP",
+        "links": {
+            "docs": "https://discord-php.github.io/DiscordPHP/",
+            "repo": "https://github.com/discord-php/DiscordPHP"
+        }
+    },
+    {
+        "name": "RestCord",
         "language": "PHP",
         "links": {
             "docs": "https://www.restcord.com/",
@@ -192,6 +232,14 @@
         }
     },
     {
+        "name": "Twilight",
+        "language": "Rust",
+        "links": {
+            "docs": "https://twilight.rs/overview.html",
+            "repo": "https://github.com/twilight-rs/twilight"
+        }
+    },
+    {
         "name": "AckCord",
         "language": "Scala",
         "links": {
@@ -205,6 +253,38 @@
         "links": {
             "docs": "https://azoy.github.io/Sword/",
             "repo": "https://github.com/Azoy/Sword"
+        }
+    },
+    {
+        "name": "Detritus",
+        "language": "TypeScript",
+        "links": {
+            "docs": "https://detritusjs.com/",
+            "repo": "https://github.com/detritusjs/client"
+        }
+    },
+    {
+        "name": "discordeno",
+        "language": "TypeScript",
+        "links": {
+            "docs": "https://discordeno.mod.land/",
+            "repo": "https://github.com/discordeno/discordeno"
+        }
+    },
+    {
+        "name": "droff",
+        "language": "TypeScript",
+        "links": {
+            "docs": "https://tim-smart.github.io/droff/droff/",
+            "repo": "https://github.com/tim-smart/droff"
+        }
+    },
+    {
+        "name": "Harmony",
+        "language": "TypeScript",
+        "links": {
+            "docs": "https://github.com/harmonyland/harmony#docs",
+            "repo": "https://github.com/harmonyland/harmony"
         }
     },
     {

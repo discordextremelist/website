@@ -234,3 +234,13 @@ iframe {
 #delLogo:hover {
     content: url('/img/animated.gif')
 }
+
+.button.is-blurple.is-outlined {
+    border-color: $blurple-text !important;
+    color: $blurple-text !important;
+}
+
+.button.is-blurple.is-outlined:hover, .button.is-blurple.is-outlined.is-hovered, .button.is-blurple.is-outlined:focus, .button.is-blurple.is-outlined.is-focused {
+    border-color: $blurple !important;
+    color: white !important;
+}

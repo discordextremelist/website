@@ -2,7 +2,7 @@
 
 Consists some of the following colours:
 ```scss
-$blurple: #7289DA;
+$blurple: #5865f2;
 $danger: #cd0930;
 $orange: #f24405;
 $gold: #ff8400;
@@ -19,7 +19,7 @@ $bg: #000000;
 
 Consists some of the following colours:
 ```scss
-$blurple: #7289DA;
+$blurple: #5865f2;
 $danger: #cd0930;
 $orange: #f24405;
 $gold: #ff8400;

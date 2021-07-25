@@ -37,10 +37,10 @@ const url = (path: string, lang: string) =>
         <xhtml:link rel="alternate" hreflang="en-nz" href="${base}/en-NZ${path}"/>
         <xhtml:link rel="alternate" hreflang="de"    href="${base}/de-DE${path}"/>
         <xhtml:link rel="alternate" hreflang="de-de" href="${base}/de-DE${path}"/>
-        <xhtml:link rel="alternate" hreflang="fr" href="${base}/fr-FR${path}"/>
-        <xhtml:link rel="alternate" hreflang="fr-fr"    href="${base}/fr-FR${path}"/>
-        <xhtml:link rel="alternate" hreflang="pt" href="${base}/pt-PT${path}"/>
-        <xhtml:link rel="alternate" hreflang="pt-pt"    href="${base}/pt-PT${path}"/>
+        <xhtml:link rel="alternate" hreflang="fr"    href="${base}/fr-FR${path}"/>
+        <xhtml:link rel="alternate" hreflang="fr-fr" href="${base}/fr-FR${path}"/>
+        <xhtml:link rel="alternate" hreflang="pt"    href="${base}/pt-PT${path}"/>
+        <xhtml:link rel="alternate" hreflang="pt-pt" href="${base}/pt-PT${path}"/>
         <xhtml:link rel="alternate" hreflang="es"    href="${base}/es-ES${path}"/>
         <xhtml:link rel="alternate" hreflang="es-es" href="${base}/es-ES${path}"/>
         <xhtml:link rel="alternate" hreflang="he"    href="${base}/he-IL${path}"/>
@@ -49,6 +49,10 @@ const url = (path: string, lang: string) =>
         <xhtml:link rel="alternate" hreflang="hu-hu" href="${base}/hu-HU${path}"/>
         <xhtml:link rel="alternate" hreflang="tr"    href="${base}/tr-TR${path}"/>
         <xhtml:link rel="alternate" hreflang="tr-tr" href="${base}/tr-TR${path}"/>
+        <xhtml:link rel="alternate" hreflang="sv"    href="${base}/sv-SE${path}"/>
+        <xhtml:link rel="alternate" hreflang="sv-SE" href="${base}/sv-SE${path}"/>
+        <xhtml:link rel="alternate" hreflang="it"    href="${base}/it-IT${path}"/>
+        <xhtml:link rel="alternate" hreflang="it-IT" href="${base}/it-IT${path}"/>
     </url>`;
 
 export const sitemapGenerator = async (

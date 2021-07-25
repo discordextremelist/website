@@ -270,6 +270,14 @@
                         <% } %>
                         <span><%= __({ phrase: "common.nav.language.hu", locale: "hu-HU" }) %></span>
                     </<%= req.locale !== "hu-HU" ? 'a' : 'div' %>>
+                    <<% if (req.locale !== "it-IT") { %>a href="<%= req.originalUrl.replace(req.locale, "it-IT") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } else { %>div<% } %> class="navbar-item" rel="nofollow" tabindex="0">
+                        <% if (req.locale === "it-IT") { %>
+                            <span title="Selected" href="<%= req.originalUrl.replace(req.locale, "it-IT") %>" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.it", locale: "it-IT" }) %></span>
+                    </<%= req.locale !== "it-IT" ? 'a' : 'div' %>>
                     <<% if (req.locale !== "pt-PT") { %>a href="<%= req.originalUrl.replace(req.locale, "pt-PT") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } else { %>div<% } %> class="navbar-item" rel="nofollow" tabindex="0">
                         <% if (req.locale === "pt-PT") { %>
                             <span title="Selected" href="<%= req.originalUrl.replace(req.locale, "pt-PT") %>" class="icon has-text-success iconalign">
@@ -286,6 +294,14 @@
                         <% } %>
                         <span><%= __({ phrase: "common.nav.language.es-ES", locale: "es-ES" }) %></span>
                     </<%= req.locale !== "es-ES" ? 'a' : 'div' %>>
+                    <<% if (req.locale !== "sv-SE") { %>a href="<%= req.originalUrl.replace(req.locale, "sv-SE") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } else { %>div<% } %> class="navbar-item" rel="nofollow" tabindex="0">
+                        <% if (req.locale === "sv-SE") { %>
+                            <span title="Selected" class="icon has-text-success iconalign">
+                                <i class="fad fa-check-circle" aria-hidden="true"></i>
+                            </span>
+                        <% } %>
+                        <span><%= __({ phrase: "common.nav.language.sv-SE", locale: "sv-SE" }) %></span>
+                    </<%= req.locale !== "sv-SE" ? 'a' : 'div' %>>
                     <<% if (req.locale !== "tr-TR") { %>a href="<%= req.originalUrl.replace(req.locale, "tr-TR") + (req.originalUrl.includes('?') ? '&' : '?') %>setLang=t"<% } else { %>div<% } %> class="navbar-item" rel="nofollow" tabindex="0">
                         <% if (req.locale === "tr-TR") { %>
                             <span title="Selected" class="icon has-text-success iconalign">

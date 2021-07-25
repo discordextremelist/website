@@ -55,7 +55,7 @@
     "@types/ioredis": "^4.26.6",
     "@types/mongodb": "^3.6.20",
     "@types/morgan": "^1.9.3",
-    "@types/node": "^14.17.5",
+    "@types/node": "^14.17.6",
     "@types/passport": "^1.0.7",
     "@types/passport-discord": "^0.1.4",
     "@types/passport-oauth2-refresh": "^1.1.1",

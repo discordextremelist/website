@@ -27,7 +27,7 @@
     "html-entities": "^1.4.0",
     "http-errors": "~1.6.3",
     "i18n": "^0.8.6",
-    "ioredis": "^4.27.6",
+    "ioredis": "^4.27.8",
     "markdown-it": "^10.0.0",
     "moment": "^2.29.1",
     "mongodb": "~3.5.11",

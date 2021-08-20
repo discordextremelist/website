@@ -50,6 +50,12 @@ export const bot = new Client({
     http: { version: 8 }
 });
 
+bot.on("guildBanRemove", async (guild, user) => {
+   if (guild.id === settings.guild.main) {
+       await global.redis?.hdel("bans", user.id);
+   }
+});
+
 bot.on("ready", async () => {
     console.log(`Discord: Connected as ${bot.user.tag} (${bot.user.id})`);
     if (process.env.EXECUTOR === "pm2") {

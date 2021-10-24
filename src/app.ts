@@ -96,18 +96,18 @@ new Promise<void>((resolve, reject) => {
                 .collection("libraries")
                 .updateOne(
                     { _id: lib.name },
-                    {
+                    { $set: {
                         _id: lib.name,
                         language: lib.language,
                         links: {
                             docs: lib.links.docs,
                             repo: lib.links.repo
                         }
-                    },
+                    }},
                     { upsert: true }
                 )
                 .then(() => true)
-                .catch(() => false);
+                .catch(console.error);
         }
         if (
             !(await global.db

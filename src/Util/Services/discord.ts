@@ -144,6 +144,7 @@ export async function postMetric() {
 }
 
 export async function postWebMetric(type: string) {
+    if (!global.db) return
     const bots: delBot[] = await global.db.collection("bots").find().toArray();
 
     const servers: delServer[] = await global.db

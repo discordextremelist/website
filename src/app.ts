@@ -145,7 +145,8 @@ new Promise<void>((resolve, reject) => {
                 sentinels: settings.secrets.redis.sentinels,
                 name: settings.secrets.redis.name,
                 db: settings.secrets.redis.db,
-                password: settings.secrets.redis.passwd
+                password: settings.secrets.redis.passwd,
+                sentinelPassword: settings.secrets.redis.passwd
             };
         } else {
             redisConfig = {

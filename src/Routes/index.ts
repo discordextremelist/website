@@ -135,8 +135,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
         switch ((req.query.tag as string).toLowerCase()) {
             case "slashcommands":
                 icon = "fa-slash fa-flip-horizontal has-text-blurple";
-                title = res.__("common.bots.title.slashcommands")
-                subtitle = res.__("common.bots.subtitle.filter.slashcommands", {a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">', ea: "</a>"})
+                title = res.__("common.bots.title.applicationCommands")
+                subtitle = res.__("common.bots.subtitle.filter.applicationCommands", {a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">', a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">', ea: "</a>"})
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, scopes }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && scopes?.slashCommands

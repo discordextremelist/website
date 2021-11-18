@@ -394,9 +394,9 @@
     const idDetails = document.querySelector('#idDetails')
     const clientID = document.querySelector('#clientID')
     const name = document.querySelector('#appName')
-    const botScope = document.querySelector('#bot').checked
     const shortDesc = document.querySelector('#form_shortDescription')
     const privacy = document.querySelector('#form_privacyPolicy')
+    const invite = document.querySelector('#form_invite')
 
     const onScopeChange = () => {
         clientIDDisplayCheck()
@@ -436,13 +436,14 @@
             document.getElementById("errors").style.display = "block";
             document.getElementById("errorList").innerText = '<%= __("common.error.bot.conflict") %>'
             scroll(0, 0);
-        } else document.getElementById("errors").style.display = "none";
-
-        getApp(id.value)
+        } else {
+            document.getElementById("errors").style.display = "none";
+            getApp(id.value)
+        }
     })
 
     const getApp = async id => {
-        const app = await (await fetch(`https://discord.com/api/v8/applications/${id}/rpc`)).json()
+        const app = await (await fetch(`https://discord.com/api/v9/applications/${id}/rpc`)).json()
         if (!app.id) return
 
         name.innerText = app.name
@@ -451,7 +452,7 @@
             document.getElementById("errors").style.display = "block";
             document.getElementById("errorList").innerText = '<%- __("common.error.bot.arr.notPublic") %>'
             scroll(0, 0);
-        } else if (botScope && !('bot_public' in app)) {
+        } else if (bot.checked && !('bot_public' in app)) {
             document.getElementById("errors").style.display = "block";
             document.getElementById("errorList").innerText = '<%= __("common.error.bot.arr.noBot") %>'
             scroll(0, 0);
@@ -459,6 +460,19 @@
             document.getElementById("errors").style.display = "none";
             if (!shortDesc.value && app.description) shortDesc.value = app.description
             if (!privacy.value && app.privacy_policy_url) privacy.value = app.privacy_policy_url
+
+            if (app.install_params) {
+                const scopes = app.install_params.scopes
+                if (scopes.includes('bot')) bot.checked = true
+                if (scopes.includes('applications.commands')) slashcommands.checked = true
+
+                if (!invite.value)
+                    invite.value = `https://discord.com/api/oauth2/authorize?client_id=${id}&scope=${scopes.join('+')}${app.install_params.permissions !== '0' ? `&permissions=${app.install_params.permissions}` : ''}`
+            } else if (!invite.value && app.custom_install_url) invite.value = app.custom_install_url
+
+            ;['fun', 'social', 'economy', 'utility', 'moderation', 'multipurpose', 'music'].forEach(tag => {
+                if (app.tags.some(t => t.toLowerCase() === tag)) document.getElementById(tag).checked = true
+            })
         }
     }
 
@@ -471,9 +485,10 @@
             document.getElementById("errors").style.display = "block";
             document.getElementById("errorList").innerHTML = '<%= __("common.error.bot.arr.clientIDTooLong") %>'
             scroll(0, 0);
-        } else document.getElementById("errors").style.display = "none";
-
-        getApp(clientID.value)
+        } else {
+            document.getElementById("errors").style.display = "none";
+            getApp(clientID.value)
+        }
     })
 
     bot.addEventListener('change', onScopeChange)

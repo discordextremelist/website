@@ -43,16 +43,6 @@
         <form id="form" method="POST">
             <h3 class="is-size-3 has-text-default"><%= __("page.form.category.generalInfo") %></h3>
             <br>
-            <label class="label has-text-default"><%= __("page.bots.generalInfo.scopes") %> <span class="has-text-danger">*</span></label>
-            <div class="field">
-                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="bot" name="bot" <% if (bot.scopes?.bot) { %> checked <% } %>>
-                <label class="has-text-default" for="bot"><%= __("common.bot") %></label>
-            </div>
-            <div class="field">
-                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="slashcommands" name="slashcommands" <% if (bot.scopes?.slashCommands) { %> checked <% } %>>
-                <label class="has-text-default" for="slashcommands"><%= __("common.applicationCommands") %></label>
-            </div>
-            <br>
             <div class="field">
                 <label class="label has-text-default"><span id="idText"><%= __("page.bots.generalInfo.clientID") %></span> <span class="has-text-danger">(<%= __("common.form.readOnly") %>)</span></label>
                 <p class="control has-icons-left" required>
@@ -61,6 +51,16 @@
                         <i aria-hidden="true" class="fas fa-hashtag"></i>
                     </span>
                 </p>
+            </div>
+            <br>
+            <label class="label has-text-default"><%= __("page.bots.generalInfo.scopes") %> <span class="has-text-danger">*</span></label>
+            <div class="field">
+                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="bot" name="bot" <% if (bot.scopes?.bot) { %> checked <% } %>>
+                <label class="has-text-default" for="bot"><%= __("common.bot") %></label>
+            </div>
+            <div class="field">
+                <input class="is-checkradio is-circle has-background-color is-default" type="checkbox" id="slashcommands" name="slashcommands" <% if (bot.scopes?.slashCommands) { %> checked <% } %>>
+                <label class="has-text-default" for="slashcommands"><%= __("common.applicationCommands") %></label>
             </div>
             <br>
             <div class="field" id="clientIDBlock" style="display: none">

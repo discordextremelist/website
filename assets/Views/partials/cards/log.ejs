@@ -22,13 +22,13 @@
         <div style="display: none;" id="rawLOG-<%= log._id %>">
             <div class="columns">
                 <% if (log.details.old) { %>
-                    <div class="column is-one-half">
+                    <div class="column is-one-half" style="min-width: 0">
                         <span class="is-size-5"><%= __("page.staff.audit.before") %></span>
                         <br />
                         <pre class="has-background-primary"><code class="prettyprint"><%= JSON.stringify(log.details.old, null, 4) %></code></pre>
                     </div>
                 <% } %>
-                <div class="column is-one-half">
+                <div class="column is-one-half" style="min-width: 0">
                     <span class="is-size-5"><%= __("page.staff.audit.after") %></span>
                     <br />
                     <pre class="has-background-primary"><code class="prettyprint"><%= JSON.stringify(log.details.new, null, 4) %></code></pre>

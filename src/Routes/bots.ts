@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import type { Response as fetchRes } from "../../@types/fetch";
-import type { APIApplication, APIApplicationCommand, RESTPostOAuth2AccessTokenResult } from "discord-api-types/v8";
+import { APIApplication, APIApplicationCommand, APIUser, PresenceUpdateStatus, RESTPostOAuth2AccessTokenResult, UserFlags } from "discord-api-types/v8";
 import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord-api-types/v8"
 
 import * as fetch from "node-fetch";
@@ -512,6 +512,13 @@ router.post(
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
+        let userFlags = 0
+
+        if (req.body.bot) {
+            const user = await discord.bot.api.users(req.body.id).get().catch(() => {}) as APIUser
+            if (user.public_flags) userFlags = user.public_flags
+        }
+
         if (error === true)
             return res.status(400).json({
                 error: true,
@@ -557,6 +564,7 @@ router.post(
                     reviewNotes: [],
                     editors,
                     commands,
+                    userFlags,
                     owner: {
                         id: req.user.id
                     },
@@ -1453,6 +1461,13 @@ router.post(
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
+        let userFlags = 0
+
+        if (req.body.bot) {
+            const user = await discord.bot.api.users(bot._id).get().catch(() => {}) as APIUser
+            if (user.public_flags) userFlags = user.public_flags
+        }
+
         if (error === true) {
             req.body.status
                 ? (req.body.status.premium = botExists.status.premium)
@@ -1489,6 +1504,7 @@ router.post(
                             longDesc: req.body.longDescription,
                             editors,
                             commands,
+                            userFlags,
                             icon: {
                                 hash: app.icon,
                                 url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
@@ -1765,6 +1781,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         title: `${bot.name} | ${res.__("common.bots.discord")}`,
         subtitle: bot.shortDesc,
         bot: bot,
+        showStatus: botStatus !== PresenceUpdateStatus.Offline || (!bot.scopes || bot.scopes.bot) && (!('userFlags' in bot) || !(bot.userFlags & UserFlags.BotHTTPInteractions)),
         longDesc: clean,
         botOwner: botOwner,
         botStatus: botStatus,
@@ -2771,6 +2788,13 @@ router.post(
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
+        let userFlags = 0
+
+        if (req.body.bot) {
+            const user = await discord.bot.api.users(bot._id).get().catch(() => {}) as APIUser
+            if (user.public_flags) userFlags = user.public_flags
+        }
+
         if (error === true)
             return res.status(400).json({
                 error: true,
@@ -2802,6 +2826,7 @@ router.post(
                             longDesc: req.body.longDescription,
                             editors,
                             commands,
+                            userFlags,
                             icon: {
                                 hash: app.icon,
                                 url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
@@ -3989,6 +4014,13 @@ router.get(
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
+        let userFlags = 0
+
+        if (bot.scopes?.bot) {
+            const user = await discord.bot.api.users(bot._id).get().catch(() => {}) as APIUser
+            if (user.public_flags) userFlags = user.public_flags
+        }
+
         discord.bot.api
             .applications(botExists.clientID || req.params.id).rpc
             .get()
@@ -4009,7 +4041,8 @@ router.get(
                                 hash: app.icon,
                                 url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                             },
-                            commands
+                            commands,
+                            userFlags
                         } as delBot
                     }
                 );

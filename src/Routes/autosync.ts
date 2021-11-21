@@ -25,7 +25,7 @@ import * as botCache from "../Util/Services/botCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
-import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication } from "discord-api-types/v8";
+import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord-api-types/v8";
 import * as settings from "../../settings.json";
 
 const router = express.Router();
@@ -86,6 +86,13 @@ router.get('/bots', async (req, res) => {
                 if (Array.isArray(receivedCommands)) commands = receivedCommands;
             }
         }
+
+        let userFlags = 0
+
+        if (botExists.scopes?.bot) {
+            const user = await discord.bot.api.users(id).get().catch(() => {}) as APIUser
+            if (user.public_flags) userFlags = user.public_flags
+        }
         
         await global.db.collection("bots").updateOne(
             { _id: id },
@@ -96,7 +103,8 @@ router.get('/bots', async (req, res) => {
                         hash: app.icon,
                         url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                     },
-                    commands
+                    commands,
+                    userFlags
                 } as delBot
             }
         );

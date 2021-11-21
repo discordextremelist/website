@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PresenceUpdateStatus } from "discord-api-types/v8";
+import { PresenceUpdateStatus, UserFlags } from "discord-api-types/v8";
 import * as functions from "../Function/main";
 
 export async function getFeaturedBots(): Promise<delBot[]> {
@@ -43,10 +43,11 @@ export async function updateFeaturedBots() {
                 .collection("bots")
                 .find()
                 .toArray()) as delBot[]).filter(
-                ({ _id, status, scopes }) =>
+                ({ _id, status, scopes, userFlags }) =>
                     status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden &&
                     ((statuses[_id] && statuses[_id] !== PresenceUpdateStatus.Offline) ||
-                    scopes?.slashCommands)
+                    !scopes?.bot ||
+                    userFlags === undefined || userFlags & UserFlags.BotHTTPInteractions)
             )
         )
         .slice(0, 6);

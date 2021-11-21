@@ -204,6 +204,7 @@ declare global {
         reviewNotes: reviewNote[];
         editors: string[];
         commands: APIApplicationCommand[];
+        userFlags?: UserFlags;
         owner: {
             id: Snowflake;
         };

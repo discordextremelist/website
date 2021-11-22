@@ -67,7 +67,7 @@
   },
   "scripts": {
     "compile": "rm -rf dist/ && tsc",
-    "start": "node  --max-old-space-size=2048 dist/src/app",
+    "start": "node  --max-old-space-size=8192 dist/src/app",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",
     "css-compile": "sh ./scripts/css_build.sh",
     "setup": "node scripts/setup",

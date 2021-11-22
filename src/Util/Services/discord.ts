@@ -24,6 +24,7 @@ import * as settings from "../../../settings.json";
 import moment from "moment";
 import { PresenceUpdateStatus } from "discord-api-types/v8";
 import * as botCache from "./botCaching";
+import cluster from "cluster";
 
 const prefix = "statuses";
 
@@ -258,8 +259,10 @@ export async function postTodaysGrowth() {
     } else return;
 }
 
-setInterval(async () => {
-    postWebMetric("user");
-    postWebMetric("bot_unapproved");
-    await postTodaysGrowth();
-}, 5000);
+if (cluster.isWorker) {
+    setInterval(async () => {
+        postWebMetric("user");
+        postWebMetric("bot_unapproved");
+        await postTodaysGrowth();
+    }, 5000);
+}

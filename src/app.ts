@@ -28,7 +28,6 @@ import cookieParser from "cookie-parser";
 import createError from "http-errors";
 import passport from "passport";
 import logger from "morgan";
-import cluster from "cluster";
 
 import * as botCache from "./Util/Services/botCaching";
 import * as serverCache from "./Util/Services/serverCaching";
@@ -54,143 +53,57 @@ import i18n from "i18n";
 import * as settings from "../settings.json";
 import { MongoClient } from "mongodb";
 import { RedisOptions } from "ioredis";
-import { cpus } from "os";
 
 const app = express();
 
-logger.token("worker", (req, res) => process.env.WORKER_ID);
+if (!settings.website.dev) Sentry.init({ dsn: settings.secrets.sentry, release: "website@" + process.env.npm_package_version, environment: "production" });
+if (!settings.website.dev) app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
 
-if (cluster.isMaster) {
-    new Promise<void>((resolve, reject) => {
-        console.time("Mongo TTL");
-        MongoClient.connect(
-            settings.secrets.mongo.uri,
-            { useUnifiedTopology: true, useNewUrlParser: true }, // useNewUrlParser is set to true because sometimes MongoDB is a cunt - Ice, I love this comment - Cairo
-            (error, mongo) => {
-                if (error) return reject(error);
-                global.db = mongo.db(settings.secrets.mongo.db);
-                console.log(
-                    "Mongo: Connection established! Released deadlock as a part of startup..."
-                );
-                console.timeEnd("Mongo TTL");
-                resolve();
-            }
+app.use(
+    "/fonts/fa/webfonts/*",
+    (req: Request, res: Response, next: () => void) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header(
+            "Access-Control-Allow-Headers",
+            "Origin, X-Requested-With, Content-Type, Accept"
         );
-    }).then(async () => {
+        next();
+    }
+);
+
+app.set("views", path.join(__dirname + "/../../assets/Views"));
+app.use(express.static(path.join(__dirname + "/../../assets/Public")));
+
+new Promise<void>((resolve, reject) => {
+    console.time("Mongo TTL");
+    MongoClient.connect(
+        settings.secrets.mongo.uri,
+        { useUnifiedTopology: true, useNewUrlParser: true }, // useNewUrlParser is set to true because sometimes MongoDB is a cunt - Ice, I love this comment - Cairo
+        (error, mongo) => {
+            if (error) return reject(error);
+            global.db = mongo.db(settings.secrets.mongo.db);
+            console.log(
+                "Mongo: Connection established! Released deadlock as a part of startup..."
+            );
+            console.timeEnd("Mongo TTL");
+            resolve();
+        }
+    );
+})
+    .then(async () => {
         for (const lib of require("../../assets/libraries.json")) {
             await global.db
                 .collection("libraries")
                 .updateOne(
                     { _id: lib.name },
-                    {
-                        $set: {
-                            _id: lib.name,
-                            language: lib.language,
-                            links: {
-                                docs: lib.links.docs,
-                                repo: lib.links.repo
-                            }
+                    { $set: {
+                        _id: lib.name,
+                        language: lib.language,
+                        links: {
+                            docs: lib.links.docs,
+                            repo: lib.links.repo
                         }
-                    },
-                    { upsert: true }
-                )
-                .then(() => true)
-                .catch(console.error);
-        }
-        if (
-            !(await global.db
-                .collection("webOptions")
-                .findOne({ _id: "ddosMode" })) ||
-            !(await global.db
-                .collection("webOptions")
-                .findOne({ _id: "announcement" }))
-        ) {
-            await global.db
-                .collection("webOptions")
-                .insertOne({
-                    _id: "ddosMode",
-                    active: false
-                })
-                .then(() => true)
-                .catch(() => false);
-            await global.db
-                .collection("webOptions")
-                .insertOne({
-                    _id: "announcement",
-                    active: false,
-                    message: "",
-                    colour: "",
-                    foreground: ""
-                })
-                .then(() => true)
-                .catch(() => false);
-        }
-
-        let redisConfig: RedisOptions;
-
-        if (settings.secrets.redis.sentinels.length > 0) {
-            redisConfig = {
-                sentinels: settings.secrets.redis.sentinels,
-                name: settings.secrets.redis.name,
-                db: settings.secrets.redis.db,
-                password: settings.secrets.redis.passwd,
-                sentinelPassword: settings.secrets.redis.passwd
-            };
-        } else {
-            redisConfig = {
-                port: settings.secrets.redis.port,
-                host: settings.secrets.redis.host,
-                db: settings.secrets.redis.db,
-                password: settings.secrets.redis.passwd
-            };
-        }
-
-        global.redis = new (require("ioredis"))(redisConfig);
-
-        /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems.
-         - Ice*/
-        const numThread = cpus().length;
-        console.log(`Initialised everything with the database, spawning ${numThread} threads!`);
-        let up = 0;
-        for (let i = 0; i < numThread; i++) {
-            cluster.fork({ WORKER_ID: i, global });
-        }
-        cluster.on("exit", (worker, code, signal) => {
-            console.log(`Worker ${worker.process.pid} exited with (${code}, ${signal || "N/A"})`);
-        });
-    });
-} else {
-    new Promise<void>((resolve, reject) => {
-        console.time("Mongo TTL");
-        MongoClient.connect(
-            settings.secrets.mongo.uri,
-            { useUnifiedTopology: true, useNewUrlParser: true }, // useNewUrlParser is set to true because sometimes MongoDB is a cunt - Ice, I love this comment - Cairo
-            (error, mongo) => {
-                if (error) return reject(error);
-                global.db = mongo.db(settings.secrets.mongo.db);
-                console.log(
-                    "Mongo: Connection established! Released deadlock as a part of startup..."
-                );
-                console.timeEnd("Mongo TTL");
-                resolve();
-            }
-        );
-    }).then(async () => {
-        for (const lib of require("../../assets/libraries.json")) {
-            await global.db
-                .collection("libraries")
-                .updateOne(
-                    { _id: lib.name },
-                    {
-                        $set: {
-                            _id: lib.name,
-                            language: lib.language,
-                            links: {
-                                docs: lib.links.docs,
-                                repo: lib.links.repo
-                            }
-                        }
-                    },
+                    }},
                     { upsert: true }
                 )
                 .then(() => true)
@@ -288,7 +201,7 @@ if (cluster.isMaster) {
             if (
                 typeof discord.bot.guilds !== "undefined" &&
                 typeof discord.guilds.main !==
-                "undefined"
+                    "undefined"
             ) {
                 await banned.updateBanlist();
                 await discord.uploadStatuses();
@@ -296,34 +209,13 @@ if (cluster.isMaster) {
                 setTimeout(discordBotUndefined, 250);
             }
         })();
-        if (!settings.website.dev) Sentry.init({
-            dsn: settings.secrets.sentry,
-            release: "website@" + process.env.npm_package_version,
-            environment: "production"
-        });
-        if (!settings.website.dev) app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
-
-        app.use(
-            "/fonts/fa/webfonts/*",
-            (req: Request, res: Response, next: () => void) => {
-                res.header("Access-Control-Allow-Origin", "*");
-                res.header(
-                    "Access-Control-Allow-Headers",
-                    "Origin, X-Requested-With, Content-Type, Accept"
-                );
-                next();
-            }
-        );
-
-        app.set("views", path.join(__dirname + "/../../assets/Views"));
-        app.use(express.static(path.join(__dirname + "/../../assets/Public")));
 
         app.set("view engine", "ejs");
 
         app.use(
             logger(
                 // @ts-expect-error
-                ':worker :req[cf-connecting-ip] - [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
+                ':req[cf-connecting-ip] - [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
                 {
                     skip: (r: { url: string }) =>
                         r.url === "/profile/game/snakes"
@@ -448,8 +340,10 @@ if (cluster.isMaster) {
                 `Website: Ready on port ${settings.website.port.value || 3000}`
             );
         });
-        console.log(`Worker ${parseInt(process.env.WORKER_ID)+1} (${process.pid}) is up!`);
+    })
+    .catch((e) => {
+        console.error("Mongo error: ", e);
+        process.exit(1);
     });
-}
 
 export = app;

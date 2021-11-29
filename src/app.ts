@@ -78,7 +78,7 @@ new Promise<void>((resolve, reject) => {
     console.time("Mongo TTL");
     MongoClient.connect(
         settings.secrets.mongo.uri,
-        { useUnifiedTopology: true, useNewUrlParser: true }, // useNewUrlParser is set to true because sometimes MongoDB is a cunt - Ice, I love this comment - Cairo
+        {},
         (error, mongo) => {
             if (error) return reject(error);
             global.db = mongo.db(settings.secrets.mongo.db);
@@ -118,7 +118,7 @@ new Promise<void>((resolve, reject) => {
                 .findOne({ _id: "announcement" }))
         ) {
             await global.db
-                .collection("webOptions")
+                .collection<any>("webOptions")
                 .insertOne({
                     _id: "ddosMode",
                     active: false
@@ -126,7 +126,7 @@ new Promise<void>((resolve, reject) => {
                 .then(() => true)
                 .catch(() => false);
             await global.db
-                .collection("webOptions")
+                .collection<announcement>("webOptions")
                 .insertOne({
                     _id: "announcement",
                     active: false,

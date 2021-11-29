@@ -544,7 +544,7 @@ router.post(
                         errors: [res.__("common.error.bot.arr.noBot")]
                     });
                 
-                await global.db.collection("bots").insertOne({
+                await global.db.collection<delBot>("bots").insertOne({
                     _id: req.body.id,
                     clientID: req.body.clientID,
                     name: app.name,
@@ -1087,7 +1087,7 @@ router.post(
         }
 
         const botExists: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!botExists)
@@ -1684,11 +1684,11 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
 
     if (!bot) {
         bot = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
         if (!bot) {
             bot = await global.db
-                .collection("bots")
+                .collection<delBot>("bots")
                 .findOne({ vanityUrl: req.params.id });
             if (!bot)
                 return res.status(404).render("status", {
@@ -1721,7 +1721,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     let botOwner = await userCache.getUser(bot.owner.id);
     if (!botOwner) {
         botOwner = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: bot.owner.id });
     }
 
@@ -1839,12 +1839,12 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         let bot = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot) {
             bot = await global.db
-                .collection("bots")
+                .collection<delBot>("bots")
                 .findOne({ vanityUrl: req.params.id });
 
             if (!bot)
@@ -1940,7 +1940,7 @@ router.get(
             }
         );
 
-        await botCache.updateBot(bot._id);
+        await botCache.updateBot(<string> bot._id);
 
         res.redirect(`/bots/${bot._id}`);
     }
@@ -1952,12 +1952,12 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         let bot = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot) {
             bot = await global.db
-                .collection("bots")
+                .collection<delBot>("bots")
                 .findOne({ vanityUrl: req.params.id });
 
             if (!bot)
@@ -2065,12 +2065,12 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         let bot = await global.db
-            .collection("bots")
-            .findOne({ _id: req.params.id }) as delBot;
+            .collection<delBot>("bots")
+            .findOne({ _id: req.params.id });
 
         if (!bot) {
             bot = await global.db
-                .collection("bots")
+                .collection<delBot>("bots")
                 .findOne({ vanityUrl: req.params.id });
 
             if (!bot)
@@ -2127,12 +2127,12 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         let bot = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id }) as delBot;
 
         if (!bot) {
             bot = await global.db
-                .collection("bots")
+                .collection<delBot>("bots")
                 .findOne({ vanityUrl: req.params.id });
 
             if (!bot)
@@ -2195,12 +2195,12 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         let bot = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id }) as delBot;
 
         if (!bot) {
             bot = await global.db
-                .collection("bots")
+                .collection<delBot>("bots")
                 .findOne({ vanityUrl: req.params.id });
 
             if (!bot)
@@ -2262,12 +2262,12 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         let bot = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id }) as delBot;
 
         if (!bot) {
             bot = await global.db
-                .collection("bots")
+                .collection<delBot>("bots")
                 .findOne({ vanityUrl: req.params.id });
 
             if (!bot)
@@ -2416,7 +2416,7 @@ router.post(
         }
 
         const botExists: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!botExists)
@@ -3000,7 +3000,7 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3128,7 +3128,7 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3203,8 +3203,8 @@ router.get(
     permission.auth,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const bot: delBot | undefined = await global.db
-            .collection("bots")
+        const bot = await global.db
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3254,8 +3254,8 @@ router.get(
     permission.auth,
     permission.mod,
     async (req: Request, res: Response) => {
-        const bot: delBot | undefined = await global.db
-            .collection("bots")
+        const bot: delBot = await global.db
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3300,7 +3300,7 @@ router.post(
     permission.mod,
     async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3418,7 +3418,7 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3458,7 +3458,7 @@ router.post(
     permission.mod,
     async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3578,7 +3578,7 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3618,7 +3618,7 @@ router.post(
     permission.mod,
     async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3740,7 +3740,7 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3771,7 +3771,7 @@ router.post(
     permission.mod,
     async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3880,7 +3880,7 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const bot: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!bot)
@@ -3969,7 +3969,7 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         const botExists: delBot | undefined = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
 
         if (!botExists)

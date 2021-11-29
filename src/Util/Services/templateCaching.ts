@@ -32,7 +32,7 @@ export async function getAllTemplates(): Promise<delTemplate[]> {
 
 export async function updateTemplate(id: string) {
     const data: delTemplate = await global.db
-        .collection("templates")
+        .collection<delTemplate>("templates")
         .findOne({ _id: id });
     if (!data) return;
     await global.redis?.hmset(prefix, id, JSON.stringify(data));
@@ -40,7 +40,7 @@ export async function updateTemplate(id: string) {
 
 export async function uploadTemplates() {
     const templates: delTemplate[] = await global.db
-        .collection("templates")
+        .collection<delTemplate>("templates")
         .find()
         .toArray();
     if (templates.length < 1) return;

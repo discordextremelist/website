@@ -40,7 +40,7 @@ export async function updateFeaturedBots() {
     const bots = functions
         .shuffleArray(
             ((await global.db
-                .collection("bots")
+                .collection<delBot>("bots")
                 .find()
                 .toArray()) as delBot[]).filter(
                 ({ _id, status, scopes, userFlags }) =>
@@ -82,7 +82,7 @@ export async function updateFeaturedServers() {
     const servers = functions
         .shuffleArray(
             ((await global.db
-                .collection("servers")
+                .collection<delServer>("servers")
                 .find()
                 .toArray()) as delServer[]).filter(
                 ({ status }) => status && !status.reviewRequired
@@ -107,7 +107,7 @@ export async function updateFeaturedTemplates() {
     const templates = functions
         .shuffleArray(
             (await global.db
-                .collection("templates")
+                .collection<delTemplate>("templates")
                 .find()
                 .toArray()) as delTemplate[]
         )

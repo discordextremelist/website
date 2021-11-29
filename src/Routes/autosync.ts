@@ -50,7 +50,7 @@ router.get('/bots', async (req, res) => {
     if (!id) id = ids[0]
 
     const botExists: delBot = await global.db
-        .collection("bots")
+        .collection<delBot>("bots")
         .findOne({ _id: id });
 
     if (botExists) try {
@@ -130,7 +130,7 @@ router.get('/servers', async (req, res) => {
     if (!id) id = ids[0]
 
     const server: delServer = await global.db
-        .collection("servers")
+        .collection<delServer>("servers")
         .findOne({ _id: id });
 
     if (server) try {
@@ -176,7 +176,7 @@ router.get('/templates', async (req, res) => {
     if (!id) id = ids[0]
 
     const dbTemplate: delTemplate = await global.db
-        .collection("templates")
+        .collection<delTemplate>("templates")
         .findOne({ _id: id });
 
     if (dbTemplate) try {

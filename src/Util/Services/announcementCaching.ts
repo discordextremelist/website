@@ -24,7 +24,7 @@ global.announcement = {
     message: "",
     colour: "",
     foreground: ""
-};
+} as any;
 
 export function getAnnouncement() {
     return global.announcement;
@@ -79,12 +79,12 @@ export async function updateAnnouncement(announcement, req: Request) {
         message: announcement.message,
         colour: announcement.colour,
         foreground: announcement.foreground
-    };
+    } as any;
 }
 
 export async function updateCache() {
     const announcement = await global.db
-        .collection("webOptions")
+        .collection<announcement>("webOptions")
         .findOne({ _id: "announcement" });
 
     global.announcement = announcement;

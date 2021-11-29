@@ -79,13 +79,13 @@ router.get(
 
     async (req, res, next) => {
         const user: delUser = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.user.id });
 
         const { scopes } = await (await fetch("https://discord.com/api/v8/oauth2/@me", {headers: {authorization: `Bearer ${req.user.accessToken}`}})).json() as {scopes: OAuth2Scopes[]}
 
         if (!user) {
-            await global.db.collection("users").insertOne({
+            await global.db.collection<delUser>("users").insertOne({
                 _id: req.user.id,
                 auth: {
                     accessToken: req.user.accessToken,

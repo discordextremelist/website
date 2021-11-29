@@ -56,7 +56,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     let delUser: delUser | undefined = await userCache.getUser(req.params.id);
     if (!delUser) {
         delUser = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
         if (!delUser)
             return res.status(404).render("status", {
@@ -137,7 +137,7 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const targetUser: delUser = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!targetUser)
@@ -186,7 +186,7 @@ router.post(
     permission.assistant,
     async (req: Request, res: Response) => {
         const targetUser: delUser = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!targetUser)
@@ -331,7 +331,7 @@ router.get(
         );
 
         const db: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         return res.json({ cache: cache, db: db });
@@ -369,7 +369,7 @@ router.get(
         }
 
         const userProfile: delUser = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
             return res.status(404).render("status", {
@@ -419,7 +419,7 @@ router.post(
         }
 
         const userProfile: delUser = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
             return res.status(404).render("status", {
@@ -520,7 +520,7 @@ router.get(
         }
 
         const userProfile: delUser = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
             return res.status(404).render("status", {
@@ -627,7 +627,7 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         const user: delUser = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.user.id });
 
         res.status(200).json({
@@ -652,7 +652,7 @@ router.post(
             });
 
         const user: delUser = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.user.id });
         const score = user.game.snakes.maxScore + 1;
 

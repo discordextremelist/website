@@ -32,7 +32,7 @@ export async function getAllUsers(): Promise<delUser[]> {
 
 export async function updateUser(id: string) {
     const data: delUser = await global.db
-        .collection("users")
+        .collection<delUser>("users")
         .findOne({ _id: id });
     if (!data) return;
     await global.redis?.hmset(prefix, id, JSON.stringify(data));
@@ -40,7 +40,7 @@ export async function updateUser(id: string) {
 
 export async function uploadUsers() {
     const usersDB: delUser[] = await global.db
-        .collection("users")
+        .collection<delUser>("users")
         .find()
         .toArray();
     if (usersDB.length < 1) return;

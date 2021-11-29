@@ -83,6 +83,7 @@ router.get(
         const bots: delBot[] = await global.db
             .collection("bots")
             .find()
+            .setCursorOption("allowDiskUse", [true])
             .sort({ "date.submitted": -1 })
             .toArray();
 
@@ -110,6 +111,7 @@ router.get(
         const servers: delServer[] = await global.db
             .collection("servers")
             .find()
+            .setCursorOption("allowDiskUse", [true])
             .sort({ "date.submitted": -1 })
             .toArray();
 
@@ -134,6 +136,7 @@ router.get(
         const bots: delBot[] = await global.db
             .collection("bots")
             .find()
+            .setCursorOption("allowDiskUse", [true])
             .sort({ "date.submitted": -1 })
             .toArray();
 
@@ -167,6 +170,7 @@ router.get(
         const logs: auditLog[] = ((await global.db
             .collection("audit")
             .find()
+            .setCursorOption("allowDiskUse", [true])
             .sort({ date: -1 })
             .toArray()) as auditLog[]).filter(
             ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"

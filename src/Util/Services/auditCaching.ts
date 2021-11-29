@@ -33,6 +33,7 @@ export async function uploadAuditLogs() {
     const logs: auditLog[] = ((await global.db
         .collection("audit")
         .find()
+        .setCursorOption("allowDiskUse", [true])
         .sort({ date: -1 })
         .toArray()) as auditLog[]).filter(
         ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"

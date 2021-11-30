@@ -18,6 +18,8 @@ jobs:
           node-version: 14
       - name: snyk install
         run: npm i -g snyk
+      - name: install
+        run: npm install
       - name: dependencies
         run: npm ci
       - name: settings

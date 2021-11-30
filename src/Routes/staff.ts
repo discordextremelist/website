@@ -81,9 +81,10 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const bots: delBot[] = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .find()
             .sort({ "date.submitted": -1 })
+            .allowDiskUse()
             .toArray();
 
         res.locals.premidPageInfo = res.__("premid.staff.queue");
@@ -108,9 +109,10 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const servers: delServer[] = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .find()
             .sort({ "date.submitted": -1 })
+            .allowDiskUse()
             .toArray();
 
         res.locals.premidPageInfo = res.__("premid.staff.server_queue");
@@ -132,9 +134,10 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const bots: delBot[] = await global.db
-            .collection("bots")
+            .collection<delBot>("bots")
             .find()
             .sort({ "date.submitted": -1 })
+            .allowDiskUse()
             .toArray();
 
         for (const bot of bots) {
@@ -165,9 +168,10 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const logs: auditLog[] = ((await global.db
-            .collection("audit")
+            .collection<auditLog>("audit")
             .find()
             .sort({ date: -1 })
+            .allowDiskUse()
             .toArray()) as auditLog[]).filter(
             ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
         );
@@ -205,7 +209,7 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const users: delUser[] = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .find()
             .toArray();
 
@@ -215,7 +219,7 @@ router.get(
                 let executor = await userCache.getUser(warning.executor);
                 if (!executor) {
                     executor = await global.db
-                        .collection("users")
+                        .collection<delUser>("users")
                         .findOne({ _id: warning.executor });
                 }
 
@@ -226,7 +230,7 @@ router.get(
                 let executor = await userCache.getUser(strike.executor);
                 if (!executor) {
                     executor = await global.db
-                        .collection("users")
+                        .collection<delUser>("users")
                         .findOne({ _id: strike.executor });
                 }
 
@@ -257,7 +261,7 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const user: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!user)
@@ -302,7 +306,7 @@ router.post(
     permission.assistant,
     async (req: Request, res: Response) => {
         const user: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!user)
@@ -376,7 +380,7 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const user: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!user)
@@ -445,7 +449,7 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const user: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!user)
@@ -518,7 +522,7 @@ router.post(
     permission.assistant,
     async (req: Request, res: Response) => {
         const user: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!user)
@@ -593,7 +597,7 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const user: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!user)
@@ -643,7 +647,7 @@ router.post(
     permission.assistant,
     async (req: Request, res: Response) => {
         const user: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!user)
@@ -711,7 +715,7 @@ router.get(
     permission.assistant,
     async (req: Request, res: Response) => {
         const user: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!user)
@@ -761,7 +765,7 @@ router.post(
     permission.assistant,
     async (req: Request, res: Response) => {
         const user: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         if (!user)
@@ -922,13 +926,14 @@ router.get(
         if (tokenCheck === false) return res.json({});
 
         let user: delUser | undefined = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
         discord.bot.api.users(req.params.id).get()
             .then(async (discordUser: APIUser) => {
                 if (!user) {
-                    await global.db.collection("users").insertOne({
+                    await global.db.collection<any>("users").insertOne({
+                        auth: { accessToken: "", expires: 0, refreshToken: "", scopes: [] }, flags: undefined,
                         _id: req.params.id,
                         token: "",
                         name: discordUser.username,
@@ -947,7 +952,7 @@ router.get(
                             defaultColour: "#b114ff",
                             defaultForegroundColour: "#ffffff",
                             enableGames: true,
-                            experiments: false
+                            experiments: false,
                         },
                         profile: {
                             bio: "",
@@ -1082,7 +1087,7 @@ router.get(
                 }
 
                 user = await global.db
-                    .collection("users")
+                    .collection<delUser>("users")
                     .findOne({ _id: req.params.id });
                 if (!req.user.impersonator) req.user.impersonator = req.user.id;
                 req.user.id = req.params.id as Snowflake;

@@ -32,7 +32,7 @@ export async function getAllServers(): Promise<delServer[]> {
 
 export async function updateServer(id: string) {
     const data: delServer = await global.db
-        .collection("servers")
+        .collection<delServer>("servers")
         .findOne({ _id: id });
     if (!data) return;
     await global.redis?.hmset(prefix, id, JSON.stringify(data));
@@ -40,7 +40,7 @@ export async function updateServer(id: string) {
 
 export async function uploadServers() {
     const servers: delServer[] = await global.db
-        .collection("servers")
+        .collection<delServer>("servers")
         .find()
         .toArray();
     if (servers.length < 1) return;

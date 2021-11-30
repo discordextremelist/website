@@ -42,8 +42,9 @@ export async function activateDDOSMode() {
 }
 
 export async function updateCache(): Promise<void> {
+    // @ts-ignore
     const ddosMode: ddosMode = await global.db
-        .collection("webOptions")
+        .collection<ddosMode>("webOptions")
         .findOne({ _id: "ddosMode" });
     if (ddosMode) global.ddosMode.active = ddosMode.active;
     return;

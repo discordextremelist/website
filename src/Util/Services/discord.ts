@@ -145,20 +145,20 @@ export async function postMetric() {
 
 export async function postWebMetric(type: string) {
     if (!global.db) return
-    const bots: delBot[] = await global.db.collection("bots").find().toArray();
+    const bots: delBot[] = await global.db.collection<delBot>("bots").find().toArray();
 
     const servers: delServer[] = await global.db
-        .collection("servers")
+        .collection<delServer>("servers")
         .find()
         .toArray();
 
     const templates: delTemplate[] = await global.db
-        .collection("templates")
+        .collection<delTemplate>("templates")
         .find()
         .toArray();
 
     const users: delUser[] = await global.db
-        .collection("users")
+        .collection<delUser>("users")
         .find()
         .toArray();
 
@@ -181,7 +181,7 @@ export async function postWebMetric(type: string) {
                     }
                 );
             } else {
-                await global.db.collection("webOptions").insertOne({
+                await global.db.collection<any>("webOptions").insertOne({
                     _id: "todaysGrowth",
                     count: 1,
                     lastPosted: Date.now()
@@ -227,10 +227,10 @@ export async function postWebMetric(type: string) {
 
 export async function postTodaysGrowth() {
     const todaysGrowth: botsAddedToday = await global.db
-        .collection("webOptions")
+        .collection<botsAddedToday>("webOptions")
         .findOne({ _id: "todaysGrowth" });
     if (!todaysGrowth)
-        return await global.db.collection("webOptions").insertOne({
+        return await global.db.collection<any>("webOptions").insertOne({
             _id: "todaysGrowth",
             count: 0,
             lastPosted: Date.now()

@@ -190,7 +190,7 @@ export const variables = async (
         user = await userCache.getUser(req.user.id);
 
         if (!user) 
-            user = await global.db.collection("users").findOne({ _id: req.user.id });
+            user = await global.db.collection<delUser>("users").findOne({ _id: req.user.id });
         
         req.user.db = user;
 

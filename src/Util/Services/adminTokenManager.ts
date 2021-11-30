@@ -18,21 +18,22 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import * as crypto from "crypto";
+import { ObjectId } from "mongodb";
 
 export async function tokenResetAll() {
     const users: delUser[] = await global.db
-        .collection("users")
+        .collection<delUser>("users")
         .find()
         .toArray();
 
     const tokenRefreshing = await global.db
-        .collection("webOptions")
+        .collection<any>("webOptions")
         .findOne({ _id: "tokenRefreshing" });
 
     if (!tokenRefreshing) {
         const validUntil = Date.now() + 300000;
 
-        return await global.db.collection("webOptions").insertOne({
+        return await global.db.collection<any>("webOptions").insertOne({
             _id: "tokenRefreshing",
             lastUpdate: Date.now(),
             validUntil: validUntil
@@ -59,7 +60,7 @@ export async function tokenResetAll() {
                     .findOne({ _id: user._id });
 
                 if (!token) {
-                    await global.db.collection("adminTokens").insertOne({
+                    await global.db.collection<any>("adminTokens").insertOne({
                         _id: user._id,
                         token:
                             "DELadminKey_" +
@@ -95,7 +96,7 @@ export async function tokenReset(id: string) {
 
     if (!token) {
         return await global.db.collection("adminTokens").insertOne({
-            _id: id,
+            _id: new ObjectId(id),
             token:
                 "DELadminKey_" +
                 crypto.randomBytes(16).toString("hex") +
@@ -120,7 +121,7 @@ export async function tokenReset(id: string) {
 
 export async function verifyToken(id: string, token: string) {
     const adminToken = await global.db
-        .collection("adminTokens")
+        .collection<any>("adminTokens")
         .findOne({ _id: id });
 
     if (!adminToken) return false;

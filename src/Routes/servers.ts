@@ -237,7 +237,7 @@ router.post(
                 const serverExists:
                     | delServer
                     | undefined = await global.db
-                    .collection("servers")
+                    .collection<delServer>("servers")
                     .findOne({ _id: invite.guild.id });
                 if (serverExists)
                     return res.status(409).json({
@@ -253,7 +253,7 @@ router.post(
                         errors: [res.__("common.error.server.invite.expires")]
                     });
 
-                await global.db.collection("servers").insertOne({
+                await global.db.collection<delServer>("servers").insertOne({
                     _id: invite.guild.id,
                     inviteCode: req.body.invite,
                     name: invite.guild.name,
@@ -370,7 +370,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     );
     if (!server) {
         server = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
         if (!server)
             return res.status(404).render("status", {
@@ -391,7 +391,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     );
     if (!serverOwner) {
         serverOwner = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: server.owner.id });
     }
 
@@ -457,7 +457,7 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         const server: delServer | undefined = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
 
         if (!server)
@@ -509,7 +509,7 @@ router.post(
         let errors: string[] = [];
 
         const server: delServer | undefined = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
 
         if (!server)
@@ -815,7 +815,7 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const server: delServer | undefined = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
 
         if (!server)
@@ -869,7 +869,7 @@ router.post(
     permission.mod,
     async (req: Request, res: Response) => {
         const server: delServer | undefined = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
 
         if (!server)
@@ -987,7 +987,7 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const server: delServer | undefined = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
 
         if (!server)
@@ -1080,7 +1080,7 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         const server: delServer | undefined = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
 
         if (!server)
@@ -1136,7 +1136,7 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const server: delServer | undefined = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
 
         if (!server)
@@ -1170,7 +1170,7 @@ router.post(
     permission.mod,
     async (req: Request, res: Response) => {
         const server: delServer | undefined = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
 
         if (!server)
@@ -1251,7 +1251,7 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         const server: delServer | undefined = await global.db
-            .collection("servers")
+            .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
 
         if (!server)

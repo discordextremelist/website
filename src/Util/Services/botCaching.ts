@@ -37,7 +37,7 @@ export async function getAllBots(): Promise<delBot[]> {
 
 export async function updateBot(id: string) {
     const data: delBot = await global.db
-        .collection("bots")
+        .collection<delBot>("bots")
         .findOne({ _id: id });
     if (!data) return;
     await global.redis?.hmset(prefix, id, JSON.stringify(data));
@@ -45,7 +45,7 @@ export async function updateBot(id: string) {
 
 export async function uploadBots() {
     const botsDB: delBot[] = await global.db
-        .collection("bots")
+        .collection<delBot>("bots")
         .find()
         .toArray();
     if (botsDB.length < 1) return;

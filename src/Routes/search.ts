@@ -63,7 +63,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
     if (!!only && only.includes("users")) {
         if (req.user && req.user.id) {
             const user: delUser = await global.db
-                .collection("users")
+                .collection<delUser>("users")
                 .findOne({ _id: req.user.id });
             if (!user.rank.mod)
                 return res

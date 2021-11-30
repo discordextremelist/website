@@ -21,11 +21,11 @@ import moment from "moment";
 
 export async function botStatsUpdate() {
     const botStats: botStats = await global.db
-        .collection("webOptions")
+        .collection<botStats>("webOptions")
         .findOne({ _id: "botStats" });
 
     if (!botStats) {
-        return await global.db.collection("webOptions").insertOne({
+        return await global.db.collection<any>("webOptions").insertOne({
             _id: "botStats",
             lastUpdate: Date.now()
         });
@@ -34,7 +34,7 @@ export async function botStatsUpdate() {
     const date = moment().diff(moment(botStats.lastUpdate), "days");
     if (date > 2) {
         const users: delUser[] = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .find()
             .toArray();
         for (const user of users) {

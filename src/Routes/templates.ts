@@ -112,7 +112,7 @@ router.post(
         const templateExists:
             | delTemplate
             | undefined = await global.db
-            .collection("templates")
+            .collection<delTemplate>("templates")
             .findOne({ _id: req.body.code });
         if (templateExists)
             return res.status(409).json({
@@ -157,7 +157,7 @@ router.post(
 
         discord.bot.api.guilds.templates(req.body.code).get()
             .then(async (template: APITemplate) => {
-                await global.db.collection("templates").insertOne({
+                await global.db.collection<delTemplate>("templates").insertOne({
                     _id: template.code,
                     name: template.name,
                     region: template.serialized_source_guild.region,
@@ -300,7 +300,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     );
     if (!template) {
         template = await global.db
-            .collection("templates")
+            .collection<delTemplate>("templates")
             .findOne({ _id: req.params.id });
         if (!template)
             return res.status(404).render("status", {
@@ -320,7 +320,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     );
     if (!templateOwner) {
         templateOwner = await global.db
-            .collection("users")
+            .collection<delUser>("users")
             .findOne({ _id: template.owner.id });
     }
 
@@ -385,7 +385,7 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         const template: delTemplate | undefined = await global.db
-            .collection("templates")
+            .collection<delTemplate>("templates")
             .findOne({ _id: req.params.id });
 
         if (!template)
@@ -440,7 +440,7 @@ router.post(
         let errors = [];
 
         const dbTemplate: delTemplate | undefined = await global.db
-            .collection("templates")
+            .collection<delTemplate>("templates")
             .findOne({ _id: req.params.id });
 
         if (!dbTemplate)
@@ -692,7 +692,7 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         const template: delTemplate | undefined = await global.db
-            .collection("templates")
+            .collection<delTemplate>("templates")
             .findOne({ _id: req.params.id });
 
         if (!template)
@@ -750,7 +750,7 @@ router.get(
     permission.mod,
     async (req: Request, res: Response) => {
         const template: delTemplate | undefined = await global.db
-            .collection("templates")
+            .collection<delTemplate>("templates")
             .findOne({ _id: req.params.id });
 
         if (!template)
@@ -783,7 +783,7 @@ router.post(
     permission.mod,
     async (req: Request, res: Response) => {
         const template: delTemplate | undefined = await global.db
-            .collection("templates")
+            .collection<delTemplate>("templates")
             .findOne({ _id: req.params.id });
 
         if (!template)
@@ -868,7 +868,7 @@ router.get(
     permission.auth,
     async (req: Request, res: Response) => {
         const dbTemplate: delTemplate | undefined = await global.db
-            .collection("templates")
+            .collection<delTemplate>("templates")
             .findOne({ _id: req.params.id });
 
         if (!dbTemplate)

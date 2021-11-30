@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 interface announcement {
+    _id: string;
     id?: string;
     active: boolean;
     message: string;
@@ -32,6 +33,7 @@ interface ddosMode {
 }
 
 interface botStats {
+    _id: string;
     id?: string;
     lastUpdate: number;
 }

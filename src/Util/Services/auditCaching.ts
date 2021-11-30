@@ -31,9 +31,10 @@ export async function getAllAuditLogs(): Promise<auditLog[]> {
 
 export async function uploadAuditLogs() {
     const logs: auditLog[] = ((await global.db
-        .collection("audit")
+        .collection<auditLog>("audit")
         .find()
         .sort({ date: -1 })
+        .allowDiskUse()
         .toArray()) as auditLog[]).filter(
         ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
     );

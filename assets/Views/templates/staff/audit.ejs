@@ -1,11 +1,11 @@
 <%- include("../../partials/header.ejs") %>
 <%- include("../../partials/nav.ejs") %>
 <% 
-    let defaultColour = "#b114ff";
+    let defaultColour = "#BA2EFF";
     let foreground = "#ffffff";
 
     if (req.user) {
-        defaultColour = req.user.db.preferences.defaultColour || "#b114ff"
+        defaultColour = req.user.db.preferences.defaultColour || "#BA2EFF"
         foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
     }
 %>

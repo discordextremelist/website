@@ -949,7 +949,7 @@ router.get(
                         },
                         preferences: {
                             customGlobalCss: "",
-                            defaultColour: "#b114ff",
+                            defaultColour: "#BA2EFF",
                             defaultForegroundColour: "#ffffff",
                             enableGames: true,
                             experiments: false,

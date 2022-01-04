@@ -218,12 +218,12 @@ export const variables = async (
         : (req.session.logoutJustCont = false);
     req.session.logoutJust = false;
 
-    res.locals.defaultColour = "#b114ff";
+    res.locals.defaultColour = "#BA2EFF";
     res.locals.foreground = "#ffffff";
 
     if (req.user) {
         res.locals.defaultColour =
-            req.user.db.preferences.defaultColour || "#b114ff";
+            req.user.db.preferences.defaultColour || "#BA2EFF";
         res.locals.foreground =
             req.user.db.preferences.defaultForegroundColour || "#ffffff";
     }

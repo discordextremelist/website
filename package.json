@@ -63,7 +63,7 @@
     "bulma": "^0.8.2",
     "bulma-extensions": "^6.2.7",
     "ejs-lint": "^1.2.1",
-    "node-sass": "^6.0.1"
+    "node-sass": "^7.0.1"
   },
   "scripts": {
     "compile": "rm -rf dist/ && tsc",

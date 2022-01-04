@@ -36,7 +36,8 @@
                 "it-IT",
                 "pt-PT",
                 "tr-TR",
-                "sv-SE"
+                "sv-SE",
+                "nl-NL"
             ],
             "isRTL": ["he-IL"]
         },

@@ -32,7 +32,7 @@
     "moment": "^2.29.1",
     "mongodb": "~4.2.0",
     "morgan": "~1.10.0",
-    "node-fetch": "^2.6.6",
+    "node-fetch": "^3.1.1",
     "passport": "^0.4.1",
     "passport-discord": "^0.1.4",
     "passport-oauth2-refresh": "^2.1.0",

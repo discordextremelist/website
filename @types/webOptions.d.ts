@@ -27,6 +27,7 @@ interface announcement {
 }
 
 interface ddosMode {
+    _id?: string;
     id?: string;
     active: boolean;
     requests: number;

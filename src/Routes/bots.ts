@@ -470,7 +470,7 @@ router.post(
         let editors: any[];
 
         if (req.body.editors !== "") {
-            editors = [...new Set(req.body.editors.split(/\D+/g))];
+            editors = ([...new Set(req.body.editors.split(/\D+/g))]).filter(editor => editor !== '');
         } else {
             editors = [];
         }
@@ -1419,7 +1419,7 @@ router.post(
         let editors: any[];
 
         if (req.body.editors !== "") {
-            editors = [...new Set(req.body.editors.split(/\D+/g))];
+            editors = ([...new Set(req.body.editors.split(/\D+/g))]).filter(editor => editor !== '');
         } else {
             editors = [];
         }
@@ -2746,7 +2746,7 @@ router.post(
         let editors: any[];
 
         if (req.body.editors !== "") {
-            editors = [...new Set(req.body.editors.split(/\D+/g))];
+            editors = ([...new Set(req.body.editors.split(/\D+/g))]).filter(editor => editor !== '');
         } else {
             editors = [];
         }

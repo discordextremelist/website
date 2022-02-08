@@ -1789,7 +1789,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         staffServer: settings.guild.staff,
         webUrl: settings.website.url,
         req: req,
-        editors,
+        editors: (editors.filter(editor => editor !== '')),
         votes: bot.votes.positive.length - bot.votes.negative.length,
         functions,
         privacyIsURL: functions.isURL(bot.links.privacyPolicy),

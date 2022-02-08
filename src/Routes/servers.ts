@@ -657,6 +657,7 @@ router.post(
         if (req.body.lgbt === true) {
             tags.push("LGBT");
             if (!server.tags.includes("LGBT")) reviewRequired = true;
+            if (server.tags.includes("LGBT") && server.status.reviewRequired === true) reviewRequired = true;
         }
 
         if (error === true)

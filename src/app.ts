@@ -168,15 +168,28 @@ new Promise<void>((resolve, reject) => {
         const lock = await global.redis.get("cache_lock");
         if (lock && lock != hostname()) { // We have a lock, but it is not held for us.
             console.log(`Lock is currently held by ${lock}. Waiting for caching to finish before proceeding...`);
+            const remain = await global.redis.ttl("cache_lock");
+            let got, r;
+            if (remain > 0) {
+                console.log(`Going to wait another ${remain} seconds before the lock is released, assuming cache is done if no event is emitted.`);
+                setTimeout(() => {
+                    if (!got) {
+                        r();
+                        console.log("Cache TTL expired, assuming caching is over.");
+                    }
+                }, remain * 1000);
+            }
             await new Promise<void>((res, _) => {
-                s.subscribe("cache_ready", err => {
+                r = res;
+                s.subscribe("cache_lock", err => {
                     if (err) {
                         console.error(`Subscription failed: ${err}, exiting...`);
                         process.exit();
                     }
                 });
                 s.on("message", (chan, m) => {
-                    if (chan === "cache_ready" && m === "ready") {
+                    if (chan === "cache_lock" && m === "ready") {
+                        got = true;
                         res();
                         console.log("Caching has completed, app will continue starting.");
                     }
@@ -184,7 +197,7 @@ new Promise<void>((resolve, reject) => {
             });
         } else {
             console.log("No one has the cache lock currently, acquiring it.");
-            await global.redis.setex("cache_lock", 300, hostname());
+            await global.redis.setex("cache_lock", 60, hostname());
             console.time("Redis");
             await userCache.uploadUsers();
             await botCache.uploadBots();

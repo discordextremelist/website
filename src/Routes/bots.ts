@@ -164,7 +164,7 @@ router.post(
                 error = true;
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
-            
+
             await discord.bot.api.users(req.body.clientID).get()
                 .then(() => {
                     error = true;
@@ -543,7 +543,7 @@ router.post(
                         status: 400,
                         errors: [res.__("common.error.bot.arr.noBot")]
                     });
-                
+
                 await global.db.collection<delBot>("bots").insertOne({
                     _id: req.body.id,
                     clientID: req.body.clientID,
@@ -1490,7 +1490,7 @@ router.post(
                         status: 400,
                         errors: [res.__("common.error.bot.arr.notPublic")]
                     });
-                
+
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
@@ -1645,7 +1645,7 @@ router.post(
                     .catch((e) => {
                         console.error(e);
                     });
-        
+
                 return res.status(200).json({
                     error: false,
                     status: 200,
@@ -1789,6 +1789,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         staffServer: settings.guild.staff,
         webUrl: settings.website.url,
         req: req,
+        // @ts-ignore
         editors: (editors.filter(editor => editor !== '')),
         votes: bot.votes.positive.length - bot.votes.negative.length,
         functions,
@@ -2394,7 +2395,7 @@ router.post(
             error = true;
             errors.push(res.__("common.error.bot.arr.noScopes"));
         }
-        
+
         if (req.body.clientID) {
             if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
                 error = true;
@@ -2812,7 +2813,7 @@ router.post(
                         status: 400,
                         errors: [res.__("common.error.bot.arr.notPublic")]
                     });
-                
+
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
@@ -2965,7 +2966,7 @@ router.post(
                     .catch((e) => {
                         console.error(e);
                     });
-        
+
                 return res.status(200).json({
                     error: false,
                     status: 200,
@@ -4031,7 +4032,7 @@ router.get(
                         status: 400,
                         errors: [res.__("common.error.bot.arr.notPublic")]
                     });
-                
+
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {

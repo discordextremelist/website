@@ -219,7 +219,6 @@ new Promise<void>((resolve, reject) => {
             console.timeEnd("Bot stats update");
             await global.redis.publish("cache_lock", "ready");
             await global.redis.del("cache_lock");
-            await global.redis.del("fetch_lock");
             console.log("Dropped cache lock!");
         }
 

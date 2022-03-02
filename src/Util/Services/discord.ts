@@ -67,7 +67,8 @@ bot.on("ready", async () => {
     await uploadStatuses();
 
     const lock = await global.redis.get("fetch_lock");
-    if (lock != hostname()) {
+
+    if (lock && lock != hostname()) {
         console.log(`Skipping discord caching. The instance which holds the lock is: ${lock}`);
     } else {
         console.time("Bot cache");
@@ -81,6 +82,7 @@ bot.on("ready", async () => {
                 .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
         });
         console.timeEnd("Bot cache");
+        await global.redis.del("fetch_lock");
     }
 
 });

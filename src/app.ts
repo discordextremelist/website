@@ -197,7 +197,10 @@ new Promise<void>((resolve, reject) => {
             });
         } else {
             console.log("No one has the cache lock currently, acquiring it.");
-            await global.redis.setex("cache_lock", 60, hostname());
+            // 300 seconds is a good rule of thumb, it is expected that DEL has another instance running.
+            await global.redis.setex("fetch_lock", 300, hostname());
+            console.log("Also acquired the discord lock!");
+            await global.redis.setex("cache_lock", 300, hostname());
             console.time("Redis");
             await userCache.uploadUsers();
             await botCache.uploadBots();
@@ -216,6 +219,7 @@ new Promise<void>((resolve, reject) => {
             console.timeEnd("Bot stats update");
             await global.redis.publish("cache_lock", "ready");
             await global.redis.del("cache_lock");
+            await global.redis.del("fetch_lock");
             console.log("Dropped cache lock!");
         }
 

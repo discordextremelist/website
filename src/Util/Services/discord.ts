@@ -24,6 +24,7 @@ import * as settings from "../../../settings.json";
 import moment from "moment";
 import { PresenceUpdateStatus } from "discord-api-types/v8";
 import * as botCache from "./botCaching";
+import { hostname } from "os";
 
 const prefix = "statuses";
 
@@ -65,13 +66,23 @@ bot.on("ready", async () => {
 
     await uploadStatuses();
 
-    botCache.getAllBots().then(bots => {
-        const botsToFetch = []
-        bots.forEach(bot => {
-            if (!guilds.main.members.cache.has(bot._id)) botsToFetch.push(bot._id)
-        })
-        guilds.main.members.fetch({user: botsToFetch})
-    })
+    const lock = await global.redis.get("fetch_lock");
+    if (lock != hostname()) {
+        console.log(`Skipping discord caching. The instance which holds the lock is: ${lock}`);
+    } else {
+        console.time("Bot cache");
+        botCache.getAllBots().then(bots => {
+            const botsToFetch = []
+            bots.forEach(bot => {
+                if (!guilds.main.members.cache.has(bot._id)) botsToFetch.push(bot._id)
+            })
+            guilds.main.members.fetch({user: botsToFetch})
+                .then(x => console.log(`Retrieved ${}`))
+                .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
+        });
+        console.timeEnd("Bot cache");
+    }
+
 });
 
 bot.on("presenceUpdate", async (oldPresence, newPresence) => {

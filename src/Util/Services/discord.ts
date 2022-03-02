@@ -77,7 +77,7 @@ bot.on("ready", async () => {
                 if (!guilds.main.members.cache.has(bot._id)) botsToFetch.push(bot._id)
             })
             guilds.main.members.fetch({user: botsToFetch})
-                .then(x => console.log(`Retrieved ${}`))
+                .then(x => console.log(`Retrieved ${x.size} members!`))
                 .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
         });
         console.timeEnd("Bot cache");

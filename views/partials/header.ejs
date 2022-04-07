@@ -9,7 +9,7 @@
     <link href="/img/logo.png" type="image/png" rel="icon">
     <link href="/css/theme/<%= preferredTheme %>/standard.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet">
     <% if (pageType.bot === true) { 
-        let color = "#b114ff"
+        let color = "#BA2EFF"
         if(req.user) color = req.user.db.preferences.defaultColour
         if(bot.theme?.useCustomColour) {
             color = bot.theme.colour;
@@ -17,21 +17,21 @@
         }
     %>
     <style>
-        .has-text-default { color: <%= color || "#b114ff" %> !important; }
-        .select:not(.is-multiple):not(.is-loading)::after { border-color: <%= color || "#b114ff" %> !important; }
-        .has-text-default:hover { color: <% if (req.user) { %><%= colour(`${req.user.db.preferences.defaultColour}`).darken(0.1) || colour("#b114ff").darken(0.1) %><% } else { %><%= colour("#b114ff").darken(0.1) %><% } %>; }
-        .has-background-default { background-color: <%= color || "#b114ff" %>; color: <%= foreground || "#ffffff" %>; }
-        ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<%= color || "#b114ff" %>}::-webkit-scrollbar-thumb:hover{background:<%= color || "#b114ff" %>}
+        .has-text-default { color: <%= color || "#BA2EFF" %> !important; }
+        .select:not(.is-multiple):not(.is-loading)::after { border-color: <%= color || "#BA2EFF" %> !important; }
+        .has-text-default:hover { color: <% if (req.user) { %><%= colour(`${req.user.db.preferences.defaultColour}`).darken(0.1) || colour("#BA2EFF").darken(0.1) %><% } else { %><%= colour("#BA2EFF").darken(0.1) %><% } %>; }
+        .has-background-default { background-color: <%= color || "#BA2EFF" %>; color: <%= foreground || "#ffffff" %>; }
+        ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<%= color || "#BA2EFF" %>}::-webkit-scrollbar-thumb:hover{background:<%= color || "#BA2EFF" %>}
     </style>
     <% } else { %>
         <style>
-            .has-text-default { color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %> !important; }
-            .select:not(.is-multiple):not(.is-loading)::after { border-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %> !important; }
-            .has-text-default:hover { color: <% if (req.user) { %><%= colour(`${req.user.db.preferences.defaultColour}`).darken(0.1) || colour("#b114ff").darken(0.1) %><% } else { %><%= colour("#b114ff").darken(0.1) %><% } %>; }
-            .has-background-default { background-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>; color: <% if (req.user) { %><%= req.user.db.preferences.defaultForegroundColour || "#ffffff" %><% } else { %>#ffffff<% } %>; }
-            ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}::-webkit-scrollbar-thumb:hover{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#b114ff" %><% } else { %>#b114ff<% } %>}
-            <% if (req.user) { %>.editorBackdrop { filter: drop-shadow(0px 1px 2px <%= req.user.db.preferences.defaultColour || "#b114ff" %>) }<% } %>
-            .is-checkradio[type="checkbox"].is-default.has-background-color+label::before { background-color: <%= req.user?.db.preferences.defaultColour || "#b114ff" %> !important }
+            .has-text-default { color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#BA2EFF" %><% } else { %>#BA2EFF<% } %> !important; }
+            .select:not(.is-multiple):not(.is-loading)::after { border-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#BA2EFF" %><% } else { %>#BA2EFF<% } %> !important; }
+            .has-text-default:hover { color: <% if (req.user) { %><%= colour(`${req.user.db.preferences.defaultColour}`).darken(0.1) || colour("#BA2EFF").darken(0.1) %><% } else { %><%= colour("#BA2EFF").darken(0.1) %><% } %>; }
+            .has-background-default { background-color: <% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#BA2EFF" %><% } else { %>#BA2EFF<% } %>; color: <% if (req.user) { %><%= req.user.db.preferences.defaultForegroundColour || "#ffffff" %><% } else { %>#ffffff<% } %>; }
+            ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-track{background:<%= siteThemeColour %>}::-webkit-scrollbar-thumb{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#BA2EFF" %><% } else { %>#BA2EFF<% } %>}::-webkit-scrollbar-thumb:hover{background:<% if (req.user) { %><%= req.user.db.preferences.defaultColour || "#BA2EFF" %><% } else { %>#BA2EFF<% } %>}
+            <% if (req.user) { %>.editorBackdrop { filter: drop-shadow(0px 1px 2px <%= req.user.db.preferences.defaultColour || "#BA2EFF" %>) }<% } %>
+            .is-checkradio[type="checkbox"].is-default.has-background-color+label::before { background-color: <%= req.user?.db.preferences.defaultColour || "#BA2EFF" %> !important }
         </style>
     <% } %>
     <% if (req.user) { %><style><%= req.user.db.preferences.customGlobalCss %></style><% } %>
@@ -61,7 +61,7 @@
     <meta name="distribution" content="global">
     <meta name="revisit-after" content="1 day">
 
-    <meta name="theme-color" content="<%= (pageType.bot === true && bot.theme?.useCustomColour) ? bot.theme.colour : req.user ? req.user.db.preferences.defaultColour || "#b114ff" : "#b114ff" %>">
+    <meta name="theme-color" content="<%= (pageType.bot === true && bot.theme?.useCustomColour) ? bot.theme.colour : req.user ? req.user.db.preferences.defaultColour || "#BA2EFF" : "#BA2EFF" %>">
 
     <% if (dev === true) { %>
         <meta name="robots" content="noindex">

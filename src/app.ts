@@ -53,6 +53,7 @@ import i18n from "i18n";
 import * as settings from "../settings.json";
 import { MongoClient } from "mongodb";
 import { RedisOptions } from "ioredis";
+import { hostname } from "os";
 
 const app = express();
 
@@ -158,27 +159,68 @@ new Promise<void>((resolve, reject) => {
         }
 
         global.redis = new (require("ioredis"))(redisConfig);
+        const s = new (require("ioredis"))(redisConfig);
 
         /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems.
          - Ice*/
 
-        console.time("Redis");
-        await userCache.uploadUsers();
-        await botCache.uploadBots();
-        await serverCache.uploadServers();
-        await templateCache.uploadTemplates();
-        await auditCache.uploadAuditLogs();
-        await libCache.cacheLibs();
-        await announcementCache.updateCache();
-        await featuredCache.updateFeaturedServers();
-        await featuredCache.updateFeaturedTemplates();
-        await ddosMode.updateCache();
-        await tokenManager.tokenResetAll();
-        console.timeEnd("Redis");
-
-        console.time("Bot stats update");
-        await botStatsUpdate();
-        console.timeEnd("Bot stats update");
+        console.log("Attempting to acquire caching lock...");
+        const lock = await global.redis.get("cache_lock");
+        if (lock && lock != hostname()) { // We have a lock, but it is not held for us.
+            console.log(`Lock is currently held by ${lock}. Waiting for caching to finish before proceeding...`);
+            const remain = await global.redis.ttl("cache_lock");
+            let got, r;
+            if (remain > 0) {
+                console.log(`Going to wait another ${remain} seconds before the lock is released, assuming cache is done if no event is emitted.`);
+                setTimeout(() => {
+                    if (!got) {
+                        r();
+                        console.log("Cache TTL expired, assuming caching is over.");
+                    }
+                }, remain * 1000);
+            }
+            await new Promise<void>((res, _) => {
+                r = res;
+                s.subscribe("cache_lock", err => {
+                    if (err) {
+                        console.error(`Subscription failed: ${err}, exiting...`);
+                        process.exit();
+                    }
+                });
+                s.on("message", (chan, m) => {
+                    if (chan === "cache_lock" && m === "ready") {
+                        got = true;
+                        res();
+                        console.log("Caching has completed, app will continue starting.");
+                    }
+                });
+            });
+        } else {
+            console.log("No one has the cache lock currently, acquiring it.");
+            // 300 seconds is a good rule of thumb, it is expected that DEL has another instance running.
+            await global.redis.setex("fetch_lock", 300, hostname());
+            console.log("Also acquired the discord lock!");
+            await global.redis.setex("cache_lock", 300, hostname());
+            console.time("Redis");
+            await userCache.uploadUsers();
+            await botCache.uploadBots();
+            await serverCache.uploadServers();
+            await templateCache.uploadTemplates();
+            await auditCache.uploadAuditLogs();
+            await libCache.cacheLibs();
+            await announcementCache.updateCache();
+            await featuredCache.updateFeaturedServers();
+            await featuredCache.updateFeaturedTemplates();
+            await ddosMode.updateCache();
+            await tokenManager.tokenResetAll();
+            console.timeEnd("Redis");
+            console.time("Bot stats update");
+            await botStatsUpdate();
+            console.timeEnd("Bot stats update");
+            await global.redis.publish("cache_lock", "ready");
+            await global.redis.del("cache_lock");
+            console.log("Dropped cache lock!");
+        }
 
         await discord.bot.login(settings.secrets.discord.token);
 

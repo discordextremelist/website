@@ -1,6 +1,6 @@
 {
   "name": "del-website",
-  "version": "v5.4.12-Release",
+  "version": "v5.4.22-Release",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
   "main": "dist/src/app.js",
   "directories": {
@@ -88,5 +88,8 @@
     "Advaith Jagathesan <advaithj1@gmail.com>"
   ],
   "license": "AGPL-3.0",
-  "snyk": true
+  "snyk": true,
+  "volta": {
+    "node": "14.18.3"
+  }
 }

@@ -71,7 +71,7 @@ app.use(
     }
 );
 
-app.set("views", path.join(__dirname + "/../../assets/Views"));
+app.set("views", path.join(__dirname + "/../../views"));
 app.use(express.static(path.join(__dirname + "/../../assets/Public")));
 
 new Promise<void>((resolve, reject) => {

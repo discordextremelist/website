@@ -24,8 +24,8 @@ import { Strategy } from "passport-discord";
 import type { VerifyCallback } from "passport-oauth2"
 import refresh from "passport-oauth2-refresh"
 import * as discord from "../Util/Services/discord";
-import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v8";
-import { OAuth2Scopes } from "discord-api-types/v8"
+import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
+import { OAuth2Scopes } from "discord-api-types/v10"
 import type { DiscordAPIError } from "discord.js";
 import fetch from "node-fetch";
 import * as userCache from "../Util/Services/userCaching"

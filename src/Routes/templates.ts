@@ -31,7 +31,7 @@ import * as userCache from "../Util/Services/userCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import { variables } from "../Util/Function/variables";
 import * as tokenManager from "../Util/Services/adminTokenManager";
-import type { APITemplate } from "discord-api-types/v8";
+import type { APITemplate } from "discord-api-types/v10";
 import type { DiscordAPIError } from "discord.js";
 import { MessageEmbed } from "discord.js";
 import type { templateReasons } from "../../@types/enums";

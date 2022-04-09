@@ -20,8 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import type { Response as fetchRes } from "../../@types/fetch";
-import { APIApplication, APIApplicationCommand, APIUser, PresenceUpdateStatus, RESTPostOAuth2AccessTokenResult, UserFlags } from "discord-api-types/v8";
-import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord-api-types/v8"
+import { APIApplication, APIApplicationCommand, APIUser, PresenceUpdateStatus, RESTPostOAuth2AccessTokenResult, UserFlags } from "discord-api-types/v10";
+import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord-api-types/v10"
 
 import * as fetch from "node-fetch";
 import * as crypto from "crypto";

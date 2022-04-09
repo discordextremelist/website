@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { OAuth2Scopes } from "discord-api-types/v8";
+import { OAuth2Scopes } from "discord-api-types/v10";
 import { Request, Response } from "express";
 import * as settings from "../../../settings.json";
 import * as discord from "../Services/discord";

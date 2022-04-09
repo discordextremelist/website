@@ -25,7 +25,7 @@ import * as botCache from "../Util/Services/botCaching";
 import * as serverCache from "../Util/Services/serverCaching";
 import * as templateCache from "../Util/Services/templateCaching";
 import * as userCache from "../Util/Services/userCaching";
-import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord-api-types/v8";
+import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord-api-types/v10";
 import * as settings from "../../settings.json";
 
 const router = express.Router();

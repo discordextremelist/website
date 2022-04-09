@@ -20,8 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import type { Response as fetchRes } from "../../@types/fetch";
-import type { APIInvite, RESTGetAPIInviteQuery } from "discord-api-types/v8";
-import { RESTJSONErrorCodes } from "discord-api-types/v8"
+import type { APIInvite, RESTGetAPIInviteQuery } from "discord-api-types/v10";
+import { RESTJSONErrorCodes } from "discord-api-types/v10"
 
 import * as fetch from "node-fetch";
 import type { DiscordAPIError } from "discord.js";

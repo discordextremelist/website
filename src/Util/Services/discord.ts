@@ -22,7 +22,7 @@ import * as metrics from "datadog-metrics";
 
 import * as settings from "../../../settings.json";
 import moment from "moment";
-import { PresenceUpdateStatus } from "discord-api-types/v8";
+import { PresenceUpdateStatus } from "discord-api-types/v10";
 import * as botCache from "./botCaching";
 import { hostname } from "os";
 

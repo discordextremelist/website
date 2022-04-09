@@ -47,13 +47,13 @@ class Client extends Discord.Client {
 
 export const bot = new Client({
     allowedMentions: { parse: [] },
-    ws: { intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_PRESENCES"] },
+    intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_PRESENCES"],
     http: { version: 8 }
 });
 
-bot.on("guildBanRemove", async (guild, user) => {
-   if (guild.id === settings.guild.main) {
-       await global.redis?.hdel("bans", user.id);
+bot.on("guildBanRemove", async (ban) => {
+   if (ban.guild.id === settings.guild.main) {
+       await global.redis?.hdel("bans", ban.user.id);
    }
 });
 

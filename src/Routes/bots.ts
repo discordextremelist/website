@@ -19,11 +19,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import type { Response as fetchRes } from "../../@types/fetch";
 import { APIApplication, APIApplicationCommand, APIUser, PresenceUpdateStatus, RESTPostOAuth2AccessTokenResult, UserFlags } from "discord-api-types/v10";
 import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord-api-types/v10"
 
-import * as fetch from "node-fetch";
+import fetch from "node-fetch";
 import * as crypto from "crypto";
 import * as Discord from "discord.js";
 import sanitizeHtml from "sanitize-html";
@@ -43,6 +42,7 @@ import * as tokenManager from "../Util/Services/adminTokenManager";
 import { URL } from "url";
 import type { DiscordAPIError } from "discord.js";
 import type { botReasons } from "../../@types/enums";
+import { Response as fetchRes } from "node-fetch";
 
 const md = require("markdown-it")();
 const Entities = require("html-entities").XmlEntities;
@@ -299,7 +299,7 @@ router.post(
                 }),
                 headers: { 'Content-Type': 'application/json' },
             }).then(async (fetchRes: fetchRes) => {
-                    const { data } = await fetchRes.json();
+                    const data: any = await fetchRes.json();
                     if (data && !data.guild?.id) {
                         error = true;
                         errors.push(
@@ -358,7 +358,7 @@ router.post(
                     }),
                     headers: { 'Content-Type': 'application/json' },
                 }).then(async (fetchRes: fetchRes) => {
-                    const { data } = await fetchRes.json();
+                    const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
                         errors.push(
@@ -617,7 +617,7 @@ router.post(
                 } as delBot);
 
                 discord.channels.logs.send(
-                    `${settings.emoji.addBot} **${functions.escapeFormatting(
+                    `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
                         req.user.id
@@ -1245,7 +1245,7 @@ router.post(
                     }),
                     headers: { 'Content-Type': 'application/json' },
                 }).then(async (fetchRes: fetchRes) => {
-                    const { data } = await fetchRes.json();
+                    const data: any = await fetchRes.json();
                     if (data && !data.guild?.id) {
                         error = true;
                         errors.push(
@@ -1304,7 +1304,7 @@ router.post(
                     }),
                     headers: { 'Content-Type': 'application/json' },
                 }).then(async (fetchRes: fetchRes) => {
-                    const { data } = await fetchRes.json();
+                    const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
                         errors.push(
@@ -1632,7 +1632,7 @@ router.post(
                 await botCache.updateBot(req.params.id);
 
                 discord.channels.logs.send(
-                        `${settings.emoji.editBot} **${functions.escapeFormatting(
+                        `${settings.emoji.edit} **${functions.escapeFormatting(
                             req.user.db.fullUsername
                         )}** \`(${
                             req.user.id
@@ -1732,6 +1732,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     if (bot.status.premium === true) {
         clean = sanitizeHtml(dirty, {
             allowedTags: htmlRef.trusted.tags,
+            // @ts-ignore
             allowedAttributes: htmlRef.trusted.attributes,
             allowVulnerableTags: true
         });
@@ -2094,7 +2095,7 @@ router.get(
             });
 
         discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+            `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
@@ -2156,7 +2157,7 @@ router.get(
             });
 
         discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+            `${settings.emoji.archive} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
@@ -2224,7 +2225,7 @@ router.get(
             });
 
         discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+            `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
@@ -2291,7 +2292,7 @@ router.get(
             });
 
         discord.channels.logs.send(
-            `${settings.emoji.check} **${functions.escapeFormatting(
+            `${settings.emoji.unhide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
@@ -2577,7 +2578,7 @@ router.post(
                     }),
                     headers: { 'Content-Type': 'application/json' },
                 }).then(async (fetchRes: fetchRes) => {
-                    const { data } = await fetchRes.json();
+                    const data: any = await fetchRes.json();
                     if (data && !data.guild?.id) {
                         error = true;
                         errors.push(
@@ -2636,7 +2637,7 @@ router.post(
                 }),
                 headers: { 'Content-Type': 'application/json' },
             }).then(async (fetchRes: fetchRes) => {
-                    const { data } = await fetchRes.json();
+                    const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
                         errors.push(
@@ -2952,7 +2953,7 @@ router.post(
                 await botCache.updateBot(req.params.id);
 
                 discord.channels.logs.send(
-                        `${settings.emoji.resubmitBot} **${functions.escapeFormatting(
+                        `${settings.emoji.resubmit} **${functions.escapeFormatting(
                             req.user.db.fullUsername
                         )}** \`(${
                             req.user.id
@@ -3372,16 +3373,16 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send(
-            `${settings.emoji.cross} **${functions.escapeFormatting(
+        discord.channels.logs.send({ 
+            content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
             })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
             })\``,
-            { embed: embed }
-        );
+            embeds: [embed] 
+        });
 
         const member = await discord.getTestingGuildMember(req.params.id);
 
@@ -3531,16 +3532,16 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send(
-            `${settings.emoji.unapprove} **${functions.escapeFormatting(
+        discord.channels.logs.send({
+            content: `${settings.emoji.unapprove} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
             })\` unapproved bot **${functions.escapeFormatting(
                 bot.name
             )}** \`(${bot._id})\``,
-            { embed: embed }
-        );
+            embeds: [embed]
+        });
 
 
         const member = await discord.getMember(req.params.id);
@@ -3691,16 +3692,16 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+        discord.channels.logs.send({
+            content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
             })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
             })\``,
-            { embed: embed }
-        );
+            embeds: [embed] 
+        });
 
 
         const member = await discord.getMember(req.params.id);
@@ -3718,7 +3719,7 @@ router.post(
             owner
                 .send(
                     `${
-                        settings.emoji.botDeleted
+                        settings.emoji.delete
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
@@ -3842,23 +3843,23 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+        discord.channels.logs.send({
+            content: `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
             })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
             })\``,
-            { embed: embed }
-        );
+            embeds: [embed]
+        });
 
         const owner = await discord.getMember(bot.owner.id);
         if (owner)
             owner
                 .send(
                     `${
-                        settings.emoji.botDeleted
+                        settings.emoji.hide
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${
@@ -3921,7 +3922,7 @@ router.get(
         );
 
         discord.channels.logs.send(
-                `${settings.emoji.check} **${functions.escapeFormatting(
+                `${settings.emoji.unhide} **${functions.escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${
                     req.user.id

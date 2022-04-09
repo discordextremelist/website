@@ -23,15 +23,11 @@ import { Redis } from "ioredis";
 import strings from "del-i18n/website/en-NZ.json"
 
 declare global {
-    namespace NodeJS {
-        interface Global {
-            redis: Redis;
-            announcement: announcement;
-            ddosMode: ddosMode;
-            libs: library[];
-            db: Db;
-        }
-    }
+    var redis: Redis;
+    var announcement: announcement;
+    var ddosMode: ddosMode;
+    var libs: library[];
+    var db: Db;
 }
 
 declare module "sanitize-html" {
@@ -44,7 +40,7 @@ declare module "discord.js" {
     interface GuildMember {
         order?: number;
         rank?: string;
-        avatar?: string;
+        avatar: string | null;
         username?: string;
         discriminator?: string;
     }

@@ -296,7 +296,7 @@ declare global {
         defaultMessageNotifications: number;
         explicitContent: number;
         roles: Pick<APIRole, "name" | "color">[];
-        channels: Pick<APIChannel, "name" | "type" | "nsfw">[];
+        channels: Pick<APIChannel, "name" | "type">[];
         usageCount: number;
         shortDesc: string;
         longDesc: string;

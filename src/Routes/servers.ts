@@ -19,11 +19,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import type { Response as fetchRes } from "../../@types/fetch";
+import { Response as fetchRes } from "node-fetch";
 import type { APIInvite, RESTGetAPIInviteQuery } from "discord-api-types/v10";
 import { RESTJSONErrorCodes } from "discord-api-types/v10"
 
-import * as fetch from "node-fetch";
+import fetch from "node-fetch";
 import type { DiscordAPIError } from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
@@ -173,7 +173,7 @@ router.post(
                 }),
                 headers: { 'Content-Type': 'application/json' },
             }).then(async (fetchRes: fetchRes) => {
-                    const { data } = await fetchRes.json();
+                    const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
                         errors.push(
@@ -283,7 +283,7 @@ router.post(
                 } as delServer);
 
                 discord.channels.logs.send(
-                    `${settings.emoji.addBot} **${functions.escapeFormatting(
+                    `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
                         req.user.id
@@ -609,7 +609,7 @@ router.post(
                     }),
                     headers: { 'Content-Type': 'application/json' },
                 }).then(async (fetchRes: fetchRes) => {
-                    const { data } = await fetchRes.json();
+                    const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
                         errors.push(
@@ -714,7 +714,7 @@ router.post(
                 );
 
                 discord.channels.logs.send(
-                    `${settings.emoji.editBot} **${functions.escapeFormatting(
+                    `${settings.emoji.edit} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
                         req.user.id
@@ -946,8 +946,8 @@ router.post(
         embed.setURL(`${settings.website.url}/servers/${server._id}`);
         embed.setFooter("It will still be shown as a normal server, it was declined from being listed as an LGBT community.");
 
-        discord.channels.logs.send(
-            `${settings.emoji.cross} **${functions.escapeFormatting(
+        discord.channels.logs.send({
+            content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
@@ -956,8 +956,8 @@ router.post(
             )}** \`(${
                 server._id
             })\``,
-            { embed: embed }
-        );
+            embeds: [embed]
+        });
 
         const owner = await discord.getMember(server.owner.id);
         if (owner)
@@ -1103,7 +1103,7 @@ router.get(
             });
 
         discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+            `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
@@ -1213,23 +1213,23 @@ router.post(
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+        discord.channels.logs.send({
+            content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
             })\` removed server **${functions.escapeFormatting(
                 server.name
             )}** \`(${server._id})\``,
-            { embed }
-        );
+            embeds: [embed]
+        });
 
         const owner = await discord.getMember(server.owner.id);
         if (owner)
             owner
                 .send(
                     `${
-                        settings.emoji.botDeleted
+                        settings.emoji.delete
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
                     )}** \`(${server._id})\` has been removed!\n**Reason:** \`${

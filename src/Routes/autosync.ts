@@ -188,22 +188,17 @@ router.get('/templates', async (req, res) => {
                 $set: {
                     name: template.name,
                     region: template.serialized_source_guild.region,
-                    locale:
-                        template.serialized_source_guild
-                            .preferred_locale,
-                    afkTimeout:
-                        template.serialized_source_guild.afk_timeout,
-                    verificationLevel:
-                        template.serialized_source_guild
-                            .verification_level,
-                    defaultMessageNotifications:
-                        template.serialized_source_guild
-                            .default_message_notifications,
-                    explicitContent:
-                        template.serialized_source_guild
-                            .explicit_content_filter,
-                    roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
-                    channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
+                    locale: template.serialized_source_guild
+                        .preferred_locale,
+                    afkTimeout: template.serialized_source_guild.afk_timeout,
+                    verificationLevel: template.serialized_source_guild
+                        .verification_level,
+                    defaultMessageNotifications: template.serialized_source_guild
+                        .default_message_notifications,
+                    explicitContent: template.serialized_source_guild
+                        .explicit_content_filter,
+                    roles: template.serialized_source_guild.roles.map(c => { return { name: c.name, color: c.color }; }),
+                    channels: template.serialized_source_guild.channels.map(c => { return { name: c.name, type: c.type, nsfw: c.nsfw }; }),
                     usageCount: template.usage_count,
                     creator: {
                         id: template.creator.id,
@@ -211,11 +206,10 @@ router.get('/templates', async (req, res) => {
                         discriminator: template.creator.discriminator
                     },
                     icon: {
-                        hash:
-                            template.serialized_source_guild.icon_hash,
+                        hash: template.serialized_source_guild.icon_hash,
                         url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                     }
-                } as delTemplate
+                } as unknown as delTemplate
             }
         );
 

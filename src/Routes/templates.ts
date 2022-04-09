@@ -197,7 +197,7 @@ router.post(
                 } as delTemplate);
 
                 discord.channels.logs.send(
-                    `${settings.emoji.addBot} **${functions.escapeFormatting(
+                    `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
                         req.user.id
@@ -531,22 +531,17 @@ router.post(
                         $set: {
                             name: template.name,
                             region: template.serialized_source_guild.region,
-                            locale:
-                                template.serialized_source_guild
-                                    .preferred_locale,
-                            afkTimeout:
-                                template.serialized_source_guild.afk_timeout,
-                            verificationLevel:
-                                template.serialized_source_guild
-                                    .verification_level,
-                            defaultMessageNotifications:
-                                template.serialized_source_guild
-                                    .default_message_notifications,
-                            explicitContent:
-                                template.serialized_source_guild
-                                    .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
-                            channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
+                            locale: template.serialized_source_guild
+                                .preferred_locale,
+                            afkTimeout: template.serialized_source_guild.afk_timeout,
+                            verificationLevel: template.serialized_source_guild
+                                .verification_level,
+                            defaultMessageNotifications: template.serialized_source_guild
+                                .default_message_notifications,
+                            explicitContent: template.serialized_source_guild
+                                .explicit_content_filter,
+                            roles: template.serialized_source_guild.roles.map(c => { return { name: c.name, color: c.color }; }),
+                            channels: template.serialized_source_guild.channels.map(c => { return { name: c.name, type: c.type, nsfw: c.nsfw }; }),
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
@@ -557,20 +552,19 @@ router.post(
                                 discriminator: template.creator.discriminator
                             },
                             icon: {
-                                hash:
-                                    template.serialized_source_guild.icon_hash,
+                                hash: template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             },
                             links: {
                                 linkToServerPage: linkToServerPage,
                                 template: `https://discord.new/${dbTemplate._id}`
                             }
-                        } as delTemplate
+                        } as unknown as delTemplate
                     }
                 );
 
                 discord.channels.logs.send(
-                    `${settings.emoji.editBot} **${functions.escapeFormatting(
+                    `${settings.emoji.edit} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
                         req.user.id
@@ -591,22 +585,17 @@ router.post(
                         new: {
                             name: template.name,
                             region: template.serialized_source_guild.region,
-                            locale:
-                                template.serialized_source_guild
-                                    .preferred_locale,
-                            afkTimeout:
-                                template.serialized_source_guild.afk_timeout,
-                            verificationLevel:
-                                template.serialized_source_guild
-                                    .verification_level,
-                            defaultMessageNotifications:
-                                template.serialized_source_guild
-                                    .default_message_notifications,
-                            explicitContent:
-                                template.serialized_source_guild
-                                    .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
-                            channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
+                            locale: template.serialized_source_guild
+                                .preferred_locale,
+                            afkTimeout: template.serialized_source_guild.afk_timeout,
+                            verificationLevel: template.serialized_source_guild
+                                .verification_level,
+                            defaultMessageNotifications: template.serialized_source_guild
+                                .default_message_notifications,
+                            explicitContent: template.serialized_source_guild
+                                .explicit_content_filter,
+                            roles: template.serialized_source_guild.roles.map(c => { return { name: c.name, color: c.color }; }),
+                            channels: template.serialized_source_guild.channels.map(c => { return { name: c.name, type: c.type, nsfw: c.nsfw }; }),
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
@@ -618,15 +607,14 @@ router.post(
                                 discriminator: template.creator.discriminator
                             },
                             icon: {
-                                hash:
-                                    template.serialized_source_guild.icon_hash,
+                                hash: template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             },
                             links: {
                                 linkToServerPage: linkToServerPage,
                                 template: `https://discord.new/${dbTemplate._id}`
                             }
-                        } as delTemplate,
+                        } as unknown as delTemplate,
                         old: {
                             name: dbTemplate.name,
                             region: dbTemplate.region,
@@ -714,7 +702,7 @@ router.get(
             });
 
         discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+            `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
@@ -827,23 +815,23 @@ router.post(
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+        discord.channels.logs.send({
+            content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
             })\` removed template **${functions.escapeFormatting(
                 template.name
             )}** \`(${template._id})\``,
-            { embed }
-        );
+            embeds: [embed]
+        });
 
         const owner = await discord.getMember(template.owner.id);
         if (owner)
             owner
                 .send(
                     `${
-                        settings.emoji.botDeleted
+                        settings.emoji.delete
                     } **|** Your template **${functions.escapeFormatting(
                         template.name
                     )}** \`(${
@@ -888,22 +876,17 @@ router.get(
                         $set: {
                             name: template.name,
                             region: template.serialized_source_guild.region,
-                            locale:
-                                template.serialized_source_guild
-                                    .preferred_locale,
-                            afkTimeout:
-                                template.serialized_source_guild.afk_timeout,
-                            verificationLevel:
-                                template.serialized_source_guild
-                                    .verification_level,
-                            defaultMessageNotifications:
-                                template.serialized_source_guild
-                                    .default_message_notifications,
-                            explicitContent:
-                                template.serialized_source_guild
-                                    .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
-                            channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
+                            locale: template.serialized_source_guild
+                                .preferred_locale,
+                            afkTimeout: template.serialized_source_guild.afk_timeout,
+                            verificationLevel: template.serialized_source_guild
+                                .verification_level,
+                            defaultMessageNotifications: template.serialized_source_guild
+                                .default_message_notifications,
+                            explicitContent: template.serialized_source_guild
+                                .explicit_content_filter,
+                            roles: template.serialized_source_guild.roles.map(c => { return { name: c.name, color: c.color }; }),
+                            channels: template.serialized_source_guild.channels.map(c => { return { name: c.name, type: c.type, nsfw: c.nsfw }; }),
                             usageCount: template.usage_count,
                             creator: {
                                 id: template.creator.id,
@@ -911,11 +894,10 @@ router.get(
                                 discriminator: template.creator.discriminator
                             },
                             icon: {
-                                hash:
-                                    template.serialized_source_guild.icon_hash,
+                                hash: template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             }
-                        } as delTemplate
+                        } as unknown as delTemplate
                     }
                 );
 
@@ -929,22 +911,17 @@ router.get(
                         new: {
                             name: template.name,
                             region: template.serialized_source_guild.region,
-                            locale:
-                                template.serialized_source_guild
-                                    .preferred_locale,
-                            afkTimeout:
-                                template.serialized_source_guild.afk_timeout,
-                            verificationLevel:
-                                template.serialized_source_guild
-                                    .verification_level,
-                            defaultMessageNotifications:
-                                template.serialized_source_guild
-                                    .default_message_notifications,
-                            explicitContent:
-                                template.serialized_source_guild
-                                    .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
-                            channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
+                            locale: template.serialized_source_guild
+                                .preferred_locale,
+                            afkTimeout: template.serialized_source_guild.afk_timeout,
+                            verificationLevel: template.serialized_source_guild
+                                .verification_level,
+                            defaultMessageNotifications: template.serialized_source_guild
+                                .default_message_notifications,
+                            explicitContent: template.serialized_source_guild
+                                .explicit_content_filter,
+                            roles: template.serialized_source_guild.roles.map(c => { return { name: c.name, color: c.color }; }),
+                            channels: template.serialized_source_guild.channels.map(c => { return { name: c.name, type: c.type, nsfw: c.nsfw }; }),
                             usageCount: template.usage_count,
                             creator: {
                                 id: template.creator.id,
@@ -952,11 +929,10 @@ router.get(
                                 discriminator: template.creator.discriminator
                             },
                             icon: {
-                                hash:
-                                    template.serialized_source_guild.icon_hash,
+                                hash: template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             }
-                        } as delTemplate,
+                        } as unknown as delTemplate,
                         old: {
                             name: dbTemplate.name,
                             region: dbTemplate.region,

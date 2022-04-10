@@ -18,9 +18,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { Request, Response } from "express";
-import * as settings from "../../../settings.json";
+import settings from "../../../settings.json" assert { type: "json" };
 
-export = (req: Request, res: Response, next: () => void) => {
+export default (req: Request, res: Response, next: () => void) => {
     if (
         req.params.lang &&
         settings.website.locales.all.includes(req.params.lang)

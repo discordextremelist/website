@@ -28,25 +28,25 @@ import * as Discord from "discord.js";
 import sanitizeHtml from "sanitize-html";
 import refresh from "passport-oauth2-refresh";
 
-import * as settings from "../../settings.json";
-import * as htmlRef from "../../htmlReference.json";
-import * as discord from "../Util/Services/discord";
-import * as permission from "../Util/Function/permissions";
-import * as functions from "../Util/Function/main";
-import { variables } from "../Util/Function/variables";
+import settings from "../../settings.json" assert { type: "json" };
+import htmlRef from "../../htmlReference.json" assert { type: "json" };
+import * as discord from "../Util/Services/discord.js";
+import * as permission from "../Util/Function/permissions.js";
+import * as functions from "../Util/Function/main.js";
+import { variables } from "../Util/Function/variables.js";
 
-import * as botCache from "../Util/Services/botCaching";
-import * as userCache from "../Util/Services/userCaching";
-import * as libraryCache from "../Util/Services/libCaching";
-import * as tokenManager from "../Util/Services/adminTokenManager";
+import * as botCache from "../Util/Services/botCaching.js";
+import * as userCache from "../Util/Services/userCaching.js";
+import * as libraryCache from "../Util/Services/libCaching.js";
+import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import { URL } from "url";
 import type { DiscordAPIError } from "discord.js";
-import type { botReasons } from "../../@types/enums";
+import type { botReasons } from "../../@types/enums.js";
 import { Response as fetchRes } from "node-fetch";
 
-const md = require("markdown-it")();
-const Entities = require("html-entities").XmlEntities;
-const entities = new Entities();
+import mdi from "markdown-it";
+import entities from "html-entities";
+const md = new mdi
 const router = express.Router();
 
 const DAPI = "https://discord.com/api/v8";
@@ -1728,6 +1728,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     let botStatus = await discord.getStatus(bot._id);
 
     const dirty = entities.decode(md.render(bot.longDesc));
+
     let clean;
     if (bot.status.premium === true) {
         clean = sanitizeHtml(dirty, {
@@ -4098,4 +4099,4 @@ router.get(
     }
 );
 
-export = router;
+export default router;

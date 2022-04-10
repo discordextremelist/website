@@ -20,8 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 
-import * as settings from "../../settings.json";
-import { variables } from "../Util/Function/variables";
+import settings from "../../settings.json" assert { type: "json" };
+import { variables } from "../Util/Function/variables.js";
 
 const router = express.Router();
 
@@ -39,4 +39,4 @@ router.get("/", variables, async (req: Request, res: Response, next) => {
     });
 });
 
-module.exports = router;
+export default router;

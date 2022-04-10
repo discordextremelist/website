@@ -27,21 +27,21 @@ import fetch from "node-fetch";
 import type { DiscordAPIError } from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
-import * as settings from "../../settings.json";
-import * as htmlRef from "../../htmlReference.json";
-import * as discord from "../Util/Services/discord";
-import * as permission from "../Util/Function/permissions";
-import * as functions from "../Util/Function/main";
-import * as userCache from "../Util/Services/userCaching";
-import * as serverCache from "../Util/Services/serverCaching";
-import { variables } from "../Util/Function/variables";
-import * as tokenManager from "../Util/Services/adminTokenManager";
+import settings from "../../settings.json" assert { type: "json" };
+import htmlRef from "../../htmlReference.json" assert { type: "json" };
+import * as discord from "../Util/Services/discord.js";
+import * as permission from "../Util/Function/permissions.js";
+import * as functions from "../Util/Function/main.js";
+import * as userCache from "../Util/Services/userCaching.js";
+import * as serverCache from "../Util/Services/serverCaching.js";
+import { variables } from "../Util/Function/variables.js";
+import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import { MessageEmbed } from "discord.js";
-import type { serverReasons } from "../../@types/enums";
+import type { serverReasons } from "../../@types/enums.js";
 
-const md = require("markdown-it")();
-const Entities = require("html-entities").XmlEntities;
-const entities = new Entities();
+import mdi from "markdown-it";
+import entities from "html-entities";
+const md = new mdi
 const router = express.Router();
 
 function serverType(bodyType: string): number {
@@ -1358,4 +1358,4 @@ router.get(
     }
 );
 
-export = router;
+export default router;

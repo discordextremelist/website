@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { guilds } from "./discord";
+import { guilds } from "./discord.js";
 
 export async function check(user: string): Promise<boolean> {
     const ban = await global.redis?.hget("bans", user);

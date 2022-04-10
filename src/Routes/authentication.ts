@@ -23,15 +23,15 @@ import passport from "passport";
 import { Strategy } from "passport-discord";
 import type { VerifyCallback } from "passport-oauth2"
 import refresh from "passport-oauth2-refresh"
-import * as discord from "../Util/Services/discord";
+import * as discord from "../Util/Services/discord.js";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { OAuth2Scopes } from "discord-api-types/v10"
 import type { DiscordAPIError } from "discord.js";
 import fetch from "node-fetch";
-import * as userCache from "../Util/Services/userCaching"
+import * as userCache from "../Util/Services/userCaching.js"
 
-import * as settings from "../../settings.json";
-import * as tokenManager from "../Util/Services/adminTokenManager";
+import settings from "../../settings.json" assert { type: "json" };
+import * as tokenManager from "../Util/Services/adminTokenManager.js";
 
 const router = express.Router();
 
@@ -320,4 +320,4 @@ router.get("/logout", async (req, res) => {
     }
 });
 
-export = router;
+export default router;

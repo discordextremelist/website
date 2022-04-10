@@ -19,12 +19,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Request, Response } from "express";
 
-import * as settings from "../../../settings.json";
+import settings from "../../../settings.json" assert { type: "json" };
 
-import * as botCache from "../../Util/Services/botCaching";
-import * as serverCache from "../../Util/Services/serverCaching";
-import * as templateCache from "../../Util/Services/templateCaching";
-import * as userCache from "../../Util/Services/userCaching";
+import * as botCache from "../../Util/Services/botCaching.js";
+import * as serverCache from "../../Util/Services/serverCaching.js";
+import * as templateCache from "../../Util/Services/templateCaching.js";
+import * as userCache from "../../Util/Services/userCaching.js";
 
 const base = settings.website.url;
 

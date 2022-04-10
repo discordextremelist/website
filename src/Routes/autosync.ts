@@ -20,13 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import fetch from "node-fetch";
 import refresh from "passport-oauth2-refresh";
-import * as discord from "../Util/Services/discord";
-import * as botCache from "../Util/Services/botCaching";
-import * as serverCache from "../Util/Services/serverCaching";
-import * as templateCache from "../Util/Services/templateCaching";
-import * as userCache from "../Util/Services/userCaching";
+import * as discord from "../Util/Services/discord.js";
+import * as botCache from "../Util/Services/botCaching.js";
+import * as serverCache from "../Util/Services/serverCaching.js";
+import * as templateCache from "../Util/Services/templateCaching.js";
+import * as userCache from "../Util/Services/userCaching.js";
 import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord-api-types/v10";
-import * as settings from "../../settings.json";
+import settings from "../../settings.json" assert { type: "json" };
 
 const router = express.Router();
 
@@ -223,4 +223,4 @@ router.get('/templates', async (req, res) => {
     res.sendStatus(200)
 })
 
-export = router
+export default router;

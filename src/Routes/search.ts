@@ -20,17 +20,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 
-import chunk = require("chunk");
+import chunk from "chunk";
+import path from "path";
 import * as ejs from "ejs";
-import * as settings from "../../settings.json";
+import settings from "../../settings.json" assert { type: "json" };
 
-import * as botCache from "../Util/Services/botCaching";
-import * as userCache from "../Util/Services/userCaching";
-import * as serverCache from "../Util/Services/serverCaching";
-import * as templateCache from "../Util/Services/templateCaching";
-import { variables } from "../Util/Function/variables";
+import * as botCache from "../Util/Services/botCaching.js";
+import * as userCache from "../Util/Services/userCaching.js";
+import * as serverCache from "../Util/Services/serverCaching.js";
+import * as templateCache from "../Util/Services/templateCaching.js";
+import { variables } from "../Util/Function/variables.js";
 
-const renderPath = require("path").join(process.cwd(), "assets/Views/partials");
+const renderPath = path.join(process.cwd(), "views/partials");
 
 const router = express.Router();
 
@@ -184,4 +185,4 @@ router.post("/", variables, async (req: Request, res: Response) => {
     });
 });
 
-export = router;
+export default router;

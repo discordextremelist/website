@@ -21,14 +21,14 @@ import { Request, Response } from "express";
 
 import browser from "browser-detect";
 import color from "color";
-import * as settings from "../../../settings.json";
-import { version } from "../../../package.json"
-import * as releaseInfo from "../../../release-info.json";
-import * as announcementCache from "../Services/announcementCaching";
-import * as userCache from "../Services/userCaching";
-import * as banList from "../Services/banned";
+import settings from "../../../settings.json" assert { type: "json" };
+import pkg from "../../../package.json" assert { type: "json" };
+import releaseInfo from "../../../release-info.json" assert { type: "json" };
+import * as announcementCache from "../Services/announcementCaching.js";
+import * as userCache from "../Services/userCaching.js";
+import * as banList from "../Services/banned.js";
 import { URLSearchParams } from "url";
-import { themes } from "../../../@types/enums";
+import { themes } from "../../../@types/enums.js";
 
 export const variables = async (
     req: Request,
@@ -86,6 +86,8 @@ export const variables = async (
     )
         req.session.redirectTo = req.originalUrl;
 
+
+    const version = pkg.version;
     req.del = {
         version,
         ...releaseInfo,

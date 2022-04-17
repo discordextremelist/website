@@ -616,7 +616,7 @@ router.post(
                     }
                 } as delBot);
 
-                discord.channels.logs.send(
+                await discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -1631,7 +1631,7 @@ router.post(
                 });
                 await botCache.updateBot(req.params.id);
 
-                discord.channels.logs.send(
+                await discord.channels.logs.send(
                         `${settings.emoji.edit} **${functions.escapeFormatting(
                             req.user.db.fullUsername
                         )}** \`(${
@@ -2095,7 +2095,7 @@ router.get(
                 req: req
             });
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
             `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -2157,7 +2157,7 @@ router.get(
                 req: req
             });
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
             `${settings.emoji.archive} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -2225,7 +2225,7 @@ router.get(
                 req: req
             });
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
             `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -2292,7 +2292,7 @@ router.get(
                 req: req
             });
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
             `${settings.emoji.unhide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -2953,7 +2953,7 @@ router.post(
                 });
                 await botCache.updateBot(req.params.id);
 
-                discord.channels.logs.send(
+                await discord.channels.logs.send(
                         `${settings.emoji.resubmit} **${functions.escapeFormatting(
                             req.user.db.fullUsername
                         )}** \`(${
@@ -3045,7 +3045,7 @@ router.get(
             }
         );
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
                 `${settings.emoji.check} **${functions.escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${
@@ -3374,7 +3374,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send({ 
+        await discord.channels.logs.send({
             content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -3382,7 +3382,7 @@ router.post(
             })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
             })\``,
-            embeds: [embed] 
+            embeds: [embed]
         });
 
         const member = await discord.getTestingGuildMember(req.params.id);
@@ -3533,7 +3533,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send({
+        await discord.channels.logs.send({
             content: `${settings.emoji.unapprove} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -3693,7 +3693,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send({
+        await discord.channels.logs.send({
             content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -3701,7 +3701,7 @@ router.post(
             })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
             })\``,
-            embeds: [embed] 
+            embeds: [embed]
         });
 
 
@@ -3844,7 +3844,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send({
+        await discord.channels.logs.send({
             content: `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -3922,7 +3922,7 @@ router.get(
             }
         );
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
                 `${settings.emoji.unhide} **${functions.escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${

@@ -133,7 +133,7 @@ router.get(
     "/:id/rank",
     variables,
     permission.auth,
-    // permission.assistant,
+    permission.assistant,
     async (req: Request, res: Response) => {
         const targetUser: delUser = await global.db
             .collection<delUser>("users")
@@ -182,7 +182,7 @@ router.post(
     "/:id/rank",
     variables,
     permission.auth,
-    // permission.assistant,
+    permission.assistant,
     async (req: Request, res: Response) => {
         const targetUser: delUser = await global.db
             .collection<delUser>("users")

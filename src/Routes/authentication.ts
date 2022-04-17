@@ -41,7 +41,7 @@ const strategy = new Strategy(
         clientSecret: settings.secrets.discord.secret,
         callbackURL: settings.website.url + settings.website.callback
     },
-    (accessToken: string, refreshToken: string, params: RESTPostOAuth2AccessTokenResult, profile: Strategy.Profile, done: VerifyCallback) => {
+    (_accessToken: string, refreshToken: string, params: RESTPostOAuth2AccessTokenResult, profile: Strategy.Profile, done: VerifyCallback) => {
         process.nextTick(() => {
             return done(null, {...profile, refreshToken, ...params});
         })
@@ -226,57 +226,40 @@ router.get(
                 }
             } as delUser);
         } else {
+            const importUser = {
+                auth: {
+                    accessToken: req.user.accessToken,
+                    refreshToken: req.user.refreshToken,
+                    expires: Date.now() + req.user.expires_in*1000,
+                    scopes
+                },
+                name: req.user.username,
+                discrim: req.user.discriminator,
+                fullUsername:
+                    req.user.username +
+                    "#" +
+                    req.user.discriminator,
+                locale: req.user.locale,
+                flags: req.user.flags,
+                avatar: {
+                    hash: req.user.avatar,
+                    url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
+                }
+            } as delUser
+
             if (user.rank.mod === true) {
+                importUser["staffTracking.lastLogin"] = Date.now();
                 await global.db.collection("users").updateOne(
                     { _id: req.user.id },
                     {
-                        $set: {
-                            auth: {
-                                accessToken: req.user.accessToken,
-                                refreshToken: req.user.refreshToken,
-                                expires: Date.now() + req.user.expires_in*1000,
-                                scopes
-                            },
-                            name: req.user.username,
-                            discrim: req.user.discriminator,
-                            fullUsername:
-                                req.user.username +
-                                "#" +
-                                req.user.discriminator,
-                            locale: req.user.locale,
-                            flags: req.user.flags,
-                            avatar: {
-                                hash: req.user.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
-                            },
-                            "staffTracking.lastLogin": Date.now()
-                        }
+                        $set: importUser
                     }
                 );
             } else {
                 await global.db.collection("users").updateOne(
                     { _id: req.user.id },
                     {
-                        $set: {
-                            auth: {
-                                accessToken: req.user.accessToken,
-                                refreshToken: req.user.refreshToken,
-                                expires: Date.now() + req.user.expires_in*1000,
-                                scopes
-                            },
-                            name: req.user.username,
-                            discrim: req.user.discriminator,
-                            fullUsername:
-                                req.user.username +
-                                "#" +
-                                req.user.discriminator,
-                            locale: req.user.locale,
-                            flags: req.user.flags,
-                            avatar: {
-                                hash: req.user.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
-                            }
-                        } as delUser
+                        $set: importUser
                     }
                 );
             }
@@ -311,7 +294,7 @@ router.get("/logout", async (req, res) => {
         req.session.logoutJust = true;
         if (req.user.db.rank.admin) await tokenManager.tokenReset(req.user.id);
 
-        await req.logout();
+        req.logout();
         res.redirect(req.session.redirectTo || "/");
     } else {
         req.user.id = req.user.impersonator;

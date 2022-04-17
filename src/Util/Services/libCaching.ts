@@ -18,11 +18,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 export function getLibs() {
-    return global.libs.sort((a, b) => a._id.localeCompare(b._id));
+    return global.libs?.sort((a, b) => a._id.localeCompare(b._id));
 }
 
 export function hasLib(name: string) {
-    return global.libs.find((x) => x._id === name);
+    return global.libs?.find((x) => x._id === name);
 }
 
 export async function cacheLibs() {

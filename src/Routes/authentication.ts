@@ -85,6 +85,33 @@ router.get(
         const { scopes } = await (await fetch("https://discord.com/api/v8/oauth2/@me", {headers: {authorization: `Bearer ${req.user.accessToken}`}})).json() as {scopes: OAuth2Scopes[]}
 
         if (!user) {
+            const handleDefault: delUser["staffTracking"]["handledBots"] = {
+                allTime: {
+                    total: 0,
+                    approved: 0,
+                    unapprove: 0,
+                    declined: 0,
+                    remove: 0,
+                    modHidden: 0
+                },
+                prevWeek: {
+                    total: 0,
+                    approved: 0,
+                    unapprove: 0,
+                    declined: 0,
+                    remove: 0,
+                    modHidden: 0
+                },
+                thisWeek: {
+                    total: 0,
+                    approved: 0,
+                    unapprove: 0,
+                    declined: 0,
+                    remove: 0,
+                    modHidden: 0
+                }
+            };
+
             await global.db.collection<delUser>("users").insertOne({
                 _id: req.user.id,
                 auth: {
@@ -157,72 +184,9 @@ router.get(
                         strikes: [],
                         warnings: []
                     },
-                    handledBots: {
-                        allTime: {
-                            total: 0,
-                            approved: 0,
-                            unapprove: 0,
-                            declined: 0,
-                            remove: 0,
-                            modHidden: 0
-                        },
-                        prevWeek: {
-                            total: 0,
-                            approved: 0,
-                            unapprove: 0,
-                            declined: 0,
-                            remove: 0,
-                            modHidden: 0
-                        },
-                        thisWeek: {
-                            total: 0,
-                            approved: 0,
-                            unapprove: 0,
-                            declined: 0,
-                            remove: 0,
-                            modHidden: 0
-                        }
-                    },
-                    handledServers: {
-                        allTime: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        },
-                        prevWeek: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        },
-                        thisWeek: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        }
-                    },
-                    handledTemplates: {
-                        allTime: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        },
-                        prevWeek: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        },
-                        thisWeek: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        }
-                    }
+                    handledBots: handleDefault,
+                    handledServers: handleDefault,
+                    handledTemplates: handleDefault
                 }
             } as delUser);
         } else {

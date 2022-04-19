@@ -41,6 +41,8 @@ import type { serverReasons } from "../../@types/enums.js";
 
 import mdi from "markdown-it";
 import entities from "html-entities";
+import { ParamsDictionary } from "express-serve-static-core";
+import { ParsedQs } from "qs";
 const md = new mdi
 const router = express.Router();
 
@@ -59,6 +61,36 @@ function serverType(bodyType: string): number {
     }
 
     return type;
+}
+
+function tagHandler(req: express.Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, server: false | delServer) {
+    let tags: string[] = [];
+
+    if (req.body.gaming === true) tags.push("Gaming");
+    if (req.body.music === true) tags.push("Music");
+    if (req.body.mediaEntertain === true) tags.push("Media & Entertainment");
+    if (req.body.createArts === true) tags.push("Creative Arts");
+    if (req.body.sciTech === true) tags.push("Science & Tech");
+    if (req.body.edu === true) tags.push("Education");
+    if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
+    if (req.body.relIdentity === true)
+        tags.push("Relationships & Identity");
+    if (req.body.travelCuis === true) tags.push("Travel & Food");
+    if (req.body.fitHealth === true) tags.push("Fitness & Health");
+    if (req.body.finance === true) tags.push("Finance");
+    if (req.body.contCreat === true) tags.push("Content Creation");
+    if (req.body.nsfw === true) tags.push("NSFW");
+
+    let reviewRequired = false;
+    if (req.body.lgbt === true) {
+        tags.push("LGBT");
+        if (server) {
+            if (!server.tags.includes("LGBT")) reviewRequired = true;
+            if (server.tags.includes("LGBT") && server.status.reviewRequired === true) reviewRequired = true;
+        } else reviewRequired = true;
+    }
+
+    return tags;
 }
 
 router.get(
@@ -202,28 +234,7 @@ router.post(
             );
         }
 
-        let tags: string[] = [];
-
-        if (req.body.gaming === true) tags.push("Gaming");
-        if (req.body.music === true) tags.push("Music");
-        if (req.body.mediaEntertain === true)
-            tags.push("Media & Entertainment");
-        if (req.body.createArts === true) tags.push("Creative Arts");
-        if (req.body.sciTech === true) tags.push("Science & Tech");
-        if (req.body.edu === true) tags.push("Education");
-        if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
-
-        if (req.body.relIdentity === true)
-            tags.push("Relationships & Identity");
-        if (req.body.travelCuis === true) tags.push("Travel & Food");
-        if (req.body.fitHealth === true) tags.push("Fitness & Health");
-        if (req.body.finance === true) tags.push("Finance");
-
-        let reviewRequired = false;
-        if (req.body.lgbt === true) {
-            tags.push("LGBT");
-            reviewRequired = true;
-        }
+        let tags: string[] = tagHandler(req, false);
 
         if (error === true)
             return res.status(400).json({
@@ -635,30 +646,8 @@ router.post(
             error = true;
             errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
-
-        let tags: string[] = [];
-
-        if (req.body.gaming === true) tags.push("Gaming");
-        if (req.body.music === true) tags.push("Music");
-        if (req.body.mediaEntertain === true)
-            tags.push("Media & Entertainment");
-        if (req.body.createArts === true) tags.push("Creative Arts");
-        if (req.body.sciTech === true) tags.push("Science & Tech");
-        if (req.body.edu === true) tags.push("Education");
-        if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
-
-        if (req.body.relIdentity === true)
-            tags.push("Relationships & Identity");
-        if (req.body.travelCuis === true) tags.push("Travel & Food");
-        if (req.body.fitHealth === true) tags.push("Fitness & Health");
-        if (req.body.finance === true) tags.push("Finance");
-
-        let reviewRequired = false;
-        if (req.body.lgbt === true) {
-            tags.push("LGBT");
-            if (!server.tags.includes("LGBT")) reviewRequired = true;
-            if (server.tags.includes("LGBT") && server.status.reviewRequired === true) reviewRequired = true;
-        }
+        
+        let tags: string[] = tagHandler(req, server);
 
         if (error === true)
             return res.status(400).json({

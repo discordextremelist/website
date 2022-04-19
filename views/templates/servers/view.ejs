@@ -324,6 +324,26 @@
                                     });
                                 %>
                             <% } %>
+                            <% if (server.tags.includes("Content Creation")) { %>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-danger", 
+                                        title: "",
+                                        content: __("common.tags.contCreat"),
+                                        type: "tag"
+                                    });
+                                %>
+                            <% } %>
+                            <% if (server.tags.includes("NSFW")) { %>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-pink", 
+                                        title: "",
+                                        content: __("common.tags.nsfw"),
+                                        type: "tag"
+                                    });
+                                %>
+                            <% } %>
                         </div>
                     <% } %>
                 </div>

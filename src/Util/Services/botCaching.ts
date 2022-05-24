@@ -64,7 +64,3 @@ export async function uploadBots() {
 export async function deleteBot(id: string) {
     await global.redis?.hdel(prefix, id);
 }
-
-setInterval(async () => {
-    await uploadBots();
-}, 900000);

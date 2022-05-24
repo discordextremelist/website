@@ -54,6 +54,3 @@ export async function deleteServer(id: string) {
     await global.redis?.hdel(prefix, id);
 }
 
-setInterval(async () => {
-    await uploadServers();
-}, 900000);

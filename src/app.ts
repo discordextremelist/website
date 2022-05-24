@@ -205,10 +205,10 @@ new Promise<void>((resolve, reject) => {
                 console.log("Also acquired the discord lock!");
                 await global.redis.setex("cache_lock", 300, hostname());
                 console.time("Redis");
-                await userCache.uploadUsers();
-                await botCache.uploadBots();
-                await serverCache.uploadServers();
-                await templateCache.uploadTemplates();
+                //await userCache.uploadUsers();
+                //await botCache.uploadBots();
+                //await serverCache.uploadServers();
+                //await templateCache.uploadTemplates();
                 await auditCache.uploadAuditLogs();
                 await libCache.cacheLibs();
                 await announcementCache.updateCache();

@@ -53,7 +53,3 @@ export async function uploadTemplates() {
 export async function deleteTemplate(id: string) {
     await global.redis?.hdel(prefix, id);
 }
-
-setInterval(async () => {
-    await uploadTemplates();
-}, 900000);

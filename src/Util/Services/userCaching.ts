@@ -53,7 +53,3 @@ export async function uploadUsers() {
 export async function deleteUser(id: string) {
     await global.redis?.hdel(prefix, id);
 }
-
-setInterval(async () => {
-    await uploadUsers();
-}, 900000);

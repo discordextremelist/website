@@ -28,13 +28,7 @@ import cookieParser from "cookie-parser";
 import createError from "http-errors";
 import passport from "passport";
 import logger from "morgan";
-import Redis from "ioredis";
 
-import * as botCache from "./Util/Services/botCaching.js";
-import * as serverCache from "./Util/Services/serverCaching.js";
-import * as templateCache from "./Util/Services/templateCaching.js";
-import * as auditCache from "./Util/Services/auditCaching.js";
-import * as userCache from "./Util/Services/userCaching.js";
 import * as libCache from "./Util/Services/libCaching.js";
 import * as announcementCache from "./Util/Services/announcementCaching.js";
 import * as featuredCache from "./Util/Services/featuring.js";
@@ -113,13 +107,13 @@ new Promise<void>((resolve, reject) => {
                 .updateOne(
                     { _id: lib.name },
                     { $set: {
-                        _id: lib.name,
-                        language: lib.language,
-                        links: {
-                            docs: lib.links.docs,
-                            repo: lib.links.repo
-                        }
-                    }},
+                            _id: lib.name,
+                            language: lib.language,
+                            links: {
+                                docs: lib.links.docs,
+                                repo: lib.links.repo
+                            }
+                        }},
                     { upsert: true }
                 )
                 .then(() => true)
@@ -153,7 +147,6 @@ new Promise<void>((resolve, reject) => {
                 .then(() => true)
                 .catch(() => false);
         }
-
         let redisConfig: RedisOptions;
 
         if (settings.secrets.redis.sentinels.length > 0) {
@@ -176,8 +169,7 @@ new Promise<void>((resolve, reject) => {
         global.redis = new Redis(redisConfig); 
         const s = new Redis(redisConfig);
 
-        /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems.
-         - Ice*/
+        /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems. - Ice*/
 
         console.log("Attempting to acquire caching lock...");
         const lock = await global.redis.get("cache_lock");
@@ -217,11 +209,6 @@ new Promise<void>((resolve, reject) => {
             console.log("Also acquired the discord lock!");
             await global.redis.setex("cache_lock", 300, hostname());
             console.time("Redis");
-            await userCache.uploadUsers();
-            await botCache.uploadBots();
-            await serverCache.uploadServers();
-            await templateCache.uploadTemplates();
-            await auditCache.uploadAuditLogs();
             await libCache.cacheLibs();
             await announcementCache.updateCache();
             await featuredCache.updateFeaturedServers();
@@ -258,7 +245,7 @@ new Promise<void>((resolve, reject) => {
             if (
                 typeof discord.bot.guilds !== "undefined" &&
                 typeof discord.guilds.main !==
-                    "undefined"
+                "undefined"
             ) {
                 await banned.updateBanlist();
                 await discord.uploadStatuses();
@@ -364,8 +351,7 @@ new Promise<void>((resolve, reject) => {
             (
                 err: { message: string; status?: number },
                 req: Request,
-                res: Response,
-                next: () => void
+                res: Response
             ) => {
                 res.locals.message = err.message;
                 res.locals.error = err;

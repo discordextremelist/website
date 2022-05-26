@@ -7,6 +7,10 @@
   "directories": {
     "doc": "docs"
   },
+  "engines": {
+    "npm": ">=8.5.0",
+    "node": ">=17.9.0"
+  },
   "dependencies": {
     "@sentry/node": "^6.19.2",
     "body-parser": "^1.19.2",

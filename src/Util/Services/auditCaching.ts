@@ -47,7 +47,3 @@ export async function uploadAuditLogs() {
 
     await global.redis?.hmset(prefix, "all", JSON.stringify(logs));
 }
-
-setInterval(async () => {
-    await uploadAuditLogs();
-}, 900000);

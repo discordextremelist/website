@@ -26,7 +26,7 @@ export async function check(user: string): Promise<boolean> {
 
 export async function updateBanlist() {
     await global.redis?.del("bans");
-    const bans = await guilds.main.bans.fetch();
+    const bans = await guilds.main.bans.fetch().catch(e => console.error(e));
     await global.redis?.hmset(
         "bans",
         ...bans.map((ban) => [ban.user.id, true])

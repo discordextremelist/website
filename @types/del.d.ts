@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import type { UserFlags, APIChannel, APIRole, APIUser, APIApplicationCommand, RESTPostOAuth2AccessTokenResult, OAuth2Scopes, Snowflake } from 'discord-api-types/v8'
+import type { UserFlags, APIChannel, APIRole, APIUser, APIApplicationCommand, RESTPostOAuth2AccessTokenResult, OAuth2Scopes, Snowflake } from 'discord-api-types/v10'
 
 declare global {
     interface authUser extends RESTPostOAuth2AccessTokenResult {
@@ -296,7 +296,7 @@ declare global {
         defaultMessageNotifications: number;
         explicitContent: number;
         roles: Pick<APIRole, "name" | "color">[];
-        channels: Pick<APIChannel, "name" | "type" | "nsfw">[];
+        channels: Pick<APIChannel, "name" | "type">[];
         usageCount: number;
         shortDesc: string;
         longDesc: string;

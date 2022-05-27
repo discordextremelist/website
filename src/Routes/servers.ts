@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -19,29 +19,31 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import type { Response as fetchRes } from "../../@types/fetch";
-import type { APIInvite, RESTGetAPIInviteQuery } from "discord-api-types/v8";
-import { RESTJSONErrorCodes } from "discord-api-types/v8"
+import { Response as fetchRes } from "node-fetch";
+import type { APIInvite, RESTGetAPIInviteQuery } from "discord-api-types/v10";
+import { RESTJSONErrorCodes } from "discord-api-types/v10"
 
-import * as fetch from "node-fetch";
+import fetch from "node-fetch";
 import type { DiscordAPIError } from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
-import * as settings from "../../settings.json";
-import * as htmlRef from "../../htmlReference.json";
-import * as discord from "../Util/Services/discord";
-import * as permission from "../Util/Function/permissions";
-import * as functions from "../Util/Function/main";
-import * as userCache from "../Util/Services/userCaching";
-import * as serverCache from "../Util/Services/serverCaching";
-import { variables } from "../Util/Function/variables";
-import * as tokenManager from "../Util/Services/adminTokenManager";
+import settings from "../../settings.json" assert { type: "json" };
+import htmlRef from "../../htmlReference.json" assert { type: "json" };
+import * as discord from "../Util/Services/discord.js";
+import * as permission from "../Util/Function/permissions.js";
+import * as functions from "../Util/Function/main.js";
+import * as userCache from "../Util/Services/userCaching.js";
+import * as serverCache from "../Util/Services/serverCaching.js";
+import { variables } from "../Util/Function/variables.js";
+import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import { MessageEmbed } from "discord.js";
-import type { serverReasons } from "../../@types/enums";
+import type { serverReasons } from "../../@types/enums.js";
 
-const md = require("markdown-it")();
-const Entities = require("html-entities").XmlEntities;
-const entities = new Entities();
+import mdi from "markdown-it";
+import entities from "html-entities";
+import { ParamsDictionary } from "express-serve-static-core";
+import { ParsedQs } from "qs";
+const md = new mdi
 const router = express.Router();
 
 function serverType(bodyType: string): number {
@@ -59,6 +61,36 @@ function serverType(bodyType: string): number {
     }
 
     return type;
+}
+
+function tagHandler(req: express.Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, server: false | delServer) {
+    let tags: string[] = [];
+
+    if (req.body.gaming === true) tags.push("Gaming");
+    if (req.body.music === true) tags.push("Music");
+    if (req.body.mediaEntertain === true) tags.push("Media & Entertainment");
+    if (req.body.createArts === true) tags.push("Creative Arts");
+    if (req.body.sciTech === true) tags.push("Science & Tech");
+    if (req.body.edu === true) tags.push("Education");
+    if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
+    if (req.body.relIdentity === true)
+        tags.push("Relationships & Identity");
+    if (req.body.travelCuis === true) tags.push("Travel & Food");
+    if (req.body.fitHealth === true) tags.push("Fitness & Health");
+    if (req.body.finance === true) tags.push("Finance");
+    if (req.body.contCreat === true) tags.push("Content Creation");
+    if (req.body.nsfw === true) tags.push("NSFW");
+
+    let reviewRequired = false;
+    if (req.body.lgbt === true) {
+        tags.push("LGBT");
+        if (server) {
+            if (!server.tags.includes("LGBT")) reviewRequired = true;
+            if (server.tags.includes("LGBT") && server.status.reviewRequired === true) reviewRequired = true;
+        } else reviewRequired = true;
+    }
+
+    return tags;
 }
 
 router.get(
@@ -173,7 +205,7 @@ router.post(
                 }),
                 headers: { 'Content-Type': 'application/json' },
             }).then(async (fetchRes: fetchRes) => {
-                    const { data } = await fetchRes.json();
+                    const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
                         errors.push(
@@ -202,28 +234,7 @@ router.post(
             );
         }
 
-        let tags: string[] = [];
-
-        if (req.body.gaming === true) tags.push("Gaming");
-        if (req.body.music === true) tags.push("Music");
-        if (req.body.mediaEntertain === true)
-            tags.push("Media & Entertainment");
-        if (req.body.createArts === true) tags.push("Creative Arts");
-        if (req.body.sciTech === true) tags.push("Science & Tech");
-        if (req.body.edu === true) tags.push("Education");
-        if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
-
-        if (req.body.relIdentity === true)
-            tags.push("Relationships & Identity");
-        if (req.body.travelCuis === true) tags.push("Travel & Food");
-        if (req.body.fitHealth === true) tags.push("Fitness & Health");
-        if (req.body.finance === true) tags.push("Finance");
-
-        let reviewRequired = false;
-        if (req.body.lgbt === true) {
-            tags.push("LGBT");
-            reviewRequired = true;
-        }
+        let tags: string[] = tagHandler(req, false);
 
         if (error === true)
             return res.status(400).json({
@@ -282,8 +293,8 @@ router.post(
                     }
                 } as delServer);
 
-                discord.channels.logs.send(
-                    `${settings.emoji.addBot} **${functions.escapeFormatting(
+                await discord.channels.logs.send(
+                    `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
                         req.user.id
@@ -609,7 +620,7 @@ router.post(
                     }),
                     headers: { 'Content-Type': 'application/json' },
                 }).then(async (fetchRes: fetchRes) => {
-                    const { data } = await fetchRes.json();
+                    const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
                         errors.push(
@@ -635,30 +646,8 @@ router.post(
             error = true;
             errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
-
-        let tags: string[] = [];
-
-        if (req.body.gaming === true) tags.push("Gaming");
-        if (req.body.music === true) tags.push("Music");
-        if (req.body.mediaEntertain === true)
-            tags.push("Media & Entertainment");
-        if (req.body.createArts === true) tags.push("Creative Arts");
-        if (req.body.sciTech === true) tags.push("Science & Tech");
-        if (req.body.edu === true) tags.push("Education");
-        if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
-
-        if (req.body.relIdentity === true)
-            tags.push("Relationships & Identity");
-        if (req.body.travelCuis === true) tags.push("Travel & Food");
-        if (req.body.fitHealth === true) tags.push("Fitness & Health");
-        if (req.body.finance === true) tags.push("Finance");
-
-        let reviewRequired = false;
-        if (req.body.lgbt === true) {
-            tags.push("LGBT");
-            if (!server.tags.includes("LGBT")) reviewRequired = true;
-            if (server.tags.includes("LGBT") && server.status.reviewRequired === true) reviewRequired = true;
-        }
+        
+        let tags: string[] = tagHandler(req, server);
 
         if (error === true)
             return res.status(400).json({
@@ -713,8 +702,8 @@ router.post(
                     }
                 );
 
-                discord.channels.logs.send(
-                    `${settings.emoji.editBot} **${functions.escapeFormatting(
+                await discord.channels.logs.send(
+                    `${settings.emoji.edit} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
                         req.user.id
@@ -946,8 +935,8 @@ router.post(
         embed.setURL(`${settings.website.url}/servers/${server._id}`);
         embed.setFooter("It will still be shown as a normal server, it was declined from being listed as an LGBT community.");
 
-        discord.channels.logs.send(
-            `${settings.emoji.cross} **${functions.escapeFormatting(
+        await discord.channels.logs.send({
+            content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
@@ -956,8 +945,8 @@ router.post(
             )}** \`(${
                 server._id
             })\``,
-            { embed: embed }
-        );
+            embeds: [embed]
+        });
 
         const owner = await discord.getMember(server.owner.id);
         if (owner)
@@ -1040,7 +1029,7 @@ router.get(
 
         await serverCache.updateServer(req.params.id);
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
                 `${settings.emoji.check} **${functions.escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${
@@ -1102,8 +1091,8 @@ router.get(
                 req
             });
 
-        discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+        await discord.channels.logs.send(
+            `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
@@ -1213,23 +1202,23 @@ router.post(
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        discord.channels.logs.send(
-            `${settings.emoji.botDeleted} **${functions.escapeFormatting(
+        await discord.channels.logs.send({
+            content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
             })\` removed server **${functions.escapeFormatting(
                 server.name
             )}** \`(${server._id})\``,
-            { embed }
-        );
+            embeds: [embed]
+        });
 
         const owner = await discord.getMember(server.owner.id);
         if (owner)
             owner
                 .send(
                     `${
-                        settings.emoji.botDeleted
+                        settings.emoji.delete
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
                     )}** \`(${server._id})\` has been removed!\n**Reason:** \`${
@@ -1358,4 +1347,4 @@ router.get(
     }
 );
 
-export = router;
+export default router;

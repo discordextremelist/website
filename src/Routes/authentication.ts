@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -23,15 +23,15 @@ import passport from "passport";
 import { Strategy } from "passport-discord";
 import type { VerifyCallback } from "passport-oauth2"
 import refresh from "passport-oauth2-refresh"
-import * as discord from "../Util/Services/discord";
-import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v8";
-import { OAuth2Scopes } from "discord-api-types/v8"
+import * as discord from "../Util/Services/discord.js";
+import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
+import { OAuth2Scopes } from "discord-api-types/v10"
 import type { DiscordAPIError } from "discord.js";
 import fetch from "node-fetch";
-import * as userCache from "../Util/Services/userCaching"
+import * as userCache from "../Util/Services/userCaching.js"
 
-import * as settings from "../../settings.json";
-import * as tokenManager from "../Util/Services/adminTokenManager";
+import settings from "../../settings.json" assert { type: "json" };
+import * as tokenManager from "../Util/Services/adminTokenManager.js";
 
 const router = express.Router();
 
@@ -41,7 +41,7 @@ const strategy = new Strategy(
         clientSecret: settings.secrets.discord.secret,
         callbackURL: settings.website.url + settings.website.callback
     },
-    (accessToken: string, refreshToken: string, params: RESTPostOAuth2AccessTokenResult, profile: Strategy.Profile, done: VerifyCallback) => {
+    (_accessToken: string, refreshToken: string, params: RESTPostOAuth2AccessTokenResult, profile: Strategy.Profile, done: VerifyCallback) => {
         process.nextTick(() => {
             return done(null, {...profile, refreshToken, ...params});
         })
@@ -85,6 +85,33 @@ router.get(
         const { scopes } = await (await fetch("https://discord.com/api/v8/oauth2/@me", {headers: {authorization: `Bearer ${req.user.accessToken}`}})).json() as {scopes: OAuth2Scopes[]}
 
         if (!user) {
+            const handleDefault: delUser["staffTracking"]["handledBots"] = {
+                allTime: {
+                    total: 0,
+                    approved: 0,
+                    unapprove: 0,
+                    declined: 0,
+                    remove: 0,
+                    modHidden: 0
+                },
+                prevWeek: {
+                    total: 0,
+                    approved: 0,
+                    unapprove: 0,
+                    declined: 0,
+                    remove: 0,
+                    modHidden: 0
+                },
+                thisWeek: {
+                    total: 0,
+                    approved: 0,
+                    unapprove: 0,
+                    declined: 0,
+                    remove: 0,
+                    modHidden: 0
+                }
+            };
+
             await global.db.collection<delUser>("users").insertOne({
                 _id: req.user.id,
                 auth: {
@@ -157,126 +184,46 @@ router.get(
                         strikes: [],
                         warnings: []
                     },
-                    handledBots: {
-                        allTime: {
-                            total: 0,
-                            approved: 0,
-                            unapprove: 0,
-                            declined: 0,
-                            remove: 0,
-                            modHidden: 0
-                        },
-                        prevWeek: {
-                            total: 0,
-                            approved: 0,
-                            unapprove: 0,
-                            declined: 0,
-                            remove: 0,
-                            modHidden: 0
-                        },
-                        thisWeek: {
-                            total: 0,
-                            approved: 0,
-                            unapprove: 0,
-                            declined: 0,
-                            remove: 0,
-                            modHidden: 0
-                        }
-                    },
-                    handledServers: {
-                        allTime: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        },
-                        prevWeek: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        },
-                        thisWeek: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        }
-                    },
-                    handledTemplates: {
-                        allTime: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        },
-                        prevWeek: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        },
-                        thisWeek: {
-                            total: 0,
-                            approved: 0,
-                            declined: 0,
-                            remove: 0
-                        }
-                    }
+                    handledBots: handleDefault,
+                    handledServers: handleDefault,
+                    handledTemplates: handleDefault
                 }
             } as delUser);
         } else {
+            const importUser = {
+                auth: {
+                    accessToken: req.user.accessToken,
+                    refreshToken: req.user.refreshToken,
+                    expires: Date.now() + req.user.expires_in*1000,
+                    scopes
+                },
+                name: req.user.username,
+                discrim: req.user.discriminator,
+                fullUsername:
+                    req.user.username +
+                    "#" +
+                    req.user.discriminator,
+                locale: req.user.locale,
+                flags: req.user.flags,
+                avatar: {
+                    hash: req.user.avatar,
+                    url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
+                }
+            } as delUser
+
             if (user.rank.mod === true) {
+                importUser["staffTracking.lastLogin"] = Date.now();
                 await global.db.collection("users").updateOne(
                     { _id: req.user.id },
                     {
-                        $set: {
-                            auth: {
-                                accessToken: req.user.accessToken,
-                                refreshToken: req.user.refreshToken,
-                                expires: Date.now() + req.user.expires_in*1000,
-                                scopes
-                            },
-                            name: req.user.username,
-                            discrim: req.user.discriminator,
-                            fullUsername:
-                                req.user.username +
-                                "#" +
-                                req.user.discriminator,
-                            locale: req.user.locale,
-                            flags: req.user.flags,
-                            avatar: {
-                                hash: req.user.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
-                            },
-                            "staffTracking.lastLogin": Date.now()
-                        }
+                        $set: importUser
                     }
                 );
             } else {
                 await global.db.collection("users").updateOne(
                     { _id: req.user.id },
                     {
-                        $set: {
-                            auth: {
-                                accessToken: req.user.accessToken,
-                                refreshToken: req.user.refreshToken,
-                                expires: Date.now() + req.user.expires_in*1000,
-                                scopes
-                            },
-                            name: req.user.username,
-                            discrim: req.user.discriminator,
-                            fullUsername:
-                                req.user.username +
-                                "#" +
-                                req.user.discriminator,
-                            locale: req.user.locale,
-                            flags: req.user.flags,
-                            avatar: {
-                                hash: req.user.avatar,
-                                url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
-                            }
-                        } as delUser
+                        $set: importUser
                     }
                 );
             }
@@ -311,7 +258,7 @@ router.get("/logout", async (req, res) => {
         req.session.logoutJust = true;
         if (req.user.db.rank.admin) await tokenManager.tokenReset(req.user.id);
 
-        await req.logout();
+        req.logout();
         res.redirect(req.session.redirectTo || "/");
     } else {
         req.user.id = req.user.impersonator;
@@ -320,4 +267,4 @@ router.get("/logout", async (req, res) => {
     }
 });
 
-export = router;
+export default router;

@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -18,11 +18,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 export function getLibs() {
-    return global.libs.sort((a, b) => a._id.localeCompare(b._id));
+    return global.libs?.sort((a, b) => a._id.localeCompare(b._id));
 }
 
 export function hasLib(name: string) {
-    return global.libs.find((x) => x._id === name);
+    return global.libs?.find((x) => x._id === name);
 }
 
 export async function cacheLibs() {

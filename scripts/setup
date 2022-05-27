@@ -4,30 +4,6 @@ const app = require("../dist/src/app.js");
 
 const libraries = [
     {
-        name: "discljord",
-        language: "Clojure",
-        links: {
-            docs: "https://igjoshua.github.io/discljord/",
-            repo: "https://github.com/igjoshua/discljord"
-        }
-    },
-    {
-        name: "aegis.cpp",
-        language: "C++",
-        links: {
-            docs: "https://docs.aegisbot.io/",
-            repo: "https://github.com/zeroxs/aegis.cpp"
-        }
-    },
-    {
-        name: "discordcr",
-        language: "Crystal",
-        links: {
-            docs: "https://discordcr.github.io/discordcr/doc/v0.4.0/",
-            repo: "https://github.com/discordcr/discordcr"
-        }
-    },
-    {
         name: "Discord.Net",
         language: "C#",
         links: {
@@ -44,14 +20,6 @@ const libraries = [
         }
     },
     {
-        name: "dscord",
-        language: "D",
-        links: {
-            docs: "https://b1naryth1ef.github.io/dscord/",
-            repo: "https://github.com/b1naryth1ef/dscord"
-        }
-    },
-    {
         name: "DiscordGo",
         language: "Go",
         links: {
@@ -65,14 +33,6 @@ const libraries = [
         links: {
             docs: "https://pkg.go.dev/github.com/andersfylling/disgord?tab=doc",
             repo: "https://github.com/andersfylling/disgord"
-        }
-    },
-    {
-        name: "catnip",
-        language: "Java",
-        links: {
-            docs: "https://mewna.github.io/catnip/docs/",
-            repo: "https://github.com/mewna/catnip"
         }
     },
     {
@@ -115,6 +75,49 @@ const libraries = [
             repo: "https://github.com/abalabahaha/eris"
         }
     },
+
+    {
+        name: "discljord",
+        language: "Clojure",
+        links: {
+            docs: "https://igjoshua.github.io/discljord/",
+            repo: "https://github.com/igjoshua/discljord"
+        }
+    },
+    {
+        name: "aegis.cpp",
+        language: "C++",
+        links: {
+            docs: "https://docs.aegisbot.io/",
+            repo: "https://github.com/zeroxs/aegis.cpp"
+        }
+    },
+    {
+        name: "discordcr",
+        language: "Crystal",
+        links: {
+            docs: "https://discordcr.github.io/discordcr/doc/v0.4.0/",
+            repo: "https://github.com/discordcr/discordcr"
+        }
+    },
+    
+    
+    {
+        name: "dscord",
+        language: "D",
+        links: {
+            docs: "https://b1naryth1ef.github.io/dscord/",
+            repo: "https://github.com/b1naryth1ef/dscord"
+        }
+    },
+    {
+        name: "catnip",
+        language: "Java",
+        links: {
+            docs: "https://mewna.github.io/catnip/docs/",
+            repo: "https://github.com/mewna/catnip"
+        }
+    },
     {
         name: "Discord.jl",
         language: "Julia",
@@ -148,11 +151,51 @@ const libraries = [
         }
     },
     {
+        name: "DiscordPHP",
+        language: "PHP",
+        links: {
+            docs: "http://discord-php.github.io/DiscordPHP/",
+            repo: "https://github.com/discord-php/DiscordPHP"
+        }
+    },
+    {
         name: "discord.py",
         language: "Python",
         links: {
             docs: "https://discordpy.readthedocs.io/en/latest/index.html",
             repo: "https://github.com/Rapptz/discord.py"
+        }
+    },
+    {
+        name: "disnake",
+        language: "Python",
+        links: {
+            docs: "https://docs.disnake.dev/en/latest/",
+            repo: "https://github.com/DisnakeDev/disnake"
+        }
+    },
+    {
+        name: "hikari",
+        language: "Python",
+        links: {
+            docs: "https://www.hikari-py.dev/hikari/index.html",
+            repo: "https://github.com/hikari-py/hikari"
+        }
+    },
+    {
+        name: "nextcord",
+        language: "Python",
+        links: {
+            docs: "https://docs.nextcord.dev/en/stable/",
+            repo: "https://github.com/nextcord/nextcord"
+        }
+    },
+    {
+        name: "pycord",
+        language: "Python",
+        links: {
+            docs: "https://docs.pycord.dev/en/master/",
+            repo: "https://github.com/Pycord-Development/pycord"
         }
     },
     {

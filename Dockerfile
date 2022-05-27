@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:17.9.0-alpine3.14
 WORKDIR /app
 RUN apk update && apk add git ca-certificates
 COPY . .

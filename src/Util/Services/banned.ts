@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { guilds } from "./discord";
+import { guilds } from "./discord.js";
 
 export async function check(user: string): Promise<boolean> {
     const ban = await global.redis?.hget("bans", user);
@@ -26,7 +26,7 @@ export async function check(user: string): Promise<boolean> {
 
 export async function updateBanlist() {
     await global.redis?.del("bans");
-    const bans = await guilds.main.fetchBans();
+    const bans = await guilds.main.bans.fetch().catch(e => console.error(e));
     await global.redis?.hmset(
         "bans",
         ...bans.map((ban) => [ban.user.id, true])

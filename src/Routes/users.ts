@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -19,23 +19,22 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import type { APIUser } from "discord-api-types/v8";
+import type { APIUser } from "discord-api-types/v10";
 
-import * as discord from "../Util/Services/discord";
-import * as banned from "../Util/Services/banned";
-import { variables } from "../Util/Function/variables";
-import * as permission from "../Util/Function/permissions";
-import * as functions from "../Util/Function/main";
-import * as botCache from "../Util/Services/botCaching";
-import * as serverCache from "../Util/Services/serverCaching";
-import * as templateCache from "../Util/Services/templateCaching";
-import * as userCache from "../Util/Services/userCaching";
-import * as tokenManager from "../Util/Services/adminTokenManager";
+import * as discord from "../Util/Services/discord.js";
+import * as banned from "../Util/Services/banned.js";
+import { variables } from "../Util/Function/variables.js";
+import * as permission from "../Util/Function/permissions.js";
+import * as functions from "../Util/Function/main.js";
+import * as botCache from "../Util/Services/botCaching.js";
+import * as serverCache from "../Util/Services/serverCaching.js";
+import * as templateCache from "../Util/Services/templateCaching.js";
+import * as userCache from "../Util/Services/userCaching.js";
+import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import type { DiscordAPIError } from "discord.js";
-import { themes } from "../../@types/enums";
+import { themes } from "../../@types/enums.js";
 
-const Entities = require("html-entities").XmlEntities;
-const entities = new Entities();
+import entities from "html-entities";
 const router = express.Router();
 
 router.get("/:id", variables, async (req: Request, res: Response) => {
@@ -835,4 +834,4 @@ router.get(
     }
 );
 
-module.exports = router;
+export default router;

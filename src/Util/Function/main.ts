@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -17,10 +17,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as botCache from "../Services/botCaching";
-import * as userCache from "../Services/userCaching";
+import * as botCache from "../Services/botCaching.js";
+import * as userCache from "../Services/userCaching.js";
 import { URL } from "url";
-import { OAuth2Scopes } from "discord-api-types/v8";
+import { OAuth2Scopes } from "discord-api-types/v10";
 
 export const escapeFormatting = (text: string) => {
     const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");

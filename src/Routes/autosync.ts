@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -20,13 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import fetch from "node-fetch";
 import refresh from "passport-oauth2-refresh";
-import * as discord from "../Util/Services/discord";
-import * as botCache from "../Util/Services/botCaching";
-import * as serverCache from "../Util/Services/serverCaching";
-import * as templateCache from "../Util/Services/templateCaching";
-import * as userCache from "../Util/Services/userCaching";
-import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord-api-types/v8";
-import * as settings from "../../settings.json";
+import * as discord from "../Util/Services/discord.js";
+import * as botCache from "../Util/Services/botCaching.js";
+import * as serverCache from "../Util/Services/serverCaching.js";
+import * as templateCache from "../Util/Services/templateCaching.js";
+import * as userCache from "../Util/Services/userCaching.js";
+import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord-api-types/v10";
+import settings from "../../settings.json" assert { type: "json" };
 
 const router = express.Router();
 
@@ -188,22 +188,17 @@ router.get('/templates', async (req, res) => {
                 $set: {
                     name: template.name,
                     region: template.serialized_source_guild.region,
-                    locale:
-                        template.serialized_source_guild
-                            .preferred_locale,
-                    afkTimeout:
-                        template.serialized_source_guild.afk_timeout,
-                    verificationLevel:
-                        template.serialized_source_guild
-                            .verification_level,
-                    defaultMessageNotifications:
-                        template.serialized_source_guild
-                            .default_message_notifications,
-                    explicitContent:
-                        template.serialized_source_guild
-                            .explicit_content_filter,
-                    roles: template.serialized_source_guild.roles.map(c => {return {name: c.name, color: c.color}}),
-                    channels: template.serialized_source_guild.channels.map(c => {return {name: c.name, type: c.type, nsfw: c.nsfw}}),
+                    locale: template.serialized_source_guild
+                        .preferred_locale,
+                    afkTimeout: template.serialized_source_guild.afk_timeout,
+                    verificationLevel: template.serialized_source_guild
+                        .verification_level,
+                    defaultMessageNotifications: template.serialized_source_guild
+                        .default_message_notifications,
+                    explicitContent: template.serialized_source_guild
+                        .explicit_content_filter,
+                    roles: template.serialized_source_guild.roles.map(c => { return { name: c.name, color: c.color }; }),
+                    channels: template.serialized_source_guild.channels.map(c => { return { name: c.name, type: c.type, nsfw: c.nsfw }; }),
                     usageCount: template.usage_count,
                     creator: {
                         id: template.creator.id,
@@ -211,11 +206,10 @@ router.get('/templates', async (req, res) => {
                         discriminator: template.creator.discriminator
                     },
                     icon: {
-                        hash:
-                            template.serialized_source_guild.icon_hash,
+                        hash: template.serialized_source_guild.icon_hash,
                         url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                     }
-                } as delTemplate
+                } as unknown as delTemplate
             }
         );
 
@@ -229,4 +223,4 @@ router.get('/templates', async (req, res) => {
     res.sendStatus(200)
 })
 
-export = router
+export default router;

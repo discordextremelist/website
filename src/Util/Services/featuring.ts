@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PresenceUpdateStatus, UserFlags } from "discord-api-types/v8";
-import * as functions from "../Function/main";
+import { PresenceUpdateStatus, UserFlags } from "discord-api-types/v10";
+import * as functions from "../Function/main.js";
 
 export async function getFeaturedBots(): Promise<delBot[]> {
     const bots = await global.redis?.get("featured_bots");

@@ -101,8 +101,16 @@
                             <label class="has-text-orange" for="finance"><%= __("common.tags.finance") %></label>
                         </div>
                         <div class="field">
-                            <input class="is-checkradio is-circle has-background-color is-danger" type="checkbox" id="lgbt" name="lgbt" <% if (server.tags && server.tags.includes("LGBT")) { %>checked="checked"<% } %>>
-                            <label class="has-text-danger" for="lgbt"><%= __("common.tags.lgbt") %></label>
+                            <input class="is-checkradio is-circle has-background-color is-danger" type="checkbox" id="contCreat" name="contCreat" <% if (server.tags && server.tags.includes("Content Creation")) { %>checked="checked"<% } %>>
+                            <label class="has-text-danger" for="contCreat"><%= __("common.tags.contCreat") %></label>
+                        </div>
+                        <div class="field">
+                            <input class="is-checkradio is-circle has-background-color is-magenta" type="checkbox" id="lgbt" name="lgbt" <% if (server.tags && server.tags.includes("LGBT")) { %>checked="checked"<% } %>>
+                            <label class="has-text-magenta" for="lgbt"><%= __("common.tags.lgbt") %></label>
+                        </div>
+                        <div class="field">
+                            <input class="is-checkradio is-circle has-background-color is-pink" type="checkbox" id="nsfw" name="nsfw" <% if (server.tags && server.tags.includes("NSFW")) { %>checked="checked"<% } %>>
+                            <label class="has-text-pink" for="nsfw"><%= __("common.tags.nsfw") %></label>
                         </div>
                     </div>
                 </div>

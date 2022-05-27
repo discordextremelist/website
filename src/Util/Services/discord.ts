@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -18,12 +18,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import * as Discord from "discord.js";
-import * as metrics from "datadog-metrics";
+import metrics from "datadog-metrics";
 
-import * as settings from "../../../settings.json";
+import settings from "../../../settings.json" assert { type: "json" };
 import moment from "moment";
-import { PresenceUpdateStatus } from "discord-api-types/v8";
-import * as botCache from "./botCaching";
+import { PresenceUpdateStatus } from "discord-api-types/v10";
+import * as botCache from "./botCaching.js";
 import { hostname } from "os";
 
 const prefix = "statuses";
@@ -47,13 +47,13 @@ class Client extends Discord.Client {
 
 export const bot = new Client({
     allowedMentions: { parse: [] },
-    ws: { intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_PRESENCES"] },
+    intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_PRESENCES"],
     http: { version: 8 }
 });
 
-bot.on("guildBanRemove", async (guild, user) => {
-   if (guild.id === settings.guild.main) {
-       await global.redis?.hdel("bans", user.id);
+bot.on("guildBanRemove", async (ban) => {
+   if (ban.guild.id === settings.guild.main) {
+       await global.redis?.hdel("bans", ban.user.id);
    }
 });
 
@@ -84,10 +84,9 @@ bot.on("ready", async () => {
         console.timeEnd("Bot cache");
         await global.redis.del("fetch_lock");
     }
-
 });
 
-bot.on("presenceUpdate", async (oldPresence, newPresence) => {
+bot.on("presenceUpdate", async (_oldPresence, newPresence) => {
     await global.redis?.hmset(
         prefix,
         newPresence.member.id,
@@ -140,12 +139,18 @@ export async function getStatus(id: string) {
 }
 
 export async function uploadStatuses() {
+    await bot.guilds.fetch();
+
+    bot.guilds.cache.forEach(async (g) => {
+        await g.members.fetch({ withPresences: true });
+    });
+
     await Promise.all(
         bot.guilds.cache.map(
             async (g) =>
                 await global.redis?.hmset(
                     prefix,
-                    ...g.members.cache.map((m) => [m.id, m.presence.status])
+                    ...g.members.cache.map((m) => [m.id, m.presence?.status])
                 )
         )
     );

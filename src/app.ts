@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -21,7 +21,7 @@ import express from "express";
 import { Request, Response } from "express";
 
 import * as Sentry from "@sentry/node";
-import * as path from "path";
+import path from "path";
 import * as device from "express-device";
 import cookieSession from "cookie-session";
 import cookieParser from "cookie-parser";
@@ -29,28 +29,42 @@ import createError from "http-errors";
 import passport from "passport";
 import logger from "morgan";
 
-import * as libCache from "./Util/Services/libCaching";
-import * as announcementCache from "./Util/Services/announcementCaching";
-import * as featuredCache from "./Util/Services/featuring";
-import * as ddosMode from "./Util/Services/ddosMode";
-import * as banned from "./Util/Services/banned";
-import * as discord from "./Util/Services/discord";
-import * as tokenManager from "./Util/Services/adminTokenManager";
+import * as libCache from "./Util/Services/libCaching.js";
+import * as announcementCache from "./Util/Services/announcementCaching.js";
+import * as featuredCache from "./Util/Services/featuring.js";
+import * as ddosMode from "./Util/Services/ddosMode.js";
+import * as banned from "./Util/Services/banned.js";
+import * as discord from "./Util/Services/discord.js";
+import * as tokenManager from "./Util/Services/adminTokenManager.js";
 
-import languageHandler from "./Util/Middleware/languageHandler";
+import languageHandler from "./Util/Middleware/languageHandler.js";
 
-import { botStatsUpdate } from "./Util/Services/botStatsUpdate";
-import { variables } from "./Util/Function/variables";
-import { monacoRedirect } from "./Util/Middleware/monacoRedirect";
-import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap";
+import { botStatsUpdate } from "./Util/Services/botStatsUpdate.js";
+import { variables } from "./Util/Function/variables.js";
+import { monacoRedirect } from "./Util/Middleware/monacoRedirect.js";
+import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap.js";
 
 import i18n from "i18n";
-import * as settings from "../settings.json";
 import { MongoClient } from "mongodb";
 import { RedisOptions } from "ioredis";
 import { hostname } from "os";
 
+import settings from "../settings.json" assert { type: "json" };
+import libraries from "../assets/libraries.json" assert { type: "json" };
+
+import authRoute from "./Routes/authentication.js";
+import autosyncRoute from "./Routes/autosync.js";
+import indexRoute from "./Routes/index.js";
+import searchRoute from "./Routes/search.js";
+import docsRoute from "./Routes/docs.js";
+import botsRoute from "./Routes/bots.js";
+import serversRoute from "./Routes/servers.js";
+import usersRoute from "./Routes/users.js";
+import templatesRoute from "./Routes/templates.js";
+import staffRoute from "./Routes/staff.js";
+
 const app = express();
+const __dirname = path.resolve();
 
 if (!settings.website.dev) Sentry.init({ dsn: settings.secrets.sentry, release: "website@" + process.env.npm_package_version, environment: "production" });
 if (!settings.website.dev) app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
@@ -67,8 +81,8 @@ app.use(
     }
 );
 
-app.set("views", path.join(__dirname + "/../../assets/Views"));
-app.use(express.static(path.join(__dirname + "/../../assets/Public")));
+app.set("views", __dirname + "/views");
+app.use(express.static(__dirname + "/assets/Public"));
 
 new Promise<void>((resolve, reject) => {
     console.time("Mongo TTL");
@@ -87,7 +101,7 @@ new Promise<void>((resolve, reject) => {
     );
 })
     .then(async () => {
-        for (const lib of require("../../assets/libraries.json")) {
+        for (const lib of libraries) {
             await global.db
                 .collection("libraries")
                 .updateOne(
@@ -152,8 +166,8 @@ new Promise<void>((resolve, reject) => {
             };
         }
 
-        global.redis = new (require("ioredis"))(redisConfig);
-        const s = new (require("ioredis"))(redisConfig);
+        global.redis = new Redis(redisConfig); 
+        const s = new Redis(redisConfig);
 
         /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems. - Ice*/
 
@@ -259,7 +273,7 @@ new Promise<void>((resolve, reject) => {
 
         i18n.configure({
             locales: settings.website.locales.all,
-            directory: __dirname + "/../../node_modules/del-i18n/website",
+            directory: __dirname + "/node_modules/del-i18n/website",
             defaultLocale: settings.website.locales.default
         });
 
@@ -303,9 +317,8 @@ new Promise<void>((resolve, reject) => {
             }
         );
 
-        app.use("/auth", require("./Routes/authentication"));
-
-        app.use("/autosync", require("./Routes/autosync"))
+        app.use("/auth", authRoute);
+        app.use("/autosync", autosyncRoute)
 
         // Locale handler.
         // Don't put anything below here that you don't want it's locale to be checked whatever (broken english kthx)
@@ -313,17 +326,17 @@ new Promise<void>((resolve, reject) => {
 
         app.use("/:lang/sitemap.xml", sitemapGenerator);
 
-        app.use("/:lang", require("./Routes/index"));
-        app.use("/:lang/search", require("./Routes/search"));
-        app.use("/:lang/docs", require("./Routes/docs"));
+        app.use("/:lang", indexRoute);
+        app.use("/:lang/search", searchRoute);
+        app.use("/:lang/docs", docsRoute);
 
         app.use("*", monacoRedirect);
 
-        app.use("/:lang/bots", require("./Routes/bots"));
-        app.use("/:lang/servers", require("./Routes/servers"));
-        app.use("/:lang/templates", require("./Routes/templates"));
-        app.use("/:lang/users", require("./Routes/users"));
-        app.use("/:lang/staff", require("./Routes/staff"));
+        app.use("/:lang/bots", botsRoute);
+        app.use("/:lang/servers", serversRoute);
+        app.use("/:lang/templates", templatesRoute);
+        app.use("/:lang/users", usersRoute);
+        app.use("/:lang/staff", staffRoute);
 
         app.use(variables);
 
@@ -375,4 +388,4 @@ new Promise<void>((resolve, reject) => {
         process.exit(1);
     });
 
-export = app;
+export default app;

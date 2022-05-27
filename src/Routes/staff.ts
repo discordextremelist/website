@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -19,20 +19,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import type { APIUser, Snowflake } from "discord-api-types/v8";
+import type { APIUser, Snowflake } from "discord-api-types/v10";
 
-import * as settings from "../../settings.json";
-import * as permission from "../Util/Function/permissions";
-import * as functions from "../Util/Function/main";
-import * as botCache from "../Util/Services/botCaching";
-import * as serverCache from "../Util/Services/serverCaching";
-import * as templateCache from "../Util/Services/templateCaching";
-import * as auditCache from "../Util/Services/auditCaching";
-import * as userCache from "../Util/Services/userCaching";
-import * as announcementCache from "../Util/Services/announcementCaching";
-import { variables } from "../Util/Function/variables";
-import * as tokenManager from "../Util/Services/adminTokenManager";
-import * as discord from "../Util/Services/discord";
+import settings from "../../settings.json" assert { type: "json" };
+import * as permission from "../Util/Function/permissions.js";
+import * as functions from "../Util/Function/main.js";
+import * as botCache from "../Util/Services/botCaching.js";
+import * as serverCache from "../Util/Services/serverCaching.js";
+import * as templateCache from "../Util/Services/templateCaching.js";
+import * as userCache from "../Util/Services/userCaching.js";
+import * as announcementCache from "../Util/Services/announcementCaching.js";
+import { variables } from "../Util/Function/variables.js";
+import * as tokenManager from "../Util/Services/adminTokenManager.js";
+import * as discord from "../Util/Services/discord.js";
 
 const router = express.Router();
 
@@ -1100,4 +1099,4 @@ router.get(
     }
 );
 
-module.exports = router;
+export default router;

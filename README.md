@@ -1,4 +1,4 @@
-# Discord Extreme List version 5.x.x
+ Discord Extreme List version 5.x.x
 
 [![Compile](https://github.com/discordextremelist/website/workflows/Compile/badge.svg)](https://github.com/discordextremelist/website/actions?query=workflow%3ACompile)
 [![Discord](https://img.shields.io/discord/568567800910839811?color=5865f2&logo=discord&logoColor=white)](https://discord.gg/WeCer3J)
@@ -19,7 +19,7 @@ Note that we do not support running public clones: you are allowed to do it if y
 
 ### Node.js
 
-DEL requires [Node.js](https://nodejs.org) 14+.
+DEL requires [Node.js](https://nodejs.org) v17.9.0+.
 
 ### MongoDB
 

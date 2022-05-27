@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Cairo Mitchell-Acason, John Burke, Advaith Jagathesan
+Copyright (C) 2020 Carolina Mitchell-Acason, John Burke, Advaith Jagathesan
 t
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -23,15 +23,11 @@ import { Redis } from "ioredis";
 import strings from "del-i18n/website/en-NZ.json"
 
 declare global {
-    namespace NodeJS {
-        interface Global {
-            redis: Redis;
-            announcement: announcement;
-            ddosMode: ddosMode;
-            libs: library[];
-            db: Db;
-        }
-    }
+    var redis: Redis;
+    var announcement: announcement;
+    var ddosMode: ddosMode;
+    var libs: library[];
+    var db: Db;
 }
 
 declare module "sanitize-html" {
@@ -44,7 +40,7 @@ declare module "discord.js" {
     interface GuildMember {
         order?: number;
         rank?: string;
-        avatar?: string;
+        avatar: string | null;
         username?: string;
         discriminator?: string;
     }

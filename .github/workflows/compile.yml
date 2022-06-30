@@ -8,14 +8,14 @@ on:
 
 jobs:
   node14:
-    name: node v14 - tsc
+    name: node v17 - tsc
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: install node v14
+      - name: install node v17
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 17
       - name: snyk install
         run: npm i -g snyk
       - name: install

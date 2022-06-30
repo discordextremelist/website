@@ -16,8 +16,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 17
-      - name: snyk install
-        run: npm i -g snyk
       - name: install
         run: npm install
       - name: dependencies

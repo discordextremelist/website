@@ -46,7 +46,7 @@ import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap.js";
 
 import i18n from "i18n";
 import { MongoClient } from "mongodb";
-import { RedisOptions } from "ioredis";
+import Redis from "ioredis"
 import { hostname } from "os";
 
 import settings from "../settings.json" assert { type: "json" };
@@ -147,7 +147,7 @@ new Promise<void>((resolve, reject) => {
                 .then(() => true)
                 .catch(() => false);
         }
-        let redisConfig: RedisOptions;
+        let redisConfig: Redis.RedisOptions;
 
         if (settings.secrets.redis.sentinels.length > 0) {
             redisConfig = {

@@ -27,8 +27,9 @@ import * as botCache from "./botCaching.js";
 import { hostname } from "os";
 
 const prefix = "statuses";
-
-metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
+// If someone is to self-host or contribute, setting datadog metrics is a lot,
+// if they have nothing set in the secret section of settings.json, let's ignore metrics - AJ
+if (!settings.secrets.datadog) metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
 
 // @ts-expect-error
 class Client extends Discord.Client {
@@ -52,9 +53,9 @@ export const bot = new Client({
 });
 
 bot.on("guildBanRemove", async (ban) => {
-   if (ban.guild.id === settings.guild.main) {
-       await global.redis?.hdel("bans", ban.user.id);
-   }
+    if (ban.guild.id === settings.guild.main) {
+        await global.redis?.hdel("bans", ban.user.id);
+    }
 });
 
 bot.on("ready", async () => {
@@ -77,7 +78,7 @@ bot.on("ready", async () => {
             bots.forEach(bot => {
                 if (!guilds.main.members.cache.has(bot._id)) botsToFetch.push(bot._id)
             })
-            guilds.main.members.fetch({user: botsToFetch})
+            guilds.main.members.fetch({ user: botsToFetch })
                 .then(x => console.log(`Retrieved ${x.size} members!`))
                 .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
         });
@@ -123,13 +124,13 @@ export const guilds = {
 
 export async function getMember(id: string) {
     if (guilds.main) {
-        return await guilds.main.members.fetch(id).catch(() => {});
+        return await guilds.main.members.fetch(id).catch(() => { });
     } else return undefined;
 }
 
 export async function getTestingGuildMember(id: string) {
     if (guilds.testing) {
-        return await guilds.testing.members.fetch(id).catch(() => {});
+        return await guilds.testing.members.fetch(id).catch(() => { });
     } else return undefined;
 }
 
@@ -158,7 +159,7 @@ export async function uploadStatuses() {
 
 export async function postMetric() {
     const guild = guilds.main;
-    if (guild) metrics.gauge("del.server.memberCount", guild.memberCount);
+    if (guild && settings.secrets.datadog) metrics.gauge("del.server.memberCount", guild.memberCount);
 }
 
 export async function postWebMetric(type: string) {
@@ -182,7 +183,7 @@ export async function postWebMetric(type: string) {
 
     switch (type) {
         case "bot":
-            settings.website.dev
+            if (settings.secrets.datadog) settings.website.dev
                 ? metrics.gauge("del.website.dev.botCount", bots.length)
                 : metrics.gauge("del.website.botCount", bots.length);
 
@@ -212,31 +213,31 @@ export async function postWebMetric(type: string) {
                 (b) => !b.status.approved && !b.status.archived
             );
 
-            settings.website.dev
+            if (settings.secrets.datadog) settings.website.dev
                 ? metrics.gauge(
-                      "del.website.dev.botCount.unapproved",
-                      unapprovedBots.length
-                  )
+                    "del.website.dev.botCount.unapproved",
+                    unapprovedBots.length
+                )
                 : metrics.gauge(
-                      "del.website.botCount.unapproved",
-                      unapprovedBots.length
-                  );
+                    "del.website.botCount.unapproved",
+                    unapprovedBots.length
+                );
             break;
         case "server":
-            settings.website.dev
+            if (settings.secrets.datadog) settings.website.dev
                 ? metrics.gauge("del.website.dev.serverCount", servers.length)
                 : metrics.gauge("del.website.serverCount", servers.length);
             break;
         case "template":
-            settings.website.dev
+            if (settings.secrets.datadog) settings.website.dev
                 ? metrics.gauge(
-                      "del.website.dev.templateCount",
-                      templates.length
-                  )
+                    "del.website.dev.templateCount",
+                    templates.length
+                )
                 : metrics.gauge("del.website.templateCount", templates.length);
             break;
         case "user":
-            settings.website.dev
+            if (settings.secrets.datadog) settings.website.dev
                 ? metrics.gauge("del.website.dev.userCount", users.length)
                 : metrics.gauge("del.website.userCount", users.length);
             break;
@@ -257,11 +258,11 @@ export async function postTodaysGrowth() {
     const date = moment().diff(moment(todaysGrowth.lastPosted), "days");
 
     if (date >= 1) {
-        settings.website.dev
+        if (settings.secrets.datadog) settings.website.dev
             ? metrics.gauge(
-                  "del.website.dev.addedBotsToday",
-                  todaysGrowth.count
-              )
+                "del.website.dev.addedBotsToday",
+                todaysGrowth.count
+            )
             : metrics.gauge("del.website.addedBotsToday", todaysGrowth.count);
 
         await global.db.collection("webOptions").updateOne(

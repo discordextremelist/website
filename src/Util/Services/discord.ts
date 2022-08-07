@@ -31,6 +31,13 @@ const prefix = "statuses";
 // if they have nothing set in the secret section of settings.json, let's ignore metrics - AJ
 if (settings.secrets.datadog) metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
 
+// Let's not query the database of users, and bots, and then make changes to it every 5 seconds, that would be a good thing not to do
+setInterval(async () => {
+    postWebMetric("user");
+    postWebMetric("bot_unapproved");
+    await postTodaysGrowth();
+}, 8.568e+7); // 23.8h, to account for eventual time drift if the site is online for a while (which is the goal lol) - AJ
+
 // @ts-expect-error
 class Client extends Discord.Client {
     readonly api: {
@@ -278,9 +285,3 @@ export async function postTodaysGrowth() {
         );
     } else return;
 }
-
-setInterval(async () => {
-    postWebMetric("user");
-    postWebMetric("bot_unapproved");
-    await postTodaysGrowth();
-}, 5000);

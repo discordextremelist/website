@@ -280,7 +280,7 @@ new Promise<void>((resolve, reject) => {
         app.use(
             cookieSession({
                 name: "delSession",
-                secret: settings.secrets.cookie,
+                keys: [settings.secrets.cookie],
                 maxAge: 1000 * 60 * 60 * 24 * 7
             })
         );

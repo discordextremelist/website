@@ -226,10 +226,6 @@ new Promise<void>((resolve, reject) => {
 
         await discord.bot.login(settings.secrets.discord.token);
 
-        await new Promise<void>((resolve) => {
-            discord.bot.once("ready", () => resolve());
-        });
-
         setTimeout(async () => {
             await featuredCache.updateFeaturedBots();
             await discord.postMetric();

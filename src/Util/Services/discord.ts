@@ -160,7 +160,6 @@ export async function uploadStatuses() {
 export async function postMetric() {
     const guild = guilds.main;
     if (guild && settings.secrets.datadog) metrics.gauge("del.server.memberCount", guild.memberCount);
-    else return true; // My only guess is that this is holding it up somehow if datadog isn't enabled
 }
 
 export async function postWebMetric(type: string) {

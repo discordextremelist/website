@@ -89,9 +89,9 @@ router.get(
     permission.scopes([OAuth2Scopes.GuildsJoin]),
     async (req: Request, res: Response) => {
 
-        const bots = await botCache.getAllBots();
-
-        const showResubmitNote = bots.filter(bot => bot.status.archived && bot.owner.id === req.user.id).length > 0
+        // in this specific instance it makes more sense to make a mongo query than filtering through the entire redis cache
+        const showResubmitNote = await global.db.collection<delBot>("bots").countDocuments({ "owner.id": req.user.id, "status.archived": true }, { limit: 1 })
+        // this will return 1/true if something exists/is found, 0 if not.
 
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 
@@ -125,7 +125,7 @@ router.post(
 
         const botExists = await global.db
             .collection("bots")
-            .findOne({ _id: req.body.id });
+            .countDocuments({ _id: req.body.id }, { limit: 1 });
 
         if (botExists)
             return res.status(409).json({
@@ -170,7 +170,7 @@ router.post(
                     error = true;
                     errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
                 })
-                .catch(() => {});
+                .catch(() => { });
         }
 
         if (req.body.invite === "") {
@@ -292,13 +292,13 @@ router.post(
                     });
 
             if (fetchServer)
-            await fetch(`https://stonks.widgetbot.io/api/graphql`, {
-                method: 'post',
-                body: JSON.stringify({
-                    query: `{guild(id:"${req.body.widgetServer}"){id}}`
-                }),
-                headers: { 'Content-Type': 'application/json' },
-            }).then(async (fetchRes: fetchRes) => {
+                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                    method: 'post',
+                    body: JSON.stringify({
+                        query: `{guild(id:"${req.body.widgetServer}"){id}}`
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                }).then(async (fetchRes: fetchRes) => {
                     const data: any = await fetchRes.json();
                     if (data && !data.guild?.id) {
                         error = true;
@@ -498,7 +498,7 @@ router.post(
                                     auth: {
                                         accessToken,
                                         refreshToken,
-                                        expires: Date.now() + result.expires_in*1000
+                                        expires: Date.now() + result.expires_in * 1000
                                     }
                                 }
                             }
@@ -508,14 +508,14 @@ router.post(
                 })
             }
 
-            const receivedCommands = await (await fetch(DAPI+Routes.applicationCommands(req.body.id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(req.body.id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await discord.bot.api.users(req.body.id).get().catch(() => {}) as APIUser
+            const user = await discord.bot.api.users(req.body.id).get().catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -616,15 +616,13 @@ router.post(
                     }
                 } as delBot);
 
-                await discord.channels.logs.send(
+                (await discord.channels.logs).send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
+                    )}** \`(${req.user.id
                     })\` added bot **${functions.escapeFormatting(
                         app.name
-                    )}** \`(${req.body.id})\`\n<${settings.website.url}/bots/${
-                        req.body.id
+                    )}** \`(${req.body.id})\`\n<${settings.website.url}/bots/${req.body.id
                     }>`
                 );
 
@@ -1083,7 +1081,7 @@ router.post(
                             res.__("common.error.bot.arr.clientIDIsUser")
                         );
                     })
-                    .catch(() => {});
+                    .catch(() => { });
         }
 
         const botExists: delBot | undefined = await global.db
@@ -1133,7 +1131,7 @@ router.post(
                     res.__("common.error.listing.arr.invite.discordapp")
                 );
             } else if (req.body.invite.includes("discord.com") &&
-            (req.body.bot && !req.body.invite.includes(OAuth2Scopes.Bot) || req.body.slashCommands && !req.body.invite.includes(OAuth2Scopes.ApplicationsCommands))) {
+                (req.body.bot && !req.body.invite.includes(OAuth2Scopes.Bot) || req.body.slashCommands && !req.body.invite.includes(OAuth2Scopes.ApplicationsCommands))) {
                 error = true;
                 errors.push(
                     res.__("common.error.bot.arr.scopesNotInInvite")
@@ -1297,7 +1295,7 @@ router.post(
                     });
 
             if (fetchChannel)
-            await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
@@ -1447,7 +1445,7 @@ router.post(
                                     auth: {
                                         accessToken,
                                         refreshToken,
-                                        expires: Date.now() + result.expires_in*1000
+                                        expires: Date.now() + result.expires_in * 1000
                                     }
                                 }
                             }
@@ -1457,14 +1455,14 @@ router.post(
                 })
             }
 
-            const receivedCommands = await (await fetch(DAPI+Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(bot._id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await discord.bot.api.users(bot._id).get().catch(() => {}) as APIUser
+            const user = await discord.bot.api.users(bot._id).get().catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -1631,17 +1629,15 @@ router.post(
                 });
                 await botCache.updateBot(req.params.id);
 
-                await discord.channels.logs.send(
-                        `${settings.emoji.edit} **${functions.escapeFormatting(
-                            req.user.db.fullUsername
-                        )}** \`(${
-                            req.user.id
-                        })\` edited bot **${functions.escapeFormatting(
-                            app.name
-                        )}** \`(${app.id})\`\n<${settings.website.url}/bots/${
-                            req.params.id
-                        }>`
-                    )
+                (await discord.channels.logs).send(
+                    `${settings.emoji.edit} **${functions.escapeFormatting(
+                        req.user.db.fullUsername
+                    )}** \`(${req.user.id
+                    })\` edited bot **${functions.escapeFormatting(
+                        app.name
+                    )}** \`(${app.id})\`\n<${settings.website.url}/bots/${req.params.id
+                    }>`
+                )
                     .catch((e) => {
                         console.error(e);
                     });
@@ -1763,16 +1759,12 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
 
         if (user) {
             editorsLength !== looped
-                ? (editors += `<a class="has-text-white" href="${
-                      settings.website.url
-                  }${res.locals.linkPrefix}/users/${user._id}">${
-                      sen(user.fullUsername) || "Unknown#0000"
-                  }</a>,&nbsp;`)
-                : (editors += `<a class="has-text-white" href="${
-                      settings.website.url
-                  }${res.locals.linkPrefix}/users/${user._id}">${
-                      sen(user.fullUsername) || "Unknown#0000"
-                  }</a>`);
+                ? (editors += `<a class="has-text-white" href="${settings.website.url
+                    }${res.locals.linkPrefix}/users/${user._id}">${sen(user.fullUsername) || "Unknown#0000"
+                    }</a>,&nbsp;`)
+                : (editors += `<a class="has-text-white" href="${settings.website.url
+                    }${res.locals.linkPrefix}/users/${user._id}">${sen(user.fullUsername) || "Unknown#0000"
+                    }</a>`);
         } else {
             if (editorsLength === looped)
                 editors = editors.substring(0, editors.length - 2);
@@ -1804,7 +1796,7 @@ router.get(
     permission.auth,
     async (req, res) => {
         res.send(String(await global.redis?.hexists("bots", req.params.id)))
-})
+    })
 
 router.get(
     "/:id/src",
@@ -1942,7 +1934,7 @@ router.get(
             }
         );
 
-        await botCache.updateBot(<string> bot._id);
+        await botCache.updateBot(<string>bot._id);
 
         res.redirect(`/bots/${bot._id}`);
     }
@@ -2095,13 +2087,11 @@ router.get(
                 req: req
             });
 
-        await discord.channels.logs.send(
+        (await discord.channels.logs).send(
             `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
+            )}** \`(${req.user.id
+            })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
             })\``
         );
 
@@ -2157,13 +2147,11 @@ router.get(
                 req: req
             });
 
-        await discord.channels.logs.send(
+        (await discord.channels.logs).send(
             `${settings.emoji.archive} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` archived bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
+            )}** \`(${req.user.id
+            })\` archived bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
             })\``
         );
 
@@ -2225,13 +2213,11 @@ router.get(
                 req: req
             });
 
-        await discord.channels.logs.send(
+        (await discord.channels.logs).send(
             `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
+            )}** \`(${req.user.id
+            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
             })\``
         );
 
@@ -2292,13 +2278,11 @@ router.get(
                 req: req
             });
 
-        await discord.channels.logs.send(
+        (await discord.channels.logs).send(
             `${settings.emoji.unhide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` unhid bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
+            )}** \`(${req.user.id
+            })\` unhid bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
             })\``
         );
 
@@ -2414,7 +2398,7 @@ router.post(
                         error = true
                         errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
                     })
-                    .catch(() => {});
+                    .catch(() => { });
         }
 
         const botExists: delBot | undefined = await global.db
@@ -2631,13 +2615,13 @@ router.post(
                     });
 
             if (fetchChannel)
-            await fetch(`https://stonks.widgetbot.io/api/graphql`, {
-                method: 'post',
-                body: JSON.stringify({
-                    query: `{channel(id:"${req.body.widgetChannel}"){id}}`
-                }),
-                headers: { 'Content-Type': 'application/json' },
-            }).then(async (fetchRes: fetchRes) => {
+                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                    method: 'post',
+                    body: JSON.stringify({
+                        query: `{channel(id:"${req.body.widgetChannel}"){id}}`
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                }).then(async (fetchRes: fetchRes) => {
                     const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
@@ -2776,7 +2760,7 @@ router.post(
                                     auth: {
                                         accessToken,
                                         refreshToken,
-                                        expires: Date.now() + result.expires_in*1000
+                                        expires: Date.now() + result.expires_in * 1000
                                     }
                                 }
                             }
@@ -2786,14 +2770,14 @@ router.post(
                 })
             }
 
-            const receivedCommands = await (await fetch(DAPI+Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(bot._id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await discord.bot.api.users(bot._id).get().catch(() => {}) as APIUser
+            const user = await discord.bot.api.users(bot._id).get().catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -2953,17 +2937,15 @@ router.post(
                 });
                 await botCache.updateBot(req.params.id);
 
-                await discord.channels.logs.send(
-                        `${settings.emoji.resubmit} **${functions.escapeFormatting(
-                            req.user.db.fullUsername
-                        )}** \`(${
-                            req.user.id
-                        })\` resubmitted bot **${functions.escapeFormatting(
-                            app.name
-                        )}** \`(${app.id})\`\n<${settings.website.url}/bots/${
-                            app.id
-                        }>`
-                    )
+                (await discord.channels.logs).send(
+                    `${settings.emoji.resubmit} **${functions.escapeFormatting(
+                        req.user.db.fullUsername
+                    )}** \`(${req.user.id
+                    })\` resubmitted bot **${functions.escapeFormatting(
+                        app.name
+                    )}** \`(${app.id})\`\n<${settings.website.url}/bots/${app.id
+                    }>`
+                )
                     .catch((e) => {
                         console.error(e);
                     });
@@ -3045,17 +3027,15 @@ router.get(
             }
         );
 
-        await discord.channels.logs.send(
-                `${settings.emoji.check} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` approved bot **${functions.escapeFormatting(
-                    bot.name
-                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                    bot._id
-                }>`
-            )
+        (await discord.channels.logs).send(
+            `${settings.emoji.check} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${req.user.id
+            })\` approved bot **${functions.escapeFormatting(
+                bot.name
+            )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${bot._id
+            }>`
+        )
             .catch((e) => {
                 console.error(e);
             });
@@ -3064,12 +3044,10 @@ router.get(
         if (owner)
             owner
                 .send(
-                    `${
-                        settings.emoji.check
+                    `${settings.emoji.check
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been approved on the website!${
-                        !bot.scopes || bot.scopes.bot ? '\n\nYour bot will be added to our server within the next 24 hours.' : ''
+                    )}** \`(${bot._id})\` has been approved on the website!${!bot.scopes || bot.scopes.bot ? '\n\nYour bot will be added to our server within the next 24 hours.' : ''
                     }`
                 )
                 .catch((e) => {
@@ -3080,9 +3058,9 @@ router.get(
         if (mainGuildOwner)
             mainGuildOwner.roles
                 .add(settings.roles.developer, "User's bot was just approved.")
-                .catch((e) => {
+                .catch(async (e) => {
                     console.error(e);
-                    discord.channels.alerts.send(
+                    (await discord.channels.alerts).send(
                         `${settings.emoji.error} Failed giving <@${bot.owner.id}> \`${bot.owner.id}\` the role **Bot Developer** upon one of their bots being approved.`
                     );
                 });
@@ -3091,9 +3069,9 @@ router.get(
         if (mainGuildBot)
             mainGuildBot.roles
                 .add(settings.roles.bot, "Bot was approved on the website.")
-                .catch((e) => {
+                .catch(async (e) => {
                     console.error(e);
-                    discord.channels.alerts.send(
+                    (await discord.channels.alerts).send(
                         `${settings.emoji.error} Failed giving <@${bot._id}> \`${bot._id}\` the role **Bot** upon being approved on the website.`
                     );
                 });
@@ -3102,9 +3080,9 @@ router.get(
         if (botStaffServer)
             botStaffServer
                 .kick("Bot was approved on the website.")
-                .catch((e) => {
+                .catch(async (e) => {
                     console.error(e);
-                    discord.channels.alerts.send(
+                    (await discord.channels.alerts).send(
                         `${settings.emoji.error} Failed kicking <@${bot._id}> \`${bot._id}\` from the Testing Server on approval.`
                     );
                 });
@@ -3160,9 +3138,9 @@ router.get(
                     settings.roles.premiumBot,
                     "Bot was given premium on the website."
                 )
-                .catch((e) => {
+                .catch(async (e) => {
                     console.error(e);
-                    discord.channels.alerts.send(
+                    (await discord.channels.alerts).send(
                         `${settings.emoji.error} Failed giving <@${botMember.id}> \`${botMember.id}\` the role **Premium Bot** upon being given premium on the website.`
                     );
                 });
@@ -3374,14 +3352,12 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        await discord.channels.logs.send({
+        (await discord.channels.logs).send({
             content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
-            })\``,
+            )}** \`(${req.user.id
+                })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
+                })\``,
             embeds: [embed]
         });
 
@@ -3397,12 +3373,10 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${
-                        settings.emoji.cross
+                    `${settings.emoji.cross
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been declined.\n**Reason:** \`${
-                        req.body.reason || "None specified."
+                    )}** \`(${bot._id})\` has been declined.\n**Reason:** \`${req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -3533,14 +3507,13 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        await discord.channels.logs.send({
+        (await discord.channels.logs).send({
             content: `${settings.emoji.unapprove} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` unapproved bot **${functions.escapeFormatting(
-                bot.name
-            )}** \`(${bot._id})\``,
+            )}** \`(${req.user.id
+                })\` unapproved bot **${functions.escapeFormatting(
+                    bot.name
+                )}** \`(${bot._id})\``,
             embeds: [embed]
         });
 
@@ -3557,12 +3530,10 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${
-                        settings.emoji.unapprove
+                    `${settings.emoji.unapprove
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been unapproved!\n**Reason:** \`${
-                        req.body.reason || "None specified."
+                    )}** \`(${bot._id})\` has been unapproved!\n**Reason:** \`${req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -3693,14 +3664,12 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        await discord.channels.logs.send({
+        (await discord.channels.logs).send({
             content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
-            })\``,
+            )}** \`(${req.user.id
+                })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
+                })\``,
             embeds: [embed]
         });
 
@@ -3719,12 +3688,10 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${
-                        settings.emoji.delete
+                    `${settings.emoji.delete
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
-                        req.body.reason || "None specified."
+                    )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -3844,14 +3811,12 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        await discord.channels.logs.send({
+        (await discord.channels.logs).send({
             content: `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
-            })\``,
+            )}** \`(${req.user.id
+                })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
+                })\``,
             embeds: [embed]
         });
 
@@ -3859,12 +3824,10 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${
-                        settings.emoji.hide
+                    `${settings.emoji.hide
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${
-                        req.body.reason || "None specified."
+                    )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -3922,17 +3885,15 @@ router.get(
             }
         );
 
-        await discord.channels.logs.send(
-                `${settings.emoji.unhide} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` unhid bot **${functions.escapeFormatting(
-                    bot.name
-                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                    bot._id
-                }>`
-            )
+        (await discord.channels.logs).send(
+            `${settings.emoji.unhide} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${req.user.id
+            })\` unhid bot **${functions.escapeFormatting(
+                bot.name
+            )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${bot._id
+            }>`
+        )
             .catch((e) => {
                 console.error(e);
             });
@@ -3941,8 +3902,7 @@ router.get(
         if (owner)
             owner
                 .send(
-                    `${
-                        settings.emoji.check
+                    `${settings.emoji.check
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been unhidden on the website!`
@@ -4002,7 +3962,7 @@ router.get(
                                     auth: {
                                         accessToken,
                                         refreshToken,
-                                        expires: Date.now() + result.expires_in*1000
+                                        expires: Date.now() + result.expires_in * 1000
                                     }
                                 }
                             }
@@ -4012,14 +3972,14 @@ router.get(
                 })
             }
 
-            const receivedCommands = await (await fetch(DAPI+Routes.applicationCommands(bot._id), {headers: {authorization: `Bearer ${req.user.db.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+            const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(bot._id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
         let userFlags = 0
 
         if (bot.scopes?.bot) {
-            const user = await discord.bot.api.users(bot._id).get().catch(() => {}) as APIUser
+            const user = await discord.bot.api.users(bot._id).get().catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 

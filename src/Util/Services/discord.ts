@@ -27,8 +27,16 @@ import * as botCache from "./botCaching.js";
 import { hostname } from "os";
 
 const prefix = "statuses";
+// If someone is to self-host or contribute, setting datadog metrics is a lot,
+// if they have nothing set in the secret section of settings.json, let's ignore metrics - AJ
+if (settings.secrets.datadog) metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
 
-metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
+// Let's not query the database of users, and bots, and then make changes to it every 5 seconds, that would be a good thing not to do
+setInterval(async () => {
+    postWebMetric("user");
+    postWebMetric("bot_unapproved");
+    await postTodaysGrowth();
+}, 8.568e+7); // 23.8h, to account for eventual time drift if the site is online for a while (which is the goal lol) - AJ
 
 // @ts-expect-error
 class Client extends Discord.Client {
@@ -52,9 +60,9 @@ export const bot = new Client({
 });
 
 bot.on("guildBanRemove", async (ban) => {
-   if (ban.guild.id === settings.guild.main) {
-       await global.redis?.hdel("bans", ban.user.id);
-   }
+    if (ban.guild.id === settings.guild.main) {
+        await global.redis?.hdel("bans", ban.user.id);
+    }
 });
 
 bot.on("ready", async () => {
@@ -72,12 +80,12 @@ bot.on("ready", async () => {
         console.log(`Skipping discord caching. The instance which holds the lock is: ${lock}`);
     } else {
         console.time("Bot cache");
-        botCache.getAllBots().then(bots => {
+        botCache.getAllBots().then(async bots => {
             const botsToFetch = []
-            bots.forEach(bot => {
-                if (!guilds.main.members.cache.has(bot._id)) botsToFetch.push(bot._id)
-            })
-            guilds.main.members.fetch({user: botsToFetch})
+            bots.forEach(async bot => {
+                if (!(await guilds.main).members.cache.has(bot._id)) botsToFetch.push(bot._id)
+            });
+            (await guilds.main).members.fetch({ user: botsToFetch })
                 .then(x => console.log(`Retrieved ${x.size} members!`))
                 .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
         });
@@ -110,26 +118,28 @@ bot.on("guildMemberRemove", async (member) => {
         await postMetric();
     }
 });
-
 export const channels = {
-    get logs() { return bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel },
-    get alerts() { return bot.channels.cache.get(settings.channels.alerts) as Discord.TextChannel }
+    // There is a chance this will fail on recent bot restart if it didn't cache the channel yet.
+    // Using .fetch() will check the cache first, and if it isn't there, will try and fetch from the API.
+    get logs() { return bot.channels.fetch(settings.channels.webLog) as Promise<Discord.TextChannel> },
+    get alerts() { return bot.channels.fetch(settings.channels.alerts) as Promise<Discord.TextChannel> }
 }
 
 export const guilds = {
-    get main() { return bot.guilds.cache.get(settings.guild.main) },
-    get testing() { return bot.guilds.cache.get(settings.guild.staff) },
+    // same thing as the channels above
+    get main() { return bot.guilds.fetch(settings.guild.main) as Promise<Discord.Guild> },
+    get testing() { return bot.guilds.fetch(settings.guild.staff) as Promise<Discord.Guild> },
 }
 
 export async function getMember(id: string) {
     if (guilds.main) {
-        return await guilds.main.members.fetch(id).catch(() => {});
+        return (await guilds.main).members.fetch(id).catch(() => { });
     } else return undefined;
 }
 
 export async function getTestingGuildMember(id: string) {
     if (guilds.testing) {
-        return await guilds.testing.members.fetch(id).catch(() => {});
+        return (await guilds.testing).members.fetch(id).catch(() => { });
     } else return undefined;
 }
 
@@ -158,33 +168,19 @@ export async function uploadStatuses() {
 
 export async function postMetric() {
     const guild = guilds.main;
-    if (guild) metrics.gauge("del.server.memberCount", guild.memberCount);
+    if (guild && settings.secrets.datadog) metrics.gauge("del.server.memberCount", (await guild).memberCount);
 }
-
+export async function postSpecificMetric(metric: string, gauge: number) {
+    if (settings.secrets.datadog) metrics.gauge(`${metric}`, gauge);
+}
 export async function postWebMetric(type: string) {
     if (!global.db) return
-    const bots: delBot[] = await global.db.collection<delBot>("bots").find().toArray();
-
-    const servers: delServer[] = await global.db
-        .collection<delServer>("servers")
-        .find()
-        .toArray();
-
-    const templates: delTemplate[] = await global.db
-        .collection<delTemplate>("templates")
-        .find()
-        .toArray();
-
-    const users: delUser[] = await global.db
-        .collection<delUser>("users")
-        .find()
-        .toArray();
-
     switch (type) {
         case "bot":
-            settings.website.dev
-                ? metrics.gauge("del.website.dev.botCount", bots.length)
-                : metrics.gauge("del.website.botCount", bots.length);
+            const bots = await global.db.collection<delBot>("bots").estimatedDocumentCount()
+            if (settings.secrets.datadog) settings.website.dev
+                ? metrics.gauge("del.website.dev.botCount", bots)
+                : metrics.gauge("del.website.botCount", bots);
 
             const todaysGrowth = await global.db
                 .collection("webOptions")
@@ -208,37 +204,40 @@ export async function postWebMetric(type: string) {
 
             break;
         case "bot_unapproved":
-            const unapprovedBots = bots.filter(
-                (b) => !b.status.approved && !b.status.archived
-            );
+            const unapprovedBots = await global.db.collection<delBot>("bots").countDocuments({ $or: [{ "status.archived": false }, { "status.approved": false }] })
 
-            settings.website.dev
+            if (settings.secrets.datadog) settings.website.dev
                 ? metrics.gauge(
-                      "del.website.dev.botCount.unapproved",
-                      unapprovedBots.length
-                  )
+                    "del.website.dev.botCount.unapproved",
+                    unapprovedBots
+                )
                 : metrics.gauge(
-                      "del.website.botCount.unapproved",
-                      unapprovedBots.length
-                  );
+                    "del.website.botCount.unapproved",
+                    unapprovedBots
+                );
             break;
         case "server":
-            settings.website.dev
-                ? metrics.gauge("del.website.dev.serverCount", servers.length)
-                : metrics.gauge("del.website.serverCount", servers.length);
+            const servers = settings.secrets.datadog ? await global.db.collection<delServer>("servers").estimatedDocumentCount() : 0
+
+            if (settings.secrets.datadog) settings.website.dev
+                ? metrics.gauge("del.website.dev.serverCount", servers)
+                : metrics.gauge("del.website.serverCount", servers);
             break;
         case "template":
-            settings.website.dev
+            // if they aren't using datadog, don't make an unnecessary query
+            const templates = settings.secrets.datadog ? await global.db.collection<delTemplate>("templates").estimatedDocumentCount() : 0
+            if (settings.secrets.datadog) settings.website.dev
                 ? metrics.gauge(
-                      "del.website.dev.templateCount",
-                      templates.length
-                  )
-                : metrics.gauge("del.website.templateCount", templates.length);
+                    "del.website.dev.templateCount",
+                    templates
+                )
+                : metrics.gauge("del.website.templateCount", templates);
             break;
         case "user":
-            settings.website.dev
-                ? metrics.gauge("del.website.dev.userCount", users.length)
-                : metrics.gauge("del.website.userCount", users.length);
+            const users = await global.db.collection<delUser>("users").estimatedDocumentCount()
+            if (settings.secrets.datadog) settings.website.dev
+                ? metrics.gauge("del.website.dev.userCount", users)
+                : metrics.gauge("del.website.userCount", users);
             break;
     }
 }
@@ -257,11 +256,11 @@ export async function postTodaysGrowth() {
     const date = moment().diff(moment(todaysGrowth.lastPosted), "days");
 
     if (date >= 1) {
-        settings.website.dev
+        if (settings.secrets.datadog) settings.website.dev
             ? metrics.gauge(
-                  "del.website.dev.addedBotsToday",
-                  todaysGrowth.count
-              )
+                "del.website.dev.addedBotsToday",
+                todaysGrowth.count
+            )
             : metrics.gauge("del.website.addedBotsToday", todaysGrowth.count);
 
         await global.db.collection("webOptions").updateOne(
@@ -275,9 +274,3 @@ export async function postTodaysGrowth() {
         );
     } else return;
 }
-
-setInterval(async () => {
-    postWebMetric("user");
-    postWebMetric("bot_unapproved");
-    await postTodaysGrowth();
-}, 5000);

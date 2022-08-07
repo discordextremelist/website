@@ -25,6 +25,8 @@ import * as botCache from "../Util/Services/botCaching.js";
 import * as serverCache from "../Util/Services/serverCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
 import * as userCache from "../Util/Services/userCaching.js";
+import * as functions from "../Util/Function/main.js";
+import { MessageEmbed } from "discord.js";
 import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord-api-types/v10";
 import settings from "../../settings.json" assert { type: "json" };
 
@@ -46,7 +48,7 @@ router.get('/bots', async (req, res) => {
 
     const ids = (await global.redis?.hkeys("bots")).sort()
     if (!ids) return res.sendStatus(503)
-    
+
     if (!id) id = ids[0]
 
     const botExists: delBot = await global.db
@@ -57,7 +59,7 @@ router.get('/bots', async (req, res) => {
         const app = await discord.bot.api.applications(botExists.clientID || id).rpc.get() as APIApplication
 
         let commands: APIApplicationCommand[] = botExists.commands || []
-        
+
         if (botExists.scopes?.slashCommands) {
             const owner = await userCache.getUser(botExists.owner.id)
 
@@ -72,7 +74,7 @@ router.get('/bots', async (req, res) => {
                                         auth: {
                                             accessToken,
                                             refreshToken,
-                                            expires: Date.now() + result.expires_in*1000
+                                            expires: Date.now() + result.expires_in * 1000
                                         }
                                     }
                                 }
@@ -81,8 +83,8 @@ router.get('/bots', async (req, res) => {
                         }
                     })
                 }
-    
-                const receivedCommands = await (await fetch('https://discord.com/api/v8'+Routes.applicationCommands(app.id), {headers: {authorization: `Bearer ${owner.auth.accessToken}`}})).json().catch(() => {}) as APIApplicationCommand[]
+
+                const receivedCommands = await (await fetch('https://discord.com/api/v8' + Routes.applicationCommands(app.id), { headers: { authorization: `Bearer ${owner.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
                 if (Array.isArray(receivedCommands)) commands = receivedCommands;
             }
         }
@@ -90,10 +92,10 @@ router.get('/bots', async (req, res) => {
         let userFlags = 0
 
         if (botExists.scopes?.bot) {
-            const user = await discord.bot.api.users(id).get().catch(() => {}) as APIUser
+            const user = await discord.bot.api.users(id).get().catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
-        
+
         await global.db.collection("bots").updateOne(
             { _id: id },
             {
@@ -113,7 +115,7 @@ router.get('/bots', async (req, res) => {
 
         if (app.bot_public === false) throw 'Bot is not public'
     } catch (e) {
-        if (!botExists.status.archived) discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`)
+        if (!botExists.status.archived) (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextBot", getNext(ids, id))
@@ -126,7 +128,7 @@ router.get('/servers', async (req, res) => {
 
     const ids = (await global.redis?.hkeys("servers")).sort()
     if (!ids) return res.sendStatus(503)
-    
+
     if (!id) id = ids[0]
 
     const server: delServer = await global.db
@@ -134,12 +136,12 @@ router.get('/servers', async (req, res) => {
         .findOne({ _id: id });
 
     if (server) try {
-        const invite = await discord.bot.api.invites(server.inviteCode).get({query: {with_counts: true, with_expiration: true} as RESTGetAPIInviteQuery}) as APIInvite
+        const invite = await discord.bot.api.invites(server.inviteCode).get({ query: { with_counts: true, with_expiration: true } as RESTGetAPIInviteQuery }) as APIInvite
 
         if (invite.guild.id !== server._id) throw 'Invite points to a different server'
 
         if (invite.expires_at) throw 'This invite is set to expire'
-        
+
         await global.db.collection("servers").updateOne(
             { _id: id },
             {
@@ -159,7 +161,46 @@ router.get('/servers', async (req, res) => {
 
         await serverCache.updateServer(id);
     } catch (e) {
-        discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync server **${server.name}** \`(${id})\`: ${e}\n<${settings.website.url}/servers/${id}>`)
+        await global.db.collection("servers").deleteOne({ _id: id });
+        await global.db.collection("audit").insertOne({
+            type: "REMOVE_SERVER",
+            executor: "AutoSync",
+            target: id,
+            date: Date.now(),
+            reason: "Failed to autosync server, assuming the invite is invalid.",
+            reasonType: 0 // again, assuming 0 is the only option here
+        });
+
+        await serverCache.deleteServer(id);
+
+        const embed = new MessageEmbed();
+        embed.setColor(0x2f3136);
+        embed.setTitle("Reason");
+        embed.setDescription(req.body.reason);
+
+        (await discord.channels.logs).send({
+            content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
+                server.name
+            )}** \`(${server._id})\``,
+            embeds: [embed]
+        });
+
+        const owner = await discord.getMember(server.owner.id);
+        if (owner)
+            owner
+                .send(
+                    `${settings.emoji.delete
+                    } **|** Your server **${functions.escapeFormatting(
+                        server.name
+                    )}** \`(${server._id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this server has either been deleted, or the invite provided to us has expired. If your server is still active, please repost it with a permanent invite!\``
+                )
+                .catch((e: string) => {
+                    console.error(e);
+                });
+
+        await discord.postWebMetric("server");
+        // keeping this here incase the team wants it
+        // (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync server **${server.name}** \`(${id})\`: ${e}\n<${settings.website.url}/servers/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextServer", getNext(ids, id))
@@ -172,7 +213,7 @@ router.get('/templates', async (req, res) => {
 
     const ids = (await global.redis?.hkeys("templates")).sort()
     if (!ids) return res.sendStatus(503)
-    
+
     if (!id) id = ids[0]
 
     const dbTemplate: delTemplate = await global.db
@@ -181,7 +222,7 @@ router.get('/templates', async (req, res) => {
 
     if (dbTemplate) try {
         const template = await discord.bot.api.guilds.templates(id).get() as APITemplate
-        
+
         await global.db.collection("templates").updateOne(
             { _id: id },
             {
@@ -215,7 +256,52 @@ router.get('/templates', async (req, res) => {
 
         await templateCache.updateTemplate(id);
     } catch (e) {
-        discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync template **${dbTemplate.name}** \`(${id})\`: ${e}\n<${settings.website.url}/templates/${id}>`)
+        const template = await discord.bot.api.guilds.templates(id).get() as APITemplate
+        // may as well reduce the load on web mods - AJ
+        await global.db
+            .collection("templates")
+            .deleteOne({ _id: id });
+
+        await global.db.collection("audit").insertOne({
+            type: "REMOVE_TEMPLATE",
+            executor: "AutoSync",
+            target: id,
+            date: Date.now(),
+            reason: "Failed to autosync template, assuming it has been deleted from discord",
+            reasonType: 0 // since this is the only option i guess? - AJ
+        });
+
+        await templateCache.deleteTemplate(id);
+
+        const embed = new MessageEmbed();
+        embed.setColor(0x2f3136);
+        embed.setTitle("Reason");
+        embed.setDescription(req.body.reason);
+
+        (await discord.channels.logs).send({
+            content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(
+                template.name
+            )}** \`(${id})\``,
+            embeds: [embed]
+        });
+
+        const owner = await discord.getMember(template.creator_id);
+        if (owner)
+            owner
+                .send(
+                    `${settings.emoji.delete
+                    } **|** Your template **${functions.escapeFormatting(
+                        template.name
+                    )}** \`(${id
+                    })\` has been removed!\n**Reason:** \`Our AutoSync system has determined this template has been deleted from discord.\``
+                )
+                .catch((e) => {
+                    console.error(e);
+                });
+
+        await discord.postWebMetric("template");
+        // keeping the below just in-case the team wants it still.
+        // (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync template **${dbTemplate.name}** \`(${id})\`: ${e}\n<${settings.website.url}/templates/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextTemplate", getNext(ids, id))

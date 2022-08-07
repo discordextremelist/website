@@ -73,12 +73,12 @@ bot.on("ready", async () => {
         console.log(`Skipping discord caching. The instance which holds the lock is: ${lock}`);
     } else {
         console.time("Bot cache");
-        botCache.getAllBots().then(bots => {
+        botCache.getAllBots().then(async bots => {
             const botsToFetch = []
-            bots.forEach(bot => {
-                if (!guilds.main.members.cache.has(bot._id)) botsToFetch.push(bot._id)
-            })
-            guilds.main.members.fetch({ user: botsToFetch })
+            bots.forEach(async bot => {
+                if (!(await guilds.main).members.cache.has(bot._id)) botsToFetch.push(bot._id)
+            });
+            (await guilds.main).members.fetch({ user: botsToFetch })
                 .then(x => console.log(`Retrieved ${x.size} members!`))
                 .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
         });
@@ -111,26 +111,28 @@ bot.on("guildMemberRemove", async (member) => {
         await postMetric();
     }
 });
-
 export const channels = {
-    get logs() { return bot.channels.cache.get(settings.channels.webLog) as Discord.TextChannel },
-    get alerts() { return bot.channels.cache.get(settings.channels.alerts) as Discord.TextChannel }
+    // There is a chance this will fail on recent bot restart if it didn't cache the channel yet.
+    // Using .fetch() will check the cache first, and if it isn't there, will try and fetch from the API.
+    get logs() { return bot.channels.fetch(settings.channels.webLog) as Promise<Discord.TextChannel> },
+    get alerts() { return bot.channels.fetch(settings.channels.alerts) as Promise<Discord.TextChannel> }
 }
 
 export const guilds = {
-    get main() { return bot.guilds.cache.get(settings.guild.main) },
-    get testing() { return bot.guilds.cache.get(settings.guild.staff) },
+    // same thing as the channels above
+    get main() { return bot.guilds.fetch(settings.guild.main) as Promise<Discord.Guild> },
+    get testing() { return bot.guilds.fetch(settings.guild.staff) as Promise<Discord.Guild> },
 }
 
 export async function getMember(id: string) {
     if (guilds.main) {
-        return await guilds.main.members.fetch(id).catch(() => { });
+        return (await guilds.main).members.fetch(id).catch(() => { });
     } else return undefined;
 }
 
 export async function getTestingGuildMember(id: string) {
     if (guilds.testing) {
-        return await guilds.testing.members.fetch(id).catch(() => { });
+        return (await guilds.testing).members.fetch(id).catch(() => { });
     } else return undefined;
 }
 
@@ -159,7 +161,7 @@ export async function uploadStatuses() {
 
 export async function postMetric() {
     const guild = guilds.main;
-    if (guild && settings.secrets.datadog) metrics.gauge("del.server.memberCount", guild.memberCount);
+    if (guild && settings.secrets.datadog) metrics.gauge("del.server.memberCount", (await guild).memberCount);
 }
 
 export async function postWebMetric(type: string) {

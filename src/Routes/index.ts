@@ -27,14 +27,14 @@ import * as serverCache from "../Util/Services/serverCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
 import * as discord from "../Util/Services/discord.js";
 import { variables } from "../Util/Function/variables.js";
-import type { GuildMember } from "discord.js";
+import type { Guild, GuildMember, GuildMemberManager } from "discord.js";
 
 const router = express.Router();
 
 const nickSorter = (a, b) =>
     (a.nick || a.user.username).localeCompare(b.nick || b.user.username);
 function sortAll() {
-    let members = discord.guilds.main.members;
+    let members = (async () => { return (await discord.guilds.main).members }).call(this) as GuildMemberManager;
     if (!members) throw new Error("Fetching members failed!");
     const staff: GuildMember[] = [],
         donators: GuildMember[] = [],
@@ -53,10 +53,10 @@ function sortAll() {
             member.rank = admin
                 ? "admin"
                 : assistant
-                ? "assistant"
-                : mod
-                ? "mod"
-                : null;
+                    ? "assistant"
+                    : mod
+                        ? "mod"
+                        : null;
             const user = discord.bot.users.cache.get(member.id);
             member.avatar = user.avatar;
             member.username = user.username;
@@ -128,7 +128,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
     let subtitle = res.__("common.bots.subtitle");
     let bots: delBot[];
     let pageParam = '?page='
-    
+
     if (req.query.tag) {
         pageParam = `?tag=${req.query.tag}&page=`
 
@@ -136,7 +136,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
             case "slashcommands":
                 icon = "fa-slash fa-flip-horizontal has-text-blurple";
                 title = res.__("common.bots.title.applicationCommands")
-                subtitle = res.__("common.bots.subtitle.filter.applicationCommands", {a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">', a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">', ea: "</a>"})
+                subtitle = res.__("common.bots.subtitle.filter.applicationCommands", { a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">', a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">', ea: "</a>" })
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, scopes }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && scopes?.slashCommands
@@ -205,7 +205,7 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Music")
                 );
                 break;
-            default: 
+            default:
                 bots = (await botCache.getAllBots()).filter(
                     ({ status }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden

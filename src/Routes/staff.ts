@@ -140,7 +140,7 @@ router.get(
             .toArray();
 
         for (const bot of bots) {
-            discord.guilds.main.members.cache.has(bot._id)
+            (await discord.guilds.main).members.cache.has(bot._id)
                 ? (bot.inServer = true)
                 : (bot.inServer = false);
         }

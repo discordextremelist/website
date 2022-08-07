@@ -113,7 +113,7 @@ router.get('/bots', async (req, res) => {
 
         if (app.bot_public === false) throw 'Bot is not public'
     } catch (e) {
-        if (!botExists.status.archived) discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`)
+        if (!botExists.status.archived) (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextBot", getNext(ids, id))
@@ -159,7 +159,7 @@ router.get('/servers', async (req, res) => {
 
         await serverCache.updateServer(id);
     } catch (e) {
-        discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync server **${server.name}** \`(${id})\`: ${e}\n<${settings.website.url}/servers/${id}>`)
+        (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync server **${server.name}** \`(${id})\`: ${e}\n<${settings.website.url}/servers/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextServer", getNext(ids, id))
@@ -215,7 +215,7 @@ router.get('/templates', async (req, res) => {
 
         await templateCache.updateTemplate(id);
     } catch (e) {
-        discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync template **${dbTemplate.name}** \`(${id})\`: ${e}\n<${settings.website.url}/templates/${id}>`)
+        (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync template **${dbTemplate.name}** \`(${id})\`: ${e}\n<${settings.website.url}/templates/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextTemplate", getNext(ids, id))

@@ -45,6 +45,7 @@ import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
 const md = new mdi
 const router = express.Router();
+let reviewRequired = false; // Needs to be outside of the functions or it cannot be referenced outside of x function - AJ
 
 function serverType(bodyType: string): number {
     let type: serverReasons = parseInt(bodyType);
@@ -81,7 +82,6 @@ function tagHandler(req: express.Request<ParamsDictionary, any, any, ParsedQs, R
     if (req.body.contCreat === true) tags.push("Content Creation");
     if (req.body.nsfw === true) tags.push("NSFW");
 
-    let reviewRequired = false;
     if (req.body.lgbt === true) {
         tags.push("LGBT");
         if (server) {
@@ -293,7 +293,7 @@ router.post(
                     }
                 } as delServer);
 
-                await discord.channels.logs.send(
+                (await discord.channels.logs).send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -702,7 +702,7 @@ router.post(
                     }
                 );
 
-                await discord.channels.logs.send(
+                (await discord.channels.logs).send(
                     `${settings.emoji.edit} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -935,7 +935,7 @@ router.post(
         embed.setURL(`${settings.website.url}/servers/${server._id}`);
         embed.setFooter("It will still be shown as a normal server, it was declined from being listed as an LGBT community.");
 
-        await discord.channels.logs.send({
+        (await discord.channels.logs).send({
             content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1029,7 +1029,7 @@ router.get(
 
         await serverCache.updateServer(req.params.id);
 
-        await discord.channels.logs.send(
+        (await discord.channels.logs).send(
                 `${settings.emoji.check} **${functions.escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${
@@ -1091,7 +1091,7 @@ router.get(
                 req
             });
 
-        await discord.channels.logs.send(
+        (await discord.channels.logs).send(
             `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1202,7 +1202,7 @@ router.post(
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        await discord.channels.logs.send({
+        (await discord.channels.logs).send({
             content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${

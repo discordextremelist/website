@@ -89,9 +89,9 @@ router.get(
     permission.scopes([OAuth2Scopes.GuildsJoin]),
     async (req: Request, res: Response) => {
 
-        const bots = await botCache.getAllBots();
-
-        const showResubmitNote = bots.filter(bot => bot.status.archived && bot.owner.id === req.user.id).length > 0
+        // in this specific instance it makes more sense to make a mongo query than filtering through the entire redis cache
+        const showResubmitNote = await global.db.collection<delBot>("bots").countDocuments({ "owner.id": req.user.id, "status.archived": true }, { limit: 1 })
+        // this will return 1/true if something exists/is found, 0 if not.
 
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 
@@ -125,7 +125,7 @@ router.post(
 
         const botExists = await global.db
             .collection("bots")
-            .findOne({ _id: req.body.id });
+            .countDocuments({ _id: req.body.id }, { limit: 1 });
 
         if (botExists)
             return res.status(409).json({

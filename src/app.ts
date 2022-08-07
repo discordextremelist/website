@@ -106,14 +106,16 @@ new Promise<void>((resolve, reject) => {
                 .collection("libraries")
                 .updateOne(
                     { _id: lib.name },
-                    { $set: {
+                    {
+                        $set: {
                             _id: lib.name,
                             language: lib.language,
                             links: {
                                 docs: lib.links.docs,
                                 repo: lib.links.repo
                             }
-                        }},
+                        }
+                    },
                     { upsert: true }
                 )
                 .then(() => true)
@@ -166,7 +168,7 @@ new Promise<void>((resolve, reject) => {
             };
         }
 
-        global.redis = new Redis(redisConfig); 
+        global.redis = new Redis(redisConfig);
         const s = new Redis(redisConfig);
 
         /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems. - Ice*/
@@ -225,31 +227,33 @@ new Promise<void>((resolve, reject) => {
         }
 
         await discord.bot.login(settings.secrets.discord.token);
+        // to replace the needed wait time for the below functions, instead of using a redundant blocking promise
+        // just... do it once it is actually ready -AJ
+        discord.bot.once("login", async () => {
+            setTimeout(async () => {
+                await featuredCache.updateFeaturedBots();
+                await discord.postMetric();
+            }, 10000);
 
-        setTimeout(async () => {
-            await featuredCache.updateFeaturedBots();
-            await discord.postMetric();
-        }, 10000);
+            await discord.postWebMetric("bot");
+            await discord.postWebMetric("bot_unapproved");
+            await discord.postWebMetric("server");
+            await discord.postWebMetric("template");
+            await discord.postWebMetric("user");
 
-        await discord.postWebMetric("bot");
-        await discord.postWebMetric("bot_unapproved");
-        await discord.postWebMetric("server");
-        await discord.postWebMetric("template");
-        await discord.postWebMetric("user");
-
-        await (async function discordBotUndefined() {
-            if (
-                typeof discord.bot.guilds !== "undefined" &&
-                typeof discord.guilds.main !==
-                "undefined"
-            ) {
-                await banned.updateBanlist();
-                await discord.uploadStatuses();
-            } else {
-                setTimeout(discordBotUndefined, 250);
-            }
-        })();
-
+            await (async function discordBotUndefined() {
+                if (
+                    typeof discord.bot.guilds !== "undefined" &&
+                    typeof discord.guilds.main !==
+                    "undefined"
+                ) {
+                    await banned.updateBanlist();
+                    await discord.uploadStatuses();
+                } else {
+                    setTimeout(discordBotUndefined, 250);
+                }
+            })();
+        })
         app.set("view engine", "ejs");
 
         app.use(

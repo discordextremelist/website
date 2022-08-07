@@ -173,28 +173,25 @@ export async function postMetric() {
 
 export async function postWebMetric(type: string) {
     if (!global.db) return
-    const bots: delBot[] = await global.db.collection<delBot>("bots").find().toArray();
+    const bots = await global.db.collection<delBot>("bots").estimatedDocumentCount()
 
-    const servers: delServer[] = await global.db
+    const servers = await global.db
         .collection<delServer>("servers")
-        .find()
-        .toArray();
+        .estimatedDocumentCount()
 
-    const templates: delTemplate[] = await global.db
+    const templates = await global.db
         .collection<delTemplate>("templates")
-        .find()
-        .toArray();
+        .estimatedDocumentCount()
 
-    const users: delUser[] = await global.db
+    const users = await global.db
         .collection<delUser>("users")
-        .find()
-        .toArray();
+        .estimatedDocumentCount()
 
     switch (type) {
         case "bot":
             if (settings.secrets.datadog) settings.website.dev
-                ? metrics.gauge("del.website.dev.botCount", bots.length)
-                : metrics.gauge("del.website.botCount", bots.length);
+                ? metrics.gauge("del.website.dev.botCount", bots)
+                : metrics.gauge("del.website.botCount", bots);
 
             const todaysGrowth = await global.db
                 .collection("webOptions")
@@ -218,37 +215,35 @@ export async function postWebMetric(type: string) {
 
             break;
         case "bot_unapproved":
-            const unapprovedBots = bots.filter(
-                (b) => !b.status.approved && !b.status.archived
-            );
+            const unapprovedBots = await global.db.collection<delBot>("bots").countDocuments({ $or: [{ "status.archived": false }, { "status.approved": false }] })
 
             if (settings.secrets.datadog) settings.website.dev
                 ? metrics.gauge(
                     "del.website.dev.botCount.unapproved",
-                    unapprovedBots.length
+                    unapprovedBots
                 )
                 : metrics.gauge(
                     "del.website.botCount.unapproved",
-                    unapprovedBots.length
+                    unapprovedBots
                 );
             break;
         case "server":
             if (settings.secrets.datadog) settings.website.dev
-                ? metrics.gauge("del.website.dev.serverCount", servers.length)
-                : metrics.gauge("del.website.serverCount", servers.length);
+                ? metrics.gauge("del.website.dev.serverCount", servers)
+                : metrics.gauge("del.website.serverCount", servers);
             break;
         case "template":
             if (settings.secrets.datadog) settings.website.dev
                 ? metrics.gauge(
                     "del.website.dev.templateCount",
-                    templates.length
+                    templates
                 )
-                : metrics.gauge("del.website.templateCount", templates.length);
+                : metrics.gauge("del.website.templateCount", templates);
             break;
         case "user":
             if (settings.secrets.datadog) settings.website.dev
-                ? metrics.gauge("del.website.dev.userCount", users.length)
-                : metrics.gauge("del.website.userCount", users.length);
+                ? metrics.gauge("del.website.dev.userCount", users)
+                : metrics.gauge("del.website.userCount", users);
             break;
     }
 }

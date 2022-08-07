@@ -126,129 +126,92 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
     let icon = "fa-robot has-text-default";
     let title = res.__("common.bots.discord")
     let subtitle = res.__("common.bots.subtitle");
-    let bots = (await botCache.getAllBots()) as delBot[]; // avoid redundant extra code // queries
+    let bots: delBot[];
     let pageParam = '?page='
-    let pages = await global.redis?.hget("bots", "all")
+    
     if (req.query.tag) {
         pageParam = `?tag=${req.query.tag}&page=`
+
         switch ((req.query.tag as string).toLowerCase()) {
             case "slashcommands":
-                pages = await global.redis?.get("bots.slashcommands")
                 icon = "fa-slash fa-flip-horizontal has-text-blurple";
                 title = res.__("common.bots.title.applicationCommands")
-                subtitle = res.__("common.bots.subtitle.filter.applicationCommands", { a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">', a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">', ea: "</a>" })
-                bots = bots.slice(
-                    15 * Number(req.query.page) - 15,
-                    15 * Number(req.query.page)
-                ).filter(
+                subtitle = res.__("common.bots.subtitle.filter.applicationCommands", {a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">', a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">', ea: "</a>"})
+                bots = (await botCache.getAllBots()).filter(
                     ({ status, scopes }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && scopes?.slashCommands
                 );
                 break;
             case "fun":
-                pages = await global.redis?.get("bots.fun")
                 icon = "fa-grin-squint-tears has-text-link";
                 title = res.__("common.bots.title.fun")
                 subtitle = res.__("common.bots.subtitle.filter.fun");
-                bots = bots.slice(
-                    15 * Number(req.query.page) - 15,
-                    15 * Number(req.query.page)
-                ).filter(
+                bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Fun")
                 );
                 break;
             case "social":
-                pages = await global.redis?.get("bots.social")
                 icon = "fa-comments-alt has-text-info";
                 title = res.__("common.bots.title.social")
                 subtitle = res.__("common.bots.subtitle.filter.social");
-                bots = bots.slice(
-                    15 * Number(req.query.page) - 15,
-                    15 * Number(req.query.page)
-                ).filter(
+                bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Social")
                 );
                 break;
             case "economy":
-                pages = await global.redis?.get("bots.economy")
                 icon = "fa-comments-dollar has-text-success";
                 title = res.__("common.bots.title.economy")
                 subtitle = res.__("common.bots.subtitle.filter.economy");
-                bots = bots.slice(
-                    15 * Number(req.query.page) - 15,
-                    15 * Number(req.query.page)
-                ).filter(
+                bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Economy")
                 );
                 break;
             case "utility":
-                pages = await global.redis?.get("bots.utility")
                 icon = "fa-cogs has-text-orange";
                 title = res.__("common.bots.title.utility")
                 subtitle = res.__("common.bots.subtitle.filter.utility");
-                bots = bots.slice(
-                    15 * Number(req.query.page) - 15,
-                    15 * Number(req.query.page)
-                ).filter(
+                bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Utility")
                 );
                 break;
             case "moderation":
-                pages = await global.redis?.get("bots.moderation")
                 icon = "fa-gavel has-text-danger";
                 title = res.__("common.bots.title.moderation")
                 subtitle = res.__("common.bots.subtitle.filter.moderation");
-                bots = (await botCache.getAllBots()).slice(
-                    15 * Number(req.query.page) - 15,
-                    15 * Number(req.query.page)
-                ).filter(
+                bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Moderation")
                 );
                 break;
             case "multipurpose":
-                pages = await global.redis?.get("bots.multipurpose")
                 icon = "fa-ball-pile has-text-magenta";
                 title = res.__("common.bots.title.multipurpose")
                 subtitle = res.__("common.bots.subtitle.filter.multipurpose");
-                bots = (await botCache.getAllBots()).slice(
-                    15 * Number(req.query.page) - 15,
-                    15 * Number(req.query.page)
-                ).filter(
+                bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Multipurpose")
                 );
                 break;
             case "music":
-                pages = await global.redis?.get("bots.music")
                 icon = "fa-comment-music has-text-pink";
                 title = res.__("common.bots.title.music")
                 subtitle = res.__("common.bots.subtitle.filter.music");
-                bots = (await botCache.getAllBots()).slice(
-                    15 * Number(req.query.page) - 15,
-                    15 * Number(req.query.page)
-                ).filter(
+                bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Music")
                 );
                 break;
-            default:
-                bots = (await botCache.getAllBots()).slice(
-                    15 * Number(req.query.page) - 15,
-                    15 * Number(req.query.page)
-                ).filter(
+            default: 
+                bots = (await botCache.getAllBots()).filter(
                     ({ status }) =>
                         status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden
                 );
         }
-    } else bots = (await botCache.getAllBots()).slice(
-        15 * Number(req.query.page) - 15,
-        15 * Number(req.query.page)
-    ).filter(
+    } else bots = (await botCache.getAllBots()).filter(
         ({ status }) =>
             status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden
     );
@@ -260,9 +223,12 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
         bots,
         icon: icon,
         pageParam,
-        botsPgArr: bots,
+        botsPgArr: bots.slice(
+            15 * Number(req.query.page) - 15,
+            15 * Number(req.query.page)
+        ),
         page: req.query.page,
-        pages: Math.ceil(Number(pages) / 15)
+        pages: Math.ceil(bots.length / 15)
     });
 });
 

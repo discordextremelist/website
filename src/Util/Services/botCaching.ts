@@ -58,14 +58,6 @@ export async function uploadBots() {
         prefix,
         ...botsDB.map((bot: delBot) => [bot._id, JSON.stringify(bot)])
     );
-    // since we are loading all those in, let's go ahead and mark those long pagination tag queries in the cache too
-    let available = botsDB.filter((bot) => bot.status.approved && !bot.status.siteBot && !bot.status.archived && !bot.status.hidden && !bot.status.modHidden) as delBot[];
-    const tags = ["fun", "social", "economy", "utility", "moderation", "multipurpose", "music"]
-    await global.redis?.set("bots.all", available.length)
-    await global.redis?.set("bots.slashcommands", available.filter(({ scopes }) => scopes?.slashCommands).length)
-    for (const tag of tags) {
-        await global.redis?.set(`bots.${tag}`, available.filter(({ tags }) => tags.includes(`${tag.charAt(0).toUpperCase()+tag.substring(1).toLowerCase()}`)).length)
-    }
 
 }
 

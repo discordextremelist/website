@@ -29,7 +29,7 @@ import { hostname } from "os";
 const prefix = "statuses";
 // If someone is to self-host or contribute, setting datadog metrics is a lot,
 // if they have nothing set in the secret section of settings.json, let's ignore metrics - AJ
-if (!settings.secrets.datadog) metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
+if (settings.secrets.datadog) metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
 
 // @ts-expect-error
 class Client extends Discord.Client {

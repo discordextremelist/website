@@ -83,9 +83,9 @@ bot.on("ready", async () => {
         botCache.getAllBots().then(async bots => {
             const botsToFetch = []
             bots.forEach(async bot => {
-                if (!(await guilds.main).members.cache.has(bot._id)) botsToFetch.push(bot._id)
+                if (guilds.main.members.cache.has(bot._id)) botsToFetch.push(bot._id)
             });
-            (await guilds.main).members.fetch({ user: botsToFetch })
+            await guilds.main.members.fetch({ user: botsToFetch })
                 .then(x => console.log(`Retrieved ${x.size} members!`))
                 .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
         });

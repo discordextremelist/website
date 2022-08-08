@@ -115,7 +115,7 @@ router.get('/bots', async (req, res) => {
 
         if (app.bot_public === false) throw 'Bot is not public'
     } catch (e) {
-        if (!botExists.status.archived) (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`)
+        if (!botExists.status.archived) discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextBot", getNext(ids, id))
@@ -137,7 +137,6 @@ router.get('/servers', async (req, res) => {
 
     if (server) try {
         const invite = await discord.bot.api.invites(server.inviteCode).get({ query: { with_counts: true, with_expiration: true } as RESTGetAPIInviteQuery }) as APIInvite
-
         if (invite.guild.id !== server._id) throw 'Invite points to a different server'
 
         if (invite.expires_at) throw 'This invite is set to expire'
@@ -178,7 +177,7 @@ router.get('/servers', async (req, res) => {
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        (await discord.channels.logs).send({
+        discord.channels.logs.send({
             content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
                 server.name
             )}** \`(${server._id})\``,
@@ -200,7 +199,7 @@ router.get('/servers', async (req, res) => {
 
         await discord.postWebMetric("server");
         // keeping this here incase the team wants it
-        // (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync server **${server.name}** \`(${id})\`: ${e}\n<${settings.website.url}/servers/${id}>`)
+        // discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync server **${server.name}** \`(${id})\`: ${e}\n<${settings.website.url}/servers/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextServer", getNext(ids, id))
@@ -278,7 +277,7 @@ router.get('/templates', async (req, res) => {
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        (await discord.channels.logs).send({
+        discord.channels.logs.send({
             content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(
                 template.name
             )}** \`(${id})\``,
@@ -301,7 +300,7 @@ router.get('/templates', async (req, res) => {
 
         await discord.postWebMetric("template");
         // keeping the below just in-case the team wants it still.
-        // (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync template **${dbTemplate.name}** \`(${id})\`: ${e}\n<${settings.website.url}/templates/${id}>`)
+        // discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync template **${dbTemplate.name}** \`(${id})\`: ${e}\n<${settings.website.url}/templates/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextTemplate", getNext(ids, id))

@@ -160,6 +160,7 @@ router.get('/servers', async (req, res) => {
 
         await serverCache.updateServer(id);
     } catch (e) {
+        if (e.code != 10006) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
         await global.db.collection("servers").deleteOne({ _id: id });
         await global.db.collection("audit").insertOne({
             type: "REMOVE_SERVER",
@@ -255,7 +256,7 @@ router.get('/templates', async (req, res) => {
 
         await templateCache.updateTemplate(id);
     } catch (e) {
-        const template = await discord.bot.api.guilds.templates(id).get() as APITemplate
+        if (e.code == 10057) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
         // may as well reduce the load on web mods - AJ
         await global.db
             .collection("templates")
@@ -266,7 +267,7 @@ router.get('/templates', async (req, res) => {
             executor: "AutoSync",
             target: id,
             date: Date.now(),
-            reason: "Failed to autosync template, assuming it has been deleted from discord",
+            reason: "Unknown server template (10057)",
             reasonType: 0 // since this is the only option i guess? - AJ
         });
 
@@ -279,18 +280,18 @@ router.get('/templates', async (req, res) => {
 
         discord.channels.logs.send({
             content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(
-                template.name
+                dbTemplate.name
             )}** \`(${id})\``,
             embeds: [embed]
         });
 
-        const owner = await discord.getMember(template.creator_id);
+        const owner = await discord.getMember(dbTemplate.creator.id);
         if (owner)
             owner
                 .send(
                     `${settings.emoji.delete
                     } **|** Your template **${functions.escapeFormatting(
-                        template.name
+                        dbTemplate.name
                     )}** \`(${id
                     })\` has been removed!\n**Reason:** \`Our AutoSync system has determined this template has been deleted from discord.\``
                 )

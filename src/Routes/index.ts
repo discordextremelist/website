@@ -34,7 +34,7 @@ const router = express.Router();
 const nickSorter = (a, b) =>
     (a.nick || a.user.username).localeCompare(b.nick || b.user.username);
 function sortAll() {
-    let members = (async () => { return (await discord.guilds.main).members }).call(this) as GuildMemberManager;
+    let members = discord.guilds.main.members as GuildMemberManager;
     if (!members) throw new Error("Fetching members failed!");
     const staff: GuildMember[] = [],
         donators: GuildMember[] = [],

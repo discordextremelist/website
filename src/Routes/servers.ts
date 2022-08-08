@@ -293,7 +293,7 @@ router.post(
                     }
                 } as delServer);
 
-                (await discord.channels.logs).send(
+                discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -702,7 +702,7 @@ router.post(
                     }
                 );
 
-                (await discord.channels.logs).send(
+                discord.channels.logs.send(
                     `${settings.emoji.edit} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -935,7 +935,7 @@ router.post(
         embed.setURL(`${settings.website.url}/servers/${server._id}`);
         embed.setFooter("It will still be shown as a normal server, it was declined from being listed as an LGBT community.");
 
-        (await discord.channels.logs).send({
+        discord.channels.logs.send({
             content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1029,7 +1029,7 @@ router.get(
 
         await serverCache.updateServer(req.params.id);
 
-        (await discord.channels.logs).send(
+        discord.channels.logs.send(
                 `${settings.emoji.check} **${functions.escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${
@@ -1091,7 +1091,7 @@ router.get(
                 req
             });
 
-        (await discord.channels.logs).send(
+        discord.channels.logs.send(
             `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -1202,7 +1202,7 @@ router.post(
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        (await discord.channels.logs).send({
+        discord.channels.logs.send({
             content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${

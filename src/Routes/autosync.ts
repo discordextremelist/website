@@ -115,7 +115,7 @@ router.get('/bots', async (req, res) => {
 
         if (app.bot_public === false) throw 'Bot is not public'
     } catch (e) {
-        if (!botExists.status.archived) (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`)
+        if (!botExists.status.archived) discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextBot", getNext(ids, id))
@@ -137,7 +137,6 @@ router.get('/servers', async (req, res) => {
 
     if (server) try {
         const invite = await discord.bot.api.invites(server.inviteCode).get({ query: { with_counts: true, with_expiration: true } as RESTGetAPIInviteQuery }) as APIInvite
-
         if (invite.guild.id !== server._id) throw 'Invite points to a different server'
 
         if (invite.expires_at) throw 'This invite is set to expire'
@@ -161,6 +160,7 @@ router.get('/servers', async (req, res) => {
 
         await serverCache.updateServer(id);
     } catch (e) {
+        if (e.code != 10006) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
         await global.db.collection("servers").deleteOne({ _id: id });
         await global.db.collection("audit").insertOne({
             type: "REMOVE_SERVER",
@@ -178,7 +178,7 @@ router.get('/servers', async (req, res) => {
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        (await discord.channels.logs).send({
+        discord.channels.logs.send({
             content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
                 server.name
             )}** \`(${server._id})\``,
@@ -200,7 +200,7 @@ router.get('/servers', async (req, res) => {
 
         await discord.postWebMetric("server");
         // keeping this here incase the team wants it
-        // (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync server **${server.name}** \`(${id})\`: ${e}\n<${settings.website.url}/servers/${id}>`)
+        // discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync server **${server.name}** \`(${id})\`: ${e}\n<${settings.website.url}/servers/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextServer", getNext(ids, id))
@@ -256,7 +256,7 @@ router.get('/templates', async (req, res) => {
 
         await templateCache.updateTemplate(id);
     } catch (e) {
-        const template = await discord.bot.api.guilds.templates(id).get() as APITemplate
+        if (e.code == 10057) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
         // may as well reduce the load on web mods - AJ
         await global.db
             .collection("templates")
@@ -267,7 +267,7 @@ router.get('/templates', async (req, res) => {
             executor: "AutoSync",
             target: id,
             date: Date.now(),
-            reason: "Failed to autosync template, assuming it has been deleted from discord",
+            reason: "Unknown server template (10057)",
             reasonType: 0 // since this is the only option i guess? - AJ
         });
 
@@ -278,20 +278,20 @@ router.get('/templates', async (req, res) => {
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        (await discord.channels.logs).send({
+        discord.channels.logs.send({
             content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(
-                template.name
+                dbTemplate.name
             )}** \`(${id})\``,
             embeds: [embed]
         });
 
-        const owner = await discord.getMember(template.creator_id);
+        const owner = await discord.getMember(dbTemplate.creator.id);
         if (owner)
             owner
                 .send(
                     `${settings.emoji.delete
                     } **|** Your template **${functions.escapeFormatting(
-                        template.name
+                        dbTemplate.name
                     )}** \`(${id
                     })\` has been removed!\n**Reason:** \`Our AutoSync system has determined this template has been deleted from discord.\``
                 )
@@ -301,7 +301,7 @@ router.get('/templates', async (req, res) => {
 
         await discord.postWebMetric("template");
         // keeping the below just in-case the team wants it still.
-        // (await discord.channels.alerts).send(`${settings.emoji.warn} failed to autosync template **${dbTemplate.name}** \`(${id})\`: ${e}\n<${settings.website.url}/templates/${id}>`)
+        // discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync template **${dbTemplate.name}** \`(${id})\`: ${e}\n<${settings.website.url}/templates/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextTemplate", getNext(ids, id))

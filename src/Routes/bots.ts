@@ -616,7 +616,7 @@ router.post(
                     }
                 } as delBot);
 
-                (await discord.channels.logs).send(
+                discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${req.user.id
@@ -1629,7 +1629,7 @@ router.post(
                 });
                 await botCache.updateBot(req.params.id);
 
-                (await discord.channels.logs).send(
+                discord.channels.logs.send(
                     `${settings.emoji.edit} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${req.user.id
@@ -2087,7 +2087,7 @@ router.get(
                 req: req
             });
 
-        (await discord.channels.logs).send(
+        discord.channels.logs.send(
             `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${req.user.id
@@ -2147,7 +2147,7 @@ router.get(
                 req: req
             });
 
-        (await discord.channels.logs).send(
+        discord.channels.logs.send(
             `${settings.emoji.archive} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${req.user.id
@@ -2213,7 +2213,7 @@ router.get(
                 req: req
             });
 
-        (await discord.channels.logs).send(
+        discord.channels.logs.send(
             `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${req.user.id
@@ -2278,7 +2278,7 @@ router.get(
                 req: req
             });
 
-        (await discord.channels.logs).send(
+        discord.channels.logs.send(
             `${settings.emoji.unhide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${req.user.id
@@ -2937,7 +2937,7 @@ router.post(
                 });
                 await botCache.updateBot(req.params.id);
 
-                (await discord.channels.logs).send(
+                await discord.channels.logs.send(
                     `${settings.emoji.resubmit} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${req.user.id
@@ -3027,7 +3027,7 @@ router.get(
             }
         );
 
-        (await discord.channels.logs).send(
+        await discord.channels.logs.send(
             `${settings.emoji.check} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${req.user.id
@@ -3060,7 +3060,7 @@ router.get(
                 .add(settings.roles.developer, "User's bot was just approved.")
                 .catch(async (e) => {
                     console.error(e);
-                    (await discord.channels.alerts).send(
+                    discord.channels.alerts.send(
                         `${settings.emoji.error} Failed giving <@${bot.owner.id}> \`${bot.owner.id}\` the role **Bot Developer** upon one of their bots being approved.`
                     );
                 });
@@ -3071,7 +3071,7 @@ router.get(
                 .add(settings.roles.bot, "Bot was approved on the website.")
                 .catch(async (e) => {
                     console.error(e);
-                    (await discord.channels.alerts).send(
+                    discord.channels.alerts.send(
                         `${settings.emoji.error} Failed giving <@${bot._id}> \`${bot._id}\` the role **Bot** upon being approved on the website.`
                     );
                 });
@@ -3082,7 +3082,7 @@ router.get(
                 .kick("Bot was approved on the website.")
                 .catch(async (e) => {
                     console.error(e);
-                    (await discord.channels.alerts).send(
+                    discord.channels.alerts.send(
                         `${settings.emoji.error} Failed kicking <@${bot._id}> \`${bot._id}\` from the Testing Server on approval.`
                     );
                 });
@@ -3140,7 +3140,7 @@ router.get(
                 )
                 .catch(async (e) => {
                     console.error(e);
-                    (await discord.channels.alerts).send(
+                    discord.channels.alerts.send(
                         `${settings.emoji.error} Failed giving <@${botMember.id}> \`${botMember.id}\` the role **Premium Bot** upon being given premium on the website.`
                     );
                 });
@@ -3352,7 +3352,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        (await discord.channels.logs).send({
+        discord.channels.logs.send({
             content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${req.user.id
@@ -3507,7 +3507,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        (await discord.channels.logs).send({
+        discord.channels.logs.send({
             content: `${settings.emoji.unapprove} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${req.user.id
@@ -3664,7 +3664,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        (await discord.channels.logs).send({
+        discord.channels.logs.send({
             content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${req.user.id
@@ -3811,7 +3811,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        (await discord.channels.logs).send({
+        discord.channels.logs.send({
             content: `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${req.user.id
@@ -3885,7 +3885,7 @@ router.get(
             }
         );
 
-        (await discord.channels.logs).send(
+        discord.channels.logs.send(
             `${settings.emoji.unhide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${req.user.id

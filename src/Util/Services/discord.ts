@@ -83,9 +83,9 @@ bot.on("ready", async () => {
         botCache.getAllBots().then(async bots => {
             const botsToFetch = []
             bots.forEach(async bot => {
-                if (!(await guilds.main).members.cache.has(bot._id)) botsToFetch.push(bot._id)
+                if (guilds.main.members.cache.has(bot._id)) botsToFetch.push(bot._id)
             });
-            (await guilds.main).members.fetch({ user: botsToFetch })
+            await guilds.main.members.fetch({ user: botsToFetch })
                 .then(x => console.log(`Retrieved ${x.size} members!`))
                 .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
         });
@@ -120,26 +120,26 @@ bot.on("guildMemberRemove", async (member) => {
 });
 export const channels = {
     // There is a chance this will fail on recent bot restart if it didn't cache the channel yet.
-    // Using .fetch() will check the cache first, and if it isn't there, will try and fetch from the API.
-    get logs() { return bot.channels.fetch(settings.channels.webLog) as Promise<Discord.TextChannel> },
-    get alerts() { return bot.channels.fetch(settings.channels.alerts) as Promise<Discord.TextChannel> }
+    // Using .fetch() will by default cache the channel on success, and then from there it shouldn't need to again
+    get logs() { return (bot.channels.cache.has(settings.channels.webLog) ? bot.channels.cache.get(settings.channels.webLog) : (async () => { await bot.channels.fetch(settings.channels.webLog) }).call(this)) as Discord.TextChannel },
+    get alerts() { return (bot.channels.cache.has(settings.channels.webLog) ? bot.channels.cache.get(settings.channels.alerts) : (async () => { await bot.channels.fetch(settings.channels.alerts) }).call(this)) as Discord.TextChannel }
 }
 
 export const guilds = {
     // same thing as the channels above
-    get main() { return bot.guilds.fetch(settings.guild.main) as Promise<Discord.Guild> },
-    get testing() { return bot.guilds.fetch(settings.guild.staff) as Promise<Discord.Guild> },
+    get main() { return (bot.guilds.cache.has(settings.guild.main) ? bot.guilds.cache.get(settings.guild.main) : (async () => { await bot.guilds.fetch(settings.guild.main) }).call(this)) as Discord.Guild },
+    get testing() { return (bot.guilds.cache.has(settings.guild.staff) ? bot.guilds.cache.get(settings.guild.staff) : (async () => { await bot.guilds.fetch(settings.guild.staff) }).call(this)) as Discord.Guild },
 }
 
 export async function getMember(id: string) {
     if (guilds.main) {
-        return (await guilds.main).members.fetch(id).catch(() => { });
+        return guilds.main.members.fetch(id).catch(() => { });
     } else return undefined;
 }
 
 export async function getTestingGuildMember(id: string) {
     if (guilds.testing) {
-        return (await guilds.testing).members.fetch(id).catch(() => { });
+        return guilds.testing.members.fetch(id).catch(() => { });
     } else return undefined;
 }
 

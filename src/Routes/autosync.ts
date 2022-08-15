@@ -168,7 +168,7 @@ router.get('/servers', async (req, res) => {
             target: id,
             date: Date.now(),
             reason: "Failed to autosync server, assuming the invite is invalid.",
-            reasonType: 0 // again, assuming 0 is the only option here
+            reasonType: 5
         });
 
         await serverCache.deleteServer(id);
@@ -268,7 +268,7 @@ router.get('/templates', async (req, res) => {
             target: id,
             date: Date.now(),
             reason: "Unknown server template (10057)",
-            reasonType: 0 // since this is the only option i guess? - AJ
+            reasonType: 4
         });
 
         await templateCache.deleteTemplate(id);

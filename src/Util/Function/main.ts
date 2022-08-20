@@ -141,7 +141,7 @@ export async function parseDate(__, locale: string, rawDate: number): Promise<st
             monthNumber: date.getUTCMonth() + 1,
             amPM: amPM,
             year: date.getUTCFullYear()
-        }).call();
+        });
     } else {
         let hour: any = date.getUTCHours();
         let minute: any = date.getUTCMinutes();

@@ -134,14 +134,14 @@ export async function parseDate(__, locale: string, rawDate: number): Promise<st
             if (hour === 24) hour = hour - 12;
         }
 
-        return await __("common.dateFormat", {
+        return __("common.dateFormat", {
             hours: hour,
             minutes: minute,
             dateInMonth: date.getUTCDate(),
             monthNumber: date.getUTCMonth() + 1,
             amPM: amPM,
             year: date.getUTCFullYear()
-        });
+        }).call();
     } else {
         let hour: any = date.getUTCHours();
         let minute: any = date.getUTCMinutes();
@@ -149,7 +149,7 @@ export async function parseDate(__, locale: string, rawDate: number): Promise<st
         if (hour <= 9) hour = `0${hour}`;
         if (minute <= 9) minute = `0${minute}`;
 
-        return await __("common.dateFormat", {
+        return __("common.dateFormat", {
             hours: hour,
             minutes: minute,
             dateInMonth: date.getUTCDate(),

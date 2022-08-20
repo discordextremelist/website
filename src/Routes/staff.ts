@@ -172,8 +172,8 @@ router.get(
             .sort({ date: -1 })
             .allowDiskUse()
             .toArray()) as auditLog[]).filter(
-            ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
-        );
+                ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
+            );
 
         if (!req.query.page) req.query.page = "1";
 

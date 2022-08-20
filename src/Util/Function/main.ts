@@ -118,7 +118,7 @@ export async function parseDate(__, locale: string, rawDate: number): Promise<st
 
     const date = new Date(rawDate);
     const { default: dateFormat } = await import(`../../../../node_modules/del-i18n/website/${locale}.json`, { assert: { type: "json" } })
-    if (await dateFormat["common.dateFormat"].includes("{{amPM}}")) {
+    if (dateFormat["common.dateFormat"].includes("{{amPM}}")) {
         let amPM: string;
         let hour = date.getUTCHours();
         let minute: any = date.getUTCMinutes();
@@ -134,7 +134,7 @@ export async function parseDate(__, locale: string, rawDate: number): Promise<st
             if (hour === 24) hour = hour - 12;
         }
 
-        return __("common.dateFormat", {
+        return await __("common.dateFormat", {
             hours: hour,
             minutes: minute,
             dateInMonth: date.getUTCDate(),
@@ -149,7 +149,7 @@ export async function parseDate(__, locale: string, rawDate: number): Promise<st
         if (hour <= 9) hour = `0${hour}`;
         if (minute <= 9) minute = `0${minute}`;
 
-        return __("common.dateFormat", {
+        return await __("common.dateFormat", {
             hours: hour,
             minutes: minute,
             dateInMonth: date.getUTCDate(),

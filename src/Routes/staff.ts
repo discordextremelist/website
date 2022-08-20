@@ -197,7 +197,8 @@ router.get(
             logsPgArr: iteratedLogs,
             page: req.query.page,
             pages: Math.ceil(logs.length / 15),
-            functions
+            functions,
+            async: true // ejs docs suck but this should work
         });
     }
 );

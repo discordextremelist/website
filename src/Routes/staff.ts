@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
+import ejs from "ejs"
 import type { Request, Response } from "express";
 import type { APIUser, Snowflake } from "discord-api-types/v10";
 
@@ -188,8 +189,9 @@ router.get(
         }
 
         res.locals.premidPageInfo = res.__("premid.staff.audit");
-
-        res.render("templates/staff/audit", {
+        // okay so ejs async is odd with .render, it works better in renderFile for some reason?
+        // I think it's because it technically just "preloads" any async functions, so they actually "run" as a sync? - AJ
+        const preRender = ejs.renderFile("templates/staff/audit.ejs", {
             title: res.__("page.staff.audit"),
             subtitle: res.__("page.staff.audit.subtitle"),
             req,
@@ -198,8 +200,8 @@ router.get(
             page: req.query.page,
             pages: Math.ceil(logs.length / 15),
             functions,
-            async: true // ejs docs suck but this should work
-        });
+        }, { async: true });
+        res.send(preRender)
     }
 );
 

@@ -21,12 +21,14 @@ import * as botCache from "../Services/botCaching.js";
 import * as userCache from "../Services/userCaching.js";
 import { URL } from "url";
 import { OAuth2Scopes } from "discord-api-types/v10";
-
 export const escapeFormatting = (text: string) => {
     const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
     const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, "\\$1");
     return escaped;
 };
+// this seems stupid but apparently it should work
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
 const regions = {
     "us-west": "US West",
@@ -118,8 +120,7 @@ export function parseDate(__, locale: string, rawDate: number): string {
     if (rawDate === 0) return "???";
 
     const date = new Date(rawDate);
-    const dateFormat = require(`../../../../node_modules/del-i18n/website/${locale}.json`);
-
+    const dateFormat = require(`../../../../node_modules/del-i18n/website/${locale}.json`)
     if (dateFormat["common.dateFormat"].includes("{{amPM}}")) {
         let amPM: string;
         let hour = date.getUTCHours();
@@ -228,7 +229,7 @@ export function parseAudit(__, auditType: string): auditType {
             returnType.name = __("page.staff.audit.type.MOD_HIDE_BOT");
             returnType.icon = "far fa-eye-slash has-text-white";
             break;
-        case "MOD_UNHIDE_BOT":  
+        case "MOD_UNHIDE_BOT":
             returnType.name = __("page.staff.audit.type.MOD_UNHIDE_BOT");
             returnType.icon = "far fa-eye has-text-white";
             break;

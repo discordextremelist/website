@@ -106,7 +106,7 @@ bot.on("guildMemberAdd", async (member) => {
     await global.redis?.hmset(
         prefix,
         member.id,
-        member.presence.status || PresenceUpdateStatus.Offline
+        member.presence ? member.presence.status || PresenceUpdateStatus.Offline : PresenceUpdateStatus.Offline
     );
 
     if (member.guild.id === settings.guild.main) await postMetric();

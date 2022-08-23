@@ -26,6 +26,9 @@ export const escapeFormatting = (text: string) => {
     const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, "\\$1");
     return escaped;
 };
+// this seems stupid but apparently it should work
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
 const regions = {
     "us-west": "US West",
@@ -113,11 +116,11 @@ export function standingParseEmoji(standing: string) {
     return result;
 }
 
-export async function parseDate(__, locale: string, rawDate: number): Promise<string> {
+export function parseDate(__, locale: string, rawDate: number): string {
     if (rawDate === 0) return "???";
 
     const date = new Date(rawDate);
-    const { default: dateFormat } = await import(`../../../../node_modules/del-i18n/website/${locale}.json`, { assert: { type: "json" } })
+    const dateFormat = require(`../../../../node_modules/del-i18n/website/${locale}.json`)
     if (dateFormat["common.dateFormat"].includes("{{amPM}}")) {
         let amPM: string;
         let hour = date.getUTCHours();

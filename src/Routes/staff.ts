@@ -172,8 +172,8 @@ router.get(
             .sort({ date: -1 })
             .allowDiskUse()
             .toArray()) as auditLog[]).filter(
-            ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
-        );
+                ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
+            );
 
         if (!req.query.page) req.query.page = "1";
 
@@ -188,7 +188,6 @@ router.get(
         }
 
         res.locals.premidPageInfo = res.__("premid.staff.audit");
-
         res.render("templates/staff/audit", {
             title: res.__("page.staff.audit"),
             subtitle: res.__("page.staff.audit.subtitle"),
@@ -197,7 +196,7 @@ router.get(
             logsPgArr: iteratedLogs,
             page: req.query.page,
             pages: Math.ceil(logs.length / 15),
-            functions
+            functions,
         });
     }
 );

@@ -46,7 +46,7 @@ import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap.js";
 
 import i18n from "i18n";
 import { MongoClient } from "mongodb";
-import { RedisOptions } from "ioredis";
+import Redis from "ioredis"
 import { hostname } from "os";
 
 import settings from "../settings.json" assert { type: "json" };
@@ -106,14 +106,16 @@ new Promise<void>((resolve, reject) => {
                 .collection("libraries")
                 .updateOne(
                     { _id: lib.name },
-                    { $set: {
+                    {
+                        $set: {
                             _id: lib.name,
                             language: lib.language,
                             links: {
                                 docs: lib.links.docs,
                                 repo: lib.links.repo
                             }
-                        }},
+                        }
+                    },
                     { upsert: true }
                 )
                 .then(() => true)
@@ -147,7 +149,7 @@ new Promise<void>((resolve, reject) => {
                 .then(() => true)
                 .catch(() => false);
         }
-        let redisConfig: RedisOptions;
+        let redisConfig: Redis.RedisOptions;
 
         if (settings.secrets.redis.sentinels.length > 0) {
             redisConfig = {
@@ -166,7 +168,7 @@ new Promise<void>((resolve, reject) => {
             };
         }
 
-        global.redis = new Redis(redisConfig); 
+        global.redis = new Redis(redisConfig);
         const s = new Redis(redisConfig);
 
         /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems. - Ice*/
@@ -225,35 +227,33 @@ new Promise<void>((resolve, reject) => {
         }
 
         await discord.bot.login(settings.secrets.discord.token);
+        // to replace the needed wait time for the below functions, instead of using a redundant blocking promise
+        // just... do it once it is actually ready -AJ
+        discord.bot.once("login", async () => {
+            setTimeout(async () => {
+                await featuredCache.updateFeaturedBots();
+                await discord.postMetric();
+            }, 10000);
 
-        await new Promise<void>((resolve) => {
-            discord.bot.once("ready", () => resolve());
-        });
+            await discord.postWebMetric("bot");
+            await discord.postWebMetric("bot_unapproved");
+            await discord.postWebMetric("server");
+            await discord.postWebMetric("template");
+            await discord.postWebMetric("user");
 
-        setTimeout(async () => {
-            await featuredCache.updateFeaturedBots();
-            await discord.postMetric();
-        }, 10000);
-
-        await discord.postWebMetric("bot");
-        await discord.postWebMetric("bot_unapproved");
-        await discord.postWebMetric("server");
-        await discord.postWebMetric("template");
-        await discord.postWebMetric("user");
-
-        await (async function discordBotUndefined() {
-            if (
-                typeof discord.bot.guilds !== "undefined" &&
-                typeof discord.guilds.main !==
-                "undefined"
-            ) {
-                await banned.updateBanlist();
-                await discord.uploadStatuses();
-            } else {
-                setTimeout(discordBotUndefined, 250);
-            }
-        })();
-
+            await (async function discordBotUndefined() {
+                if (
+                    typeof discord.bot.guilds !== "undefined" &&
+                    typeof discord.guilds.main !==
+                    "undefined"
+                ) {
+                    await banned.updateBanlist();
+                    await discord.uploadStatuses();
+                } else {
+                    setTimeout(discordBotUndefined, 250);
+                }
+            })();
+        })
         app.set("view engine", "ejs");
 
         app.use(
@@ -280,7 +280,7 @@ new Promise<void>((resolve, reject) => {
         app.use(
             cookieSession({
                 name: "delSession",
-                secret: settings.secrets.cookie,
+                keys: [settings.secrets.cookie],
                 maxAge: 1000 * 60 * 60 * 24 * 7
             })
         );

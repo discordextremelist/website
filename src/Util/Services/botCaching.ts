@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const prefix = "bots";
-
 export async function getBot(id: string): Promise<delBot> {
     const bot = await global.redis?.hget(prefix, id);
     if (!bot) return;
@@ -59,6 +58,7 @@ export async function uploadBots() {
         prefix,
         ...botsDB.map((bot: delBot) => [bot._id, JSON.stringify(bot)])
     );
+
 }
 
 export async function deleteBot(id: string) {

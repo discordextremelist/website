@@ -27,14 +27,14 @@ import * as serverCache from "../Util/Services/serverCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
 import * as discord from "../Util/Services/discord.js";
 import { variables } from "../Util/Function/variables.js";
-import type { GuildMember } from "discord.js";
+import type { Guild, GuildMember, GuildMemberManager } from "discord.js";
 
 const router = express.Router();
 
 const nickSorter = (a, b) =>
     (a.nick || a.user.username).localeCompare(b.nick || b.user.username);
 function sortAll() {
-    let members = discord.guilds.main.members;
+    let members = discord.guilds.main.members as GuildMemberManager;
     if (!members) throw new Error("Fetching members failed!");
     const staff: GuildMember[] = [],
         donators: GuildMember[] = [],
@@ -53,10 +53,10 @@ function sortAll() {
             member.rank = admin
                 ? "admin"
                 : assistant
-                ? "assistant"
-                : mod
-                ? "mod"
-                : null;
+                    ? "assistant"
+                    : mod
+                        ? "mod"
+                        : null;
             const user = discord.bot.users.cache.get(member.id);
             member.avatar = user.avatar;
             member.username = user.username;
@@ -237,7 +237,10 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
 
     if (!req.query.page) req.query.page = "1";
 
-    const servers = (await serverCache.getAllServers()).filter(
+    const servers = (await serverCache.getAllServers()).slice(
+        15 * Number(req.query.page) - 15,
+        15 * Number(req.query.page)
+    ).filter(
         ({ _id, status }) => status && !status.reviewRequired
     );
 
@@ -246,10 +249,7 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
         subtitle: res.__("common.servers.subtitle"),
         req,
         servers,
-        serversPgArr: servers.slice(
-            15 * Number(req.query.page) - 15,
-            15 * Number(req.query.page)
-        ),
+        serversPgArr: servers,
         page: req.query.page,
         pages: Math.ceil(servers.length / 15)
     });

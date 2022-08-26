@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@sentry/node": "^6.19.2",
+    "@snyk/protect": "^1.984.0",
     "body-parser": "^1.19.2",
     "browser-detect": "^0.2.28",
     "chunk": "0.0.3",
@@ -72,15 +73,15 @@
   },
   "scripts": {
     "compile": "rm -rf dist/ && tsc",
-    "start": "node --max-old-space-size=8192 dist/src/app",
+    "start": "node --max-old-space-size=4096 dist/src/app",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",
     "css-compile": "sh ./scripts/css_build.sh",
     "setup": "node scripts/setup",
     "snyk-protect": "snyk-protect",
     "prepare": "npm run snyk-protect",
     "dev": "nodemon --exec \"tsc && fuser -k 3001/tcp && node dist/src/app.js\" --ext ts",
-    "update": "npm run compile && pm2 restart 1",
-    "updatel": "npm run compile && pm2 restart 1 && pm2 logs 1"
+    "update": "npm run compile && pm2 restart DEL",
+    "updatel": "npm run compile && pm2 restart DEL && pm2 logs DEL"
   },
   "repository": {
     "type": "git",

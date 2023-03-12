@@ -1,5 +1,4 @@
 .gitignore
 .gitattributes
-settings.json
 .git
 node_modules/

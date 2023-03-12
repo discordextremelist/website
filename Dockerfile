@@ -6,7 +6,7 @@ FROM node:${NODE_VERSION} as build
 # Set new working dir
 WORKDIR /opt/del
 # Copy to-be-compiled files to container filesystem
-COPY . /opt/del/
+COPY . /opt/del
 # Run apt update & add needed packages
 RUN apk update && \
     apk add git ca-certificates

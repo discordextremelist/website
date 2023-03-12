@@ -9,9 +9,8 @@ WORKDIR /opt/del${DEL_VERSION}
 # Copy to-be-compiled files to container filesystem
 COPY . /opt/del${DEL_VERSION}/
 # Run apt update & add needed packages
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    git ca-certificates
+RUN apk update && \
+    apk add git ca-certificates
 # Install node modules
 RUN npm ci --production
 # Compile new dist file

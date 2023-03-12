@@ -1,0 +1,24 @@
+# You should configure the passwords/username's where expected
+services:
+  web: 
+    build: .
+    ports:
+      - "127.0.0.1:3000:3000" # Expected to be proxied via something like Nginx
+    restart: always
+    shm_size: 1024mb # Set 1gb default memory alloc. 1gb should be more than enough
+
+  mongo:
+    image: mongo
+    restart: always
+    env_file: .env.production
+    networks:
+      - mongo
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    env_file: .env.production
+    ports:
+      - "8081:8081"
+    networks:
+      - mongo

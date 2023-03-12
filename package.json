@@ -9,7 +9,7 @@
   },
   "engines": {
     "npm": ">=8.5.0",
-    "node": ">=17.9.0"
+    "node": ">=18.15.0"
   },
   "dependencies": {
     "@sentry/node": "^6.19.2",

@@ -282,7 +282,7 @@ router.post(
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [`${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
+                    errors: [`${error.name}: ${error.message}`, `${error.code} ${error.method} ${error.url}`]
                 });
             });
     }
@@ -668,7 +668,7 @@ router.post(
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [`${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
+                    errors: [`${error.name}: ${error.message}`, `${error.code} ${error.method} ${error.url}`]
                 });
             });
     }
@@ -973,7 +973,7 @@ router.get(
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
                     status: 400,
-                    subtitle: `${error.name}: ${error.message} | ${error.httpStatus} ${error.method} ${error.path}`,
+                    subtitle: `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`,
                     req,
                     type: "Error"
                 });

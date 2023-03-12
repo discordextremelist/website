@@ -280,7 +280,7 @@ router.post(
                     .guilds(req.body.widgetServer)
                     .channels.get()
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -339,7 +339,7 @@ router.post(
                     .channels(req.body.widgetChannel)
                     .get()
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -720,7 +720,7 @@ router.post(
                     errors: [
                         res.__("common.error.bot.arr.fetchError"),
                         `${error.name}: ${error.message}`,
-                        `${error.httpStatus} ${error.method} ${error.path}`
+                        `${error.code} ${error.method} ${error.url}`
                     ]
                 });
             });
@@ -1224,7 +1224,7 @@ router.post(
                     .guilds(req.body.widgetServer)
                     .channels.get()
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -1283,7 +1283,7 @@ router.post(
                     .channels(req.body.widgetChannel)
                     .get()
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -1662,7 +1662,7 @@ router.post(
                     errors: [
                         res.__("common.error.bot.arr.fetchError"),
                         `${error.name}: ${error.message}`,
-                        `${error.httpStatus} ${error.method} ${error.path}`
+                        `${error.code} ${error.method} ${error.url}`
                     ]
                 });
             });
@@ -2544,7 +2544,7 @@ router.post(
                     .guilds(req.body.widgetServer)
                     .channels.get()
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -2603,7 +2603,7 @@ router.post(
                     .channels(req.body.widgetChannel)
                     .get()
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -2970,7 +2970,7 @@ router.post(
                     errors: [
                         res.__("common.error.bot.arr.fetchError"),
                         `${error.name}: ${error.message}`,
-                        `${error.httpStatus} ${error.method} ${error.path}`
+                        `${error.code} ${error.method} ${error.url}`
                     ]
                 });
             });
@@ -4050,7 +4050,7 @@ router.get(
                     errors: [
                         res.__("common.error.bot.arr.fetchError"),
                         `${error.name}: ${error.message}`,
-                        `${error.httpStatus} ${error.method} ${error.path}`
+                        `${error.code} ${error.method} ${error.url}`
                     ]
                 });
             });

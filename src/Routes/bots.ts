@@ -3346,7 +3346,7 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
@@ -3501,7 +3501,7 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
@@ -3658,7 +3658,7 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
@@ -3805,7 +3805,7 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);

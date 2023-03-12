@@ -26,7 +26,7 @@ import * as serverCache from "../Util/Services/serverCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
 import * as userCache from "../Util/Services/userCaching.js";
 import * as functions from "../Util/Function/main.js";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord-api-types/v10";
 import settings from "../../settings.json" assert { type: "json" };
 
@@ -173,7 +173,7 @@ router.get('/servers', async (req, res) => {
 
         await serverCache.deleteServer(id);
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
@@ -273,7 +273,7 @@ router.get('/templates', async (req, res) => {
 
         await templateCache.deleteTemplate(id);
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);

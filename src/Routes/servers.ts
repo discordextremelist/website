@@ -36,7 +36,7 @@ import * as userCache from "../Util/Services/userCaching.js";
 import * as serverCache from "../Util/Services/serverCaching.js";
 import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import type { serverReasons } from "../../@types/enums.js";
 
 import mdi from "markdown-it";
@@ -928,7 +928,7 @@ router.post(
 
         await serverCache.updateServer(req.params.id);
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
@@ -1197,7 +1197,7 @@ router.post(
 
         await serverCache.deleteServer(req.params.id);
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);

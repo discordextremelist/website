@@ -33,7 +33,7 @@ import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import type { APITemplate } from "discord-api-types/v10";
 import type { DiscordAPIError } from "discord.js";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import type { templateReasons } from "../../@types/enums.js";
 
 import mdi from "markdown-it";
@@ -810,7 +810,7 @@ router.post(
 
         await templateCache.deleteTemplate(req.params.id);
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);

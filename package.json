@@ -25,7 +25,7 @@
     "debug": "~4.3.4",
     "del-i18n": "github:discordextremelist/i18n",
     "discord-api-types": "^0.30.0",
-    "discord.js": "^13.6.0",
+    "discord.js": "^14.8.0",
     "ejs": "^3.1.7",
     "express": "^4.17.3",
     "express-device": "^0.4.2",

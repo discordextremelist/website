@@ -2,3 +2,4 @@
 .gitattributes
 .git
 node_modules/
+data/

@@ -6,6 +6,9 @@ services:
       - "127.0.0.1:3000:3000" # Expected to be proxied via something like Nginx
     restart: always
     shm_size: 1024mb # Set 1gb default memory alloc. 1gb should be more than enough
+    depends_on:
+      - redis
+      - mongo
 
   mongo:
     image: mongo
@@ -13,6 +16,14 @@ services:
     env_file: .env.production
     networks:
       - mongo
+    volumes:
+      - ./data/mongo:/data/db
+    healthcheck:
+      test: ["CMD", "echo 'db.runCommand(\"ping\").ok' | mongo mongo:27017/test --quiet"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
   mongo-express:
     image: mongo-express
@@ -22,3 +33,17 @@ services:
       - "8081:8081"
     networks:
       - mongo
+    depends_on:
+      - mongo
+
+  redis:
+    restart: always
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    volumes:
+      - ./data/redis:/data

@@ -60,4 +60,3 @@ networks:
   redis:
     internal: true
   public:
-    external: true

@@ -2,7 +2,7 @@
 # NOTE: You should have made a settings.json file before running docker compose.
 # Node v17 is EOL, Node v18 is current
 ARG NODE_VERSION="18.15.0-alpine3.16"
-FROM node:${NODE_VERSION} as build
+FROM node:${NODE_VERSION}
 # Copy to-be-compiled files to container filesystem
 COPY . /opt/del
 # Set new working dir

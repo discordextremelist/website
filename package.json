@@ -9,7 +9,7 @@
   },
   "engines": {
     "npm": ">=8.5.0",
-    "node": ">=17.9.0"
+    "node": ">=18.15.0"
   },
   "dependencies": {
     "@sentry/node": "^6.19.2",
@@ -25,7 +25,7 @@
     "debug": "~4.3.4",
     "del-i18n": "github:discordextremelist/i18n",
     "discord-api-types": "^0.30.0",
-    "discord.js": "^13.6.0",
+    "discord.js": "v14.8",
     "ejs": "^3.1.7",
     "express": "^4.17.3",
     "express-device": "^0.4.2",

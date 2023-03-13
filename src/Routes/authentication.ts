@@ -237,7 +237,7 @@ router.get(
             discord.bot.api.guilds(settings.guild.main).members(req.user.id).put({ data: { access_token: req.user.accessToken } })
                 .catch((error: DiscordAPIError) => {
                     console.error(error)
-                    if (error.httpStatus === 403 && !req.user.impersonator) {
+                    if (error.code === 403 && !req.user.impersonator) {
                         return res.status(403).render("status", {
                             title: res.__("common.error"),
                             status: 403,

@@ -55,8 +55,7 @@ class Client extends Discord.Client {
 
 export const bot = new Client({
     allowedMentions: { parse: [] },
-    intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_PRESENCES"],
-    http: { version: 8 }
+    intents: ["Guilds", "GuildMembers", "GuildPresences"],
 });
 
 bot.on("guildBanRemove", async (ban) => {

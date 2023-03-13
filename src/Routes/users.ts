@@ -576,7 +576,7 @@ router.get(
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
                     status: 400,
-                    subtitle: `${error.name}: ${error.message} | ${error.httpStatus} ${error.method} ${error.path}`,
+                    subtitle: `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`,
                     req,
                     type: "Error"
                 });

@@ -36,7 +36,7 @@ import * as userCache from "../Util/Services/userCaching.js";
 import * as serverCache from "../Util/Services/serverCaching.js";
 import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import type { serverReasons } from "../../@types/enums.js";
 
 import mdi from "markdown-it";
@@ -186,7 +186,7 @@ router.post(
             if (fetchChannel)
                 await discord.bot.api.channels(req.body.previewChannel).get()
                     .catch((e: DiscordAPIError) => {
-                        if([400, 404].includes(e.httpStatus)) {
+                        if([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -364,7 +364,7 @@ router.post(
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [`${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
+                    errors: [`${error.name}: ${error.message}`, `${error.code} ${error.method} ${error.url}`]
                 });
             });
     }
@@ -601,7 +601,7 @@ router.post(
             if (fetchChannel)
                 await discord.bot.api.channels(req.body.previewChannel).get()
                     .catch((e: DiscordAPIError) => {
-                        if([400, 404].includes(e.httpStatus)) {
+                        if([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -792,7 +792,7 @@ router.post(
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [`${error.name}: ${error.message}`, `${error.httpStatus} ${error.method} ${error.path}`]
+                    errors: [`${error.name}: ${error.message}`, `${error.code} ${error.method} ${error.url}`]
                 });
             });
     }
@@ -928,12 +928,12 @@ router.post(
 
         await serverCache.updateServer(req.params.id);
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/servers/${server._id}`);
-        embed.setFooter("It will still be shown as a normal server, it was declined from being listed as an LGBT community.");
+        embed.setFooter({ text: "It will still be shown as a normal server, it was declined from being listed as an LGBT community." });
 
         discord.channels.logs.send({
             content: `${settings.emoji.cross} **${functions.escapeFormatting(
@@ -1197,7 +1197,7 @@ router.post(
 
         await serverCache.deleteServer(req.params.id);
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
@@ -1339,7 +1339,7 @@ router.get(
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
                     status: 400,
-                    subtitle: `${error.name}: ${error.message} | ${error.httpStatus} ${error.method} ${error.path}`,
+                    subtitle: `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`,
                     req,
                     type: "Error"
                 });

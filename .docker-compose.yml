@@ -34,7 +34,7 @@ services:
     restart: always
     env_file: .env.production
     ports:
-      - "8081:8081"
+      - "127.0.0.1:8081:8081" # Expected to be proxied by something like Nginx
     networks:
       - mongo
     depends_on:

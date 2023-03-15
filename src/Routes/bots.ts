@@ -523,7 +523,6 @@ router.post(
 
         (await fetch(DAPI + `/oauth2/applications/${req.body.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
             .then(async (app: APIApplication) => {
-                console.log(app)
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
                         error: true,
@@ -3970,7 +3969,6 @@ router.get(
 
         (await fetch(DAPI + `/oauth2/applications/${botExists.clientID || botExists._id || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
             .then(async (app: APIApplication) => {
-                console.log(app)
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
                         error: true,
@@ -4021,7 +4019,6 @@ router.get(
                 await botCache.updateBot(req.params.id);
             })
             .catch((error: DiscordAPIError) => {
-                console.log(error)
                 if (error.code === RESTJSONErrorCodes.UnknownApplication)
                     return res.status(400).json({
                         error: true,

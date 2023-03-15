@@ -84,7 +84,7 @@ router.get('/bots', async (req, res) => {
                     })
                 }
 
-                const receivedCommands = await (await fetch('https://discord.com/api/v8' + Routes.applicationCommands(app.id), { headers: { authorization: `Bearer ${owner.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
+                const receivedCommands = await (await fetch('https://discord.com/api/v10' + Routes.applicationCommands(app.id), { headers: { authorization: `Bearer ${owner.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
                 if (Array.isArray(receivedCommands)) commands = receivedCommands;
             }
         }
@@ -177,7 +177,7 @@ router.get('/servers', async (req, res) => {
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        discord.channels.logs.send({
+        discord.channels.alerts.send({
             content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
                 server.name
             )}** \`(${server._id})\``,
@@ -198,8 +198,6 @@ router.get('/servers', async (req, res) => {
                 });
 
         await discord.postWebMetric("server");
-        // keeping this here incase the team wants it
-        // discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync server **${server.name}** \`(${id})\`: ${e}\n<${settings.website.url}/servers/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextServer", getNext(ids, id))
@@ -277,7 +275,7 @@ router.get('/templates', async (req, res) => {
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        discord.channels.logs.send({
+        discord.channels.alerts.send({
             content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(
                 dbTemplate.name
             )}** \`(${id})\``,
@@ -299,8 +297,6 @@ router.get('/templates', async (req, res) => {
                 });
 
         await discord.postWebMetric("template");
-        // keeping the below just in-case the team wants it still.
-        // discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync template **${dbTemplate.name}** \`(${id})\`: ${e}\n<${settings.website.url}/templates/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextTemplate", getNext(ids, id))

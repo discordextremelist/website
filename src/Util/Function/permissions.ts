@@ -40,7 +40,6 @@ export const scopes = (scopes: OAuth2Scopes[]) => (req: Request, res: Response, 
     if (req.session.logoutJustCont === true) {
         req.session.logoutJust = false;
         req.session.logoutJustCont = false;
-        console.log('logoutJustCont')
         return res.redirect("/");
     }
 

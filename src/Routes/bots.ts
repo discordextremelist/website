@@ -49,7 +49,7 @@ import entities from "html-entities";
 const md = new mdi
 const router = express.Router();
 
-const DAPI = "https://discord.com/api/v8";
+const DAPI = "https://discord.com/api/v10";
 
 function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);
@@ -503,7 +503,6 @@ router.post(
                     }
                 })
             }
-
             const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(req.body.id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
@@ -522,8 +521,9 @@ router.post(
                 errors: errors
             });
 
-        await rest.get(Routes.user(req.body.clientID || req.body.id))
+        (await fetch(DAPI + `/oauth2/applications/${req.body.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
             .then(async (app: APIApplication) => {
+                console.log(app)
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
                         error: true,
@@ -1468,7 +1468,8 @@ router.post(
             });
         }
 
-        await rest.get(Routes.user(req.body.clientID || req.params.id))
+
+        (await fetch(DAPI + `/oauth2/applications/${req.body.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -2772,7 +2773,8 @@ router.post(
                 errors: errors
             });
 
-        await rest.get(Routes.user(req.body.clientID || req.params.id))
+
+        (await fetch(DAPI + `/oauth2/applications/${req.body.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -3965,7 +3967,8 @@ router.get(
             if (user.public_flags) userFlags = user.public_flags
         }
 
-        await rest.get(Routes.user(botExists.clientID || req.params.id))
+
+        (await fetch(DAPI + `/oauth2/applications/${botExists.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({

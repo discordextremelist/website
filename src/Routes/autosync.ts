@@ -27,8 +27,9 @@ import * as templateCache from "../Util/Services/templateCaching.js";
 import * as userCache from "../Util/Services/userCaching.js";
 import * as functions from "../Util/Function/main.js";
 import { EmbedBuilder } from "discord.js";
-import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord-api-types/v10";
+import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord.js";
 import settings from "../../settings.json" assert { type: "json" };
+import { rest } from "../Util/Function/rest.js";
 
 const router = express.Router();
 
@@ -56,8 +57,7 @@ router.get('/bots', async (req, res) => {
         .findOne({ _id: id });
 
     if (botExists) try {
-        const app = await discord.bot.api.applications(botExists.clientID || id).rpc.get() as APIApplication
-
+        const app = await rest.get(Routes.applicationCommands(botExists.clientID || id)) as APIApplication
         let commands: APIApplicationCommand[] = botExists.commands || []
 
         if (botExists.scopes?.slashCommands) {
@@ -92,7 +92,7 @@ router.get('/bots', async (req, res) => {
         let userFlags = 0
 
         if (botExists.scopes?.bot) {
-            const user = await discord.bot.api.users(id).get().catch(() => { }) as APIUser
+            const user = await rest.get(Routes.user(id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -136,9 +136,8 @@ router.get('/servers', async (req, res) => {
         .findOne({ _id: id });
 
     if (server) try {
-        const invite = await discord.bot.api.invites(server.inviteCode).get({ query: { with_counts: true, with_expiration: true } as RESTGetAPIInviteQuery }) as APIInvite
+        const invite = await rest.get(Routes.invite(server.inviteCode), { body: { with_counts: true, with_expiration: true } as RESTGetAPIInviteQuery }) as APIInvite
         if (invite.guild.id !== server._id) throw 'Invite points to a different server'
-
         if (invite.expires_at) throw 'This invite is set to expire'
 
         await global.db.collection("servers").updateOne(
@@ -221,7 +220,7 @@ router.get('/templates', async (req, res) => {
         .findOne({ _id: id });
 
     if (dbTemplate) try {
-        const template = await discord.bot.api.guilds.templates(id).get() as APITemplate
+        const template = await rest.get(Routes.template(id)) as APITemplate
 
         await global.db.collection("templates").updateOne(
             { _id: id },

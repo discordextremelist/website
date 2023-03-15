@@ -19,8 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import type { APIUser } from "discord-api-types/v10";
-
+import type { APIUser } from "discord.js";
+import { Routes } from "discord.js";
+import { rest } from "../Util/Function/rest.js";
 import * as discord from "../Util/Services/discord.js";
 import * as banned from "../Util/Services/banned.js";
 import { variables } from "../Util/Function/variables.js";
@@ -529,7 +530,7 @@ router.get(
                 req: req
             });
 
-        discord.bot.api.users(req.params.id).get()
+            await rest.get(Routes.user(req.params.id))
             .then(async (user: APIUser) => {
                 await global.db.collection("users").updateOne(
                     { _id: req.params.id },

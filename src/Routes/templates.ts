@@ -31,11 +31,11 @@ import * as userCache from "../Util/Services/userCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
 import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
-import type { APITemplate } from "discord-api-types/v10";
+import type { APITemplate } from "discord.js";
 import type { DiscordAPIError } from "discord.js";
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Routes } from "discord.js";
 import type { templateReasons } from "../../@types/enums.js";
-
+import { rest } from "../Util/Function/rest.js";
 import mdi from "markdown-it";
 import entities from "html-entities";
 const md = new mdi
@@ -155,7 +155,7 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api.guilds.templates(req.body.code).get()
+        await rest.get(Routes.template(req.body.code))
             .then(async (template: APITemplate) => {
                 await global.db.collection<delTemplate>("templates").insertOne({
                     _id: template.code,
@@ -523,7 +523,7 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api.guilds.templates(req.body.code).get()
+        await rest.get(Routes.template(req.body.code))
             .then(async (template: APITemplate) => {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
@@ -868,7 +868,7 @@ router.get(
                 type: "Error"
             });
 
-        await discord.bot.api.guilds.templates(req.params.id).get()
+        await rest.get(Routes.template(req.params.id))
             .then(async (template: APITemplate) => {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },

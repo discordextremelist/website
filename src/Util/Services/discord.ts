@@ -22,7 +22,7 @@ import metrics from "datadog-metrics";
 
 import settings from "../../../settings.json" assert { type: "json" };
 import moment from "moment";
-import { PresenceUpdateStatus } from "discord-api-types/v10";
+import { PresenceUpdateStatus } from "discord.js";
 import * as botCache from "./botCaching.js";
 import { hostname } from "os";
 
@@ -38,9 +38,8 @@ setInterval(async () => {
     await postTodaysGrowth();
 }, 8.568e+7); // 23.8h, to account for eventual time drift if the site is online for a while (which is the goal lol) - AJ
 
-// @ts-expect-error
 class Client extends Discord.Client {
-    readonly api: {
+    /* readonly rest: {
         applications: any;
         channels: any;
         gateway: any;
@@ -50,7 +49,7 @@ class Client extends Discord.Client {
         users: any;
         voice: any;
         webhooks: any;
-    }
+    } */
 }
 
 export const bot = new Client({

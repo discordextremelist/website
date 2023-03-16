@@ -236,8 +236,9 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.servers");
 
     if (!req.query.page) req.query.page = "1";
-
-    const servers = (await serverCache.getAllServers()).slice(
+    // Can't calculate total pages with sliced value - AJ
+    const allServers = await serverCache.getAllServers()
+    const servers = [...allServers].slice(
         15 * Number(req.query.page) - 15,
         15 * Number(req.query.page)
     ).filter(
@@ -251,7 +252,7 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
         servers,
         serversPgArr: servers,
         page: req.query.page,
-        pages: Math.ceil(servers.length / 15)
+        pages: Math.ceil(allServers.length / 15)
     });
 });
 

@@ -1237,7 +1237,7 @@ router.get(
                 req: req
             });
 
-        (await fetch(DAPI + `/invites/${req.body.invite}?with_counts=true&with_expiration=true`)).json()
+        (await fetch(DAPI + `/invites/${server.inviteCode}?with_counts=true&with_expiration=true`)).json()
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).render("status", {

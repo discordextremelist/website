@@ -172,7 +172,6 @@ new Promise<void>((resolve, reject) => {
         const s = new Redis(redisConfig);
 
         /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems. - Ice*/
-
         console.log("Attempting to acquire caching lock...");
         const lock = await global.redis.get("cache_lock");
         if (lock && lock != hostname()) { // We have a lock, but it is not held for us.

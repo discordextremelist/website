@@ -30,10 +30,6 @@ import passport from "passport";
 import logger from "morgan";
 
 import * as libCache from "./Util/Services/libCaching.js";
-import { uploadBots } from "./Util/Services/botCaching.js";
-import { uploadServers } from "./Util/Services/serverCaching.js";
-import { uploadTemplates } from "./Util/Services/templateCaching.js";
-/*Not uploading users, as that isn't a publicly searchable function, and they are re-set/cached on login/auth, if need be - AJ*/
 import * as announcementCache from "./Util/Services/announcementCaching.js";
 import * as featuredCache from "./Util/Services/featuring.js";
 import * as ddosMode from "./Util/Services/ddosMode.js";
@@ -176,7 +172,6 @@ new Promise<void>((resolve, reject) => {
         const s = new Redis(redisConfig);
 
         /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems. - Ice*/
-        /*Ref #1 - While ice is totally right, we also aren't caching things at all unless it's being added, which means god forbid it get cleared, or flushed somehow, it doesn't work, which explains some issues - AJ*/
         console.log("Attempting to acquire caching lock...");
         const lock = await global.redis.get("cache_lock");
         if (lock && lock != hostname()) { // We have a lock, but it is not held for us.
@@ -215,10 +210,6 @@ new Promise<void>((resolve, reject) => {
             console.log("Also acquired the discord lock!");
             await global.redis.setex("cache_lock", 300, hostname());
             console.time("Redis");
-            /*Relates to Ref #1 above, we weren't caching servers, bots, or templates on startup, and these were never called. Meaning some queries are failing (from what debugging results in anyway) - AJ*/
-            await uploadBots()
-            await uploadServers() // may perhaps be a bit intensive, but with a set of 15000 randomly generated entries, it didn't take too terribly long ~1ms, especially if results already exist and reply with 0 (or string for hmset)
-            await uploadTemplates()
             await libCache.cacheLibs();
             await announcementCache.updateCache();
             await featuredCache.updateFeaturedServers();

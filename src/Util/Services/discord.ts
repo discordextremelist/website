@@ -22,7 +22,7 @@ import metrics from "datadog-metrics";
 
 import settings from "../../../settings.json" assert { type: "json" };
 import moment from "moment";
-import { PresenceUpdateStatus } from "discord.js";
+import { PresenceUpdateStatus, GatewayIntentBits } from "discord.js";
 import * as botCache from "./botCaching.js";
 import { hostname } from "os";
 
@@ -54,7 +54,7 @@ class Client extends Discord.Client {
 
 export const bot = new Client({
     allowedMentions: { parse: [] },
-    intents: ["Guilds", "GuildMembers", "GuildPresences"],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences],
 });
 
 bot.on("guildBanRemove", async (ban) => {

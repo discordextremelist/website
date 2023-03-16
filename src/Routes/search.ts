@@ -97,7 +97,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
                         _id === query ||
                         fullUsername.toLowerCase().indexOf(query) >= 0
                 )
-                .map((user) => {
+                .map(async (user) => {
                     return ejs.renderFile(renderPath + "/cards/userCard.ejs", {
                         req,
                         linkPrefix: res.locals.linkPrefix,
@@ -117,7 +117,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
                     ({ status }) =>
                         !status.archived && status.approved && !status.siteBot && !status.hidden && !status.modHidden
                 )
-                .map((bot) => {
+                .map(async (bot) => {
                     return ejs.renderFile(renderPath + "/cards/botCard.ejs", {
                         req,
                         linkPrefix: res.locals.linkPrefix,
@@ -136,7 +136,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
                     ({ _id, name }) =>
                         _id === query || name.toLowerCase().indexOf(query) >= 0
                 )
-                .map((server) => {
+                .map(async (server) => {
                     return ejs.renderFile(
                         renderPath + "/cards/serverCard.ejs",
                         {
@@ -156,7 +156,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
                     ({ _id, name }) =>
                         _id === query || name.toLowerCase().indexOf(query) >= 0
                 )
-                .map((template) => {
+                .map(async (template) => {
                     return ejs.renderFile(
                         renderPath + "/cards/templateCard.ejs",
                         {

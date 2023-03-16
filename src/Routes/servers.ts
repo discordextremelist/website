@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import { Response as fetchRes } from "node-fetch";
-import type { APIInvite, RESTGetAPIInviteQuery } from "discord.js";
+import type { APIInvite, RequestData, RESTGetAPIInviteQuery, RESTGetAPIInviteResult } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js"
 import fetch from "node-fetch";
 import type { DiscordAPIError } from "discord.js";
@@ -42,6 +42,7 @@ import mdi from "markdown-it";
 import entities from "html-entities";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
+const DAPI = "https://discord.com/api/v10";
 const md = new mdi
 const router = express.Router();
 let reviewRequired = false; // Needs to be outside of the functions or it cannot be referenced outside of x function - AJ
@@ -242,11 +243,9 @@ router.post(
                 errors: errors
             });
 
-        await rest.get(Routes.invite(req.body.invite), {
-            body:
-                { with_counts: true, with_expiration: true } as RESTGetAPIInviteQuery
-        })
+        (await fetch(DAPI + `/invites/${req.body.invite}?with_counts=true&with_expiration=true`)).json()
             .then(async (invite: APIInvite) => {
+                console.log(invite)
                 const serverExists:
                     | delServer
                     | undefined = await global.db
@@ -656,7 +655,7 @@ router.post(
                 errors: errors
             });
 
-        await rest.get(Routes.invite(req.body.invite), { body: { with_counts: true, with_expiration: true } as RESTGetAPIInviteQuery })
+        (await fetch(DAPI + `/invites/${req.body.invite}?with_counts=true&with_expiration=true`)).json()
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).json({
@@ -1238,7 +1237,7 @@ router.get(
                 req: req
             });
 
-        await rest.get(Routes.invite(server.inviteCode), { body: { with_counts: true, with_expiration: true } as RESTGetAPIInviteQuery })
+        (await fetch(DAPI + `/invites/${req.body.invite}?with_counts=true&with_expiration=true`)).json()
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).render("status", {

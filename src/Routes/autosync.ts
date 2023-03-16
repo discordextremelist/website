@@ -30,7 +30,7 @@ import { EmbedBuilder } from "discord.js";
 import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord.js";
 import settings from "../../settings.json" assert { type: "json" };
 import { rest } from "../Util/Function/rest.js";
-
+const DAPI = "https://discord.com/api/v10";
 const router = express.Router();
 
 const getNext = (arr: string[], id: string) => {
@@ -136,7 +136,7 @@ router.get('/servers', async (req, res) => {
         .findOne({ _id: id });
 
     if (server) try {
-        const invite = await rest.get(Routes.invite(server.inviteCode), { body: { with_counts: true, with_expiration: true } as RESTGetAPIInviteQuery }) as APIInvite
+        const invite = await (await fetch(DAPI + `/invites/${server.inviteCode}?with_counts=true&with_expiration=true`)).json() as APIInvite
         if (invite.guild.id !== server._id) throw 'Invite points to a different server'
         if (invite.expires_at) throw 'This invite is set to expire'
 

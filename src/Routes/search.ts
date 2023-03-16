@@ -57,7 +57,6 @@ router.post("/", variables, async (req: Request, res: Response) => {
             status: 400,
             message: "Missing body parameter 'query'"
         });
-    console.log(only)
     const originalQuery = query;
     query = query.toLowerCase();
     let isStaff = false;

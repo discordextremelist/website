@@ -20,9 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import { Response as fetchRes } from "node-fetch";
-import type { APIInvite, RESTGetAPIInviteQuery } from "discord-api-types/v10";
-import { RESTJSONErrorCodes } from "discord-api-types/v10"
-
+import type { APIInvite, RequestData, RESTGetAPIInviteQuery, RESTGetAPIInviteResult } from "discord.js";
+import { RESTJSONErrorCodes, Routes } from "discord.js"
 import fetch from "node-fetch";
 import type { DiscordAPIError } from "discord.js";
 import sanitizeHtml from "sanitize-html";
@@ -38,11 +37,12 @@ import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import { EmbedBuilder } from "discord.js";
 import type { serverReasons } from "../../@types/enums.js";
-
+import { rest } from "../Util/Function/rest.js";
 import mdi from "markdown-it";
 import entities from "html-entities";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
+const DAPI = "https://discord.com/api/v10";
 const md = new mdi
 const router = express.Router();
 let reviewRequired = false; // Needs to be outside of the functions or it cannot be referenced outside of x function - AJ
@@ -122,22 +122,22 @@ router.post(
             error = true
             errors.push(res.__("common.error.listing.arr.invite.invalid"))
         }
-        
-        if(req.body.invite.length > 2000) {
+
+        if (req.body.invite.length > 2000) {
             error = true
             errors.push(res.__("common.error.listing.arr.invite.tooLong"))
         }
-        
-        if(functions.isURL(req.body.invite)) {
+
+        if (functions.isURL(req.body.invite)) {
             error = true
             errors.push(res.__("common.error.listing.arr.invite.isURL"))
         }
 
-        if(req.body.invite.includes("discord.gg")) {
+        if (req.body.invite.includes("discord.gg")) {
             error = true
             errors.push(res.__("common.error.server.arr.invite.dgg"))
         }
-        
+
         if (req.body.website && !functions.isURL(req.body.website)) {
             error = true;
             errors.push(
@@ -184,9 +184,9 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api.channels(req.body.previewChannel).get()
+                await rest.get(Routes.channel(req.body.previewChannel))
                     .catch((e: DiscordAPIError) => {
-                        if([400, 404].includes(Number(e.code))) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -198,13 +198,13 @@ router.post(
                     })
 
             if (fetchChannel)
-            await fetch(`https://stonks.widgetbot.io/api/graphql`, {
-                method: 'post',
-                body: JSON.stringify({
-                    query: `{channel(id:"${req.body.previewChannel}"){id}}`
-                }),
-                headers: { 'Content-Type': 'application/json' },
-            }).then(async (fetchRes: fetchRes) => {
+                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                    method: 'post',
+                    body: JSON.stringify({
+                        query: `{channel(id:"${req.body.previewChannel}"){id}}`
+                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                }).then(async (fetchRes: fetchRes) => {
                     const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
                         error = true;
@@ -243,13 +243,14 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api.invites(req.body.invite).get({query: {with_counts: true, with_expiration: true} as RESTGetAPIInviteQuery})
+        (await fetch(DAPI + `/invites/${req.body.invite}?with_counts=true&with_expiration=true`)).json()
             .then(async (invite: APIInvite) => {
+                console.log(invite)
                 const serverExists:
                     | delServer
                     | undefined = await global.db
-                    .collection<delServer>("servers")
-                    .findOne({ _id: invite.guild.id });
+                        .collection<delServer>("servers")
+                        .findOne({ _id: invite.guild.id });
                 if (serverExists)
                     return res.status(409).json({
                         error: true,
@@ -296,12 +297,10 @@ router.post(
                 discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
+                    )}** \`(${req.user.id
                     })\` added server **${functions.escapeFormatting(
                         invite.guild.name
-                    )}** \`(${invite.guild.id})\`\n<${
-                        settings.website.url
+                    )}** \`(${invite.guild.id})\`\n<${settings.website.url
                     }/servers/${invite.guild.id}>`
                 );
 
@@ -354,7 +353,7 @@ router.post(
                 });
             })
             .catch((error: DiscordAPIError) => {
-                if(error.code === RESTJSONErrorCodes.UnknownInvite)
+                if (error.code === RESTJSONErrorCodes.UnknownInvite)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -432,7 +431,7 @@ router.get(
     permission.auth,
     async (req, res) => {
         res.send(String(await global.redis?.hexists("servers", req.params.id)))
-})
+    })
 
 router.get(
     "/:id/src",
@@ -599,9 +598,9 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api.channels(req.body.previewChannel).get()
+                await rest.get(Routes.channel(req.body.previewChannel))
                     .catch((e: DiscordAPIError) => {
-                        if([400, 404].includes(Number(e.code))) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -646,7 +645,7 @@ router.post(
             error = true;
             errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
-        
+
         let tags: string[] = tagHandler(req, server);
 
         if (error === true)
@@ -656,7 +655,7 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api.invites(req.body.invite).get({query: {with_counts: true, with_expiration: true} as RESTGetAPIInviteQuery})
+        (await fetch(DAPI + `/invites/${req.body.invite}?with_counts=true&with_expiration=true`)).json()
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).json({
@@ -705,12 +704,10 @@ router.post(
                 discord.channels.logs.send(
                     `${settings.emoji.edit} **${functions.escapeFormatting(
                         req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
+                    )}** \`(${req.user.id
                     })\` edited server **${functions.escapeFormatting(
                         invite.guild.name
-                    )}** \`(${invite.guild.id})\`\n<${
-                        settings.website.url
+                    )}** \`(${invite.guild.id})\`\n<${settings.website.url
                     }/servers/${invite.guild.id}>`
                 );
 
@@ -782,7 +779,7 @@ router.post(
                 });
             })
             .catch((error: DiscordAPIError) => {
-                if(error.code === RESTJSONErrorCodes.UnknownInvite)
+                if (error.code === RESTJSONErrorCodes.UnknownInvite)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -914,7 +911,7 @@ router.post(
                 }
             }
         );
-        
+
         const type = serverType(req.body.type);
 
         await global.db.collection("audit").insertOne({
@@ -938,13 +935,11 @@ router.post(
         discord.channels.logs.send({
             content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` declined server **${functions.escapeFormatting(
-                server.name
-            )}** \`(${
-                server._id
-            })\``,
+            )}** \`(${req.user.id
+                })\` declined server **${functions.escapeFormatting(
+                    server.name
+                )}** \`(${server._id
+                })\``,
             embeds: [embed]
         });
 
@@ -952,14 +947,11 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${
-                        settings.emoji.cross
+                    `${settings.emoji.cross
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
-                    )}** \`(${
-                        server._id
-                    })\` was declined from being listed as an LGBT community. It will still appear as a normal server.\n**Reason:** \`${
-                        req.body.reason || "None specified."
+                    )}** \`(${server._id
+                    })\` was declined from being listed as an LGBT community. It will still appear as a normal server.\n**Reason:** \`${req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -1030,16 +1022,14 @@ router.get(
         await serverCache.updateServer(req.params.id);
 
         discord.channels.logs.send(
-                `${settings.emoji.check} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` approved server **${functions.escapeFormatting(
-                    server.name
-                )}** \`(${server._id})\` to be listed as an LGBT community.\n<${
-                    settings.website.url
-                }/servers/${server._id}>`
-            )
+            `${settings.emoji.check} **${functions.escapeFormatting(
+                req.user.db.fullUsername
+            )}** \`(${req.user.id
+            })\` approved server **${functions.escapeFormatting(
+                server.name
+            )}** \`(${server._id})\` to be listed as an LGBT community.\n<${settings.website.url
+            }/servers/${server._id}>`
+        )
             .catch((e) => {
                 console.error(e);
             });
@@ -1048,12 +1038,10 @@ router.get(
         if (owner)
             owner
                 .send(
-                    `${
-                        settings.emoji.check
+                    `${settings.emoji.check
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
-                    )}** \`(${
-                        server._id
+                    )}** \`(${server._id
                     })\` was approved as being listed as an LGBT community.`
                 )
                 .catch((e) => {
@@ -1094,8 +1082,7 @@ router.get(
         discord.channels.logs.send(
             `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
+            )}** \`(${req.user.id
             })\` deleted server **${functions.escapeFormatting(
                 server.name
             )}** \`(${server._id})\``
@@ -1183,7 +1170,7 @@ router.post(
         }
 
         await global.db.collection("servers").deleteOne({ _id: req.params.id });
-        
+
         const type = serverType(req.body.type);
 
         await global.db.collection("audit").insertOne({
@@ -1205,11 +1192,10 @@ router.post(
         discord.channels.logs.send({
             content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` removed server **${functions.escapeFormatting(
-                server.name
-            )}** \`(${server._id})\``,
+            )}** \`(${req.user.id
+                })\` removed server **${functions.escapeFormatting(
+                    server.name
+                )}** \`(${server._id})\``,
             embeds: [embed]
         });
 
@@ -1217,12 +1203,10 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${
-                        settings.emoji.delete
+                    `${settings.emoji.delete
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
-                    )}** \`(${server._id})\` has been removed!\n**Reason:** \`${
-                        req.body.reason || "None specified."
+                    )}** \`(${server._id})\` has been removed!\n**Reason:** \`${req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e: string) => {
@@ -1253,7 +1237,7 @@ router.get(
                 req: req
             });
 
-        discord.bot.api.invites(server.inviteCode).get({query: {with_counts: true, with_expiration: true} as RESTGetAPIInviteQuery})
+        (await fetch(DAPI + `/invites/${server.inviteCode}?with_counts=true&with_expiration=true`)).json()
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).render("status", {
@@ -1327,7 +1311,7 @@ router.get(
                 res.redirect(`/servers/${req.params.id}`);
             })
             .catch((error: DiscordAPIError) => {
-                if(error.code === RESTJSONErrorCodes.UnknownInvite)
+                if (error.code === RESTJSONErrorCodes.UnknownInvite)
                     return res.status(400).render("status", {
                         title: res.__("common.error"),
                         status: 400,

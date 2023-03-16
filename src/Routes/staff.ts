@@ -19,8 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import type { APIUser, Snowflake } from "discord-api-types/v10";
-
+import type { APIUser, Snowflake } from "discord.js";
+import { Routes } from "discord.js"
 import settings from "../../settings.json" assert { type: "json" };
 import * as permission from "../Util/Function/permissions.js";
 import * as functions from "../Util/Function/main.js";
@@ -32,7 +32,7 @@ import * as announcementCache from "../Util/Services/announcementCaching.js";
 import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import * as discord from "../Util/Services/discord.js";
-
+import { rest } from "../Util/Function/rest.js";
 const router = express.Router();
 
 router.get(
@@ -927,7 +927,7 @@ router.get(
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
-        discord.bot.api.users(req.params.id).get()
+        await rest.get(Routes.user(req.params.id))
             .then(async (discordUser: APIUser) => {
                 if (!user) {
                     await global.db.collection<any>("users").insertOne({

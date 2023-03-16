@@ -19,9 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import { APIApplication, APIApplicationCommand, APIUser, PresenceUpdateStatus, RESTPostOAuth2AccessTokenResult, UserFlags } from "discord-api-types/v10";
-import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord-api-types/v10"
-
+import { APIApplication, APIApplicationCommand, APIUser, PresenceUpdateStatus, RESTPostOAuth2AccessTokenResult, UserFlags } from "discord.js";
+import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord.js"
+import { rest } from "../Util/Function/rest.js";
 import fetch from "node-fetch";
 import * as crypto from "crypto";
 import * as Discord from "discord.js";
@@ -49,7 +49,7 @@ import entities from "html-entities";
 const md = new mdi
 const router = express.Router();
 
-const DAPI = "https://discord.com/api/v8";
+const DAPI = "https://discord.com/api/v10";
 
 function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);
@@ -165,7 +165,7 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
 
-            await discord.bot.api.users(req.body.clientID).get()
+            await rest.get(Routes.user(req.body.clientID))
                 .then(() => {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
@@ -276,9 +276,7 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.api
-                    .guilds(req.body.widgetServer)
-                    .channels.get()
+                await rest.get(Routes.guildChannels(req.body.widgetServer))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -335,9 +333,7 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api
-                    .channels(req.body.widgetChannel)
-                    .get()
+                await rest.get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -507,7 +503,6 @@ router.post(
                     }
                 })
             }
-
             const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(req.body.id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
@@ -515,7 +510,7 @@ router.post(
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await discord.bot.api.users(req.body.id).get().catch(() => { }) as APIUser
+            const user = await rest.get(Routes.user(req.body.id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -526,9 +521,7 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api
-            .applications(req.body.clientID || req.body.id).rpc
-            .get()
+        (await fetch(DAPI + `/oauth2/applications/${req.body.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -1074,7 +1067,7 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
             if (req.body.clientID !== req.params.id)
-                await discord.bot.api.users(req.body.clientID).get()
+                await rest.get(Routes.user(req.body.clientID))
                     .then(() => {
                         error = true;
                         errors.push(
@@ -1220,9 +1213,7 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.api
-                    .guilds(req.body.widgetServer)
-                    .channels.get()
+                await rest.get(Routes.guildChannels(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -1279,9 +1270,7 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api
-                    .channels(req.body.widgetChannel)
-                    .get()
+                await rest.get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -1462,7 +1451,7 @@ router.post(
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await discord.bot.api.users(bot._id).get().catch(() => { }) as APIUser
+            const user = await rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -1478,9 +1467,8 @@ router.post(
             });
         }
 
-        discord.bot.api
-            .applications(req.body.clientID || req.params.id).rpc
-            .get()
+
+        (await fetch(DAPI + `/oauth2/applications/${req.body.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -2393,7 +2381,7 @@ router.post(
             }
 
             if (req.body.clientID !== req.params.id)
-                await discord.bot.api.users(req.body.clientID).get()
+                await rest.get(Routes.user(req.body.clientID))
                     .then(() => {
                         error = true
                         errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
@@ -2540,9 +2528,7 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.api
-                    .guilds(req.body.widgetServer)
-                    .channels.get()
+                await rest.get(Routes.guildChannels(req.body.widgetServer))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -2599,9 +2585,7 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api
-                    .channels(req.body.widgetChannel)
-                    .get()
+                await rest.get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -2777,7 +2761,7 @@ router.post(
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await discord.bot.api.users(bot._id).get().catch(() => { }) as APIUser
+            const user = await rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -2788,9 +2772,8 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api
-            .applications(req.body.clientID || req.params.id).rpc
-            .get()
+
+        (await fetch(DAPI + `/oauth2/applications/${req.body.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -3979,13 +3962,12 @@ router.get(
         let userFlags = 0
 
         if (bot.scopes?.bot) {
-            const user = await discord.bot.api.users(bot._id).get().catch(() => { }) as APIUser
+            const user = await rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
-        discord.bot.api
-            .applications(botExists.clientID || req.params.id).rpc
-            .get()
+
+        (await fetch(DAPI + `/oauth2/applications/${botExists.clientID || botExists._id || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({

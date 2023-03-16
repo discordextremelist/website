@@ -24,11 +24,12 @@ import { Strategy } from "passport-discord";
 import type { VerifyCallback } from "passport-oauth2"
 import refresh from "passport-oauth2-refresh"
 import * as discord from "../Util/Services/discord.js";
-import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
-import { OAuth2Scopes } from "discord-api-types/v10"
+import type { RESTPostOAuth2AccessTokenResult } from "discord.js";
+import { OAuth2Scopes, Routes } from "discord.js"
 import type { DiscordAPIError } from "discord.js";
 import fetch from "node-fetch";
 import * as userCache from "../Util/Services/userCaching.js"
+import { rest } from "../Util/Function/rest.js";
 
 import settings from "../../settings.json" assert { type: "json" };
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
@@ -43,7 +44,7 @@ const strategy = new Strategy(
     },
     (_accessToken: string, refreshToken: string, params: RESTPostOAuth2AccessTokenResult, profile: Strategy.Profile, done: VerifyCallback) => {
         process.nextTick(() => {
-            return done(null, {...profile, refreshToken, ...params});
+            return done(null, { ...profile, refreshToken, ...params });
         })
     }
 )
@@ -61,7 +62,7 @@ router.use(
     })
 );
 
-router.get("/login/joinGuild", 
+router.get("/login/joinGuild",
     (req, res) => {
         req.session.joinGuild = true;
         res.redirect(`/auth/login/callback?scope=${OAuth2Scopes.Identify} ${OAuth2Scopes.GuildsJoin}`);
@@ -82,7 +83,7 @@ router.get(
             .collection<delUser>("users")
             .findOne({ _id: req.user.id });
 
-        const { scopes } = await (await fetch("https://discord.com/api/v8/oauth2/@me", {headers: {authorization: `Bearer ${req.user.accessToken}`}})).json() as {scopes: OAuth2Scopes[]}
+        const { scopes } = await (await fetch("https://discord.com/api/v8/oauth2/@me", { headers: { authorization: `Bearer ${req.user.accessToken}` } })).json() as { scopes: OAuth2Scopes[] }
 
         if (!user) {
             const handleDefault: delUser["staffTracking"]["handledBots"] = {
@@ -117,7 +118,7 @@ router.get(
                 auth: {
                     accessToken: req.user.accessToken,
                     refreshToken: req.user.refreshToken,
-                    expires: Date.now() + req.user.expires_in*1000,
+                    expires: Date.now() + req.user.expires_in * 1000,
                     scopes
                 },
                 name: req.user.username,
@@ -194,7 +195,7 @@ router.get(
                 auth: {
                     accessToken: req.user.accessToken,
                     refreshToken: req.user.refreshToken,
-                    expires: Date.now() + req.user.expires_in*1000,
+                    expires: Date.now() + req.user.expires_in * 1000,
                     scopes
                 },
                 name: req.user.username,
@@ -233,8 +234,9 @@ router.get(
 
         if (req.session.joinGuild && req.session.joinGuild === true) {
             req.session.joinGuild = false;
-
-            discord.bot.api.guilds(settings.guild.main).members(req.user.id).put({ data: { access_token: req.user.accessToken } })
+            await rest.put(Routes.guildMember(settings.guild.main, req.user.id), {
+                body: { access_token: req.user.accessToken }
+            })
                 .catch((error: DiscordAPIError) => {
                     console.error(error)
                     if (error.code === 403 && !req.user.impersonator) {

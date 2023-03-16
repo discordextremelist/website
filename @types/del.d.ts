@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import type { UserFlags, APIChannel, APIRole, APIUser, APIApplicationCommand, RESTPostOAuth2AccessTokenResult, OAuth2Scopes, Snowflake } from 'discord-api-types/v10'
+import type { UserFlags, APIChannel, APIRole, APIUser, APIApplicationCommand, RESTPostOAuth2AccessTokenResult, OAuth2Scopes, Snowflake } from 'discord.js'
 
 declare global {
     interface authUser extends RESTPostOAuth2AccessTokenResult {

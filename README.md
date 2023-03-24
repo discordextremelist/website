@@ -7,7 +7,7 @@
 [![Code style](https://img.shields.io/badge/code%20style-prettier-ff69b4?logo=prettier&logoColor=white)](https://prettier.io)
 [![Crowdin](https://badges.crowdin.net/delly/localized.svg)](https://translate.discordextremelist.xyz/project/delly)  
 
-Licensing information viewable in the [LICENSE](https://github.com/discordextremelist/website/blob/master/LICENSE) file.
+Licensing information viewable in the [LICENSE](https://github.com/discordextremelist/website/blob/main/LICENSE) file.
 
 We welcome contributions to DEL! If you need any help contributing, please talk to us in our Discord server.
 

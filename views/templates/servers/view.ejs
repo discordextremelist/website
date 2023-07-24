@@ -394,7 +394,7 @@
     <script>
         document.querySelector("a#deleteModal")?.addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})});
         (async () => {
-            const invite = await (await fetch('https://discord.com/api/v8/invites/<%= server.inviteCode %>?with_counts=true')).json()
+            const invite = await (await fetch('https://discord.com/api/v10/invites/<%= server.inviteCode %>?with_counts=true')).json()
             if (!invite.channel) return
             document.querySelector('#serverName').innerText = invite.guild.name
             document.querySelector('#members').innerText = invite.approximate_member_count.toLocaleString("<%= locale %>")

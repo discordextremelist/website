@@ -247,6 +247,11 @@ declare global {
             options: string;
             server: string;
         };
+        date?: {
+            submitted: number;
+            approved: number;
+            edited: number;
+        };
         status: {
             approved: boolean;
             premium: boolean;
@@ -256,6 +261,8 @@ declare global {
             modHidden: boolean;
         };
     }
+
+    type partialBot = Partial<Omit<delBot, 'status'> & { status: Partial<delBot["status"]> }>;
 
     interface delServer {
         _id: Snowflake;

@@ -215,7 +215,7 @@
             scroll(0, 0);
         } else document.getElementById("errors").style.display = "none";
 
-        const invite = await (await fetch(`https://discord.com/api/v8/invites/${code.value}?with_expiration=true`)).json()
+        const invite = await (await fetch(`https://discord.com/api/v10/invites/${code.value}?with_expiration=true`)).json()
         if (!invite.guild) return
 
         name.innerText = invite.guild.name

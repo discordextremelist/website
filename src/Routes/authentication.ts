@@ -18,18 +18,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import bodyParser from "body-parser";
 import passport from "passport";
 import { Strategy } from "passport-discord";
 import type { VerifyCallback } from "passport-oauth2"
 import refresh from "passport-oauth2-refresh"
 import * as discord from "../Util/Services/discord.js";
-import type { RESTPostOAuth2AccessTokenResult } from "discord.js";
+import type { DiscordAPIError, RESTPostOAuth2AccessTokenResult, RESTPutAPIGuildMemberJSONBody } from "discord.js";
 import { OAuth2Scopes, Routes } from "discord.js"
-import type { DiscordAPIError } from "discord.js";
 import fetch from "node-fetch";
 import * as userCache from "../Util/Services/userCaching.js"
-import { rest } from "../Util/Function/rest.js";
+import { DAPI } from "../Util/Services/discord.js"
 
 import settings from "../../settings.json" assert { type: "json" };
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
@@ -55,12 +53,8 @@ refresh.use(strategy);
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
-router.use(bodyParser.json());
-router.use(
-    bodyParser.urlencoded({
-        extended: true
-    })
-);
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
 
 router.get("/login/joinGuild",
     (req, res) => {
@@ -83,7 +77,7 @@ router.get(
             .collection<delUser>("users")
             .findOne({ _id: req.user.id });
 
-        const { scopes } = await (await fetch("https://discord.com/api/v8/oauth2/@me", { headers: { authorization: `Bearer ${req.user.accessToken}` } })).json() as { scopes: OAuth2Scopes[] }
+        const { scopes } = await (await fetch(DAPI + Routes.oauth2CurrentAuthorization(), { headers: { authorization: `Bearer ${req.user.accessToken}` } })).json() as { scopes: OAuth2Scopes[] }
 
         if (!user) {
             const handleDefault: delUser["staffTracking"]["handledBots"] = {
@@ -189,7 +183,7 @@ router.get(
                     handledServers: handleDefault,
                     handledTemplates: handleDefault
                 }
-            } as delUser);
+            } satisfies delUser);
         } else {
             const importUser = {
                 auth: {
@@ -234,8 +228,8 @@ router.get(
 
         if (req.session.joinGuild && req.session.joinGuild === true) {
             req.session.joinGuild = false;
-            await rest.put(Routes.guildMember(settings.guild.main, req.user.id), {
-                body: { access_token: req.user.accessToken }
+            await discord.bot.rest.put(Routes.guildMember(settings.guild.main, req.user.id), {
+                body: { access_token: req.user.accessToken } satisfies RESTPutAPIGuildMemberJSONBody
             })
                 .catch((error: DiscordAPIError) => {
                     console.error(error)

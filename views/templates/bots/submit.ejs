@@ -443,7 +443,7 @@
     })
 
     const getApp = async id => {
-        const app = await (await fetch(`https://discord.com/api/v9/applications/${id}/rpc`)).json()
+        const app = await (await fetch(`https://discord.com/api/v10/applications/${id}/rpc`)).json()
         if (!app.id) return
 
         name.innerText = app.name
@@ -497,7 +497,7 @@
     const useCustomColour = document.querySelector('#form_customColourSwitch')
     const customColour = document.querySelector('#customColor')
     useCustomColour.addEventListener('change', () => {
-        if(useCustomColour.checked) {
+        if (useCustomColour.checked) {
             customColour.style.display = 'inherit'
         } else customColour.style.display = 'none'
     })

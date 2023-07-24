@@ -26,6 +26,8 @@ import { PresenceUpdateStatus, GatewayIntentBits } from "discord.js";
 import * as botCache from "./botCaching.js";
 import { hostname } from "os";
 
+export const DAPI = "https://discord.com/api/v10";
+
 const prefix = "statuses";
 // If someone is to self-host or contribute, setting datadog metrics is a lot,
 // if they have nothing set in the secret section of settings.json, let's ignore metrics - AJ
@@ -38,21 +40,7 @@ setInterval(async () => {
     await postTodaysGrowth();
 }, 8.568e+7); // 23.8h, to account for eventual time drift if the site is online for a while (which is the goal lol) - AJ
 
-class Client extends Discord.Client {
-    /* readonly rest: {
-        applications: any;
-        channels: any;
-        gateway: any;
-        guilds: any;
-        invites: any;
-        oauth2: any;
-        users: any;
-        voice: any;
-        webhooks: any;
-    } */
-}
-
-export const bot = new Client({
+export const bot = new Discord.Client({
     allowedMentions: { parse: [] },
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences],
 });

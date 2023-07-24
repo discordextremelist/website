@@ -32,7 +32,6 @@ import * as announcementCache from "../Util/Services/announcementCaching.js";
 import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import * as discord from "../Util/Services/discord.js";
-import { rest } from "../Util/Function/rest.js";
 const router = express.Router();
 
 router.get(
@@ -927,7 +926,7 @@ router.get(
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
-        await rest.get(Routes.user(req.params.id))
+        await discord.bot.rest.get(Routes.user(req.params.id))
             .then(async (discordUser: APIUser) => {
                 if (!user) {
                     await global.db.collection<any>("users").insertOne({

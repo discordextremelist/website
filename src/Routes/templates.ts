@@ -31,11 +31,9 @@ import * as userCache from "../Util/Services/userCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
 import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
-import type { APITemplate } from "discord.js";
-import type { DiscordAPIError } from "discord.js";
-import { EmbedBuilder, Routes } from "discord.js";
+import type { APITemplate, DiscordAPIError } from "discord.js";
+import { EmbedBuilder, RESTJSONErrorCodes, Routes } from "discord.js";
 import type { templateReasons } from "../../@types/enums.js";
-import { rest } from "../Util/Function/rest.js";
 import mdi from "markdown-it";
 import entities from "html-entities";
 const md = new mdi
@@ -155,7 +153,7 @@ router.post(
                 errors: errors
             });
 
-        await rest.get(Routes.template(req.body.code))
+        await discord.bot.rest.get(Routes.template(req.body.code))
             .then(async (template: APITemplate) => {
                 await global.db.collection<delTemplate>("templates").insertOne({
                     _id: template.code,
@@ -194,7 +192,7 @@ router.post(
                         linkToServerPage: false,
                         template: `https://discord.new/${template.code}`
                     }
-                } as delTemplate);
+                } satisfies delTemplate);
 
                 discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
@@ -256,7 +254,7 @@ router.post(
                                 linkToServerPage: false,
                                 template: `https://discord.new/${template.code}`
                             }
-                        } as delTemplate
+                        } satisfies delTemplate
                     }
                 });
 
@@ -272,7 +270,7 @@ router.post(
                 });
             })
             .catch((error: DiscordAPIError) => {
-                if(error.code === 10057)
+                if (error.code === RESTJSONErrorCodes.UnknownGuildTemplate)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -523,7 +521,7 @@ router.post(
                 errors: errors
             });
 
-        await rest.get(Routes.template(req.body.code))
+        await discord.bot.rest.get(Routes.template(req.body.code))
             .then(async (template: APITemplate) => {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
@@ -559,7 +557,7 @@ router.post(
                                 linkToServerPage: linkToServerPage,
                                 template: `https://discord.new/${dbTemplate._id}`
                             }
-                        } as unknown as delTemplate
+                        } satisfies Partial<delTemplate>
                     }
                 );
 
@@ -614,7 +612,7 @@ router.post(
                                 linkToServerPage: linkToServerPage,
                                 template: `https://discord.new/${dbTemplate._id}`
                             }
-                        } as unknown as delTemplate,
+                        } satisfies Partial<delTemplate>,
                         old: {
                             name: dbTemplate.name,
                             region: dbTemplate.region,
@@ -644,7 +642,7 @@ router.post(
                                 linkToServerPage: linkToServerPage,
                                 template: `https://discord.new/${dbTemplate._id}`
                             }
-                        } as delTemplate
+                        } satisfies Partial<delTemplate>
                     }
                 });
 
@@ -658,7 +656,7 @@ router.post(
                 });
             })
             .catch((error: DiscordAPIError) => {
-                if(error.code === 10057)
+                if (error.code === RESTJSONErrorCodes.UnknownGuildTemplate)
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -868,7 +866,7 @@ router.get(
                 type: "Error"
             });
 
-        await rest.get(Routes.template(req.params.id))
+        await discord.bot.rest.get(Routes.template(req.params.id))
             .then(async (template: APITemplate) => {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
@@ -897,7 +895,7 @@ router.get(
                                 hash: template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             }
-                        } as unknown as delTemplate
+                        } satisfies Partial<delTemplate>
                     }
                 );
 
@@ -932,7 +930,7 @@ router.get(
                                 hash: template.serialized_source_guild.icon_hash,
                                 url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                             }
-                        } as unknown as delTemplate,
+                        } satisfies Partial<delTemplate>,
                         old: {
                             name: dbTemplate.name,
                             region: dbTemplate.region,
@@ -954,14 +952,14 @@ router.get(
                                 hash: dbTemplate.icon.hash,
                                 url: dbTemplate.icon.url
                             }
-                        } as delTemplate
+                        } satisfies Partial<delTemplate>
                     }
                 });
 
                 await templateCache.updateTemplate(req.params.id);
             })
             .catch((error: DiscordAPIError) => {
-                if(error.code === 10057)
+                if (error.code === RESTJSONErrorCodes.UnknownGuildTemplate)
                     return res.status(400).render("status", {
                         title: res.__("common.error"),
                         status: 400,

@@ -21,7 +21,6 @@ import express from "express";
 import type { Request, Response } from "express";
 import { APIApplication, APIApplicationCommand, APIUser, PresenceUpdateStatus, RESTPostOAuth2AccessTokenResult, UserFlags } from "discord.js";
 import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord.js"
-import { rest } from "../Util/Function/rest.js";
 import fetch from "node-fetch";
 import * as crypto from "crypto";
 import * as Discord from "discord.js";
@@ -43,13 +42,12 @@ import { URL } from "url";
 import type { DiscordAPIError } from "discord.js";
 import type { botReasons } from "../../@types/enums.js";
 import { Response as fetchRes } from "node-fetch";
+import { DAPI } from "../Util/Services/discord.js"
 
 import mdi from "markdown-it";
 import entities from "html-entities";
 const md = new mdi
 const router = express.Router();
-
-const DAPI = "https://discord.com/api/v10";
 
 function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);
@@ -77,6 +75,7 @@ function botType(bodyType: string): number {
 
     return type;
 }
+
 
 router.get("/search", (req: Request, res: Response) => {
     res.redirect("/search");
@@ -165,7 +164,7 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
 
-            await rest.get(Routes.user(req.body.clientID))
+            await discord.bot.rest.get(Routes.user(req.body.clientID))
                 .then(() => {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
@@ -276,7 +275,7 @@ router.post(
             }
 
             if (fetchServer)
-                await rest.get(Routes.guildChannels(req.body.widgetServer))
+                await discord.bot.rest.get(Routes.guildChannels(req.body.widgetServer))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -333,7 +332,7 @@ router.post(
             }
 
             if (fetchChannel)
-                await rest.get(Routes.channel(req.body.widgetChannel))
+                await discord.bot.rest.get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -510,7 +509,7 @@ router.post(
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await rest.get(Routes.user(req.body.id)).catch(() => { }) as APIUser
+            const user = await discord.bot.rest.get(Routes.user(req.body.id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -521,7 +520,7 @@ router.post(
                 errors: errors
             });
 
-        (await fetch(DAPI + `/oauth2/applications/${req.body.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
+        discord.bot.rest.get(`/applications/${req.body.clientID || req.body.id}/rpc`)
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -607,7 +606,7 @@ router.post(
                         hidden: false,
                         modHidden: false
                     }
-                } as delBot);
+                } satisfies delBot);
 
                 discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
@@ -642,6 +641,7 @@ router.post(
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             modNotes: req.body.modNotes,
+                            reviewNotes: [],
                             editors,
                             commands,
                             owner: {
@@ -684,9 +684,11 @@ router.post(
                                 approved: false,
                                 premium: false,
                                 siteBot: false,
-                                archived: false
+                                archived: false,
+                                hidden: false,
+                                modHidden: false
                             }
-                        } as delBot
+                        } satisfies delBot
                     }
                 });
                 await botCache.updateBot(req.params.id);
@@ -1067,7 +1069,7 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
             if (req.body.clientID !== req.params.id)
-                await rest.get(Routes.user(req.body.clientID))
+                await discord.bot.rest.get(Routes.user(req.body.clientID))
                     .then(() => {
                         error = true;
                         errors.push(
@@ -1213,7 +1215,7 @@ router.post(
             }
 
             if (fetchServer)
-                await rest.get(Routes.guildChannels(req.body.widgetChannel))
+                await discord.bot.rest.get(Routes.guildChannels(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -1270,7 +1272,7 @@ router.post(
             }
 
             if (fetchChannel)
-                await rest.get(Routes.channel(req.body.widgetChannel))
+                await discord.bot.rest.get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -1451,7 +1453,7 @@ router.post(
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
+            const user = await discord.bot.rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -1467,8 +1469,7 @@ router.post(
             });
         }
 
-
-        (await fetch(DAPI + `/oauth2/applications/${req.body.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
+        discord.bot.rest.get(`/applications/${req.body.clientID || req.body.id}/rpc`)
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -1572,7 +1573,7 @@ router.post(
                                 options: botExists.widgetbot.options,
                                 server: botExists.widgetbot.server
                             }
-                        } as delBot,
+                        } satisfies Partial<delBot>,
                         new: {
                             clientID: req.body.clientID,
                             name: app.name,
@@ -1612,7 +1613,7 @@ router.post(
                                 options: req.body.widgetOptions,
                                 server: req.body.widgetServer
                             }
-                        } as delBot
+                        } satisfies Partial<delBot>
                     }
                 });
                 await botCache.updateBot(req.params.id);
@@ -2381,7 +2382,7 @@ router.post(
             }
 
             if (req.body.clientID !== req.params.id)
-                await rest.get(Routes.user(req.body.clientID))
+                await discord.bot.rest.get(Routes.user(req.body.clientID))
                     .then(() => {
                         error = true
                         errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
@@ -2528,7 +2529,7 @@ router.post(
             }
 
             if (fetchServer)
-                await rest.get(Routes.guildChannels(req.body.widgetServer))
+                await discord.bot.rest.get(Routes.guildChannels(req.body.widgetServer))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -2585,7 +2586,7 @@ router.post(
             }
 
             if (fetchChannel)
-                await rest.get(Routes.channel(req.body.widgetChannel))
+                await discord.bot.rest.get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -2761,7 +2762,7 @@ router.post(
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
+            const user = await discord.bot.rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -2772,8 +2773,7 @@ router.post(
                 errors: errors
             });
 
-
-        (await fetch(DAPI + `/oauth2/applications/${req.body.clientID || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
+        discord.bot.rest.get(`/applications/${req.body.clientID || req.body.id}/rpc`)
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -2872,7 +2872,7 @@ router.post(
                             status: {
                                 archived: true
                             }
-                        } as delBot,
+                        } satisfies partialBot,
                         new: {
                             clientID: req.body.clientID,
                             name: app.name,
@@ -2915,7 +2915,7 @@ router.post(
                             status: {
                                 archived: false
                             }
-                        } as delBot
+                        } satisfies partialBot
                     }
                 });
                 await botCache.updateBot(req.params.id);
@@ -3962,12 +3962,11 @@ router.get(
         let userFlags = 0
 
         if (bot.scopes?.bot) {
-            const user = await rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
+            const user = await discord.bot.rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
-
-        (await fetch(DAPI + `/oauth2/applications/${botExists.clientID || botExists._id || req.body.id}/rpc`, { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json()
+        discord.bot.rest.get(`/applications/${botExists.clientID || req.params.id}/rpc`)
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -3987,7 +3986,7 @@ router.get(
                             },
                             commands,
                             userFlags
-                        } as delBot
+                        } satisfies Partial<delBot>
                     }
                 );
 
@@ -4005,7 +4004,7 @@ router.get(
                                 url: botExists.icon.url
                             },
                             commands: botExists.commands
-                        } as delBot,
+                        } satisfies Partial<delBot>,
                         new: {
                             name: app.name,
                             icon: {
@@ -4013,7 +4012,7 @@ router.get(
                                 url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                             },
                             commands
-                        } as delBot
+                        } satisfies Partial<delBot>
                     }
                 });
                 await botCache.updateBot(req.params.id);

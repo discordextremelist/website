@@ -21,7 +21,6 @@ import { OAuth2Scopes, Routes } from "discord.js";
 import { Request, Response } from "express";
 import settings from "../../../settings.json" assert { type: "json" };
 import * as discord from "../Services/discord.js";
-import { rest } from "./rest.js";
 export const auth = (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {
         req.session.logoutJust = false;
@@ -59,7 +58,7 @@ export const member = async (req: Request, res: Response, next: () => void) => {
     }
 
     if (!await discord.getMember(req.body.id)) {
-        await rest.get(Routes.guildMembers(settings.guild.main), { body: { access_token: req.user.db.auth.accessToken } })
+        await discord.bot.rest.get(Routes.guildMembers(settings.guild.main), { body: { access_token: req.user.db.auth.accessToken } })
             .catch(() => { });
     }
 

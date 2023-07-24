@@ -10,8 +10,8 @@
     <link href="/css/theme/<%= preferredTheme %>/standard.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet">
     <% if (pageType.bot === true) { 
         let color = "#BA2EFF"
-        if(req.user) color = req.user.db.preferences.defaultColour
-        if(bot.theme?.useCustomColour) {
+        if (req.user) color = req.user.db.preferences.defaultColour
+        if (bot.theme?.useCustomColour) {
             color = bot.theme.colour;
             foreground = functions.getForeground(color);
         }

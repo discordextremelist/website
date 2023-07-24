@@ -20,10 +20,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import { Response as fetchRes } from "node-fetch";
-import type { APIInvite, RequestData, RESTGetAPIInviteQuery, RESTGetAPIInviteResult } from "discord.js";
-import { RESTJSONErrorCodes, Routes } from "discord.js"
+import type { APIInvite, DiscordAPIError, RESTGetAPIInviteQuery } from "discord.js";
+import { EmbedBuilder, RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js"
 import fetch from "node-fetch";
-import type { DiscordAPIError } from "discord.js";
 import sanitizeHtml from "sanitize-html";
 
 import settings from "../../settings.json" assert { type: "json" };
@@ -35,14 +34,13 @@ import * as userCache from "../Util/Services/userCaching.js";
 import * as serverCache from "../Util/Services/serverCaching.js";
 import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
-import { EmbedBuilder } from "discord.js";
 import type { serverReasons } from "../../@types/enums.js";
-import { rest } from "../Util/Function/rest.js";
 import mdi from "markdown-it";
 import entities from "html-entities";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
-const DAPI = "https://discord.com/api/v10";
+import { DAPI } from "../Util/Services/discord.js"
+
 const md = new mdi
 const router = express.Router();
 let reviewRequired = false; // Needs to be outside of the functions or it cannot be referenced outside of x function - AJ
@@ -184,7 +182,7 @@ router.post(
             }
 
             if (fetchChannel)
-                await rest.get(Routes.channel(req.body.previewChannel))
+                await discord.bot.rest.get(Routes.channel(req.body.previewChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -243,9 +241,10 @@ router.post(
                 errors: errors
             });
 
-        (await fetch(DAPI + `/invites/${req.body.invite}?with_counts=true&with_expiration=true`)).json()
+        discord.bot.rest.get(Routes.invite(req.body.invite), {
+            query: makeURLSearchParams({ with_counts: true, with_expiration: true } satisfies RESTGetAPIInviteQuery)
+        })
             .then(async (invite: APIInvite) => {
-                console.log(invite)
                 const serverExists:
                     | delServer
                     | undefined = await global.db
@@ -292,7 +291,7 @@ router.post(
                     status: {
                         reviewRequired: reviewRequired
                     }
-                } as delServer);
+                } satisfies delServer);
 
                 discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
@@ -337,7 +336,7 @@ router.post(
                             status: {
                                 reviewRequired: reviewRequired
                             }
-                        } as delServer
+                        } satisfies delServer
                     }
                 });
 
@@ -598,7 +597,7 @@ router.post(
             }
 
             if (fetchChannel)
-                await rest.get(Routes.channel(req.body.previewChannel))
+                await discord.bot.rest.get(Routes.channel(req.body.previewChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -655,7 +654,9 @@ router.post(
                 errors: errors
             });
 
-        (await fetch(DAPI + `/invites/${req.body.invite}?with_counts=true&with_expiration=true`)).json()
+        discord.bot.rest.get(Routes.invite(req.body.invite), {
+            query: makeURLSearchParams({ with_counts: true, with_expiration: true } satisfies RESTGetAPIInviteQuery)
+        })
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).json({
@@ -697,7 +698,7 @@ router.post(
                             status: {
                                 reviewRequired: reviewRequired
                             }
-                        } as delServer
+                        } satisfies Partial<delServer>
                     }
                 );
 
@@ -741,7 +742,7 @@ router.post(
                             status: {
                                 reviewRequired: reviewRequired
                             }
-                        } as delServer,
+                        } satisfies Partial<delServer>,
                         old: {
                             name: server.name,
                             shortDesc: server.shortDesc,
@@ -765,7 +766,7 @@ router.post(
                             status: {
                                 reviewRequired: server.status.reviewRequired
                             }
-                        } as delServer
+                        } satisfies Partial<delServer>
                     }
                 });
 
@@ -1237,7 +1238,9 @@ router.get(
                 req: req
             });
 
-        (await fetch(DAPI + `/invites/${server.inviteCode}?with_counts=true&with_expiration=true`)).json()
+        discord.bot.rest.get(Routes.invite(server.inviteCode), {
+            query: makeURLSearchParams({ with_counts: true, with_expiration: true } satisfies RESTGetAPIInviteQuery)
+        })
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).render("status", {
@@ -1270,7 +1273,7 @@ router.get(
                                 hash: invite.guild.icon,
                                 url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
                             }
-                        } as delServer
+                        } satisfies Partial<delServer>
                     }
                 );
 
@@ -1291,7 +1294,7 @@ router.get(
                                 hash: invite.guild.icon,
                                 url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
                             }
-                        } as delServer,
+                        } satisfies Partial<delServer>,
                         old: {
                             name: server.name,
                             counts: {
@@ -1302,7 +1305,7 @@ router.get(
                                 hash: server.icon.hash,
                                 url: server.icon.url
                             }
-                        } as delServer
+                        } satisfies Partial<delServer>
                     }
                 });
 

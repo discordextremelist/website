@@ -26,11 +26,11 @@ import * as serverCache from "../Util/Services/serverCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
 import * as userCache from "../Util/Services/userCaching.js";
 import * as functions from "../Util/Function/main.js";
-import { EmbedBuilder } from "discord.js";
-import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord.js";
+import { EmbedBuilder, RESTGetAPIInviteResult, makeURLSearchParams, OAuth2Scopes, Routes } from "discord.js";
+import type { APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, APIApplication, APIUser } from "discord.js";
 import settings from "../../settings.json" assert { type: "json" };
-import { rest } from "../Util/Function/rest.js";
-const DAPI = "https://discord.com/api/v10";
+import { DAPI } from "../Util/Services/discord.js"
+
 const router = express.Router();
 
 const getNext = (arr: string[], id: string) => {
@@ -57,7 +57,7 @@ router.get('/bots', async (req, res) => {
         .findOne({ _id: id });
 
     if (botExists) try {
-        const app = await rest.get(Routes.applicationCommands(botExists.clientID || id)) as APIApplication
+        const app = await discord.bot.rest.get(`/applications/${botExists.clientID || id}/rpc`) as APIApplication
         let commands: APIApplicationCommand[] = botExists.commands || []
 
         if (botExists.scopes?.slashCommands) {
@@ -84,7 +84,7 @@ router.get('/bots', async (req, res) => {
                     })
                 }
 
-                const receivedCommands = await (await fetch('https://discord.com/api/v10' + Routes.applicationCommands(app.id), { headers: { authorization: `Bearer ${owner.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
+                const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(app.id), { headers: { authorization: `Bearer ${owner.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
                 if (Array.isArray(receivedCommands)) commands = receivedCommands;
             }
         }
@@ -92,7 +92,7 @@ router.get('/bots', async (req, res) => {
         let userFlags = 0
 
         if (botExists.scopes?.bot) {
-            const user = await rest.get(Routes.user(id)).catch(() => { }) as APIUser
+            const user = await discord.bot.rest.get(Routes.user(id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -107,7 +107,7 @@ router.get('/bots', async (req, res) => {
                     },
                     commands,
                     userFlags
-                } as delBot
+                } satisfies Partial<delBot>
             }
         );
 
@@ -136,7 +136,9 @@ router.get('/servers', async (req, res) => {
         .findOne({ _id: id });
 
     if (server) try {
-        const invite = await (await fetch(DAPI + `/invites/${server.inviteCode}?with_counts=true&with_expiration=true`)).json() as APIInvite
+        const invite = await discord.bot.rest.get(Routes.invite(server.inviteCode), {
+            query: makeURLSearchParams({ with_counts: true, with_expiration: true } satisfies RESTGetAPIInviteQuery)
+        }) as RESTGetAPIInviteResult
         if (invite.guild.id !== server._id) throw 'Invite points to a different server'
         if (invite.expires_at) throw 'This invite is set to expire'
 
@@ -153,7 +155,7 @@ router.get('/servers', async (req, res) => {
                         hash: invite.guild.icon,
                         url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
                     }
-                } as delServer
+                } satisfies Partial<delServer>
             }
         );
 
@@ -218,7 +220,7 @@ router.get('/templates', async (req, res) => {
         .findOne({ _id: id });
 
     if (dbTemplate) try {
-        const template = await rest.get(Routes.template(id)) as APITemplate
+        const template = await discord.bot.rest.get(Routes.template(id)) as APITemplate
 
         await global.db.collection("templates").updateOne(
             { _id: id },
@@ -247,7 +249,7 @@ router.get('/templates', async (req, res) => {
                         hash: template.serialized_source_guild.icon_hash,
                         url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                     }
-                } as unknown as delTemplate
+                } satisfies Partial<delTemplate>
             }
         );
 

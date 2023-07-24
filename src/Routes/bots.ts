@@ -289,7 +289,7 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
@@ -346,7 +346,7 @@ router.post(
                     });
 
             if (fetchChannel)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
@@ -1229,7 +1229,7 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
@@ -1286,7 +1286,7 @@ router.post(
                     });
 
             if (fetchChannel)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
@@ -2543,7 +2543,7 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
@@ -2600,7 +2600,7 @@ router.post(
                     });
 
             if (fetchChannel)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`

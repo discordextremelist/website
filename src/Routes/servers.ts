@@ -39,7 +39,6 @@ import mdi from "markdown-it";
 import entities from "html-entities";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
-import { DAPI } from "../Util/Services/discord.js"
 
 const md = new mdi
 const router = express.Router();
@@ -196,7 +195,7 @@ router.post(
                     })
 
             if (fetchChannel)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.previewChannel}"){id}}`
@@ -611,7 +610,7 @@ router.post(
                     })
 
             if (fetchChannel)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.previewChannel}"){id}}`

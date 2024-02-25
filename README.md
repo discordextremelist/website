@@ -19,7 +19,7 @@ Note that we do not support running public clones: you are allowed to do it if y
 
 ### Node.js
 
-DEL requires [Node.js](https://nodejs.org) v17.9.0+.
+DEL requires [Node.js](https://nodejs.org) v18.15.0+.
 
 ### MongoDB
 

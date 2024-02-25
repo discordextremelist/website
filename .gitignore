@@ -111,6 +111,7 @@ dist
 .tern-port
 
 # SSL & configuration files
+.env.production
 settings.json
 .env
 ssl/

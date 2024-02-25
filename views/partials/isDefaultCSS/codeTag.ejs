@@ -1,7 +1,7 @@
 <%
     let color = "#BA2EFF";
     let foreground = "#ffffff";
-    if(req.user) {
+    if (req.user) {
         color = req.user.db.preferences.defaultColour;
         foreground = req.user.db.preferences.foreground;
     }

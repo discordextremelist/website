@@ -94,7 +94,6 @@
 
         const input = document.querySelector("input.input.is-rounded.is-dark#searchInput");
 
-        if (input.value.match(/gay(\s+)?(men\s+)?.*/i)) return window.location.href = "/users/302604426781261824";
         if (input.value.toLowerCase() === "developers developers developers developers") return document.body.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/KMU0tzLwhbE?controls=0&autoplay=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         
         const c = document.querySelector("input[type='checkbox']#users");
@@ -131,7 +130,6 @@
         })
         .then(data => {
             let content = "";
-
             if (data.data.pages.length !== 0) {
                 for (const card of data.data.pages[0]) {
                     content = content + card;

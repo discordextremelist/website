@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import * as botCache from "../Services/botCaching.js";
 import * as userCache from "../Services/userCaching.js";
 import { URL } from "url";
-import { OAuth2Scopes } from "discord-api-types/v10";
+import { OAuth2Scopes } from "discord.js";
 export const escapeFormatting = (text: string) => {
     const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
     const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, "\\$1");

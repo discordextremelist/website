@@ -19,8 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import type { APIUser } from "discord-api-types/v10";
-
+import type { APIUser, DiscordAPIError } from "discord.js";
+import { Routes } from "discord.js";
 import * as discord from "../Util/Services/discord.js";
 import * as banned from "../Util/Services/banned.js";
 import { variables } from "../Util/Function/variables.js";
@@ -31,7 +31,6 @@ import * as serverCache from "../Util/Services/serverCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
 import * as userCache from "../Util/Services/userCaching.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
-import type { DiscordAPIError } from "discord.js";
 import { themes } from "../../@types/enums.js";
 
 import entities from "html-entities";
@@ -529,7 +528,7 @@ router.get(
                 req: req
             });
 
-        discord.bot.api.users(req.params.id).get()
+            await discord.bot.rest.get(Routes.user(req.params.id))
             .then(async (user: APIUser) => {
                 await global.db.collection("users").updateOne(
                     { _id: req.params.id },
@@ -541,7 +540,7 @@ router.get(
                                 hash: user.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${user.avatar}`
                             }
-                        } as delUser
+                        } satisfies Partial<delUser>
                     }
                 );
 
@@ -559,7 +558,7 @@ router.get(
                                 hash: userProfile.avatar.hash,
                                 url: userProfile.avatar.url
                             }
-                        } as delUser,
+                        } satisfies Partial<delUser>,
                         new: {
                             name: user.username,
                             flags: user.public_flags,
@@ -567,7 +566,7 @@ router.get(
                                 hash: user.avatar,
                                 url: `https://cdn.discordapp.com/avatars/${req.params.id}/${user.avatar}`
                             }
-                        } as delUser
+                        } satisfies Partial<delUser>
                     }
                 });
                 await userCache.updateUser(req.params.id);
@@ -576,7 +575,7 @@ router.get(
                 return res.status(400).render("status", {
                     title: res.__("common.error"),
                     status: 400,
-                    subtitle: `${error.name}: ${error.message} | ${error.httpStatus} ${error.method} ${error.path}`,
+                    subtitle: `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`,
                     req,
                     type: "Error"
                 });

@@ -19,9 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import { APIApplication, APIApplicationCommand, APIUser, PresenceUpdateStatus, RESTPostOAuth2AccessTokenResult, UserFlags } from "discord-api-types/v10";
-import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord-api-types/v10"
-
+import { APIApplication, APIApplicationCommand, APIUser, PresenceUpdateStatus, RESTPostOAuth2AccessTokenResult, UserFlags } from "discord.js";
+import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord.js"
 import fetch from "node-fetch";
 import * as crypto from "crypto";
 import * as Discord from "discord.js";
@@ -43,13 +42,12 @@ import { URL } from "url";
 import type { DiscordAPIError } from "discord.js";
 import type { botReasons } from "../../@types/enums.js";
 import { Response as fetchRes } from "node-fetch";
+import { DAPI } from "../Util/Services/discord.js"
 
 import mdi from "markdown-it";
 import entities from "html-entities";
 const md = new mdi
 const router = express.Router();
-
-const DAPI = "https://discord.com/api/v8";
 
 function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);
@@ -77,6 +75,7 @@ function botType(bodyType: string): number {
 
     return type;
 }
+
 
 router.get("/search", (req: Request, res: Response) => {
     res.redirect("/search");
@@ -165,7 +164,7 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
 
-            await discord.bot.api.users(req.body.clientID).get()
+            await discord.bot.rest.get(Routes.user(req.body.clientID))
                 .then(() => {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
@@ -276,11 +275,9 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.api
-                    .guilds(req.body.widgetServer)
-                    .channels.get()
+                await discord.bot.rest.get(Routes.guildChannels(req.body.widgetServer))
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -292,7 +289,7 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
@@ -335,11 +332,9 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api
-                    .channels(req.body.widgetChannel)
-                    .get()
+                await discord.bot.rest.get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -351,7 +346,7 @@ router.post(
                     });
 
             if (fetchChannel)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
@@ -507,7 +502,6 @@ router.post(
                     }
                 })
             }
-
             const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(req.body.id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
@@ -515,7 +509,7 @@ router.post(
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await discord.bot.api.users(req.body.id).get().catch(() => { }) as APIUser
+            const user = await discord.bot.rest.get(Routes.user(req.body.id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -526,9 +520,7 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api
-            .applications(req.body.clientID || req.body.id).rpc
-            .get()
+        discord.bot.rest.get(`/applications/${req.body.clientID || req.body.id}/rpc`)
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -614,7 +606,7 @@ router.post(
                         hidden: false,
                         modHidden: false
                     }
-                } as delBot);
+                } satisfies delBot);
 
                 discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
@@ -649,6 +641,7 @@ router.post(
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             modNotes: req.body.modNotes,
+                            reviewNotes: [],
                             editors,
                             commands,
                             owner: {
@@ -691,9 +684,11 @@ router.post(
                                 approved: false,
                                 premium: false,
                                 siteBot: false,
-                                archived: false
+                                archived: false,
+                                hidden: false,
+                                modHidden: false
                             }
-                        } as delBot
+                        } satisfies delBot
                     }
                 });
                 await botCache.updateBot(req.params.id);
@@ -720,7 +715,7 @@ router.post(
                     errors: [
                         res.__("common.error.bot.arr.fetchError"),
                         `${error.name}: ${error.message}`,
-                        `${error.httpStatus} ${error.method} ${error.path}`
+                        `${error.code} ${error.method} ${error.url}`
                     ]
                 });
             });
@@ -1074,7 +1069,7 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
             if (req.body.clientID !== req.params.id)
-                await discord.bot.api.users(req.body.clientID).get()
+                await discord.bot.rest.get(Routes.user(req.body.clientID))
                     .then(() => {
                         error = true;
                         errors.push(
@@ -1220,11 +1215,9 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.api
-                    .guilds(req.body.widgetServer)
-                    .channels.get()
+                await discord.bot.rest.get(Routes.guildChannels(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -1236,7 +1229,7 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
@@ -1279,11 +1272,9 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api
-                    .channels(req.body.widgetChannel)
-                    .get()
+                await discord.bot.rest.get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -1295,7 +1286,7 @@ router.post(
                     });
 
             if (fetchChannel)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
@@ -1462,7 +1453,7 @@ router.post(
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await discord.bot.api.users(bot._id).get().catch(() => { }) as APIUser
+            const user = await discord.bot.rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -1478,9 +1469,7 @@ router.post(
             });
         }
 
-        discord.bot.api
-            .applications(req.body.clientID || req.params.id).rpc
-            .get()
+        discord.bot.rest.get(`/applications/${req.body.clientID || req.body.id}/rpc`)
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -1584,7 +1573,7 @@ router.post(
                                 options: botExists.widgetbot.options,
                                 server: botExists.widgetbot.server
                             }
-                        } as delBot,
+                        } satisfies Partial<delBot>,
                         new: {
                             clientID: req.body.clientID,
                             name: app.name,
@@ -1624,7 +1613,7 @@ router.post(
                                 options: req.body.widgetOptions,
                                 server: req.body.widgetServer
                             }
-                        } as delBot
+                        } satisfies Partial<delBot>
                     }
                 });
                 await botCache.updateBot(req.params.id);
@@ -1662,7 +1651,7 @@ router.post(
                     errors: [
                         res.__("common.error.bot.arr.fetchError"),
                         `${error.name}: ${error.message}`,
-                        `${error.httpStatus} ${error.method} ${error.path}`
+                        `${error.code} ${error.method} ${error.url}`
                     ]
                 });
             });
@@ -2393,7 +2382,7 @@ router.post(
             }
 
             if (req.body.clientID !== req.params.id)
-                await discord.bot.api.users(req.body.clientID).get()
+                await discord.bot.rest.get(Routes.user(req.body.clientID))
                     .then(() => {
                         error = true
                         errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
@@ -2540,11 +2529,9 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.api
-                    .guilds(req.body.widgetServer)
-                    .channels.get()
+                await discord.bot.rest.get(Routes.guildChannels(req.body.widgetServer))
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -2556,7 +2543,7 @@ router.post(
                     });
 
             if (fetchServer)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
@@ -2599,11 +2586,9 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.api
-                    .channels(req.body.widgetChannel)
-                    .get()
+                await discord.bot.rest.get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(e.httpStatus)) {
+                        if ([400, 404].includes(Number(e.code))) {
                             error = true;
                             errors.push(
                                 res.__(
@@ -2615,7 +2600,7 @@ router.post(
                     });
 
             if (fetchChannel)
-                await fetch(`https://stonks.widgetbot.io/api/graphql`, {
+                await fetch("https://stonks.widgetbot.io/api/graphql", {
                     method: 'post',
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
@@ -2777,7 +2762,7 @@ router.post(
         let userFlags = 0
 
         if (req.body.bot) {
-            const user = await discord.bot.api.users(bot._id).get().catch(() => { }) as APIUser
+            const user = await discord.bot.rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -2788,9 +2773,7 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.api
-            .applications(req.body.clientID || req.params.id).rpc
-            .get()
+        discord.bot.rest.get(`/applications/${req.body.clientID || req.body.id}/rpc`)
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -2889,7 +2872,7 @@ router.post(
                             status: {
                                 archived: true
                             }
-                        } as delBot,
+                        } satisfies partialBot,
                         new: {
                             clientID: req.body.clientID,
                             name: app.name,
@@ -2932,7 +2915,7 @@ router.post(
                             status: {
                                 archived: false
                             }
-                        } as delBot
+                        } satisfies partialBot
                     }
                 });
                 await botCache.updateBot(req.params.id);
@@ -2970,7 +2953,7 @@ router.post(
                     errors: [
                         res.__("common.error.bot.arr.fetchError"),
                         `${error.name}: ${error.message}`,
-                        `${error.httpStatus} ${error.method} ${error.path}`
+                        `${error.code} ${error.method} ${error.url}`
                     ]
                 });
             });
@@ -3346,7 +3329,7 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
@@ -3501,7 +3484,7 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
@@ -3658,7 +3641,7 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
@@ -3805,7 +3788,7 @@ router.post(
 
         await botCache.updateBot(req.params.id);
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
@@ -3979,13 +3962,11 @@ router.get(
         let userFlags = 0
 
         if (bot.scopes?.bot) {
-            const user = await discord.bot.api.users(bot._id).get().catch(() => { }) as APIUser
+            const user = await discord.bot.rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
-        discord.bot.api
-            .applications(botExists.clientID || req.params.id).rpc
-            .get()
+        discord.bot.rest.get(`/applications/${botExists.clientID || req.params.id}/rpc`)
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
@@ -4005,7 +3986,7 @@ router.get(
                             },
                             commands,
                             userFlags
-                        } as delBot
+                        } satisfies Partial<delBot>
                     }
                 );
 
@@ -4023,7 +4004,7 @@ router.get(
                                 url: botExists.icon.url
                             },
                             commands: botExists.commands
-                        } as delBot,
+                        } satisfies Partial<delBot>,
                         new: {
                             name: app.name,
                             icon: {
@@ -4031,7 +4012,7 @@ router.get(
                                 url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
                             },
                             commands
-                        } as delBot
+                        } satisfies Partial<delBot>
                     }
                 });
                 await botCache.updateBot(req.params.id);
@@ -4050,7 +4031,7 @@ router.get(
                     errors: [
                         res.__("common.error.bot.arr.fetchError"),
                         `${error.name}: ${error.message}`,
-                        `${error.httpStatus} ${error.method} ${error.path}`
+                        `${error.code} ${error.method} ${error.url}`
                     ]
                 });
             });

@@ -165,7 +165,7 @@
             scroll(0, 0);
         } else document.getElementById("errors").style.display = "none";
 
-        const template = await (await fetch(`https://discord.com/api/v8/guilds/templates/${code.value}`)).json()
+        const template = await (await fetch(`https://discord.com/api/v10/guilds/templates/${code.value}`)).json()
         if (!template.name) return
 
         name.innerText = template.name

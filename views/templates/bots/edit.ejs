@@ -237,7 +237,7 @@
                 <label for="form_customColourSwitch"></label>
             </div>
             <br>
-            <div class="field" id="form_customColour" style="display: <% if(bot.theme && bot.theme.useCustomColour) { %>inherit<% } else { %>none<% } %>">
+            <div class="field" id="form_customColour" style="display: <% if (bot.theme && bot.theme.useCustomColour) { %>inherit<% } else { %>none<% } %>">
                 <label class="label has-text-default"><%= __("page.bots.theme.color") %></label>
                 <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
                     <%= __("page.bots.theme.color.details") %>
@@ -390,7 +390,7 @@
     const useCustomColor = document.querySelector('#form_customColourSwitch')
     const customColor = document.querySelector('#form_customColour')
     useCustomColor.addEventListener('change', () => {
-        if(useCustomColor.checked) {
+        if (useCustomColor.checked) {
             customColor.style.display = 'inherit'
         } else customColor.style.display = 'none'
     })

@@ -26,9 +26,10 @@ import * as serverCache from "../Util/Services/serverCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
 import * as userCache from "../Util/Services/userCaching.js";
 import * as functions from "../Util/Function/main.js";
-import { MessageEmbed } from "discord.js";
-import { APIInvite, APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, OAuth2Scopes, Routes, APIApplication, APIUser } from "discord-api-types/v10";
+import { EmbedBuilder, RESTGetAPIInviteResult, makeURLSearchParams, OAuth2Scopes, Routes } from "discord.js";
+import type { APITemplate, RESTGetAPIInviteQuery, RESTPostOAuth2AccessTokenResult, APIApplicationCommand, APIApplication, APIUser } from "discord.js";
 import settings from "../../settings.json" assert { type: "json" };
+import { DAPI } from "../Util/Services/discord.js"
 
 const router = express.Router();
 
@@ -56,8 +57,7 @@ router.get('/bots', async (req, res) => {
         .findOne({ _id: id });
 
     if (botExists) try {
-        const app = await discord.bot.api.applications(botExists.clientID || id).rpc.get() as APIApplication
-
+        const app = await discord.bot.rest.get(`/applications/${botExists.clientID || id}/rpc`) as APIApplication
         let commands: APIApplicationCommand[] = botExists.commands || []
 
         if (botExists.scopes?.slashCommands) {
@@ -84,7 +84,7 @@ router.get('/bots', async (req, res) => {
                     })
                 }
 
-                const receivedCommands = await (await fetch('https://discord.com/api/v8' + Routes.applicationCommands(app.id), { headers: { authorization: `Bearer ${owner.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
+                const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(app.id), { headers: { authorization: `Bearer ${owner.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
                 if (Array.isArray(receivedCommands)) commands = receivedCommands;
             }
         }
@@ -92,7 +92,7 @@ router.get('/bots', async (req, res) => {
         let userFlags = 0
 
         if (botExists.scopes?.bot) {
-            const user = await discord.bot.api.users(id).get().catch(() => { }) as APIUser
+            const user = await discord.bot.rest.get(Routes.user(id)).catch(() => { }) as APIUser
             if (user.public_flags) userFlags = user.public_flags
         }
 
@@ -107,7 +107,7 @@ router.get('/bots', async (req, res) => {
                     },
                     commands,
                     userFlags
-                } as delBot
+                } satisfies Partial<delBot>
             }
         );
 
@@ -136,9 +136,10 @@ router.get('/servers', async (req, res) => {
         .findOne({ _id: id });
 
     if (server) try {
-        const invite = await discord.bot.api.invites(server.inviteCode).get({ query: { with_counts: true, with_expiration: true } as RESTGetAPIInviteQuery }) as APIInvite
+        const invite = await discord.bot.rest.get(Routes.invite(server.inviteCode), {
+            query: makeURLSearchParams({ with_counts: true, with_expiration: true } satisfies RESTGetAPIInviteQuery)
+        }) as RESTGetAPIInviteResult
         if (invite.guild.id !== server._id) throw 'Invite points to a different server'
-
         if (invite.expires_at) throw 'This invite is set to expire'
 
         await global.db.collection("servers").updateOne(
@@ -154,7 +155,7 @@ router.get('/servers', async (req, res) => {
                         hash: invite.guild.icon,
                         url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
                     }
-                } as delServer
+                } satisfies Partial<delServer>
             }
         );
 
@@ -173,12 +174,12 @@ router.get('/servers', async (req, res) => {
 
         await serverCache.deleteServer(id);
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        discord.channels.logs.send({
+        discord.channels.alerts.send({
             content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
                 server.name
             )}** \`(${server._id})\``,
@@ -199,8 +200,6 @@ router.get('/servers', async (req, res) => {
                 });
 
         await discord.postWebMetric("server");
-        // keeping this here incase the team wants it
-        // discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync server **${server.name}** \`(${id})\`: ${e}\n<${settings.website.url}/servers/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextServer", getNext(ids, id))
@@ -221,7 +220,7 @@ router.get('/templates', async (req, res) => {
         .findOne({ _id: id });
 
     if (dbTemplate) try {
-        const template = await discord.bot.api.guilds.templates(id).get() as APITemplate
+        const template = await discord.bot.rest.get(Routes.template(id)) as APITemplate
 
         await global.db.collection("templates").updateOne(
             { _id: id },
@@ -250,7 +249,7 @@ router.get('/templates', async (req, res) => {
                         hash: template.serialized_source_guild.icon_hash,
                         url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
                     }
-                } as unknown as delTemplate
+                } satisfies Partial<delTemplate>
             }
         );
 
@@ -273,12 +272,12 @@ router.get('/templates', async (req, res) => {
 
         await templateCache.deleteTemplate(id);
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        discord.channels.logs.send({
+        discord.channels.alerts.send({
             content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(
                 dbTemplate.name
             )}** \`(${id})\``,
@@ -300,8 +299,6 @@ router.get('/templates', async (req, res) => {
                 });
 
         await discord.postWebMetric("template");
-        // keeping the below just in-case the team wants it still.
-        // discord.channels.alerts.send(`${settings.emoji.warn} failed to autosync template **${dbTemplate.name}** \`(${id})\`: ${e}\n<${settings.website.url}/templates/${id}>`)
     }
 
     await global.redis?.hset("autosync", "nextTemplate", getNext(ids, id))

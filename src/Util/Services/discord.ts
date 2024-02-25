@@ -22,9 +22,11 @@ import metrics from "datadog-metrics";
 
 import settings from "../../../settings.json" assert { type: "json" };
 import moment from "moment";
-import { PresenceUpdateStatus } from "discord-api-types/v10";
+import { PresenceUpdateStatus, GatewayIntentBits } from "discord.js";
 import * as botCache from "./botCaching.js";
 import { hostname } from "os";
+
+export const DAPI = "https://discord.com/api/v10";
 
 const prefix = "statuses";
 // If someone is to self-host or contribute, setting datadog metrics is a lot,
@@ -38,25 +40,9 @@ setInterval(async () => {
     await postTodaysGrowth();
 }, 8.568e+7); // 23.8h, to account for eventual time drift if the site is online for a while (which is the goal lol) - AJ
 
-// @ts-expect-error
-class Client extends Discord.Client {
-    readonly api: {
-        applications: any;
-        channels: any;
-        gateway: any;
-        guilds: any;
-        invites: any;
-        oauth2: any;
-        users: any;
-        voice: any;
-        webhooks: any;
-    }
-}
-
-export const bot = new Client({
+export const bot = new Discord.Client({
     allowedMentions: { parse: [] },
-    intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_PRESENCES"],
-    http: { version: 8 }
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences],
 });
 
 bot.on("guildBanRemove", async (ban) => {
@@ -85,7 +71,7 @@ bot.on("ready", async () => {
             bots.forEach(async bot => {
                 if (guilds.main.members.cache.has(bot._id)) botsToFetch.push(bot._id)
             });
-            await guilds.main.members.fetch({ user: botsToFetch })
+            guilds.main.members.fetch({ user: botsToFetch })
                 .then(x => console.log(`Retrieved ${x.size} members!`))
                 .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
         });

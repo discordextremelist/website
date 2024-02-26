@@ -1,33 +1,23 @@
+<p align="center">
+  <img height=128 width=128 src="https://raw.githubusercontent.com/discordextremelist/website/main/assets/Public/img/branding/development_logo.png" />
+</p>
+
 # Security Policy
+Our security policy is designed to keep you informed on how to disclose security vulnerabilities and give crucial information on what versions of the project will receive support for security vulnerabilities.
 
-## Supported Versions
+## How to disclose a security vulnerability?
+We appreciate the disclosure of security vulnerabilities to ensure the security of the project.
 
-These are the versions we currently support, note any version below v5 is closed-source and not available on this repository.
+If you have a vulnerability to report, please contact us at [mailroom@discordextremelist.xyz](mailto:mailroom@discordextremelist.xyz).
 
-### Patch Releases
-Creating releases patching security issues.
+## Project support
+We will only provide patches for the latest project version given the purpose of the open-source project. 
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.3.x   | 🟢 Supported       |
-| 5.2.x   | 🔴 No Support      |
-| 5.1.x   | 🔴 No Support      |
-| 5.0.x   | 🔴 No Support      |
-| 4.x.x   | 🔴 No Support      |
-| < 4.0   | 🔴 No Support      |
+In the table we have detailed what versions will receive ongoing security updates, information on how to patch security issues, and whether there is no support at all.
 
-### Disclosure
-Security issues we will disclose and provide instructions on how to patch them, if this is not patched in a newer version see Patch Releases.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.3.x   | 🟢 Supported       |
-| 5.2.x   | 🟢 Supported       |
-| 5.1.x   | 🟢 Supported       |
-| 5.0.x   | 🟠 Deprecated      |
-| 4.x.x   | 🔴 No Support      |
-| < 4.0   | 🔴 No Support      |
-
-## Reporting a Vulnerability
-
-You can report a vulnerability by contacting us at [contact@discordextremelist.xyz](mailto:contact@discordextremelist.xyz).
+| Version | Support                              |
+| ------- | ------------------------------------ |
+| 5.5.x   | 🟢 Ongoing security updates          |
+| 5.4.x   | 🟠 Security patch information        |
+| 5.0-5.3 | 🔴 No support                        |
+| ≤ 4.0   | ⚫️ No support - releases not public  |

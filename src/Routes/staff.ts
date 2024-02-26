@@ -32,6 +32,7 @@ import * as announcementCache from "../Util/Services/announcementCaching.js";
 import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import * as discord from "../Util/Services/discord.js";
+import app from "../app";
 const router = express.Router();
 
 router.get(
@@ -915,13 +916,15 @@ router.get(
     async (req: Request, res: Response) => {
         if (req.params.id === req.user.id) return res.redirect("/staff");
 
-        if (!req.query.token) return res.json({});
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            req.query.token as string
-        );
-        if (tokenCheck === false) return res.json({});
-
+        if (app.get('env') === 'production') {
+            if (!req.query.token) return res.json({});
+            const tokenCheck = await tokenManager.verifyToken(
+                req.user.id,
+                req.query.token as string
+            );
+            if (tokenCheck === false) return res.json({});
+        }
+        
         let user: delUser | undefined = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });

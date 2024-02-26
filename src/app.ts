@@ -23,7 +23,8 @@ import { Request, Response } from "express";
 import * as Sentry from "@sentry/node";
 import path from "path";
 import * as device from "express-device";
-import cookieSession from "cookie-session";
+import session from "express-session";
+import RedisStore from "connect-redis";
 import cookieParser from "cookie-parser";
 import createError from "http-errors";
 import passport from "passport";
@@ -276,15 +277,26 @@ new Promise<void>((resolve, reject) => {
             defaultLocale: settings.website.locales.default
         });
 
-        app.use(
-            cookieSession({
-                name: "delSession",
-                keys: [settings.secrets.cookie],
-                maxAge: 1000 * 60 * 60 * 24 * 7
-            })
-        );
+        const sess = {
+            store: new RedisStore({client: global.redis}),
+            secret: settings.secrets.cookie,
+            resave: false,
+            saveUninitialized: false,
+            cookie: {
+                secure: false,
+                httpOnly: true,
+                maxAge: 1000 * 60 * 60 * 3,
+            }
+        };
 
-        app.use(cookieParser(settings.secrets.cookie));
+        if (app.get('env') === 'production') {
+            app.set('trust proxy', 1) // trust first proxy
+            sess.cookie.secure = true // serve secure cookies
+        }
+
+        app.use(session(sess));
+
+        // app.use(cookieParser(settings.secrets.cookie)); unknown if still required
 
         app.use(passport.initialize());
         app.use(passport.session());

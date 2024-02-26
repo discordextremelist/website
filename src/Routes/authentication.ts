@@ -249,13 +249,16 @@ router.get(
     }
 );
 
-router.get("/logout", async (req, res) => {
+router.get("/logout", async (req, res, next) => {
     if (!req.user.impersonator) {
         req.session.logoutJust = true;
         if (req.user.db.rank.admin) await tokenManager.tokenReset(req.user.id);
 
-        req.logout();
-        res.redirect(req.session.redirectTo || "/");
+            
+        req.logout(err => {
+            if (err) { return next(err); }
+            res.redirect(req.session.redirectTo || '/');
+        });
     } else {
         req.user.id = req.user.impersonator;
         req.user.impersonator = undefined;

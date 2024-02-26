@@ -12,7 +12,7 @@
 
 Licensing information viewable in the [LICENSE](https://github.com/discordextremelist/website/blob/main/LICENSE) file.
 
-We welcome contributions to DEL! If you need any help contributing, please talk to us in our Discord server.
+We welcome contributions to DEL! If you need any help contributing, please talk to us in our Discord server. Also, please have a look at [CONTRIBUTING.md](https://github.com/discordextremelist/website/blob/main/CONTRIBUTING.md).
 
 Note that we do not support running public clones of the project: you are allowed to do it if you follow the license, but we will not provide any support and it goes against the intent of this project. We are an open source project to provide transparency to our community and allow developers to contribute as they wish to improve the project. The following instructions are only intended for users running DEL in development to contribute.
 
@@ -22,7 +22,7 @@ Note that we do not support running public clones of the project: you are allowe
 
 ### Node.js
 
-DEL requires [Node.js](https://nodejs.org) v17.9.0+.
+DEL requires [Node.js](https://nodejs.org) v18.15.0+.
 
 ### MongoDB
 

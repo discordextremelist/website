@@ -1,4 +1,4 @@
- Discord Extreme List version 5.x.x
+# Discord Extreme List 5
 
 [![Compile](https://github.com/discordextremelist/website/workflows/Compile/badge.svg)](https://github.com/discordextremelist/website/actions?query=workflow%3ACompile)
 [![Discord](https://img.shields.io/discord/568567800910839811?color=5865f2&logo=discord&logoColor=white)](https://discord.gg/WeCer3J)
@@ -11,7 +11,7 @@ Licensing information viewable in the [LICENSE](https://github.com/discordextrem
 
 We welcome contributions to DEL! If you need any help contributing, please talk to us in our Discord server.
 
-Note that we do not support running public clones: you are allowed to do it if you follow the license, but we will not provide any support. The following instructions are only for users running DEL in development to contribute.
+Note that we do not support running public clones of the project: you are allowed to do it if you follow the license, but we will not provide any support and it goes against the intent of this project. We are an open source project to provide transparency to our community and allow developers to contribute as they wish to improve the project. The following instructions are only intended for users running DEL in development to contribute.
 
 # Setup
 

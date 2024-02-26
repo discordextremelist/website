@@ -25,7 +25,6 @@ import path from "path";
 import * as device from "express-device";
 import session from "express-session";
 import RedisStore from "connect-redis";
-import cookieParser from "cookie-parser";
 import createError from "http-errors";
 import passport from "passport";
 import logger from "morgan";
@@ -295,8 +294,6 @@ new Promise<void>((resolve, reject) => {
         }
 
         app.use(session(sess));
-
-        // app.use(cookieParser(settings.secrets.cookie)); unknown if still required
 
         app.use(passport.initialize());
         app.use(passport.session());

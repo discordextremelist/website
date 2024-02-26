@@ -18,7 +18,6 @@
     "chunk": "0.0.3",
     "color": "^4.2.1",
     "connect-redis": "^7.1.1",
-    "cookie-parser": "^1.4.6",
     "datadog-metrics": "^0.9.3",
     "debug": "~4.3.4",
     "del-i18n": "github:discordextremelist/i18n",

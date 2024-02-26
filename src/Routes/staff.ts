@@ -32,7 +32,6 @@ import * as announcementCache from "../Util/Services/announcementCaching.js";
 import { variables } from "../Util/Function/variables.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import * as discord from "../Util/Services/discord.js";
-import app from "../app";
 const router = express.Router();
 
 router.get(
@@ -916,7 +915,7 @@ router.get(
     async (req: Request, res: Response) => {
         if (req.params.id === req.user.id) return res.redirect("/staff");
 
-        if (app.get('env') === 'production') {
+        if (global.env_prod) {
             if (!req.query.token) return res.json({});
             const tokenCheck = await tokenManager.verifyToken(
                 req.user.id,

@@ -288,7 +288,9 @@ new Promise<void>((resolve, reject) => {
             }
         };
 
-        if (app.get('env') === 'production') {
+        global.env_prod = (app.get('env') === 'production');
+
+        if (global.env_prod) {
             app.set('trust proxy', 1) // trust first proxy
             sess.cookie.secure = true // serve secure cookies
         }

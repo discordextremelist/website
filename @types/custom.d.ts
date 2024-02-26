@@ -28,6 +28,7 @@ declare global {
     var ddosMode: ddosMode;
     var libs: library[];
     var db: Db;
+    var env_prod: boolean;
 }
 
 declare module "sanitize-html" {

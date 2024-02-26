@@ -228,7 +228,7 @@ new Promise<void>((resolve, reject) => {
         await discord.bot.login(settings.secrets.discord.token);
         // to replace the needed wait time for the below functions, instead of using a redundant blocking promise
         // just... do it once it is actually ready -AJ
-        discord.bot.once("login", async () => {
+        discord.bot.once("ready", async () => {
             setTimeout(async () => {
                 await featuredCache.updateFeaturedBots();
                 await discord.postMetric();

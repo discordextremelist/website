@@ -59,8 +59,6 @@ declare module "express-serve-static-core" {
         };
         del: {
             version: string;
-            channel: string;
-            cssVersion: string;
             node: string;
         };
     }

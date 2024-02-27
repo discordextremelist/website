@@ -23,7 +23,6 @@ import browser from "browser-detect";
 import color from "color";
 import settings from "../../../settings.json" assert { type: "json" };
 import pkg from "../../../package.json" assert { type: "json" };
-import releaseInfo from "../../../release-info.json" assert { type: "json" };
 import * as announcementCache from "../Services/announcementCaching.js";
 import * as userCache from "../Services/userCaching.js";
 import * as banList from "../Services/banned.js";
@@ -52,7 +51,7 @@ export const variables = async (
     req.browser = browser(req.headers["user-agent"]);
     res.locals.browser = req.browser;
     res.locals.requestedAt = Date.now();
-    res.locals.cssVersion = releaseInfo.cssVersion;
+    res.locals.cssVersion = pkg.version;
     res.locals.ddosMode = false; //ddosMode.getDDOSMode().active;
     res.locals.gaID = settings.website.gaID;
     res.locals.arcID = settings.website.arcID;
@@ -90,7 +89,6 @@ export const variables = async (
     const version = pkg.version;
     req.del = {
         version,
-        ...releaseInfo,
         node: "Unavailable"
     }
     

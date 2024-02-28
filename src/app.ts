@@ -66,8 +66,20 @@ import staffRoute from "./Routes/staff.js";
 const app = express();
 const __dirname = path.resolve();
 
-if (!settings.website.dev) Sentry.init({ dsn: settings.secrets.sentry, release: "website@" + process.env.npm_package_version, environment: "production" });
-if (!settings.website.dev) app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
+if (!settings.website.dev) {
+    Sentry.init({ 
+        dsn: settings.secrets.sentry, 
+        release: "website@" + process.env.npm_package_version, 
+        environment: "production",
+        integrations: [
+            new Sentry.Integrations.Express({
+                app
+            })
+        ]
+    });
+    
+    app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
+}
 
 app.use(
     "/fonts/fa/webfonts/*",

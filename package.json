@@ -12,7 +12,7 @@
     "node": ">=18.15.0"
   },
   "dependencies": {
-    "@sentry/node": "^6.19.2",
+    "@sentry/node": "^7.103.0",
     "@snyk/protect": "^1.984.0",
     "browser-detect": "^0.2.28",
     "chunk": "0.0.3",

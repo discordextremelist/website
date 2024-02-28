@@ -25,7 +25,6 @@ import strings from "del-i18n/website/en-NZ.json"
 declare global {
     var redis: Redis;
     var announcement: announcement;
-    var ddosMode: ddosMode;
     var libs: library[];
     var db: Db;
     var env_prod: boolean;

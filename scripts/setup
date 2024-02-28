@@ -275,14 +275,6 @@ setTimeout(async () => {
     console.log("Done!");
 
     console.log("Inserting default web options...");
-    await global.db
-        .collection("webOptions")
-        .insertOne({
-            _id: "ddosMode",
-            active: false
-        })
-        .then(() => true)
-        .catch(() => false);
 
     await global.db
         .collection("webOptions")

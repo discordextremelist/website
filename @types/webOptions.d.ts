@@ -26,13 +26,6 @@ interface announcement {
     foreground: string;
 }
 
-interface ddosMode {
-    _id?: string;
-    id?: string;
-    active: boolean;
-    requests: number;
-}
-
 interface botStats {
     _id: string;
     id?: string;

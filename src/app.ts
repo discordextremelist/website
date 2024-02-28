@@ -32,7 +32,6 @@ import logger from "morgan";
 import * as libCache from "./Util/Services/libCaching.js";
 import * as announcementCache from "./Util/Services/announcementCaching.js";
 import * as featuredCache from "./Util/Services/featuring.js";
-import * as ddosMode from "./Util/Services/ddosMode.js";
 import * as banned from "./Util/Services/banned.js";
 import * as discord from "./Util/Services/discord.js";
 import * as tokenManager from "./Util/Services/adminTokenManager.js";
@@ -136,19 +135,8 @@ new Promise<void>((resolve, reject) => {
         if (
             !(await global.db
                 .collection("webOptions")
-                .findOne({ _id: "ddosMode" })) ||
-            !(await global.db
-                .collection("webOptions")
                 .findOne({ _id: "announcement" }))
         ) {
-            await global.db
-                .collection<any>("webOptions")
-                .insertOne({
-                    _id: "ddosMode",
-                    active: false
-                })
-                .then(() => true)
-                .catch(() => false);
             await global.db
                 .collection<announcement>("webOptions")
                 .insertOne({
@@ -226,7 +214,6 @@ new Promise<void>((resolve, reject) => {
             await announcementCache.updateCache();
             await featuredCache.updateFeaturedServers();
             await featuredCache.updateFeaturedTemplates();
-            await ddosMode.updateCache();
             await tokenManager.tokenResetAll();
             console.timeEnd("Redis");
             console.time("Bot stats update");

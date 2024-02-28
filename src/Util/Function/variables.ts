@@ -52,7 +52,6 @@ export const variables = async (
     res.locals.browser = req.browser;
     res.locals.requestedAt = Date.now();
     res.locals.cssVersion = pkg.version;
-    res.locals.ddosMode = false; //ddosMode.getDDOSMode().active;
     res.locals.gaID = settings.website.gaID;
     res.locals.arcID = settings.website.arcID;
 

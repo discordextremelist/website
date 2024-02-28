@@ -77,7 +77,7 @@ if (!settings.website.dev) {
             })
         ]
     });
-    
+
     app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
 }
 

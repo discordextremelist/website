@@ -353,10 +353,6 @@ router.get(
     }
 );
 
-router.get("/profile/:id", (req: Request, res: Response) => {
-    res.redirect("/" + req.params.id);
-});
-
 router.get(
     "/profile/:id/edit",
     variables,

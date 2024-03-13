@@ -408,7 +408,10 @@ router.post(
             );
         } else if (req.body.prefix?.length > 32) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"));
+        } else if (req.body.prefix = "/" && !req.body.slashCommands) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
 
         if (req.body.privacyPolicy) {
@@ -1348,7 +1351,10 @@ router.post(
             );
         } else if (req.body.prefix?.length > 32) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"));
+        } else if (req.body.prefix = "/" && !req.body.slashCommands) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
 
         if (req.body.privacyPolicy) {
@@ -2667,7 +2673,10 @@ router.post(
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
         } else if (req.body.prefix?.length > 32) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"));
+        } else if (req.body.prefix = "/" && !req.body.slashCommands) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
 
         if (req.body.privacyPolicy) {

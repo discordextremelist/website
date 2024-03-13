@@ -204,22 +204,14 @@ router.get(
                 }
             } as delUser
 
-            if (user.rank.mod === true) {
-                importUser["staffTracking.lastLogin"] = Date.now();
-                await global.db.collection("users").updateOne(
-                    { _id: req.user.id },
-                    {
-                        $set: importUser
-                    }
-                );
-            } else {
-                await global.db.collection("users").updateOne(
-                    { _id: req.user.id },
-                    {
-                        $set: importUser
-                    }
-                );
-            }
+            if (user.rank.mod === true) importUser["staffTracking.lastLogin"] = Date.now(); 
+            
+            await global.db.collection("users").updateOne(
+                { _id: req.user.id },
+                {
+                    $set: importUser
+                }
+            );
         }
 
         await userCache.updateUser(req.user.id)

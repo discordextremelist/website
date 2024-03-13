@@ -197,7 +197,7 @@
                                   </div>
                                 </div>
                             </div>
-                            <% if (bot.status.hidden) { %>
+                            <% if (bot.status.hidden && bot.status.approved) { %>
                                 <%-
                                     include("../../partials/button.ejs", {
                                         className: "button is-white",
@@ -273,14 +273,14 @@
                                             <span><%= __("common.edit") %></span>
                                         </a>
                                     <% } %>
-                                    <% if (!bot.status.modHidden) { %>
+                                    <% if (!bot.status.modHidden && bot.status.approved) { %>
                                         <a class="dropdown-item has-text-grey-light" href="<%= linkPrefix %>/bots/<%= bot._id %>/modhide">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-eye-slash"></i>
                                             </span>
                                             <span><%= __("common.hide") %></span>
                                         </a>
-                                    <% } else { %>
+                                    <% } else if (bot.status.approved) { %>
                                         <a class="dropdown-item has-text-grey-light" href="<%= linkPrefix %>/bots/<%= bot._id %>/modunhide">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-eye"></i>
@@ -653,7 +653,7 @@
                     </span>
                     <span><%= __("common.archive") %></span>
                 </a>
-                <a class="button is-white" style="background-color: #b5b5b5" <% if (!bot.status.hidden && !bot.status.modHidden) { %>href="<%= linkPrefix %>/bots/<%= bot._id %>/hide"<% } else { %>disabled<% } %>>
+                <a class="button is-white" style="background-color: #b5b5b5" <% if (!bot.status.hidden && !bot.status.modHidde && bot.status.approved) { %>href="<%= linkPrefix %>/bots/<%= bot._id %>/hide"<% } else { %>disabled<% } %>>
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-eye-slash"></i>
                     </span>

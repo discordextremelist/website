@@ -2202,6 +2202,15 @@ router.get(
                 req: req
             });
 
+        if (bot.status.approved === false)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.bot.inQueueHide"),
+                req,
+                type: "Error"
+            });
+
         discord.channels.logs.send(
             `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
@@ -3704,6 +3713,15 @@ router.get(
                 type: "Error"
             });
 
+        if (bot.status.approved === false)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.bot.inQueueHide"),
+                req,
+                type: "Error"
+            });
+
         res.locals.premidPageInfo = res.__("premid.bots.hide", bot.name);
 
         res.render("templates/bots/staffActions/remove", {
@@ -3739,7 +3757,7 @@ router.post(
             return res.status(400).render("status", {
                 title: res.__("common.error"),
                 status: 400,
-                subtitle: res.__("common.error.bot.inQueue"),
+                subtitle: res.__("common.error.bot.inQueueHide"),
                 req,
                 type: "Error"
             });

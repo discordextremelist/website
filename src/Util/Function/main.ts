@@ -390,7 +390,7 @@ export function parseScopes(scopes: delBot["scopes"]): OAuth2Scopes | `${OAuth2S
 }
 
 export function grabFullUser(user: authUser | APIUser) {
-    if (user.discriminator == "0") {
+    if (user.discriminator != "0") {
         return user.username + "#" + user.discriminator;
     } else {
         return "@" + user.username;

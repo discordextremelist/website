@@ -31,6 +31,7 @@ import { DAPI } from "../Util/Services/discord.js"
 
 import settings from "../../settings.json" assert { type: "json" };
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
+import { grabFullUser } from "../Util/Function/main.js";
 
 const router = express.Router();
 
@@ -117,7 +118,7 @@ router.get(
                 },
                 name: req.user.username,
                 discrim: req.user.discriminator,
-                fullUsername: req.user.username + "#" + req.user.discriminator,
+                fullUsername: grabFullUser(req.user),
                 locale: req.user.locale,
                 flags: req.user.flags,
                 avatar: {
@@ -194,10 +195,7 @@ router.get(
                 },
                 name: req.user.username,
                 discrim: req.user.discriminator,
-                fullUsername:
-                    req.user.username +
-                    "#" +
-                    req.user.discriminator,
+                fullUsername: grabFullUser(req.user),
                 locale: req.user.locale,
                 flags: req.user.flags,
                 avatar: {

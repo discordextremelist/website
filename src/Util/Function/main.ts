@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import * as botCache from "../Services/botCaching.js";
 import * as userCache from "../Services/userCaching.js";
 import { URL } from "url";
-import { OAuth2Scopes } from "discord.js";
+import { APIUser, OAuth2Scopes } from "discord.js";
 export const escapeFormatting = (text: string) => {
     const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
     const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, "\\$1");
@@ -387,4 +387,12 @@ export function parseScopes(scopes: delBot["scopes"]): OAuth2Scopes | `${OAuth2S
     } else if (scopes.slashCommands) {
         return OAuth2Scopes.ApplicationsCommands
     } else return OAuth2Scopes.Bot
+}
+
+export function grabFullUser(user: authUser | APIUser) {
+    if (user.discriminator == "0") {
+        return user.username + "#" + user.discriminator;
+    } else {
+        return "@" + user.username;
+    }
 }

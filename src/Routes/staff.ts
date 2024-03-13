@@ -937,10 +937,7 @@ router.get(
                         token: "",
                         name: discordUser.username,
                         discrim: discordUser.discriminator,
-                        fullUsername:
-                            discordUser.username +
-                            "#" +
-                            discordUser.discriminator,
+                        fullUsername: functions.grabFullUser(discordUser),
                         locale: "",
                         avatar: {
                             hash: discordUser.avatar,
@@ -1072,10 +1069,7 @@ router.get(
                             $set: {
                                 name: discordUser.username,
                                 discrim: discordUser.discriminator,
-                                fullUsername:
-                                    discordUser.username +
-                                    "#" +
-                                    discordUser.discriminator,
+                                fullUsername: functions.grabFullUser(discordUser),
                                 avatar: {
                                     hash: discordUser.avatar,
                                     url: `https://cdn.discordapp.com/avatars/${req.params.id}/${discordUser.avatar}`

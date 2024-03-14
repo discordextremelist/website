@@ -836,6 +836,62 @@ router.get(
 );
 
 router.post(
+    "/:id/transfer-owner",
+    variables,
+    permission.assistant,
+    async (req: Request, res: Response) => {
+        const botExists = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id })
+        if (!botExists)
+            return res.status(404).render("status", {
+                title: res.__("common.error"),
+                subtitlte: res.__("common.error.bot.404"),
+                status: 404,
+                type: "Error",
+                req
+            });
+
+        if (req.user.db.rank.assistant === false) {
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.bot.perms.vanity"),
+                status: 403,
+                type: "Error",
+                req
+            });
+        }
+
+            await global.db.collection("bots").updateOne(
+                { _id: req.params.id },
+                {
+                    $set: {
+                        owner: {
+                            id: req.body.newOwner
+                        }
+                    }
+                }
+            );
+
+            await global.db.collection("audit").insertOne({
+                type: "MODIFY_OWNER",
+                executor: req.user.id,
+                target: req.params.id,
+                date: Date.now(),
+                reason: req.body.reason || "None specified.",
+                details: {
+                    old: botExists.owner.id,
+                    new: req.body.newOwner
+                }
+            });
+            
+            await botCache.updateBot(req.params.id);
+
+            res.redirect(`/bots/${botExists._id}`);
+    }
+)
+
+router.post(
     "/:id/setvanity",
     variables,
     permission.auth,

@@ -862,6 +862,18 @@ router.post(
             });
         }
 
+        const newOwnerExists = await global.db 
+            .collection("users")
+            .findOne({ _id: req.body.newOwner })
+
+        if (!newOwnerExists) return res.status(403).render("status", {
+            title: res.__("common.error"),
+            subtitle: res.__("common.error.user.404"),
+            status: 404,
+            type: "Error",
+            req
+        });
+
             await global.db.collection("bots").updateOne(
                 { _id: req.params.id },
                 {

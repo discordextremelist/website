@@ -855,7 +855,7 @@ router.post(
         if (req.user.db.rank.assistant === false) {
             return res.status(403).render("status", {
                 title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.perms.vanity"),
+                subtitle: res.__("common.error.notAssistant"),
                 status: 403,
                 type: "Error",
                 req

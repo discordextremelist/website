@@ -31,6 +31,7 @@ import logger from "morgan";
 
 import * as libCache from "./Util/Services/libCaching.js";
 import * as announcementCache from "./Util/Services/announcementCaching.js";
+import * as legalCache from "./Util/Services/legalCaching.js";
 import * as featuredCache from "./Util/Services/featuring.js";
 import * as banned from "./Util/Services/banned.js";
 import * as discord from "./Util/Services/discord.js";
@@ -222,6 +223,7 @@ new Promise<void>((resolve, reject) => {
             await featuredCache.updateFeaturedServers();
             await featuredCache.updateFeaturedTemplates();
             await tokenManager.tokenResetAll();
+            await legalCache.updateCache();
             console.timeEnd("Redis");
             console.time("Bot stats update");
             await botStatsUpdate();

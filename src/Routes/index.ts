@@ -25,6 +25,7 @@ import * as featuring from "../Util/Services/featuring.js";
 import * as botCache from "../Util/Services/botCaching.js";
 import * as serverCache from "../Util/Services/serverCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
+import * as legalCache from "../Util/Services/legalCaching.js";
 import * as discord from "../Util/Services/discord.js";
 import { variables } from "../Util/Function/variables.js";
 import type { Guild, GuildMember, GuildMemberManager } from "discord.js";
@@ -330,33 +331,24 @@ router.get("/templates", variables, async (req: Request, res: Response) => {
     });
 });
 
-router.get("/terms", variables, (req: Request, res: Response) => {
+router.get("/terms", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.terms");
 
     res.render("templates/legal/terms", {
         title: res.__("common.nav.more.terms"),
         subtitle: res.__("common.nav.more.terms.subtitle"),
-        req
+        req,
+        terms: await legalCache.getFile("terms")
     });
 });
 
-router.get("/privacy", variables, (req: Request, res: Response) => {
+router.get("/privacy", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.privacy");
 
     res.render("templates/legal/privacy", {
         title: res.__("common.nav.more.privacy"),
         subtitle: res.__("common.nav.more.privacy.subtitle"),
-        req
-    });
-});
-
-router.get("/cookies", variables, (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.cookie");
-
-    res.render("templates/legal/cookie", {
-        title: res.__("common.nav.more.cookies"),
-        subtitle: res.__("common.nav.more.cookies.subtitle"),
-        req
+        privacy: await legalCache.getFile("privacy")
     });
 });
 

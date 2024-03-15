@@ -40,8 +40,7 @@
     "passport-discord": "^0.1.4",
     "passport-oauth2-refresh": "^2.1.0",
     "read-file-safe": "^2.1.1",
-    "remove": "^0.1.5",
-    "sanitize-html": "^2.7.0",
+    "sanitize-html": "^2.12.1",
     "typescript": "^5.3.3",
     "typescript-transpile-only": "^0.0.4"
   },

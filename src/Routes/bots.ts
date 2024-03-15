@@ -1867,20 +1867,11 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     const dirty = entities.decode(md.render(bot.longDesc));
 
     let clean;
-    if (bot.status.premium === true) {
-        clean = sanitizeHtml(dirty, {
-            allowedTags: htmlRef.trusted.tags,
-            // @ts-ignore
-            allowedAttributes: htmlRef.trusted.attributes,
-            allowVulnerableTags: true
-        });
-    } else {
-        clean = sanitizeHtml(dirty, {
-            allowedTags: htmlRef.standard.tags,
-            allowedAttributes: htmlRef.standard.attributes,
-            allowVulnerableTags: true
-        });
-    }
+    clean = sanitizeHtml(dirty, {
+        allowedTags: htmlRef.standard.tags,
+        allowedAttributes: htmlRef.standard.attributes,
+        allowVulnerableTags: true
+    });
 
     function sen(name: string) {
         return sanitizeHtml(name, {

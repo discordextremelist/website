@@ -1139,12 +1139,12 @@ router.get(
                 req
             });
 
-        const clean = sanitizeHtml(botExists.longDesc, {
+        const clean = (sanitizeHtml(botExists.longDesc, {
             allowedTags: htmlRef.standard.tags,
             allowedAttributes: htmlRef.standard.attributes,
             allowVulnerableTags: true,
             disallowedTagsMode: "escape"
-        });
+        })).replace("<iframe", "<iframe sandbox=\"\"");
 
         res.render("templates/bots/edit", {
             title: res.__("page.bots.edit.title"),
@@ -1866,12 +1866,11 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
 
     const dirty = entities.decode(md.render(bot.longDesc));
 
-    let clean;
-    clean = sanitizeHtml(dirty, {
+    const clean = (sanitizeHtml(dirty, {
         allowedTags: htmlRef.standard.tags,
         allowedAttributes: htmlRef.standard.attributes,
         allowVulnerableTags: true
-    });
+    })).replace("<iframe", "<iframe sandbox=\"\"");
 
     function sen(name: string) {
         return sanitizeHtml(name, {

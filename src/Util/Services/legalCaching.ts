@@ -32,8 +32,8 @@ export async function getFile(file: string) {
 }
 
 export async function updateCache() {
-    for (const item in legalMarkdown) {
-        const file = readFileSync(path.join(process.cwd() + `/assets/Markdown/${legalMarkdown[item]}.md`));
-        await global.redis?.hmset(prefix, legalMarkdown[item], md.render(file.toString()));
+    for (const item of legalMarkdown) {
+        const file = readFileSync(path.join(process.cwd() + `/assets/Markdown/${item}.md`));
+        await global.redis?.hmset(prefix, item, md.render(file.toString()));
     }
 }

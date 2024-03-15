@@ -78,7 +78,10 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     for (const bot of bots) {
         if (bot.status.archived === true && bot.owner.id === req.params.id) {
             archivedBots.push(bot);
-        } else if ((bot.status.hidden || bot.status.modHidden) && bot.owner.id === req.params.id) {
+        } else if (
+            (bot.status.hidden || bot.status.modHidden) &&
+            bot.owner.id === req.params.id
+        ) {
             hiddenBots.push(bot);
         } else if (bot.owner.id === req.params.id) {
             botsOwner.push(bot);
@@ -109,7 +112,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             templatesOwner.push(template);
         }
     }
-    
+
     res.locals.pageType.user = true;
 
     res.render("templates/users/profile", {
@@ -169,7 +172,10 @@ router.get(
 
         res.render("templates/users/staffActions/modifyRank", {
             title: res.__("page.users.modifyRank"),
-            subtitle: res.__("page.users.modifyRank.subtitle", targetUser.fullUsername),
+            subtitle: res.__(
+                "page.users.modifyRank.subtitle",
+                targetUser.fullUsername
+            ),
             user: req.user,
             req: req,
             targetUser: targetUser
@@ -524,7 +530,8 @@ router.get(
                 req: req
             });
 
-            await discord.bot.rest.get(Routes.user(req.params.id))
+        await discord.bot.rest
+            .get(Routes.user(req.params.id))
             .then(async (user: APIUser) => {
                 await global.db.collection("users").updateOne(
                     { _id: req.params.id },

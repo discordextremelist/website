@@ -53,10 +53,10 @@ function sortAll() {
             member.rank = admin
                 ? "admin"
                 : assistant
-                    ? "assistant"
-                    : mod
-                        ? "mod"
-                        : null;
+                  ? "assistant"
+                  : mod
+                    ? "mod"
+                    : null;
             const user = discord.bot.users.cache.get(member.id);
             member.avatar = user.avatar;
             member.username = user.username;
@@ -124,97 +124,153 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
     if (!req.query.page) req.query.page = "1";
 
     let icon = "fa-robot has-text-default";
-    let title = res.__("common.bots.discord")
+    let title = res.__("common.bots.discord");
     let subtitle = res.__("common.bots.subtitle");
     let bots: delBot[];
-    let pageParam = '?page='
-    
+    let pageParam = "?page=";
+
     if (req.query.tag) {
-        pageParam = `?tag=${req.query.tag}&page=`
+        pageParam = `?tag=${req.query.tag}&page=`;
 
         switch ((req.query.tag as string).toLowerCase()) {
             case "slashcommands":
                 icon = "fa-slash fa-flip-horizontal has-text-blurple";
-                title = res.__("common.bots.title.applicationCommands")
-                subtitle = res.__("common.bots.subtitle.filter.applicationCommands", {a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">', a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">', ea: "</a>"})
+                title = res.__("common.bots.title.applicationCommands");
+                subtitle = res.__(
+                    "common.bots.subtitle.filter.applicationCommands",
+                    {
+                        a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">',
+                        a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">',
+                        ea: "</a>"
+                    }
+                );
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, scopes }) =>
-                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && scopes?.slashCommands
+                        status.approved &&
+                        !status.siteBot &&
+                        !status.archived &&
+                        !status.hidden &&
+                        !status.modHidden &&
+                        scopes?.slashCommands
                 );
                 break;
             case "fun":
                 icon = "fa-grin-squint-tears has-text-link";
-                title = res.__("common.bots.title.fun")
+                title = res.__("common.bots.title.fun");
                 subtitle = res.__("common.bots.subtitle.filter.fun");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Fun")
+                        status.approved &&
+                        !status.siteBot &&
+                        !status.archived &&
+                        !status.hidden &&
+                        !status.modHidden &&
+                        tags.includes("Fun")
                 );
                 break;
             case "social":
                 icon = "fa-comments-alt has-text-info";
-                title = res.__("common.bots.title.social")
+                title = res.__("common.bots.title.social");
                 subtitle = res.__("common.bots.subtitle.filter.social");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Social")
+                        status.approved &&
+                        !status.siteBot &&
+                        !status.archived &&
+                        !status.hidden &&
+                        !status.modHidden &&
+                        tags.includes("Social")
                 );
                 break;
             case "economy":
                 icon = "fa-comments-dollar has-text-success";
-                title = res.__("common.bots.title.economy")
+                title = res.__("common.bots.title.economy");
                 subtitle = res.__("common.bots.subtitle.filter.economy");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Economy")
+                        status.approved &&
+                        !status.siteBot &&
+                        !status.archived &&
+                        !status.hidden &&
+                        !status.modHidden &&
+                        tags.includes("Economy")
                 );
                 break;
             case "utility":
                 icon = "fa-cogs has-text-orange";
-                title = res.__("common.bots.title.utility")
+                title = res.__("common.bots.title.utility");
                 subtitle = res.__("common.bots.subtitle.filter.utility");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Utility")
+                        status.approved &&
+                        !status.siteBot &&
+                        !status.archived &&
+                        !status.hidden &&
+                        !status.modHidden &&
+                        tags.includes("Utility")
                 );
                 break;
             case "moderation":
                 icon = "fa-gavel has-text-danger";
-                title = res.__("common.bots.title.moderation")
+                title = res.__("common.bots.title.moderation");
                 subtitle = res.__("common.bots.subtitle.filter.moderation");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Moderation")
+                        status.approved &&
+                        !status.siteBot &&
+                        !status.archived &&
+                        !status.hidden &&
+                        !status.modHidden &&
+                        tags.includes("Moderation")
                 );
                 break;
             case "multipurpose":
                 icon = "fa-ball-pile has-text-magenta";
-                title = res.__("common.bots.title.multipurpose")
+                title = res.__("common.bots.title.multipurpose");
                 subtitle = res.__("common.bots.subtitle.filter.multipurpose");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Multipurpose")
+                        status.approved &&
+                        !status.siteBot &&
+                        !status.archived &&
+                        !status.hidden &&
+                        !status.modHidden &&
+                        tags.includes("Multipurpose")
                 );
                 break;
             case "music":
                 icon = "fa-comment-music has-text-pink";
-                title = res.__("common.bots.title.music")
+                title = res.__("common.bots.title.music");
                 subtitle = res.__("common.bots.subtitle.filter.music");
                 bots = (await botCache.getAllBots()).filter(
                     ({ status, tags }) =>
-                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden && tags.includes("Music")
+                        status.approved &&
+                        !status.siteBot &&
+                        !status.archived &&
+                        !status.hidden &&
+                        !status.modHidden &&
+                        tags.includes("Music")
                 );
                 break;
-            default: 
+            default:
                 bots = (await botCache.getAllBots()).filter(
                     ({ status }) =>
-                        status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden
+                        status.approved &&
+                        !status.siteBot &&
+                        !status.archived &&
+                        !status.hidden &&
+                        !status.modHidden
                 );
         }
-    } else bots = (await botCache.getAllBots()).filter(
-        ({ status }) =>
-            status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden
-    );
+    } else
+        bots = (await botCache.getAllBots()).filter(
+            ({ status }) =>
+                status.approved &&
+                !status.siteBot &&
+                !status.archived &&
+                !status.hidden &&
+                !status.modHidden
+        );
 
     res.render("templates/bots/index", {
         title,
@@ -237,13 +293,10 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
 
     if (!req.query.page) req.query.page = "1";
     // Can't calculate total pages with sliced value - AJ
-    const allServers = await serverCache.getAllServers()
-    const servers = [...allServers].slice(
-        15 * Number(req.query.page) - 15,
-        15 * Number(req.query.page)
-    ).filter(
-        ({ _id, status }) => status && !status.reviewRequired
-    );
+    const allServers = await serverCache.getAllServers();
+    const servers = [...allServers]
+        .slice(15 * Number(req.query.page) - 15, 15 * Number(req.query.page))
+        .filter(({ _id, status }) => status && !status.reviewRequired);
 
     res.render("templates/servers/index", {
         title: res.__("common.servers.discord"),

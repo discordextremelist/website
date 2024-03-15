@@ -35,20 +35,23 @@ export const auth = (req: Request, res: Response, next: () => void) => {
     }
 };
 
-export const scopes = (scopes: OAuth2Scopes[]) => (req: Request, res: Response, next: () => void) => {
-    if (req.session.logoutJustCont === true) {
-        req.session.logoutJust = false;
-        req.session.logoutJustCont = false;
-        return res.redirect("/");
-    }
+export const scopes =
+    (scopes: OAuth2Scopes[]) =>
+    (req: Request, res: Response, next: () => void) => {
+        if (req.session.logoutJustCont === true) {
+            req.session.logoutJust = false;
+            req.session.logoutJustCont = false;
+            return res.redirect("/");
+        }
 
-
-    if (!scopes.every(scope => req.user.db.auth?.scopes?.includes(scope))) {
-        res.redirect(`/auth/login/callback?scope=${scopes.join(' ')}`)
-    } else {
-        next()
-    }
-};
+        if (
+            !scopes.every((scope) => req.user.db.auth?.scopes?.includes(scope))
+        ) {
+            res.redirect(`/auth/login/callback?scope=${scopes.join(" ")}`);
+        } else {
+            next();
+        }
+    };
 
 export const member = async (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {
@@ -57,9 +60,12 @@ export const member = async (req: Request, res: Response, next: () => void) => {
         return res.redirect("/");
     }
 
-    if (!await discord.getMember(req.body.id)) {
-        await discord.bot.rest.get(Routes.guildMembers(settings.guild.main), { body: { access_token: req.user.db.auth.accessToken } })
-            .catch(() => { });
+    if (!(await discord.getMember(req.body.id))) {
+        await discord.bot.rest
+            .get(Routes.guildMembers(settings.guild.main), {
+                body: { access_token: req.user.db.auth.accessToken }
+            })
+            .catch(() => {});
     }
 
     next();

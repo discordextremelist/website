@@ -84,7 +84,13 @@ export const sitemapGenerator = async (
     ${url("/guidelines", lang)}
     ${url("/auth/login", lang)}
     ${bots
-        .filter((b) => b.status.approved && !b.status.archived && !b.status.hidden && !b.status.modHidden)
+        .filter(
+            (b) =>
+                b.status.approved &&
+                !b.status.archived &&
+                !b.status.hidden &&
+                !b.status.modHidden
+        )
         .map((b) => url(`/bots/${b.vanityUrl || b._id}`, lang))
         .join("\n    ")}
     ${servers.map((s) => url(`/servers/${s._id}`, lang)).join("\n    ")}

@@ -58,7 +58,6 @@ export async function uploadBots() {
         prefix,
         ...botsDB.map((bot: delBot) => [bot._id, JSON.stringify(bot)])
     );
-
 }
 
 export async function deleteBot(id: string) {

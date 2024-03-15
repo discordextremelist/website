@@ -84,13 +84,12 @@ export const variables = async (
     )
         req.session.redirectTo = req.originalUrl;
 
-
     const version = pkg.version;
     req.del = {
         version,
         node: "Unavailable"
-    }
-    
+    };
+
     res.locals.colour = color;
     res.locals.premidPageInfo = "";
     res.locals.hideLogin = false;
@@ -140,7 +139,7 @@ export const variables = async (
     }
 
     if (
-        (req.browser.name === "firefox") ||
+        req.browser.name === "firefox" ||
         (req.browser.name === "opera" &&
             req.browser.os === "Android" &&
             req.browser.versionNumber < 46) ||
@@ -159,9 +158,9 @@ export const variables = async (
         res.locals.imageFormat = "png";
     }
 
-    let theme = req.user?.db?.preferences?.theme
+    let theme = req.user?.db?.preferences?.theme;
 
-    if (req.query.theme) theme = themes[req.query.theme as string]
+    if (req.query.theme) theme = themes[req.query.theme as string];
 
     switch (theme) {
         case themes.dark:
@@ -188,9 +187,11 @@ export const variables = async (
         let user: delUser;
         user = await userCache.getUser(req.user.id);
 
-        if (!user) 
-            user = await global.db.collection<delUser>("users").findOne({ _id: req.user.id });
-        
+        if (!user)
+            user = await global.db
+                .collection<delUser>("users")
+                .findOne({ _id: req.user.id });
+
         req.user.db = user;
 
         if (

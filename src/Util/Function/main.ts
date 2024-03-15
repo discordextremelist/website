@@ -35,25 +35,26 @@ const regions = {
     "us-east": "US East",
     "us-central": "US Central",
     "us-south": "US South",
-    "singapore": "Singapore",
-    "southafrica": "South Africa",
-    "sydney": "Sydney",
-    "europe": "Europe",
-    "brazil": "Brazil",
-    "hongkong": "Hong Kong",
-    "russia": "Russia",
-    "japan": "Japan",
-    "india": "India",
-    "dubai": "Dubai",
-    "amsterdam": "Amsterdam",
-    "london": "London",
-    "frankfurt": "Frankfurt",
+    singapore: "Singapore",
+    southafrica: "South Africa",
+    sydney: "Sydney",
+    europe: "Europe",
+    brazil: "Brazil",
+    hongkong: "Hong Kong",
+    russia: "Russia",
+    japan: "Japan",
+    india: "India",
+    dubai: "Dubai",
+    amsterdam: "Amsterdam",
+    london: "London",
+    frankfurt: "Frankfurt",
     "eu-central": "Central Europe",
     "eu-west": "Western Europe",
     "south-korea": "South Korea"
-}
+};
 
-export const parseRegion = (region: keyof typeof regions) => regions[region] || region
+export const parseRegion = (region: keyof typeof regions) =>
+    regions[region] || region;
 
 export function regionIcon(region: keyof typeof regions) {
     let icon = "81b90eae4fc67502d59808a7c219ee65";
@@ -62,22 +63,50 @@ export function regionIcon(region: keyof typeof regions) {
         case "us-west":
         case "us-east":
         case "us-central":
-        case "us-south": icon = "e6d6b255259ac878d00819a9555072ad"; break;
-        case "singapore": icon = "92cd1f9eabd48ec32dc2ecef617f706b"; break;
-        case "southafrica": icon = "3a3ec02f3c9193e85bda10f5d2a42574"; break;
-        case "sydney": icon = "1d8d4e2b3fd0e542b6d37cbfa156d55e"; break;
+        case "us-south":
+            icon = "e6d6b255259ac878d00819a9555072ad";
+            break;
+        case "singapore":
+            icon = "92cd1f9eabd48ec32dc2ecef617f706b";
+            break;
+        case "southafrica":
+            icon = "3a3ec02f3c9193e85bda10f5d2a42574";
+            break;
+        case "sydney":
+            icon = "1d8d4e2b3fd0e542b6d37cbfa156d55e";
+            break;
         case "europe":
         case "eu-central":
-        case "eu-west": icon = "554a8e1a41c2e30cdb946396d3d336f2"; break;
-        case "brazil": icon = "7beab7b17eaa9ff7ceed3e5b1af274c2"; break;
-        case "hongkong": icon = "a92f116201fa7ff2b4acbb39f144ec60"; break;
-        case "russia": icon = "64f37efd5319b9b581557604864f042a"; break;
-        case "japan": icon = "f23c5c28c4429691f7c54af93876d661"; break;
-        case "india": icon = "716d569d0bca379a84578572c6efc7ac"; break;
-        case "dubai": icon = "0113e92896135807e30f5de869074733"; break;
-        case "amsterdam": icon = "c9f51873ae719a6b4b8c6724362e999e"; break;
-        case "london": icon = "3a79cdd1d4af225247f2ba574b97ae78"; break;
-        case "frankfurt": icon = "7fa2adf98f26db34178bb30a63dabe8c"; break;
+        case "eu-west":
+            icon = "554a8e1a41c2e30cdb946396d3d336f2";
+            break;
+        case "brazil":
+            icon = "7beab7b17eaa9ff7ceed3e5b1af274c2";
+            break;
+        case "hongkong":
+            icon = "a92f116201fa7ff2b4acbb39f144ec60";
+            break;
+        case "russia":
+            icon = "64f37efd5319b9b581557604864f042a";
+            break;
+        case "japan":
+            icon = "f23c5c28c4429691f7c54af93876d661";
+            break;
+        case "india":
+            icon = "716d569d0bca379a84578572c6efc7ac";
+            break;
+        case "dubai":
+            icon = "0113e92896135807e30f5de869074733";
+            break;
+        case "amsterdam":
+            icon = "c9f51873ae719a6b4b8c6724362e999e";
+            break;
+        case "london":
+            icon = "3a79cdd1d4af225247f2ba574b97ae78";
+            break;
+        case "frankfurt":
+            icon = "7fa2adf98f26db34178bb30a63dabe8c";
+            break;
     }
 
     return icon;
@@ -120,7 +149,9 @@ export function parseDate(__, locale: string, rawDate: number): string {
     if (rawDate === 0) return "???";
 
     const date = new Date(rawDate);
-    const dateFormat = require(`../../../../node_modules/del-i18n/website/${locale}.json`)
+    const dateFormat = require(
+        `../../../../node_modules/del-i18n/website/${locale}.json`
+    );
     if (dateFormat["common.dateFormat"].includes("{{amPM}}")) {
         let amPM: string;
         let hour = date.getUTCHours();
@@ -374,19 +405,21 @@ export function shuffleArray<T>(array: T[]) {
 
 export function isURL(string: string) {
     try {
-        return new URL(string).protocol === 'https:'
+        return new URL(string).protocol === "https:";
     } catch {
         return false;
     }
 }
 
-export function parseScopes(scopes: delBot["scopes"]): OAuth2Scopes | `${OAuth2Scopes}+${OAuth2Scopes}` {
-    if (!scopes) return OAuth2Scopes.Bot
+export function parseScopes(
+    scopes: delBot["scopes"]
+): OAuth2Scopes | `${OAuth2Scopes}+${OAuth2Scopes}` {
+    if (!scopes) return OAuth2Scopes.Bot;
     if (scopes.bot && scopes.slashCommands) {
-        return `${OAuth2Scopes.Bot}+${OAuth2Scopes.ApplicationsCommands}` as const
+        return `${OAuth2Scopes.Bot}+${OAuth2Scopes.ApplicationsCommands}` as const;
     } else if (scopes.slashCommands) {
-        return OAuth2Scopes.ApplicationsCommands
-    } else return OAuth2Scopes.Bot
+        return OAuth2Scopes.ApplicationsCommands;
+    } else return OAuth2Scopes.Bot;
 }
 
 export function grabFullUser(user: authUser | APIUser) {

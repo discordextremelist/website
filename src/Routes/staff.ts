@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import type { APIUser, Snowflake } from "discord.js";
-import { Routes } from "discord.js"
+import { Routes } from "discord.js";
 import settings from "../../settings.json" assert { type: "json" };
 import * as permission from "../Util/Function/permissions.js";
 import * as functions from "../Util/Function/main.js";
@@ -152,7 +152,11 @@ router.get(
             req,
             bots: bots.filter(
                 ({ inServer, status, scopes }) =>
-                    !inServer && !status.archived && status.approved && !status.siteBot && (!scopes || scopes.bot)
+                    !inServer &&
+                    !status.archived &&
+                    status.approved &&
+                    !status.siteBot &&
+                    (!scopes || scopes.bot)
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff
@@ -165,14 +169,14 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const logs: auditLog[] = ((await global.db
-            .collection<auditLog>("audit")
-            .find()
-            .sort({ date: -1 })
-            .allowDiskUse()
-            .toArray()) as auditLog[]).filter(
-                ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
-            );
+        const logs: auditLog[] = (
+            (await global.db
+                .collection<auditLog>("audit")
+                .find()
+                .sort({ date: -1 })
+                .allowDiskUse()
+                .toArray()) as auditLog[]
+        ).filter(({ type }) => type !== "GAME_HIGHSCORE_UPDATE");
 
         if (!req.query.page) req.query.page = "1";
 
@@ -195,7 +199,7 @@ router.get(
             logsPgArr: iteratedLogs,
             page: req.query.page,
             pages: Math.ceil(logs.length / 15),
-            functions,
+            functions
         });
     }
 );
@@ -923,16 +927,23 @@ router.get(
             );
             if (tokenCheck === false) return res.json({});
         }
-        
+
         let user: delUser | undefined = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
-        await discord.bot.rest.get(Routes.user(req.params.id))
+        await discord.bot.rest
+            .get(Routes.user(req.params.id))
             .then(async (discordUser: APIUser) => {
                 if (!user) {
                     await global.db.collection<any>("users").insertOne({
-                        auth: { accessToken: "", expires: 0, refreshToken: "", scopes: [] }, flags: undefined,
+                        auth: {
+                            accessToken: "",
+                            expires: 0,
+                            refreshToken: "",
+                            scopes: []
+                        },
+                        flags: undefined,
                         _id: req.params.id,
                         token: "",
                         name: discordUser.username,
@@ -948,7 +959,7 @@ router.get(
                             defaultColour: "#BA2EFF",
                             defaultForegroundColour: "#ffffff",
                             enableGames: true,
-                            experiments: false,
+                            experiments: false
                         },
                         profile: {
                             bio: "",
@@ -1069,7 +1080,8 @@ router.get(
                             $set: {
                                 name: discordUser.username,
                                 discrim: discordUser.discriminator,
-                                fullUsername: functions.grabFullUser(discordUser),
+                                fullUsername:
+                                    functions.grabFullUser(discordUser),
                                 avatar: {
                                     hash: discordUser.avatar,
                                     url: `https://cdn.discordapp.com/avatars/${req.params.id}/${discordUser.avatar}`

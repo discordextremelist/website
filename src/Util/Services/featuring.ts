@@ -36,18 +36,29 @@ export async function getFeaturedTemplates(): Promise<delTemplate[]> {
 }
 
 export async function updateFeaturedBots() {
-    const statuses = await global.redis?.hgetall("statuses") as Record<string, PresenceUpdateStatus>;
+    const statuses = (await global.redis?.hgetall("statuses")) as Record<
+        string,
+        PresenceUpdateStatus
+    >;
     const bots = functions
         .shuffleArray(
-            ((await global.db
-                .collection<delBot>("bots")
-                .find()
-                .toArray()) as delBot[]).filter(
+            (
+                (await global.db
+                    .collection<delBot>("bots")
+                    .find()
+                    .toArray()) as delBot[]
+            ).filter(
                 ({ _id, status, scopes, userFlags }) =>
-                    status.approved && !status.siteBot && !status.archived && !status.hidden && !status.modHidden &&
-                    ((statuses[_id] && statuses[_id] !== PresenceUpdateStatus.Offline) ||
-                    !scopes?.bot ||
-                    userFlags === undefined || userFlags & UserFlags.BotHTTPInteractions)
+                    status.approved &&
+                    !status.siteBot &&
+                    !status.archived &&
+                    !status.hidden &&
+                    !status.modHidden &&
+                    ((statuses[_id] &&
+                        statuses[_id] !== PresenceUpdateStatus.Offline) ||
+                        !scopes?.bot ||
+                        userFlags === undefined ||
+                        userFlags & UserFlags.BotHTTPInteractions)
             )
         )
         .slice(0, 6);
@@ -81,12 +92,12 @@ export async function updateFeaturedBots() {
 export async function updateFeaturedServers() {
     const servers = functions
         .shuffleArray(
-            ((await global.db
-                .collection<delServer>("servers")
-                .find()
-                .toArray()) as delServer[]).filter(
-                ({ status }) => status && !status.reviewRequired
-            )
+            (
+                (await global.db
+                    .collection<delServer>("servers")
+                    .find()
+                    .toArray()) as delServer[]
+            ).filter(({ status }) => status && !status.reviewRequired)
         )
         .slice(0, 6);
 

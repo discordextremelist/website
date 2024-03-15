@@ -25,19 +25,35 @@ export const monacoRedirect = (
     next: () => void
 ) => {
     if (req.originalUrl.includes("/vs/basic-languages/markdown/markdown.js")) {
-        return res.redirect("https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/basic-languages/markdown/markdown.min.js");
+        return res.redirect(
+            "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/basic-languages/markdown/markdown.min.js"
+        );
     } else if (req.originalUrl.includes("/vs/basic-languages/html/html.js")) {
-        return res.redirect("https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/basic-languages/html/html.min.js");
+        return res.redirect(
+            "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/basic-languages/html/html.min.js"
+        );
     } else if (req.originalUrl.includes("/vs/language/html/htmlMode.js")) {
-        return res.redirect("https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/language/html/htmlMode.min.js");
+        return res.redirect(
+            "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/language/html/htmlMode.min.js"
+        );
     } else if (req.originalUrl.includes("/vs/basic-languages/css/css.js")) {
-        return res.redirect("https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/basic-languages/css/css.min.js");
+        return res.redirect(
+            "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/basic-languages/css/css.min.js"
+        );
     } else if (req.originalUrl.includes("/vs/language/css/cssMode.js")) {
-        return res.redirect("https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/language/css/cssMode.min.js");
-    } else if (req.originalUrl.includes("/vs/basic-languages/javascript/javascript.js")) {
-        return res.redirect("https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/basic-languages/javascript/javascript.min.js");
+        return res.redirect(
+            "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/language/css/cssMode.min.js"
+        );
+    } else if (
+        req.originalUrl.includes("/vs/basic-languages/javascript/javascript.js")
+    ) {
+        return res.redirect(
+            "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/basic-languages/javascript/javascript.min.js"
+        );
     } else if (req.originalUrl.includes("/vs/language/typescript/tsMode.js")) {
-        return res.redirect("https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/language/typescript/tsMode.min.js");
+        return res.redirect(
+            "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/language/typescript/tsMode.min.js"
+        );
     } else {
         next();
     }

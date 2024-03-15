@@ -63,7 +63,8 @@ export async function botStatsUpdate() {
                             "staffTracking.handledBots.prevWeek.remove":
                                 user.staffTracking.handledBots.thisWeek.remove,
                             "staffTracking.handledBots.prevWeek.modHidden":
-                                user.staffTracking.handledBots.thisWeek.modHidden
+                                user.staffTracking.handledBots.thisWeek
+                                    .modHidden
                         }
                     }
                 );

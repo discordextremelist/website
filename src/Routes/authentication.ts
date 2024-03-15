@@ -20,14 +20,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import passport from "passport";
 import { Strategy } from "passport-discord";
-import type { VerifyCallback } from "passport-oauth2"
-import refresh from "passport-oauth2-refresh"
+import type { VerifyCallback } from "passport-oauth2";
+import refresh from "passport-oauth2-refresh";
 import * as discord from "../Util/Services/discord.js";
-import type { DiscordAPIError, RESTPostOAuth2AccessTokenResult, RESTPutAPIGuildMemberJSONBody } from "discord.js";
-import { OAuth2Scopes, Routes } from "discord.js"
+import type {
+    DiscordAPIError,
+    RESTPostOAuth2AccessTokenResult,
+    RESTPutAPIGuildMemberJSONBody
+} from "discord.js";
+import { OAuth2Scopes, Routes } from "discord.js";
 import fetch from "node-fetch";
-import * as userCache from "../Util/Services/userCaching.js"
-import { DAPI } from "../Util/Services/discord.js"
+import * as userCache from "../Util/Services/userCaching.js";
+import { DAPI } from "../Util/Services/discord.js";
 
 import settings from "../../settings.json" assert { type: "json" };
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
@@ -41,12 +45,18 @@ const strategy = new Strategy(
         clientSecret: settings.secrets.discord.secret,
         callbackURL: settings.website.url + settings.website.callback
     },
-    (_accessToken: string, refreshToken: string, params: RESTPostOAuth2AccessTokenResult, profile: Strategy.Profile, done: VerifyCallback) => {
+    (
+        _accessToken: string,
+        refreshToken: string,
+        params: RESTPostOAuth2AccessTokenResult,
+        profile: Strategy.Profile,
+        done: VerifyCallback
+    ) => {
         process.nextTick(() => {
             return done(null, { ...profile, refreshToken, ...params });
-        })
+        });
     }
-)
+);
 
 passport.use(strategy);
 refresh.use(strategy);
@@ -57,12 +67,12 @@ passport.deserializeUser((user, done) => done(null, user));
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
-router.get("/login/joinGuild",
-    (req, res) => {
-        req.session.joinGuild = true;
-        res.redirect(`/auth/login/callback?scope=${OAuth2Scopes.Identify} ${OAuth2Scopes.GuildsJoin}`);
-    }
-);
+router.get("/login/joinGuild", (req, res) => {
+    req.session.joinGuild = true;
+    res.redirect(
+        `/auth/login/callback?scope=${OAuth2Scopes.Identify} ${OAuth2Scopes.GuildsJoin}`
+    );
+});
 
 router.get(
     "/login/callback",
@@ -78,7 +88,11 @@ router.get(
             .collection<delUser>("users")
             .findOne({ _id: req.user.id });
 
-        const { scopes } = await (await fetch(DAPI + Routes.oauth2CurrentAuthorization(), { headers: { authorization: `Bearer ${req.user.accessToken}` } })).json() as { scopes: OAuth2Scopes[] }
+        const { scopes } = (await (
+            await fetch(DAPI + Routes.oauth2CurrentAuthorization(), {
+                headers: { authorization: `Bearer ${req.user.accessToken}` }
+            })
+        ).json()) as { scopes: OAuth2Scopes[] };
 
         if (!user) {
             const handleDefault: delUser["staffTracking"]["handledBots"] = {
@@ -202,10 +216,11 @@ router.get(
                     hash: req.user.avatar,
                     url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
                 }
-            } as delUser
+            } as delUser;
 
-            if (user.rank.mod === true) importUser["staffTracking.lastLogin"] = Date.now(); 
-            
+            if (user.rank.mod === true)
+                importUser["staffTracking.lastLogin"] = Date.now();
+
             await global.db.collection("users").updateOne(
                 { _id: req.user.id },
                 {
@@ -214,15 +229,18 @@ router.get(
             );
         }
 
-        await userCache.updateUser(req.user.id)
+        await userCache.updateUser(req.user.id);
 
         if (req.session.joinGuild && req.session.joinGuild === true) {
             req.session.joinGuild = false;
-            await discord.bot.rest.put(Routes.guildMember(settings.guild.main, req.user.id), {
-                body: { access_token: req.user.accessToken } satisfies RESTPutAPIGuildMemberJSONBody
-            })
+            await discord.bot.rest
+                .put(Routes.guildMember(settings.guild.main, req.user.id), {
+                    body: {
+                        access_token: req.user.accessToken
+                    } satisfies RESTPutAPIGuildMemberJSONBody
+                })
                 .catch((error: DiscordAPIError) => {
-                    console.error(error)
+                    console.error(error);
                     if (error.code === 403 && !req.user.impersonator) {
                         return res.status(403).render("status", {
                             title: res.__("common.error"),
@@ -244,10 +262,11 @@ router.get("/logout", async (req, res, next) => {
         req.session.logoutJust = true;
         if (req.user.db.rank.admin) await tokenManager.tokenReset(req.user.id);
 
-            
-        req.logout(err => {
-            if (err) { return next(err); }
-            res.redirect(req.session.redirectTo || '/');
+        req.logout((err) => {
+            if (err) {
+                return next(err);
+            }
+            res.redirect(req.session.redirectTo || "/");
         });
     } else {
         req.user.id = req.user.impersonator;

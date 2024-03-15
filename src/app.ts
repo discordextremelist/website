@@ -45,7 +45,7 @@ import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap.js";
 
 import i18n from "i18n";
 import { MongoClient } from "mongodb";
-import Redis from "ioredis"
+import Redis from "ioredis";
 import { hostname } from "os";
 
 import settings from "../settings.json" assert { type: "json" };
@@ -66,9 +66,9 @@ const app = express();
 const __dirname = path.resolve();
 
 if (!settings.website.dev) {
-    Sentry.init({ 
-        dsn: settings.secrets.sentry, 
-        release: "website@" + process.env.npm_package_version, 
+    Sentry.init({
+        dsn: settings.secrets.sentry,
+        release: "website@" + process.env.npm_package_version,
         environment: "production",
         integrations: [
             new Sentry.Integrations.Express({
@@ -97,19 +97,15 @@ app.use(express.static(__dirname + "/assets/Public"));
 
 new Promise<void>((resolve, reject) => {
     console.time("Mongo TTL");
-    MongoClient.connect(
-        settings.secrets.mongo.uri,
-        {},
-        (error, mongo) => {
-            if (error) return reject(error);
-            global.db = mongo.db(settings.secrets.mongo.db);
-            console.log(
-                "Mongo: Connection established! Released deadlock as a part of startup..."
-            );
-            console.timeEnd("Mongo TTL");
-            resolve();
-        }
-    );
+    MongoClient.connect(settings.secrets.mongo.uri, {}, (error, mongo) => {
+        if (error) return reject(error);
+        global.db = mongo.db(settings.secrets.mongo.db);
+        console.log(
+            "Mongo: Connection established! Released deadlock as a part of startup..."
+        );
+        console.timeEnd("Mongo TTL");
+        resolve();
+    });
 })
     .then(async () => {
         for (const lib of libraries) {
@@ -174,24 +170,33 @@ new Promise<void>((resolve, reject) => {
         /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems. - Ice*/
         console.log("Attempting to acquire caching lock...");
         const lock = await global.redis.get("cache_lock");
-        if (lock && lock != hostname()) { // We have a lock, but it is not held for us.
-            console.log(`Lock is currently held by ${lock}. Waiting for caching to finish before proceeding...`);
+        if (lock && lock != hostname()) {
+            // We have a lock, but it is not held for us.
+            console.log(
+                `Lock is currently held by ${lock}. Waiting for caching to finish before proceeding...`
+            );
             const remain = await global.redis.ttl("cache_lock");
             let got, r;
             if (remain > 0) {
-                console.log(`Going to wait another ${remain} seconds before the lock is released, assuming cache is done if no event is emitted.`);
+                console.log(
+                    `Going to wait another ${remain} seconds before the lock is released, assuming cache is done if no event is emitted.`
+                );
                 setTimeout(() => {
                     if (!got) {
                         r();
-                        console.log("Cache TTL expired, assuming caching is over.");
+                        console.log(
+                            "Cache TTL expired, assuming caching is over."
+                        );
                     }
                 }, remain * 1000);
             }
             await new Promise<void>((res, _) => {
                 r = res;
-                s.subscribe("cache_lock", err => {
+                s.subscribe("cache_lock", (err) => {
                     if (err) {
-                        console.error(`Subscription failed: ${err}, exiting...`);
+                        console.error(
+                            `Subscription failed: ${err}, exiting...`
+                        );
                         process.exit();
                     }
                 });
@@ -199,7 +204,9 @@ new Promise<void>((resolve, reject) => {
                     if (chan === "cache_lock" && m === "ready") {
                         got = true;
                         res();
-                        console.log("Caching has completed, app will continue starting.");
+                        console.log(
+                            "Caching has completed, app will continue starting."
+                        );
                     }
                 });
             });
@@ -242,8 +249,7 @@ new Promise<void>((resolve, reject) => {
             await (async function discordBotUndefined() {
                 if (
                     typeof discord.bot.guilds !== "undefined" &&
-                    typeof discord.guilds.main !==
-                    "undefined"
+                    typeof discord.guilds.main !== "undefined"
                 ) {
                     await banned.updateBanlist();
                     await discord.uploadStatuses();
@@ -251,7 +257,7 @@ new Promise<void>((resolve, reject) => {
                     setTimeout(discordBotUndefined, 250);
                 }
             })();
-        })
+        });
         app.set("view engine", "ejs");
 
         app.use(
@@ -276,22 +282,22 @@ new Promise<void>((resolve, reject) => {
         });
 
         const sess = {
-            store: new RedisStore({client: global.redis}),
+            store: new RedisStore({ client: global.redis }),
             secret: settings.secrets.cookie,
             resave: false,
             saveUninitialized: false,
             cookie: {
                 secure: false,
                 httpOnly: true,
-                maxAge: 1000 * 60 * 60 * 3,
+                maxAge: 1000 * 60 * 60 * 3
             }
         };
 
-        global.env_prod = (app.get('env') === 'production');
+        global.env_prod = app.get("env") === "production";
 
         if (global.env_prod) {
-            app.set('trust proxy', 1) // trust first proxy
-            sess.cookie.secure = true // serve secure cookies
+            app.set("trust proxy", 1); // trust first proxy
+            sess.cookie.secure = true; // serve secure cookies
         }
 
         app.use(session(sess));
@@ -327,7 +333,7 @@ new Promise<void>((resolve, reject) => {
         );
 
         app.use("/auth", authRoute);
-        app.use("/autosync", autosyncRoute)
+        app.use("/autosync", autosyncRoute);
 
         // Locale handler.
         // Don't put anything below here that you don't want it's locale to be checked whatever (broken english kthx)
@@ -349,7 +355,10 @@ new Promise<void>((resolve, reject) => {
 
         app.use(variables);
 
-        if (!settings.website.dev) app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
+        if (!settings.website.dev)
+            app.use(
+                Sentry.Handlers.errorHandler() as express.ErrorRequestHandler
+            );
 
         app.use((req: Request, res: Response, next: () => void) => {
             // @ts-expect-error

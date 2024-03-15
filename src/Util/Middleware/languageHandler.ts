@@ -41,10 +41,7 @@ export default (req: Request, res: Response, next: () => void) => {
         ) {
             res.redirect(
                 307,
-                req.originalUrl.replace(
-                    req.params.lang,
-                    req.session.delLang
-                )
+                req.originalUrl.replace(req.params.lang, req.session.delLang)
             );
         } else {
             req.session.delLang = req.params.lang;

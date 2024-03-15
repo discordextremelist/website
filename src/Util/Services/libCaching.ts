@@ -28,7 +28,10 @@ export function hasLib(name: string) {
 export async function cacheLibs() {
     const libraries: library[] = [];
     // @ts-ignore
-    const dbLibs: library[] = await global.db.collection<library>("libraries").find().toArray();
+    const dbLibs: library[] = await global.db
+        .collection<library>("libraries")
+        .find()
+        .toArray();
     for (const lib of dbLibs) libraries.push(lib);
     global.libs = libraries;
 }

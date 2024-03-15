@@ -115,7 +115,11 @@ router.post("/", variables, async (req: Request, res: Response) => {
                 )
                 .filter(
                     ({ status }) =>
-                        !status.archived && status.approved && !status.siteBot && !status.hidden && !status.modHidden
+                        !status.archived &&
+                        status.approved &&
+                        !status.siteBot &&
+                        !status.hidden &&
+                        !status.modHidden
                 )
                 .map(async (bot) => {
                     return ejs.renderFile(renderPath + "/cards/botCard.ejs", {

@@ -35,12 +35,23 @@ export async function getFile(file: string) {
 
 export async function updateCache() {
     for (const item of legalMarkdown) {
-        const file = readFileSync(path.join(process.cwd() + `/assets/Markdown/${item}.md`));
+        const file = readFileSync(
+            path.join(process.cwd() + `/assets/Markdown/${item}.md`)
+        );
         await global.redis?.hmset(prefix, item, md.render(file.toString()));
     }
 
     for (const locale of settings.website.locales.all) {
-        const file = readFileSync(path.join(process.cwd() + `/node_modules/del-i18n/website/files/${locale}/guidelines.md`));
-        await global.redis?.hmset(prefix, "guidelines-" + locale, md.render(file.toString()));
-    }   
+        const file = readFileSync(
+            path.join(
+                process.cwd() +
+                    `/node_modules/del-i18n/website/files/${locale}/guidelines.md`
+            )
+        );
+        await global.redis?.hmset(
+            prefix,
+            "guidelines-" + locale,
+            md.render(file.toString())
+        );
+    }
 }

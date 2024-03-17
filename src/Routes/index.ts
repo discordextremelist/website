@@ -352,13 +352,14 @@ router.get("/privacy", variables, async (req: Request, res: Response) => {
     });
 });
 
-router.get("/guidelines", variables, (req: Request, res: Response) => {
+router.get("/guidelines", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.guidelines");
 
     res.render("templates/legal/guidelines", {
         title: res.__("common.nav.more.guidelines"),
         subtitle: res.__("common.nav.more.guidelines.subtitle"),
-        req
+        req,
+        guidelines: await legalCache.getFile("guidelines-" + req.locale)
     });
 });
 

@@ -21,6 +21,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import mdi from "markdown-it";
 
+import settings from "../../../settings.json" assert { type: "json" };
+
 const md = new mdi();
 
 const legalMarkdown = ["terms", "privacy"];
@@ -36,4 +38,9 @@ export async function updateCache() {
         const file = readFileSync(path.join(process.cwd() + `/assets/Markdown/${item}.md`));
         await global.redis?.hmset(prefix, item, md.render(file.toString()));
     }
+
+    for (const locale of settings.website.locales.all) {
+        const file = readFileSync(path.join(process.cwd() + `/node_modules/del-i18n/website/files/${locale}/guidelines.md`));
+        await global.redis?.hmset(prefix, "guidelines-" + locale, md.render(file.toString()));
+    }   
 }

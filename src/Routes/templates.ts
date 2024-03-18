@@ -318,6 +318,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             .findOne({ _id: req.params.id });
         if (!template)
             return res.status(404).render("status", {
+                        res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.template.404"),
@@ -403,6 +404,7 @@ router.get(
 
         if (!template)
             return res.status(404).render("status", {
+                        res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.template.404"),
@@ -738,6 +740,7 @@ router.get(
 
         if (!template)
             return res.status(404).render("status", {
+                        res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.template.404"),
@@ -796,6 +799,7 @@ router.get(
 
         if (!template)
             return res.status(404).render("status", {
+                        res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.template.404"),
@@ -829,6 +833,7 @@ router.post(
 
         if (!template)
             return res.status(404).render("status", {
+                        res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.template.404"),
@@ -914,6 +919,7 @@ router.get(
 
         if (!dbTemplate)
             return res.status(404).render("status", {
+                        res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.template.404"),

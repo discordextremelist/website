@@ -17,7 +17,7 @@
     </section>
     <div class="container">
         <div style="text-align: center;" class="section">
-            <% if (req.device.type !== "phone" && req.device.type !== "tablet") { %>
+            <% if (!res.locals.mobile) { %>
                 <% if (!req.user || req.user.db.preferences.enableGames === true) { %>
                     <div id="snake_game">
                         <p class="is-size-5 has-text-warning"><span><%= __("page.snake.highscore") %></span> <span id="highScore"><%= req.user.db.game.snakes.maxScore %></span></p>

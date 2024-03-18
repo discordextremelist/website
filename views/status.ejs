@@ -27,7 +27,7 @@
 </section>
 <div class="container">
 <div style="text-align: center;" class="section">
-    <% if (req.device.type !== "phone" && req.device.type !== "tablet") { %>
+    <% if (!res.locals.mobile) { %>
         <% if (!req.user || req.user.db.preferences.enableGames === true) { %>
             <div id="snake_game">
                 <% if (req.user) { %>

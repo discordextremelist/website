@@ -28,6 +28,7 @@ import * as userCache from "../Services/userCaching.js";
 import * as banList from "../Services/banned.js";
 import { URLSearchParams } from "url";
 import { themes } from "../../../@types/enums.js";
+import UAParser from "ua-parser-js";
 
 export const variables = async (
     req: Request,
@@ -124,14 +125,14 @@ export const variables = async (
 
     res.locals.discordServer = "https://discord.gg/WeCer3J";
 
-    if (req.device.type === "tablet" || req.device.type === "phone") {
+    let useragent = new UAParser(req.headers["user-agent"] || "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Safari/605.1.15");
+
+    if (useragent.getDevice().type === "tablet") {
         res.locals.mobile = true;
-        req.device.type === "phone"
-            ? (res.locals.phone = true)
-            : (res.locals.phone = false);
-        req.device.type === "tablet"
-            ? (res.locals.tablet = true)
-            : (res.locals.tablet = false);
+        res.locals.tablet = true;
+    } else if (useragent.getDevice().type === "mobile") {
+        res.locals.mobile = true;
+        res.locals.phone = true;
     } else {
         res.locals.mobile = false;
         res.locals.phone = false;

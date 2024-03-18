@@ -22,7 +22,6 @@ import { Request, Response } from "express";
 
 import * as Sentry from "@sentry/node";
 import path from "path";
-import * as device from "express-device";
 import session from "express-session";
 import RedisStore from "connect-redis";
 import createError from "http-errors";
@@ -275,8 +274,6 @@ new Promise<void>((resolve, reject) => {
         app.use(express.json());
         app.use(express.urlencoded({ extended: false }));
 
-        app.use(device.capture());
-
         i18n.configure({
             locales: settings.website.locales.all,
             directory: __dirname + "/node_modules/del-i18n/website",
@@ -378,6 +375,7 @@ new Promise<void>((resolve, reject) => {
 
                 if (err.message === "Not Found")
                     return res.status(404).render("status", {
+                        res,
                         title: res.__("common.error"),
                         subtitle: res.__("common.error.404"),
                         status: 404,

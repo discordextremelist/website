@@ -49,7 +49,6 @@ import Redis from "ioredis";
 import { hostname } from "os";
 
 import settings from "../settings.json" assert { type: "json" };
-import libraries from "../assets/libraries.json" assert { type: "json" };
 
 import authRoute from "./Routes/authentication.js";
 import autosyncRoute from "./Routes/autosync.js";
@@ -61,6 +60,7 @@ import serversRoute from "./Routes/servers.js";
 import usersRoute from "./Routes/users.js";
 import templatesRoute from "./Routes/templates.js";
 import staffRoute from "./Routes/staff.js";
+import setup from "./setup.js";
 
 const app = express();
 const __dirname = path.resolve();
@@ -108,43 +108,8 @@ new Promise<void>((resolve, reject) => {
     });
 })
     .then(async () => {
-        for (const lib of libraries) {
-            await global.db
-                .collection("libraries")
-                .updateOne(
-                    { _id: lib.name },
-                    {
-                        $set: {
-                            _id: lib.name,
-                            language: lib.language,
-                            links: {
-                                docs: lib.links.docs,
-                                repo: lib.links.repo
-                            }
-                        }
-                    },
-                    { upsert: true }
-                )
-                .then(() => true)
-                .catch(console.error);
-        }
-        if (
-            !(await global.db
-                .collection("webOptions")
-                .findOne({ _id: "announcement" }))
-        ) {
-            await global.db
-                .collection<announcement>("webOptions")
-                .insertOne({
-                    _id: "announcement",
-                    active: false,
-                    message: "",
-                    colour: "",
-                    foreground: ""
-                })
-                .then(() => true)
-                .catch(() => false);
-        }
+        await setup();
+
         let redisConfig: Redis.RedisOptions;
 
         if (settings.secrets.redis.sentinels.length > 0) {

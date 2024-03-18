@@ -30,6 +30,7 @@
     "http-errors": "~2.0.0",
     "i18n": "^0.14.2",
     "ioredis": "^4.28.5",
+    "lib-comparison": "github:advaith1/libs",
     "markdown-it": "^12.3.2",
     "moment": "^2.29.4",
     "mongodb": "^4.17.2",
@@ -75,7 +76,6 @@
     "start": "node --max-old-space-size=4096 dist/src/app",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",
     "css-compile": "sh ./scripts/css_build.sh",
-    "setup": "node scripts/setup",
     "snyk-protect": "snyk-protect",
     "prepare": "pnpm run snyk-protect"
   },

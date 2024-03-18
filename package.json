@@ -15,7 +15,6 @@
     "@sentry/node": "^7.103.0",
     "@snyk/protect": "^1.984.0",
     "@types/ua-parser-js": "^0.7.39",
-    "browser-detect": "^0.2.28",
     "chunk": "0.0.3",
     "color": "^4.2.1",
     "connect-redis": "^7.1.1",

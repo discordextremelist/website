@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Request, Response } from "express";
 
-import browser from "browser-detect";
 import color from "color";
 import settings from "../../../settings.json" assert { type: "json" };
 import pkg from "../../../package.json" assert { type: "json" };
@@ -49,8 +48,6 @@ export const variables = async (
         );
     }
 
-    req.browser = browser(req.headers["user-agent"]);
-    res.locals.browser = req.browser;
     res.locals.requestedAt = Date.now();
     res.locals.cssVersion = pkg.version;
     res.locals.gaID = settings.website.gaID;
@@ -137,20 +134,6 @@ export const variables = async (
         res.locals.mobile = false;
         res.locals.phone = false;
         res.locals.tablet = false;
-    }
-
-    if (
-        req.browser.name === "firefox" ||
-        (req.browser.name === "opera" &&
-            req.browser.os === "Android" &&
-            req.browser.versionNumber < 46) ||
-        (req.browser.name === "safari" &&
-            req.browser.versionNumber < 11.3 &&
-            req.get("User-Agent").toLowerCase().includes("kaios"))
-    ) {
-        res.locals.usePreload = false;
-    } else {
-        res.locals.usePreload = true;
     }
 
     if (req.headers.accept && req.headers.accept.includes("image/webp")) {

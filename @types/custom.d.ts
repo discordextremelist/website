@@ -17,7 +17,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { BrowserDetectInfo } from "browser-detect/dist/types/browser-detect.interface";
 import { Db } from "mongodb";
 import { Redis } from "ioredis";
 import strings from "del-i18n/website/en-NZ.json"
@@ -52,7 +51,6 @@ declare module "express-serve-static-core" {
         user?: authUser;
         locale: any;
         setLocale(language: string): any;
-        browser: BrowserDetectInfo;
         device: {
             type: string;
         };

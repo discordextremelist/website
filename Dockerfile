@@ -9,11 +9,13 @@ WORKDIR /opt/del
 # Run apt update & add needed packages
 RUN apk update && \
     apk add git ca-certificates
+# Enable pnpm
+RUN corepack enable pnpm
 # Install node modules
-RUN npm ci --production
+RUN CI=true pnpm i
 # Compile new dist file
 RUN npx tsc-transpile-only
 # Remove non-dist files
 RUN rm -rf src/ @types/ .env.production
 # Start the process within the container
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]

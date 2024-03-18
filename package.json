@@ -8,9 +8,9 @@
     "doc": "docs"
   },
   "engines": {
-    "npm": ">=8.5.0",
     "node": ">=18.15.0"
   },
+  "packageManager": "pnpm@8.15.5",
   "dependencies": {
     "@sentry/node": "^7.103.0",
     "@snyk/protect": "^1.984.0",
@@ -70,16 +70,14 @@
     "node-sass": "^9.0.0"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "compile": "rm -rf dist/ && tsc",
     "start": "node --max-old-space-size=4096 dist/src/app",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",
     "css-compile": "sh ./scripts/css_build.sh",
     "setup": "node scripts/setup",
     "snyk-protect": "snyk-protect",
-    "prepare": "npm run snyk-protect",
-    "dev": "nodemon --exec \"tsc && fuser -k 3001/tcp && node dist/src/app.js\" --ext ts",
-    "update": "npm run compile && pm2 restart DEL",
-    "updatel": "npm run compile && pm2 restart DEL && pm2 logs DEL"
+    "prepare": "pnpm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -95,5 +93,11 @@
   "snyk": true,
   "volta": {
     "node": "18.17.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "semver@<5.7.2": ">=5.7.2",
+      "tough-cookie@<4.1.3": ">=4.1.3"
+    }
   }
 }

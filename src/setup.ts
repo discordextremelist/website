@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { libs } from "../node_modules/lib-comparison/libs";
 
 async function setup () {
+    console.log("Setup: Updating libraries...")
     for (const lib of libs) {
         await global.db
             .collection("libraries")
@@ -43,6 +44,8 @@ async function setup () {
             .collection("webOptions")
             .findOne({ _id: "announcement" }))
     ) {
+        console.log("Setup: Adding webOptions...");
+
         await global.db
             .collection<announcement>("webOptions")
             .insertOne({
@@ -55,6 +58,8 @@ async function setup () {
             .then(() => true)
             .catch(() => false);
     }
+
+    console.log("Setup: Complete!")
 }
 
 export default setup;

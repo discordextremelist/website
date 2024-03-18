@@ -59,26 +59,7 @@ const router = express.Router();
 function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);
 
-    switch (type) {
-        case 0:
-        case 1:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-        case 8:
-        case 9:
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-        case 14:
-        case 15:
-            break;
-        default:
-            type = 0;
-    }
+    if (type > 15) type = 0;
 
     return type;
 }

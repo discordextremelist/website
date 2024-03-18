@@ -42,14 +42,7 @@ const router = express.Router();
 function templateType(bodyType: string): number {
     let type: templateReasons = parseInt(bodyType);
 
-    switch (type) {
-        case 0:
-        case 1:
-        case 3:
-            break;
-        default:
-            type = 0;
-    }
+    if (type > 3) type = 0;
 
     return type;
 }

@@ -56,16 +56,7 @@ let reviewRequired = false; // Needs to be outside of the functions or it cannot
 function serverType(bodyType: string): number {
     let type: serverReasons = parseInt(bodyType);
 
-    switch (type) {
-        case 0:
-        case 1:
-        case 3:
-        case 4:
-        case 5:
-            break;
-        default:
-            type = 0;
-    }
+    if (type > 5) type = 0;
 
     return type;
 }

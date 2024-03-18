@@ -807,7 +807,7 @@ router.get(
             .findOne({ _id: req.params.id });
         if (!botExists)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.404"),
                 status: 404,
@@ -869,7 +869,7 @@ router.post(
             .findOne({ _id: req.params.id });
         if (!botExists)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 subtitlte: res.__("common.error.bot.404"),
                 status: 404,
@@ -939,7 +939,7 @@ router.post(
             .findOne({ _id: req.params.id });
         if (!botExists)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.404"),
                 status: 404,
@@ -1101,7 +1101,7 @@ router.get(
             .findOne({ _id: req.params.id });
         if (!botExists)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.404"),
                 status: 404,
@@ -1814,7 +1814,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
                 .findOne({ vanityUrl: req.params.id });
             if (!bot)
                 return res.status(404).render("status", {
-                        res,
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -1965,7 +1965,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
-                        res,
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -2079,7 +2079,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
-                        res,
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -2193,7 +2193,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
-                        res,
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -2256,7 +2256,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
-                        res,
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -2325,7 +2325,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
-                        res,
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -2402,7 +2402,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
-                        res,
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -2465,7 +2465,7 @@ router.get(
             .findOne({ _id: req.params.id });
         if (!botExists)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.404"),
                 status: 404,
@@ -3168,7 +3168,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3304,7 +3304,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3380,7 +3380,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3432,7 +3432,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3478,7 +3478,7 @@ router.post(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3601,7 +3601,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3642,7 +3642,7 @@ router.post(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3766,7 +3766,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3807,7 +3807,7 @@ router.post(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3933,7 +3933,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3974,7 +3974,7 @@ router.post(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -4088,7 +4088,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),

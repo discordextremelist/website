@@ -122,7 +122,10 @@ export const variables = async (
 
     res.locals.discordServer = "https://discord.gg/WeCer3J";
 
-    let useragent = new UAParser(req.headers["user-agent"] || "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Safari/605.1.15");
+    let useragent = new UAParser(
+        req.headers["user-agent"] ||
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Safari/605.1.15"
+    );
 
     if (useragent.getDevice().type === "tablet") {
         res.locals.mobile = true;

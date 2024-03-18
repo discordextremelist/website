@@ -267,7 +267,7 @@ router.get(
 
         if (!user)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -313,7 +313,7 @@ router.post(
 
         if (!user)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -388,7 +388,7 @@ router.get(
 
         if (!user)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -458,7 +458,7 @@ router.get(
 
         if (!user)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -532,7 +532,7 @@ router.post(
 
         if (!user)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -608,7 +608,7 @@ router.get(
 
         if (!user)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -659,7 +659,7 @@ router.post(
 
         if (!user)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -728,7 +728,7 @@ router.get(
 
         if (!user)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -779,7 +779,7 @@ router.post(
 
         if (!user)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),

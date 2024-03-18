@@ -58,7 +58,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             .findOne({ _id: req.params.id });
         if (!delUser)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -144,7 +144,7 @@ router.get(
 
         if (!targetUser)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -197,7 +197,7 @@ router.post(
 
         if (!targetUser)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -376,7 +376,7 @@ router.get(
             .findOne({ _id: req.params.id });
         if (!userProfile)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -427,7 +427,7 @@ router.post(
             .findOne({ _id: req.params.id });
         if (!userProfile)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -529,7 +529,7 @@ router.get(
             .findOne({ _id: req.params.id });
         if (!userProfile)
             return res.status(404).render("status", {
-                        res,
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),

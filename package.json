@@ -77,7 +77,8 @@
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",
     "css-compile": "sh ./scripts/css_build.sh",
     "snyk-protect": "snyk-protect",
-    "prepare": "pnpm run snyk-protect"
+    "prepare": "pnpm run snyk-protect",
+    "pretty": "npx prettier --write src/"
   },
   "repository": {
     "type": "git",

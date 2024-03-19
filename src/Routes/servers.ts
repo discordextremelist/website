@@ -66,8 +66,7 @@ function tagHandler(
         ParamsDictionary,
         any,
         any,
-        ParsedQs,
-        Record<string, any>
+        ParsedQs
     >,
     server: false | delServer
 ) {

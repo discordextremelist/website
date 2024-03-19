@@ -29,8 +29,7 @@ const legalMarkdown = ["terms", "privacy"];
 const prefix = "legalMarkdown";
 
 export async function getFile(file: string) {
-    const content = await global.redis?.hget(prefix, file);
-    return content;
+    return await global.redis?.hget(prefix, file);
 }
 
 export async function updateCache() {

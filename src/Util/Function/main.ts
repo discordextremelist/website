@@ -21,13 +21,13 @@ import * as botCache from "../Services/botCaching.js";
 import * as userCache from "../Services/userCaching.js";
 import { URL } from "url";
 import { APIUser, OAuth2Scopes } from "discord.js";
-export const escapeFormatting = (text: string) => {
-    const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
-    const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, "\\$1");
-    return escaped;
-};
 // this seems stupid but apparently it should work
 import { createRequire } from "module";
+
+export const escapeFormatting = (text: string) => {
+    const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
+    return unescaped.replace(/(\*|_|`|~|\\)/g, "\\$1");
+};
 const require = createRequire(import.meta.url);
 
 const regions = {

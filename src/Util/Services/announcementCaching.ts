@@ -83,11 +83,9 @@ export async function updateAnnouncement(announcement, req: Request) {
 }
 
 export async function updateCache() {
-    const announcement = await global.db
+    global.announcement = await global.db
         .collection<announcement>("webOptions")
         .findOne({ _id: "announcement" });
-
-    global.announcement = announcement;
     return;
 }
 

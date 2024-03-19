@@ -161,7 +161,7 @@ router.get("/bots", async (req, res) => {
             if (app.bot_public === false) throw "Bot is not public";
         } catch (e) {
             if (!botExists.status.archived)
-                discord.channels.alerts.send(
+                await discord.channels.alerts.send(
                     `${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`
                 );
         }
@@ -235,7 +235,7 @@ router.get("/servers", async (req, res) => {
             embed.setTitle("Reason");
             embed.setDescription(req.body.reason);
 
-            discord.channels.alerts.send({
+            await discord.channels.alerts.send({
                 content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
                     server.name
                 )}** \`(${server._id})\``,
@@ -350,7 +350,7 @@ router.get("/templates", async (req, res) => {
             embed.setTitle("Reason");
             embed.setDescription(req.body.reason);
 
-            discord.channels.alerts.send({
+            await discord.channels.alerts.send({
                 content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(
                     dbTemplate.name
                 )}** \`(${id})\``,

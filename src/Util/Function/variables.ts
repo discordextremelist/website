@@ -185,7 +185,7 @@ export const variables = async (
             req.user.db.rank.mod === true &&
             req.url !== "/profile/game/snakes"
         ) {
-            global.db.collection("users").updateOne(
+            await global.db.collection("users").updateOne(
                 { _id: req.user.id },
                 {
                     $set: {

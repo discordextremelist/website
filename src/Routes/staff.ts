@@ -893,7 +893,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        announcementCache.updateAnnouncement(
+        await announcementCache.updateAnnouncement(
             {
                 active: false,
                 message: "",

@@ -36,8 +36,8 @@ if (settings.secrets.datadog)
 
 // Let's not query the database of users, and bots, and then make changes to it every 5 seconds, that would be a good thing not to do
 setInterval(async () => {
-    postWebMetric("user");
-    postWebMetric("bot_unapproved");
+    await postWebMetric("user");
+    await postWebMetric("bot_unapproved");
     await postTodaysGrowth();
 }, 8.568e7); // 23.8h, to account for eventual time drift if the site is online for a while (which is the goal lol) - AJ
 

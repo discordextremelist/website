@@ -186,7 +186,7 @@ router.post(
                     }
                 } satisfies delTemplate);
 
-                discord.channels.logs.send(
+                await discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -588,7 +588,7 @@ router.post(
                     }
                 );
 
-                discord.channels.logs.send(
+                await discord.channels.logs.send(
                     `${settings.emoji.edit} **${functions.escapeFormatting(
                         req.user.db.fullUsername
                     )}** \`(${
@@ -750,7 +750,7 @@ router.get(
                 req
             });
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
             `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
@@ -866,7 +866,7 @@ router.post(
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        discord.channels.logs.send({
+        await discord.channels.logs.send({
             content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${

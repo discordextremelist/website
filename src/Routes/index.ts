@@ -28,7 +28,7 @@ import * as templateCache from "../Util/Services/templateCaching.js";
 import * as legalCache from "../Util/Services/legalCaching.js";
 import * as discord from "../Util/Services/discord.js";
 import { variables } from "../Util/Function/variables.js";
-import type { Guild, GuildMember, GuildMemberManager } from "discord.js";
+import type { GuildMember, GuildMemberManager } from "discord.js";
 
 const router = express.Router();
 

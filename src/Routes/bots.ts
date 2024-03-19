@@ -1900,7 +1900,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             botStatus !== PresenceUpdateStatus.Offline ||
             ((!bot.scopes || bot.scopes.bot) &&
                 (!("userFlags" in bot) ||
-                    !(bot.userFlags & UserFlags.BotHTTPInteractions))),
+                    !(bot.userFlags && UserFlags.BotHTTPInteractions))),
         longDesc: clean,
         botOwner: botOwner,
         botStatus: botStatus,

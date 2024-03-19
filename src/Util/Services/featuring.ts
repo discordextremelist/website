@@ -58,7 +58,7 @@ export async function updateFeaturedBots() {
                         statuses[_id] !== PresenceUpdateStatus.Offline) ||
                         !scopes?.bot ||
                         userFlags === undefined ||
-                        userFlags & UserFlags.BotHTTPInteractions)
+                        userFlags && UserFlags.BotHTTPInteractions)
             )
         )
         .slice(0, 6);

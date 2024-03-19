@@ -25,8 +25,8 @@ import { APIUser, OAuth2Scopes } from "discord.js";
 import { createRequire } from "module";
 
 export const escapeFormatting = (text: string) => {
-    const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, "$1");
-    return unescaped.replace(/(\*|_|`|~|\\)/g, "\\$1");
+    const unescaped = text.replace(/\\([*_`~\\])/g, "$1");
+    return unescaped.replace(/([*_`~\\])/g, "\\$1");
 };
 const require = createRequire(import.meta.url);
 

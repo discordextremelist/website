@@ -15,6 +15,8 @@ RUN corepack enable pnpm
 RUN CI=true pnpm i
 # Compile new dist file
 RUN npx tsc-transpile-only
+# Compile library module so it is readable by src
+RUN pnpm run lib-compile
 # Remove non-dist files
 RUN rm -rf src/ @types/ .env.production
 # Start the process within the container

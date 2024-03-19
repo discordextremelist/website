@@ -72,10 +72,11 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "compile": "rm -rf dist/ && tsc",
+    "compile": "rm -rf dist/ && tsc && pnpm run lib-compile",
     "start": "node --max-old-space-size=4096 dist/src/app",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",
     "css-compile": "sh ./scripts/css_build.sh",
+    "lib-compile": "mkdir ./dist/node_modules/ && cp -R ./node_modules/lib-comparison/ ./dist/node_modules/lib-comparison/ && tsc ./dist/node_modules/lib-comparison/libs.ts",
     "snyk-protect": "snyk-protect",
     "prepare": "pnpm run snyk-protect",
     "pretty": "npx prettier --write src/"

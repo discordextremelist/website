@@ -17,18 +17,27 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { libs } from "lib-comparison/libs";
+import { libs } from "../node_modules/lib-comparison/libs.js";
+
+function cleanLibName(lib: string) {
+    if (lib.includes(" 🍴🪦")) return lib.replace(" 🍴🪦", "");
+    if (lib.includes(" 🍴")) return lib.replace(" 🍴", "");
+    if (lib.includes(" 🪦")) return lib.replace(" 🪦", "");
+    if (lib.includes("🪦")) return lib.replace("🪦", "");
+    return lib;
+}
 
 async function setup() {
     console.log("Setup: Updating libraries...");
+    await global.db.collection("libraries").drop();
     for (const lib of libs) {
         await global.db
             .collection("libraries")
             .updateOne(
-                { _id: lib.name },
+                { _id: cleanLibName(lib.name) },
                 {
                     $set: {
-                        _id: lib.name,
+                        _id: cleanLibName(lib.name),
                         language: lib.language,
                         link: lib.url
                     }

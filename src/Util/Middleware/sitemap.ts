@@ -69,7 +69,7 @@ export const sitemapGenerator = async (
 
     res.send(
         `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
     ${url("", lang)}
     ${url("/bots", lang)}
     ${url("/servers", lang)}
@@ -109,7 +109,7 @@ export const sitemapIndex = async (
 
     res.send(
         `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<sitemapindex xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
     ${settings.website.locales.all
         .map(
             (l) =>

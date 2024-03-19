@@ -748,17 +748,9 @@ router.post(
                 break;
         }
 
-        if (req.body.noGames === "on") {
-            gamePreferences = false;
-        } else {
-            gamePreferences = true;
-        }
+        gamePreferences = req.body.noGames !== "on";
 
-        if (req.body.experiments === "on") {
-            experiments = true;
-        } else {
-            experiments = false;
-        }
+        experiments = req.body.experiments === "on";
 
         const foreground = functions.getForeground(req.body.iconColour);
 

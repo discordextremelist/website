@@ -25,3 +25,21 @@ jobs:
         uses: icrawl/action-tsc@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  node20:
+    name: node v20 - tsc
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: install node v20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: dependencies
+        run: npm ci
+      - name: settings
+        run: cp settings.example.json settings.json
+      - name: tsc
+        uses: icrawl/action-tsc@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

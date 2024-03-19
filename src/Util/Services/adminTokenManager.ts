@@ -126,7 +126,7 @@ export async function verifyToken(id: string, token: string) {
 
     if (!adminToken) return false;
 
-    let pass = false;
+    let pass: boolean;
     adminToken.token === token && adminToken._id === id
         ? (pass = true)
         : (pass = false);

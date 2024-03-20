@@ -258,7 +258,7 @@ router.get(
 );
 
 router.get("/logout", async (req, res, next) => {
-    if (!req.user.impersonator) {
+    if (req.user && !req.user.impersonator) {
         req.session.logoutJust = true;
         if (req.user.db.rank.admin) await tokenManager.tokenReset(req.user.id);
 

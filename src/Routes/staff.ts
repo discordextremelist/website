@@ -81,7 +81,7 @@ router.get(
         const bots: delBot[] = await global.db
             .collection<delBot>("bots")
             .find()
-            .sort({ "date.submitted": -1 })
+            .sort({ "date.submitted": 1 })
             .allowDiskUse()
             .toArray();
 
@@ -109,7 +109,7 @@ router.get(
         const servers: delServer[] = await global.db
             .collection<delServer>("servers")
             .find()
-            .sort({ "date.submitted": -1 })
+            .sort({ "date.submitted": 1 })
             .allowDiskUse()
             .toArray();
 
@@ -134,7 +134,7 @@ router.get(
         const bots: delBot[] = await global.db
             .collection<delBot>("bots")
             .find()
-            .sort({ "date.submitted": -1 })
+            .sort({ "date.submitted": 1 })
             .allowDiskUse()
             .toArray();
 

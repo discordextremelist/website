@@ -1128,8 +1128,17 @@ router.get(
             allowedTags: htmlRef.standard.tags,
             allowedAttributes: htmlRef.standard.attributes,
             allowVulnerableTags: true,
-            disallowedTagsMode: "escape"
-        }).replace("<iframe", '<iframe sandbox=""');
+            disallowedTagsMode: "escape",
+            transformTags: {
+                iframe: function (tagName, attribs) {
+                    attribs.sandbox = "allow-forms";
+                    return {
+                        tagName: 'iframe',
+                        attribs: attribs
+                    };
+                }
+            }
+        });
 
         res.render("templates/bots/edit", {
             title: res.__("page.bots.edit.title"),
@@ -1855,8 +1864,17 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     const clean = sanitizeHtml(dirty, {
         allowedTags: htmlRef.standard.tags,
         allowedAttributes: htmlRef.standard.attributes,
-        allowVulnerableTags: true
-    }).replace("<iframe", '<iframe sandbox=""');
+        allowVulnerableTags: true,
+        transformTags: {
+            iframe: function (tagName, attribs) {
+                attribs.sandbox = "allow-forms";
+                return {
+                    tagName: 'iframe',
+                    attribs: attribs
+                };
+            }
+        }
+    });
 
     function sen(name: string) {
         return sanitizeHtml(name, {

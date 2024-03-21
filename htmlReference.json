@@ -132,7 +132,12 @@
                 "usemap",
                 "value",
                 "width"
-            ]
+            ],
+            "iframe": [{
+                "name": "sandbox",
+                "multiple": true,
+                "values": ["allow-forms"]
+            }]
         }
     }
 }

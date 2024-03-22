@@ -1133,7 +1133,7 @@ router.get(
                 iframe: function (tagName, attribs) {
                     attribs.sandbox = "allow-forms";
                     return {
-                        tagName: 'iframe',
+                        tagName: "iframe",
                         attribs: attribs
                     };
                 }
@@ -1869,7 +1869,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             iframe: function (tagName, attribs) {
                 attribs.sandbox = "allow-forms";
                 return {
-                    tagName: 'iframe',
+                    tagName: "iframe",
                     attribs: attribs
                 };
             }

@@ -62,12 +62,7 @@ function serverType(bodyType: string): number {
 }
 
 function tagHandler(
-    req: express.Request<
-        ParamsDictionary,
-        any,
-        any,
-        ParsedQs
-    >,
+    req: express.Request<ParamsDictionary, any, any, ParsedQs>,
     server: false | delServer
 ) {
     let tags: string[] = [];

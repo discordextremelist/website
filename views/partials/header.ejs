@@ -182,7 +182,7 @@
     <meta name="msapplication-config" content="/browserconfig.xml">
 
     <% if (htmlDir === "rtl") { %><%- include("./rtl.ejs") %><% } %>
-    <script async src="https://arc.io/widget.min.js#1mwUgGa4"></script>
+    <script async src="https://arc.io/widget.min.js#nV9jzuzJ"></script>
     
     <script type="application/ld+json">
         {
@@ -196,16 +196,5 @@
             }
         }
     </script>
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaID %>"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', '<%= gaID %>');
-    </script>
-
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "306c58a96e52404fb8a26e51b27ae1af"}'></script>
 </head>

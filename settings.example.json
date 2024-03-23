@@ -51,7 +51,6 @@
         "lgbtSiteURL": "https://discordextremelist.gay",
         "dev": true,
         "callback": "/auth/login/callback",
-        "gaID": "UA-X-X",
         "arcID": "X",
         "bannedVanityURLs": []
     },

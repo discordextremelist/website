@@ -596,15 +596,28 @@
             </div>
             <br />
             <% if (req.user) { %>
-                <% if (req.user.db.rank.mod === true) { %>
-                    <% if (bot.modNotes && bot.status.approved === false) { %>
+                <% if (req.user.db.rank.mod === true) && bot.status.approved === false { %>
+                    <% if (bot.modNotes) { %>
                         <div class="container">
-                            <article class="message is-default">
+                            <article class="message is-warning">
                                 <div class="message-header">
                                     <p style="color: <%= foreground %>;"><%= __("page.bots.modNotes.view") %></p>
                                 </div>
                                 <div class="message-body" style="background-color: black; color <%= foreground %>;">
                                     <%= bot.modNotes %>
+                                </div>
+                            </article>
+                        </div>
+                        <br />
+                    <% } %>
+                    <% if (bot.lastDenyReason) { %>
+                        <div class="container">
+                            <article class="message is-danger">
+                                <div class="message-header">
+                                    <p style="color: <%= foreground %>;"><%= __("page.bots.lastDenyReason.view") %></p>
+                                </div>
+                                <div class="message-body" style="background-color: black; color <%= foreground %>;">
+                                    <%= bot.lastDenyReason %>
                                 </div>
                             </article>
                         </div>

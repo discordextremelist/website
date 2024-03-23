@@ -3528,7 +3528,8 @@ router.post(
             {
                 $set: {
                     vanityUrl: "",
-                    "status.archived": true
+                    lastDenyReason: req.body.reason,
+                    "status.archived": true,
                 }
             }
         );

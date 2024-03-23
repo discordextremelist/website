@@ -202,6 +202,7 @@ declare global {
         longDesc: string;
         modNotes: string;
         reviewNotes: reviewNote[];
+        lastDenyReason: string;
         editors: string[];
         commands: APIApplicationCommand[];
         userFlags?: UserFlags;

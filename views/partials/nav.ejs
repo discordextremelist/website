@@ -349,7 +349,7 @@
             <% if (req.user) { %>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <div class="navbar-link" tabindex="0">
-                        <img width="28" height="28" style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.hash ? req.user.db.avatar.url : `${baseURL}/img/defaultavatar` %>.webo?size=64" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar.webp&quot;" %> type="image/webp" draggable="false">
+                        <img width="28" height="28" style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.hash ? req.user.db.avatar.url : `${baseURL}/img/defaultavatar` %>.webp?size=64" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar.webp&quot;" %> type="image/webp" draggable="false">
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
                     </div>
 

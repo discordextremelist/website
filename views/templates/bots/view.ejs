@@ -596,7 +596,7 @@
             </div>
             <br />
             <% if (req.user) { %>
-                <% if (req.user.db.rank.mod === true) && bot.status.approved === false { %>
+                <% if (req.user.db.rank.mod === true && bot.status.approved === false) { %>
                     <% if (bot.modNotes) { %>
                         <div class="container">
                             <article class="message is-warning">

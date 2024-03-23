@@ -86,7 +86,7 @@ We may disclose information to any staff member of Discord Extreme List who reas
 We may share the following user data with the following third parties:
 
 1. Google Analytics, all automatically collected data; and
-2. Cloudflare, all automatically collected data as a result of your use of their proxy to access the Site; and
+2. Cloudflare, all automatically collected data as a result of your use of their proxy to access the Site and analytics purposes; and
 3. Sentry, such as session information, your browser and operating system information, and other automatically collected data; and
 4. [Arc.io](https://arc.io/about), any information required to facilitate the service.
 

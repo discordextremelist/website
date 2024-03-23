@@ -48,7 +48,7 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-2">
-                    <img class="image" <% if (showStatus) { %>title="<%= __(`page.bots.status.${botStatus}`) %>"<% } %> style="margin: auto; width: 128px; border-radius: 50%; <% if (showStatus) { %>animation: <%= botStatus %> 2s infinite !important;<% } %>" src="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=512" alt="<%= __('common.img.avatar', bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');">
+                    <img class="image" <% if (showStatus) { %>title="<%= __(`page.bots.status.${botStatus}`) %>"<% } %> style="margin: auto; width: 128px; border-radius: 50%; <% if (showStatus) { %>animation: <%= botStatus %> 2s infinite !important;<% } %>" src="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.webp?size=512" alt="<%= __('common.img.avatar', bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.webp';console.log('<%= __("common.img.loadFail") %>');">
                 </div>
             <div class="column is-10<% if (mobile) { %> has-text-centered<% } %>">
                     <h1 class="is-size-1">

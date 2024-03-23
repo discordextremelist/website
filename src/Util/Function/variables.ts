@@ -138,12 +138,6 @@ export const variables = async (
         res.locals.tablet = false;
     }
 
-    if (req.headers.accept && req.headers.accept.includes("image/webp")) {
-        res.locals.imageFormat = "webp";
-    } else {
-        res.locals.imageFormat = "png";
-    }
-
     let theme = req.user?.db?.preferences?.theme;
 
     if (req.query.theme) theme = themes[req.query.theme as string];

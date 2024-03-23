@@ -88,7 +88,6 @@ router.post("/", variables, async (req: Request, res: Response) => {
             ? await templateCache.getAllTemplates()
             : []
     ]);
-    const imageFormat = res.locals.imageFormat;
     let results = chunk(
         await Promise.all([
             ...users
@@ -102,7 +101,6 @@ router.post("/", variables, async (req: Request, res: Response) => {
                         req,
                         linkPrefix: res.locals.linkPrefix,
                         user,
-                        imageFormat,
                         search: true,
                         baseURL: settings.website.url,
                         __: res.locals.__
@@ -126,7 +124,6 @@ router.post("/", variables, async (req: Request, res: Response) => {
                         req,
                         linkPrefix: res.locals.linkPrefix,
                         bot,
-                        imageFormat,
                         queue: false,
                         verificationApp: false,
                         search: true,
@@ -147,7 +144,6 @@ router.post("/", variables, async (req: Request, res: Response) => {
                             req,
                             linkPrefix: res.locals.linkPrefix,
                             server,
-                            imageFormat,
                             search: true,
                             baseURL: settings.website.url,
                             lgbtWebURL: settings.website.lgbtSiteURL,
@@ -168,7 +164,6 @@ router.post("/", variables, async (req: Request, res: Response) => {
                             req,
                             linkPrefix: res.locals.linkPrefix,
                             template,
-                            imageFormat,
                             search: true,
                             baseURL: settings.website.url,
                             profile: false,

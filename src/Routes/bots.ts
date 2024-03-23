@@ -114,7 +114,7 @@ router.post(
 
         const botExists = await global.db
             .collection("bots")
-            .countDocuments({ _id: req.body.id }, { limit: 1 });
+            .findOne({ _id: req.body.id });
 
         if (botExists)
             return res.status(409).json({
@@ -577,6 +577,7 @@ router.post(
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
                     modNotes: req.body.modNotes,
+                    lastDenyReason: botExists.lastDenyReason || '',
                     reviewNotes: [],
                     editors,
                     commands,
@@ -667,6 +668,7 @@ router.post(
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             modNotes: req.body.modNotes,
+                            lastDenyReason: botExists.lastDenyReason || '',
                             reviewNotes: [],
                             editors,
                             commands,

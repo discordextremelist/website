@@ -1,5 +1,5 @@
 <!doctype HTML>
-<html lang="<%= req.locale || defaultLang %>" dir="<%= htmlDir %>" class="theme-<%= preferredTheme %>">
+<html lang="<%= req.locale || defaultLang %>" dir="<%= htmlDir %>" data-theme="<%= (preferredTheme == "light") ? 'light' : 'dark'%>" data-deltheme="<%= preferredTheme %>">
 <head>
     <meta charset="utf-8">
     
@@ -7,7 +7,7 @@
 
     <link href="/img/logo.png" type="image/png" rel="shortcut-icon">
     <link href="/img/logo.png" type="image/png" rel="icon">
-    <link href="/css/theme/<%= preferredTheme %>/standard.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet">
+    <link href="/css/themes/<%= preferredTheme %>.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" async>
     <% if (pageType.bot === true) { 
         let color = "#BA2EFF"
         if (req.user) color = req.user.db.preferences.defaultColour
@@ -46,8 +46,8 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="search" title="Search" href="<%= linkPrefix %>/search">
     <link rel="preconnect" href="https://cdn.discordapp.com">
-    <link rel="preconnect" href="https://twemoji.maxcdn.com">
-
+    <link rel="preconnect" href="https://unpkg.com">
+    
     <%- include("./locales.ejs") %>
     
     <meta name="viewport" content="width=device-width, initial-scale=1">

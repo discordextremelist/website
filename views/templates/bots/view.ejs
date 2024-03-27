@@ -39,7 +39,7 @@
         foreground = functions.getForeground(bot.theme.colour);
     }
 %>
-<link href="/css/theme/<%= preferredTheme %>/listing.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
+<link href="/css/listing.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
 <style>.message{background-color:#f5f5f5;border-radius:4px;font-size:1rem}.message strong{color:currentColor}.message a:not(.button):not(.tag):not(.dropdown-item){color:currentColor;text-decoration:underline}.message.is-small{font-size:.75rem}.message.is-medium{font-size:1.25rem}.message.is-large{font-size:1.5rem}.message.is-default{background-color:<%= defaultColour %>}.message.is-default .message-header{background-color:<%= defaultColour %>;color:<%= foreground %>}.message.is-default .message-body{border-color:#fff;color:<%= defaultColour %>}</style>
 <%- include("../../partials/isDefaultCSS/codeTag.ejs") %>
 <section class="hero is-primary" <% if (bot.theme && bot.theme.banner) { %>style="background-image: url(<%= bot.theme.banner %>); background-size: cover; background-position: center"<% } %>>
@@ -171,7 +171,7 @@
                             %>
                         <% } %>
                         <% if (bot.owner.id === req.user.id) { %>
-                            <div style="padding-right: .5em;" class="dropdown is-hoverable">
+                            <div class="dropdown is-hoverable">
                                 <div class="dropdown-trigger">
                                     <%-
                                         include("../../partials/button.ejs", {
@@ -689,10 +689,10 @@
     <div class="modal-background" id="vanityModalBg"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title has-text-danger"><%= __("page.bots.setVanity") %></p>
+            <p class="modal-card-title has-text-link"><%= __("page.bots.setVanity") %></p>
         </header>
         <form action="<%= linkPrefix %>/bots/<%= bot._id %>/setvanity" method="POST">
-            <section class="modal-card-body has-text-danger">
+            <section class="modal-card-body has-text-link">
                 <%= __("page.bots.setVanity.warning") %>
                 <div>
                     <br />
@@ -730,10 +730,10 @@
     <div class="modal-background" id="transferOwnerModalBg"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title has-text-danger"><%= __("page.bots.transferOwner") %></p>
+            <p class="modal-card-title has-text-pink"><%= __("page.bots.transferOwner") %></p>
         </header>
         <form action="<%= linkPrefix %>/bots/<%= bot._id %>/transfer-owner" method="POST">
-            <section class="modal-card-body has-text-danger">
+            <section class="modal-card-body has-text-pink">
                 <%= __("page.bots.transferOwner.warning") %>
                 <div>
                     <br />
@@ -766,6 +766,7 @@
         </form>
     </div>
     <script>document.querySelector("a#transferOwner").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".transferOwner");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal3").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+    <script>const modals=[".transferOwner",".setVanity",".deleteModal"];document.addEventListener("keydown",(e)=>{if(e.key=="Escape")for(const unsModal of modals){const modal=document.querySelector(unsModal);modal.classList.remove("is-active");modal.classList.remove("is-clipped")}})</script>
 </div>
 
 <% if (req.user && bot.owner.id === req.user.id || req.user && req.user.db.rank.mod === true) { %>

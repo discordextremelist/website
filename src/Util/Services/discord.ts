@@ -72,7 +72,7 @@ bot.on("ready", async () => {
             `Skipping discord caching. The instance which holds the lock is: ${lock}`
         );
     } else {
-        console.time("Bot cache");
+        console.time("Cache: Bot cache");
         botCache.getAllBots().then(async (bots) => {
             const botsToFetch = [];
             bots.forEach(async (bot) => {
@@ -81,10 +81,10 @@ bot.on("ready", async () => {
             });
             guilds.main.members
                 .fetch({ user: botsToFetch })
-                .then((x) => console.log(`Retrieved ${x.size} members!`))
+                .then((x) => console.log(`Discord: Retrieved ${x.size} members!`))
                 .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
         });
-        console.timeEnd("Bot cache");
+        console.timeEnd("Cache: Bot cache");
         await global.redis.del("fetch_lock");
     }
 });

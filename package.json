@@ -15,6 +15,7 @@
     "@sentry/node": "^7.103.0",
     "@snyk/protect": "^1.984.0",
     "@types/ua-parser-js": "^0.7.39",
+    "bulma": "^1.0.0",
     "chunk": "0.0.3",
     "color": "^4.2.1",
     "connect-redis": "^7.1.1",
@@ -62,18 +63,18 @@
     "@types/passport-discord": "^0.1.5",
     "@types/passport-oauth2-refresh": "^1.1.1",
     "@types/sanitize-html": "^2.11.0",
-    "bulma": "^0.9.4",
     "bulma-extensions": "^6.2.7",
     "ejs-lint": "^1.2.1",
-    "node-sass": "^9.0.0"
+    "node-sass": "^7.0.1",
+    "sass": "^1.72.0"
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "compile": "rm -rf dist/ && tsc && pnpm run lib-compile",
     "start": "node --max-old-space-size=4096 dist/src/app",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",
-    "css-compile": "sh ./scripts/css_build.sh",
     "lib-compile": "mkdir ./dist/node_modules/ && cp -R ./node_modules/lib-comparison/ ./dist/node_modules/lib-comparison/ && tsc ./dist/node_modules/lib-comparison/libs.ts",
+    "css-compile": "sass --no-source-map assets/Sass/themes/black.scss:assets/Public/css/themes/black.css assets/Sass/themes/dark.scss:assets/Public/css/themes/dark.css assets/Sass/themes/light.scss:assets/Public/css/themes/light.css assets/Sass/components/listing.scss:assets/Public/css/listing.css --style=compressed",
     "snyk-protect": "snyk-protect",
     "prepare": "pnpm run snyk-protect",
     "pretty": "npx prettier --write src/"

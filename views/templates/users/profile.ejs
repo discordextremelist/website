@@ -262,17 +262,17 @@
     </div>
 </section>
 <div class="container">
-    <div class="section has-text-centered">
+    <div class="section">
             <% if (userProfileIsBanned && req.user && req.user.db.rank.mod === false || userProfileIsBanned && !req.user) { %>
-                    <h2 class="is-size-4"><%= __("common.unavailable") %></h2>
+                    <h2 class="is-size-4 has-text-centered"><%= __("common.unavailable") %></h2>
             <% } else if (botsOwner.length === 0 && botsEditor.length === 0 && serversOwner.length === 0 && templatesOwner.length === 0) { %>
-                <h2 class="is-size-4"><%= __("page.users.listings.nil") %></h2>
+                <h2 class="is-size-4 has-text-centered"><%= __("page.users.listings.nil") %></h2>
             <% } else { %>
                 <% if (botsOwner.length !== 0 || botsEditor.length !== 0) { %>
-                    <h2 class="is-size-3"><%= __("common.bots") %></h2>
+                    <h2 class="is-size-3 has-text-centered"><%= __("common.bots") %></h2>
                     <% if (botsOwner.length !== 0) { %>
                         <br>
-                        <h3 class="is-size-4"><%= __("common.owner") %></h3>
+                        <h3 class="is-size-4 has-text-centered"><%= __("common.owner") %></h3>
                         <br>
                         <div class="columns is-multiline is-centered">
                             <%- botsOwner.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, archived: false, verificationApp: false, profile: true })).join("") %>
@@ -280,7 +280,7 @@
                     <% } %>
                     <% if (botsEditor.length !== 0) { %>
                         <br>
-                        <h3 class="is-size-4"><%= __("common.editor") %></h3>
+                        <h3 class="is-size-4 has-text-centered"><%= __("common.editor") %></h3>
                         <br>
                         <div class="columns is-multiline is-centered">
                             <%- botsEditor.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, archived: false, verificationApp: false, profile: true })).join("") %>
@@ -289,7 +289,7 @@
                 <% } %>
                 <br>
                 <% if (serversOwner.length !== 0) { %>
-                    <h2 class="is-size-3"><%= __("common.servers") %></h2>
+                    <h2 class="is-size-3 has-text-centered"><%= __("common.servers") %></h2>
                     <br>
                     <div class="columns is-multiline is-centered">
                         <%- serversOwner.map(server => include("../../partials/cards/serverCard.ejs", { server, search: false, profile: true, queue: false })).join("") %>
@@ -297,7 +297,7 @@
                 <% } %>
                 <br>
                 <% if (templatesOwner.length !== 0) { %>
-                    <h2 class="is-size-3"><%= __("common.templates") %></h2>
+                    <h2 class="is-size-3 has-text-centered"><%= __("common.templates") %></h2>
                     <br>
                     <div class="columns is-multiline is-centered">
                         <%- templatesOwner.map(template => include("../../partials/cards/templateCard.ejs", { template, search: false, profile: true })).join("") %>
@@ -307,7 +307,7 @@
             <% if (user && (user.id === userProfile._id || user.db.rank.mod)) { %>
                 <% if (hiddenBots.length > 0) { %>
                     <br>
-                    <h2 id="archived-bots" class="is-size-4"><%= __("page.users.listings.hiddenBots") %></h2>
+                    <h2 id="hidden-bots" class="is-size-4 has-text-centered"><%= __("page.users.listings.hiddenBots") %></h2>
                     <br>
                     <div class="columns is-multiline is-centered">
                         <%- hiddenBots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, hidden: true, verificationApp: false, profile: false })).join("") %>
@@ -315,7 +315,7 @@
                 <% } %>
                 <% if (archivedBots.length > 0) { %>
                     <br>
-                    <h2 id="archived-bots" class="is-size-4"><%= __("page.users.listings.archivedBots") %></h2>
+                    <h2 id="archived-bots" class="is-size-4 has-text-centered"><%= __("page.users.listings.archivedBots") %></h2>
                     <br>
                     <div class="columns is-multiline is-centered">
                         <%- archivedBots.map(bot => include("../../partials/cards/botCard.ejs", { bot, search: false, queue: false, inviteQueue: false, archived: true, verificationApp: false, profile: false })).join("") %>

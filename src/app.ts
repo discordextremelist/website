@@ -133,24 +133,24 @@ new Promise<void>((resolve, reject) => {
         const s = new Redis(redisConfig);
 
         /*There is no point in flushing the DEL redis database, it's persistent as is, and will lead to problems. - Ice*/
-        console.log("Attempting to acquire caching lock...");
+        console.log("Cache: Attempting to acquire caching lock...");
         const lock = await global.redis.get("cache_lock");
         if (lock && lock != hostname()) {
             // We have a lock, but it is not held for us.
             console.log(
-                `Lock is currently held by ${lock}. Waiting for caching to finish before proceeding...`
+                `Cache: Lock is currently held by ${lock}. Waiting for caching to finish before proceeding...`
             );
             const remain = await global.redis.ttl("cache_lock");
             let got, r;
             if (remain > 0) {
                 console.log(
-                    `Going to wait another ${remain} seconds before the lock is released, assuming cache is done if no event is emitted.`
+                    `Cache: Going to wait another ${remain} seconds before the lock is released, assuming cache is done if no event is emitted.`
                 );
                 setTimeout(() => {
                     if (!got) {
                         r();
                         console.log(
-                            "Cache TTL expired, assuming caching is over."
+                            "Cache: Cache TTL expired, assuming caching is over."
                         );
                     }
                 }, remain * 1000);
@@ -160,7 +160,7 @@ new Promise<void>((resolve, reject) => {
                 s.subscribe("cache_lock", (err) => {
                     if (err) {
                         console.error(
-                            `Subscription failed: ${err}, exiting...`
+                            `Cache: Subscription failed: ${err}, exiting...`
                         );
                         process.exit();
                     }
@@ -170,16 +170,16 @@ new Promise<void>((resolve, reject) => {
                         got = true;
                         res();
                         console.log(
-                            "Caching has completed, app will continue starting."
+                            "Cache: Caching has completed, app will continue starting."
                         );
                     }
                 });
             });
         } else {
-            console.log("No one has the cache lock currently, acquiring it.");
+            console.log("Cache: No one has the cache lock currently, acquiring it.");
             // 300 seconds is a good rule of thumb, it is expected that DEL has another instance running.
             await global.redis.setex("fetch_lock", 300, hostname());
-            console.log("Also acquired the discord lock!");
+            console.log("Discord: Also acquired the discord lock!");
             await global.redis.setex("cache_lock", 300, hostname());
             console.time("Redis");
             await libCache.cacheLibs();
@@ -189,12 +189,12 @@ new Promise<void>((resolve, reject) => {
             await tokenManager.tokenResetAll();
             await legalCache.updateCache();
             console.timeEnd("Redis");
-            console.time("Bot stats update");
+            console.time("Discord: Bot stats update");
             await botStatsUpdate();
-            console.timeEnd("Bot stats update");
+            console.timeEnd("Discord: Bot stats update");
             await global.redis.publish("cache_lock", "ready");
             await global.redis.del("cache_lock");
-            console.log("Dropped cache lock!");
+            console.log("Cache: Dropped cache lock!");
         }
 
         await discord.bot.login(settings.secrets.discord.token);

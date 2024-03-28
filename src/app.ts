@@ -81,6 +81,7 @@ if (!settings.website.dev) {
     });
 
     app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
+    app.use(Sentry.Handlers.tracingHandler());
 }
 
 app.use(
@@ -250,7 +251,11 @@ new Promise<void>((resolve, reject) => {
 
         global.env_prod = app.get("env") === "production";
 
-        const sess = {
+        if (global.env_prod) {
+            app.set("trust proxy", 1); // trust first proxy
+        }
+
+        app.use(session({
             store: new RedisStore({ client: global.redis }),
             secret: settings.secrets.cookie,
             resave: false,
@@ -260,14 +265,7 @@ new Promise<void>((resolve, reject) => {
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 3
             }
-        };
-
-        if (global.env_prod) {
-            app.set("trust proxy", 1); // trust first proxy
-            sess.cookie.secure = true; // serve secure cookies
-        }
-
-        app.use(session(sess));
+        }));
 
         app.use(passport.initialize());
         app.use(passport.session());

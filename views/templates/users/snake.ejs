@@ -148,7 +148,7 @@
                                         document.getElementById("score").innerHTML = `${snake.maxCells - 4}`;
 
                                         xhr.open("POST", url, true);
-                                        xhr.setRequestHeader("Content-Type", "application/json");
+                                        xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
                                         xhr.onreadystatechange = function() {
                                             if (xhr.readyState === 4 && xhr.status === 200) {
                                                 const json = JSON.parse(xhr.responseText);

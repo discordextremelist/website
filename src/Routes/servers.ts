@@ -159,7 +159,7 @@ router.post(
             let fetchChannel = true;
 
             if (
-                isNaN(req.body.previewChannel) ||
+                Number.isNaN(req.body.previewChannel) ||
                 req.body.previewChannel.includes(" ")
             ) {
                 error = true;
@@ -211,6 +211,13 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.channelNotFound"
+                        )
+                    );
                 });
         }
 
@@ -431,7 +438,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/:id/exists", permission.auth, async (req, res) => {
-    res.send(String(await global.redis?.hexists("servers", req.params.id)));
+    res.type('text').send(String(await global.redis?.hexists("servers", req.params.id)));
 });
 
 router.get(
@@ -579,7 +586,7 @@ router.post(
             let fetchChannel = true;
 
             if (
-                isNaN(req.body.previewChannel) ||
+                Number.isNaN(req.body.previewChannel) ||
                 req.body.previewChannel.includes(" ")
             ) {
                 error = true;
@@ -631,6 +638,13 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.channelNotFound"
+                        )
+                    );
                 });
         }
 

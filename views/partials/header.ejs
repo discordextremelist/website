@@ -88,7 +88,7 @@
         <meta itemprop="image" content="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.png">
     
         <meta name="author" content="<%= botOwner ? botOwner.fullUsername : "Unknown" %>">
-        <meta name="copyright" content="Carolina, John Burke, Advaith Jagathesan">
+        <meta name="copyright" content="Carolina Mitchell, John Burke, Advaith Jagathesan">
     <% } else if (pageType.server || pageType.template) { %>
         <%
             let listing;
@@ -132,7 +132,7 @@
         <meta itemprop="image" content="<%= listing.icon.url || `${baseURL}/img/defaultavatar` %>.png">
     
         <meta name="author" content="<%= listingOwner ? listingOwner.fullUsername : 'Unknown' %>">
-        <meta name="copyright" content="Carolina, John Burke, Advaith Jagathesan">
+        <meta name="copyright" content="Carolina Mitchell, John Burke, Advaith Jagathesan">
     <% } else { %>
         <meta name="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list, giving Discord bots and Discord servers of all sizes an extreme chance!" %>">
 
@@ -150,8 +150,8 @@
         <meta itemprop="name" content="<%= title || "Page" %> | Discord Extreme List">
         <meta itemprop="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list, giving Discord bots and Discord servers of all sizes an extreme chance!" %>">
         
-        <meta name="author" content="Carolina, John Burke, Advaith Jagathesan">
-        <meta name="copyright" content="Carolina, John Burke, Advaith Jagathesan">
+        <meta name="author" content="Carolina Mitchell, John Burke, Advaith Jagathesan">
+        <meta name="copyright" content="Carolina Mitchell, John Burke, Advaith Jagathesan">
 
         <% if (pageType.user) { %>
             <meta property="twitter:image" content="<%= userProfile.avatar.url || `${baseURL}/img/defaultavatar` %>.png">

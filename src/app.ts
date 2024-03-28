@@ -27,6 +27,7 @@ import RedisStore from "connect-redis";
 import createError from "http-errors";
 import passport from "passport";
 import logger from "morgan";
+import helmet from "helmet";
 
 import * as libCache from "./Util/Services/libCaching.js";
 import * as announcementCache from "./Util/Services/announcementCaching.js";
@@ -64,6 +65,8 @@ import setup from "./setup.js";
 
 const app = express();
 const __dirname = path.resolve();
+
+app.use(helmet());
 
 if (!settings.website.dev) {
     Sentry.init({
@@ -245,19 +248,19 @@ new Promise<void>((resolve, reject) => {
             defaultLocale: settings.website.locales.default
         });
 
+        global.env_prod = app.get("env") === "production";
+
         const sess = {
             store: new RedisStore({ client: global.redis }),
             secret: settings.secrets.cookie,
             resave: false,
             saveUninitialized: false,
             cookie: {
-                secure: false,
+                secure: global.env_prod,
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 3
             }
         };
-
-        global.env_prod = app.get("env") === "production";
 
         if (global.env_prod) {
             app.set("trust proxy", 1); // trust first proxy

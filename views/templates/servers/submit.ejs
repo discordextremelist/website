@@ -307,7 +307,7 @@
                 removeEventListener("beforeunload", warn);
                 window.location = `<%= baseURL %>/<%= linkPrefix %>/servers/${data.id}`;
             }
-        });
+        }).catch((e) => { console.error(e); });
     }
     MonacoEnvironment = {getWorkerUrl: () => '/js/monaco.js'}
 </script>

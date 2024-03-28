@@ -211,7 +211,7 @@
                         removeEventListener("beforeunload", warn);
                         window.location = "<%= linkPrefix %>/templates/<%= template._id %>";
                     }
-                });
+                }).catch((e) => { console.error(e); });
             }
             MonacoEnvironment = {getWorkerUrl: () => '/js/monaco.js'}
         </script>

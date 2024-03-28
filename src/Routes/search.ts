@@ -30,6 +30,7 @@ import * as userCache from "../Util/Services/userCaching.js";
 import * as serverCache from "../Util/Services/serverCaching.js";
 import * as templateCache from "../Util/Services/templateCaching.js";
 import { variables } from "../Util/Function/variables.js";
+import { ParsedQs } from "qs";
 
 const renderPath = path.join(process.cwd(), "views/partials");
 
@@ -38,7 +39,7 @@ const router = express.Router();
 router.get("/", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.search");
 
-    let search;
+    let search: string | string[] | ParsedQs | ParsedQs[];
     req.query.q ? (search = req.query.q) : (search = "");
 
     return res.render("templates/search", {
@@ -51,11 +52,11 @@ router.get("/", variables, (req: Request, res: Response) => {
 
 router.post("/", variables, async (req: Request, res: Response) => {
     let { query, only }: { query: string; only: string[] } = req.body;
-    if (!query)
+    if (!query || typeof(query) !== "string" || typeof(only) !== "object")
         return res.status(400).json({
             error: true,
             status: 400,
-            message: "Missing body parameter 'query'"
+            message: "Missing body parameter"
         });
     const originalQuery = query;
     query = query.toLowerCase();

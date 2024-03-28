@@ -133,7 +133,7 @@ router.post(
             errors.push(res.__("common.error.listing.arr.IDRequired"));
         }
 
-        if (isNaN(req.body.id) || req.body.id.includes(" ")) {
+        if (Number.isNaN(req.body.id) || req.body.id.includes(" ")) {
             error = true;
             errors.push(res.__("common.error.bot.arr.invalidID"));
         }
@@ -144,7 +144,7 @@ router.post(
         }
 
         if (req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+            if (Number.isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
@@ -244,7 +244,7 @@ router.post(
             let fetchServer = true;
 
             if (
-                isNaN(req.body.widgetServer) ||
+                Number.isNaN(req.body.widgetServer) ||
                 req.body.widgetServer.includes(" ")
             ) {
                 error = true;
@@ -297,12 +297,19 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.guildNotFound"
+                        )
+                    );
                 });
 
             let fetchChannel = true;
 
             if (
-                isNaN(req.body.widgetChannel) ||
+                Number.isNaN(req.body.widgetChannel) ||
                 req.body.widgetChannel.includes(" ")
             ) {
                 error = true;
@@ -355,6 +362,13 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.channelNotFound"
+                        )
+                    );
                 });
         }
 
@@ -1170,7 +1184,7 @@ router.post(
         }
 
         if (req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+            if (Number.isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
@@ -1309,7 +1323,7 @@ router.post(
             let fetchServer = true;
 
             if (
-                isNaN(req.body.widgetServer) ||
+                Number.isNaN(req.body.widgetServer) ||
                 req.body.widgetServer.includes(" ")
             ) {
                 error = true;
@@ -1362,12 +1376,19 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.guildNotFound"
+                        )
+                    );
                 });
 
             let fetchChannel = true;
 
             if (
-                isNaN(req.body.widgetChannel) ||
+                Number.isNaN(req.body.widgetChannel) ||
                 req.body.widgetChannel.includes(" ")
             ) {
                 error = true;
@@ -1420,6 +1441,13 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.channelNotFound"
+                        )
+                    );
                 });
         }
 
@@ -1937,7 +1965,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/:id/exists", permission.auth, async (req, res) => {
-    res.send(String(await global.redis?.hexists("bots", req.params.id)));
+    res.type("text").send(String(await global.redis?.hexists("bots", req.params.id)));
 });
 
 router.get(
@@ -2548,7 +2576,7 @@ router.post(
         }
 
         if (req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+            if (Number.isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
@@ -2687,7 +2715,7 @@ router.post(
             let fetchServer = true;
 
             if (
-                isNaN(req.body.widgetServer) ||
+                Number.isNaN(req.body.widgetServer) ||
                 req.body.widgetServer.includes(" ")
             ) {
                 error = true;
@@ -2740,12 +2768,19 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.guildNotFound"
+                        )
+                    );
                 });
 
             let fetchChannel = true;
 
             if (
-                isNaN(req.body.widgetChannel) ||
+                Number.isNaN(req.body.widgetChannel) ||
                 req.body.widgetChannel.includes(" ")
             ) {
                 error = true;

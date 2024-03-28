@@ -122,5 +122,6 @@ dump.rdb
 # Sitemap
 src/Assets/Public/sitemap.xml
 
-# Yarn is disgusting
+# We only use pnpm
 yarn.lock
+package-lock.json

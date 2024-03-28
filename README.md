@@ -8,7 +8,6 @@
 [![Discord](https://img.shields.io/discord/568567800910839811?color=5865f2&logo=discord&logoColor=white)](https://discord.gg/WeCer3J)
 [![Code style](https://img.shields.io/badge/code%20style-prettier-ff69b4?logo=prettier&logoColor=white)](https://prettier.io)
 [![Crowdin](https://badges.crowdin.net/delly/localized.svg)](https://translate.discordextremelist.xyz/project/delly)
-[![DeepScan grade](https://deepscan.io/api/teams/8370/projects/12889/branches/206397/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=8370&pid=12889&bid=206397)
 
 Licensing information viewable in the [LICENSE](https://github.com/discordextremelist/website/blob/main/LICENSE) file.
 
@@ -22,7 +21,7 @@ Note that we do not support running public clones of the project: you are allowe
 
 ### Node.js
 
-DEL requires [Node.js](https://nodejs.org) v18.15.0+.
+DEL requires [Node.js](https://nodejs.org) v18.15.0+. We recommend using the latest v20 LTS version.
 
 ### MongoDB
 

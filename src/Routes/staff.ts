@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import type { APIUser, Snowflake } from "discord.js";
-import { Routes } from "discord.js"
+import { Routes } from "discord.js";
 import settings from "../../settings.json" assert { type: "json" };
 import * as permission from "../Util/Function/permissions.js";
 import * as functions from "../Util/Function/main.js";
@@ -81,7 +81,7 @@ router.get(
         const bots: delBot[] = await global.db
             .collection<delBot>("bots")
             .find()
-            .sort({ "date.submitted": -1 })
+            .sort({ "date.submitted": 1 })
             .allowDiskUse()
             .toArray();
 
@@ -109,7 +109,7 @@ router.get(
         const servers: delServer[] = await global.db
             .collection<delServer>("servers")
             .find()
-            .sort({ "date.submitted": -1 })
+            .sort({ "date.submitted": 1 })
             .allowDiskUse()
             .toArray();
 
@@ -134,7 +134,7 @@ router.get(
         const bots: delBot[] = await global.db
             .collection<delBot>("bots")
             .find()
-            .sort({ "date.submitted": -1 })
+            .sort({ "date.submitted": 1 })
             .allowDiskUse()
             .toArray();
 
@@ -152,7 +152,11 @@ router.get(
             req,
             bots: bots.filter(
                 ({ inServer, status, scopes }) =>
-                    !inServer && !status.archived && status.approved && !status.siteBot && (!scopes || scopes.bot)
+                    !inServer &&
+                    !status.archived &&
+                    status.approved &&
+                    !status.siteBot &&
+                    (!scopes || scopes.bot)
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff
@@ -165,14 +169,14 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const logs: auditLog[] = ((await global.db
-            .collection<auditLog>("audit")
-            .find()
-            .sort({ date: -1 })
-            .allowDiskUse()
-            .toArray()) as auditLog[]).filter(
-                ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
-            );
+        const logs: auditLog[] = (
+            (await global.db
+                .collection<auditLog>("audit")
+                .find()
+                .sort({ date: -1 })
+                .allowDiskUse()
+                .toArray()) as auditLog[]
+        ).filter(({ type }) => type !== "GAME_HIGHSCORE_UPDATE");
 
         if (!req.query.page) req.query.page = "1";
 
@@ -195,7 +199,7 @@ router.get(
             logsPgArr: iteratedLogs,
             page: req.query.page,
             pages: Math.ceil(logs.length / 15),
-            functions,
+            functions
         });
     }
 );
@@ -263,6 +267,7 @@ router.get(
 
         if (!user)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -308,6 +313,7 @@ router.post(
 
         if (!user)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -382,6 +388,7 @@ router.get(
 
         if (!user)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -451,6 +458,7 @@ router.get(
 
         if (!user)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -524,6 +532,7 @@ router.post(
 
         if (!user)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -599,6 +608,7 @@ router.get(
 
         if (!user)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -649,6 +659,7 @@ router.post(
 
         if (!user)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -717,6 +728,7 @@ router.get(
 
         if (!user)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -767,6 +779,7 @@ router.post(
 
         if (!user)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -880,7 +893,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        announcementCache.updateAnnouncement(
+        await announcementCache.updateAnnouncement(
             {
                 active: false,
                 message: "",
@@ -915,30 +928,36 @@ router.get(
     async (req: Request, res: Response) => {
         if (req.params.id === req.user.id) return res.redirect("/staff");
 
-        if (!req.query.token) return res.json({});
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            req.query.token as string
-        );
-        if (tokenCheck === false) return res.json({});
+        if (global.env_prod) {
+            if (!req.query.token) return res.json({});
+            const tokenCheck = await tokenManager.verifyToken(
+                req.user.id,
+                req.query.token as string
+            );
+            if (tokenCheck === false) return res.json({});
+        }
 
         let user: delUser | undefined = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
-        await discord.bot.rest.get(Routes.user(req.params.id))
+        await discord.bot.rest
+            .get(Routes.user(req.params.id))
             .then(async (discordUser: APIUser) => {
                 if (!user) {
                     await global.db.collection<any>("users").insertOne({
-                        auth: { accessToken: "", expires: 0, refreshToken: "", scopes: [] }, flags: undefined,
+                        auth: {
+                            accessToken: "",
+                            expires: 0,
+                            refreshToken: "",
+                            scopes: []
+                        },
+                        flags: undefined,
                         _id: req.params.id,
                         token: "",
                         name: discordUser.username,
                         discrim: discordUser.discriminator,
-                        fullUsername:
-                            discordUser.username +
-                            "#" +
-                            discordUser.discriminator,
+                        fullUsername: functions.grabFullUser(discordUser),
                         locale: "",
                         avatar: {
                             hash: discordUser.avatar,
@@ -949,7 +968,7 @@ router.get(
                             defaultColour: "#BA2EFF",
                             defaultForegroundColour: "#ffffff",
                             enableGames: true,
-                            experiments: false,
+                            experiments: false
                         },
                         profile: {
                             bio: "",
@@ -1071,9 +1090,7 @@ router.get(
                                 name: discordUser.username,
                                 discrim: discordUser.discriminator,
                                 fullUsername:
-                                    discordUser.username +
-                                    "#" +
-                                    discordUser.discriminator,
+                                    functions.grabFullUser(discordUser),
                                 avatar: {
                                     hash: discordUser.avatar,
                                     url: `https://cdn.discordapp.com/avatars/${req.params.id}/${discordUser.avatar}`

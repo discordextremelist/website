@@ -28,15 +28,15 @@
 
 <%- include("../../partials/nav.ejs") %>
 <style>.tag:not(body).is-default{background-color:<%= defaultColour %>;color:<%= foreground %>}</style>
-<style>h1{font-size:48px}h2{font-size:40px}h3{font-size:32px}h4{font-size:24px}h5{font-size:20px}h6{font-size:16px}strong{color:#fff}code{background-color:#1f1f1f}pre{color:#ff3860;background-color:#1f1f1f}table th{color:#d2d2d2}a:hover{color:#1c5abd}.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{color:#fff;font-weight:inherit}table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all;-webkit-overflow-scrolling:touch}blockquote{background-color:transparent!important;}</style>
 <%- include("../../partials/isDefaultCSS/codeTag.ejs") %>
+<link href="/css/listing.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
 <section class="hero is-primary">
     <div class="hero-body">
         <br>
         <div class="container">
             <div class="columns">
                 <div class="column is-2">
-                    <img class="image" title="<%= server.name %>'s Icon'" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= server.icon.hash ? server.icon.url : `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=512" alt="<%= server.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
+                    <img class="image" title="<%= server.name %>'s Icon'" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= server.icon.hash ? server.icon.url : `${baseURL}/img/defaultavatar` %>.webp?size=512" alt="<%= server.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.webp';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
@@ -104,10 +104,6 @@
                                     </div>
                                     <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                         <div class="dropdown-content">
-                                            <div class="dropdown-item">
-                                                <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
-                                            </div>
-                                            <hr class="dropdown-divider">
                                             <a class="dropdown-item has-text-success" href="<%= linkPrefix %>/servers/<%= server._id %>/sync">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-sync-alt"></i></span>
                                                 <span><%= __("common.sync") %></span>

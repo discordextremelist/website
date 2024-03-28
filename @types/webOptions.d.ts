@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -24,13 +24,6 @@ interface announcement {
     message: string;
     colour: string;
     foreground: string;
-}
-
-interface ddosMode {
-    _id?: string;
-    id?: string;
-    active: boolean;
-    requests: number;
 }
 
 interface botStats {

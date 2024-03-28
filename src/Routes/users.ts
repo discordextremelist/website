@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -58,6 +58,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             .findOne({ _id: req.params.id });
         if (!delUser)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -78,7 +79,10 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     for (const bot of bots) {
         if (bot.status.archived === true && bot.owner.id === req.params.id) {
             archivedBots.push(bot);
-        } else if ((bot.status.hidden || bot.status.modHidden) && bot.owner.id === req.params.id) {
+        } else if (
+            (bot.status.hidden || bot.status.modHidden) &&
+            bot.owner.id === req.params.id
+        ) {
             hiddenBots.push(bot);
         } else if (bot.owner.id === req.params.id) {
             botsOwner.push(bot);
@@ -109,7 +113,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             templatesOwner.push(template);
         }
     }
-    
+
     res.locals.pageType.user = true;
 
     res.render("templates/users/profile", {
@@ -140,6 +144,7 @@ router.get(
 
         if (!targetUser)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -169,7 +174,10 @@ router.get(
 
         res.render("templates/users/staffActions/modifyRank", {
             title: res.__("page.users.modifyRank"),
-            subtitle: res.__("page.users.modifyRank.subtitle", targetUser.fullUsername),
+            subtitle: res.__(
+                "page.users.modifyRank.subtitle",
+                targetUser.fullUsername
+            ),
             user: req.user,
             req: req,
             targetUser: targetUser
@@ -189,6 +197,7 @@ router.post(
 
         if (!targetUser)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -353,10 +362,6 @@ router.get(
     }
 );
 
-router.get("/profile/:id", (req: Request, res: Response) => {
-    res.redirect("/" + req.params.id);
-});
-
 router.get(
     "/profile/:id/edit",
     variables,
@@ -371,6 +376,7 @@ router.get(
             .findOne({ _id: req.params.id });
         if (!userProfile)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -421,6 +427,7 @@ router.post(
             .findOne({ _id: req.params.id });
         if (!userProfile)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
@@ -522,13 +529,15 @@ router.get(
             .findOne({ _id: req.params.id });
         if (!userProfile)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
                 req: req
             });
 
-            await discord.bot.rest.get(Routes.user(req.params.id))
+        await discord.bot.rest
+            .get(Routes.user(req.params.id))
             .then(async (user: APIUser) => {
                 await global.db.collection("users").updateOne(
                     { _id: req.params.id },
@@ -739,17 +748,9 @@ router.post(
                 break;
         }
 
-        if (req.body.noGames === "on") {
-            gamePreferences = false;
-        } else {
-            gamePreferences = true;
-        }
+        gamePreferences = req.body.noGames !== "on";
 
-        if (req.body.experiments === "on") {
-            experiments = true;
-        } else {
-            experiments = false;
-        }
+        experiments = req.body.experiments === "on";
 
         const foreground = functions.getForeground(req.body.iconColour);
 

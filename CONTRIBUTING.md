@@ -7,7 +7,6 @@
 ![GitHub Licence](https://img.shields.io/github/license/discordextremelist/website?logo=gnu&label=licence)
 [![Code style](https://img.shields.io/badge/code%20style-prettier-ff69b4?logo=prettier&logoColor=white)](https://prettier.io)
 [![Crowdin](https://badges.crowdin.net/delly/localized.svg)](https://translate.discordextremelist.xyz/project/delly)
-[![DeepScan grade](https://deepscan.io/api/teams/8370/projects/12889/branches/206397/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=8370&pid=12889&bid=206397)
 
 ## Issues
 * **Security vulnerabilities:** Please do not open up an issue to report a security vulnerability with DEL. Have a look at our security policy located in [SECURITY.md](https://github.com/discordextremelist/website/blob/main/.github/SECURITY.md)

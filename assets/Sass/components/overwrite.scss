@@ -1,0 +1,25 @@
+@use "./colours.scss" as cc;
+
+html[data-theme=dark] {
+    --del-text: #fff;
+    --del-primary-invert: #fff;
+    --del-primary-invert-l: 100%;
+    --del-navbar-dropdown-item-color-l: 100%;
+    --delovr-navbar-colour: #fff;
+}
+
+html[data-theme=light] {
+    --delovr-navbar-colour: #000;
+}
+
+html[data-deltheme=black] {
+    --delovr-primary-colour: cc.$primary-black;
+}
+
+html[data-deltheme=dark] {
+    --delovr-primary-colour: cc.$primary-dark;
+}
+
+html[data-deltheme=light] {
+    --delovr-primary-colour: cc.$primary-light;
+}

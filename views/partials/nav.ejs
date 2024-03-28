@@ -25,11 +25,11 @@
         <%- announcement.message %>
     </div>
 <% } %>
-<nav class="navbar" role="navigation" aria-label="main navigation">
+<nav class="navbar is-primary has-text-white" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <% if (title !== __("common.home")) { %>
             <a class="navbar-item" href="<%= linkPrefix %>" aria-hidden="true">
-                <img width="28" height="28" style="width: auto !important; height: 48px !important;" alt="<% __("common.nav.logoAlt") %>" src="/img/logo-64px.<%= imageFormat %>" draggable="false">
+                <img width="28" height="28" style="width: auto !important; height: 48px !important;" alt="<% __("common.nav.logoAlt") %>" src="/img/logo-64px.webp" draggable="false">
             </a>
         <% } %>
 
@@ -135,12 +135,6 @@
                             <i class="fad fa-user-secret" aria-hidden="true"></i>
                         </span>
                         <span><%= __("common.nav.more.privacy") %></span>
-                    </a>
-                    <a class="navbar-item" href="<%= linkPrefix %>/cookies" tabindex="0">
-                        <span class="icon iconalign">
-                            <i class="fad fa-cookie" aria-hidden="true"></i>
-                        </span>
-                        <span><%= __("common.nav.more.cookies") %></span>
                     </a>
                     <a class="navbar-item" href="<%= linkPrefix %>/guidelines" tabindex="0">
                         <span class="icon iconalign">
@@ -355,7 +349,7 @@
             <% if (req.user) { %>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <div class="navbar-link" tabindex="0">
-                        <img width="28" height="28" style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.hash ? req.user.db.avatar.url : `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=64" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar." + imageFormat + "&quot;" %> type="image/<%= imageFormat %>" draggable="false">
+                        <img width="28" height="28" style="margin-right: 6px; border-radius: 50%; vertical-align: middle;" src="<%= req.user.db.avatar.hash ? req.user.db.avatar.url : `${baseURL}/img/defaultavatar` %>.webp?size=64" alt="<%= req.user.db.fullUsername %>'s Discord Profile Picture" onerror=<%= "this.onerror=null,this.src=&quot;/img/defaultavatar.webp&quot;" %> type="image/webp" draggable="false">
                         <span style="vertical-align: middle;">&nbsp; <%= req.user.db.fullUsername %> </span>
                     </div>
 

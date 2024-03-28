@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -69,7 +69,7 @@ export const sitemapGenerator = async (
 
     res.send(
         `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"> 
     ${url("", lang)}
     ${url("/bots", lang)}
     ${url("/servers", lang)}
@@ -84,7 +84,13 @@ export const sitemapGenerator = async (
     ${url("/guidelines", lang)}
     ${url("/auth/login", lang)}
     ${bots
-        .filter((b) => b.status.approved && !b.status.archived && !b.status.hidden && !b.status.modHidden)
+        .filter(
+            (b) =>
+                b.status.approved &&
+                !b.status.archived &&
+                !b.status.hidden &&
+                !b.status.modHidden
+        )
         .map((b) => url(`/bots/${b.vanityUrl || b._id}`, lang))
         .join("\n    ")}
     ${servers.map((s) => url(`/servers/${s._id}`, lang)).join("\n    ")}
@@ -103,7 +109,7 @@ export const sitemapIndex = async (
 
     res.send(
         `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<sitemapindex xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
     ${settings.website.locales.all
         .map(
             (l) =>

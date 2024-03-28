@@ -1,7 +1,7 @@
 <%- include("../../../partials/header.ejs") %>
 <%- include("../../../partials/nav.ejs") %>
 <%- include("../../../partials/isDefaultCSS/button.ejs") %>
-<section class="hero is-black">
+<section class="hero is-primary">
     <div class="hero-body">
         <br />
         <div class="container has-text-centered">
@@ -65,6 +65,9 @@
                     </button>
                     <button type="button" id="offline" onclick="premadeReason('offline');" class="button is-dark">
                         <span><%= __("page.remove.premadeReasons.offline") %></span>
+                    </button>
+                    <button type="button" id="offline" onclick="premadeReason('serverLimit');" class="button is-dark">
+                        <span><%= __("page.remove.premadeReasons.serverLimit") %></span>
                     </button>
                     <% if (req.user.db.rank.admin === true) { %>
                         <button type="button" id="shitBot" onclick="premadeReason('shitBot');" class="button is-dark">
@@ -187,6 +190,10 @@
                 document.getElementById("discontinued").classList.add("is-default");
                 document.getElementById("type").value = 14;
                 break;
+            case "serverLimit":
+                document.getElementById("reason").value = "This bot has reached Discord's limit of 100 servers without Discord verification. Please resubmit once it is verified by Discord.";
+                document.getElementById("discontinued").classList.add("is-default");
+                document.getElementById("type").value = 16;
             case "shitBot":
                 document.getElementById("reason").value = "This bot is just actual shit.";
                 document.getElementById("shitBot").classList.add("is-default");

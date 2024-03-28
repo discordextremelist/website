@@ -2,8 +2,10 @@
 
 (function(){
 
+    var prefix = "https://status.discordextremelist.xyz";
+
     var frame = document.createElement('iframe');
-    frame.src = 'https://status.discordextremelist.xyz/embed/frame';
+    frame.src = `${prefix}/embed/frame`;
     frame.style.position = 'fixed';
     frame.style.border = 'none';
     frame.style.boxShadow = '0 20px 32px -8px rgba(9,20,66,0.25)';
@@ -46,7 +48,7 @@
     }
 
     window.addEventListener('message', function(event){
-      if (event.data.action && actions.hasOwnProperty(event.data.action)) {
+      if (event.origin == prefix && event.data.action && actions.hasOwnProperty(event.data.action)) {
         actions[event.data.action](event.data);
       }
     }, false);

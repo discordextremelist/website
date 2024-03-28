@@ -1,0 +1,18 @@
+@use "sass:map";
+@use "../components/colours.scss" as cc;
+
+$primary: #fff !default;
+$white: #fff !default;
+$colours: map.merge(cc.$custom-colors, cc.$standard-colors);
+
+@use "./switch.sass" with (
+    $primary: $primary,
+    $white: $white,
+    $colors: $colours
+);
+
+@use "./checkradio.sass" with ( 
+    $primary: $primary, 
+    $text: $white, 
+    $colors: $colours
+);

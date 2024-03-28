@@ -19,8 +19,6 @@
     ]
 }
 </script>
-
-<link href="/css/theme/<%= preferredTheme %>/search.css" media="screen, print" rel="stylesheet" />
 <style>.is-checkradio[type="checkbox"].is-default.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked+label::after,.is-checkradio[type="checkbox"].is-default:checked+label:after{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::before,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:before{border-color:transparent !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label::after,.is-checkradio[type="checkbox"].is-default:checked.has-background-color+label:after{border-color:<%= foreground %> !important;background-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:hover:not([disabled])+label:before{border-color:<%= defaultColour %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked+label{color:<%= foreground %>;border-color:<%= defaultColour %> !important;background:<%= defaultColour %>}.is-checkradio[type="checkbox"].is-default.is-block:checked+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked+label:after{border-color:<%= foreground %> !important}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label{background:#5e78d5}.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:after,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label::before,.is-checkradio[type="checkbox"].is-default.is-block:checked:hover:not([disabled])+label:before{border-color:#f2f2f2 !important}</style><%- include("../partials/nav.ejs") %>
 <%- include("../partials/isDefaultCSS/button.ejs") %>
 <section class="hero is-primary">
@@ -63,7 +61,13 @@
     <div class="section is-fluid" id="display">
         <div>
             <h2 class="is-size-3" id="noticeMsg" style="display: block;"><%= __("page.search.initial") %></h2>
-            <button class="button is-transparent is-large is-fullwidth is-loading" style="display: none;" id="loader"><%= __("common.loading") %></button>
+            <div class="columns is-multiline is-centred" style="display: none;" id="loader" alt="<%= __("common.loading") %>">
+                <div class="column is-one-third"><div class="box has-background-primary is-skeleton" style="height: 180px;"></div></div>
+                <div class="column is-one-third"><div class="box has-background-primary is-skeleton" style="height: 180px;"></div></div>
+                <div class="column is-one-third"><div class="box has-background-primary is-skeleton" style="height: 180px;"></div></div>
+                <div class="column is-one-third"><div class="box has-background-primary is-skeleton" style="height: 180px;"></div></div>
+                <div class="column is-one-third"><div class="box has-background-primary is-skeleton" style="height: 180px;"></div></div>
+            </div>
             <div class="columns is-multiline is-centered" id="renderingDiv"></div>
         </div>
     </div>
@@ -89,7 +93,7 @@
         const loader = document.getElementById("loader");
 
         document.getElementById("renderingDiv").innerHTML = "";
-        loader.style.display = "block";
+        loader.style.display = "flex";
         noticeMsg.style.display = "none";
 
         const input = document.querySelector("input.input.is-rounded.is-dark#searchInput");

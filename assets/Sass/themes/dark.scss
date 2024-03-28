@@ -1,0 +1,44 @@
+@charset "UTF-8";
+
+$primary: #23272A;
+$bg: #2C2F33;
+$white: #ffffff;
+$black: $primary;
+
+@use "../components/colours.scss" as cc with (
+    $black: $black,
+    $white: $white,
+);
+
+@use "../../../node_modules/bulma/sass" with (
+    // Preliminary variables
+    $cssvars-prefix: "del-",
+    $primary: $primary,
+    $white: #ffffff,
+    $black: $primary,
+    $background: $bg,
+
+    // Text, body, and font variables
+    $text: $white,
+    $text-strong: $white,
+    $label-color: $white,
+    $title-color: $white,
+    $subtitle-color: #d8d8d8,
+    $body-background-color: $bg,
+    $family-sans-serif: '"Lexend Deca", sans-serif',
+
+    // Colour and navbar variables
+    $danger: cc.$danger,
+    $success: cc.$success,
+    $warning: cc.$warning,
+    $navbar-tab-active-color: cc.$magenta,
+
+    $custom-colors: cc.$custom-colors
+);
+
+@use "../components/additional.scss";
+@use "../components/overwrite.scss";
+@use "../extensions/index.scss" with (
+    $primary: $primary,
+    $white: $white,
+);

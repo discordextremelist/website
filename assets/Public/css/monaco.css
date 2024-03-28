@@ -1,0 +1,33 @@
+.monaco-editor .button.codicon {
+    height: 18px;
+    color: #fff !important;
+}
+
+.monaco-editor .find-widget .button:not(.disabled):hover {
+    background-color: hsla(0, 0%, 100%, 0.1);
+}
+
+.monaco-editor .button.codicon.toggle.left {
+    padding: 0 !important;
+    position: absolute;
+    height: 100%;
+    display: flex;
+    border-radius: 0;
+    margin-left: 0;
+}
+
+.monaco-editor .find-widget .button {
+    background-color: transparent;
+    border-color: transparent;
+    border-radius: 0;
+    padding: 0 !important;
+    margin-left: 3px;
+}
+
+.monaco-custom-checkbox {
+    outline: 0;
+}
+
+.is-checkradio[type="checkbox"].is-default.has-background-color+label::before, .is-checkradio[type="checkbox"]:hover:not([disabled])+label::before {
+    border-color: transparent !important
+}

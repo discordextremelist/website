@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -19,8 +19,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import { APIApplication, APIApplicationCommand, APIUser, PresenceUpdateStatus, RESTPostOAuth2AccessTokenResult, UserFlags } from "discord.js";
-import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord.js"
+import {
+    APIApplication,
+    APIApplicationCommand,
+    APIUser,
+    PresenceUpdateStatus,
+    RESTPostOAuth2AccessTokenResult,
+    UserFlags
+} from "discord.js";
+import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord.js";
 import fetch from "node-fetch";
 import * as crypto from "crypto";
 import * as Discord from "discord.js";
@@ -42,40 +49,20 @@ import { URL } from "url";
 import type { DiscordAPIError } from "discord.js";
 import type { botReasons } from "../../@types/enums.js";
 import { Response as fetchRes } from "node-fetch";
-import { DAPI } from "../Util/Services/discord.js"
+import { DAPI } from "../Util/Services/discord.js";
 
 import mdi from "markdown-it";
 import entities from "html-entities";
-const md = new mdi
+const md = new mdi();
 const router = express.Router();
 
 function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);
 
-    switch (type) {
-        case 0:
-        case 1:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-        case 8:
-        case 9:
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-        case 14:
-        case 15:
-            break;
-        default:
-            type = 0;
-    }
+    if (type > 15) type = 0;
 
     return type;
 }
-
 
 router.get("/search", (req: Request, res: Response) => {
     res.redirect("/search");
@@ -87,9 +74,13 @@ router.get(
     permission.auth,
     permission.scopes([OAuth2Scopes.GuildsJoin]),
     async (req: Request, res: Response) => {
-
         // in this specific instance it makes more sense to make a mongo query than filtering through the entire redis cache
-        const showResubmitNote = await global.db.collection<delBot>("bots").countDocuments({ "owner.id": req.user.id, "status.archived": true }, { limit: 1 })
+        const showResubmitNote = await global.db
+            .collection<delBot>("bots")
+            .countDocuments(
+                { "owner.id": req.user.id, "status.archived": true },
+                { limit: 1 }
+            );
         // this will return 1/true if something exists/is found, 0 if not.
 
         res.locals.premidPageInfo = res.__("premid.bots.submit");
@@ -101,8 +92,7 @@ router.get(
             libraries: libraryCache.getLibs(),
             req,
             joinServerNotice: res.__("common.form.joinServer.full", {
-                a:
-                    '<a href="https://discord.gg/WeCer3J" rel="noopener" target="_blank">',
+                a: '<a href="https://discord.gg/WeCer3J" rel="noopener" target="_blank">',
                 ea: "</a>"
             })
         });
@@ -124,7 +114,7 @@ router.post(
 
         const botExists = await global.db
             .collection("bots")
-            .countDocuments({ _id: req.body.id }, { limit: 1 });
+            .findOne({ _id: req.body.id });
 
         if (botExists)
             return res.status(409).json({
@@ -143,7 +133,7 @@ router.post(
             errors.push(res.__("common.error.listing.arr.IDRequired"));
         }
 
-        if (isNaN(req.body.id) || req.body.id.includes(" ")) {
+        if (Number.isNaN(req.body.id) || req.body.id.includes(" ")) {
             error = true;
             errors.push(res.__("common.error.bot.arr.invalidID"));
         }
@@ -154,7 +144,7 @@ router.post(
         }
 
         if (req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+            if (Number.isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
@@ -164,12 +154,13 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
 
-            await discord.bot.rest.get(Routes.user(req.body.clientID))
+            await discord.bot.rest
+                .get(Routes.user(req.body.clientID))
                 .then(() => {
                     error = true;
                     errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
                 })
-                .catch(() => { });
+                .catch(() => {});
         }
 
         if (req.body.invite === "") {
@@ -253,7 +244,7 @@ router.post(
             let fetchServer = true;
 
             if (
-                isNaN(req.body.widgetServer) ||
+                Number.isNaN(req.body.widgetServer) ||
                 req.body.widgetServer.includes(" ")
             ) {
                 error = true;
@@ -275,7 +266,8 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.rest.get(Routes.guildChannels(req.body.widgetServer))
+                await discord.bot.rest
+                    .get(Routes.guildChannels(req.body.widgetServer))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -290,11 +282,11 @@ router.post(
 
             if (fetchServer)
                 await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: 'post',
+                    method: "post",
                     body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
                     }),
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { "Content-Type": "application/json" }
                 }).then(async (fetchRes: fetchRes) => {
                     const data: any = await fetchRes.json();
                     if (data && !data.guild?.id) {
@@ -305,12 +297,19 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.guildNotFound"
+                        )
+                    );
                 });
 
             let fetchChannel = true;
 
             if (
-                isNaN(req.body.widgetChannel) ||
+                Number.isNaN(req.body.widgetChannel) ||
                 req.body.widgetChannel.includes(" ")
             ) {
                 error = true;
@@ -332,7 +331,8 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.rest.get(Routes.channel(req.body.widgetChannel))
+                await discord.bot.rest
+                    .get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -347,11 +347,11 @@ router.post(
 
             if (fetchChannel)
                 await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: 'post',
+                    method: "post",
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
                     }),
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { "Content-Type": "application/json" }
                 }).then(async (fetchRes: fetchRes) => {
                     const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
@@ -362,31 +362,37 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.channelNotFound"
+                        )
+                    );
                 });
         }
 
         if (req.body.twitter?.length > 15) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.twitterInvalid"))
+            errors.push(res.__("common.error.bot.arr.twitterInvalid"));
         }
 
         if (!req.body.shortDescription) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.shortDescRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"));
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.longDescRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.longDescRequired"));
         } else {
-            if (req.body.longDescription.length < 150 && !req.body.longDescription.includes("<iframe ")) {
+            if (
+                req.body.longDescription.length < 150 &&
+                !req.body.longDescription.includes("<iframe ")
+            ) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.notAtMinChars", "150")
@@ -395,29 +401,33 @@ router.post(
 
             if (req.body.longDescription.includes("http://")) {
                 error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.containsHttp")
-                )
+                errors.push(res.__("common.error.listing.arr.containsHttp"));
             }
         }
 
         if (!req.body.prefix && !req.body.slashCommands) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.prefixRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.prefixRequired"));
         } else if (req.body.prefix?.length > 32) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"));
+        } else if ((req.body.prefix = "/" && !req.body.slashCommands)) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.length > 32 && !functions.isURL(req.body.privacyPolicy)) {
+            if (
+                req.body.privacyPolicy.length > 32 &&
+                !functions.isURL(req.body.privacyPolicy)
+            ) {
                 error = true;
-                errors.push(res.__("common.error.bot.arr.privacyTooLong"))
+                errors.push(res.__("common.error.bot.arr.privacyTooLong"));
             }
             if (
-                ['discord.bot', 'my-cool-app.com'].some(s => req.body.privacyPolicy.includes(s))
+                ["discord.bot", "my-cool-app.com"].some((s) =>
+                    req.body.privacyPolicy.includes(s)
+                )
             ) {
                 error = true;
                 errors.push(
@@ -436,7 +446,10 @@ router.post(
                     res.__("common.error.listing.arr.privacyPolicy.yardim")
                 );
             }
-            if (req.body.privacyPolicy.includes("help") && !functions.isURL(req.body.privacyPolicy)) {
+            if (
+                req.body.privacyPolicy.includes("help") &&
+                !functions.isURL(req.body.privacyPolicy)
+            ) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.help")
@@ -465,7 +478,9 @@ router.post(
         let editors: any[];
 
         if (req.body.editors !== "") {
-            editors = ([...new Set(req.body.editors.split(/\D+/g))]).filter(editor => editor !== '');
+            editors = [...new Set(req.body.editors.split(/\D+/g))].filter(
+                (editor) => editor !== ""
+            );
         } else {
             editors = [];
         }
@@ -477,40 +492,61 @@ router.post(
             );
         }
 
-        let commands: APIApplicationCommand[] = []
+        let commands: APIApplicationCommand[] = [];
 
         if (req.body.slashCommands && req.user.db.auth) {
             if (Date.now() > req.user.db.auth.expires) {
-                await refresh.requestNewAccessToken('discord', req.user.db.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
-                    if (err) {
-                        error = true;
-                        errors.push(`${err.statusCode} ${err.data}`);
-                    } else {
-                        await global.db.collection("users").updateOne(
-                            { _id: req.user.id },
-                            {
-                                $set: {
-                                    auth: {
-                                        accessToken,
-                                        refreshToken,
-                                        expires: Date.now() + result.expires_in * 1000
+                await refresh.requestNewAccessToken(
+                    "discord",
+                    req.user.db.auth.refreshToken,
+                    async (
+                        err,
+                        accessToken,
+                        refreshToken,
+                        result: RESTPostOAuth2AccessTokenResult
+                    ) => {
+                        if (err) {
+                            error = true;
+                            errors.push(`${err.statusCode} ${err.data}`);
+                        } else {
+                            await global.db.collection("users").updateOne(
+                                { _id: req.user.id },
+                                {
+                                    $set: {
+                                        auth: {
+                                            accessToken,
+                                            refreshToken,
+                                            expires:
+                                                Date.now() +
+                                                result.expires_in * 1000
+                                        }
                                     }
                                 }
-                            }
-                        );
-                        await userCache.updateUser(req.user.id)
+                            );
+                            await userCache.updateUser(req.user.id);
+                        }
+                    }
+                );
+            }
+            const receivedCommands = (await (
+                await fetch(DAPI + Routes.applicationCommands(req.body.id), {
+                    headers: {
+                        authorization: `Bearer ${req.user.db.auth.accessToken}`
                     }
                 })
-            }
-            const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(req.body.id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
+            )
+                .json()
+                .catch(() => {})) as APIApplicationCommand[];
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
-        let userFlags = 0
+        let userFlags = 0;
 
         if (req.body.bot) {
-            const user = await discord.bot.rest.get(Routes.user(req.body.id)).catch(() => { }) as APIUser
-            if (user.public_flags) userFlags = user.public_flags
+            const user = (await discord.bot.rest
+                .get(Routes.user(req.body.id))
+                .catch(() => {})) as APIUser;
+            if (user.public_flags) userFlags = user.public_flags;
         }
 
         if (error === true)
@@ -520,16 +556,18 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.rest.get(`/applications/${req.body.clientID || req.body.id}/rpc`)
+        discord.bot.rest
+            .get(`/applications/${req.body.clientID || req.body.id}/rpc`)
             .then(async (app: APIApplication) => {
-                if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
+                if (app.bot_public === false)
+                    // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
                         error: true,
                         status: 400,
                         errors: [res.__("common.error.bot.arr.notPublic")]
                     });
 
-                if (req.body.bot && !('bot_public' in app))
+                if (req.body.bot && !("bot_public" in app))
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -553,6 +591,7 @@ router.post(
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
                     modNotes: req.body.modNotes,
+                    lastDenyReason: botExists.lastDenyReason || '',
                     reviewNotes: [],
                     editors,
                     commands,
@@ -608,13 +647,15 @@ router.post(
                     }
                 } satisfies delBot);
 
-                discord.channels.logs.send(
+                await discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
-                    )}** \`(${req.user.id
+                    )}** \`(${
+                        req.user.id
                     })\` added bot **${functions.escapeFormatting(
                         app.name
-                    )}** \`(${req.body.id})\`\n<${settings.website.url}/bots/${req.body.id
+                    )}** \`(${req.body.id})\`\n<${settings.website.url}/bots/${
+                        req.body.id
                     }>`
                 );
 
@@ -641,6 +682,7 @@ router.post(
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             modNotes: req.body.modNotes,
+                            lastDenyReason: botExists.lastDenyReason || '',
                             reviewNotes: [],
                             editors,
                             commands,
@@ -781,6 +823,7 @@ router.get(
             .findOne({ _id: req.params.id });
         if (!botExists)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.404"),
                 status: 404,
@@ -833,6 +876,76 @@ router.get(
 );
 
 router.post(
+    "/:id/transfer-owner",
+    variables,
+    permission.assistant,
+    async (req: Request, res: Response) => {
+        const botExists = await global.db
+            .collection("bots")
+            .findOne({ _id: req.params.id });
+        if (!botExists)
+            return res.status(404).render("status", {
+                res,
+                title: res.__("common.error"),
+                subtitlte: res.__("common.error.bot.404"),
+                status: 404,
+                type: "Error",
+                req
+            });
+
+        if (req.user.db.rank.assistant === false) {
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.notAssistant"),
+                status: 403,
+                type: "Error",
+                req
+            });
+        }
+
+        const newOwnerExists = await global.db
+            .collection("users")
+            .findOne({ _id: req.body.newOwner });
+
+        if (!newOwnerExists)
+            return res.status(403).render("status", {
+                title: res.__("common.error"),
+                subtitle: res.__("common.error.user.404"),
+                status: 404,
+                type: "Error",
+                req
+            });
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    owner: {
+                        id: req.body.newOwner
+                    }
+                }
+            }
+        );
+
+        await global.db.collection("audit").insertOne({
+            type: "MODIFY_OWNER",
+            executor: req.user.id,
+            target: req.params.id,
+            date: Date.now(),
+            reason: req.body.reason || "None specified.",
+            details: {
+                old: botExists.owner.id,
+                new: req.body.newOwner
+            }
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        res.redirect(`/bots/${botExists._id}`);
+    }
+);
+
+router.post(
     "/:id/setvanity",
     variables,
     permission.auth,
@@ -842,6 +955,7 @@ router.post(
             .findOne({ _id: req.params.id });
         if (!botExists)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.404"),
                 status: 404,
@@ -1003,6 +1117,7 @@ router.get(
             .findOne({ _id: req.params.id });
         if (!botExists)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.404"),
                 status: 404,
@@ -1029,7 +1144,16 @@ router.get(
             allowedTags: htmlRef.standard.tags,
             allowedAttributes: htmlRef.standard.attributes,
             allowVulnerableTags: true,
-            disallowedTagsMode: "escape"
+            disallowedTagsMode: "escape",
+            transformTags: {
+                iframe: function (tagName, attribs) {
+                    attribs.sandbox = "allow-forms";
+                    return {
+                        tagName: "iframe",
+                        attribs: attribs
+                    };
+                }
+            }
         });
 
         res.render("templates/bots/edit", {
@@ -1060,7 +1184,7 @@ router.post(
         }
 
         if (req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+            if (Number.isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
@@ -1069,14 +1193,15 @@ router.post(
                 errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
             }
             if (req.body.clientID !== req.params.id)
-                await discord.bot.rest.get(Routes.user(req.body.clientID))
+                await discord.bot.rest
+                    .get(Routes.user(req.body.clientID))
                     .then(() => {
                         error = true;
                         errors.push(
                             res.__("common.error.bot.arr.clientIDIsUser")
                         );
                     })
-                    .catch(() => { });
+                    .catch(() => {});
         }
 
         const botExists: delBot | undefined = await global.db
@@ -1125,12 +1250,17 @@ router.post(
                 errors.push(
                     res.__("common.error.listing.arr.invite.discordapp")
                 );
-            } else if (req.body.invite.includes("discord.com") &&
-                (req.body.bot && !req.body.invite.includes(OAuth2Scopes.Bot) || req.body.slashCommands && !req.body.invite.includes(OAuth2Scopes.ApplicationsCommands))) {
+            } else if (
+                req.body.invite.includes("discord.com") &&
+                ((req.body.bot &&
+                    !req.body.invite.includes(OAuth2Scopes.Bot)) ||
+                    (req.body.slashCommands &&
+                        !req.body.invite.includes(
+                            OAuth2Scopes.ApplicationsCommands
+                        )))
+            ) {
                 error = true;
-                errors.push(
-                    res.__("common.error.bot.arr.scopesNotInInvite")
-                );
+                errors.push(res.__("common.error.bot.arr.scopesNotInInvite"));
             } else {
                 invite = req.body.invite;
             }
@@ -1193,7 +1323,7 @@ router.post(
             let fetchServer = true;
 
             if (
-                isNaN(req.body.widgetServer) ||
+                Number.isNaN(req.body.widgetServer) ||
                 req.body.widgetServer.includes(" ")
             ) {
                 error = true;
@@ -1215,7 +1345,8 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.rest.get(Routes.guildChannels(req.body.widgetChannel))
+                await discord.bot.rest
+                    .get(Routes.guildChannels(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -1230,11 +1361,11 @@ router.post(
 
             if (fetchServer)
                 await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: 'post',
+                    method: "post",
                     body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
                     }),
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { "Content-Type": "application/json" }
                 }).then(async (fetchRes: fetchRes) => {
                     const data: any = await fetchRes.json();
                     if (data && !data.guild?.id) {
@@ -1245,12 +1376,19 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.guildNotFound"
+                        )
+                    );
                 });
 
             let fetchChannel = true;
 
             if (
-                isNaN(req.body.widgetChannel) ||
+                Number.isNaN(req.body.widgetChannel) ||
                 req.body.widgetChannel.includes(" ")
             ) {
                 error = true;
@@ -1272,7 +1410,8 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.rest.get(Routes.channel(req.body.widgetChannel))
+                await discord.bot.rest
+                    .get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -1287,11 +1426,11 @@ router.post(
 
             if (fetchChannel)
                 await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: 'post',
+                    method: "post",
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
                     }),
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { "Content-Type": "application/json" }
                 }).then(async (fetchRes: fetchRes) => {
                     const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
@@ -1302,31 +1441,37 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.channelNotFound"
+                        )
+                    );
                 });
         }
 
         if (req.body.twitter?.length > 15) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.twitterInvalid"))
+            errors.push(res.__("common.error.bot.arr.twitterInvalid"));
         }
 
         if (!req.body.shortDescription) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.shortDescRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"));
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.longDescRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.longDescRequired"));
         } else {
-            if (req.body.longDescription.length < 150 && !req.body.longDescription.includes("<iframe ")) {
+            if (
+                req.body.longDescription.length < 150 &&
+                !req.body.longDescription.includes("<iframe ")
+            ) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.notAtMinChars", "150")
@@ -1335,30 +1480,30 @@ router.post(
 
             if (req.body.longDescription.includes("http://")) {
                 error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.containsHttp")
-                )
+                errors.push(res.__("common.error.listing.arr.containsHttp"));
             }
         }
 
         if (!req.body.prefix && !req.body.slashCommands) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.prefixRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.prefixRequired"));
         } else if (req.body.prefix?.length > 32) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"));
+        } else if ((req.body.prefix = "/" && !req.body.slashCommands)) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.length > 32 && !functions.isURL(req.body.privacyPolicy)) {
-                error = true;
-                errors.push(res.__("common.error.bot.arr.privacyTooLong"))
-            }
             if (
-                req.body.privacyPolicy.includes("discord.bot/privacy")
+                req.body.privacyPolicy.length > 32 &&
+                !functions.isURL(req.body.privacyPolicy)
             ) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.privacyTooLong"));
+            }
+            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.placeholder")
@@ -1379,7 +1524,10 @@ router.post(
                 );
             }
 
-            if (req.body.privacyPolicy.includes("help") && !functions.isURL(req.body.privacyPolicy)) {
+            if (
+                req.body.privacyPolicy.includes("help") &&
+                !functions.isURL(req.body.privacyPolicy)
+            ) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.help")
@@ -1408,7 +1556,9 @@ router.post(
         let editors: any[];
 
         if (req.body.editors !== "") {
-            editors = ([...new Set(req.body.editors.split(/\D+/g))]).filter(editor => editor !== '');
+            editors = [...new Set(req.body.editors.split(/\D+/g))].filter(
+                (editor) => editor !== ""
+            );
         } else {
             editors = [];
         }
@@ -1420,41 +1570,62 @@ router.post(
             );
         }
 
-        let commands: APIApplicationCommand[] = bot.commands || []
+        let commands: APIApplicationCommand[] = bot.commands || [];
 
         if (req.body.slashCommands && req.user.db.auth) {
             if (Date.now() > req.user.db.auth.expires) {
-                await refresh.requestNewAccessToken('discord', req.user.db.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
-                    if (err) {
-                        error = true;
-                        errors.push(`${err.statusCode} ${err.data}`);
-                    } else {
-                        await global.db.collection("users").updateOne(
-                            { _id: req.user.id },
-                            {
-                                $set: {
-                                    auth: {
-                                        accessToken,
-                                        refreshToken,
-                                        expires: Date.now() + result.expires_in * 1000
+                await refresh.requestNewAccessToken(
+                    "discord",
+                    req.user.db.auth.refreshToken,
+                    async (
+                        err,
+                        accessToken,
+                        refreshToken,
+                        result: RESTPostOAuth2AccessTokenResult
+                    ) => {
+                        if (err) {
+                            error = true;
+                            errors.push(`${err.statusCode} ${err.data}`);
+                        } else {
+                            await global.db.collection("users").updateOne(
+                                { _id: req.user.id },
+                                {
+                                    $set: {
+                                        auth: {
+                                            accessToken,
+                                            refreshToken,
+                                            expires:
+                                                Date.now() +
+                                                result.expires_in * 1000
+                                        }
                                     }
                                 }
-                            }
-                        );
-                        await userCache.updateUser(req.user.id)
+                            );
+                            await userCache.updateUser(req.user.id);
+                        }
                     }
-                })
+                );
             }
 
-            const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(bot._id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
+            const receivedCommands = (await (
+                await fetch(DAPI + Routes.applicationCommands(bot._id), {
+                    headers: {
+                        authorization: `Bearer ${req.user.db.auth.accessToken}`
+                    }
+                })
+            )
+                .json()
+                .catch(() => {})) as APIApplicationCommand[];
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
-        let userFlags = 0
+        let userFlags = 0;
 
         if (req.body.bot) {
-            const user = await discord.bot.rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
-            if (user.public_flags) userFlags = user.public_flags
+            const user = (await discord.bot.rest
+                .get(Routes.user(bot._id))
+                .catch(() => {})) as APIUser;
+            if (user.public_flags) userFlags = user.public_flags;
         }
 
         if (error === true) {
@@ -1469,9 +1640,11 @@ router.post(
             });
         }
 
-        discord.bot.rest.get(`/applications/${req.body.clientID || req.body.id}/rpc`)
+        discord.bot.rest
+            .get(`/applications/${req.body.clientID || req.body.id}/rpc`)
             .then(async (app: APIApplication) => {
-                if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
+                if (app.bot_public === false)
+                    // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -1618,15 +1791,18 @@ router.post(
                 });
                 await botCache.updateBot(req.params.id);
 
-                discord.channels.logs.send(
-                    `${settings.emoji.edit} **${functions.escapeFormatting(
-                        req.user.db.fullUsername
-                    )}** \`(${req.user.id
-                    })\` edited bot **${functions.escapeFormatting(
-                        app.name
-                    )}** \`(${app.id})\`\n<${settings.website.url}/bots/${req.params.id
-                    }>`
-                )
+                discord.channels.logs
+                    .send(
+                        `${settings.emoji.edit} **${functions.escapeFormatting(
+                            req.user.db.fullUsername
+                        )}** \`(${
+                            req.user.id
+                        })\` edited bot **${functions.escapeFormatting(
+                            app.name
+                        )}** \`(${app.id})\`\n<${settings.website.url}/bots/${
+                            req.params.id
+                        }>`
+                    )
                     .catch((e) => {
                         console.error(e);
                     });
@@ -1677,6 +1853,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
                 .findOne({ vanityUrl: req.params.id });
             if (!bot)
                 return res.status(404).render("status", {
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -1714,21 +1891,20 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
 
     const dirty = entities.decode(md.render(bot.longDesc));
 
-    let clean;
-    if (bot.status.premium === true) {
-        clean = sanitizeHtml(dirty, {
-            allowedTags: htmlRef.trusted.tags,
-            // @ts-ignore
-            allowedAttributes: htmlRef.trusted.attributes,
-            allowVulnerableTags: true
-        });
-    } else {
-        clean = sanitizeHtml(dirty, {
-            allowedTags: htmlRef.standard.tags,
-            allowedAttributes: htmlRef.standard.attributes,
-            allowVulnerableTags: true
-        });
-    }
+    const clean = sanitizeHtml(dirty, {
+        allowedTags: htmlRef.standard.tags,
+        allowedAttributes: htmlRef.standard.attributes,
+        allowVulnerableTags: true,
+        transformTags: {
+            iframe: function (tagName, attribs) {
+                attribs.sandbox = "allow-forms";
+                return {
+                    tagName: "iframe",
+                    attribs: attribs
+                };
+            }
+        }
+    });
 
     function sen(name: string) {
         return sanitizeHtml(name, {
@@ -1748,12 +1924,16 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
 
         if (user) {
             editorsLength !== looped
-                ? (editors += `<a class="has-text-white" href="${settings.website.url
-                    }${res.locals.linkPrefix}/users/${user._id}">${sen(user.fullUsername) || "Unknown#0000"
-                    }</a>,&nbsp;`)
-                : (editors += `<a class="has-text-white" href="${settings.website.url
-                    }${res.locals.linkPrefix}/users/${user._id}">${sen(user.fullUsername) || "Unknown#0000"
-                    }</a>`);
+                ? (editors += `<a class="has-text-white" href="${
+                      settings.website.url
+                  }${res.locals.linkPrefix}/users/${user._id}">${
+                      sen(user.fullUsername) || "Unknown#0000"
+                  }</a>,&nbsp;`)
+                : (editors += `<a class="has-text-white" href="${
+                      settings.website.url
+                  }${res.locals.linkPrefix}/users/${user._id}">${
+                      sen(user.fullUsername) || "Unknown#0000"
+                  }</a>`);
         } else {
             if (editorsLength === looped)
                 editors = editors.substring(0, editors.length - 2);
@@ -1764,7 +1944,11 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         title: `${bot.name} | ${res.__("common.bots.discord")}`,
         subtitle: bot.shortDesc,
         bot: bot,
-        showStatus: botStatus !== PresenceUpdateStatus.Offline || (!bot.scopes || bot.scopes.bot) && (!('userFlags' in bot) || !(bot.userFlags & UserFlags.BotHTTPInteractions)),
+        showStatus:
+            botStatus !== PresenceUpdateStatus.Offline ||
+            ((!bot.scopes || bot.scopes.bot) &&
+                (!("userFlags" in bot) ||
+                    !(bot.userFlags && UserFlags.BotHTTPInteractions))),
         longDesc: clean,
         botOwner: botOwner,
         botStatus: botStatus,
@@ -1780,12 +1964,9 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     });
 });
 
-router.get(
-    "/:id/exists",
-    permission.auth,
-    async (req, res) => {
-        res.send(String(await global.redis?.hexists("bots", req.params.id)))
-    })
+router.get("/:id/exists", permission.auth, async (req, res) => {
+    res.type("text").send(String(await global.redis?.hexists("bots", req.params.id)));
+});
 
 router.get(
     "/:id/src",
@@ -1832,6 +2013,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -1866,7 +2048,7 @@ router.get(
         }
 
         if (bot.votes.positive.includes(req.user.id)) {
-            global.db.collection("audit").insertOne({
+            await global.db.collection("audit").insertOne({
                 type: "REMOVE_UPVOTE_BOT",
                 executor: req.user.id,
                 target: req.params.id,
@@ -1888,7 +2070,7 @@ router.get(
                 }
             });
         } else {
-            global.db.collection("audit").insertOne({
+            await global.db.collection("audit").insertOne({
                 type: "UPVOTE_BOT",
                 executor: req.user.id,
                 target: req.params.id,
@@ -1945,6 +2127,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -1991,7 +2174,7 @@ router.get(
         );
 
         if (bot.votes.negative.includes(req.user.id)) {
-            global.db.collection("audit").insertOne({
+            await global.db.collection("audit").insertOne({
                 type: "REMOVE_DOWNVOTE_BOT",
                 executor: req.user.id,
                 target: req.params.id,
@@ -2013,7 +2196,7 @@ router.get(
                 }
             });
         } else {
-            global.db.collection("audit").insertOne({
+            await global.db.collection("audit").insertOne({
                 type: "DOWNVOTE_BOT",
                 executor: req.user.id,
                 target: req.params.id,
@@ -2058,6 +2241,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -2076,11 +2260,13 @@ router.get(
                 req: req
             });
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
             `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
-            })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
+            )}** \`(${
+                req.user.id
+            })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
             })\``
         );
 
@@ -2107,9 +2293,9 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
-        let bot = await global.db
+        let bot = (await global.db
             .collection<delBot>("bots")
-            .findOne({ _id: req.params.id }) as delBot;
+            .findOne({ _id: req.params.id })) as delBot;
 
         if (!bot) {
             bot = await global.db
@@ -2118,6 +2304,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -2136,11 +2323,13 @@ router.get(
                 req: req
             });
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
             `${settings.emoji.archive} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
-            })\` archived bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
+            )}** \`(${
+                req.user.id
+            })\` archived bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
             })\``
         );
 
@@ -2173,9 +2362,9 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
-        let bot = await global.db
+        let bot = (await global.db
             .collection<delBot>("bots")
-            .findOne({ _id: req.params.id }) as delBot;
+            .findOne({ _id: req.params.id })) as delBot;
 
         if (!bot) {
             bot = await global.db
@@ -2184,6 +2373,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -2202,11 +2392,22 @@ router.get(
                 req: req
             });
 
-        discord.channels.logs.send(
+        if (bot.status.approved === false)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.bot.inQueueHide"),
+                req,
+                type: "Error"
+            });
+
+        await discord.channels.logs.send(
             `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
-            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
+            )}** \`(${
+                req.user.id
+            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
             })\``
         );
 
@@ -2238,9 +2439,9 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
-        let bot = await global.db
+        let bot = (await global.db
             .collection<delBot>("bots")
-            .findOne({ _id: req.params.id }) as delBot;
+            .findOne({ _id: req.params.id })) as delBot;
 
         if (!bot) {
             bot = await global.db
@@ -2249,6 +2450,7 @@ router.get(
 
             if (!bot)
                 return res.status(404).render("status", {
+                    res,
                     title: res.__("common.error"),
                     status: 404,
                     subtitle: res.__("common.error.bot.404"),
@@ -2267,11 +2469,13 @@ router.get(
                 req: req
             });
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
             `${settings.emoji.unhide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
-            })\` unhid bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
+            )}** \`(${
+                req.user.id
+            })\` unhid bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
             })\``
         );
 
@@ -2309,6 +2513,7 @@ router.get(
             .findOne({ _id: req.params.id });
         if (!botExists)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.404"),
                 status: 404,
@@ -2371,7 +2576,7 @@ router.post(
         }
 
         if (req.body.clientID) {
-            if (isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+            if (Number.isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
@@ -2382,12 +2587,15 @@ router.post(
             }
 
             if (req.body.clientID !== req.params.id)
-                await discord.bot.rest.get(Routes.user(req.body.clientID))
+                await discord.bot.rest
+                    .get(Routes.user(req.body.clientID))
                     .then(() => {
-                        error = true
-                        errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
+                        error = true;
+                        errors.push(
+                            res.__("common.error.bot.arr.clientIDIsUser")
+                        );
                     })
-                    .catch(() => { });
+                    .catch(() => {});
         }
 
         const botExists: delBot | undefined = await global.db
@@ -2507,7 +2715,7 @@ router.post(
             let fetchServer = true;
 
             if (
-                isNaN(req.body.widgetServer) ||
+                Number.isNaN(req.body.widgetServer) ||
                 req.body.widgetServer.includes(" ")
             ) {
                 error = true;
@@ -2529,7 +2737,8 @@ router.post(
             }
 
             if (fetchServer)
-                await discord.bot.rest.get(Routes.guildChannels(req.body.widgetServer))
+                await discord.bot.rest
+                    .get(Routes.guildChannels(req.body.widgetServer))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -2544,11 +2753,11 @@ router.post(
 
             if (fetchServer)
                 await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: 'post',
+                    method: "post",
                     body: JSON.stringify({
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
                     }),
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { "Content-Type": "application/json" }
                 }).then(async (fetchRes: fetchRes) => {
                     const data: any = await fetchRes.json();
                     if (data && !data.guild?.id) {
@@ -2559,12 +2768,19 @@ router.post(
                             )
                         );
                     }
+                }).catch(() => {
+                    error = true;
+                    errors.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.guildNotFound"
+                        )
+                    );
                 });
 
             let fetchChannel = true;
 
             if (
-                isNaN(req.body.widgetChannel) ||
+                Number.isNaN(req.body.widgetChannel) ||
                 req.body.widgetChannel.includes(" ")
             ) {
                 error = true;
@@ -2586,7 +2802,8 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.rest.get(Routes.channel(req.body.widgetChannel))
+                await discord.bot.rest
+                    .get(Routes.channel(req.body.widgetChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -2601,11 +2818,11 @@ router.post(
 
             if (fetchChannel)
                 await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: 'post',
+                    method: "post",
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
                     }),
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { "Content-Type": "application/json" }
                 }).then(async (fetchRes: fetchRes) => {
                     const data: any = await fetchRes.json();
                     if (!data.channel?.id) {
@@ -2621,7 +2838,7 @@ router.post(
 
         if (req.body.twitter?.length > 15) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.twitterInvalid"))
+            errors.push(res.__("common.error.bot.arr.twitterInvalid"));
         }
 
         if (!req.body.shortDescription) {
@@ -2629,16 +2846,17 @@ router.post(
             errors.push(res.__("common.error.listing.arr.shortDescRequired"));
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"));
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.longDescRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.longDescRequired"));
         } else {
-            if (req.body.longDescription.length < 150 && !req.body.longDescription.includes("<iframe ")) {
+            if (
+                req.body.longDescription.length < 150 &&
+                !req.body.longDescription.includes("<iframe ")
+            ) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.notAtMinChars", "150")
@@ -2647,9 +2865,7 @@ router.post(
 
             if (req.body.longDescription.includes("http://")) {
                 error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.containsHttp")
-                )
+                errors.push(res.__("common.error.listing.arr.containsHttp"));
             }
         }
 
@@ -2658,17 +2874,21 @@ router.post(
             errors.push(res.__("common.error.listing.arr.prefixRequired"));
         } else if (req.body.prefix?.length > 32) {
             error = true;
-            errors.push(res.__("common.error.bot.arr.prefixTooLong"))
+            errors.push(res.__("common.error.bot.arr.prefixTooLong"));
+        } else if ((req.body.prefix = "/" && !req.body.slashCommands)) {
+            error = true;
+            errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
 
         if (req.body.privacyPolicy) {
-            if (req.body.privacyPolicy.length > 32 && !functions.isURL(req.body.privacyPolicy)) {
-                error = true;
-                errors.push(res.__("common.error.bot.arr.privacyTooLong"))
-            }
             if (
-                req.body.privacyPolicy.includes("discord.bot/privacy")
+                req.body.privacyPolicy.length > 32 &&
+                !functions.isURL(req.body.privacyPolicy)
             ) {
+                error = true;
+                errors.push(res.__("common.error.bot.arr.privacyTooLong"));
+            }
+            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.placeholder")
@@ -2689,7 +2909,10 @@ router.post(
                 );
             }
 
-            if (req.body.privacyPolicy.includes("help") && !functions.isURL(req.body.privacyPolicy)) {
+            if (
+                req.body.privacyPolicy.includes("help") &&
+                !functions.isURL(req.body.privacyPolicy)
+            ) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.help")
@@ -2717,7 +2940,9 @@ router.post(
         let editors: any[];
 
         if (req.body.editors !== "") {
-            editors = ([...new Set(req.body.editors.split(/\D+/g))]).filter(editor => editor !== '');
+            editors = [...new Set(req.body.editors.split(/\D+/g))].filter(
+                (editor) => editor !== ""
+            );
         } else {
             editors = [];
         }
@@ -2729,41 +2954,62 @@ router.post(
             );
         }
 
-        let commands: APIApplicationCommand[] = bot.commands || []
+        let commands: APIApplicationCommand[] = bot.commands || [];
 
         if (req.body.slashCommands && req.user.db.auth) {
             if (Date.now() > req.user.db.auth.expires) {
-                await refresh.requestNewAccessToken('discord', req.user.db.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
-                    if (err) {
-                        error = true;
-                        errors.push(`${err.statusCode} ${err.data}`);
-                    } else {
-                        await global.db.collection("users").updateOne(
-                            { _id: req.user.id },
-                            {
-                                $set: {
-                                    auth: {
-                                        accessToken,
-                                        refreshToken,
-                                        expires: Date.now() + result.expires_in * 1000
+                await refresh.requestNewAccessToken(
+                    "discord",
+                    req.user.db.auth.refreshToken,
+                    async (
+                        err,
+                        accessToken,
+                        refreshToken,
+                        result: RESTPostOAuth2AccessTokenResult
+                    ) => {
+                        if (err) {
+                            error = true;
+                            errors.push(`${err.statusCode} ${err.data}`);
+                        } else {
+                            await global.db.collection("users").updateOne(
+                                { _id: req.user.id },
+                                {
+                                    $set: {
+                                        auth: {
+                                            accessToken,
+                                            refreshToken,
+                                            expires:
+                                                Date.now() +
+                                                result.expires_in * 1000
+                                        }
                                     }
                                 }
-                            }
-                        );
-                        await userCache.updateUser(req.user.id)
+                            );
+                            await userCache.updateUser(req.user.id);
+                        }
                     }
-                })
+                );
             }
 
-            const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(bot._id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
+            const receivedCommands = (await (
+                await fetch(DAPI + Routes.applicationCommands(bot._id), {
+                    headers: {
+                        authorization: `Bearer ${req.user.db.auth.accessToken}`
+                    }
+                })
+            )
+                .json()
+                .catch(() => {})) as APIApplicationCommand[];
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
-        let userFlags = 0
+        let userFlags = 0;
 
         if (req.body.bot) {
-            const user = await discord.bot.rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
-            if (user.public_flags) userFlags = user.public_flags
+            const user = (await discord.bot.rest
+                .get(Routes.user(bot._id))
+                .catch(() => {})) as APIUser;
+            if (user.public_flags) userFlags = user.public_flags;
         }
 
         if (error === true)
@@ -2773,9 +3019,11 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.rest.get(`/applications/${req.body.clientID || req.body.id}/rpc`)
+        discord.bot.rest
+            .get(`/applications/${req.body.clientID || req.body.id}/rpc`)
             .then(async (app: APIApplication) => {
-                if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
+                if (app.bot_public === false)
+                    // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
                         error: true,
                         status: 400,
@@ -2920,15 +3168,18 @@ router.post(
                 });
                 await botCache.updateBot(req.params.id);
 
-                await discord.channels.logs.send(
-                    `${settings.emoji.resubmit} **${functions.escapeFormatting(
-                        req.user.db.fullUsername
-                    )}** \`(${req.user.id
-                    })\` resubmitted bot **${functions.escapeFormatting(
-                        app.name
-                    )}** \`(${app.id})\`\n<${settings.website.url}/bots/${app.id
-                    }>`
-                )
+                await discord.channels.logs
+                    .send(
+                        `${settings.emoji.resubmit} **${functions.escapeFormatting(
+                            req.user.db.fullUsername
+                        )}** \`(${
+                            req.user.id
+                        })\` resubmitted bot **${functions.escapeFormatting(
+                            app.name
+                        )}** \`(${app.id})\`\n<${settings.website.url}/bots/${
+                            app.id
+                        }>`
+                    )
                     .catch((e) => {
                         console.error(e);
                     });
@@ -2972,6 +3223,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3002,23 +3254,30 @@ router.get(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
-                    "staffTracking.handledBots.allTime.approved": req.user.db.staffTracking.handledBots.allTime.approved += 1,
-                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
-                    "staffTracking.handledBots.thisWeek.approved": req.user.db.staffTracking.handledBots.thisWeek.approved += 1
+                    "staffTracking.handledBots.allTime.total":
+                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
+                    "staffTracking.handledBots.allTime.approved":
+                        (req.user.db.staffTracking.handledBots.allTime.approved += 1),
+                    "staffTracking.handledBots.thisWeek.total":
+                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
+                    "staffTracking.handledBots.thisWeek.approved":
+                        (req.user.db.staffTracking.handledBots.thisWeek.approved += 1)
                 }
             }
         );
 
-        await discord.channels.logs.send(
-            `${settings.emoji.check} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${req.user.id
-            })\` approved bot **${functions.escapeFormatting(
-                bot.name
-            )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${bot._id
-            }>`
-        )
+        await discord.channels.logs
+            .send(
+                `${settings.emoji.check} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` approved bot **${functions.escapeFormatting(
+                    bot.name
+                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
+                    bot._id
+                }>`
+            )
             .catch((e) => {
                 console.error(e);
             });
@@ -3027,10 +3286,14 @@ router.get(
         if (owner)
             owner
                 .send(
-                    `${settings.emoji.check
+                    `${
+                        settings.emoji.check
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been approved on the website!${!bot.scopes || bot.scopes.bot ? '\n\nYour bot will be added to our server within the next 24 hours.' : ''
+                    )}** \`(${bot._id})\` has been approved on the website!${
+                        !bot.scopes || bot.scopes.bot
+                            ? "\n\nYour bot will be added to our server within the next 24 hours."
+                            : ""
                     }`
                 )
                 .catch((e) => {
@@ -3043,7 +3306,7 @@ router.get(
                 .add(settings.roles.developer, "User's bot was just approved.")
                 .catch(async (e) => {
                     console.error(e);
-                    discord.channels.alerts.send(
+                    await discord.channels.alerts.send(
                         `${settings.emoji.error} Failed giving <@${bot.owner.id}> \`${bot.owner.id}\` the role **Bot Developer** upon one of their bots being approved.`
                     );
                 });
@@ -3054,7 +3317,7 @@ router.get(
                 .add(settings.roles.bot, "Bot was approved on the website.")
                 .catch(async (e) => {
                     console.error(e);
-                    discord.channels.alerts.send(
+                    await discord.channels.alerts.send(
                         `${settings.emoji.error} Failed giving <@${bot._id}> \`${bot._id}\` the role **Bot** upon being approved on the website.`
                     );
                 });
@@ -3065,12 +3328,12 @@ router.get(
                 .kick("Bot was approved on the website.")
                 .catch(async (e) => {
                     console.error(e);
-                    discord.channels.alerts.send(
+                    await discord.channels.alerts.send(
                         `${settings.emoji.error} Failed kicking <@${bot._id}> \`${bot._id}\` from the Testing Server on approval.`
                     );
                 });
 
-        global.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "APPROVE_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -3096,6 +3359,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3112,7 +3376,6 @@ router.get(
                 type: "Error"
             });
 
-
         const botMember = await discord.getMember(bot._id);
 
         if (botMember)
@@ -3123,7 +3386,7 @@ router.get(
                 )
                 .catch(async (e) => {
                     console.error(e);
-                    discord.channels.alerts.send(
+                    await discord.channels.alerts.send(
                         `${settings.emoji.error} Failed giving <@${botMember.id}> \`${botMember.id}\` the role **Premium Bot** upon being given premium on the website.`
                     );
                 });
@@ -3148,7 +3411,7 @@ router.get(
 
         await botCache.updateBot(req.params.id);
 
-        global.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "PREMIUM_BOT_GIVE",
             executor: req.user.id,
             target: req.params.id,
@@ -3172,6 +3435,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3199,7 +3463,7 @@ router.get(
 
         await botCache.updateBot(req.params.id);
 
-        global.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "PREMIUM_BOT_TAKE",
             executor: req.user.id,
             target: req.params.id,
@@ -3223,6 +3487,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3268,6 +3533,7 @@ router.post(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3299,7 +3565,8 @@ router.post(
             {
                 $set: {
                     vanityUrl: "",
-                    "status.archived": true
+                    lastDenyReason: req.body.reason,
+                    "status.archived": true,
                 }
             }
         );
@@ -3308,10 +3575,14 @@ router.post(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
-                    "staffTracking.handledBots.allTime.declined": req.user.db.staffTracking.handledBots.allTime.declined += 1,
-                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
-                    "staffTracking.handledBots.thisWeek.declined": req.user.db.staffTracking.handledBots.thisWeek.declined += 1
+                    "staffTracking.handledBots.allTime.total":
+                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
+                    "staffTracking.handledBots.allTime.declined":
+                        (req.user.db.staffTracking.handledBots.allTime.declined += 1),
+                    "staffTracking.handledBots.thisWeek.total":
+                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
+                    "staffTracking.handledBots.thisWeek.declined":
+                        (req.user.db.staffTracking.handledBots.thisWeek.declined += 1)
                 }
             }
         );
@@ -3335,12 +3606,14 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send({
+        await discord.channels.logs.send({
             content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
-                })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
-                })\``,
+            )}** \`(${
+                req.user.id
+            })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
+            })\``,
             embeds: [embed]
         });
 
@@ -3356,10 +3629,12 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${settings.emoji.cross
+                    `${
+                        settings.emoji.cross
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been declined.\n**Reason:** \`${req.body.reason || "None specified."
+                    )}** \`(${bot._id})\` has been declined.\n**Reason:** \`${
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -3382,6 +3657,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3422,6 +3698,7 @@ router.post(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3465,10 +3742,14 @@ router.post(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
-                    "staffTracking.handledBots.allTime.unapprove": req.user.db.staffTracking.handledBots.allTime.unapprove += 1,
-                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
-                    "staffTracking.handledBots.thisWeek.unapprove": req.user.db.staffTracking.handledBots.thisWeek.unapprove += 1
+                    "staffTracking.handledBots.allTime.total":
+                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
+                    "staffTracking.handledBots.allTime.unapprove":
+                        (req.user.db.staffTracking.handledBots.allTime.unapprove += 1),
+                    "staffTracking.handledBots.thisWeek.total":
+                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
+                    "staffTracking.handledBots.thisWeek.unapprove":
+                        (req.user.db.staffTracking.handledBots.thisWeek.unapprove += 1)
                 }
             }
         );
@@ -3490,16 +3771,16 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send({
+        await discord.channels.logs.send({
             content: `${settings.emoji.unapprove} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
-                })\` unapproved bot **${functions.escapeFormatting(
-                    bot.name
-                )}** \`(${bot._id})\``,
+            )}** \`(${
+                req.user.id
+            })\` unapproved bot **${functions.escapeFormatting(
+                bot.name
+            )}** \`(${bot._id})\``,
             embeds: [embed]
         });
-
 
         const member = await discord.getMember(req.params.id);
 
@@ -3513,10 +3794,12 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${settings.emoji.unapprove
+                    `${
+                        settings.emoji.unapprove
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been unapproved!\n**Reason:** \`${req.body.reason || "None specified."
+                    )}** \`(${bot._id})\` has been unapproved!\n**Reason:** \`${
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -3539,6 +3822,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3579,6 +3863,7 @@ router.post(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3620,10 +3905,14 @@ router.post(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
-                    "staffTracking.handledBots.allTime.remove": req.user.db.staffTracking.handledBots.allTime.remove += 1,
-                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
-                    "staffTracking.handledBots.thisWeek.remove": req.user.db.staffTracking.handledBots.thisWeek.remove += 1
+                    "staffTracking.handledBots.allTime.total":
+                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
+                    "staffTracking.handledBots.allTime.remove":
+                        (req.user.db.staffTracking.handledBots.allTime.remove += 1),
+                    "staffTracking.handledBots.thisWeek.total":
+                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
+                    "staffTracking.handledBots.thisWeek.remove":
+                        (req.user.db.staffTracking.handledBots.thisWeek.remove += 1)
                 }
             }
         );
@@ -3647,15 +3936,16 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send({
+        await discord.channels.logs.send({
             content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
-                })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
-                })\``,
+            )}** \`(${
+                req.user.id
+            })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
+            })\``,
             embeds: [embed]
         });
-
 
         const member = await discord.getMember(req.params.id);
 
@@ -3671,10 +3961,12 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${settings.emoji.delete
+                    `${
+                        settings.emoji.delete
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${req.body.reason || "None specified."
+                    )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -3697,9 +3989,19 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
+                req,
+                type: "Error"
+            });
+
+        if (bot.status.approved === false)
+            return res.status(400).render("status", {
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__("common.error.bot.inQueueHide"),
                 req,
                 type: "Error"
             });
@@ -3728,6 +4030,7 @@ router.post(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3739,7 +4042,7 @@ router.post(
             return res.status(400).render("status", {
                 title: res.__("common.error"),
                 status: 400,
-                subtitle: res.__("common.error.bot.inQueue"),
+                subtitle: res.__("common.error.bot.inQueueHide"),
                 req,
                 type: "Error"
             });
@@ -3767,10 +4070,14 @@ router.post(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
-                    "staffTracking.handledBots.allTime.modHidden": req.user.db.staffTracking.handledBots.allTime.modHidden += 1,
-                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
-                    "staffTracking.handledBots.thisWeek.modHidden": req.user.db.staffTracking.handledBots.thisWeek.modHidden += 1
+                    "staffTracking.handledBots.allTime.total":
+                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
+                    "staffTracking.handledBots.allTime.modHidden":
+                        (req.user.db.staffTracking.handledBots.allTime.modHidden += 1),
+                    "staffTracking.handledBots.thisWeek.total":
+                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
+                    "staffTracking.handledBots.thisWeek.modHidden":
+                        (req.user.db.staffTracking.handledBots.thisWeek.modHidden += 1)
                 }
             }
         );
@@ -3794,12 +4101,14 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        discord.channels.logs.send({
+        await discord.channels.logs.send({
             content: `${settings.emoji.hide} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
-                })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${bot._id
-                })\``,
+            )}** \`(${
+                req.user.id
+            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
+                bot._id
+            })\``,
             embeds: [embed]
         });
 
@@ -3807,10 +4116,12 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${settings.emoji.hide
+                    `${
+                        settings.emoji.hide
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${req.body.reason || "None specified."
+                    )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -3833,6 +4144,7 @@ router.get(
 
         if (!bot)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.bot.404"),
@@ -3862,21 +4174,26 @@ router.get(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledBots.allTime.total": req.user.db.staffTracking.handledBots.allTime.total += 1,
-                    "staffTracking.handledBots.thisWeek.total": req.user.db.staffTracking.handledBots.thisWeek.total += 1,
+                    "staffTracking.handledBots.allTime.total":
+                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
+                    "staffTracking.handledBots.thisWeek.total":
+                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1)
                 }
             }
         );
 
-        discord.channels.logs.send(
-            `${settings.emoji.unhide} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${req.user.id
-            })\` unhid bot **${functions.escapeFormatting(
-                bot.name
-            )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${bot._id
-            }>`
-        )
+        discord.channels.logs
+            .send(
+                `${settings.emoji.unhide} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` unhid bot **${functions.escapeFormatting(
+                    bot.name
+                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
+                    bot._id
+                }>`
+            )
             .catch((e) => {
                 console.error(e);
             });
@@ -3885,7 +4202,8 @@ router.get(
         if (owner)
             owner
                 .send(
-                    `${settings.emoji.check
+                    `${
+                        settings.emoji.check
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been unhidden on the website!`
@@ -3894,7 +4212,7 @@ router.get(
                     console.error(e);
                 });
 
-        global.db.collection("audit").insertOne({
+        await global.db.collection("audit").insertOne({
             type: "MOD_UNHIDE_BOT",
             executor: req.user.id,
             target: req.params.id,
@@ -3926,49 +4244,72 @@ router.get(
 
         const bot = botExists;
 
-        let commands: APIApplicationCommand[] = bot.commands || []
+        let commands: APIApplicationCommand[] = bot.commands || [];
 
         if (bot.scopes?.slashCommands && req.user.db.auth) {
             if (Date.now() > req.user.db.auth.expires) {
-                await refresh.requestNewAccessToken('discord', req.user.db.auth.refreshToken, async (err, accessToken, refreshToken, result: RESTPostOAuth2AccessTokenResult) => {
-                    if (err) {
-                        return res.status(500).json({
-                            error: true,
-                            status: 500,
-                            errors: [err.statusCode, err.data]
-                        });
-                    } else {
-                        await global.db.collection("users").updateOne(
-                            { _id: req.user.id },
-                            {
-                                $set: {
-                                    auth: {
-                                        accessToken,
-                                        refreshToken,
-                                        expires: Date.now() + result.expires_in * 1000
+                await refresh.requestNewAccessToken(
+                    "discord",
+                    req.user.db.auth.refreshToken,
+                    async (
+                        err,
+                        accessToken,
+                        refreshToken,
+                        result: RESTPostOAuth2AccessTokenResult
+                    ) => {
+                        if (err) {
+                            return res.status(500).json({
+                                error: true,
+                                status: 500,
+                                errors: [err.statusCode, err.data]
+                            });
+                        } else {
+                            await global.db.collection("users").updateOne(
+                                { _id: req.user.id },
+                                {
+                                    $set: {
+                                        auth: {
+                                            accessToken,
+                                            refreshToken,
+                                            expires:
+                                                Date.now() +
+                                                result.expires_in * 1000
+                                        }
                                     }
                                 }
-                            }
-                        );
-                        await userCache.updateUser(req.user.id)
+                            );
+                            await userCache.updateUser(req.user.id);
+                        }
                     }
-                })
+                );
             }
 
-            const receivedCommands = await (await fetch(DAPI + Routes.applicationCommands(bot._id), { headers: { authorization: `Bearer ${req.user.db.auth.accessToken}` } })).json().catch(() => { }) as APIApplicationCommand[]
+            const receivedCommands = (await (
+                await fetch(DAPI + Routes.applicationCommands(bot._id), {
+                    headers: {
+                        authorization: `Bearer ${req.user.db.auth.accessToken}`
+                    }
+                })
+            )
+                .json()
+                .catch(() => {})) as APIApplicationCommand[];
             if (Array.isArray(receivedCommands)) commands = receivedCommands;
         }
 
-        let userFlags = 0
+        let userFlags = 0;
 
         if (bot.scopes?.bot) {
-            const user = await discord.bot.rest.get(Routes.user(bot._id)).catch(() => { }) as APIUser
-            if (user.public_flags) userFlags = user.public_flags
+            const user = (await discord.bot.rest
+                .get(Routes.user(bot._id))
+                .catch(() => {})) as APIUser;
+            if (user.public_flags) userFlags = user.public_flags;
         }
 
-        discord.bot.rest.get(`/applications/${botExists.clientID || req.params.id}/rpc`)
+        discord.bot.rest
+            .get(`/applications/${botExists.clientID || req.params.id}/rpc`)
             .then(async (app: APIApplication) => {
-                if (app.bot_public === false) // not !app.bot_public; should not trigger when undefined
+                if (app.bot_public === false)
+                    // not !app.bot_public; should not trigger when undefined
                     return res.status(400).json({
                         error: true,
                         status: 400,

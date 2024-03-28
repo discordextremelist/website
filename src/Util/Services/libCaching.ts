@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -28,7 +28,10 @@ export function hasLib(name: string) {
 export async function cacheLibs() {
     const libraries: library[] = [];
     // @ts-ignore
-    const dbLibs: library[] = await global.db.collection<library>("libraries").find().toArray();
+    const dbLibs: library[] = await global.db
+        .collection<library>("libraries")
+        .find()
+        .toArray();
     for (const lib of dbLibs) libraries.push(lib);
     global.libs = libraries;
 }

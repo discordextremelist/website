@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 t
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -17,7 +17,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { BrowserDetectInfo } from "browser-detect/dist/types/browser-detect.interface";
 import { Db } from "mongodb";
 import { Redis } from "ioredis";
 import strings from "del-i18n/website/en-NZ.json"
@@ -25,9 +24,9 @@ import strings from "del-i18n/website/en-NZ.json"
 declare global {
     var redis: Redis;
     var announcement: announcement;
-    var ddosMode: ddosMode;
     var libs: library[];
     var db: Db;
+    var env_prod: boolean;
 }
 
 declare module "sanitize-html" {
@@ -52,14 +51,11 @@ declare module "express-serve-static-core" {
         user?: authUser;
         locale: any;
         setLocale(language: string): any;
-        browser: BrowserDetectInfo;
         device: {
             type: string;
         };
         del: {
             version: string;
-            channel: string;
-            cssVersion: string;
             node: string;
         };
     }

@@ -51,7 +51,6 @@
         "lgbtSiteURL": "https://discordextremelist.gay",
         "dev": true,
         "callback": "/auth/login/callback",
-        "gaID": "UA-X-X",
         "arcID": "X",
         "bannedVanityURLs": []
     },
@@ -85,23 +84,19 @@
         }
     },
     "emoji": {
-        "snowflake": {
-            "cross": "962329493610057729",
-            "check": "962330097363333210"
-        },
-        "cross": "<:cross:962329493610057729>",
-        "check": "<:check:962330097363333210>",
-        "add": "<:add:962306249339326464>",
-        "edit": "<:edit:962326292605333564>",
-        "delete": "<:delete:962326725499453440>",
-        "archive": "<:archive:962327110259712010>",
-        "hide": "<:hide:962328113407197214>",
-        "unhide": "<:unhide:962328113419784222>",
-        "resubmit": "<:resubmit:962328564072579112>",
-        "unapprove": "<:unapprove:962330822713675776>",
-        "error": "<:error:962332666152239186>",
-        "notification": "<:notification:962333041697648650>",
-        "warn": "<:warn:962333041676668948>",
-        "info": "<:info:962333041664065556>"
+        "cross": "❌",
+        "check": "✅",
+        "add": "🆕",
+        "edit": "📝",
+        "delete": "🗑️",
+        "archive": "🗂️",
+        "hide": "🙈",
+        "unhide": "🙊",
+        "resubmit": "🔄",
+        "unapprove": "➖",
+        "error": "‼️",
+        "notification": "🔔",
+        "warn": "⚠️",
+        "info": "ℹ️"
     }
 }

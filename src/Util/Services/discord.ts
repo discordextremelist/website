@@ -95,11 +95,12 @@ bot.on("ready", async () => {
 });
 
 bot.on("presenceUpdate", async (_oldPresence, newPresence) => {
-    await global.redis?.hmset(
-        prefix,
-        newPresence.member.id,
-        newPresence.status || PresenceUpdateStatus.Offline
-    );
+    if (newPresence.member)
+        await global.redis?.hmset(
+            prefix,
+            newPresence.member.id,
+            newPresence.status || PresenceUpdateStatus.Offline
+        );
 });
 
 bot.on("guildMemberAdd", async (member) => {

@@ -180,7 +180,9 @@ new Promise<void>((resolve, reject) => {
                 });
             });
         } else {
-            console.log("Cache: No one has the cache lock currently, acquiring it.");
+            console.log(
+                "Cache: No one has the cache lock currently, acquiring it."
+            );
             // 300 seconds is a good rule of thumb, it is expected that DEL has another instance running.
             await global.redis.setex("fetch_lock", 300, hostname());
             console.log("Discord: Also acquired the discord lock!");
@@ -255,17 +257,19 @@ new Promise<void>((resolve, reject) => {
             app.set("trust proxy", 1); // trust first proxy
         }
 
-        app.use(session({
-            store: new RedisStore({ client: global.redis }),
-            secret: settings.secrets.cookie,
-            resave: false,
-            saveUninitialized: false,
-            cookie: {
-                secure: global.env_prod,
-                httpOnly: true,
-                maxAge: 1000 * 60 * 60 * 3
-            }
-        }));
+        app.use(
+            session({
+                store: new RedisStore({ client: global.redis }),
+                secret: settings.secrets.cookie,
+                resave: false,
+                saveUninitialized: false,
+                cookie: {
+                    secure: global.env_prod,
+                    httpOnly: true,
+                    maxAge: 1000 * 60 * 60 * 3
+                }
+            })
+        );
 
         app.use(passport.initialize());
         app.use(passport.session());

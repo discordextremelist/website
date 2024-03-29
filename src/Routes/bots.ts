@@ -144,7 +144,10 @@ router.post(
         }
 
         if (req.body.clientID) {
-            if (Number.isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+            if (
+                Number.isNaN(req.body.clientID) ||
+                req.body.clientID.includes(" ")
+            ) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
@@ -287,24 +290,26 @@ router.post(
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
                     }),
                     headers: { "Content-Type": "application/json" }
-                }).then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (data && !data.guild?.id) {
+                })
+                    .then(async (fetchRes: fetchRes) => {
+                        const data: any = await fetchRes.json();
+                        if (data && !data.guild?.id) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.guildNotFound"
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.widgetbot.guildNotFound"
                             )
                         );
-                    }
-                }).catch(() => {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.guildNotFound"
-                        )
-                    );
-                });
+                    });
 
             let fetchChannel = true;
 
@@ -352,24 +357,26 @@ router.post(
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
                     }),
                     headers: { "Content-Type": "application/json" }
-                }).then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (!data.channel?.id) {
+                })
+                    .then(async (fetchRes: fetchRes) => {
+                        const data: any = await fetchRes.json();
+                        if (!data.channel?.id) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.channelNotFound"
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.widgetbot.channelNotFound"
                             )
                         );
-                    }
-                }).catch(() => {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.channelNotFound"
-                        )
-                    );
-                });
+                    });
         }
 
         if (req.body.twitter?.length > 15) {
@@ -591,7 +598,7 @@ router.post(
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
                     modNotes: req.body.modNotes,
-                    lastDenyReason: botExists.lastDenyReason || '',
+                    lastDenyReason: botExists.lastDenyReason || "",
                     reviewNotes: [],
                     editors,
                     commands,
@@ -682,7 +689,7 @@ router.post(
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
                             modNotes: req.body.modNotes,
-                            lastDenyReason: botExists.lastDenyReason || '',
+                            lastDenyReason: botExists.lastDenyReason || "",
                             reviewNotes: [],
                             editors,
                             commands,
@@ -1184,7 +1191,10 @@ router.post(
         }
 
         if (req.body.clientID) {
-            if (Number.isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+            if (
+                Number.isNaN(req.body.clientID) ||
+                req.body.clientID.includes(" ")
+            ) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
@@ -1366,24 +1376,26 @@ router.post(
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
                     }),
                     headers: { "Content-Type": "application/json" }
-                }).then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (data && !data.guild?.id) {
+                })
+                    .then(async (fetchRes: fetchRes) => {
+                        const data: any = await fetchRes.json();
+                        if (data && !data.guild?.id) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.guildNotFound"
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.widgetbot.guildNotFound"
                             )
                         );
-                    }
-                }).catch(() => {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.guildNotFound"
-                        )
-                    );
-                });
+                    });
 
             let fetchChannel = true;
 
@@ -1431,24 +1443,26 @@ router.post(
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
                     }),
                     headers: { "Content-Type": "application/json" }
-                }).then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (!data.channel?.id) {
+                })
+                    .then(async (fetchRes: fetchRes) => {
+                        const data: any = await fetchRes.json();
+                        if (!data.channel?.id) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.channelNotFound"
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.widgetbot.channelNotFound"
                             )
                         );
-                    }
-                }).catch(() => {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.channelNotFound"
-                        )
-                    );
-                });
+                    });
         }
 
         if (req.body.twitter?.length > 15) {
@@ -1965,7 +1979,9 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/:id/exists", permission.auth, async (req, res) => {
-    res.type("text").send(String(await global.redis?.hexists("bots", req.params.id)));
+    res.type("text").send(
+        String(await global.redis?.hexists("bots", req.params.id))
+    );
 });
 
 router.get(
@@ -2576,7 +2592,10 @@ router.post(
         }
 
         if (req.body.clientID) {
-            if (Number.isNaN(req.body.clientID) || req.body.clientID.includes(" ")) {
+            if (
+                Number.isNaN(req.body.clientID) ||
+                req.body.clientID.includes(" ")
+            ) {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.invalidClientID"));
             }
@@ -2758,24 +2777,26 @@ router.post(
                         query: `{guild(id:"${req.body.widgetServer}"){id}}`
                     }),
                     headers: { "Content-Type": "application/json" }
-                }).then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (data && !data.guild?.id) {
+                })
+                    .then(async (fetchRes: fetchRes) => {
+                        const data: any = await fetchRes.json();
+                        if (data && !data.guild?.id) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.guildNotFound"
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.widgetbot.guildNotFound"
                             )
                         );
-                    }
-                }).catch(() => {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.guildNotFound"
-                        )
-                    );
-                });
+                    });
 
             let fetchChannel = true;
 
@@ -3566,7 +3587,7 @@ router.post(
                 $set: {
                     vanityUrl: "",
                     lastDenyReason: req.body.reason,
-                    "status.archived": true,
+                    "status.archived": true
                 }
             }
         );

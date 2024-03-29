@@ -52,7 +52,7 @@ router.get("/", variables, (req: Request, res: Response) => {
 
 router.post("/", variables, async (req: Request, res: Response) => {
     let { query, only }: { query: string; only: string[] } = req.body;
-    if (!query || typeof(query) !== "string" || typeof(only) !== "object")
+    if (!query || typeof query !== "string" || typeof only !== "object")
         return res.status(400).json({
             error: true,
             status: 400,

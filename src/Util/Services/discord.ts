@@ -73,17 +73,22 @@ bot.on("ready", async () => {
         );
     } else {
         console.time("Cache: Bot cache");
-        botCache.getAllBots().then(async (bots) => {
-            const botsToFetch = [];
-            bots.forEach(async (bot) => {
-                if (guilds.main.members.cache.has(bot._id))
-                    botsToFetch.push(bot._id);
-            });
-            guilds.main.members
-                .fetch({ user: botsToFetch })
-                .then((x) => console.log(`Discord: Retrieved ${x.size} members!`))
-                .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
-        }).catch((e) => console.error(e));
+        botCache
+            .getAllBots()
+            .then(async (bots) => {
+                const botsToFetch = [];
+                bots.forEach(async (bot) => {
+                    if (guilds.main.members.cache.has(bot._id))
+                        botsToFetch.push(bot._id);
+                });
+                guilds.main.members
+                    .fetch({ user: botsToFetch })
+                    .then((x) =>
+                        console.log(`Discord: Retrieved ${x.size} members!`)
+                    )
+                    .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
+            })
+            .catch((e) => console.error(e));
         console.timeEnd("Cache: Bot cache");
         await global.redis.del("fetch_lock");
     }

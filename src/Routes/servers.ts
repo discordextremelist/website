@@ -201,24 +201,26 @@ router.post(
                         query: `{channel(id:"${req.body.previewChannel}"){id}}`
                     }),
                     headers: { "Content-Type": "application/json" }
-                }).then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (!data.channel?.id) {
+                })
+                    .then(async (fetchRes: fetchRes) => {
+                        const data: any = await fetchRes.json();
+                        if (!data.channel?.id) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.channelNotFound"
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.widgetbot.channelNotFound"
                             )
                         );
-                    }
-                }).catch(() => {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.channelNotFound"
-                        )
-                    );
-                });
+                    });
         }
 
         if (!req.body.shortDescription) {
@@ -438,7 +440,9 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/:id/exists", permission.auth, async (req, res) => {
-    res.type('text').send(String(await global.redis?.hexists("servers", req.params.id)));
+    res.type("text").send(
+        String(await global.redis?.hexists("servers", req.params.id))
+    );
 });
 
 router.get(
@@ -628,24 +632,26 @@ router.post(
                         query: `{channel(id:"${req.body.previewChannel}"){id}}`
                     }),
                     headers: { "Content-Type": "application/json" }
-                }).then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (!data.channel?.id) {
+                })
+                    .then(async (fetchRes: fetchRes) => {
+                        const data: any = await fetchRes.json();
+                        if (!data.channel?.id) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.channelNotFound"
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.widgetbot.channelNotFound"
                             )
                         );
-                    }
-                }).catch(() => {
-                    error = true;
-                    errors.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.channelNotFound"
-                        )
-                    );
-                });
+                    });
         }
 
         if (!req.body.shortDescription) {

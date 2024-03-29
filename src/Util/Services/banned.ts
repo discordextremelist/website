@@ -29,7 +29,11 @@ export async function updateBanlist() {
     await guilds.main.bans
         .fetch()
         .then(async (bans) => {
-            if (bans.size > 0) await global.redis?.hmset("bans", ...bans.map((ban) => [ban.user.id, true]));
+            if (bans.size > 0)
+                await global.redis?.hmset(
+                    "bans",
+                    ...bans.map((ban) => [ban.user.id, true])
+                );
         })
         .catch((e) => console.error(e));
 }

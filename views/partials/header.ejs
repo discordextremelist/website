@@ -1,5 +1,5 @@
 <!doctype HTML>
-<html lang="<%= req.locale || defaultLang %>" dir="<%= htmlDir %>" class="theme-<%= preferredTheme %>">
+<html lang="<%= req.locale || defaultLang %>" dir="<%= htmlDir %>" data-theme="<%= (preferredTheme == "light") ? 'light' : 'dark'%>" data-deltheme="<%= preferredTheme %>">
 <head>
     <meta charset="utf-8">
     
@@ -7,7 +7,7 @@
 
     <link href="/img/logo.png" type="image/png" rel="shortcut-icon">
     <link href="/img/logo.png" type="image/png" rel="icon">
-    <link href="/css/theme/<%= preferredTheme %>/standard.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet">
+    <link href="/css/themes/<%= preferredTheme %>.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" async>
     <% if (pageType.bot === true) { 
         let color = "#BA2EFF"
         if (req.user) color = req.user.db.preferences.defaultColour
@@ -36,23 +36,18 @@
     <% } %>
     <% if (req.user) { %><style><%= req.user.db.preferences.customGlobalCss %></style><% } %>
 
-    <% if (usePreload) { %>
-        <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
 
-        <link href="/fonts/fa/css/all.css?v=<%= cssVersion %>" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="/fonts/fa/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="preload" href="/fonts/fa/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="preload" href="/fonts/fa/webfonts/fa-duotone-900.woff2" as="font" type="font/woff2" crossorigin>
-    <% } else { %>
-        <link href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap" media="screen" rel="stylesheet">
-        <link href="/fonts/fa/css/all.css?v=<%= cssVersion %>" media="screen" rel="stylesheet">
-    <% } %>
+    <link href="/fonts/fa/css/all.css?v=<%= cssVersion %>" media="screen" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/fonts/fa/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/fa/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/fa/webfonts/fa-duotone-900.woff2" as="font" type="font/woff2" crossorigin>
 
     <link rel="manifest" href="/manifest.json">
     <link rel="search" title="Search" href="<%= linkPrefix %>/search">
     <link rel="preconnect" href="https://cdn.discordapp.com">
-    <link rel="preconnect" href="https://twemoji.maxcdn.com">
-
+    <link rel="preconnect" href="https://unpkg.com">
+    
     <%- include("./locales.ejs") %>
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -77,7 +72,7 @@
         <meta name="twitter:creator" content="@ExtremeList">
         <meta name="twitter:title" content="<%= title || "Page" %> | Discord Extreme List">
         <meta name="twitter:description" content="<%= bot.shortDesc %>">
-        <meta property="twitter:image" content="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.png">
+        <meta property="twitter:image" content="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.webp">
         <meta property="twitter:image:alt" content="DEL's Logo">
 
         <meta property="og:type" content="website">
@@ -92,8 +87,8 @@
         <meta itemprop="description" content="<%= bot.shortDesc %>">
         <meta itemprop="image" content="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.png">
     
-        <meta name="author" content="<%= botOwner ? botOwner.fullUsername : "Unknown#0000" %>">
-        <meta name="copyright" content="Carolina, John Burke, Advaith Jagathesan">
+        <meta name="author" content="<%= botOwner ? botOwner.fullUsername : "Unknown" %>">
+        <meta name="copyright" content="Carolina Mitchell, John Burke, Advaith Jagathesan">
     <% } else if (pageType.server || pageType.template) { %>
         <%
             let listing;
@@ -121,7 +116,7 @@
         <meta name="twitter:creator" content="@ExtremeList">
         <meta name="twitter:title" content="<%= title || "Page" %> | Discord Extreme List">
         <meta name="twitter:description" content="<%= listing.shortDesc %>">
-        <meta property="twitter:image" content="<%= listing.icon.url || `${baseURL}/img/defaultavatar` %>.png">
+        <meta property="twitter:image" content="<%= listing.icon.url || `${baseURL}/img/defaultavatar` %>.webp">
         <meta property="twitter:image:alt" content="DEL's Logo">
 
         <meta property="og:type" content="website">
@@ -137,7 +132,7 @@
         <meta itemprop="image" content="<%= listing.icon.url || `${baseURL}/img/defaultavatar` %>.png">
     
         <meta name="author" content="<%= listingOwner ? listingOwner.fullUsername : 'Unknown' %>">
-        <meta name="copyright" content="Carolina, John Burke, Advaith Jagathesan">
+        <meta name="copyright" content="Carolina Mitchell, John Burke, Advaith Jagathesan">
     <% } else { %>
         <meta name="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list, giving Discord bots and Discord servers of all sizes an extreme chance!" %>">
 
@@ -155,8 +150,8 @@
         <meta itemprop="name" content="<%= title || "Page" %> | Discord Extreme List">
         <meta itemprop="description" content="<%= subtitle || "Discord Extreme List, Discord's unbiased list, giving Discord bots and Discord servers of all sizes an extreme chance!" %>">
         
-        <meta name="author" content="Carolina, John Burke, Advaith Jagathesan">
-        <meta name="copyright" content="Carolina, John Burke, Advaith Jagathesan">
+        <meta name="author" content="Carolina Mitchell, John Burke, Advaith Jagathesan">
+        <meta name="copyright" content="Carolina Mitchell, John Burke, Advaith Jagathesan">
 
         <% if (pageType.user) { %>
             <meta property="twitter:image" content="<%= userProfile.avatar.url || `${baseURL}/img/defaultavatar` %>.png">
@@ -187,7 +182,7 @@
     <meta name="msapplication-config" content="/browserconfig.xml">
 
     <% if (htmlDir === "rtl") { %><%- include("./rtl.ejs") %><% } %>
-    <script async src="https://arc.io/widget.min.js#1mwUgGa4"></script>
+    <script async src="https://arc.io/widget.min.js#nV9jzuzJ"></script>
     
     <script type="application/ld+json">
         {
@@ -201,16 +196,5 @@
             }
         }
     </script>
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaID %>"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', '<%= gaID %>');
-    </script>
-
-    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "306c58a96e52404fb8a26e51b27ae1af"}'></script>
+    <script src="https://js.sentry-cdn.com/1fcecc392aa0480cb106746fe7fb50e4.min.js" crossorigin="anonymous"></script>
 </head>

@@ -1,5 +1,5 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/theme/<%= preferredTheme %>/listing.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
+<link href="/css/listing.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
 <% if (longDesc) { %><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha512-/DXTXr6nQodMUiq+IUJYCt2PPOUjrHJ9wFrqpJ3XkgPNOZVfMok7cRw6CSxyCQxXn6ozlESsSh1/sMCTF1rL/g==" crossorigin="anonymous"></script><% } %>
 <script type="application/ld+json">
     {
@@ -37,7 +37,7 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-2">
-                    <img class="image" title="<%= template.name %>'s Icon'" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= template.icon.hash ? template.icon.url : `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=512" alt="<%= template.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
+                    <img class="image" title="<%= template.name %>'s Icon'" style="margin: auto; width: 128px; border-radius: 50%;" src="<%= template.icon.hash ? template.icon.url : `${baseURL}/img/defaultavatar` %>.webp?size=512" alt="<%= template.name %>'s Icon" onerror="this.onerror = null;this.src = '/img/defaultavatar.webp';console.log('Failed to load item\'s avatar/icon, using default instead.');" draggable="false">
                 </div>
                 <div class="column is-10">
                     <h1 class="is-size-1 <% if (mobile) { %>has-text-centered<% } %>">
@@ -94,10 +94,6 @@
                                     </div>
                                     <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                         <div class="dropdown-content">
-                                            <div class="dropdown-item">
-                                                <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
-                                            </div>
-                                            <hr class="dropdown-divider">
                                             <a class="dropdown-item has-text-success" href="<%= linkPrefix %>/templates/<%= template._id %>/sync">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-sync-alt"></i></span>
                                                 <span><%= __("common.sync") %></span>

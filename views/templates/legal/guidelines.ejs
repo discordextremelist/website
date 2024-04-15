@@ -1,6 +1,6 @@
 <%- include("../../partials/header.ejs") %>
 <%- include("../../partials/nav.ejs") %>
-<section class="hero is-black">
+<section class="hero is-primary">
     <div class="hero-body">
         <br />
         <div class="container has-text-centered">
@@ -17,101 +17,26 @@
     </section>
     <div class="container">
         <div class="section">
-            <h2 class="is-size-3 has-text-default"><%= __("page.guidelines.principle") %></h2>
-            <div class="content">
-                <ul>
-                    <li class="is-size-4"><%= __("page.guidelines.commonSense") %></li>
-                    <li class="is-size-6"><a class="has-text-white" href="mailto:contact@discordextremelist.xyz"><%= __("page.guidelines.support", "contact@discordextremelist.xyz") %></a></li>
-                </ul>
-            </div>
-            <h2 class="is-size-3 has-text-default"><%= __("page.guidelines.user") %></h2>
-            <div class="content">
-                <ul>
-                    <li class="is-size-4"><%= __("page.guidelines.user.profile") %>
-                        <ul class="is-size-6">
-                            <li><%= __("page.guidelines.user.profile.0") %></li>
-                            <li><%= __("page.guidelines.user.profile.1") %></li>
-                            <li><%= __("page.guidelines.user.profile.2") %></li>
-                        </ul>
-                    </li>
-                    <li class="is-size-4"><%= __("page.guidelines.user.other") %>
-                        <ul class="is-size-6">
-                            <li><%= __("page.guidelines.user.other.0") %></li>
-                            <li><%= __("page.guidelines.user.other.1") %></li>
-                            <li><span class="is-size-6"><%= __("page.guidelines.user.other.1.1") %></span></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <br />
-            <h2 class="is-size-3 has-text-default"><%= __("page.guidelines.bot") %></h2>
-            <div class="content">
-                <ul>
-                    <li class="is-size-4"><%= __("page.guidelines.listing") %>
-                        <ul class="is-size-6">
-                            <li><%= __("page.guidelines.bot.listing.0") %></li>
-                            <li><%= __("page.guidelines.bot.listing.1") %></li>
-                            <li><%= __("page.guidelines.bot.listing.2") %></li>
-                            <li><%= __("page.guidelines.bot.listing.3") %></li>
-                        </ul>
-                    </li>
-                    <li class="is-size-4"><%= __("page.guidelines.other") %>
-                        <ul class="is-size-6">
-                            <li><%= __("page.guidelines.bot.other.0") %></li>
-                            <li><%= __("page.guidelines.bot.other.1") %></li>
-                            <li><%= __("page.guidelines.bot.other.2") %></li>
-                            <li><%= __("page.guidelines.bot.other.3") %></li>
-                            <li><%= __("page.guidelines.bot.other.4") %>
-                                <ul class="is-size-6">
-                                    <li><%= __("page.guidelines.bot.other.4.1") %></li>
-                                    <li><%= __("page.guidelines.bot.other.4.2") %></li>
-                                    <li><%= __("page.guidelines.bot.other.4.3") %></li>
-                                    <li><%= __("page.guidelines.bot.other.4.4") %></li>
-                                </ul>
-                            </li>
-                            <li><%= __("page.guidelines.bot.other.5") %></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <br />
-            <h2 class="is-size-3 has-text-default"><%= __("page.guidelines.server") %></h2>
-            <div class="content">
-                <ul>
-                    <li class="is-size-4"><%= __("page.guidelines.listing") %>
-                        <ul class="is-size-6">
-                            <li><%= __("page.guidelines.server.listing.0") %></li>
-                            <li><%= __("page.guidelines.server.listing.1") %></li>
-                            <li><%= __("page.guidelines.server.listing.2") %></li>
-                            <li><%= __("page.guidelines.server.listing.3") %></li>
-                        </ul>
-                    </li>
-                    <li class="is-size-4"><%= __("page.guidelines.other") %>
-                        <ul class="is-size-6">
-                            <li><%= __("page.guidelines.server.other.0") %></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <br />
-            <h2 class="is-size-3 has-text-default"><%= __("page.guidelines.template") %></h2>
-            <div class="content">
-                <ul>
-                    <li class="is-size-4"><%= __("page.guidelines.listing") %>
-                        <ul class="is-size-6">
-                            <li><%= __("page.guidelines.template.listing.0") %></li>
-                            <li><%= __("page.guidelines.template.listing.1") %></li>
-                            <li><%= __("page.guidelines.template.listing.2") %></li>
-                            <li><%= __("page.guidelines.template.listing.3") %></li>
-                        </ul>
-                    </li>
-                    <li class="is-size-4"><%= __("page.guidelines.other") %>
-                        <ul class="is-size-6">
-                            <li><%= __("page.guidelines.template.other.0") %></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+            <%- guidelines %>
         </div>
     </div>
+    <style>
+        h1 {
+          font-size:2rem;
+          font-weight: bolder;
+        }
+        h2 {
+          font-size:1.5rem;
+          font-weight: bold;
+        }
+        p, ol, ul {
+            padding-block-end: 15px;
+        }
+        ol, ul {
+            padding-left: 35px;
+        }
+        ul {
+            list-style: unset !important;
+        }
+      </style>
 <%- include("../../partials/footer.ejs") %>

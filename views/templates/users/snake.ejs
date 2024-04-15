@@ -1,6 +1,6 @@
 <%- include("../../partials/header.ejs") %>
 <%- include("../../partials/nav.ejs") %>
-<section class="hero is-black">
+<section class="hero is-primary">
     <div class="hero-body">
         <br />
         <div class="container has-text-centered">
@@ -17,7 +17,7 @@
     </section>
     <div class="container">
         <div style="text-align: center;" class="section">
-            <% if (req.device.type !== "phone" && req.device.type !== "tablet") { %>
+            <% if (!res.locals.mobile) { %>
                 <% if (!req.user || req.user.db.preferences.enableGames === true) { %>
                     <div id="snake_game">
                         <p class="is-size-5 has-text-warning"><span><%= __("page.snake.highscore") %></span> <span id="highScore"><%= req.user.db.game.snakes.maxScore %></span></p>
@@ -148,7 +148,7 @@
                                         document.getElementById("score").innerHTML = `${snake.maxCells - 4}`;
 
                                         xhr.open("POST", url, true);
-                                        xhr.setRequestHeader("Content-Type", "application/json");
+                                        xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
                                         xhr.onreadystatechange = function() {
                                             if (xhr.readyState === 4 && xhr.status === 200) {
                                                 const json = JSON.parse(xhr.responseText);

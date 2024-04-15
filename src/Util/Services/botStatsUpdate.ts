@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -63,7 +63,8 @@ export async function botStatsUpdate() {
                             "staffTracking.handledBots.prevWeek.remove":
                                 user.staffTracking.handledBots.thisWeek.remove,
                             "staffTracking.handledBots.prevWeek.modHidden":
-                                user.staffTracking.handledBots.thisWeek.modHidden
+                                user.staffTracking.handledBots.thisWeek
+                                    .modHidden
                         }
                     }
                 );

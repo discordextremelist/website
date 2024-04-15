@@ -1,13 +1,14 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/theme/<%= preferredTheme %>/form.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet">
 <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/editor/editor.main.min.css" integrity="sha512-XjO5XYWl8u7tYF3CItEHgoWh8rtQmDeSzPJq4+4PIrbak7TiqeKbWv/4ZwHZ1HAf5dIWHXoguA/jobn2psKZ7w==" crossorigin="anonymous">
+<link href="/css/monaco.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha512-/DXTXr6nQodMUiq+IUJYCt2PPOUjrHJ9wFrqpJ3XkgPNOZVfMok7cRw6CSxyCQxXn6ozlESsSh1/sMCTF1rL/g==" crossorigin="anonymous" async></script>
+<script src="https://cdn.jsdelivr.net/gh/jitbit/HtmlSanitizer@master/HtmlSanitizer.js"></script>
 <%- include("../../partials/nav.ejs") %>
 <%
     let postURL = `${linkPrefix}/bots/${bot._id}/edit`;
     if (resubmit) postURL = `${linkPrefix}/bots/${bot._id}/resubmit`;
 %>
-<section class="hero is-black">
+<section class="hero is-primary">
     <div class="hero-body">
         <br>
         <div class="container has-text-centered">
@@ -485,7 +486,7 @@ function doSubmit() {
         .then(data => {
             if (!data || data.error === true) {
                 document.getElementById("errors").style.display = "block";
-                document.getElementById("errorList").innerHTML = data.errors.map(err => `<li>${err}</li>`).join('');
+                document.getElementById("errorList").innerHTML = data.errors.map(err => `<li>${HtmlSanitizer.SanitizeHtml(err)}</li>`).join('');
                 scroll(0, 0);
                 document.getElementById("submitButton").classList.remove("is-loading");
                 document.getElementById("cancelButton").removeAttribute("disabled");

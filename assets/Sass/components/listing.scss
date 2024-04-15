@@ -1,0 +1,117 @@
+/*
+Discord Extreme List - Discord's unbiased list.
+
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+@charset "UTF-8";
+
+@use "./colours.scss" as cc;
+
+h1 {
+    font-size: 48px;
+}
+
+h2 {
+    font-size: 40px;
+}
+
+h3 {
+    font-size: 32px;
+}
+
+h4 {
+    font-size: 24px;
+}
+
+h5 {
+    font-size: 20px;
+}
+
+h6 {
+    font-size: 16px;
+}
+
+strong {
+    color: #fff;
+}
+
+code {
+    background-color: #1f1f1f;
+}
+
+pre {
+    color: #ff3860;
+    background-color: #1f1f1f;
+}
+
+table th {
+    color: #d2d2d2;
+}
+
+.content a:hover {
+    color: #1c5abd;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+    color: #fff;
+    font-weight: inherit;
+}
+
+table {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all;
+    -webkit-overflow-scrolling: touch;
+}
+
+blockquote {
+    background-color: transparent !important;
+}
+
+.tab-content {
+    display: none;
+
+    &.is-active {
+        display: block;
+    }
+}
+
+.infoColumn {
+    border-radius: 5px;
+    background-color: var(--delovr-primary-colour);
+    padding: 15px;
+}
+
+.command {
+    outline: none;
+    margin-bottom: .5rem;
+    &:hover, &:active, &:focus {
+        opacity: .9;
+    }
+}
+
+.option {
+    padding: 0 .5rem !important;
+    height: 1.4rem !important;
+}

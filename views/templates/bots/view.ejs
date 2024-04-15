@@ -39,7 +39,7 @@
         foreground = functions.getForeground(bot.theme.colour);
     }
 %>
-<link href="/css/theme/<%= preferredTheme %>/listing.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
+<link href="/css/listing.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
 <style>.message{background-color:#f5f5f5;border-radius:4px;font-size:1rem}.message strong{color:currentColor}.message a:not(.button):not(.tag):not(.dropdown-item){color:currentColor;text-decoration:underline}.message.is-small{font-size:.75rem}.message.is-medium{font-size:1.25rem}.message.is-large{font-size:1.5rem}.message.is-default{background-color:<%= defaultColour %>}.message.is-default .message-header{background-color:<%= defaultColour %>;color:<%= foreground %>}.message.is-default .message-body{border-color:#fff;color:<%= defaultColour %>}</style>
 <%- include("../../partials/isDefaultCSS/codeTag.ejs") %>
 <section class="hero is-primary" <% if (bot.theme && bot.theme.banner) { %>style="background-image: url(<%= bot.theme.banner %>); background-size: cover; background-position: center"<% } %>>
@@ -48,7 +48,7 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-2">
-                    <img class="image" <% if (showStatus) { %>title="<%= __(`page.bots.status.${botStatus}`) %>"<% } %> style="margin: auto; width: 128px; border-radius: 50%; <% if (showStatus) { %>animation: <%= botStatus %> 2s infinite !important;<% } %>" src="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>?size=512" alt="<%= __('common.img.avatar', bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.<%= imageFormat %>';console.log('<%= __("common.img.loadFail") %>');">
+                    <img class="image" <% if (showStatus) { %>title="<%= __(`page.bots.status.${botStatus}`) %>"<% } %> style="margin: auto; width: 128px; border-radius: 50%; <% if (showStatus) { %>animation: <%= botStatus %> 2s infinite !important;<% } %>" src="<%= bot.icon?.url || bot.avatar?.url || `${baseURL}/img/defaultavatar` %>.webp?size=512" alt="<%= __('common.img.avatar', bot.name) %>" onerror="this.onerror = null;this.src = '/img/defaultavatar.webp';console.log('<%= __("common.img.loadFail") %>');">
                 </div>
             <div class="column is-10<% if (mobile) { %> has-text-centered<% } %>">
                     <h1 class="is-size-1">
@@ -171,7 +171,7 @@
                             %>
                         <% } %>
                         <% if (bot.owner.id === req.user.id) { %>
-                            <div style="padding-right: .5em;" class="dropdown is-hoverable">
+                            <div class="dropdown is-hoverable">
                                 <div class="dropdown-trigger">
                                     <%-
                                         include("../../partials/button.ejs", {
@@ -197,7 +197,7 @@
                                   </div>
                                 </div>
                             </div>
-                            <% if (bot.status.hidden) { %>
+                            <% if (bot.status.hidden && bot.status.approved) { %>
                                 <%-
                                     include("../../partials/button.ejs", {
                                         className: "button is-white",
@@ -236,10 +236,6 @@
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-ui-actions" role="menu">
                                   <div class="dropdown-content">
-                                    <div class="dropdown-item">
-                                        <p class="has-text-danger"><%= __("common.staffManagement.warning") %></p>
-                                    </div>
-                                    <hr class="dropdown-divider">
                                     <a class="dropdown-item has-text-success" href="<%= linkPrefix %>/bots/<%= bot._id %>/sync">
                                         <span class="icon">
                                             <i aria-hidden="true" class="fas fa-sync-alt"></i>
@@ -255,6 +251,12 @@
                                                 <span><%= __("page.bots.setVanity") %></span>
                                             </a>
                                         <% } %>
+                                        <a class="dropdown-item has-text-pink" id="transferOwner">
+                                            <span class="icon">
+                                                <i aria-hidden="true" class="fas fa-crown"></i>
+                                            </span>
+                                            <span><%= __("page.bots.transferOwner") %></span>
+                                        </a>
                                         <% if (bot.status.premium === false) { %>
                                             <a class="dropdown-item has-text-magenta" href="<%= linkPrefix %>/bots/<%= bot._id %>/give-premium">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-heart"></i></span>
@@ -273,14 +275,14 @@
                                             <span><%= __("common.edit") %></span>
                                         </a>
                                     <% } %>
-                                    <% if (!bot.status.modHidden) { %>
+                                    <% if (!bot.status.modHidden && bot.status.approved) { %>
                                         <a class="dropdown-item has-text-grey-light" href="<%= linkPrefix %>/bots/<%= bot._id %>/modhide">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-eye-slash"></i>
                                             </span>
                                             <span><%= __("common.hide") %></span>
                                         </a>
-                                    <% } else { %>
+                                    <% } else if (bot.status.approved) { %>
                                         <a class="dropdown-item has-text-grey-light" href="<%= linkPrefix %>/bots/<%= bot._id %>/modunhide">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-eye"></i>
@@ -594,15 +596,28 @@
             </div>
             <br />
             <% if (req.user) { %>
-                <% if (req.user.db.rank.mod === true) { %>
-                    <% if (bot.modNotes && bot.status.approved === false) { %>
+                <% if (req.user.db.rank.mod === true && bot.status.approved === false) { %>
+                    <% if (bot.modNotes) { %>
                         <div class="container">
-                            <article class="message is-default">
+                            <article class="message is-warning">
                                 <div class="message-header">
                                     <p style="color: <%= foreground %>;"><%= __("page.bots.modNotes.view") %></p>
                                 </div>
                                 <div class="message-body" style="background-color: black; color <%= foreground %>;">
                                     <%= bot.modNotes %>
+                                </div>
+                            </article>
+                        </div>
+                        <br />
+                    <% } %>
+                    <% if (bot.lastDenyReason) { %>
+                        <div class="container">
+                            <article class="message is-danger">
+                                <div class="message-header">
+                                    <p style="color: <%= foreground %>;"><%= __("page.bots.lastDenyReason.view") %></p>
+                                </div>
+                                <div class="message-body" style="background-color: black; color <%= foreground %>;">
+                                    <%= bot.lastDenyReason %>
                                 </div>
                             </article>
                         </div>
@@ -653,7 +668,7 @@
                     </span>
                     <span><%= __("common.archive") %></span>
                 </a>
-                <a class="button is-white" style="background-color: #b5b5b5" <% if (!bot.status.hidden && !bot.status.modHidden) { %>href="<%= linkPrefix %>/bots/<%= bot._id %>/hide"<% } else { %>disabled<% } %>>
+                <a class="button is-white" style="background-color: #b5b5b5" <% if (!bot.status.hidden && !bot.status.modHidde && bot.status.approved) { %>href="<%= linkPrefix %>/bots/<%= bot._id %>/hide"<% } else { %>disabled<% } %>>
                     <span class="icon">
                         <i aria-hidden="true" class="fas fa-eye-slash"></i>
                     </span>
@@ -674,10 +689,10 @@
     <div class="modal-background" id="vanityModalBg"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title has-text-danger"><%= __("page.bots.setVanity") %></p>
+            <p class="modal-card-title has-text-link"><%= __("page.bots.setVanity") %></p>
         </header>
         <form action="<%= linkPrefix %>/bots/<%= bot._id %>/setvanity" method="POST">
-            <section class="modal-card-body has-text-danger">
+            <section class="modal-card-body has-text-link">
                 <%= __("page.bots.setVanity.warning") %>
                 <div>
                     <br />
@@ -710,6 +725,48 @@
         </form>
     </div>
     <script>document.querySelector("a#setVanity").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".setVanity");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal2").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+</div>
+<div class="modal transferOwner">
+    <div class="modal-background" id="transferOwnerModalBg"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title has-text-pink"><%= __("page.bots.transferOwner") %></p>
+        </header>
+        <form action="<%= linkPrefix %>/bots/<%= bot._id %>/transfer-owner" method="POST">
+            <section class="modal-card-body has-text-pink">
+                <%= __("page.bots.transferOwner.warning") %>
+                <div>
+                    <br />
+                    <div class="field">
+                        <p class="control has-icons-left has-icons-right">
+                            <input class="input is-rounded" type="text" name="vanity" placeholder="<%= __("page.bots.transferOwner.placeholder") %>" required>
+                            <span class="icon is-small is-left">
+                                <i aria-hidden="true" class="fas fa-link"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <div class="buttons">
+                    <button class="button is-success">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fas fa-check-circle"></i>
+                        </span>
+                        <span><%= __("common.set") %></span>
+                    </button>
+                    <button class="button is-danger" id="close-modal3">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fas fa-times-circle"></i>
+                        </span>
+                        <span><%= __("common.cancel") %></span>
+                    </button>
+                </div>
+            </footer>
+        </form>
+    </div>
+    <script>document.querySelector("a#transferOwner").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".transferOwner");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal3").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
+    <script>const modals=[".transferOwner",".setVanity",".deleteModal"];document.addEventListener("keydown",(e)=>{if(e.key=="Escape")for(const unsModal of modals){const modal=document.querySelector(unsModal);modal.classList.remove("is-active");modal.classList.remove("is-clipped")}})</script>
 </div>
 
 <% if (req.user && bot.owner.id === req.user.id || req.user && req.user.db.rank.mod === true) { %>

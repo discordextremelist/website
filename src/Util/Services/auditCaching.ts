@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -30,14 +30,14 @@ export async function getAllAuditLogs(): Promise<auditLog[]> {
 }
 
 export async function uploadAuditLogs() {
-    const logs: auditLog[] = ((await global.db
-        .collection<auditLog>("audit")
-        .find()
-        .sort({ date: -1 })
-        .allowDiskUse()
-        .toArray()) as auditLog[]).filter(
-        ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
-    );
+    const logs: auditLog[] = (
+        (await global.db
+            .collection<auditLog>("audit")
+            .find()
+            .sort({ date: -1 })
+            .allowDiskUse()
+            .toArray()) as auditLog[]
+    ).filter(({ type }) => type !== "GAME_HIGHSCORE_UPDATE");
 
     if (logs.length < 1) return;
     await global.redis?.hmset(

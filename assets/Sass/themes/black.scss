@@ -1,0 +1,64 @@
+/*
+Discord Extreme List - Discord's unbiased list.
+
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+@charset "UTF-8";
+
+$primary: #0e0e0e;
+$bg: #000000;
+$white: #ffffff;
+$black: $primary;
+
+@use "../components/colours.scss" as cc with (
+    $black: $black,
+    $white: $white,
+);
+
+@use "../../../node_modules/bulma/sass" with (
+    // Preliminary variables
+    $cssvars-prefix: "del-",
+    $primary: $primary,
+    $white: #ffffff,
+    $black: $primary,
+    $background: $bg,
+
+    // Text, body, and font variables
+    $text: $white,
+    $text-strong: $white,
+    $label-color: $white,
+    $title-color: $white,
+    $subtitle-color: #d8d8d8,
+    $body-background-color: $bg,
+    $family-sans-serif: '"Lexend Deca", sans-serif',
+
+
+    // Colour and navbar variables
+    $danger: cc.$danger,
+    $success: cc.$success,
+    $warning: cc.$warning,
+    $navbar-tab-active-color: cc.$magenta,
+
+    $custom-colors: cc.$custom-colors
+);
+
+@use "../components/additional.scss";
+@use "../components/overwrite.scss";
+@use "../extensions/index.scss" with (
+    $primary: $primary,
+    $white: $white,
+);

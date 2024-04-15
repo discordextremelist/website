@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -83,11 +83,9 @@ export async function updateAnnouncement(announcement, req: Request) {
 }
 
 export async function updateCache() {
-    const announcement = await global.db
+    global.announcement = await global.db
         .collection<announcement>("webOptions")
         .findOne({ _id: "announcement" });
-
-    global.announcement = announcement;
     return;
 }
 

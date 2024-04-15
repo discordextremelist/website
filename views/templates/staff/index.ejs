@@ -1,5 +1,4 @@
 <%- include("../../partials/header.ejs") %>
-<link href="/css/theme/<%= preferredTheme %>/all.css?v=<%= cssVersion %>" media="screen, print" rel="stylesheet" />
 <style>.stats{padding:15px;border-radius:5px;}p.heading.main{margin-top:5px}.stats-header{background-color:<%= siteThemeColourDarker %>bd !important;padding:3px;filter: drop-shadow(0px 0px 1px black)}</style>
 <%- include("../../partials/nav.ejs") %>
 <section class="hero is-primary">
@@ -20,7 +19,7 @@
 <div class="container">
     <div class="section">
         <p>
-            <img style="border-radius: 50%; vertical-align: middle; height: 32px; width: auto; margin-left: 6px;" src="<%= req.user.db.avatar.hash ? req.user.db.avatar.url : `${baseURL}/img/defaultavatar` %>.<%= imageFormat %>" alt="<%= __("common.img.avatar", req.user.db.fullUsername) %>" onerror="this.onerror=null;this.src='/img/defaultavatar.<%= imageFormat %>';" draggable="false">
+            <img style="border-radius: 50%; vertical-align: middle; height: 32px; width: auto; margin-left: 6px;" src="<%= req.user.db.avatar.hash ? req.user.db.avatar.url : `${baseURL}/img/defaultavatar` %>.webp" alt="<%= __("common.img.avatar", req.user.db.fullUsername) %>" onerror="this.onerror=null;this.src='/img/defaultavatar.webp';" draggable="false">
             &nbsp;
             <span style="vertical-align: middle;"><%= user.db.fullUsername %></span>
             <span style="vertical-align: middle; color: #354146;">&nbsp;|&nbsp;</span>

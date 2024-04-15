@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -20,8 +20,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 import { Response as fetchRes } from "node-fetch";
-import type { APIInvite, DiscordAPIError, RESTGetAPIInviteQuery } from "discord.js";
-import { EmbedBuilder, RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js"
+import type {
+    APIInvite,
+    DiscordAPIError,
+    RESTGetAPIInviteQuery
+} from "discord.js";
+import {
+    EmbedBuilder,
+    RESTJSONErrorCodes,
+    Routes,
+    makeURLSearchParams
+} from "discord.js";
 import fetch from "node-fetch";
 import sanitizeHtml from "sanitize-html";
 
@@ -40,28 +49,22 @@ import entities from "html-entities";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
 
-const md = new mdi
+const md = new mdi();
 const router = express.Router();
 let reviewRequired = false; // Needs to be outside of the functions or it cannot be referenced outside of x function - AJ
 
 function serverType(bodyType: string): number {
     let type: serverReasons = parseInt(bodyType);
 
-    switch (type) {
-        case 0:
-        case 1:
-        case 3:
-        case 4:
-        case 5:
-            break;
-        default:
-            type = 0;
-    }
+    if (type > 5) type = 0;
 
     return type;
 }
 
-function tagHandler(req: express.Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, server: false | delServer) {
+function tagHandler(
+    req: express.Request<ParamsDictionary, any, any, ParsedQs>,
+    server: false | delServer
+) {
     let tags: string[] = [];
 
     if (req.body.gaming === true) tags.push("Gaming");
@@ -71,8 +74,7 @@ function tagHandler(req: express.Request<ParamsDictionary, any, any, ParsedQs, R
     if (req.body.sciTech === true) tags.push("Science & Tech");
     if (req.body.edu === true) tags.push("Education");
     if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
-    if (req.body.relIdentity === true)
-        tags.push("Relationships & Identity");
+    if (req.body.relIdentity === true) tags.push("Relationships & Identity");
     if (req.body.travelCuis === true) tags.push("Travel & Food");
     if (req.body.fitHealth === true) tags.push("Fitness & Health");
     if (req.body.finance === true) tags.push("Finance");
@@ -83,7 +85,11 @@ function tagHandler(req: express.Request<ParamsDictionary, any, any, ParsedQs, R
         tags.push("LGBT");
         if (server) {
             if (!server.tags.includes("LGBT")) reviewRequired = true;
-            if (server.tags.includes("LGBT") && server.status.reviewRequired === true) reviewRequired = true;
+            if (
+                server.tags.includes("LGBT") &&
+                server.status.reviewRequired === true
+            )
+                reviewRequired = true;
         } else reviewRequired = true;
     }
 
@@ -115,55 +121,50 @@ router.post(
         let error = false;
         let errors: string[] = [];
 
-        if (!req.body.invite || typeof req.body.invite !== "string" || req.body.invite.includes(" ")) {
-            error = true
-            errors.push(res.__("common.error.listing.arr.invite.invalid"))
+        if (
+            !req.body.invite ||
+            typeof req.body.invite !== "string" ||
+            req.body.invite.includes(" ")
+        ) {
+            error = true;
+            errors.push(res.__("common.error.listing.arr.invite.invalid"));
         }
 
         if (req.body.invite.length > 2000) {
-            error = true
-            errors.push(res.__("common.error.listing.arr.invite.tooLong"))
+            error = true;
+            errors.push(res.__("common.error.listing.arr.invite.tooLong"));
         }
 
         if (functions.isURL(req.body.invite)) {
-            error = true
-            errors.push(res.__("common.error.listing.arr.invite.isURL"))
+            error = true;
+            errors.push(res.__("common.error.listing.arr.invite.isURL"));
         }
 
         if (req.body.invite.includes("discord.gg")) {
-            error = true
-            errors.push(res.__("common.error.server.arr.invite.dgg"))
+            error = true;
+            errors.push(res.__("common.error.server.arr.invite.dgg"));
         }
 
         if (req.body.website && !functions.isURL(req.body.website)) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.invalidURL.website")
-            );
+            errors.push(res.__("common.error.listing.arr.invalidURL.website"));
         }
 
-        if (
-            req.body.donationUrl &&
-            !functions.isURL(req.body.donationUrl)
-        ) {
+        if (req.body.donationUrl && !functions.isURL(req.body.donationUrl)) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.invalidURL.donation")
-            );
+            errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
         }
 
         if (req.body.previewChannel) {
             let fetchChannel = true;
 
             if (
-                isNaN(req.body.previewChannel) ||
+                Number.isNaN(req.body.previewChannel) ||
                 req.body.previewChannel.includes(" ")
             ) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.server.arr.previewChannel.invalid"
-                    )
+                    res.__("common.error.server.arr.previewChannel.invalid")
                 );
                 fetchChannel = false;
             }
@@ -173,15 +174,14 @@ router.post(
             ) {
                 error = true;
                 errors.push(
-                    res.__(
-                        "common.error.server.arr.previewChannel.tooLong"
-                    )
+                    res.__("common.error.server.arr.previewChannel.tooLong")
                 );
                 fetchChannel = false;
             }
 
             if (fetchChannel)
-                await discord.bot.rest.get(Routes.channel(req.body.previewChannel))
+                await discord.bot.rest
+                    .get(Routes.channel(req.body.previewChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -192,43 +192,48 @@ router.post(
                             );
                             fetchChannel = false;
                         }
-                    })
+                    });
 
             if (fetchChannel)
                 await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: 'post',
+                    method: "post",
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.previewChannel}"){id}}`
                     }),
-                    headers: { 'Content-Type': 'application/json' },
-                }).then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (!data.channel?.id) {
+                    headers: { "Content-Type": "application/json" }
+                })
+                    .then(async (fetchRes: fetchRes) => {
+                        const data: any = await fetchRes.json();
+                        if (!data.channel?.id) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.channelNotFound"
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.widgetbot.channelNotFound"
                             )
                         );
-                    }
-                });
+                    });
         }
 
         if (!req.body.shortDescription) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.shortDescRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"));
         }
 
         if (!req.body.longDescription) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.longDescRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.longDescRequired"));
         }
 
         let tags: string[] = tagHandler(req, false);
@@ -240,15 +245,17 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.rest.get(Routes.invite(req.body.invite), {
-            query: makeURLSearchParams({ with_counts: true, with_expiration: true } satisfies RESTGetAPIInviteQuery)
-        })
+        discord.bot.rest
+            .get(Routes.invite(req.body.invite), {
+                query: makeURLSearchParams({
+                    with_counts: true,
+                    with_expiration: true
+                } satisfies RESTGetAPIInviteQuery)
+            })
             .then(async (invite: APIInvite) => {
-                const serverExists:
-                    | delServer
-                    | undefined = await global.db
-                        .collection<delServer>("servers")
-                        .findOne({ _id: invite.guild.id });
+                const serverExists: delServer | undefined = await global.db
+                    .collection<delServer>("servers")
+                    .findOne({ _id: invite.guild.id });
                 if (serverExists)
                     return res.status(409).json({
                         error: true,
@@ -292,13 +299,15 @@ router.post(
                     }
                 } satisfies delServer);
 
-                discord.channels.logs.send(
+                await discord.channels.logs.send(
                     `${settings.emoji.add} **${functions.escapeFormatting(
                         req.user.db.fullUsername
-                    )}** \`(${req.user.id
+                    )}** \`(${
+                        req.user.id
                     })\` added server **${functions.escapeFormatting(
                         invite.guild.name
-                    )}** \`(${invite.guild.id})\`\n<${settings.website.url
+                    )}** \`(${invite.guild.id})\`\n<${
+                        settings.website.url
                     }/servers/${invite.guild.id}>`
                 );
 
@@ -355,13 +364,18 @@ router.post(
                     return res.status(400).json({
                         error: true,
                         status: 400,
-                        errors: [res.__("common.error.listing.arr.invite.invalid")]
+                        errors: [
+                            res.__("common.error.listing.arr.invite.invalid")
+                        ]
                     });
 
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [`${error.name}: ${error.message}`, `${error.code} ${error.method} ${error.url}`]
+                    errors: [
+                        `${error.name}: ${error.message}`,
+                        `${error.code} ${error.method} ${error.url}`
+                    ]
                 });
             });
     }
@@ -382,6 +396,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             .findOne({ _id: req.params.id });
         if (!server)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.server.404"),
@@ -424,12 +439,11 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
     });
 });
 
-router.get(
-    "/:id/exists",
-    permission.auth,
-    async (req, res) => {
-        res.send(String(await global.redis?.hexists("servers", req.params.id)))
-    })
+router.get("/:id/exists", permission.auth, async (req, res) => {
+    res.type("text").send(
+        String(await global.redis?.hexists("servers", req.params.id))
+    );
+});
 
 router.get(
     "/:id/src",
@@ -470,6 +484,7 @@ router.get(
 
         if (!server)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.server.404"),
@@ -575,7 +590,7 @@ router.post(
             let fetchChannel = true;
 
             if (
-                isNaN(req.body.previewChannel) ||
+                Number.isNaN(req.body.previewChannel) ||
                 req.body.previewChannel.includes(" ")
             ) {
                 error = true;
@@ -596,7 +611,8 @@ router.post(
             }
 
             if (fetchChannel)
-                await discord.bot.rest.get(Routes.channel(req.body.previewChannel))
+                await discord.bot.rest
+                    .get(Routes.channel(req.body.previewChannel))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;
@@ -607,36 +623,43 @@ router.post(
                             );
                             fetchChannel = false;
                         }
-                    })
+                    });
 
             if (fetchChannel)
                 await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: 'post',
+                    method: "post",
                     body: JSON.stringify({
                         query: `{channel(id:"${req.body.previewChannel}"){id}}`
                     }),
-                    headers: { 'Content-Type': 'application/json' },
-                }).then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (!data.channel?.id) {
+                    headers: { "Content-Type": "application/json" }
+                })
+                    .then(async (fetchRes: fetchRes) => {
+                        const data: any = await fetchRes.json();
+                        if (!data.channel?.id) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.channelNotFound"
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.widgetbot.channelNotFound"
                             )
                         );
-                    }
-                });
+                    });
         }
 
         if (!req.body.shortDescription) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.shortDescRequired")
-            );
+            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
         } else if (req.body.shortDescription.length > 200) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescTooLong"))
+            errors.push(res.__("common.error.listing.arr.shortDescTooLong"));
         }
 
         if (!req.body.longDescription) {
@@ -653,15 +676,21 @@ router.post(
                 errors: errors
             });
 
-        discord.bot.rest.get(Routes.invite(req.body.invite), {
-            query: makeURLSearchParams({ with_counts: true, with_expiration: true } satisfies RESTGetAPIInviteQuery)
-        })
+        discord.bot.rest
+            .get(Routes.invite(req.body.invite), {
+                query: makeURLSearchParams({
+                    with_counts: true,
+                    with_expiration: true
+                } satisfies RESTGetAPIInviteQuery)
+            })
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).json({
                         error: true,
                         status: 400,
-                        errors: [res.__("common.error.server.arr.invite.sameServer")]
+                        errors: [
+                            res.__("common.error.server.arr.invite.sameServer")
+                        ]
                     });
 
                 if (invite.expires_at)
@@ -701,13 +730,15 @@ router.post(
                     }
                 );
 
-                discord.channels.logs.send(
+                await discord.channels.logs.send(
                     `${settings.emoji.edit} **${functions.escapeFormatting(
                         req.user.db.fullUsername
-                    )}** \`(${req.user.id
+                    )}** \`(${
+                        req.user.id
                     })\` edited server **${functions.escapeFormatting(
                         invite.guild.name
-                    )}** \`(${invite.guild.id})\`\n<${settings.website.url
+                    )}** \`(${invite.guild.id})\`\n<${
+                        settings.website.url
                     }/servers/${invite.guild.id}>`
                 );
 
@@ -783,13 +814,18 @@ router.post(
                     return res.status(400).json({
                         error: true,
                         status: 400,
-                        errors: [res.__("common.error.listing.arr.invite.invalid")]
+                        errors: [
+                            res.__("common.error.listing.arr.invite.invalid")
+                        ]
                     });
 
                 return res.status(400).json({
                     error: true,
                     status: 400,
-                    errors: [`${error.name}: ${error.message}`, `${error.code} ${error.method} ${error.url}`]
+                    errors: [
+                        `${error.name}: ${error.message}`,
+                        `${error.code} ${error.method} ${error.url}`
+                    ]
                 });
             });
     }
@@ -807,6 +843,7 @@ router.get(
 
         if (!server)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.server.404"),
@@ -861,6 +898,7 @@ router.post(
 
         if (!server)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.server.404"),
@@ -904,10 +942,14 @@ router.post(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledServers.allTime.total": req.user.db.staffTracking.handledServers.allTime.total += 1,
-                    "staffTracking.handledServers.allTime.declined": req.user.db.staffTracking.handledServers.allTime.declined += 1,
-                    "staffTracking.handledServers.thisWeek.total": req.user.db.staffTracking.handledServers.thisWeek.total += 1,
-                    "staffTracking.handledServers.thisWeek.declined": req.user.db.staffTracking.handledServers.thisWeek.declined += 1
+                    "staffTracking.handledServers.allTime.total":
+                        (req.user.db.staffTracking.handledServers.allTime.total += 1),
+                    "staffTracking.handledServers.allTime.declined":
+                        (req.user.db.staffTracking.handledServers.allTime.declined += 1),
+                    "staffTracking.handledServers.thisWeek.total":
+                        (req.user.db.staffTracking.handledServers.thisWeek.total += 1),
+                    "staffTracking.handledServers.thisWeek.declined":
+                        (req.user.db.staffTracking.handledServers.thisWeek.declined += 1)
                 }
             }
         );
@@ -930,16 +972,18 @@ router.post(
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/servers/${server._id}`);
-        embed.setFooter({ text: "It will still be shown as a normal server, it was declined from being listed as an LGBT community." });
+        embed.setFooter({
+            text: "It will still be shown as a normal server, it was declined from being listed as an LGBT community."
+        });
 
-        discord.channels.logs.send({
+        await discord.channels.logs.send({
             content: `${settings.emoji.cross} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
-                })\` declined server **${functions.escapeFormatting(
-                    server.name
-                )}** \`(${server._id
-                })\``,
+            )}** \`(${
+                req.user.id
+            })\` declined server **${functions.escapeFormatting(
+                server.name
+            )}** \`(${server._id})\``,
             embeds: [embed]
         });
 
@@ -947,11 +991,14 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${settings.emoji.cross
+                    `${
+                        settings.emoji.cross
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
-                    )}** \`(${server._id
-                    })\` was declined from being listed as an LGBT community. It will still appear as a normal server.\n**Reason:** \`${req.body.reason || "None specified."
+                    )}** \`(${
+                        server._id
+                    })\` was declined from being listed as an LGBT community. It will still appear as a normal server.\n**Reason:** \`${
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e) => {
@@ -974,6 +1021,7 @@ router.get(
 
         if (!server)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.server.404"),
@@ -1003,10 +1051,14 @@ router.get(
             { _id: req.user.id },
             {
                 $set: {
-                    "staffTracking.handledServers.allTime.total": req.user.db.staffTracking.handledServers.allTime.total += 1,
-                    "staffTracking.handledServers.allTime.approved": req.user.db.staffTracking.handledServers.allTime.approved += 1,
-                    "staffTracking.handledServers.thisWeek.total": req.user.db.staffTracking.handledServers.thisWeek.total += 1,
-                    "staffTracking.handledServers.thisWeek.approved": req.user.db.staffTracking.handledServers.thisWeek.approved += 1
+                    "staffTracking.handledServers.allTime.total":
+                        (req.user.db.staffTracking.handledServers.allTime.total += 1),
+                    "staffTracking.handledServers.allTime.approved":
+                        (req.user.db.staffTracking.handledServers.allTime.approved += 1),
+                    "staffTracking.handledServers.thisWeek.total":
+                        (req.user.db.staffTracking.handledServers.thisWeek.total += 1),
+                    "staffTracking.handledServers.thisWeek.approved":
+                        (req.user.db.staffTracking.handledServers.thisWeek.approved += 1)
                 }
             }
         );
@@ -1021,15 +1073,18 @@ router.get(
 
         await serverCache.updateServer(req.params.id);
 
-        discord.channels.logs.send(
-            `${settings.emoji.check} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${req.user.id
-            })\` approved server **${functions.escapeFormatting(
-                server.name
-            )}** \`(${server._id})\` to be listed as an LGBT community.\n<${settings.website.url
-            }/servers/${server._id}>`
-        )
+        discord.channels.logs
+            .send(
+                `${settings.emoji.check} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` approved server **${functions.escapeFormatting(
+                    server.name
+                )}** \`(${server._id})\` to be listed as an LGBT community.\n<${
+                    settings.website.url
+                }/servers/${server._id}>`
+            )
             .catch((e) => {
                 console.error(e);
             });
@@ -1038,10 +1093,12 @@ router.get(
         if (owner)
             owner
                 .send(
-                    `${settings.emoji.check
+                    `${
+                        settings.emoji.check
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
-                    )}** \`(${server._id
+                    )}** \`(${
+                        server._id
                     })\` was approved as being listed as an LGBT community.`
                 )
                 .catch((e) => {
@@ -1063,6 +1120,7 @@ router.get(
 
         if (!server)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.server.404"),
@@ -1079,10 +1137,11 @@ router.get(
                 req
             });
 
-        discord.channels.logs.send(
+        await discord.channels.logs.send(
             `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
+            )}** \`(${
+                req.user.id
             })\` deleted server **${functions.escapeFormatting(
                 server.name
             )}** \`(${server._id})\``
@@ -1118,6 +1177,7 @@ router.get(
 
         if (!server)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.server.404"),
@@ -1152,6 +1212,7 @@ router.post(
 
         if (!server)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.server.404"),
@@ -1189,13 +1250,14 @@ router.post(
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        discord.channels.logs.send({
+        await discord.channels.logs.send({
             content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
-            )}** \`(${req.user.id
-                })\` removed server **${functions.escapeFormatting(
-                    server.name
-                )}** \`(${server._id})\``,
+            )}** \`(${
+                req.user.id
+            })\` removed server **${functions.escapeFormatting(
+                server.name
+            )}** \`(${server._id})\``,
             embeds: [embed]
         });
 
@@ -1203,10 +1265,12 @@ router.post(
         if (owner)
             owner
                 .send(
-                    `${settings.emoji.delete
+                    `${
+                        settings.emoji.delete
                     } **|** Your server **${functions.escapeFormatting(
                         server.name
-                    )}** \`(${server._id})\` has been removed!\n**Reason:** \`${req.body.reason || "None specified."
+                    )}** \`(${server._id})\` has been removed!\n**Reason:** \`${
+                        req.body.reason || "None specified."
                     }\``
                 )
                 .catch((e: string) => {
@@ -1230,6 +1294,7 @@ router.get(
 
         if (!server)
             return res.status(404).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.server.404"),
@@ -1237,9 +1302,13 @@ router.get(
                 req: req
             });
 
-        discord.bot.rest.get(Routes.invite(server.inviteCode), {
-            query: makeURLSearchParams({ with_counts: true, with_expiration: true } satisfies RESTGetAPIInviteQuery)
-        })
+        discord.bot.rest
+            .get(Routes.invite(server.inviteCode), {
+                query: makeURLSearchParams({
+                    with_counts: true,
+                    with_expiration: true
+                } satisfies RESTGetAPIInviteQuery)
+            })
             .then(async (invite: APIInvite) => {
                 if (invite.guild.id !== server._id)
                     return res.status(400).render("status", {
@@ -1317,7 +1386,9 @@ router.get(
                     return res.status(400).render("status", {
                         title: res.__("common.error"),
                         status: 400,
-                        subtitle: res.__("common.error.listing.arr.invite.invalid"),
+                        subtitle: res.__(
+                            "common.error.listing.arr.invite.invalid"
+                        ),
                         req,
                         type: "Error"
                     });

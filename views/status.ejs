@@ -1,6 +1,6 @@
 <%- include("./partials/header.ejs") %>
 <%- include("./partials/nav.ejs") %>
-<section class="hero is-black">
+<section class="hero is-primary">
     <div class="hero-body">
         <br />
         <div class="container has-text-centered">
@@ -27,7 +27,7 @@
 </section>
 <div class="container">
 <div style="text-align: center;" class="section">
-    <% if (req.device.type !== "phone" && req.device.type !== "tablet") { %>
+    <% if (!res.locals.mobile) { %>
         <% if (!req.user || req.user.db.preferences.enableGames === true) { %>
             <div id="snake_game">
                 <% if (req.user) { %>

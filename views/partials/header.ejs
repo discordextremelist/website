@@ -2,6 +2,8 @@
 <html lang="<%= req.locale || defaultLang %>" dir="<%= htmlDir %>" data-theme="<%= (preferredTheme == "light") ? 'light' : 'dark'%>" data-deltheme="<%= preferredTheme %>">
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline'; img-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; frame-src *;">
+
     
     <title><%= title || "Page" %> | Discord Extreme List</title>
 

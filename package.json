@@ -23,7 +23,7 @@
     "debug": "~4.3.4",
     "del-i18n": "github:discordextremelist/i18n",
     "discord.js": "^14.11.0",
-    "ejs": "^3.1.9",
+    "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "express-sitemap": "^1.8.0",

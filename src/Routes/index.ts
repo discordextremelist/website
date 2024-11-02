@@ -348,6 +348,7 @@ router.get("/privacy", variables, async (req: Request, res: Response) => {
     res.render("templates/legal/privacy", {
         title: res.__("common.nav.more.privacy"),
         subtitle: res.__("common.nav.more.privacy.subtitle"),
+        req,
         privacy: await legalCache.getFile("privacy")
     });
 });

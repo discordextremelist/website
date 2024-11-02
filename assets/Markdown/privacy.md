@@ -1,5 +1,5 @@
 Type of website: Discord bot, server and template advertising service
-Effective date: 18th day of March, 2024
+Effective date: 2nd day of November, 2024
 
 # Preliminary provisions
 

@@ -147,7 +147,6 @@ router.post("/", variables, async (req: Request, res: Response) => {
                             server,
                             search: true,
                             baseURL: settings.website.url,
-                            lgbtWebURL: settings.website.lgbtSiteURL,
                             profile: false,
                             __: res.locals.__
                         }

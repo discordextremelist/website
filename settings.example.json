@@ -48,7 +48,6 @@
             "agressive": true
         },
         "url": "https://discordextremelist.xyz",
-        "lgbtSiteURL": "https://discordextremelist.gay",
         "dev": true,
         "callback": "/auth/login/callback",
         "bannedVanityURLs": []

@@ -406,9 +406,6 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             });
     }
 
-    if (server.tags.includes("LGBT"))
-        res.redirect(`${settings.website.lgbtSiteURL}/servers/${server._id}`);
-
     let serverOwner: delUser | undefined = await userCache.getUser(
         server.owner.id
     );
@@ -973,7 +970,7 @@ router.post(
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/servers/${server._id}`);
         embed.setFooter({
-            text: "It will still be shown as a normal server, it was declined from being listed as an LGBT community."
+            text: "It will still be shown as a normal server, it was declined from being listed as an LGBTQ+ community."
         });
 
         await discord.channels.logs.send({
@@ -997,7 +994,7 @@ router.post(
                         server.name
                     )}** \`(${
                         server._id
-                    })\` was declined from being listed as an LGBT community. It will still appear as a normal server.\n**Reason:** \`${
+                    })\` was declined from being listed as an LGBTQ+ community. It will still appear as a normal server.\n**Reason:** \`${
                         req.body.reason || "None specified."
                     }\``
                 )
@@ -1081,7 +1078,7 @@ router.get(
                     req.user.id
                 })\` approved server **${functions.escapeFormatting(
                     server.name
-                )}** \`(${server._id})\` to be listed as an LGBT community.\n<${
+                )}** \`(${server._id})\` to be listed as an LGBTQ+ community.\n<${
                     settings.website.url
                 }/servers/${server._id}>`
             )
@@ -1099,7 +1096,7 @@ router.get(
                         server.name
                     )}** \`(${
                         server._id
-                    })\` was approved as being listed as an LGBT community.`
+                    })\` was approved as being listed as an LGBTQ+ community.`
                 )
                 .catch((e) => {
                     console.error(e);

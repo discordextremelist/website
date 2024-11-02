@@ -50,7 +50,6 @@ export const variables = async (
 
     res.locals.requestedAt = Date.now();
     res.locals.cssVersion = pkg.version;
-    res.locals.arcID = settings.website.arcID;
 
     res.locals.linkPrefix = `/${
         req.locale || settings.website.locales.default

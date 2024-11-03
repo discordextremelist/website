@@ -771,55 +771,6 @@ router.post(
     }
 );
 
-/* TODO: Add preview for long description on edit & submit page
-router.post("/preview_post", async (req: Request, res: Response) => {
-    const dirty = entities.decode(md.render(req.body.longDesc));
-
-    const clean = sanitizeHtml(dirty, {
-        allowedTags: [
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "h5",
-            "h6",
-            "blockquote",
-            "button",
-            "p",
-            "a",
-            "ul",
-            "ol",
-            "nl",
-            "li",
-            "b",
-            "i",
-            "img",
-            "strong",
-            "em",
-            "strike",
-            "code",
-            "hr",
-            "br",
-            "div",
-            "table",
-            "thead",
-            "caption",
-            "tbody",
-            "tr",
-            "th",
-            "td",
-            "pre",
-            "iframe",
-            "style",
-            "link"
-        ],
-        allowedAttributes: false,
-        allowVulnerableTags: true
-    });
-
-    res.status(200).send(clean);
-});*/
-
 router.get(
     "/:id/tokenreset",
     variables,

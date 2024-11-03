@@ -604,7 +604,8 @@ router.get(
         res.render("templates/users/snake", {
             title: res.__("common.nav.me.playSnake"),
             subtitle: res.__("common.nav.me.playSnake.subtitle"),
-            req
+            req,
+            res
         });
     }
 );

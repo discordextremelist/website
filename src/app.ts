@@ -251,7 +251,7 @@ new Promise<void>((resolve, reject) => {
             defaultLocale: settings.website.locales.default
         });
 
-        global.env_prod = app.get("env") === "production";
+        global.env_prod = !settings.website.dev;
 
         if (global.env_prod) {
             app.set("trust proxy", 1); // trust first proxy

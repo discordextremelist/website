@@ -418,7 +418,7 @@ router.post(
         } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"));
-        } else if ((req.body.prefix = "/" && !req.body.slashCommands)) {
+        } else if ((req.body.prefix === "/" && !req.body.slashCommands)) {
             error = true;
             errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
@@ -794,6 +794,7 @@ router.get(
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.perms.tokenReset"),
                 status: 403,
@@ -824,6 +825,7 @@ router.get(
         await botCache.updateBot(req.params.id);
 
         return res.status(200).render("status", {
+            res,
             title: res.__("common.success"),
             subtitle: res.__("common.success.bot.tokenReset"),
             status: 200,
@@ -853,6 +855,7 @@ router.post(
 
         if (req.user.db.rank.assistant === false) {
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.notAssistant"),
                 status: 403,
@@ -867,6 +870,7 @@ router.post(
 
         if (!newOwnerExists)
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.user.404"),
                 status: 404,
@@ -926,6 +930,7 @@ router.post(
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.perms.vanity"),
                 status: 403,
@@ -939,6 +944,7 @@ router.post(
             req.body.vanity.includes("\\")
         )
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.vanity.blacklisted"),
                 status: 400,
@@ -950,6 +956,7 @@ router.post(
         for (const bot of bots) {
             if (req.body.vanity === bot.vanityUrl)
                 return res.status(409).render("status", {
+                    res,
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.conflict"),
                     status: 409,
@@ -961,6 +968,7 @@ router.post(
         if (botExists.vanityUrl) {
             if (req.body.vanity.split(" ").length !== 1)
                 return res.status(400).render("status", {
+                    res,
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.tooLong"),
                     status: 400,
@@ -970,6 +978,7 @@ router.post(
 
             if (req.body.vanity === botExists.vanityUrl)
                 return res.status(400).render("status", {
+                    res,
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.same"),
                     status: 400,
@@ -984,6 +993,7 @@ router.post(
                 )
             )
                 return res.status(400).render("status", {
+                    res,
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.blacklisted"),
                     status: 400,
@@ -1017,6 +1027,7 @@ router.post(
         } else if (!botExists.vanityUrl) {
             if (req.body.vanity.split(" ").length !== 1)
                 return res.status(400).render("status", {
+                    res,
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.tooLong"),
                     status: 400,
@@ -1031,6 +1042,7 @@ router.post(
                 )
             )
                 return res.status(400).render("status", {
+                    res,
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.blacklisted"),
                     status: 400,
@@ -1091,6 +1103,7 @@ router.get(
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.perms.edit"),
                 status: 403,
@@ -1455,7 +1468,7 @@ router.post(
         } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"));
-        } else if ((req.body.prefix = "/" && !req.body.slashCommands)) {
+        } else if ((req.body.prefix === "/" && !req.body.slashCommands)) {
             error = true;
             errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
@@ -1835,6 +1848,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         !req.user?.db.rank.mod
     )
         return res.status(403).render("status", {
+            res,
             title: res.__("common.error"),
             status: 403,
             subtitle: res.__("common.error.bot.archived"),
@@ -2219,6 +2233,7 @@ router.get(
 
         if (!req.user || req.user.id !== bot.owner.id)
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.bot.perms.notOwner"),
@@ -2282,6 +2297,7 @@ router.get(
 
         if (!req.user || req.user.id !== bot.owner.id)
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.bot.perms.notOwner"),
@@ -2351,6 +2367,7 @@ router.get(
 
         if (!req.user || req.user.id !== bot.owner.id)
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.bot.perms.notOwner"),
@@ -2361,6 +2378,7 @@ router.get(
 
         if (bot.status.approved === false)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.inQueueHide"),
@@ -2428,6 +2446,7 @@ router.get(
 
         if (!req.user || req.user.id !== bot.owner.id)
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.bot.perms.notOwner"),
@@ -2490,6 +2509,7 @@ router.get(
 
         if (botExists.status.archived === false)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.notArchived"),
                 status: 400,
@@ -2502,6 +2522,7 @@ router.get(
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.bot.perms.resubmit"),
                 status: 403,
@@ -2847,7 +2868,7 @@ router.post(
         } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"));
-        } else if ((req.body.prefix = "/" && !req.body.slashCommands)) {
+        } else if ((req.body.prefix === "/" && !req.body.slashCommands)) {
             error = true;
             errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
@@ -3205,6 +3226,7 @@ router.get(
 
         if (bot.status.approved === true)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.alreadyApproved"),
@@ -3341,6 +3363,7 @@ router.get(
 
         if (bot.status.premium === true)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.alreadyPremium"),
@@ -3417,6 +3440,7 @@ router.get(
 
         if (bot.status.premium === false)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.noPremiumTake"),
@@ -3471,6 +3495,7 @@ router.get(
 
         if (bot.status.approved === true)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.notInQueue"),
@@ -3515,6 +3540,7 @@ router.post(
 
         if (bot.status.approved === true)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.notInQueue"),
@@ -3524,6 +3550,7 @@ router.post(
 
         if (!req.body.reason && !req.user.db.rank.admin) {
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.reasonRequired"),
@@ -3639,6 +3666,7 @@ router.get(
 
         if (!bot.status.approved)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.alreadyNotApproved"),
@@ -3680,6 +3708,7 @@ router.post(
 
         if (!bot.status.approved)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.inQueue"),
@@ -3689,6 +3718,7 @@ router.post(
 
         if (!req.body.reason && !req.user.db.rank.admin) {
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.reasonRequired"),
@@ -3804,6 +3834,7 @@ router.get(
 
         if (bot.status.approved === false)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.inQueue"),
@@ -3845,6 +3876,7 @@ router.post(
 
         if (bot.status.approved === false)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.inQueue"),
@@ -3854,6 +3886,7 @@ router.post(
 
         if (!req.body.reason && !req.user.db.rank.admin) {
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.reasonRequired"),
@@ -3971,6 +4004,7 @@ router.get(
 
         if (bot.status.approved === false)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.inQueueHide"),
@@ -4012,6 +4046,7 @@ router.post(
 
         if (bot.status.approved === false)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.inQueueHide"),
@@ -4021,6 +4056,7 @@ router.post(
 
         if (!req.body.reason && !req.user.db.rank.admin) {
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.reasonRequired"),
@@ -4126,6 +4162,7 @@ router.get(
 
         if (!bot.status.modHidden)
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.bot.notHidden"),

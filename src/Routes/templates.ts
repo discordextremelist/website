@@ -412,6 +412,7 @@ router.get(
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.template.perms.edit"),
                 status: 403,
@@ -745,6 +746,7 @@ router.get(
 
         if (template.owner.id !== req.user.id)
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 subtitle: res.__("common.error.template.perms.delete"),
                 status: 403,
@@ -838,6 +840,7 @@ router.post(
 
         if (!req.body.reason && !req.user.db.rank.admin) {
             return res.status(400).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 400,
                 subtitle: res.__("common.error.reasonRequired"),
@@ -1054,6 +1057,7 @@ router.get(
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownGuildTemplate)
                     return res.status(400).render("status", {
+                        res,
                         title: res.__("common.error"),
                         status: 400,
                         subtitle: res.__(
@@ -1064,6 +1068,7 @@ router.get(
                     });
 
                 return res.status(400).render("status", {
+                    res,
                     title: res.__("common.error"),
                     status: 400,
                     subtitle: `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`,

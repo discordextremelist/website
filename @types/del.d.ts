@@ -55,6 +55,7 @@ declare global {
         fullUsername: string;
         locale: string;
         flags: UserFlags;
+        lastDataRequest: null | number;
         avatar: {
             hash: string;
             url: string;

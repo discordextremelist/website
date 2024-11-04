@@ -135,6 +135,7 @@ router.get(
                 fullUsername: grabFullUser(req.user),
                 locale: req.user.locale,
                 flags: req.user.flags,
+                lastDataRequest: null,
                 avatar: {
                     hash: req.user.avatar,
                     url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
@@ -243,6 +244,7 @@ router.get(
                     console.error(error);
                     if (error.code === 403 && !req.user.impersonator) {
                         return res.status(403).render("status", {
+                            res,
                             title: res.__("common.error"),
                             status: 403,
                             subtitle: res.__("common.error.notMember"),

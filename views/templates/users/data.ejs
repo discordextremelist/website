@@ -1,0 +1,85 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/nav.ejs") %>
+<%- include("../../partials/isDefaultCSS/button.ejs") %>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <br />
+        <div class="container has-text-centered">
+            <h1 class="title">
+                <span class="icon is-medium iconalign">
+                    <i aria-hidden="true" class="fad fa-database has-text-default fa-1x"></i>
+                </span>
+                <br />
+                <span><%= title %></span>
+            </h1>
+            <h2 class="subtitle"><%= subtitle %></h2>
+            <div class="buttons is-centered">
+                <a href="<%= linkPrefix %>/privacy/" class="button is-default">
+                    <span class="icon">
+                        <i class="fas fa-user-secret"></i>
+                    </span>
+                    <span><%= __("common.nav.more.privacy") %></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    </section>
+    <div class="container">
+        <div class="section">
+            <p><%= __("page.account.data.note") %></p>
+            <br />
+            <h3 class="is-size-3 has-text-warning"><%= __("page.account.data.download") %></h2>
+            <p><%= __("page.account.data.download.details") %></p>
+            <br />
+            <div class="buttons">
+                <% if (dataRequestTimeout) { %>
+                    <a class="button is-dark" disabled>
+                        <span class="icon">
+                            <i class="fas fa-ban"></i>
+                        </span>
+                        <span><%= __("page.account.data.download.button.disabled") %>
+                    </a>
+                <% } else { %>
+                    <a id="dataRequest" onclick="dataRequest();" class="button is-warning">
+                        <span class="icon">
+                            <i class="fas fa-download"></i>
+                        </span>
+                        <span><%= __("page.account.data.download.button.active") %></span>
+                    </a>
+                <% } %>
+            </div>
+            <br />
+            <h3 class="is-size-3 has-text-danger"><%= __("page.account.data.delete") %></h2>
+            <p><%= __("page.account.data.delete.details") %></p>
+            <br />
+            <div class="buttons">
+                <a href="<%= linkPrefix %>/account/data/delete/" class="button is-danger">
+                    <span class="icon">
+                        <i class="fas fa-shredder"></i>
+                    </span>
+                    <span><%= __("page.account.data.delete.button") %></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function dataRequest() {
+            const button = document.getElementById("dataRequest");
+
+            if (button.getAttribute("disabled") != 'true') {
+                window.open("<%= linkPrefix %>/users/account/data/request", "_blank");
+
+                button.classList.add("is-dark");
+                button.classList.remove("is-warning");
+                button.setAttribute("disabled", true);
+
+                button.innerHTML = 
+                    `<span class="icon">
+
+                        <i class="fas fa-ban"></i>
+                    </span>
+                    <span><%= __("page.account.data.download.button.disabled") %></span>`
+            }
+        }
+    </script>
+<%- include("../../partials/footer.ejs") %>

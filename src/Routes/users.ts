@@ -163,6 +163,7 @@ router.get(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -211,6 +212,7 @@ router.post(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -241,6 +243,7 @@ router.post(
             (req.user.db.rank.admin === false && req.body.rank === "admin")
         ) {
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -389,6 +392,7 @@ router.get(
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.user.perms.edit"),
@@ -439,6 +443,7 @@ router.post(
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.user.perms.edit"),
@@ -582,6 +587,7 @@ router.get(
             })
             .catch((error: DiscordAPIError) => {
                 return res.status(400).render("status", {
+                    res,
                     title: res.__("common.error"),
                     status: 400,
                     subtitle: `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`,
@@ -834,5 +840,68 @@ router.get(
         res.redirect("/users/@me");
     }
 );
+
+router.get("/account/data", variables, permission.auth, async (req: Request, res: Response) => {
+    let dataRequestTimeout = false;
+
+    // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
+    if (req.user.db.lastDataRequest && ((Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24)) dataRequestTimeout = true;
+
+    res.render("templates/users/data", {
+        title: res.__("common.nav.me.data"),
+        subtitle: res.__("common.nav.me.data.subtitle"),
+        req,
+        dataRequestTimeout
+    });
+});
+
+router.get("/account/data/request", variables, permission.auth, async (req: Request, res: Response) => {
+    // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
+    console.log(req.user.db.lastDataRequest);
+    console.log(Date.now());
+    if (req.user.db.lastDataRequest && ((Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24)) return res.status(429).render("status", {
+        res,
+        title: res.__("common.error"),
+        status: 429,
+        subtitle: res.__("page.account.data.download.button.disabled"),
+        req,
+        type: "Error"
+    });
+    
+    const userData: delUser = await global.db
+        .collection<delUser>("users")
+        .findOne({ _id: req.user.id });
+
+    const userBotsData: delBot[] = await global.db
+        .collection<delBot>("bots")
+        .find({ "owner.id": req.user.id })
+        .toArray();
+   
+    // Filter userData to remove auth Object
+    delete userData.auth;
+    
+    // Filter userBots.votes to not expose user ID's of persons who up/downvoted a bot an instead show number inside of the existing string[]
+    for (const bot of userBotsData) {
+        const positiveVotes = bot.votes.positive.length;
+        const negativeVotes = bot.votes.negative.length;
+
+        bot.votes.positive = [positiveVotes.toString()];
+        bot.votes.negative = [negativeVotes.toString()];
+    }
+
+    await global.db.collection("users").updateOne(
+        { _id: req.user.id },
+        {
+            $set: {
+                lastDataRequest: Date.now()
+            }
+        }
+    );
+
+    userCache.updateUser(req.user.id);
+
+    res.setHeader("Content-disposition", `attachment; filename="del_data_user_${userData._id}.json"`);
+    res.json({user: userData, bots: userBotsData});
+});
 
 export default router;

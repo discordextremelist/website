@@ -281,6 +281,7 @@ router.get(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -327,6 +328,7 @@ router.post(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -402,6 +404,7 @@ router.get(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -472,6 +475,7 @@ router.get(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -546,6 +550,7 @@ router.post(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -622,6 +627,7 @@ router.get(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -673,6 +679,7 @@ router.post(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -742,6 +749,7 @@ router.get(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -793,6 +801,7 @@ router.post(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(

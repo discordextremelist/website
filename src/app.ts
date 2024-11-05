@@ -266,7 +266,7 @@ new Promise<void>((resolve, reject) => {
                 cookie: {
                     secure: global.env_prod,
                     httpOnly: true,
-                    maxAge: 1000 * 60 * 60 * 3
+                    maxAge: 14 * 24 * 60 * 60 * 1000
                 }
             })
         );

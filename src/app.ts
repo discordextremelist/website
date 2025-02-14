@@ -62,6 +62,7 @@ import usersRoute from "./Routes/users.js";
 import templatesRoute from "./Routes/templates.js";
 import staffRoute from "./Routes/staff.js";
 import setup from "./setup.js";
+import { setupExpressErrorHandler } from "@sentry/node";
 
 const app = express();
 const __dirname = path.resolve();
@@ -74,14 +75,10 @@ if (!settings.website.dev) {
         release: "website@" + process.env.npm_package_version,
         environment: "production",
         integrations: [
-            new Sentry.Integrations.Express({
-                app
-            })
+            Sentry.expressIntegration(),
         ]
     });
-
-    app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
-    app.use(Sentry.Handlers.tracingHandler());
+    setupExpressErrorHandler(app);
 }
 
 app.use(
@@ -324,10 +321,7 @@ new Promise<void>((resolve, reject) => {
 
         app.use(variables);
 
-        if (!settings.website.dev)
-            app.use(
-                Sentry.Handlers.errorHandler() as express.ErrorRequestHandler
-            );
+        if (!settings.website.dev) Sentry.setupExpressErrorHandler(app);
 
         app.use((req: Request, res: Response, next: () => void) => {
             // @ts-expect-error

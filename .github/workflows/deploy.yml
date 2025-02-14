@@ -11,9 +11,9 @@ jobs:
             - name: Login
               run: echo "${{secrets.DOCKER_PASSWORD}}" | docker login ${{secrets.DOCKER_URL}} -u admin --password-stdin
             - name: Build
-              run: DOCKER_BUILDKIT=0 docker build -t ${{ secrets.DOCKER_URL }}/del/site:${GITHUB_REF#refs/tags/} .
+              run: docker build -t ${{ secrets.DOCKER_URL }}/del/site:${GITHUB_REF#refs/tags/} .
             - name: Push
-              run: DOCKER_BUILDKIT=0 docker push ${{ secrets.DOCKER_URL }}/del/site:${GITHUB_REF#refs/tags/}
+              run: docker push ${{ secrets.DOCKER_URL }}/del/site:${GITHUB_REF#refs/tags/}
     deploy:
         needs: build
         runs-on: ubuntu-latest

@@ -265,7 +265,7 @@
                         document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/servers/<%= server._id %>");
                     } else {
                         removeEventListener("beforeunload", warn);
-                        window.location = "<%= linkPrefix %>/servers/<%= server._id %>";
+                        window.location = "/servers/<%= server._id %>";
                     }
                 }).catch((e) => { console.error (e); });
             }

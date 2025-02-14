@@ -239,7 +239,7 @@
                 document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/users/@me");
             } else {
                 removeEventListener("beforeunload", warn);
-                window.location = `<%= baseURL %>/<%= linkPrefix %>/templates/${data.id}`;
+                window.location = `/templates/${data.id}`;
             }
         }).catch((e) => { console.error(e); });
     }

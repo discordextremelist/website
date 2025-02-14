@@ -673,7 +673,7 @@ router.post(
                 await global.db.collection("audit").insertOne({
                     type: "SUBMIT_BOT",
                     executor: req.user.id,
-                    target: req.params.id,
+                    target: req.body.id,
                     date: Date.now(),
                     reason: "None specified.",
                     details: {
@@ -744,7 +744,7 @@ router.post(
                         } satisfies delBot
                     }
                 });
-                await botCache.updateBot(req.params.id);
+                await botCache.updateBot(req.body.id);
 
                 await discord.postWebMetric("bot");
 

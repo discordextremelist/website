@@ -306,7 +306,8 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
         servers,
         serversPgArr: servers,
         page: req.query.page,
-        pages: Math.ceil(allServers.length / 15)
+        pages: Math.ceil(allServers.length / 15),
+        pageParam: "?page="
     });
 });
 
@@ -327,7 +328,8 @@ router.get("/templates", variables, async (req: Request, res: Response) => {
             15 * Number(req.query.page)
         ),
         page: req.query.page,
-        pages: Math.ceil(templates.length / 15)
+        pages: Math.ceil(templates.length / 15),
+        pageParam: "?page="
     });
 });
 

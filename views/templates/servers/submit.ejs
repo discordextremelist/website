@@ -305,7 +305,7 @@
                 document.getElementById("cancelButton").setAttribute("href", "<%= linkPrefix %>/users/@me");
             } else {
                 removeEventListener("beforeunload", warn);
-                window.location = `<%= baseURL %>/<%= linkPrefix %>/servers/${data.id}`;
+                window.location = `/servers/${data.id}`;
             }
         }).catch((e) => { console.error(e); });
     }

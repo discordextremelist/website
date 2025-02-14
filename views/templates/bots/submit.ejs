@@ -592,7 +592,7 @@ function doSubmit() {
                 document.getElementById("cancelButton").setAttribute("href", `/users/@me`);
             } else {
                 removeEventListener("beforeunload", warn);
-                window.location = `<%= baseURL %>/<%= linkPrefix %>/bots/${document.getElementById("id").value}`;
+                window.location = `/bots/${document.getElementById("id").value}`;
             }
         });
 }

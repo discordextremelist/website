@@ -8,6 +8,11 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
+            - name: Configure Docker Daemon
+              run: |
+                  sudo mkdir -p /etc/docker
+                  echo '{ "max-concurrent-uploads": 1 }' | sudo tee /etc/docker/daemon.json
+                  sudo systemctl restart docker
             - name: Login
               run: echo "${{secrets.DOCKER_PASSWORD}}" | docker login ${{secrets.DOCKER_URL}} -u admin --password-stdin
             - name: Build

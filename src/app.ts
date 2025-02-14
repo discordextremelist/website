@@ -145,7 +145,7 @@ new Promise<void>((resolve, reject) => {
                 `Cache: Lock is currently held by ${lock}. Waiting for caching to finish before proceeding...`
             );
             const remain = await global.redis.ttl("cache_lock");
-            let got, r;
+            let got: boolean, r: (value: void | PromiseLike<void>) => void;
             if (remain > 0) {
                 console.log(
                     `Cache: Going to wait another ${remain} seconds before the lock is released, assuming cache is done if no event is emitted.`

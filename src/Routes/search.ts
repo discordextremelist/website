@@ -40,7 +40,7 @@ router.get("/", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.search");
 
     let search: string | string[] | ParsedQs | ParsedQs[];
-    req.query.q ? (search = req.query.q) : (search = "");
+    search = typeof req.query.q === 'string' ? req.query.q : "";
 
     return res.render("templates/search", {
         title: res.__("common.search"),

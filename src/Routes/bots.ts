@@ -514,7 +514,11 @@ router.post(
                     ) => {
                         if (err) {
                             error = true;
-                            errors.push(`${err.statusCode} ${err.data}`);
+                            if (functions.isDiscordAPIError(err)) {
+                                errors.push(`${err.statusCode} ${err.data}`);
+                            } else {
+                                errors.push(err.message);
+                            }
                         } else {
                             await global.db.collection("users").updateOne(
                                 { _id: req.user.id },
@@ -1563,7 +1567,12 @@ router.post(
                     ) => {
                         if (err) {
                             error = true;
-                            errors.push(`${err.statusCode} ${err.data}`);
+
+                            if (functions.isDiscordAPIError(err)) {
+                                errors.push(`${err.statusCode} ${err.data}`);
+                            } else {
+                                errors.push(err.message);
+                            }
                         } else {
                             await global.db.collection("users").updateOne(
                                 { _id: req.user.id },
@@ -2962,7 +2971,12 @@ router.post(
                     ) => {
                         if (err) {
                             error = true;
-                            errors.push(`${err.statusCode} ${err.data}`);
+
+                            if (functions.isDiscordAPIError(err)) {
+                                errors.push(`${err.statusCode} ${err.data}`);
+                            } else {
+                                errors.push(err.message);
+                            }
                         } else {
                             await global.db.collection("users").updateOne(
                                 { _id: req.user.id },
@@ -4267,10 +4281,18 @@ router.get(
                         result: RESTPostOAuth2AccessTokenResult
                     ) => {
                         if (err) {
+                            let errors: string[] = [];
+
+                            if (functions.isDiscordAPIError(err)) {
+                                errors.push(`${err.statusCode} ${err.data}`);
+                            } else {
+                                errors.push(err.message);
+                            }
+
                             return res.status(500).json({
                                 error: true,
                                 status: 500,
-                                errors: [err.statusCode, err.data]
+                                errors: [errors]
                             });
                         } else {
                             await global.db.collection("users").updateOne(

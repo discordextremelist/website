@@ -33,6 +33,8 @@ import * as userCache from "../Util/Services/userCaching.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import { themes } from "../../@types/enums.js";
 
+import settings from "../../settings.json" assert { type: "json" };
+
 import entities from "html-entities";
 const router = express.Router();
 
@@ -163,6 +165,7 @@ router.get(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -211,6 +214,7 @@ router.post(
             req.user.db.rank.assistant === true
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -241,6 +245,7 @@ router.post(
             (req.user.db.rank.admin === false && req.body.rank === "admin")
         ) {
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__(
@@ -389,6 +394,7 @@ router.get(
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.user.perms.edit"),
@@ -439,6 +445,7 @@ router.post(
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.user.perms.edit"),
@@ -582,6 +589,7 @@ router.get(
             })
             .catch((error: DiscordAPIError) => {
                 return res.status(400).render("status", {
+                    res,
                     title: res.__("common.error"),
                     status: 400,
                     subtitle: `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`,
@@ -604,7 +612,8 @@ router.get(
         res.render("templates/users/snake", {
             title: res.__("common.nav.me.playSnake"),
             subtitle: res.__("common.nav.me.playSnake.subtitle"),
-            req
+            req,
+            res
         });
     }
 );
@@ -833,5 +842,136 @@ router.get(
         res.redirect("/users/@me");
     }
 );
+
+
+// /* Route that displays the templates/users/data view. A centre for a user to manage their data (download or delete). */
+// router.get("/account/data", variables, permission.auth, async (req: Request, res: Response) => {
+//     let dataRequestTimeout = false;
+
+//     // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
+//     if (req.user.db.lastDataRequest && ((Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24)) dataRequestTimeout = true;
+
+//     res.render("templates/users/data", {
+//         title: res.__("common.nav.me.data"),
+//         subtitle: res.__("common.nav.me.data.subtitle"),
+//         req,
+//         dataRequestTimeout
+//     });
+// });
+
+// /* Route that on successful requests, downloads the user's data that is stored in the database. */
+// router.get("/account/data/request", variables, permission.auth, async (req: Request, res: Response) => {
+//     // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
+//     if (req.user.db.lastDataRequest && ((Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24)) return res.status(429).render("status", {
+//         res,
+//         title: res.__("common.error"),
+//         status: 429,
+//         subtitle: res.__("page.account.data.download.button.disabled"),
+//         req,
+//         type: "Error"
+//     });
+    
+//     const userData: delUser = await global.db
+//         .collection<delUser>("users")
+//         .findOne({ _id: req.user.id });
+
+//     const userBotsData: delBot[] = await global.db
+//         .collection<delBot>("bots")
+//         .find({ "owner.id": req.user.id })
+//         .toArray();
+   
+//     // Filter userData to remove auth Object
+//     delete userData.auth;
+    
+//     // Filter userBots.votes to not expose user ID's of persons who up/downvoted a bot an instead show number inside of the existing string[]
+//     for (const bot of userBotsData) {
+//         const positiveVotes = bot.votes.positive.length;
+//         const negativeVotes = bot.votes.negative.length;
+
+//         bot.votes.positive = [positiveVotes.toString()];
+//         bot.votes.negative = [negativeVotes.toString()];
+//     }
+
+//     /*
+//         Updates 'lastDataRequest' in the database so that any future attempted requests are checked against this. 
+//         If the next attempted request is less than 24 hours relative to this current time, it will be denied.
+//     */
+//     await global.db.collection("users").updateOne(
+//         { _id: req.user.id },
+//         {
+//             $set: {
+//                 lastDataRequest: Date.now()
+//             }
+//         }
+//     );
+
+//     userCache.updateUser(req.user.id);
+
+//     res.setHeader("Content-disposition", `attachment; filename="del_data_user_${userData._id}.json"`);
+//     res.json({user: userData, bots: userBotsData});
+// });
+
+// /* Route that on successful requests, deletes the user's account and terminates their session. */
+// router.get("/account/data/delete", variables, permission.auth, async (req: Request, res: Response) => {
+//     const userBotsData: delBot[] = await global.db
+//         .collection<delBot>("bots")
+//         .find({ "owner.id": req.user.id })
+//         .toArray();
+    
+//     // Loops through the user's bots and deletes them from the database.
+//     for (const bot of userBotsData) {
+//         await global.db.collection("bots").deleteOne({ _id: bot._id });
+
+//         await discord.channels.logs.send(
+//             `${settings.emoji.delete} **${functions.escapeFormatting(
+//                 req.user.db.fullUsername
+//             )}** \`(${
+//                 req.user.id
+//             })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
+//                 bot._id
+//             })\``
+//         );
+
+//         await global.db.collection("audit").insertOne({
+//             type: "DELETE_BOT",
+//             executor: req.user.id,
+//             target: bot._id,
+//             date: Date.now(),
+//             reason: "Owner deleted their data and account."
+//         });
+
+//         await botCache.deleteBot(bot._id);
+//     }
+
+//     // Deletes the user's account from the database and cache.
+//     await global.db.collection("users").deleteOne({ _id: req.user.id });
+
+//     await userCache.deleteUser(req.user.id);
+
+//     // Terminates the user's session.
+//     req.logout((err) => {
+//         if (err) {
+//             // Returns error page with error log if session termination encounters an error.
+//             return res.status(500).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 500,
+//                 subtitle: err,
+//                 req,
+//                 type: "Error"
+//             });
+//         }
+        
+//         // Returns success status page if session terminates successfully.
+//         return res.status(200).render("status", {
+//             res,
+//             title: res.__("common.success"),
+//             subtitle: res.__("common.success.account.delete"),
+//             status: 200,
+//             type: "Success",
+//             req
+//         });
+//     });
+// });
 
 export default router;

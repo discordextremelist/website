@@ -1,5 +1,5 @@
 Type of website: Discord bot, server and template advertising service
-Effective date: 2nd day of November, 2024
+Effective date: 11th day of November, 2024
 
 # Preliminary provisions
 
@@ -87,8 +87,7 @@ We may share the following user data with the following third parties:
 
 1. Google Analytics, all automatically collected data; and
 2. Cloudflare, all automatically collected data as a result of your use of their proxy to access the Site and analytics purposes; and
-3. Sentry, such as session information, your browser and operating system information, and other automatically collected data; and
-4. [Arc.io](https://arc.io/about), any information required to facilitate the service.
+3. Sentry, such as session information, your browser and operating system information, and other automatically collected data.
 
 For more information, please view the respective service's privacy policies. By using the Site you agree to their terms and policies.
 
@@ -145,7 +144,7 @@ We use the following types of cookies on our Site:
 
 1. Functional cookies to remember the selections you make on our Site so that they are saved for your future visits; and
 2. Analytical cookies to allow us to improve the design and functionality of our site by collecting data on how you access our Site, for example the data on the content you access, how long you stay on our site, etc; and
-3. Third party cookies created by a website other than ours. We may use third-parties cookies to utilise the third-parties services mentioned earlier, such as for Google Analytics and Arc.io.
+3. Third party cookies created by a website other than ours. We may use third-parties cookies to utilise the third-parties services mentioned earlier, such as for Google Analytics.
 
 # Modifications and Complaints
 

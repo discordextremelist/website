@@ -83,6 +83,7 @@ export const mod = (req: Request, res: Response, next: () => void) => {
             next();
         } else {
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.notMod"),
@@ -105,6 +106,7 @@ export const assistant = (req: Request, res: Response, next: () => void) => {
             next();
         } else {
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.notAssistant"),
@@ -127,6 +129,7 @@ export const admin = (req: Request, res: Response, next: () => void) => {
             next();
         } else {
             return res.status(403).render("status", {
+                res,
                 title: res.__("common.error"),
                 status: 403,
                 subtitle: res.__("common.error.notAdmin"),

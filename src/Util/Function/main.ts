@@ -429,3 +429,14 @@ export function grabFullUser(user: authUser | APIUser) {
         return "@" + user.username;
     }
 }
+
+interface DiscordAPIError {
+    statusCode: number;
+    data?: any;
+}
+
+type RefreshError = Error | DiscordAPIError;
+
+export function isDiscordAPIError(error: RefreshError): error is DiscordAPIError {
+    return 'statusCode' in error;
+}

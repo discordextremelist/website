@@ -217,6 +217,7 @@ router.get("/servers", async (req, res) => {
 
             await serverCache.updateServer(id);
         } catch (e) {
+            console.log(e.code);
             if (e.code != 10006) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
             await global.db.collection("servers").deleteOne({ _id: id });
             await global.db.collection("audit").insertOne({

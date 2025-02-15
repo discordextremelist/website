@@ -196,7 +196,7 @@ router.get("/servers", async (req, res) => {
             )) as RESTGetAPIInviteResult;
             if (invite.guild.id !== server._id)
                 throw 3350001; // Invite points to a different server
-            if (invite.expires_at) throw 3350002; // "This invite is set to expire";
+            if (invite.expires_at) throw 3350002; // This invite is set to expire
 
             await global.db.collection("servers").updateOne(
                 { _id: id },
@@ -217,7 +217,6 @@ router.get("/servers", async (req, res) => {
 
             await serverCache.updateServer(id);
         } catch (e) {
-            console.log(e);
             if (e != 3350001 && e != 3350002 && e.code != 10006) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
             await global.db.collection("servers").deleteOne({ _id: id });
             await global.db.collection("audit").insertOne({

@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2025 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -40,7 +40,7 @@ router.get("/", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.search");
 
     let search: string | string[] | ParsedQs | ParsedQs[];
-    search = typeof req.query.q === 'string' ? req.query.q : "";
+    search = typeof req.query.q === "string" ? req.query.q : "";
 
     return res.render("templates/search", {
         title: res.__("common.search"),

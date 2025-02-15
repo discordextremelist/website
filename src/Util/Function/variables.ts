@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2025 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -207,7 +207,9 @@ export const variables = async (
 
     res.setHeader(
         "Content-Security-Policy",
-        "default-src 'self' 'unsafe-inline' status.discordextremelist.xyz cdn.jsdelivr.net cdnjs.cloudflare.com js.sentry-cdn.com fonts.googleapis.com fonts.gstatic.com; img-src *;"
+        "default-src 'self' 'unsafe-inline' status.discordextremelist.xyz cdn.jsdelivr.net cdnjs.cloudflare.com static.cloudflareinsights.com js.sentry-cdn.com fonts.googleapis.com fonts.gstatic.com; " +
+            "img-src *; " +
+            "worker-src 'self';"
     );
 
     next();

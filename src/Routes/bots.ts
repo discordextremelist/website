@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2025 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -418,7 +418,7 @@ router.post(
         } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"));
-        } else if ((req.body.prefix === "/" && !req.body.slashCommands)) {
+        } else if (req.body.prefix === "/" && !req.body.slashCommands) {
             error = true;
             errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
@@ -1472,7 +1472,7 @@ router.post(
         } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"));
-        } else if ((req.body.prefix === "/" && !req.body.slashCommands)) {
+        } else if (req.body.prefix === "/" && !req.body.slashCommands) {
             error = true;
             errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
@@ -2877,7 +2877,7 @@ router.post(
         } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"));
-        } else if ((req.body.prefix === "/" && !req.body.slashCommands)) {
+        } else if (req.body.prefix === "/" && !req.body.slashCommands) {
             error = true;
             errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }

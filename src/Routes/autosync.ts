@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2025 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -233,7 +233,9 @@ router.get("/servers", async (req, res) => {
             const embed = new EmbedBuilder();
             embed.setColor(0x2f3136);
             embed.setTitle("Reason");
-            embed.setDescription(req.body.reason);
+            embed.setDescription(
+                "Failed to autosync server, assuming the invite is invalid."
+            );
 
             await discord.channels.alerts.send({
                 content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
@@ -348,7 +350,9 @@ router.get("/templates", async (req, res) => {
             const embed = new EmbedBuilder();
             embed.setColor(0x2f3136);
             embed.setTitle("Reason");
-            embed.setDescription(req.body.reason);
+            embed.setDescription(
+                "Failed to autosync template, assuming the template is invalid."
+            );
 
             await discord.channels.alerts.send({
                 content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(

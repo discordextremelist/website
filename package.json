@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "del-website",
-  "version": "v5.6.12-Release",
+  "version": "v5.6.13-Release",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
   "main": "dist/src/app.js",
   "directories": {
@@ -48,7 +48,7 @@
     "ua-parser-js": "^1.0.37"
   },
   "devDependencies": {
-    "@sentry/types": "^6.19.2",
+    "@sentry/types": "^9.1.0",
     "@types/chunk": "0.0.0",
     "@types/color": "^3.0.3",
     "@types/datadog-metrics": "^0.6.2",
@@ -66,6 +66,7 @@
     "@types/passport-oauth2-refresh": "^1.1.1",
     "@types/sanitize-html": "^2.11.0",
     "ejs-lint": "^1.2.1",
+    "just-pnpm": "^1.0.2",
     "sass": "^1.72.0"
   },
   "scripts": {

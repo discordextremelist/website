@@ -128,8 +128,8 @@ dependencies:
 
 devDependencies:
   '@sentry/types':
-    specifier: ^6.19.2
-    version: 6.19.7
+    specifier: ^9.1.0
+    version: 9.1.0
   '@types/chunk':
     specifier: 0.0.0
     version: 0.0.0
@@ -181,6 +181,9 @@ devDependencies:
   ejs-lint:
     specifier: ^1.2.1
     version: 1.2.2
+  just-pnpm:
+    specifier: ^1.0.2
+    version: 1.0.2
   sass:
     specifier: ^1.72.0
     version: 1.85.0
@@ -2129,7 +2132,6 @@ packages:
   /@sentry/core@9.1.0:
     resolution: {integrity: sha512-djWEzSBpMgqdF3GQuxO+kXCUX+Mgq42G4Uah/HSUBvPDHKipMmyWlutGRoFyVPPOnCDgpHu3wCt83wbpEyVmDw==}
     engines: {node: '>=18'}
-    dev: false
 
   /@sentry/node@9.1.0:
     resolution: {integrity: sha512-Xf9N0rpZ+lf3kA/MBa0yA7/wBd+dW8QhBav2YmM2GpqrrZ+3HtP6sT0N9+D3qADUYTn0RE2MNo8yaiaM6/FfPw==}
@@ -2193,9 +2195,11 @@ packages:
       '@sentry/core': 9.1.0
     dev: false
 
-  /@sentry/types@6.19.7:
-    resolution: {integrity: sha512-jH84pDYE+hHIbVnab3Hr+ZXr1v8QABfhx39KknxqKWr2l0oEItzepV0URvbEhB446lk/S/59230dlUUIBGsXbg==}
-    engines: {node: '>=6'}
+  /@sentry/types@9.1.0:
+    resolution: {integrity: sha512-RE9qelDpkBHdUc2oEA/YQp77ai1XwPKQS60WD2QqX2tRC1v5kZkVem07JFJE2ZDx3eXOI/qmwu1VXN52pB2lPw==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@sentry/core': 9.1.0
     dev: true
 
   /@shikijs/core@1.29.2:
@@ -4561,6 +4565,12 @@ packages:
     dependencies:
       bignumber.js: 9.1.2
     dev: false
+
+  /just-pnpm@1.0.2:
+    resolution: {integrity: sha512-a/LtVYjTy1Z1yBl3kFEsic313J8MZ29ZEAFrw1snFOY7/x6Afy1VO2zAgtAlUjIgexOt8TRCRCXo1J+PABIo/Q==}
+    hasBin: true
+    requiresBuild: true
+    dev: true
 
   /kleur@3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}

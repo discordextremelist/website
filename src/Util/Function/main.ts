@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2025 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -437,6 +437,8 @@ interface DiscordAPIError {
 
 type RefreshError = Error | DiscordAPIError;
 
-export function isDiscordAPIError(error: RefreshError): error is DiscordAPIError {
-    return 'statusCode' in error;
+export function isDiscordAPIError(
+    error: RefreshError
+): error is DiscordAPIError {
+    return "statusCode" in error;
 }

@@ -1,7 +1,7 @@
 /*
 Discord Extreme List - Discord's unbiased list.
 
-Copyright (C) 2020-2024 Carolina Mitchell, John Burke, Advaith Jagathesan
+Copyright (C) 2020-2025 Carolina Mitchell, John Burke, Advaith Jagathesan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
@@ -437,7 +437,8 @@ router.post(
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
-                req: req
+                req: req,
+                type: "Error"
             });
 
         if (
@@ -540,7 +541,8 @@ router.get(
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
-                req: req
+                req: req,
+                type: "Error"
             });
 
         await discord.bot.rest
@@ -843,7 +845,6 @@ router.get(
     }
 );
 
-
 // /* Route that displays the templates/users/data view. A centre for a user to manage their data (download or delete). */
 // router.get("/account/data", variables, permission.auth, async (req: Request, res: Response) => {
 //     let dataRequestTimeout = false;
@@ -870,7 +871,7 @@ router.get(
 //         req,
 //         type: "Error"
 //     });
-    
+
 //     const userData: delUser = await global.db
 //         .collection<delUser>("users")
 //         .findOne({ _id: req.user.id });
@@ -879,10 +880,10 @@ router.get(
 //         .collection<delBot>("bots")
 //         .find({ "owner.id": req.user.id })
 //         .toArray();
-   
+
 //     // Filter userData to remove auth Object
 //     delete userData.auth;
-    
+
 //     // Filter userBots.votes to not expose user ID's of persons who up/downvoted a bot an instead show number inside of the existing string[]
 //     for (const bot of userBotsData) {
 //         const positiveVotes = bot.votes.positive.length;
@@ -893,7 +894,7 @@ router.get(
 //     }
 
 //     /*
-//         Updates 'lastDataRequest' in the database so that any future attempted requests are checked against this. 
+//         Updates 'lastDataRequest' in the database so that any future attempted requests are checked against this.
 //         If the next attempted request is less than 24 hours relative to this current time, it will be denied.
 //     */
 //     await global.db.collection("users").updateOne(
@@ -917,7 +918,7 @@ router.get(
 //         .collection<delBot>("bots")
 //         .find({ "owner.id": req.user.id })
 //         .toArray();
-    
+
 //     // Loops through the user's bots and deletes them from the database.
 //     for (const bot of userBotsData) {
 //         await global.db.collection("bots").deleteOne({ _id: bot._id });
@@ -961,7 +962,7 @@ router.get(
 //                 type: "Error"
 //             });
 //         }
-        
+
 //         // Returns success status page if session terminates successfully.
 //         return res.status(200).render("status", {
 //             res,

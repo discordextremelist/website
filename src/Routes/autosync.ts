@@ -217,48 +217,49 @@ router.get("/servers", async (req, res) => {
 
             await serverCache.updateServer(id);
         } catch (e) {
-            if (e != 3350001 && e != 3350002 && e.code != 10006) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
-            await global.db.collection("servers").deleteOne({ _id: id });
-            await global.db.collection("audit").insertOne({
-                type: "REMOVE_SERVER",
-                executor: "AutoSync",
-                target: id,
-                date: Date.now(),
-                reason: "Failed to autosync server, assuming the invite is invalid, for another server, or can expire.",
-                reasonType: 5
-            });
+            if (e != 3350001 && e != 3350002 && e.code != 10006) { // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
+                await global.db.collection("servers").deleteOne({ _id: id });
+                await global.db.collection("audit").insertOne({
+                    type: "REMOVE_SERVER",
+                    executor: "AutoSync",
+                    target: id,
+                    date: Date.now(),
+                    reason: "Failed to autosync server, assuming the invite is invalid, for another server, or can expire.",
+                    reasonType: 5
+                });
 
-            await serverCache.deleteServer(id);
+                await serverCache.deleteServer(id);
 
-            const embed = new EmbedBuilder();
-            embed.setColor(0x2f3136);
-            embed.setTitle("Reason");
-            embed.setDescription(
-                "Failed to autosync server, assuming the invite is invalid, for another server, or can expire."
-            );
+                const embed = new EmbedBuilder();
+                embed.setColor(0x2f3136);
+                embed.setTitle("Reason");
+                embed.setDescription(
+                    "Failed to autosync server, assuming the invite is invalid, for another server, or can expire."
+                );
 
-            await discord.channels.logs.send({
-                content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
-                    server.name
-                )}** \`(${server._id})\``,
-                embeds: [embed]
-            });
+                await discord.channels.logs.send({
+                    content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
+                        server.name
+                    )}** \`(${server._id})\``,
+                    embeds: [embed]
+                });
 
-            const owner = await discord.getMember(server.owner.id);
-            if (owner)
-                owner
-                    .send(
-                        `${
-                            settings.emoji.delete
-                        } **|** Your server **${functions.escapeFormatting(
-                            server.name
-                        )}** \`(${server._id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this server has either been deleted, or the invite provided to us has expired. If your server is still active, please repost it with a permanent invite!\``
-                    )
-                    .catch((e: string) => {
-                        console.error(e);
-                    });
+                const owner = await discord.getMember(server.owner.id);
+                if (owner)
+                    owner
+                        .send(
+                            `${
+                                settings.emoji.delete
+                            } **|** Your server **${functions.escapeFormatting(
+                                server.name
+                            )}** \`(${server._id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this server has either been deleted, or the invite provided to us has expired. If your server is still active, please repost it with a permanent invite!\``
+                        )
+                        .catch((e: string) => {
+                            console.error(e);
+                        });
 
-            await discord.postWebMetric("server");
+                await discord.postWebMetric("server");
+            }
         }
 
     await global.redis?.hset("autosync", "nextServer", getNext(ids, id));

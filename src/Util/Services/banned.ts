@@ -20,24 +20,59 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { guilds } from "./discord.js";
 
 export async function check(user: string): Promise<boolean> {
-    const ban = await global.redis?.hget("bans", user);
-    return ban !== null;
+    try {
+        if (!global.redis) {
+            return false;
+        }
+        const ban = await global.redis.hget("bans", user);
+        return ban !== null && ban !== undefined;
+    } catch (error) {
+        console.error("Error checking ban status:", error);
+        return false;
+    }
 }
 
 export async function updateBanlist() {
-    await global.redis?.del("bans");
-    await guilds.main.bans
-        .fetch()
-        .then(async (bans) => {
-            if (bans.size > 0)
-                await global.redis?.hmset(
-                    "bans",
-                    ...bans.map((ban) => [ban.user.id, true])
-                );
-        })
-        .catch((e) => console.error(e));
+    try {
+        if (!global.redis) {
+            return;
+        }
+
+        const bans = await guilds.main.bans.fetch();
+        
+        if (bans.size > 0) {
+            const multi = global.redis.multi();
+            multi.del("bans");
+            multi.hmset(
+                "bans",
+                ...bans.map((ban) => [ban.user.id, "true"])
+            );
+            await multi.exec();
+        } else {
+            await global.redis.del("bans");
+        }
+    } catch (error) {
+        console.error("Error updating banlist:", error);
+    }
 }
 
-setInterval(async () => {
-    await updateBanlist();
-}, 900000);
+const BANLIST_UPDATE_INTERVAL = 900000;
+let updateInterval: NodeJS.Timeout;
+
+export function startBanlistUpdates() {
+    if (updateInterval) {
+        clearInterval(updateInterval);
+    }
+    
+    updateInterval = setInterval(async () => {
+        try {
+            await updateBanlist();
+        } catch (error) {
+            console.error("Error in banlist update interval:", error);
+        }
+    }, BANLIST_UPDATE_INTERVAL);
+}
+
+// Initial update and start interval
+updateBanlist().catch(console.error);
+startBanlistUpdates();

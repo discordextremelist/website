@@ -41,7 +41,7 @@ import type {
     APIApplication,
     APIUser
 } from "discord.js";
-import settings from "../../settings.json" assert { type: "json" };
+import settings from "../../settings.json" with { type: "json" };
 import { DAPI } from "../Util/Services/discord.js";
 
 const router = express.Router();
@@ -217,6 +217,7 @@ router.get("/servers", async (req, res) => {
 
             await serverCache.updateServer(id);
         } catch (e) {
+            console.log(e.code);
             if (e.code != 10006) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
             await global.db.collection("servers").deleteOne({ _id: id });
             await global.db.collection("audit").insertOne({
@@ -332,7 +333,8 @@ router.get("/templates", async (req, res) => {
 
             await templateCache.updateTemplate(id);
         } catch (e) {
-            if (e.code == 10057) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
+            console.log(e.code);
+            if (e.code != 10057) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
             // may as well reduce the load on web mods - AJ
             await global.db.collection("templates").deleteOne({ _id: id });
 

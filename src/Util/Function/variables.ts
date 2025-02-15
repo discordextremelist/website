@@ -20,8 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { Request, Response } from "express";
 
 import color from "color";
-import settings from "../../../settings.json" assert { type: "json" };
-import pkg from "../../../package.json" assert { type: "json" };
+import settings from "../../../settings.json" with { type: "json" };
+import pkg from "../../../package.json" with { type: "json" };
 import * as announcementCache from "../Services/announcementCaching.js";
 import * as userCache from "../Services/userCaching.js";
 import * as banList from "../Services/banned.js";

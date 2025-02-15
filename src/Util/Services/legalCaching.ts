@@ -21,7 +21,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import mdi from "markdown-it";
 
-import settings from "../../../settings.json" assert { type: "json" };
+import settings from "../../../settings.json" with { type: "json" };
 
 const md = new mdi();
 

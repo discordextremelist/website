@@ -1,14 +1,14 @@
 {
   "type": "module",
   "name": "del-website",
-  "version": "v5.6.15-Release",
+  "version": "v5.6.16-Release",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
   "main": "dist/src/app.js",
   "directories": {
     "doc": "docs"
   },
   "engines": {
-    "node": ">=18.15.0"
+    "node": ">=20.18.3"
   },
   "packageManager": "pnpm@8.15.5",
   "dependencies": {

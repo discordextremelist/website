@@ -34,8 +34,8 @@ import * as Discord from "discord.js";
 import sanitizeHtml from "sanitize-html";
 import refresh from "passport-oauth2-refresh";
 
-import settings from "../../settings.json" assert { type: "json" };
-import htmlRef from "../../htmlReference.json" assert { type: "json" };
+import settings from "../../settings.json" with { type: "json" };
+import htmlRef from "../../htmlReference.json" with { type: "json" };
 import * as discord from "../Util/Services/discord.js";
 import * as permission from "../Util/Function/permissions.js";
 import * as functions from "../Util/Function/main.js";

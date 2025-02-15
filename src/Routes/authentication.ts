@@ -33,7 +33,7 @@ import fetch from "node-fetch";
 import * as userCache from "../Util/Services/userCaching.js";
 import { DAPI } from "../Util/Services/discord.js";
 
-import settings from "../../settings.json" assert { type: "json" };
+import settings from "../../settings.json" with { type: "json" };
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import { grabFullUser } from "../Util/Function/main.js";
 

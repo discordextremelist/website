@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 # NOTE: You should have made a settings.json file before running docker compose.
-ARG NODE_VERSION="20.11.1-alpine3.19"
+ARG NODE_VERSION="20.18.3-alpine3.19"
 FROM node:${NODE_VERSION}
 # Copy to-be-compiled files to container filesystem
 COPY . /opt/del

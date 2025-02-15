@@ -21,7 +21,7 @@ import express from "express";
 import type { Request, Response } from "express";
 import type { APIUser, Snowflake } from "discord.js";
 import { Routes } from "discord.js";
-import settings from "../../settings.json" assert { type: "json" };
+import settings from "../../settings.json" with { type: "json" };
 import * as permission from "../Util/Function/permissions.js";
 import * as functions from "../Util/Function/main.js";
 import * as botCache from "../Util/Services/botCaching.js";

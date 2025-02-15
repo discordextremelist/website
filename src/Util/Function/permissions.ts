@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { OAuth2Scopes, Routes } from "discord.js";
 import { Request, Response } from "express";
-import settings from "../../../settings.json" assert { type: "json" };
+import settings from "../../../settings.json" with { type: "json" };
 import * as discord from "../Services/discord.js";
 export const auth = (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {

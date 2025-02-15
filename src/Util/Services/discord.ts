@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import * as Discord from "discord.js";
 import metrics from "datadog-metrics";
 
-import settings from "../../../settings.json" assert { type: "json" };
+import settings from "../../../settings.json" with { type: "json" };
 import moment from "moment";
 import { PresenceUpdateStatus, GatewayIntentBits } from "discord.js";
 import * as botCache from "./botCaching.js";

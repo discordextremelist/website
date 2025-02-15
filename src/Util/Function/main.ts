@@ -437,6 +437,8 @@ interface DiscordAPIError {
 
 type RefreshError = Error | DiscordAPIError;
 
-export function isDiscordAPIError(error: RefreshError): error is DiscordAPIError {
-    return 'statusCode' in error;
+export function isDiscordAPIError(
+    error: RefreshError
+): error is DiscordAPIError {
+    return "statusCode" in error;
 }

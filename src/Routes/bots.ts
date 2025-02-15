@@ -418,7 +418,7 @@ router.post(
         } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"));
-        } else if ((req.body.prefix === "/" && !req.body.slashCommands)) {
+        } else if (req.body.prefix === "/" && !req.body.slashCommands) {
             error = true;
             errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
@@ -1472,7 +1472,7 @@ router.post(
         } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"));
-        } else if ((req.body.prefix === "/" && !req.body.slashCommands)) {
+        } else if (req.body.prefix === "/" && !req.body.slashCommands) {
             error = true;
             errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }
@@ -2877,7 +2877,7 @@ router.post(
         } else if (req.body.prefix?.length > 32) {
             error = true;
             errors.push(res.__("common.error.bot.arr.prefixTooLong"));
-        } else if ((req.body.prefix === "/" && !req.body.slashCommands)) {
+        } else if (req.body.prefix === "/" && !req.body.slashCommands) {
             error = true;
             errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
         }

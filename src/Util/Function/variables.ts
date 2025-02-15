@@ -208,8 +208,8 @@ export const variables = async (
     res.setHeader(
         "Content-Security-Policy",
         "default-src 'self' 'unsafe-inline' status.discordextremelist.xyz cdn.jsdelivr.net cdnjs.cloudflare.com static.cloudflareinsights.com js.sentry-cdn.com fonts.googleapis.com fonts.gstatic.com; " +
-        "img-src *; " +
-        "worker-src 'self';"
+            "img-src *; " +
+            "worker-src 'self';"
     );
 
     next();

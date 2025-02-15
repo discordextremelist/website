@@ -233,7 +233,7 @@ router.get("/servers", async (req, res) => {
             const embed = new EmbedBuilder();
             embed.setColor(0x2f3136);
             embed.setTitle("Reason");
-            embed.setDescription(req.body.reason);
+            embed.setDescription("Failed to autosync server, assuming the invite is invalid.");
 
             await discord.channels.alerts.send({
                 content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
@@ -348,7 +348,7 @@ router.get("/templates", async (req, res) => {
             const embed = new EmbedBuilder();
             embed.setColor(0x2f3136);
             embed.setTitle("Reason");
-            embed.setDescription(req.body.reason);
+            embed.setDescription("Failed to autosync template, assuming the template is invalid.");
 
             await discord.channels.alerts.send({
                 content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(

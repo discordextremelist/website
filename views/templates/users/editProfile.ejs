@@ -121,11 +121,29 @@
     </div>
 </div>
 <script>
-    const warn = event => {
-        event.preventDefault()
-        event.returnValue=''
-    }
-    addEventListener('beforeunload', warn)
+    let formChanged = false;
+
+    // Add change listeners to all form inputs
+    document.querySelectorAll('input, textarea, select').forEach(element => {
+        element.addEventListener('change', () => {
+            formChanged = true;
+        });
+    });
+
+    // Add input listeners for text fields
+    document.querySelectorAll('input[type="text"], textarea').forEach(element => {
+        element.addEventListener('input', () => {
+            formChanged = true;
+        });
+    });
+
+    // Update beforeunload handler
+    window.addEventListener('beforeunload', (e) => {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
     document.querySelector('form').onsubmit = () => removeEventListener('beforeunload', warn)
     MonacoEnvironment = {getWorkerUrl: () => '/js/monaco.js'}
 </script>

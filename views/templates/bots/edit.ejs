@@ -394,12 +394,31 @@
         if (useCustomColor.checked) {
             customColor.style.display = 'inherit'
         } else customColor.style.display = 'none'
-    })
-    const warn = event => {
-        event.preventDefault()
-        event.returnValue=''
-    }
-    addEventListener('beforeunload', warn)
+    });
+
+    let formChanged = false;
+
+    // Add change listeners to all form inputs
+    document.querySelectorAll('input, textarea, select').forEach(element => {
+        element.addEventListener('change', () => {
+            formChanged = true;
+        });
+    });
+
+    // Add input listeners for text fields
+    document.querySelectorAll('input[type="text"], textarea').forEach(element => {
+        element.addEventListener('input', () => {
+            formChanged = true;
+        });
+    });
+
+    // Update beforeunload handler
+    window.addEventListener('beforeunload', (e) => {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
     MonacoEnvironment = {getWorkerUrl: () => '/js/monaco.js'}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js" integrity="sha512-gWqaPfGsZiCkYB6e5mNN4SMRpEvLGItLBqgOAoyLSKtDxWS2O1YPcOeGTy8d8l00gqc8rVue9ae/ncZqhmfj4g==" crossorigin="anonymous"></script>

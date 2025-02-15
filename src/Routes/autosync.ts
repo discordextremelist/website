@@ -217,7 +217,7 @@ router.get("/servers", async (req, res) => {
 
             await serverCache.updateServer(id);
         } catch (e) {
-            console.log(e.code);
+            console.log(e);
             if (e.code != 10006) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
             await global.db.collection("servers").deleteOne({ _id: id });
             await global.db.collection("audit").insertOne({
@@ -238,7 +238,7 @@ router.get("/servers", async (req, res) => {
                 "Failed to autosync server, assuming the invite is invalid."
             );
 
-            await discord.channels.alerts.send({
+            await discord.channels.logs.send({
                 content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
                     server.name
                 )}** \`(${server._id})\``,
@@ -333,51 +333,51 @@ router.get("/templates", async (req, res) => {
 
             await templateCache.updateTemplate(id);
         } catch (e) {
-            console.log(e.code);
-            if (e.code != 10057) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
-            // may as well reduce the load on web mods - AJ
-            await global.db.collection("templates").deleteOne({ _id: id });
+            if (e.code == 10057) { // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
+                // may as well reduce the load on web mods - AJ
+                await global.db.collection("templates").deleteOne({ _id: id });
 
-            await global.db.collection("audit").insertOne({
-                type: "REMOVE_TEMPLATE",
-                executor: "AutoSync",
-                target: id,
-                date: Date.now(),
-                reason: "Unknown server template (10057)",
-                reasonType: 4
-            });
+                await global.db.collection("audit").insertOne({
+                    type: "REMOVE_TEMPLATE",
+                    executor: "AutoSync",
+                    target: id,
+                    date: Date.now(),
+                    reason: "Unknown server template (10057)",
+                    reasonType: 4
+                });
 
-            await templateCache.deleteTemplate(id);
+                await templateCache.deleteTemplate(id);
 
-            const embed = new EmbedBuilder();
-            embed.setColor(0x2f3136);
-            embed.setTitle("Reason");
-            embed.setDescription(
-                "Failed to autosync template, assuming the template is invalid."
-            );
+                const embed = new EmbedBuilder();
+                embed.setColor(0x2f3136);
+                embed.setTitle("Reason");
+                embed.setDescription(
+                    "Failed to autosync template, assuming the template is invalid."
+                );
 
-            await discord.channels.alerts.send({
-                content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(
-                    dbTemplate.name
-                )}** \`(${id})\``,
-                embeds: [embed]
-            });
+                await discord.channels.logs.send({
+                    content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(
+                        dbTemplate.name
+                    )}** \`(${id})\``,
+                    embeds: [embed]
+                });
 
-            const owner = await discord.getMember(dbTemplate.creator.id);
-            if (owner)
-                owner
-                    .send(
-                        `${
-                            settings.emoji.delete
-                        } **|** Your template **${functions.escapeFormatting(
-                            dbTemplate.name
-                        )}** \`(${id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this template has been deleted from discord.\``
-                    )
-                    .catch((e) => {
-                        console.error(e);
-                    });
+                const owner = await discord.getMember(dbTemplate.creator.id);
+                if (owner)
+                    owner
+                        .send(
+                            `${
+                                settings.emoji.delete
+                            } **|** Your template **${functions.escapeFormatting(
+                                dbTemplate.name
+                            )}** \`(${id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this template has been deleted from discord.\``
+                        )
+                        .catch((e) => {
+                            console.error(e);
+                        });
 
-            await discord.postWebMetric("template");
+                await discord.postWebMetric("template");
+            }
         }
 
     await global.redis?.hset("autosync", "nextTemplate", getNext(ids, id));

@@ -437,7 +437,8 @@ router.post(
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
-                req: req
+                req: req,
+                type: "Error"
             });
 
         if (
@@ -540,7 +541,8 @@ router.get(
                 title: res.__("common.error"),
                 status: 404,
                 subtitle: res.__("common.error.user.404"),
-                req: req
+                req: req,
+                type: "Error"
             });
 
         await discord.bot.rest

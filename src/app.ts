@@ -62,7 +62,6 @@ import usersRoute from "./Routes/users.js";
 import templatesRoute from "./Routes/templates.js";
 import staffRoute from "./Routes/staff.js";
 import setup from "./setup.js";
-import { setupExpressErrorHandler } from "@sentry/node";
 
 const app = express();
 const __dirname = path.resolve();
@@ -75,10 +74,11 @@ if (!settings.website.dev) {
         release: "website@" + process.env.npm_package_version,
         environment: "production",
         integrations: [
-            Sentry.expressIntegration(),
-        ]
+            Sentry.expressIntegration()
+        ],
+        tracesSampleRate: 0.1,
+        profilesSampleRate: 0.1
     });
-    setupExpressErrorHandler(app);
 }
 
 app.use(
@@ -273,8 +273,16 @@ new Promise<void>((resolve, reject) => {
 
         app.use((req, res, next) => {
             res.locals.user = req.user;
+            
+            if (req.user) {
+                Sentry.setUser({
+                    id: req.user.id,
+                    username: req.user.username
+                });
+            }
+            
             next();
-        });
+        });        
 
         app.get("/sitemap.xml", sitemapIndex);
 
@@ -321,43 +329,35 @@ new Promise<void>((resolve, reject) => {
 
         app.use(variables);
 
-        if (!settings.website.dev) Sentry.setupExpressErrorHandler(app);
+        Sentry.setupExpressErrorHandler(app);
 
         app.use((req: Request, res: Response, next: () => void) => {
             // @ts-expect-error
             next(createError(404));
         });
 
-        app.use(
-            (
-                err: { message: string; status?: number },
-                req: Request,
-                res: Response
-            ) => {
-                res.locals.message = err.message;
-                res.locals.error = err;
-
-                if (err.message === "Not Found")
-                    return res.status(404).render("status", {
-                        res,
-                        title: res.__("common.error"),
-                        subtitle: res.__("common.error.404"),
-                        status: 404,
-                        type: res.__("common.error"),
-                        req: req,
-                        pageType: {
-                            home: false,
-                            standard: true,
-                            server: false,
-                            bot: false,
-                            template: false
-                        }
-                    });
-
-                res.status(err.status || 500);
-                res.render("error", { __: res.__ });
+        app.use((err: { message: string; status?: number }, req: Request, res: Response, next: () => void) => {
+            if (!settings.website.dev) {
+                Sentry.captureException(err); // Capture the error in Sentry
             }
-        );
+        
+            res.locals.message = err.message;
+            res.locals.error = err;
+        
+            if (err.message === "Not Found") {
+                return res.status(404).render("status", {
+                    res,
+                    title: res.__("common.error"),
+                    subtitle: res.__("common.error.404"),
+                    req,
+                    status: 404,
+                    type: "Error"
+                });
+            }
+        
+            res.status(err.status || 500);
+            res.render("error", { error: err });
+        });        
 
         app.listen(settings.website.port.value || 3000, () => {
             console.log(

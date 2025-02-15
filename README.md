@@ -5,6 +5,7 @@
 # Discord Extreme List  5
 
 [![Compile](https://github.com/discordextremelist/website/workflows/Compile/badge.svg)](https://github.com/discordextremelist/website/actions?query=workflow%3ACompile)
+[![Deploy](https://github.com/discordextremelist/website/actions/workflows/deploy.yml/badge.svg)](https://github.com/discordextremelist/website/actions/workflows/deploy.yml)
 [![Discord](https://img.shields.io/discord/568567800910839811?color=5865f2&logo=discord&logoColor=white)](https://discord.gg/WeCer3J)
 [![Code style](https://img.shields.io/badge/code%20style-prettier-ff69b4?logo=prettier&logoColor=white)](https://prettier.io)
 [![Crowdin](https://badges.crowdin.net/delly/localized.svg)](https://translate.discordextremelist.xyz/project/delly)

@@ -7,27 +7,6 @@ on:
   pull_request:
 
 jobs:
-  node18:
-    name: node v18 - tsc
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: installs pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8.15.5
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'pnpm'
-      - name: dependencies
-        run: pnpm i
-      - name: settings
-        run: cp settings.example.json settings.json
-      - name: tsc
-        uses: icrawl/action-tsc@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   node20:
     name: node v20 - tsc
     runs-on: ubuntu-latest

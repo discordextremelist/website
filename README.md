@@ -22,7 +22,7 @@ Note that we do not support running public clones of the project: you are allowe
 
 ### Node.js
 
-DEL requires [Node.js](https://nodejs.org) v18.15.0+. We recommend using the latest v20 LTS version.
+DEL requires [Node.js](https://nodejs.org) v20.18.3+. We currently recommend using the latest v20 LTS version, higher versions are not supported. v22 support is planned.
 
 ### MongoDB
 
@@ -32,8 +32,8 @@ A [MongoDB](https://mongodb.com) instance is required - it must match the config
 
 [Redis](https://redis.io) or [Memurai](https://memurai.com) must be installed and running - it must match the configuration in the `settings.json` file.
 
-### NPM Packages
-Install all of the dependencies by running `npm i`.
+### PNPM Packages
+We use [pnpm](https://pnpm.io/installation). Install all of the dependencies by running `pnpm i`.
 
 ## Configuration
 
@@ -41,6 +41,6 @@ Rename `settings.example.json` to `settings.json` and fill it out appropriately,
 
 ## Running DEL
 
-When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run `npm run compile`.
+When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run `pnpm run compile`.
 
-Run `npm start` to start DEL.
+Run `pnpm start` to start DEL.

@@ -8,7 +8,7 @@
     "doc": "docs"
   },
   "engines": {
-    "node": ">=18.15.0"
+    "node": ">=20.18.3"
   },
   "packageManager": "pnpm@8.15.5",
   "dependencies": {

@@ -332,7 +332,7 @@ router.get("/templates", async (req, res) => {
 
             await templateCache.updateTemplate(id);
         } catch (e) {
-            if (e.code == 10057) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
+            if (e.code != 10057) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
             // may as well reduce the load on web mods - AJ
             await global.db.collection("templates").deleteOne({ _id: id });
 

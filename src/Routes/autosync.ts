@@ -195,8 +195,8 @@ router.get("/servers", async (req, res) => {
                 }
             )) as RESTGetAPIInviteResult;
             if (invite.guild.id !== server._id)
-                throw "Invite points to a different server";
-            if (invite.expires_at) throw "This invite is set to expire";
+                throw 3350001; // Invite points to a different server
+            if (invite.expires_at) throw 3350002; // "This invite is set to expire";
 
             await global.db.collection("servers").updateOne(
                 { _id: id },
@@ -218,14 +218,14 @@ router.get("/servers", async (req, res) => {
             await serverCache.updateServer(id);
         } catch (e) {
             console.log(e);
-            if (e.code != 10006) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
+            if (e != 3350001 && e != 3350002 && e.code != 10006) return; // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
             await global.db.collection("servers").deleteOne({ _id: id });
             await global.db.collection("audit").insertOne({
                 type: "REMOVE_SERVER",
                 executor: "AutoSync",
                 target: id,
                 date: Date.now(),
-                reason: "Failed to autosync server, assuming the invite is invalid.",
+                reason: "Failed to autosync server, assuming the invite is invalid, for another server, or can expire.",
                 reasonType: 5
             });
 
@@ -235,7 +235,7 @@ router.get("/servers", async (req, res) => {
             embed.setColor(0x2f3136);
             embed.setTitle("Reason");
             embed.setDescription(
-                "Failed to autosync server, assuming the invite is invalid."
+                "Failed to autosync server, assuming the invite is invalid, for another server, or can expire."
             );
 
             await discord.channels.logs.send({

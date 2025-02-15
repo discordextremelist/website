@@ -9,7 +9,7 @@
             "sizes": "512x512"
         },
         {
-            "src": "/img/logo-354.webp",
+            "src": "/img/logo-354px.webp",
             "type": "image/webp",
             "sizes": "354x354"
         },
@@ -45,7 +45,7 @@
             "sizes": "512x512"
         },
         {
-            "src": "/img/logo-354.png",
+            "src": "/img/logo-354px.png",
             "type": "image/png",
             "sizes": "354x354"
         },

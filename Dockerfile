@@ -11,6 +11,7 @@ RUN apk update && \
     apk add git ca-certificates
 # Enable pnpm
 RUN corepack enable pnpm
+RUN corepack prepare pnpm@latest --activate
 # Install node modules
 RUN CI=true pnpm i
 # Compile new dist file

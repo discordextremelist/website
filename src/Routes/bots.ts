@@ -873,11 +873,11 @@ router.post(
             .findOne({ _id: req.body.newOwner });
 
         if (!newOwnerExists)
-            return res.status(403).render("status", {
+            return res.status(422).render("status", {
                 res,
                 title: res.__("common.error"),
-                subtitle: res.__("common.error.user.404"),
-                status: 404,
+                subtitle: res.__("common.error.bot.transferOwnership.422"),
+                status: 422,
                 type: "Error",
                 req
             });

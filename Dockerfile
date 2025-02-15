@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 # NOTE: You should have made a settings.json file before running docker compose.
-ARG NODE_VERSION="20.18.3-alpine3.21"
+ARG NODE_VERSION="20.11.1-alpine3.19"
 FROM node:${NODE_VERSION}
 # Copy to-be-compiled files to container filesystem
 COPY . /opt/del
@@ -11,7 +11,6 @@ RUN apk update && \
     apk add git ca-certificates
 # Enable pnpm
 RUN corepack enable pnpm
-RUN corepack prepare pnpm@latest --activate
 # Install node modules
 RUN CI=true pnpm i
 # Compile new dist file

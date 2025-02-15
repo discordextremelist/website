@@ -42,6 +42,30 @@
                     </p>
                 </div>
                 <div class="content-footer">
+                    <% if (queue && bot.date.submitted) { 
+                        const date = new Date(bot.date.submitted);
+                        const timeString = date.getUTCHours().toString().padStart(2, '0') + ':' + 
+                                            date.getUTCMinutes().toString().padStart(2, '0');
+                        const dateString = date.getUTCDate().toString().padStart(2, '0') + ' ' + 
+                                            date.toLocaleString("default", { month: "short" }) + ' ' + 
+                                            date.getUTCFullYear();
+
+                        const daysSinceSubmission = Math.floor((Date.now() - new Date(bot.date.submitted).getTime()) / (1000 * 60 * 60 * 24));
+                        let statusClass = "is-danger";
+                        if (daysSinceSubmission < 7) {
+                            statusClass = "is-success";
+                        } else if (daysSinceSubmission < 14) {
+                            statusClass = "is-warning";
+                        }
+    
+                    %>
+                        <div class="control" style="padding-bottom: 1em;">
+                            <div class="tags has-addons">
+                              <span class="tag is-dark">Added to the queue</span>
+                              <span class="tag <%= statusClass %>"><%= timeString %> (UTC), <%= dateString %></span>
+                            </div>
+                        </div>
+                    <% } %>
                     <div class="buttons">
                     <% if (bot.status.archived === true) { %>
                         <a href="<%= linkPrefix %>/bots/<%= bot.vanityUrl ? bot.vanityUrl : (bot._id || bot.id) %>" class="button is-default is-outlined">

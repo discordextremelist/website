@@ -66,6 +66,7 @@
     "@types/passport-oauth2-refresh": "^1.1.1",
     "@types/sanitize-html": "^2.11.0",
     "ejs-lint": "^1.2.1",
+    "just-pnpm": "^1.0.2",
     "sass": "^1.72.0"
   },
   "scripts": {

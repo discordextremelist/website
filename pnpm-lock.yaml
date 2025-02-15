@@ -181,6 +181,9 @@ devDependencies:
   ejs-lint:
     specifier: ^1.2.1
     version: 1.2.2
+  just-pnpm:
+    specifier: ^1.0.2
+    version: 1.0.2
   sass:
     specifier: ^1.72.0
     version: 1.85.0
@@ -4562,6 +4565,12 @@ packages:
     dependencies:
       bignumber.js: 9.1.2
     dev: false
+
+  /just-pnpm@1.0.2:
+    resolution: {integrity: sha512-a/LtVYjTy1Z1yBl3kFEsic313J8MZ29ZEAFrw1snFOY7/x6Afy1VO2zAgtAlUjIgexOt8TRCRCXo1J+PABIo/Q==}
+    hasBin: true
+    requiresBuild: true
+    dev: true
 
   /kleur@3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}

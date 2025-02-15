@@ -33,7 +33,7 @@ import * as userCache from "../Util/Services/userCaching.js";
 import * as tokenManager from "../Util/Services/adminTokenManager.js";
 import { themes } from "../../@types/enums.js";
 
-import settings from "../../settings.json" assert { type: "json" };
+import settings from "../../settings.json" with { type: "json" };
 
 import entities from "html-entities";
 const router = express.Router();

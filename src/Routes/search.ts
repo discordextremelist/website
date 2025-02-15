@@ -23,7 +23,7 @@ import type { Request, Response } from "express";
 import chunk from "chunk";
 import path from "path";
 import * as ejs from "ejs";
-import settings from "../../settings.json" assert { type: "json" };
+import settings from "../../settings.json" with { type: "json" };
 
 import * as botCache from "../Util/Services/botCaching.js";
 import * as userCache from "../Util/Services/userCaching.js";

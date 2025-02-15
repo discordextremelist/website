@@ -49,7 +49,7 @@ import { MongoClient } from "mongodb";
 import Redis from "ioredis";
 import { hostname } from "os";
 
-import settings from "../settings.json" assert { type: "json" };
+import settings from "../settings.json" with { type: "json" };
 
 import authRoute from "./Routes/authentication.js";
 import autosyncRoute from "./Routes/autosync.js";

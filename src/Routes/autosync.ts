@@ -41,7 +41,7 @@ import type {
     APIApplication,
     APIUser
 } from "discord.js";
-import settings from "../../settings.json" assert { type: "json" };
+import settings from "../../settings.json" with { type: "json" };
 import { DAPI } from "../Util/Services/discord.js";
 
 const router = express.Router();

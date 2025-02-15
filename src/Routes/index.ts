@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import type { Request, Response } from "express";
 
-import settings from "../../settings.json" assert { type: "json" };
+import settings from "../../settings.json" with { type: "json" };
 import * as featuring from "../Util/Services/featuring.js";
 import * as botCache from "../Util/Services/botCaching.js";
 import * as serverCache from "../Util/Services/serverCaching.js";

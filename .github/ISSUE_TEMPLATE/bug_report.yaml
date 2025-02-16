@@ -44,12 +44,6 @@ body:
     validations:
       required: true
   
-  - type: "textarea"
-    id: "screenshots"
-    attributes:
-      label: "Screenshots (Optional)"
-      description: "If applicable, add screenshots to help explain your problem."
-  
   - type: "input"
     id: "os"
     attributes:

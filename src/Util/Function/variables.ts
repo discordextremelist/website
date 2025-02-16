@@ -27,7 +27,7 @@ import * as userCache from "../Services/userCaching.ts";
 import * as banList from "../Services/banned.ts";
 import { URLSearchParams } from "url";
 import { themes } from "../../../@types/enums.ts";
-import UAParser from "ua-parser-js";
+import { UAParser } from "ua-parser-js";
 
 export const variables = async (
     req: Request,
@@ -80,9 +80,8 @@ export const variables = async (
     )
         req.session.redirectTo = req.originalUrl;
 
-    const version = pkg.version;
     req.del = {
-        version,
+        version: pkg.version,
         node: "Unavailable"
     };
 
@@ -123,18 +122,24 @@ export const variables = async (
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Safari/605.1.15"
     );
 
-    if (useragent.getDevice().type === "tablet") {
-        res.locals.mobile = true;
-        res.locals.tablet = true;
-    } else if (useragent.getDevice().type === "mobile") {
-        res.locals.mobile = true;
-        res.locals.phone = true;
-    } else {
-        res.locals.mobile = false;
-        res.locals.phone = false;
-        res.locals.tablet = false;
-    }
+    res.locals.mobile = false;
+    res.locals.phone = false;
+    res.locals.tablet = false;
 
+    try {
+        const deviceType = useragent.getDevice().type;
+
+        if (deviceType === "tablet") {
+            res.locals.mobile = true;
+            res.locals.tablet = true;
+        } else if (deviceType === "mobile") {
+            res.locals.mobile = true;
+            res.locals.phone = true;
+        }
+    } catch (e) {
+        console.error("UA parsing failed, defaulting to desktop mode: ", e);
+    }
+    
     let theme = req.user?.db?.preferences?.theme;
 
     if (req.query.theme) theme = themes[req.query.theme as string];

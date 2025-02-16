@@ -46,7 +46,7 @@
     "passport-oauth2-refresh": "^2.1.0",
     "sanitize-html": "^2.12.1",
     "typescript": "^5.3.3",
-    "ua-parser-js": "^1.0.37"
+    "ua-parser-js": "^2.0.2"
   },
   "devDependencies": {
     "@sentry/types": "^9.1.0",

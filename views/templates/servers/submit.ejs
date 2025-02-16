@@ -243,29 +243,33 @@
         }
     })
             
-    let formChanged = false;
+    // Replace this part of the code:
+let formChanged = false;
 
-    // Add change listeners to all form inputs
-    document.querySelectorAll('input, textarea, select').forEach(element => {
-        element.addEventListener('change', () => {
-            formChanged = true;
-        });
-    });
+// Store the warn function in a variable
+const warn = (e) => {
+    if (formChanged) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+};
 
-    // Add input listeners for text fields
-    document.querySelectorAll('input[type="text"], textarea').forEach(element => {
-        element.addEventListener('input', () => {
-            formChanged = true;
-        });
+// Add change listeners to all form inputs
+document.querySelectorAll('input, textarea, select').forEach(element => {
+    element.addEventListener('change', () => {
+        formChanged = true;
     });
+});
 
-    // Update beforeunload handler
-    window.addEventListener('beforeunload', (e) => {
-        if (formChanged) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
+// Add input listeners for text fields
+document.querySelectorAll('input[type="text"], textarea').forEach(element => {
+    element.addEventListener('input', () => {
+        formChanged = true;
     });
+});
+
+// Use the named function for beforeunload
+window.addEventListener('beforeunload', warn);
     document.querySelector('form').onsubmit = () => removeEventListener('beforeunload', warn)
 
     function doSubmit() {

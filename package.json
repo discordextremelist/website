@@ -13,6 +13,7 @@
   "packageManager": "pnpm@8.15.5",
   "dependencies": {
     "@sentry/node": "^9.1.0",
+    "@sentry/profiling-node": "^9.1.0",
     "@snyk/protect": "^1.984.0",
     "@types/node-fetch": "^2.6.11",
     "@types/ua-parser-js": "^0.7.39",

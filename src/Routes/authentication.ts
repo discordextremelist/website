@@ -234,14 +234,21 @@ router.get(
         if (req.session.joinGuild && req.session.joinGuild === true) {
             req.session.joinGuild = false;
             try {
-                await discord.bot.rest.put(Routes.guildMember(settings.guild.main, req.user.id), {
-                    body: {
-                        access_token: req.user.accessToken
-                    } satisfies RESTPutAPIGuildMemberJSONBody
-                });
+                await discord.bot.rest.put(
+                    Routes.guildMember(settings.guild.main, req.user.id),
+                    {
+                        body: {
+                            access_token: req.user.accessToken
+                        } satisfies RESTPutAPIGuildMemberJSONBody
+                    }
+                );
             } catch (error) {
                 console.error(error);
-                if (error instanceof DiscordAPIError && error.code === 403 && !req.user.impersonator) {
+                if (
+                    error instanceof DiscordAPIError &&
+                    error.code === 403 &&
+                    !req.user.impersonator
+                ) {
                     return res.status(403).render("status", {
                         res,
                         title: res.__("common.error"),
@@ -254,7 +261,7 @@ router.get(
                 return next(error);
             }
         }
-        
+
         res.redirect(req.session.redirectTo || "/");
     }
 );

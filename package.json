@@ -3,7 +3,7 @@
   "name": "del-website",
   "version": "v5.6.18-Release",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
-  "main": "dist/src/app.js",
+  "main": "src/app.ts",
   "directories": {
     "doc": "docs"
   },
@@ -71,8 +71,7 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "start": "node --max-old-space-size=4096 --experimental-transform-types src/app.ts",
-    "pm2": "pm2 start dist/src/app.js --name 'DEL'",
+    "start": "node --max-old-space-size=4096 --experimental-transform-types --import ./src/instrument.ts ./src/app.ts",
     "postinstall": "mkdir -p ./data && tsc node_modules/lib-comparison/libs.ts && cp node_modules/lib-comparison/libs.js ./data/libs.js",
     "css-compile": "sass --no-source-map assets/Sass/themes/black.scss:assets/Public/css/themes/black.css assets/Sass/themes/dark.scss:assets/Public/css/themes/dark.css assets/Sass/themes/light.scss:assets/Public/css/themes/light.css assets/Sass/components/listing.scss:assets/Public/css/listing.css --style=compressed",
     "snyk-protect": "snyk-protect",

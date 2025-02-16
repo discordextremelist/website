@@ -1,13 +1,11 @@
-import * as Sentry from "@sentry/node"
+import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import settings from "../settings.json" with { type: "json" };
 
 if (!settings.website.dev) {
     Sentry.init({
         dsn: settings.secrets.sentry,
-        integrations: [
-          nodeProfilingIntegration(),
-        ],
+        integrations: [nodeProfilingIntegration()],
         release: "website@" + process.env.npm_package_version,
         environment: "production",
         // Tracing

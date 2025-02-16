@@ -139,7 +139,7 @@ export const variables = async (
     } catch (e) {
         console.error("UA parsing failed, defaulting to desktop mode: ", e);
     }
-    
+
     let theme = req.user?.db?.preferences?.theme;
 
     if (req.query.theme) theme = themes[req.query.theme as string];

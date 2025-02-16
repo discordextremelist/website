@@ -350,7 +350,7 @@ new Promise<void>((resolve, reject) => {
                     });
                 }
 
-                console.log('ERROR! ', err);
+                console.log("ERROR! ", err);
 
                 res.status(err.status || 500);
                 res.render("error", { error: err });

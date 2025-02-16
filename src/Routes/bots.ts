@@ -23,9 +23,15 @@ import type {
     APIApplication,
     APIApplicationCommand,
     APIUser,
-    RESTPostOAuth2AccessTokenResult,
+    RESTPostOAuth2AccessTokenResult
 } from "discord.js";
-import { OAuth2Scopes, RESTJSONErrorCodes, Routes, PresenceUpdateStatus, UserFlags } from "discord.js";
+import {
+    OAuth2Scopes,
+    RESTJSONErrorCodes,
+    Routes,
+    PresenceUpdateStatus,
+    UserFlags
+} from "discord.js";
 import fetch from "node-fetch";
 import * as crypto from "crypto";
 import * as Discord from "discord.js";
@@ -4385,7 +4391,7 @@ router.get(
                         } satisfies Partial<delBot>
                     }
                 });
-                
+
                 await botCache.updateBot(req.params.id);
 
                 res.redirect(`/bots/${bot._id}`);

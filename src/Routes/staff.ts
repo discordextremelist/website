@@ -98,7 +98,9 @@ router.get(
                                         $filter: {
                                             input: "$tickets",
                                             as: "ticket",
-                                            cond: { $ne: ["$$ticket.status", 2] } // Exclude closed tickets
+                                            cond: {
+                                                $ne: ["$$ticket.status", 2]
+                                            } // Exclude closed tickets
                                         }
                                     }
                                 },
@@ -119,7 +121,6 @@ router.get(
             .toArray();
 
         res.locals.premidPageInfo = res.__("premid.staff.queue");
-
 
         res.render("templates/staff/queue", {
             title: res.__("page.staff.queue"),

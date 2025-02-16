@@ -340,6 +340,16 @@
                                     });
                                 %>
                             <% } %>
+                            <% if (server.tags.includes("LGBT")) { %>
+                                <%- 
+                                    include("../../partials/tag.ejs", { 
+                                        contentColour: "is-white", 
+                                        title: "",
+                                        content: __("common.tags.lgbt"),
+                                        type: "lgbtTag"
+                                    });
+                                %>
+                            <% } %>
                         </div>
                     <% } %>
                 </div>

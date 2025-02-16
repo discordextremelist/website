@@ -17,10 +17,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as botCache from "../Services/botCaching.js";
-import * as userCache from "../Services/userCaching.js";
+import * as botCache from "../Services/botCaching.ts";
+import * as userCache from "../Services/userCaching.ts";
 import { URL } from "url";
-import { APIUser, OAuth2Scopes } from "discord.js";
+import { type APIUser, OAuth2Scopes } from "discord.js";
 // this seems stupid but apparently it should work
 import { createRequire } from "module";
 

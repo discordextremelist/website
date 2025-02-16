@@ -17,16 +17,16 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import color from "color";
 import settings from "../../../settings.json" with { type: "json" };
 import pkg from "../../../package.json" with { type: "json" };
-import * as announcementCache from "../Services/announcementCaching.js";
-import * as userCache from "../Services/userCaching.js";
-import * as banList from "../Services/banned.js";
+import * as announcementCache from "../Services/announcementCaching.ts";
+import * as userCache from "../Services/userCaching.ts";
+import * as banList from "../Services/banned.ts";
 import { URLSearchParams } from "url";
-import { themes } from "../../../@types/enums.js";
+import { themes } from "../../../@types/enums.ts";
 import UAParser from "ua-parser-js";
 
 export const variables = async (

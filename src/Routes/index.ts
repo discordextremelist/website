@@ -21,13 +21,13 @@ import express from "express";
 import type { Request, Response } from "express";
 
 import settings from "../../settings.json" with { type: "json" };
-import * as featuring from "../Util/Services/featuring.js";
-import * as botCache from "../Util/Services/botCaching.js";
-import * as serverCache from "../Util/Services/serverCaching.js";
-import * as templateCache from "../Util/Services/templateCaching.js";
-import * as legalCache from "../Util/Services/legalCaching.js";
-import * as discord from "../Util/Services/discord.js";
-import { variables } from "../Util/Function/variables.js";
+import * as featuring from "../Util/Services/featuring.ts";
+import * as botCache from "../Util/Services/botCaching.ts";
+import * as serverCache from "../Util/Services/serverCaching.ts";
+import * as templateCache from "../Util/Services/templateCaching.ts";
+import * as legalCache from "../Util/Services/legalCaching.ts";
+import * as discord from "../Util/Services/discord.ts";
+import { variables } from "../Util/Function/variables.ts";
 import type { GuildMember, GuildMemberManager } from "discord.js";
 
 const router = express.Router();

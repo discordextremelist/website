@@ -20,15 +20,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import express from "express";
 import fetch from "node-fetch";
 import refresh from "passport-oauth2-refresh";
-import * as discord from "../Util/Services/discord.js";
-import * as botCache from "../Util/Services/botCaching.js";
-import * as serverCache from "../Util/Services/serverCaching.js";
-import * as templateCache from "../Util/Services/templateCaching.js";
-import * as userCache from "../Util/Services/userCaching.js";
-import * as functions from "../Util/Function/main.js";
+import * as discord from "../Util/Services/discord.ts";
+import * as botCache from "../Util/Services/botCaching.ts";
+import * as serverCache from "../Util/Services/serverCaching.ts";
+import * as templateCache from "../Util/Services/templateCaching.ts";
+import * as userCache from "../Util/Services/userCaching.ts";
+import * as functions from "../Util/Function/main.ts";
 import {
     EmbedBuilder,
-    RESTGetAPIInviteResult,
     makeURLSearchParams,
     OAuth2Scopes,
     Routes
@@ -39,10 +38,11 @@ import type {
     RESTPostOAuth2AccessTokenResult,
     APIApplicationCommand,
     APIApplication,
-    APIUser
+    APIUser,
+    RESTGetAPIInviteResult,
 } from "discord.js";
 import settings from "../../settings.json" with { type: "json" };
-import { DAPI } from "../Util/Services/discord.js";
+import { DAPI } from "../Util/Services/discord.ts";
 
 const router = express.Router();
 

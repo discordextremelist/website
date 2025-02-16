@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Db } from "mongodb";
 import { Redis } from "ioredis";
-import strings from "del-i18n/website/en-NZ.json"
+import strings from "del-i18n/website/en-NZ.json" with { type: "json" };
 
 declare global {
     var redis: Redis;

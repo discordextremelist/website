@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { libs } from "../node_modules/lib-comparison/libs.js";
+import { libs } from "../data/libs.js";
 
 function cleanLibName(lib: string) {
     if (lib.includes(" 🍴🪦")) return lib.replace(" 🍴🪦", "");

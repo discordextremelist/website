@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import * as Sentry from "@sentry/node";
 import path from "path";
@@ -29,20 +29,20 @@ import passport from "passport";
 import logger from "morgan";
 import helmet from "helmet";
 
-import * as libCache from "./Util/Services/libCaching.js";
-import * as announcementCache from "./Util/Services/announcementCaching.js";
-import * as legalCache from "./Util/Services/legalCaching.js";
-import * as featuredCache from "./Util/Services/featuring.js";
-import * as banned from "./Util/Services/banned.js";
-import * as discord from "./Util/Services/discord.js";
-import * as tokenManager from "./Util/Services/adminTokenManager.js";
+import * as libCache from "./Util/Services/libCaching.ts";
+import * as announcementCache from "./Util/Services/announcementCaching.ts";
+import * as legalCache from "./Util/Services/legalCaching.ts";
+import * as featuredCache from "./Util/Services/featuring.ts";
+import * as banned from "./Util/Services/banned.ts";
+import * as discord from "./Util/Services/discord.ts";
+import * as tokenManager from "./Util/Services/adminTokenManager.ts";
 
-import languageHandler from "./Util/Middleware/languageHandler.js";
+import languageHandler from "./Util/Middleware/languageHandler.ts";
 
-import { botStatsUpdate } from "./Util/Services/botStatsUpdate.js";
-import { variables } from "./Util/Function/variables.js";
-import { monacoRedirect } from "./Util/Middleware/monacoRedirect.js";
-import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap.js";
+import { botStatsUpdate } from "./Util/Services/botStatsUpdate.ts";
+import { variables } from "./Util/Function/variables.ts";
+import { monacoRedirect } from "./Util/Middleware/monacoRedirect.ts";
+import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap.ts";
 
 import i18n from "i18n";
 import { MongoClient } from "mongodb";
@@ -51,17 +51,17 @@ import { hostname } from "os";
 
 import settings from "../settings.json" with { type: "json" };
 
-import authRoute from "./Routes/authentication.js";
-import autosyncRoute from "./Routes/autosync.js";
-import indexRoute from "./Routes/index.js";
-import searchRoute from "./Routes/search.js";
-import docsRoute from "./Routes/docs.js";
-import botsRoute from "./Routes/bots.js";
-import serversRoute from "./Routes/servers.js";
-import usersRoute from "./Routes/users.js";
-import templatesRoute from "./Routes/templates.js";
-import staffRoute from "./Routes/staff.js";
-import setup from "./setup.js";
+import authRoute from "./Routes/authentication.ts";
+import autosyncRoute from "./Routes/autosync.ts";
+import indexRoute from "./Routes/index.ts";
+import searchRoute from "./Routes/search.ts";
+import docsRoute from "./Routes/docs.ts";
+import botsRoute from "./Routes/bots.ts";
+import serversRoute from "./Routes/servers.ts";
+import usersRoute from "./Routes/users.ts";
+import templatesRoute from "./Routes/templates.ts";
+import staffRoute from "./Routes/staff.ts";
+import setup from "./setup.ts";
 
 const app = express();
 const __dirname = path.resolve();
@@ -358,6 +358,8 @@ new Promise<void>((resolve, reject) => {
                         type: "Error"
                     });
                 }
+
+                console.log('ERROR! ', err);
 
                 res.status(err.status || 500);
                 res.render("error", { error: err });

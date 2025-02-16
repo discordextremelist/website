@@ -22,7 +22,7 @@ Note that we do not support running public clones of the project: you are allowe
 
 ### Node.js
 
-DEL requires [Node.js](https://nodejs.org) v20.18.3+. We currently recommend using the latest v20 LTS version, higher versions are not supported. v22 support is planned.
+DEL requires [Node.js](https://nodejs.org) v22.7.0+. We currently recommend using the latest v22 LTS version.
 
 ### MongoDB
 
@@ -40,7 +40,5 @@ We use [pnpm](https://pnpm.io/installation). Install all of the dependencies by 
 Rename `settings.example.json` to `settings.json` and fill it out appropriately, changing anything you need to change.
 
 ## Running DEL
-
-When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run `pnpm run compile`.
 
 Run `pnpm start` to start DEL.

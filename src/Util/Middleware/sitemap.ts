@@ -17,14 +17,14 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 import settings from "../../../settings.json" with { type: "json" };
 
-import * as botCache from "../../Util/Services/botCaching.js";
-import * as serverCache from "../../Util/Services/serverCaching.js";
-import * as templateCache from "../../Util/Services/templateCaching.js";
-import * as userCache from "../../Util/Services/userCaching.js";
+import * as botCache from "../../Util/Services/botCaching.ts";
+import * as serverCache from "../../Util/Services/serverCaching.ts";
+import * as templateCache from "../../Util/Services/templateCaching.ts";
+import * as userCache from "../../Util/Services/userCaching.ts";
 
 const base = settings.website.url;
 

@@ -21,17 +21,17 @@ import express from "express";
 import type { Request, Response } from "express";
 import type { APIUser, DiscordAPIError } from "discord.js";
 import { Routes } from "discord.js";
-import * as discord from "../Util/Services/discord.js";
-import * as banned from "../Util/Services/banned.js";
-import { variables } from "../Util/Function/variables.js";
-import * as permission from "../Util/Function/permissions.js";
-import * as functions from "../Util/Function/main.js";
-import * as botCache from "../Util/Services/botCaching.js";
-import * as serverCache from "../Util/Services/serverCaching.js";
-import * as templateCache from "../Util/Services/templateCaching.js";
-import * as userCache from "../Util/Services/userCaching.js";
-import * as tokenManager from "../Util/Services/adminTokenManager.js";
-import { themes } from "../../@types/enums.js";
+import * as discord from "../Util/Services/discord.ts";
+import * as banned from "../Util/Services/banned.ts";
+import { variables } from "../Util/Function/variables.ts";
+import * as permission from "../Util/Function/permissions.ts";
+import * as functions from "../Util/Function/main.ts";
+import * as botCache from "../Util/Services/botCaching.ts";
+import * as serverCache from "../Util/Services/serverCaching.ts";
+import * as templateCache from "../Util/Services/templateCaching.ts";
+import * as userCache from "../Util/Services/userCaching.ts";
+import * as tokenManager from "../Util/Services/adminTokenManager.ts";
+import { themes } from "../../@types/enums.ts";
 
 import settings from "../../settings.json" with { type: "json" };
 

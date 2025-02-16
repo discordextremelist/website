@@ -22,16 +22,16 @@ import type { Request, Response } from "express";
 import type { APIUser, Snowflake } from "discord.js";
 import { Routes } from "discord.js";
 import settings from "../../settings.json" with { type: "json" };
-import * as permission from "../Util/Function/permissions.js";
-import * as functions from "../Util/Function/main.js";
-import * as botCache from "../Util/Services/botCaching.js";
-import * as serverCache from "../Util/Services/serverCaching.js";
-import * as templateCache from "../Util/Services/templateCaching.js";
-import * as userCache from "../Util/Services/userCaching.js";
-import * as announcementCache from "../Util/Services/announcementCaching.js";
-import { variables } from "../Util/Function/variables.js";
-import * as tokenManager from "../Util/Services/adminTokenManager.js";
-import * as discord from "../Util/Services/discord.js";
+import * as permission from "../Util/Function/permissions.ts";
+import * as functions from "../Util/Function/main.ts";
+import * as botCache from "../Util/Services/botCaching.ts";
+import * as serverCache from "../Util/Services/serverCaching.ts";
+import * as templateCache from "../Util/Services/templateCaching.ts";
+import * as userCache from "../Util/Services/userCaching.ts";
+import * as announcementCache from "../Util/Services/announcementCaching.ts";
+import { variables } from "../Util/Function/variables.ts";
+import * as tokenManager from "../Util/Services/adminTokenManager.ts";
+import * as discord from "../Util/Services/discord.ts";
 const router = express.Router();
 
 router.get(

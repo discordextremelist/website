@@ -36,18 +36,18 @@ import sanitizeHtml from "sanitize-html";
 
 import settings from "../../settings.json" with { type: "json" };
 import htmlRef from "../../htmlReference.json" with { type: "json" };
-import * as discord from "../Util/Services/discord.js";
-import * as permission from "../Util/Function/permissions.js";
-import * as functions from "../Util/Function/main.js";
-import * as userCache from "../Util/Services/userCaching.js";
-import * as serverCache from "../Util/Services/serverCaching.js";
-import { variables } from "../Util/Function/variables.js";
-import * as tokenManager from "../Util/Services/adminTokenManager.js";
-import type { serverReasons } from "../../@types/enums.js";
+import * as discord from "../Util/Services/discord.ts";
+import * as permission from "../Util/Function/permissions.ts";
+import * as functions from "../Util/Function/main.ts";
+import * as userCache from "../Util/Services/userCaching.ts";
+import * as serverCache from "../Util/Services/serverCaching.ts";
+import { variables } from "../Util/Function/variables.ts";
+import * as tokenManager from "../Util/Services/adminTokenManager.ts";
+import type { serverReasons } from "../../@types/enums.ts";
 import mdi from "markdown-it";
 import entities from "html-entities";
-import { ParamsDictionary } from "express-serve-static-core";
-import { ParsedQs } from "qs";
+import type { ParamsDictionary } from "express-serve-static-core";
+import type { ParsedQs } from "qs";
 
 const md = new mdi();
 const router = express.Router();

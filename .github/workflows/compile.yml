@@ -8,7 +8,7 @@ on:
 
 jobs:
   node20:
-    name: node v20 - tsc
+    name: node v22 - tsc
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
           version: 8.15.5
       - uses: actions/setup-node@v4
         with:
-          node-version: '20.11.1'
+          node-version: '22.14.0'
           cache: 'pnpm'
       - name: dependencies
         run: pnpm i

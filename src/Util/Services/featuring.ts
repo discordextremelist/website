@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { PresenceUpdateStatus, UserFlags } from "discord.js";
-import * as functions from "../Function/main.js";
+import * as functions from "../Function/main.ts";
 
 export async function getFeaturedBots(): Promise<delBot[]> {
     const bots = await global.redis?.get("featured_bots");

@@ -88,7 +88,7 @@ dependencies:
     version: 4.28.5
   lib-comparison:
     specifier: github:advaith1/libs
-    version: github.com/advaith1/libs/f93bd6c0c7a45e2bd9d58a7c294c178df100fe65(@types/node@18.19.76)(ioredis@4.28.5)(typescript@5.7.3)
+    version: github.com/advaith1/libs/59e3eed95a49da1bf726b4d29256bc961d5797e6(@types/node@18.19.76)(ioredis@4.28.5)(typescript@5.7.3)
   markdown-it:
     specifier: ^14.1.0
     version: 14.1.0
@@ -119,9 +119,6 @@ dependencies:
   typescript:
     specifier: ^5.3.3
     version: 5.7.3
-  typescript-transpile-only:
-    specifier: ^0.0.4
-    version: 0.0.4(typescript@5.7.3)
   ua-parser-js:
     specifier: ^1.0.37
     version: 1.0.40
@@ -6208,10 +6205,6 @@ packages:
       typescript: 5.7.3
     dev: false
 
-  /tslib@1.14.1:
-    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
-    dev: false
-
   /tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
     dev: false
@@ -6227,16 +6220,6 @@ packages:
     dependencies:
       media-typer: 0.3.0
       mime-types: 2.1.35
-    dev: false
-
-  /typescript-transpile-only@0.0.4(typescript@5.7.3):
-    resolution: {integrity: sha512-iRNrUzeUZPra6lwEiHwobrKS77Lc3W6/dlngW2G4FA1SWuSyrc1LiZtsHcS4JQO7L/3oiiMbouXr1UPZtWroag==}
-    hasBin: true
-    peerDependencies:
-      typescript: '*'
-    dependencies:
-      tslib: 1.14.1
-      typescript: 5.7.3
     dev: false
 
   /typescript@5.7.3:
@@ -6687,9 +6670,9 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: false
 
-  github.com/advaith1/libs/f93bd6c0c7a45e2bd9d58a7c294c178df100fe65(@types/node@18.19.76)(ioredis@4.28.5)(typescript@5.7.3):
-    resolution: {tarball: https://codeload.github.com/advaith1/libs/tar.gz/f93bd6c0c7a45e2bd9d58a7c294c178df100fe65}
-    id: github.com/advaith1/libs/f93bd6c0c7a45e2bd9d58a7c294c178df100fe65
+  github.com/advaith1/libs/59e3eed95a49da1bf726b4d29256bc961d5797e6(@types/node@18.19.76)(ioredis@4.28.5)(typescript@5.7.3):
+    resolution: {tarball: https://codeload.github.com/advaith1/libs/tar.gz/59e3eed95a49da1bf726b4d29256bc961d5797e6}
+    id: github.com/advaith1/libs/59e3eed95a49da1bf726b4d29256bc961d5797e6
     name: lib-comparison
     version: 0.0.0
     dependencies:

@@ -41,6 +41,4 @@ Rename `settings.example.json` to `settings.json` and fill it out appropriately,
 
 ## Running DEL
 
-When you first start DEL, and every time you make a change to any of the `.ts` files, you will need to run `pnpm run compile`.
-
 Run `pnpm start` to start DEL.

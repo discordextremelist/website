@@ -15,13 +15,3 @@ if (!settings.website.dev) {
         profilesSampleRate: 0.1 // Set sampling rate for profiling - this is relative to tracesSampleRate
     });
 }
-
-
-if (!settings.website.dev) {
-    Sentry.init({
-        dsn: settings.secrets.sentry,
-        integrations: [Sentry.expressIntegration()],
-        tracesSampleRate: 0.1,
-        profilesSampleRate: 0.1
-    });
-}

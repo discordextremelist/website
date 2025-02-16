@@ -264,6 +264,12 @@ declare global {
         };
     }
 
+    interface delQueueBot extends delBot {
+        status: delBot['status'] & {
+            pendingTicket: boolean;
+        };
+    }
+
     type partialBot = Partial<Omit<delBot, 'status'> & { status: Partial<delBot["status"]> }>;
 
     interface delServer {
@@ -366,5 +372,26 @@ declare global {
         note: string;
         author: string;
         date: number;
+    }
+
+    interface delTicketIds {
+        channel: string;
+        message: string;
+        log: string;
+        bot: string;
+        history?: string; // Optional field using ? syntax
+    }
+    
+    enum delTicketStatus {
+        AwaitingResponse = 0,
+        AwaitingFixes = 1,
+        Closed = 2
+    }
+    
+    interface delTicket {
+        _id: string;
+        ids: delTicketIds;
+        status: delTicketStatus;
+        closureReason?: string;
     }
 }

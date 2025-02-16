@@ -78,14 +78,26 @@ router.get(
     variables,
     permission.mod,
     async (req: Request, res: Response) => {
-        const bots: delBot[] = await global.db
-            .collection<delBot>("bots")
+        const bots: delQueueBot[] = await global.db
+            .collection<delQueueBot>("bots")
             .find()
             .sort({ "date.submitted": 1 })
             .allowDiskUse()
             .toArray();
 
         res.locals.premidPageInfo = res.__("premid.staff.queue");
+
+        // Check pending tickets for each bot
+        for (const bot of bots) {
+            const pendingTickets = await global.db
+                .collection<delTicket>("tickets")
+                .countDocuments({
+                    "ids.bot": bot._id,
+                    status: { $ne: 2 } // delTicketStatus.Closed
+                });
+            
+            bot.status.pendingTicket = pendingTickets > 0;
+        }
 
         res.render("templates/staff/queue", {
             title: res.__("page.staff.queue"),

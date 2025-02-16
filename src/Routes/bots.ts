@@ -4385,7 +4385,10 @@ router.get(
                         } satisfies Partial<delBot>
                     }
                 });
+                
                 await botCache.updateBot(req.params.id);
+
+                res.redirect(`/bots/${bot._id}`);
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownApplication)
@@ -4405,8 +4408,6 @@ router.get(
                     ]
                 });
             });
-
-        res.redirect(`/bots/${bot._id}`);
     }
 );
 

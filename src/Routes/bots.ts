@@ -1957,27 +1957,6 @@ router.get("/:id/exists", permission.auth, async (req, res) => {
 });
 
 router.get(
-    "/upload_bots",
-    variables,
-    permission.auth,
-    permission.admin,
-    async (req: Request, res: Response) => {
-        if (!req.query.token) return res.json({});
-
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            req.query.token as string
-        );
-
-        if (tokenCheck === false) return res.json({});
-
-        await botCache.uploadBots();
-
-        return res.sendStatus(200);
-    }
-);
-
-router.get(
     "/:id/src",
     variables,
     permission.auth,

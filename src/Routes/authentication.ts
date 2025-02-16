@@ -240,6 +240,9 @@ router.get(
                         access_token: req.user.accessToken
                     } satisfies RESTPutAPIGuildMemberJSONBody
                 })
+                .then(() => {
+                    return res.redirect(req.session.redirectTo || "/");
+                })
                 .catch((error: DiscordAPIError) => {
                     console.error(error);
                     if (error.code === 403 && !req.user.impersonator) {
@@ -251,11 +254,9 @@ router.get(
                             req,
                             type: "Error"
                         });
-                    } else next();
+                    } else return res.redirect(req.session.redirectTo || "/");
                 });
         }
-
-        res.redirect(req.session.redirectTo || "/");
     }
 );
 

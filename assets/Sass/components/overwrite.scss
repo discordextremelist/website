@@ -44,3 +44,8 @@ html[data-deltheme=dark] {
 html[data-deltheme=light] {
     --delovr-primary-colour: cc.$primary-light;
 }
+
+.modal-card-head {
+    box-shadow: unset !important;
+    background-color: var(--del-modal-card-foot-background-color) !important;
+}

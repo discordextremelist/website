@@ -13,7 +13,5 @@ RUN apk update && \
 RUN corepack enable pnpm
 # Install node modules
 RUN CI=true pnpm i
-# Remove non-dist files
-RUN rm -rf @types/ .env.production
 # Start the process within the container
 CMD ["pnpm", "start"]

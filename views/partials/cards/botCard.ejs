@@ -36,6 +36,11 @@
                                 <i aria-hidden="true" class="fad fa-eye-slash has-text-white fa-1x"></i>
                             </span>
                         <% } %>
+                        <% if (queue && bot.status.pendingTicket) { %>
+                            <span style="vertical-align: middle;" title="<%= __("page.staff.queue.pendingTicket") %>" class="icon iconalign">
+                                <i aria-hidden="true" class="fad fa-ticket has-text-pink fa-1x"></i>
+                            </span>
+                        <% } %>
                     </span>
                         <br />
                         <%= bot.shortDesc.length >= 64 ? bot.shortDesc.slice(0, 64)+'\u2026' : bot.shortDesc %>

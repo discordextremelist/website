@@ -253,7 +253,7 @@ export async function postWebMetric(type: string) {
             const unapprovedBots = await global.db
                 .collection<delBot>("bots")
                 .countDocuments({
-                    $or: [
+                    $and: [
                         { "status.archived": false },
                         { "status.approved": false }
                     ]

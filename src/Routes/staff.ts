@@ -1123,4 +1123,67 @@ router.get(
     }
 );
 
+router.get(
+    "/upload_bots",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response) => {
+        if (!req.query.token) return res.json({});
+
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            req.query.token as string
+        );
+
+        if (tokenCheck === false) return res.json({});
+
+        await botCache.uploadBots();
+
+        return res.sendStatus(200);
+    }
+);
+
+router.get(
+    "/upload_servers",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response) => {
+        if (!req.query.token) return res.json({});
+
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            req.query.token as string
+        );
+
+        if (tokenCheck === false) return res.json({});
+
+        await serverCache.uploadServers();
+
+        return res.sendStatus(200);
+    }
+);
+
+router.get(
+    "/upload_templates",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response) => {
+        if (!req.query.token) return res.json({});
+
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            req.query.token as string
+        );
+
+        if (tokenCheck === false) return res.json({});
+
+        await templateCache.uploadTemplates();
+
+        return res.sendStatus(200);
+    }
+);
+
 export default router;

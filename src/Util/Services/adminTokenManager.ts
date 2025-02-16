@@ -130,7 +130,7 @@ export async function verifyToken(id: string, token: string) {
     adminToken.token === token && adminToken._id === id
         ? (pass = true)
         : (pass = false);
-    return pass; // CHANGE THIS BEFORE PRODUCTION OTHERWISE EXTREMELY BAD THINGS WILL HAPPEN!!!!!
+    return pass;
 }
 
 setInterval(async () => {

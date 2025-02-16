@@ -20,6 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 @charset "UTF-8";
 
 @use "./colours.scss" as cc;
+@use "../../../node_modules/bulma/sass/utilities/derived-variables.scss" as bulma;
+@use "../../../node_modules/bulma/sass/utilities/functions.scss" as functions;
 
 html[data-theme=dark] {
     --del-text: #fff;
@@ -52,4 +54,41 @@ html[data-deltheme=light] {
 
 .navbar-item, .navbar-link {
     gap: unset !important;
+}
+
+.button {
+    &.is-outlined:not(.is-loading):not(.is-default) {
+        &:hover,
+        &:focus {
+            background-color: var(--button-background, currentColor) !important;
+            border-color: var(--button-border, currentColor) !important;
+            color: var(--button-hover-color, #fff) !important;
+        }
+    
+        // Handle Bulma's default colors
+        @each $name, $color in bulma.$colors {
+            &.is-#{$name} {
+                --button-background: #{$color};
+                --button-border: #{$color};
+                --button-hover-color: #{functions.bulmaFindColorInvert($color)};
+            }
+        }
+    
+        // Handle custom colors
+        @each $name, $pair in cc.$custom-colors {
+            &.is-#{$name} {
+                --button-background: #{nth($pair, 1)};
+                --button-border: #{nth($pair, 1)};
+                --button-hover-color: #{nth($pair, 2)};
+
+                // Add explicit hover state
+                &:hover,
+                &:focus {
+                    background-color: #{nth($pair, 1)} !important;
+                    border-color: #{nth($pair, 1)} !important;
+                    color: #{nth($pair, 2)} !important;
+                }
+            }
+        }
+    }
 }

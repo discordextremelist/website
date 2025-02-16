@@ -210,7 +210,7 @@
                 <p class="control has-icons-left has-icons-right">
                     <input id="form_supportServer" class="input is-rounded" type="text" name="supportServer" placeholder="https://discord.gg/someawesumsupportservhor">
                     <span class="icon is-small is-left">
-                <i aria-hidden="true" class="fas fa-heart"></i>
+                <i aria-hidden="true" class="fas fa-comments-question-check"></i>
             </span>
                 </p>
             </div>
@@ -502,29 +502,33 @@
             customColour.style.display = 'inherit'
         } else customColour.style.display = 'none'
     })
-    let formChanged = false;
+    // Replace this part of the code:
+let formChanged = false;
 
-    // Add change listeners to all form inputs
-    document.querySelectorAll('input, textarea, select').forEach(element => {
-        element.addEventListener('change', () => {
-            formChanged = true;
-        });
-    });
+// Store the warn function in a variable
+const warn = (e) => {
+    if (formChanged) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+};
 
-    // Add input listeners for text fields
-    document.querySelectorAll('input[type="text"], textarea').forEach(element => {
-        element.addEventListener('input', () => {
-            formChanged = true;
-        });
+// Add change listeners to all form inputs
+document.querySelectorAll('input, textarea, select').forEach(element => {
+    element.addEventListener('change', () => {
+        formChanged = true;
     });
+});
 
-    // Update beforeunload handler
-    window.addEventListener('beforeunload', (e) => {
-        if (formChanged) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
+// Add input listeners for text fields
+document.querySelectorAll('input[type="text"], textarea').forEach(element => {
+    element.addEventListener('input', () => {
+        formChanged = true;
     });
+});
+
+// Use the named function for beforeunload
+window.addEventListener('beforeunload', warn);
     document.querySelector('form').onsubmit = () => removeEventListener('beforeunload', warn)
     MonacoEnvironment = {getWorkerUrl: () => '/js/monaco.js'}
 </script>

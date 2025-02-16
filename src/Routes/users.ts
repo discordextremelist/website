@@ -588,6 +588,8 @@ router.get(
                     }
                 });
                 await userCache.updateUser(req.params.id);
+
+                res.redirect(`/users/${req.params.id}`);
             })
             .catch((error: DiscordAPIError) => {
                 return res.status(400).render("status", {
@@ -599,8 +601,6 @@ router.get(
                     type: "Error"
                 });
             });
-
-        res.redirect(`/users/${req.params.id}`);
     }
 );
 

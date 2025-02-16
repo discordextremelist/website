@@ -17,10 +17,12 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import "./instrument.ts";
+import * as Sentry from "@sentry/node";
+
 import express from "express";
 import type { Request, Response } from "express";
 
-import * as Sentry from "@sentry/node";
 import path from "path";
 import session from "express-session";
 import RedisStore from "connect-redis";
@@ -67,17 +69,6 @@ const app = express();
 const __dirname = path.resolve();
 
 app.use(helmet());
-
-if (!settings.website.dev) {
-    Sentry.init({
-        dsn: settings.secrets.sentry,
-        release: "website@" + process.env.npm_package_version,
-        environment: "production",
-        integrations: [Sentry.expressIntegration()],
-        tracesSampleRate: 0.1,
-        profilesSampleRate: 0.1
-    });
-}
 
 app.use(
     "/fonts/fa/webfonts/*",
@@ -272,7 +263,7 @@ new Promise<void>((resolve, reject) => {
         app.use((req, res, next) => {
             res.locals.user = req.user;
 
-            if (req.user) {
+            if (req.user && !settings.website.dev) {
                 Sentry.setUser({
                     id: req.user.id,
                     username: req.user.username
@@ -327,7 +318,7 @@ new Promise<void>((resolve, reject) => {
 
         app.use(variables);
 
-        Sentry.setupExpressErrorHandler(app);
+        if (!settings.website.dev) Sentry.setupExpressErrorHandler(app);
 
         app.use((req: Request, res: Response, next: () => void) => {
             // @ts-expect-error

@@ -128,3 +128,6 @@ package-lock.json
 
 # copied lib-comparison data
 data/
+
+# Sentry Config File
+.sentryclirc

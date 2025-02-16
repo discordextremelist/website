@@ -47,7 +47,14 @@
                     <%= __("common.login.continue") %>
                 </span>
             </a>
-            <p style="padding-top: 15px; padding-bottom: 10px" class="has-text-default"><%= __("common.login.notice") %>&nbsp;
+            <p style="padding-top: 15px; padding-bottom: 10px" class="has-text-default"><%- __("common.login.notice", { 
+                    TOpen: "<a href='/terms', >",
+                    TClose: "</a>",
+                    POpen: "<a href='/privacy', >",
+                    PClose: "</a>",
+                    GOpen: "<a href='/guidelines', >",
+                    GClose: "</a>",
+                }) %>&nbsp;
                 <label class="checkbox">
                     <input id="joinGuild" type="checkbox">
                     <%= __("common.login.join") %>

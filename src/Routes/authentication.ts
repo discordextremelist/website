@@ -24,11 +24,10 @@ import type { VerifyCallback } from "passport-oauth2";
 import refresh from "passport-oauth2-refresh";
 import * as discord from "../Util/Services/discord.ts";
 import type {
-    DiscordAPIError,
     RESTPostOAuth2AccessTokenResult,
     RESTPutAPIGuildMemberJSONBody
 } from "discord.js";
-import { OAuth2Scopes, Routes } from "discord.js";
+import { OAuth2Scopes, Routes, DiscordAPIError } from "discord.js";
 import fetch from "node-fetch";
 import * as userCache from "../Util/Services/userCaching.ts";
 import { DAPI } from "../Util/Services/discord.ts";
@@ -234,27 +233,28 @@ router.get(
 
         if (req.session.joinGuild && req.session.joinGuild === true) {
             req.session.joinGuild = false;
-            await discord.bot.rest
-                .put(Routes.guildMember(settings.guild.main, req.user.id), {
+            try {
+                await discord.bot.rest.put(Routes.guildMember(settings.guild.main, req.user.id), {
                     body: {
                         access_token: req.user.accessToken
                     } satisfies RESTPutAPIGuildMemberJSONBody
-                })
-                .catch((error: DiscordAPIError) => {
-                    console.error(error);
-                    if (error.code === 403 && !req.user.impersonator) {
-                        return res.status(403).render("status", {
-                            res,
-                            title: res.__("common.error"),
-                            status: 403,
-                            subtitle: res.__("common.error.notMember"),
-                            req,
-                            type: "Error"
-                        });
-                    } else next();
                 });
+            } catch (error) {
+                console.error(error);
+                if (error instanceof DiscordAPIError && error.code === 403 && !req.user.impersonator) {
+                    return res.status(403).render("status", {
+                        res,
+                        title: res.__("common.error"),
+                        status: 403,
+                        subtitle: res.__("common.error.notMember"),
+                        req,
+                        type: "Error"
+                    });
+                }
+                return next(error);
+            }
         }
-
+        
         res.redirect(req.session.redirectTo || "/");
     }
 );

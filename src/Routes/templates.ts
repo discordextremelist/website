@@ -1053,6 +1053,8 @@ router.get(
                 });
 
                 await templateCache.updateTemplate(req.params.id);
+
+                res.redirect(`/templates/${req.params.id}`);
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownGuildTemplate)
@@ -1076,8 +1078,6 @@ router.get(
                     type: "Error"
                 });
             });
-
-        res.redirect(`/templates/${req.params.id}`);
     }
 );
 

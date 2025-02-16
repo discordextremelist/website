@@ -160,7 +160,7 @@ router.get("/bots", async (req, res) => {
 
             if (app.bot_public === false) throw "Bot is not public";
         } catch (e) {
-            if (!botExists.status.archived)
+            if (!botExists.status.archived && !botExists.status.siteBot)
                 await discord.channels.alerts.send(
                     `${settings.emoji.warn} failed to autosync bot **${botExists.name}** \`(${id})\`: ${e}\n<${settings.website.url}/bots/${id}>`
                 );

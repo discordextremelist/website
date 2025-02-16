@@ -49,3 +49,7 @@ html[data-deltheme=light] {
     box-shadow: unset !important;
     background-color: var(--del-modal-card-foot-background-color) !important;
 }
+
+.navbar-item, .navbar-link {
+    gap: unset !important;
+}

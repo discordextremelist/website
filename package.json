@@ -8,7 +8,7 @@
     "doc": "docs"
   },
   "engines": {
-    "node": ">=20.11.1"
+    "node": ">=22.7.0"
   },
   "packageManager": "pnpm@8.15.5",
   "dependencies": {
@@ -44,7 +44,6 @@
     "passport-oauth2-refresh": "^2.1.0",
     "sanitize-html": "^2.12.1",
     "typescript": "^5.3.3",
-    "typescript-transpile-only": "^0.0.4",
     "ua-parser-js": "^1.0.37"
   },
   "devDependencies": {
@@ -71,10 +70,9 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "compile": "rm -rf dist/ && tsc && pnpm run lib-compile",
-    "start": "node --max-old-space-size=4096 dist/src/app",
+    "start": "node --max-old-space-size=4096 --experimental-transform-types src/app.ts",
     "pm2": "pm2 start dist/src/app.js --name 'DEL'",
-    "lib-compile": "mkdir ./dist/node_modules/ && cp -R ./node_modules/lib-comparison/ ./dist/node_modules/lib-comparison/ && tsc ./dist/node_modules/lib-comparison/libs.ts",
+    "postinstall": "mkdir -p ./data && tsc node_modules/lib-comparison/libs.ts && cp node_modules/lib-comparison/libs.js ./data/libs.js",
     "css-compile": "sass --no-source-map assets/Sass/themes/black.scss:assets/Public/css/themes/black.css assets/Sass/themes/dark.scss:assets/Public/css/themes/dark.css assets/Sass/themes/light.scss:assets/Public/css/themes/light.css assets/Sass/components/listing.scss:assets/Public/css/listing.css --style=compressed",
     "snyk-protect": "snyk-protect",
     "prepare": "pnpm run snyk-protect",
@@ -92,9 +90,6 @@
   ],
   "license": "AGPL-3.0",
   "snyk": true,
-  "volta": {
-    "node": "18.17.0"
-  },
   "pnpm": {
     "overrides": {
       "semver@<5.7.2": ">=5.7.2",

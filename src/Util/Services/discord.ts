@@ -23,7 +23,7 @@ import metrics from "datadog-metrics";
 import settings from "../../../settings.json" with { type: "json" };
 import moment from "moment";
 import { PresenceUpdateStatus, GatewayIntentBits } from "discord.js";
-import * as botCache from "./botCaching.js";
+import * as botCache from "./botCaching.ts";
 import { hostname } from "os";
 
 export const DAPI = "https://discord.com/api/v10";

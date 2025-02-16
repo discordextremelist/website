@@ -25,12 +25,12 @@ import path from "path";
 import * as ejs from "ejs";
 import settings from "../../settings.json" with { type: "json" };
 
-import * as botCache from "../Util/Services/botCaching.js";
-import * as userCache from "../Util/Services/userCaching.js";
-import * as serverCache from "../Util/Services/serverCaching.js";
-import * as templateCache from "../Util/Services/templateCaching.js";
-import { variables } from "../Util/Function/variables.js";
-import { ParsedQs } from "qs";
+import * as botCache from "../Util/Services/botCaching.ts";
+import * as userCache from "../Util/Services/userCaching.ts";
+import * as serverCache from "../Util/Services/serverCaching.ts";
+import * as templateCache from "../Util/Services/templateCaching.ts";
+import { variables } from "../Util/Function/variables.ts";
+import type { ParsedQs } from "qs";
 
 const renderPath = path.join(process.cwd(), "views/partials");
 

@@ -125,3 +125,6 @@ src/Assets/Public/sitemap.xml
 # We only use pnpm
 yarn.lock
 package-lock.json
+
+# copied lib-comparison data
+data/

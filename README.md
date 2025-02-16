@@ -22,7 +22,7 @@ Note that we do not support running public clones of the project: you are allowe
 
 ### Node.js
 
-DEL requires [Node.js](https://nodejs.org) v20.18.3+. We currently recommend using the latest v20 LTS version, higher versions are not supported. v22 support is planned.
+DEL requires [Node.js](https://nodejs.org) v22.7.0+. We currently recommend using the latest v22 LTS version.
 
 ### MongoDB
 

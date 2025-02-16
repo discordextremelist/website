@@ -22,7 +22,7 @@ import passport from "passport";
 import { Strategy } from "passport-discord";
 import type { VerifyCallback } from "passport-oauth2";
 import refresh from "passport-oauth2-refresh";
-import * as discord from "../Util/Services/discord.js";
+import * as discord from "../Util/Services/discord.ts";
 import type {
     DiscordAPIError,
     RESTPostOAuth2AccessTokenResult,
@@ -30,12 +30,12 @@ import type {
 } from "discord.js";
 import { OAuth2Scopes, Routes } from "discord.js";
 import fetch from "node-fetch";
-import * as userCache from "../Util/Services/userCaching.js";
-import { DAPI } from "../Util/Services/discord.js";
+import * as userCache from "../Util/Services/userCaching.ts";
+import { DAPI } from "../Util/Services/discord.ts";
 
 import settings from "../../settings.json" with { type: "json" };
-import * as tokenManager from "../Util/Services/adminTokenManager.js";
-import { grabFullUser } from "../Util/Function/main.js";
+import * as tokenManager from "../Util/Services/adminTokenManager.ts";
+import { grabFullUser } from "../Util/Function/main.ts";
 
 const router = express.Router();
 

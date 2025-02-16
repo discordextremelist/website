@@ -19,15 +19,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express from "express";
 import type { Request, Response } from "express";
-import {
+import type {
     APIApplication,
     APIApplicationCommand,
     APIUser,
-    PresenceUpdateStatus,
     RESTPostOAuth2AccessTokenResult,
-    UserFlags
 } from "discord.js";
-import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord.js";
+import { OAuth2Scopes, RESTJSONErrorCodes, Routes, PresenceUpdateStatus, UserFlags } from "discord.js";
 import fetch from "node-fetch";
 import * as crypto from "crypto";
 import * as Discord from "discord.js";
@@ -36,20 +34,20 @@ import refresh from "passport-oauth2-refresh";
 
 import settings from "../../settings.json" with { type: "json" };
 import htmlRef from "../../htmlReference.json" with { type: "json" };
-import * as discord from "../Util/Services/discord.js";
-import * as permission from "../Util/Function/permissions.js";
-import * as functions from "../Util/Function/main.js";
-import { variables } from "../Util/Function/variables.js";
+import * as discord from "../Util/Services/discord.ts";
+import * as permission from "../Util/Function/permissions.ts";
+import * as functions from "../Util/Function/main.ts";
+import { variables } from "../Util/Function/variables.ts";
 
-import * as botCache from "../Util/Services/botCaching.js";
-import * as userCache from "../Util/Services/userCaching.js";
-import * as libraryCache from "../Util/Services/libCaching.js";
-import * as tokenManager from "../Util/Services/adminTokenManager.js";
+import * as botCache from "../Util/Services/botCaching.ts";
+import * as userCache from "../Util/Services/userCaching.ts";
+import * as libraryCache from "../Util/Services/libCaching.ts";
+import * as tokenManager from "../Util/Services/adminTokenManager.ts";
 import { URL } from "url";
 import type { DiscordAPIError } from "discord.js";
-import type { botReasons } from "../../@types/enums.js";
+import type { botReasons } from "../../@types/enums.ts";
 import { Response as fetchRes } from "node-fetch";
-import { DAPI } from "../Util/Services/discord.js";
+import { DAPI } from "../Util/Services/discord.ts";
 
 import mdi from "markdown-it";
 import entities from "html-entities";

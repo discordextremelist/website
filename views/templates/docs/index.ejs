@@ -78,9 +78,9 @@
                         <a id="routesNav" href="#api-routes" onclick="changeBody('routes');">
                             <%= __("docs.routes") %>
                         </a>
-                        <!--<a id="librariesNav" href="#api-libraries" onclick="changeBody('libraries');">
+                        <a id="librariesNav" href="#api-libraries" onclick="changeBody('libraries');">
                             <%= __("docs.libraries") %>
-                        </a>-->
+                        </a>
                         <a id="examplesNav" href="#api-examples" onclick="changeBody('examples');">
                             <%= __("docs.examples") %>
                         </a>
@@ -103,7 +103,7 @@
         if (window.location.href.includes("#api-examples")) changeBody("examples");
 
         function changeBody(id) {
-            const bodies = ["intro", "reference", "routes", /*"libraries",*/ "examples"];
+            const bodies = ["intro", "reference", "routes", "libraries", "examples"];
             for (const div of bodies) {
                 document.getElementById(div).style.display = "none";
                 document.getElementById(`${div}Nav`).classList.remove("is-active");

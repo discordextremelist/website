@@ -39,7 +39,8 @@ export enum botReasons {
     invalidDesc,
     offline,
     discontinued,
-    shitBot
+    shitBot,
+    serverLimit
 }
 
 export enum serverReasons {

@@ -86,6 +86,7 @@ export const variables = async (
     };
 
     res.locals.colour = color;
+    res.locals.premidPageInfo = "";
     res.locals.hideLogin = false;
 
     if (req.session.disableRTL && req.session.disableRTL === true) {

@@ -69,6 +69,8 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             });
     }
 
+    res.locals.premidPageInfo = res.__("premid.user", delUser.fullUsername);
+
     const bots = await botCache.getAllBots();
 
     const botsOwner: delBot[] = [];
@@ -151,6 +153,11 @@ router.get(
                 req,
                 type: "Error"
             });
+
+        res.locals.premidPageInfo = res.__(
+            "premid.user.modifyRank",
+            targetUser.fullUsername
+        );
 
         if (
             targetUser.rank.assistant === true &&
@@ -395,6 +402,11 @@ router.get(
                 type: "Error"
             });
 
+        res.locals.premidPageInfo = res.__(
+            "premid.user.edit",
+            userProfile.fullUsername
+        );
+
         res.render("templates/users/editProfile", {
             title: res.__("page.users.edit.title"),
             subtitle: res.__(
@@ -597,6 +609,8 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
+        res.locals.premidPageInfo = res.__("premid.snake");
+
         res.render("templates/users/snake", {
             title: res.__("common.nav.me.playSnake"),
             subtitle: res.__("common.nav.me.playSnake.subtitle"),
@@ -610,6 +624,8 @@ router.get(
     "/game/snake/leaderboard",
     variables,
     async (req: Request, res: Response) => {
+        res.locals.premidPageInfo = res.__("premid.snake.lb");
+
         const users = await userCache.getAllUsers();
 
         res.render("templates/users/snakeLB", {
@@ -710,6 +726,8 @@ router.get(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
+        res.locals.premidPageInfo = res.__("premid.preferences");
+
         res.render("templates/users/accountPreferences", {
             title: res.__("common.nav.me.preferences"),
             subtitle: res.__("common.nav.me.preferences.subtitle"),

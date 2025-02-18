@@ -37,6 +37,8 @@ const renderPath = path.join(process.cwd(), "views/partials");
 const router = express.Router();
 
 router.get("/", variables, (req: Request, res: Response) => {
+    res.locals.premidPageInfo = res.__("premid.search");
+
     let search: string | string[] | ParsedQs | ParsedQs[];
     search = typeof req.query.q === "string" ? req.query.q : "";
 

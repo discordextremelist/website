@@ -284,6 +284,7 @@ new Promise<void>((resolve, reject) => {
             (req: Request, res: Response) => {
                 if (req.user) res.redirect("/");
 
+                res.locals.premidPageInfo = res.__("premid.login");
                 res.locals.hideLogin = true;
 
                 res.render("templates/login", {

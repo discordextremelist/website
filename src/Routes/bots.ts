@@ -87,6 +87,8 @@ router.get(
             );
         // this will return 1/true if something exists/is found, 0 if not.
 
+        res.locals.premidPageInfo = res.__("premid.bots.submit");
+
         res.render("templates/bots/submit", {
             title: res.__("common.nav.me.submitBot"),
             subtitle: res.__("common.nav.me.submitBot.subtitle"),
@@ -107,6 +109,8 @@ router.post(
     permission.auth,
     permission.member,
     async (req: Request, res: Response) => {
+        res.locals.premidPageInfo = res.__("premid.bots.submit");
+
         let error = false;
         let errors: string[] = [];
 
@@ -1099,6 +1103,8 @@ router.get(
                 req
             });
 
+        res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
+
         if (
             botExists.owner.id !== req.user.id &&
             !botExists.editors.includes(req.user.id) &&
@@ -1190,6 +1196,8 @@ router.post(
                 status: 404,
                 errors: [res.__("common.error.bot.404")]
             });
+
+        res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
 
         const bot = botExists;
         if (
@@ -1862,6 +1870,8 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             pageType: { server: false, bot: false }
         });
 
+    res.locals.premidPageInfo = res.__("premid.bots.view", bot.name);
+
     let botOwner = await userCache.getUser(bot.owner.id);
     if (!botOwner) {
         botOwner = await global.db
@@ -2533,6 +2543,11 @@ router.get(
                 req
             });
 
+        res.locals.premidPageInfo = res.__(
+            "premid.bots.resubmit",
+            botExists.name
+        );
+
         res.render("templates/bots/edit", {
             title: res.__("page.bots.resubmit.title"),
             subtitle: res.__("page.bots.resubmit.subtitle", botExists.name),
@@ -2615,6 +2630,11 @@ router.post(
                 status: 403,
                 errors: [res.__("common.error.bot.perms.resubmit")]
             });
+
+        res.locals.premidPageInfo = res.__(
+            "premid.bots.resubmit",
+            botExists.name
+        );
 
         let invite: string;
 
@@ -3489,6 +3509,8 @@ router.get(
                 type: "Error"
             });
 
+        res.locals.premidPageInfo = res.__("premid.bots.decline", bot.name);
+
         if (bot.status.approved === true)
             return res.status(400).render("status", {
                 res,
@@ -3670,6 +3692,8 @@ router.get(
                 type: "Error"
             });
 
+        res.locals.premidPageInfo = res.__("premid.bots.unapprove", bot.name);
+
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.unapprove.title"),
             icon: "minus",
@@ -3835,6 +3859,8 @@ router.get(
                 req,
                 type: "Error"
             });
+
+        res.locals.premidPageInfo = res.__("premid.bots.remove", bot.name);
 
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.remove.title"),
@@ -4003,6 +4029,8 @@ router.get(
                 req,
                 type: "Error"
             });
+
+        res.locals.premidPageInfo = res.__("premid.bots.hide", bot.name);
 
         res.render("templates/bots/staffActions/remove", {
             title: res.__("page.bots.hide.title"),

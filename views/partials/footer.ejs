@@ -21,6 +21,7 @@
         <i class="fab fa-patreon fa-del-social" aria-hidden="true"></i>
     </a>
     <br />
+    <span id="premidPageInfo" style="display: none;"><%= premidPageInfo || __("common.page") %></span>
 </div>
 <script>
     function showLicense(){document.getElementById("licenseNotice").setAttribute("onclick",""),document.getElementById("licenseNotice").setAttribute("title",'<%= __("common.footer.copyright.title.1") %>'),document.getElementById("generalLicenseInfo").style.display="block",document.getElementById("footerBreak").style.display="none",setTimeout(()=>{document.getElementById("licenseNotice").setAttribute("href","https://github.com/discordextremelist/website/blob/main/LICENSE")},500)};

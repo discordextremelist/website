@@ -101,8 +101,6 @@ router.get(
     variables,
     permission.auth,
     (req: Request, res: Response) => {
-        res.locals.premidPageInfo = res.__("premid.servers.submit");
-
         res.render("templates/servers/submit", {
             title: res.__("common.nav.me.submitServer"),
             subtitle: res.__("common.nav.me.submitServer.subtitle"),
@@ -116,8 +114,6 @@ router.post(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
-        res.locals.premidPageInfo = res.__("premid.servers.submit");
-
         let error = false;
         let errors: string[] = [];
 
@@ -415,8 +411,6 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             .findOne({ _id: server.owner.id });
     }
 
-    res.locals.premidPageInfo = res.__("premid.servers.view", server.name);
-
     const dirty = entities.decode(md.render(server.longDesc));
     let clean: string;
     clean = sanitizeHtml(dirty, {
@@ -502,8 +496,6 @@ router.get(
                 req
             });
 
-        res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
-
         const clean = sanitizeHtml(server.longDesc, {
             allowedTags: htmlRef.minimal.tags,
             allowedAttributes: htmlRef.minimal.attributes,
@@ -549,8 +541,6 @@ router.post(
                 status: 403,
                 errors: [res.__("common.error.server.perms.edit")]
             });
-
-        res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 
         if (!req.body.invite) {
             error = true;
@@ -849,11 +839,6 @@ router.get(
                 type: "Error"
             });
 
-        res.locals.premidPageInfo = res.__(
-            "premid.servers.decline",
-            server.name
-        );
-
         if (!server.status || !server.status.reviewRequired)
             return res.status(400).render("status", {
                 res,
@@ -868,11 +853,6 @@ router.get(
 
         if (req.query.from && req.query.from === "queue")
             redirect = "/staff/server_queue";
-
-        res.locals.premidPageInfo = res.__(
-            "premid.servers.decline",
-            server.name
-        );
 
         res.render("templates/servers/staffActions/remove", {
             title: res.__("page.servers.decline.title"),
@@ -1187,11 +1167,6 @@ router.get(
                 req,
                 type: "Error"
             });
-
-        res.locals.premidPageInfo = res.__(
-            "premid.servers.remove",
-            server.name
-        );
 
         res.render("templates/servers/staffActions/remove", {
             title: res.__("page.servers.remove.title"),

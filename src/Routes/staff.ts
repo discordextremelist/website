@@ -44,8 +44,6 @@ router.get(
         const servers = await serverCache.getAllServers();
         const templates = await templateCache.getAllTemplates();
 
-        res.locals.premidPageInfo = res.__("premid.staff.home");
-
         res.render("templates/staff/index", {
             title: res.__("common.nav.me.staffPanel"),
             subtitle: res.__("common.nav.me.staffPanel.subtitle"),
@@ -120,8 +118,6 @@ router.get(
             ])
             .toArray();
 
-        res.locals.premidPageInfo = res.__("premid.staff.queue");
-
         res.render("templates/staff/queue", {
             title: res.__("page.staff.queue"),
             subtitle: res.__("page.staff.queue.subtitle"),
@@ -147,8 +143,6 @@ router.get(
             .sort({ "date.submitted": 1 })
             .allowDiskUse()
             .toArray();
-
-        res.locals.premidPageInfo = res.__("premid.staff.server_queue");
 
         res.render("templates/staff/server_queue", {
             title: res.__("page.staff.server_queue"),
@@ -178,8 +172,6 @@ router.get(
                 ? (bot.inServer = true)
                 : (bot.inServer = false);
         }
-
-        res.locals.premidPageInfo = res.__("premid.staff.invite_queue");
 
         res.render("templates/staff/invite_queue", {
             title: res.__("page.staff.invite_queue"),
@@ -225,7 +217,6 @@ router.get(
             log.target = await functions.auditUserIDParse(log.target);
         }
 
-        res.locals.premidPageInfo = res.__("premid.staff.audit");
         res.render("templates/staff/audit", {
             title: res.__("page.staff.audit"),
             subtitle: res.__("page.staff.audit.subtitle"),
@@ -249,7 +240,6 @@ router.get(
             .find()
             .toArray();
 
-        res.locals.premidPageInfo = res.__("premid.staff.staffManager");
         for (const user of users) {
             for (const warning of user.staffTracking.punishments.warnings) {
                 let executor = await userCache.getUser(warning.executor);
@@ -372,11 +362,6 @@ router.post(
                 req,
                 type: "Error"
             });
-
-        res.locals.premidPageInfo = res.__(
-            "premid.staff.staffManager.updateAway",
-            user.fullUsername
-        );
 
         await global.db.collection("users").updateOne(
             { _id: req.params.id },
@@ -519,11 +504,6 @@ router.get(
                 req,
                 type: "Error"
             });
-
-        res.locals.premidPageInfo = res.__(
-            "premid.staff.staffManager.modifyStanding",
-            user.fullUsername
-        );
 
         res.render("templates/staff/staffManagement/standing", {
             title: res.__("page.staff.manager.setStanding"),
@@ -672,11 +652,6 @@ router.get(
                 type: "Error"
             });
 
-        res.locals.premidPageInfo = res.__(
-            "premid.staff.staffManager.warn",
-            user.fullUsername
-        );
-
         res.render("templates/staff/staffManagement/warn", {
             title: res.__("page.staff.manager.warn"),
             subtitle: res.__(
@@ -794,11 +769,6 @@ router.get(
                 type: "Error"
             });
 
-        res.locals.premidPageInfo = res.__(
-            "premid.staff.staffManager.strike",
-            user.fullUsername
-        );
-
         res.render("templates/staff/staffManagement/strike", {
             title: res.__("page.staff.manager.strike"),
             subtitle: res.__(
@@ -886,8 +856,6 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        res.locals.premidPageInfo = res.__("premid.staff.announcer");
-
         res.render("templates/staff/announce", {
             title: res.__("page.staff.announcer"),
             subtitle: res.__("page.staff.announcer.subtitle"),

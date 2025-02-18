@@ -52,8 +52,6 @@ router.get(
     variables,
     permission.auth,
     (req: Request, res: Response) => {
-        res.locals.premidPageInfo = res.__("premid.templates.submit");
-
         res.render("templates/serverTemplates/submit", {
             title: res.__("common.nav.me.submitTemplate"),
             subtitle: res.__("common.nav.me.submitTemplate.subtitle"),
@@ -67,8 +65,6 @@ router.post(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
-        res.locals.premidPageInfo = res.__("premid.templates.submit");
-
         let error = false;
         let errors: string[] = [];
 
@@ -321,8 +317,6 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
             });
     }
 
-    res.locals.premidPageInfo = res.__("premid.templates.view", template.name);
-
     let templateOwner: delUser | undefined = await userCache.getUser(
         template.owner.id
     );
@@ -420,11 +414,6 @@ router.get(
                 req
             });
 
-        res.locals.premidPageInfo = res.__(
-            "premid.templates.edit",
-            template.name
-        );
-
         const clean = sanitizeHtml(template.longDesc, {
             allowedTags: htmlRef.minimal.tags,
             allowedAttributes: htmlRef.minimal.attributes,
@@ -470,11 +459,6 @@ router.post(
                 status: 403,
                 errors: [res.__("common.error.template.perms.edit")]
             });
-
-        res.locals.premidPageInfo = res.__(
-            "premid.templates.edit",
-            dbTemplate.name
-        );
 
         if (!req.body.code) {
             error = true;
@@ -803,11 +787,6 @@ router.get(
                 req,
                 type: "Error"
             });
-
-        res.locals.premidPageInfo = res.__(
-            "premid.templates.remove",
-            template.name
-        );
 
         res.render("templates/serverTemplates/staffActions/remove", {
             title: res.__("page.templates.remove.title"),

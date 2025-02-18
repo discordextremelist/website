@@ -103,8 +103,6 @@ function sortAll() {
 }
 
 router.get("/", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.home");
-
     const bots = await featuring.getFeaturedBots();
     const servers = await featuring.getFeaturedServers();
     const templates = await featuring.getFeaturedTemplates();
@@ -120,8 +118,6 @@ router.get("/", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/bots", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.bots");
-
     if (!req.query.page) req.query.page = "1";
 
     let icon = "fa-robot has-text-default";
@@ -290,8 +286,6 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/servers", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.servers");
-
     if (!req.query.page) req.query.page = "1";
     // Can't calculate total pages with sliced value - AJ
     const allServers = await serverCache.getAllServers();
@@ -312,8 +306,6 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/templates", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.templates");
-
     if (!req.query.page) req.query.page = "1";
 
     const templates = await templateCache.getAllTemplates();
@@ -334,8 +326,6 @@ router.get("/templates", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/terms", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.terms");
-
     res.render("templates/legal/terms", {
         title: res.__("common.nav.more.terms"),
         subtitle: res.__("common.nav.more.terms.subtitle"),
@@ -345,8 +335,6 @@ router.get("/terms", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/privacy", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.privacy");
-
     res.render("templates/legal/privacy", {
         title: res.__("common.nav.more.privacy"),
         subtitle: res.__("common.nav.more.privacy.subtitle"),
@@ -356,8 +344,6 @@ router.get("/privacy", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/guidelines", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.guidelines");
-
     res.render("templates/legal/guidelines", {
         title: res.__("common.nav.more.guidelines"),
         subtitle: res.__("common.nav.more.guidelines.subtitle"),
@@ -367,8 +353,6 @@ router.get("/guidelines", variables, async (req: Request, res: Response) => {
 });
 
 router.get("/widgetbot", variables, (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.widgetbot");
-
     res.render("templates/widgetbot", {
         title: res.__("common.discord"),
         subtitle: res.__("common.discord.subtitle"),
@@ -378,8 +362,6 @@ router.get("/widgetbot", variables, (req: Request, res: Response) => {
 });
 
 router.get("/about", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.about");
-
     const { staff, donators, contributors } = sortAll();
     res.render("templates/about", {
         title: res.__("common.nav.more.about"),

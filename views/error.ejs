@@ -1,4 +1,16 @@
 <script src="https://js.sentry-cdn.com/1fcecc392aa0480cb106746fe7fb50e4.min.js" crossorigin="anonymous"></script>
+<script>
+    Sentry.onLoad(function() {
+        Sentry.init({
+        integrations: [
+            Sentry.replayIntegration(),
+        ],
+        // Session Replay
+        replaysSessionSampleRate: 0.1,
+        replaysOnErrorSampleRate: 1.0,
+        });
+    });
+</script>
 <style>body{background-color:black;color:white;}</style>
 <h1 style="color: red;"><%= __("page.error.critical") %></h1>
 <h2><%= message %></h2>

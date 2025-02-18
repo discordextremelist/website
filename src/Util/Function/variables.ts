@@ -108,9 +108,7 @@ export const variables = async (
     };
 
     res.locals.socialMedia = {
-        facebook: "https://facebook.com/DiscordExtremeList",
-        twitter: "https://twitter.com/@ExtremeList",
-        instagram: "https://www.instagram.com/discordextremelist/",
+        twitter: "https://x.com/@ExtremeList",
         github: "https://github.com/discordextremelist",
         patreon: "https://www.patreon.com/discordextremelist"
     };

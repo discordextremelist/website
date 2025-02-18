@@ -212,9 +212,10 @@ export const variables = async (
 
     res.setHeader(
         "Content-Security-Policy",
-        "default-src 'self' 'unsafe-inline' www.youtube.com youtube.com status.discordextremelist.xyz cdn.jsdelivr.net cdnjs.cloudflare.com static.cloudflareinsights.com js.sentry-cdn.com fonts.googleapis.com fonts.gstatic.com stats.g.doubleclick.net; " +
+        "default-src 'self' 'unsafe-inline' status.discordextremelist.xyz cdn.jsdelivr.net cdnjs.cloudflare.com static.cloudflareinsights.com js.sentry-cdn.com browser.sentry-cdn.com fonts.googleapis.com fonts.gstatic.com stats.g.doubleclick.net; " +
             "img-src *; " +
-            "worker-src 'self';"
+            "worker-src 'self'; " +
+            "frame-src *;"
     );
 
     next();

@@ -366,11 +366,11 @@
                         <% if (bot.social && bot.social.twitter) { %>
                             <%-
                                 include("../../partials/button.ejs", {
-                                    className: "button is-info",
-                                    icon: "fab fa-twitter",
+                                    className: "button is-light",
+                                    icon: "fab fa-x-twitter",
                                     tag: "a",
                                     message: `@${bot.social.twitter}`,
-                                    href: `https://twitter.com/${bot.social.twitter}`,
+                                    href: `https://x.com/${bot.social.twitter}`,
                                     additional: "target=\"_blank\" rel=\"noopener\""
                                 });
                             %>

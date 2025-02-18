@@ -187,11 +187,11 @@
                             <% if (userProfile.profile.links.twitter) { %>
                                 <%- 
                                     include("../../partials/button.ejs", { 
-                                        className: "button is-info", 
-                                        icon: "fab fa-twitter", 
+                                        className: "button is-white", 
+                                        icon: "fab fa-x-twitter", 
                                         tag: "a", 
-                                        message: __("common.social.twitter"), 
-                                        href: `https://twitter.com/@${userProfile.profile.links.twitter}`, 
+                                        message: `@${userProfile.profile.links.twitter}`, 
+                                        href: `https://x.com/@${userProfile.profile.links.twitter}`, 
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });
                                 %>
@@ -202,7 +202,7 @@
                                         className: "button is-magenta", 
                                         icon: "fab fa-instagram", 
                                         tag: "a", 
-                                        message: __("common.social.instagram"), 
+                                        message: `@${userProfile.profile.links.instagram}`, 
                                         href: `https://instagram.com/${userProfile.profile.links.instagram}`, 
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });
@@ -214,7 +214,7 @@
                                         className: "button is-warning", 
                                         icon: "fab fa-snapchat-ghost", 
                                         tag: "a", 
-                                        message: __("common.social.snapchat"), 
+                                        message: `@${userProfile.profile.links.snapchat}`, 
                                         href: `https://www.snapchat.com/add/${userProfile.profile.links.snapchat}`, 
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });
@@ -226,7 +226,7 @@
                                         className: "button is-orange", 
                                         icon: "fab fa-gitlab", 
                                         tag: "a", 
-                                        message: __("common.social.gitlab"), 
+                                        message:`@${userProfile.profile.links.gitlab}`, 
                                         href: `https://gitlab.com/${userProfile.profile.links.gitlab}`, 
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });
@@ -238,7 +238,7 @@
                                         className: "button is-dark", 
                                         icon: "fab fa-github", 
                                         tag: "a", 
-                                        message: __("common.social.github"), 
+                                        message: `@${userProfile.profile.links.github}`, 
                                         href: `https://github.com/${userProfile.profile.links.github}`, 
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });

@@ -210,9 +210,9 @@ export const variables = async (
 
     res.setHeader(
         "Content-Security-Policy",
-        "default-src 'self' 'unsafe-inline' 'unsafe-eval' github.githubassets.com gist.github.com status.discordextremelist.xyz cdn.jsdelivr.net cdnjs.cloudflare.com static.cloudflareinsights.com js.sentry-cdn.com browser.sentry-cdn.com fonts.googleapis.com fonts.gstatic.com stats.g.doubleclick.net; " +
+        "default-src 'self' 'unsafe-inline' 'unsafe-eval' github.githubassets.com gist.github.com status.discordextremelist.xyz cdn.jsdelivr.net cdnjs.cloudflare.com static.cloudflareinsights.com browser.sentry-cdn.com js.sentry-cdn.com *.sentry.io fonts.googleapis.com fonts.gstatic.com stats.g.doubleclick.net; " +
             "img-src *; " +
-            "worker-src 'self'; " +
+            "worker-src 'self' blob:; " +
             "frame-src *;"
     );
 

@@ -6,24 +6,20 @@
     <a onclick="showLicense()" style="padding-bottom: 10px" title="<%= __("common.footer.copyright.title.0") %>" id="licenseNotice" class="has-text-default" target="_blank" rel="noopener"><%- __("common.footer.copyright", { currentYear: new Date().getFullYear(), names: "Carolina Mitchell, John Burke, Advaith Jagathesan;" }) %></a>
     <!-- END -->
     <div id="generalLicenseInfo" style="display: none;">
-        <%= __("common.footer.trademark", { name: "Carolina" }) %>
+        <%= __("common.footer.trademark", { name: "Carolina Mitchell" }) %>
     <br />
         <%= __("common.footer.discordDisclaimer") %>
+    <br />
+        We promise not to name ourselves Y.
     </div>
     <br id="footerBreak" />
-    <a href="<%= socialMedia.facebook %>" aria-label="<%= __("common.social.facebook.del") %>" target="_blank" rel="noopener" title="<%= __("common.social.facebook") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-link">
-        <i class="fab fa-facebook fa-del-social" aria-hidden="true"></i>
-    </a>
-    <a href="<%= socialMedia.twitter %>" aria-label="<%= __("common.social.twitter.del") %>" target="_blank" rel="noopener" title="<%= __("common.social.twitter") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-info">
-        <i class="fab fa-twitter fa-del-social" aria-hidden="true"></i>
-    </a>
-    <a href="<%= socialMedia.instagram %>" aria-label="<%= __("common.social.instagram.del") %>" target="_blank" rel="noopener" title="<%= __("common.social.instagram") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-magenta">
-        <i class="fab fa-instagram fa-del-social" aria-hidden="true"></i>
+    <a href="<%= socialMedia.twitter %>" aria-label="<%= __("common.social.twitter.del") %>" title="X: Where the CEO's midlife crisis is a feature, not a bug." target="_blank" rel="noopener" title="<%= __("common.social.twitter") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-primary-invert">
+        <i class="fab fa-x-twitter fa-del-social" aria-hidden="true"></i>
     </a>
     <a href="<%= socialMedia.github %>" aria-label="<%= __("common.social.github.del") %>" target="_blank" rel="noopener" title="<%= __("common.social.github") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-primary-invert">
         <i class="fab fa-github fa-del-social" aria-hidden="true"></i>
     </a>
-    <a href="<%= socialMedia.patreon %>" aria-label="<%= __("common.social.patreon.del") %>" target="_blank" rel="noopener" title="<%= __("common.social.patreon") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-orange">
+    <a href="<%= socialMedia.patreon %>" aria-label="<%= __("common.social.patreon.del") %>" target="_blank" rel="noopener" title="<%= __("common.social.patreon") %>" class="icon <% if (mobile) { %> is-medium<% } %> has-text-primary-invert">
         <i class="fab fa-patreon fa-del-social" aria-hidden="true"></i>
     </a>
     <br />

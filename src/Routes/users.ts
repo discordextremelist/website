@@ -846,218 +846,257 @@ router.get(
 );
 
 /* Route that displays the templates/users/data view. A centre for a user to manage their data (download or delete). */
-router.get("/account/data", variables, permission.auth, async (req: Request, res: Response) => {
-    let dataRequestTimeout = false;
+router.get(
+    "/account/data",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response) => {
+        let dataRequestTimeout = false;
 
-    // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
-    if (req.user.db.lastDataRequest && ((Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24)) dataRequestTimeout = true;
+        // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
+        if (
+            req.user.db.lastDataRequest &&
+            (Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24
+        )
+            dataRequestTimeout = true;
 
-    res.render("templates/users/data", {
-        title: res.__("common.nav.me.data"),
-        subtitle: res.__("common.nav.me.data.subtitle"),
-        req,
-        dataRequestTimeout
-    });
-});
+        res.render("templates/users/data", {
+            title: res.__("common.nav.me.data"),
+            subtitle: res.__("common.nav.me.data.subtitle"),
+            req,
+            dataRequestTimeout
+        });
+    }
+);
 
 /* Route that on successful requests, downloads the user's data that is stored in the database. */
-router.get("/account/data/request", variables, permission.auth, async (req: Request, res: Response) => {
-    // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
-    if (req.user.db.lastDataRequest && ((Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24)) return res.status(429).render("status", {
-        res,
-        title: res.__("common.error"),
-        status: 429,
-        subtitle: res.__("common.error.account.data.alreadyDownloaded"),
-        req,
-        type: "Error"
-    });
-
-    const userData: delUser = await global.db
-        .collection<delUser>("users")
-        .findOne({ _id: req.user.id });
-
-    const userBotsData: delBot[] = await global.db
-        .collection<delBot>("bots")
-        .find({ "owner.id": req.user.id })
-        .toArray();
-
-    const userServersData: delServer[] = await global.db
-        .collection<delServer>("servers")
-        .find({ "owner.id": req.user.id })
-        .toArray();
-
-    const userTemplateData: delTemplate[] = await global.db
-        .collection<delTemplate>("templates")
-        .find({ "owner.id": req.user.id })
-        .toArray();
-
-    // Filter userData to remove auth Object
-    delete userData.auth;
-
-    // Filter userBots.votes to not expose user ID's of persons who up/downvoted a bot an instead show number inside of the existing string[]
-    for (const bot of userBotsData) {
-        const positiveVotes = bot.votes.positive.length;
-        const negativeVotes = bot.votes.negative.length;
-
-        bot.votes.positive = [positiveVotes.toString()];
-        bot.votes.negative = [negativeVotes.toString()];
-
-        delete bot.token;
-    }
-
-    /*
-        Updates 'lastDataRequest' in the database so that any future attempted requests are checked against this.
-        If the next attempted request is less than 24 hours relative to this current time, it will be denied.
-    */
-    await global.db.collection("users").updateOne(
-        { _id: req.user.id },
-        {
-            $set: {
-                lastDataRequest: Date.now()
-            }
-        }
-    );
-
-    userCache.updateUser(req.user.id);
-
-    res.setHeader("Content-disposition", `attachment; filename="del_data_user_${userData._id}.json"`);
-    res.send(JSON.stringify({
-        user: userData,
-        bots: userBotsData,
-        servers: userServersData,
-        templates: userTemplateData
-    }, null, 4));
-});
-
-/* Route that on successful requests, deletes the user's account and terminates their session. */
-router.post("/account/data/delete", variables, permission.auth, async (req: Request, res: Response) => {
-    // Checks if the user's username is equal to the username they provided in the deletion form
-    if (req.user.db.fullUsername !== req.body.typedUsername) return res.status(400).render("status", {
-        res,
-        title: res.__("common.error"),
-        status: 400,
-        subtitle: res.__("common.error.account.data.confirmationUsernameIncorrect"),
-        req,
-        type: "Error"
-    });
-    
-    const userBotsData: delBot[] = await global.db
-        .collection<delBot>("bots")
-        .find({ "owner.id": req.user.id })
-        .toArray();
-    
-    const userServersData: delServer[] = await global.db
-        .collection<delServer>("servers")
-        .find({ "owner.id": req.user.id })
-        .toArray();
-
-    const userTemplatesData: delTemplate[] = await global.db
-        .collection<delTemplate>("templates")
-        .find({ "owner.id": req.user.id })
-        .toArray();
-
-    // Loops through the user's bots, servers and templates and deletes them from the database.
-    for (const bot of userBotsData) {
-        await global.db.collection("bots").deleteOne({ _id: bot._id });
-
-        await global.db.collection("audit").insertOne({
-            type: "DELETE_BOT",
-            executor: req.user.id,
-            target: bot._id,
-            date: Date.now(),
-            reason: "Owner deleted their data and account."
-        });
-
-        await botCache.deleteBot(bot._id);
-
-        await discord.channels.logs.send(
-            `${settings.emoji.delete} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
-            })\``
-        );
-    }
-
-    for (const server of userServersData) {
-        await global.db.collection("servers").deleteOne({ _id: server._id });
-
-        await global.db.collection("audit").insertOne({
-            type: "DELETE_SERVER",
-            executor: req.user.id,
-            target: server._id,
-            date: Date.now(),
-            reason: "Owner deleted their data and account."
-        });
-
-        await serverCache.deleteServer(server._id);
-
-        await discord.channels.logs.send(
-            `${settings.emoji.delete} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` deleted server **${functions.escapeFormatting(server.name)}** \`(${
-                server._id
-            })\``
-        );
-    }
-
-    for (const template of userTemplatesData) {
-        await global.db.collection("templates").deleteOne({ _id: template._id });
-
-        await global.db.collection("audit").insertOne({
-            type: "DELETE_TEMPLATE",
-            executor: req.user.id,
-            target: template._id,
-            date: Date.now(),
-            reason: "Owner deleted their data and account."
-        });
-
-        await templateCache.deleteTemplate(template._id);
-
-        await discord.channels.logs.send(
-            `${settings.emoji.delete} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` deleted template **${functions.escapeFormatting(template.name)}** \`(${
-                template._id
-            })\``
-        );
-    }
-
-    // Deletes the user's account from the database and cache.
-    await global.db.collection("users").deleteOne({ _id: req.user.id });
-
-    await userCache.deleteUser(req.user.id);
-
-    // Terminates the user's session.
-    req.logout((err) => {
-        if (err) {
-            // Returns error page with error log if session termination encounters an error.
-            return res.status(500).render("status", {
+router.get(
+    "/account/data/request",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response) => {
+        // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
+        if (
+            req.user.db.lastDataRequest &&
+            (Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24
+        )
+            return res.status(429).render("status", {
                 res,
                 title: res.__("common.error"),
-                status: 500,
-                subtitle: err,
+                status: 429,
+                subtitle: res.__("common.error.account.data.alreadyDownloaded"),
                 req,
                 type: "Error"
             });
+
+        const userData: delUser = await global.db
+            .collection<delUser>("users")
+            .findOne({ _id: req.user.id });
+
+        const userBotsData: delBot[] = await global.db
+            .collection<delBot>("bots")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        const userServersData: delServer[] = await global.db
+            .collection<delServer>("servers")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        const userTemplateData: delTemplate[] = await global.db
+            .collection<delTemplate>("templates")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        // Filter userData to remove auth Object
+        delete userData.auth;
+
+        // Filter userBots.votes to not expose user ID's of persons who up/downvoted a bot an instead show number inside of the existing string[]
+        for (const bot of userBotsData) {
+            const positiveVotes = bot.votes.positive.length;
+            const negativeVotes = bot.votes.negative.length;
+
+            bot.votes.positive = [positiveVotes.toString()];
+            bot.votes.negative = [negativeVotes.toString()];
+
+            delete bot.token;
         }
 
-        // Returns success status page if session terminates successfully.
-        return res.status(200).render("status", {
-            res,
-            title: res.__("common.success"),
-            subtitle: res.__("common.success.account.delete"),
-            status: 200,
-            type: "Success",
-            req
+        /*
+        Updates 'lastDataRequest' in the database so that any future attempted requests are checked against this.
+        If the next attempted request is less than 24 hours relative to this current time, it will be denied.
+    */
+        await global.db.collection("users").updateOne(
+            { _id: req.user.id },
+            {
+                $set: {
+                    lastDataRequest: Date.now()
+                }
+            }
+        );
+
+        userCache.updateUser(req.user.id);
+
+        res.setHeader(
+            "Content-disposition",
+            `attachment; filename="del_data_user_${userData._id}.json"`
+        );
+        res.send(
+            JSON.stringify(
+                {
+                    user: userData,
+                    bots: userBotsData,
+                    servers: userServersData,
+                    templates: userTemplateData
+                },
+                null,
+                4
+            )
+        );
+    }
+);
+
+/* Route that on successful requests, deletes the user's account and terminates their session. */
+router.post(
+    "/account/data/delete",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response) => {
+        // Checks if the user's username is equal to the username they provided in the deletion form
+        if (req.user.db.fullUsername !== req.body.typedUsername)
+            return res.status(400).render("status", {
+                res,
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__(
+                    "common.error.account.data.confirmationUsernameIncorrect"
+                ),
+                req,
+                type: "Error"
+            });
+
+        const userBotsData: delBot[] = await global.db
+            .collection<delBot>("bots")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        const userServersData: delServer[] = await global.db
+            .collection<delServer>("servers")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        const userTemplatesData: delTemplate[] = await global.db
+            .collection<delTemplate>("templates")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        // Loops through the user's bots, servers and templates and deletes them from the database.
+        for (const bot of userBotsData) {
+            await global.db.collection("bots").deleteOne({ _id: bot._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_BOT",
+                executor: req.user.id,
+                target: bot._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await botCache.deleteBot(bot._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
+                    bot._id
+                })\``
+            );
+        }
+
+        for (const server of userServersData) {
+            await global.db
+                .collection("servers")
+                .deleteOne({ _id: server._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_SERVER",
+                executor: req.user.id,
+                target: server._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await serverCache.deleteServer(server._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted server **${functions.escapeFormatting(server.name)}** \`(${
+                    server._id
+                })\``
+            );
+        }
+
+        for (const template of userTemplatesData) {
+            await global.db
+                .collection("templates")
+                .deleteOne({ _id: template._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_TEMPLATE",
+                executor: req.user.id,
+                target: template._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await templateCache.deleteTemplate(template._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted template **${functions.escapeFormatting(template.name)}** \`(${
+                    template._id
+                })\``
+            );
+        }
+
+        // Deletes the user's account from the database and cache.
+        await global.db.collection("users").deleteOne({ _id: req.user.id });
+
+        await userCache.deleteUser(req.user.id);
+
+        // Terminates the user's session.
+        req.logout((err) => {
+            if (err) {
+                // Returns error page with error log if session termination encounters an error.
+                return res.status(500).render("status", {
+                    res,
+                    title: res.__("common.error"),
+                    status: 500,
+                    subtitle: err,
+                    req,
+                    type: "Error"
+                });
+            }
+
+            // Returns success status page if session terminates successfully.
+            return res.status(200).render("status", {
+                res,
+                title: res.__("common.success"),
+                subtitle: res.__("common.success.account.delete"),
+                status: 200,
+                type: "Success",
+                req
+            });
         });
-    });
-});
+    }
+);
 
 export default router;

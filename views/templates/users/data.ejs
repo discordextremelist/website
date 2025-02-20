@@ -26,11 +26,15 @@
     </section>
     <div class="container">
         <div class="section">
-            <p><%= __("page.account.data.note") %></p>
-            <br />
             <h3 class="is-size-3 has-text-warning"><%= __("page.account.data.download") %></h2>
-            <p><%= __("page.account.data.download.details") %></p>
-            <br />
+            <p><%= __("page.account.data.download.details.0") %></p>
+            <div class="content" style="padding-top: 1em;">
+                <ul>
+                    <li><%= __("page.account.data.download.details.1") %></li>
+                    <li><%= __("page.account.data.download.details.2") %></li>
+                    <li><%= __("page.account.data.download.details.3") %></li>
+                </ul>
+            </div>
             <div class="buttons">
                 <% if (dataRequestTimeout) { %>
                     <a class="button is-dark" disabled>
@@ -44,7 +48,7 @@
                         <span class="icon">
                             <i class="fas fa-download"></i>
                         </span>
-                        <span><%= __("page.account.data.download.button.active") %></span>
+                        <span><%= __("page.account.data.download") %></span>
                     </a>
                 <% } %>
             </div>
@@ -53,15 +57,78 @@
             <p><%= __("page.account.data.delete.details") %></p>
             <br />
             <div class="buttons">
-                <a href="<%= linkPrefix %>/users/account/data/delete/" class="button is-danger">
+                <button onclick="showDeleteModal()" class="button is-danger">
                     <span class="icon">
                         <i class="fas fa-shredder"></i>
                     </span>
-                    <span><%= __("page.account.data.delete.button") %></span>
-                </a>
+                    <span><%= __("page.account.data.delete") %></span>
+                </button>
             </div>
         </div>
     </div>
+    <div class="modal" id="deleteModal">
+        <div class="modal-background" style="backdrop-filter: blur(8px);
+        background-color: rgba(255, 0, 0, 0.111) !important;"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title has-text-danger">
+                    <span class="icon">
+                        <i class="fad fa-warning"></i>
+                    </span>
+                    <%= __("page.account.data.delete.confirm.title") %>
+                </p>
+                <button class="delete" aria-label="close" onclick="closeDeleteModal()"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="content">
+                    <p class="has-text-danger">
+                        <%= __("page.account.data.delete.confirm.warning") %>
+                    </p>
+                    <form method="POST" action="<%= linkPrefix %>/users/account/data/delete">
+                        <div class="field">
+                            <label class="label"><%= __("page.account.data.delete.confirm.type") %></label>
+                            <div class="control">
+                                <input name="typedUsername" id="typedUsername" onpaste="return false;" ondrop="return false;" autocomplete="off" class="input" type="text" 
+                                       required
+                                       placeholder="<%= __("page.account.data.delete.confirm.timeout") %>"
+                                       pattern="<%= req.user.db.fullUsername %>"
+                                       disabled>
+                                <p class="help"><%= __("page.account.data.delete.confirm.type.help") %></p>
+                            </div>
+                        </div>
+                        
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" id="submitButton" class="button is-danger" disabled>
+                                    <span class="icon">
+                                        <i class="fas fa-shredder"></i>
+                                    </span>
+                                    <span><%= __("page.account.data.delete.confirm.button") %></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
+    function showDeleteModal() {
+        document.getElementById('deleteModal').classList.add('is-active');
+        
+        setTimeout(() => {
+            submitButton.removeAttribute("disabled");
+            typedUsername.removeAttribute("disabled");
+            typedUsername.placeholder = "<%= req.user.db.fullUsername %>"
+        }, 5000);
+    }
+    
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('is-active');
+    }
+    
+    document.querySelector('.modal-background').addEventListener('click', closeDeleteModal);
+    </script>
     <script>
         async function dataRequest() {
             const button = document.getElementById("dataRequest");

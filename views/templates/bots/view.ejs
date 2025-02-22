@@ -686,7 +686,7 @@
     <% if (bot.owner.id === req.user?.id) { %>
         <script>document.querySelector("#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
     <% } %>
-    <% if (bot.owner.id === req.user?.id || req.user?.rank.mod) { %>
+    <% if (bot.owner.id === req.user?.id || req.user?.rank?.mod) { %>
         <% if (bot.status.approved) { %>
             <script>document.querySelector("a#setVanity").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".setVanity");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal2").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
         <% } %>

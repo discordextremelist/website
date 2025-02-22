@@ -22,7 +22,7 @@ export function getLibs() {
 }
 
 export function getLanguages() {
-    return new Set(global.libs?.map(l => l.language).sort());
+    return new Set(global.libs?.map((l) => l.language).sort());
 }
 
 export function hasLib(name: string) {

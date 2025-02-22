@@ -23,7 +23,7 @@ jobs:
         - name: run sentry:build
           run: pnpm run sentry:build
         - name: run sentry:sourcemaps
-          run: sentry-cli sourcemaps inject --org=delly --project=website --release=${{ github.ref }} ./dist && sentry-cli sourcemaps upload --org=delly --project=website --release=${{ github.ref }} ./dist
+          run: pnpm run sentry:sourcemaps
           env:
             SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
     # build:

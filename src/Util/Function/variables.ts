@@ -210,14 +210,14 @@ export const variables = async (
 
     res.setHeader(
         "Content-Security-Policy",
-        "default-src 'self' 'unsafe-inline' 'unsafe-eval' github.githubassets.com gist.github.com status.discordextremelist.xyz cdn.jsdelivr.net cdnjs.cloudflare.com static.cloudflareinsights.com browser.sentry-cdn.com js.sentry-cdn.com *.sentry.io fonts.googleapis.com fonts.gstatic.com stats.g.doubleclick.net data:; " +
+        "default-src 'self' 'unsafe-inline' 'unsafe-eval' github.githubassets.com gist.github.com status.discordextremelist.xyz cdn.jsdelivr.net cdnjs.cloudflare.com static.cloudflareinsights.com browser.sentry-cdn.com js.sentry-cdn.com *.sentry.io fonts.googleapis.com fonts.gstatic.com stats.g.doubleclick.net discord.com discordapp.com discordapp.net data:; " +
             "img-src * data:; " +
             "worker-src 'self' blob:; " +
             "frame-src * data:; " +
             "media-src *; " +
             "object-src 'none'; " +
             "font-src 'self' fonts.gstatic.com cdnjs.cloudflare.com; " +
-            "connect-src 'self' *.sentry.io api.github.com; " +
+            "connect-src 'self' discord.com discordapp.com discordapp.net *.sentry.io api.github.com; " +
             "form-action 'self';"
     );
 

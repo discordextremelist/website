@@ -21,6 +21,10 @@ export function getLibs() {
     return global.libs?.sort((a, b) => a._id.localeCompare(b._id));
 }
 
+export function getLanguages() {
+    return new Set(global.libs?.map(l => l.language).sort());
+}
+
 export function hasLib(name: string) {
     return global.libs?.find((x) => x._id === name);
 }

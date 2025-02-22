@@ -94,6 +94,7 @@ router.get(
             subtitle: res.__("common.nav.me.submitBot.subtitle"),
             showResubmitNote,
             libraries: libraryCache.getLibs(),
+            languages: libraryCache.getLanguages(),
             req,
             joinServerNotice: res.__("common.form.joinServer.full", {
                 a: '<a href="https://discord.gg/WeCer3J" rel="noopener" target="_blank">',
@@ -1139,6 +1140,7 @@ router.get(
             title: res.__("page.bots.edit.title"),
             subtitle: res.__("page.bots.edit.subtitle", botExists.name),
             libraries: libraryCache.getLibs(),
+            languages: libraryCache.getLanguages(),
             settings,
             bot: botExists,
             editors: botExists.editors ? botExists.editors.join(" ") : "",
@@ -2552,6 +2554,7 @@ router.get(
             title: res.__("page.bots.resubmit.title"),
             subtitle: res.__("page.bots.resubmit.subtitle", botExists.name),
             libraries: libraryCache.getLibs(),
+            languages: libraryCache.getLanguages(),
             settings,
             bot: botExists,
             editors: botExists.editors ? botExists.editors.join(" ") : "",

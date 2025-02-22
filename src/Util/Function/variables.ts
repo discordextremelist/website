@@ -218,7 +218,6 @@ export const variables = async (
             "object-src 'none'; " +
             "font-src 'self' fonts.gstatic.com cdnjs.cloudflare.com; " +
             "connect-src 'self' *.sentry.io api.github.com; " +
-            "style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com; " +
             "form-action 'self';"
     );
 

@@ -372,7 +372,6 @@
                             </h4>
                             <div id="optionsBody" class="is-hidden-mobile">
                                 <div id="otherInfo">
-                                    <p><strong><%= __("page.templates.otherInfo.region") %></strong> <img src="https://discord.com/assets/<%= functions.regionIcon(template.region) %>.png" alt="" style="height: 1em; vertical-align: middle"> <%= functions.parseRegion(template.region) %></p>
                                     <p><strong><%= __("page.templates.otherInfo.afkTimeout") %></strong> <%= Math.floor(template.afkTimeout / 60) %>m</p>
                                     <%- include("../../partials/verificationLevel.ejs") %>
                                     <%- include("../../partials/msgNotifications.ejs") %>

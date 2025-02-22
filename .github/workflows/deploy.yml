@@ -26,29 +26,29 @@ jobs:
           run: sentry-cli sourcemaps inject --org=delly --project=website --release=${{ github.ref }} ./dist && sentry-cli sourcemaps upload --org=delly --project=website --release=${{ github.ref }} ./dist
           env:
             SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: 'Login to GitHub Container Registry'
-              uses: docker/login-action@v1
-              with:
-                registry: ghcr.io
-                username: ${{github.actor}}
-                password: ${{secrets.GITHUB_TOKEN}}
-            - uses: actions/checkout@v3
-            - name: Build
-              run: docker build -t ghcr.io/discordextremelist/website:${GITHUB_REF#refs/tags/} .
-            - name: Push
-              run: docker push ghcr.io/discordextremelist/website:${GITHUB_REF#refs/tags/}
-    deploy:
-        needs: build
-        runs-on: ubuntu-latest
-        steps:
-            - name: Login
-              run: |
-                  mkdir ~/.kube
-                  echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
-            - name: Set image
-              run: kubectl set image deployment/site site=ghcr.io/discordextremelist/website:${GITHUB_REF#refs/tags/}
-            - name: Rollout status
-              run: kubectl rollout status deployment/site
+    # build:
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - name: 'Login to GitHub Container Registry'
+    #           uses: docker/login-action@v1
+    #           with:
+    #             registry: ghcr.io
+    #             username: ${{github.actor}}
+    #             password: ${{secrets.GITHUB_TOKEN}}
+    #         - uses: actions/checkout@v3
+    #         - name: Build
+    #           run: docker build -t ghcr.io/discordextremelist/website:${GITHUB_REF#refs/tags/} .
+    #         - name: Push
+    #           run: docker push ghcr.io/discordextremelist/website:${GITHUB_REF#refs/tags/}
+    # deploy:
+    #     needs: build
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - name: Login
+    #           run: |
+    #               mkdir ~/.kube
+    #               echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+    #         - name: Set image
+    #           run: kubectl set image deployment/site site=ghcr.io/discordextremelist/website:${GITHUB_REF#refs/tags/}
+    #         - name: Rollout status
+    #           run: kubectl rollout status deployment/site

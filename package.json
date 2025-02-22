@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "del-website",
-  "version": "v5.6.22-Release",
+  "version": "5.6.23-Release",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
   "main": "src/app.ts",
   "directories": {
@@ -110,7 +110,8 @@
       "path-to-regexp@<0.1.10": ">=0.1.10",
       "next@>=13.5.1 <13.5.7": ">=13.5.7",
       "cookie@<0.7.0": ">=0.7.0",
-      "next@>=10.0.0 <14.2.7": ">=14.2.7"
+      "next@>=10.0.0 <14.2.7": ">=14.2.7",
+      "esbuild@<=0.24.2": ">=0.25.0"
     }
   }
 }

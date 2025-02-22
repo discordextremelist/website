@@ -203,6 +203,7 @@
             integrations: [
                 Sentry.replayIntegration(),
             ],
+            release: "website@<%= req.del.version %>",
             // Session Replay
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,

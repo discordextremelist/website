@@ -26,14 +26,14 @@
             <% if (user.db.rank.mod === true) { %>
                 <% if (req.user.db.rank.admin === false && req.user.db.rank.assistant === false) { %>
                     <span style="vertical-align: middle;" title="<%= __("common.rank.mod") %>" class="icon is-small iconalign">
-                        <i aria-hidden="true" class="fad fa-hammer has-text-success fa-1x"></i>
+                        <i aria-hidden="true" class="fad fa-hammer-war has-text-success fa-1x"></i>
                     </span>
                     <span style="vertical-align: middle;" class="has-text-success">
                         <%= __("common.rank.mod") %>
                     </span>
                 <% } else if (req.user.db.rank.admin === false && req.user.db.rank.assistant === true) { %>
                     <span style="vertical-align: middle;" title="<%= __("common.rank.assistant") %>" class="icon is-small iconalign">
-                        <i aria-hidden="true" class="fad fa-tools has-text-orange fa-1x"></i>
+                        <i aria-hidden="true" class="fad fa-swords has-text-orange fa-1x"></i>
                     </span>
                     <span style="vertical-align: middle;" class="has-text-orange">
                         <%= __("common.rank.assistant") %>

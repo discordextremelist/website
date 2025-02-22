@@ -324,7 +324,7 @@
                 <div class="columns">
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
-                            <h4 class="is-size-4" onclick="collapseToggle(document.getElementById('channelListBody'), document.getElementById('channelListArrow'));">
+                            <h4 class="is-size-4" <% if (phone) { %>onclick="collapseToggle(document.getElementById('channelListBody'), document.getElementById('channelListArrow'));"<% } %>>
                                 <span><%= __("page.templates.channels") %></span>
                                 <% if (phone) { %>
                                     <span>
@@ -341,7 +341,7 @@
                     </div>
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
-                            <h4 class="is-size-4" onclick="collapseToggle(document.getElementById('rolesListBody'), document.getElementById('rolesArrow'));">
+                            <h4 class="is-size-4" <% if (phone) { %>onclick="collapseToggle(document.getElementById('rolesListBody'), document.getElementById('rolesArrow'));"<% } %>>
                                 <span><%= __("page.templates.roles") %></span>
                                 <% if (phone) { %>
                                     <span>
@@ -362,7 +362,7 @@
                     </div>
                     <div class="column is-one-third">
                         <div class="columnBody infoColumn">
-                            <h4 class="is-size-4" onclick="collapseToggle(document.getElementById('optionsBody'), document.getElementById('optionsArrow'));">
+                            <h4 class="is-size-4" <% if (phone) { %>onclick="collapseToggle(document.getElementById('optionsBody'), document.getElementById('optionsArrow'));"<% } %>>
                                 <span><%= __("page.templates.otherInfo") %></span>
                                 <% if (phone) { %>
                                     <span>
@@ -372,7 +372,6 @@
                             </h4>
                             <div id="optionsBody" class="is-hidden-mobile">
                                 <div id="otherInfo">
-                                    <p><strong><%= __("page.templates.otherInfo.region") %></strong> <img src="https://discord.com/assets/<%= functions.regionIcon(template.region) %>.png" alt="" style="height: 1em; vertical-align: middle"> <%= functions.parseRegion(template.region) %></p>
                                     <p><strong><%= __("page.templates.otherInfo.afkTimeout") %></strong> <%= Math.floor(template.afkTimeout / 60) %>m</p>
                                     <%- include("../../partials/verificationLevel.ejs") %>
                                     <%- include("../../partials/msgNotifications.ejs") %>
@@ -423,7 +422,6 @@
     </script>
 </div>
 <% if (phone) { %>
-    <!-- <style>#collapsibleBody1, #collapsibleBody2, #collapsibleBody3 { display: none }</style> -->
     <script>
         function collapseToggle(s, i) {
             s
@@ -441,8 +439,6 @@
                 ? (i.classList.remove("fa-chevron-left"), i.classList.add("fa-chevron-down"))
                 : (i.classList.add("fa-chevron-left"), i.classList.remove("fa-chevron-down"))
         }
-        // , i.style.right = "16px"
-        //, i.style.right = "18.4px"
     </script>
 <% } %>
 <% if (req.user && req.user.db.rank.mod === true) { %>

@@ -134,7 +134,7 @@
         })
         .then(data => {
             let content = "";
-            if (data.data.pages.length !== 0) {
+            if (data.data.pages?.length !== 0) {
                 for (const card of data.data.pages[0]) {
                     content = content + card;
                 }

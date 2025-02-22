@@ -70,17 +70,17 @@ const __dirname = path.resolve();
 
 app.use(helmet());
 
-app.use(
-    "/fonts/fa/webfonts/*",
-    (req: Request, res: Response, next: () => void) => {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header(
-            "Access-Control-Allow-Headers",
-            "Origin, X-Requested-With, Content-Type, Accept"
-        );
-        next();
-    }
-);
+const corsMiddleware = (req: Request, res: Response, next: () => void) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
+};
+
+app.use("/fonts/fa/webfonts/*", corsMiddleware);
+app.use("/upup.min.js", corsMiddleware);
 
 app.set("views", __dirname + "/views");
 app.use(express.static(__dirname + "/assets/Public"));

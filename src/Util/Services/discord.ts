@@ -58,10 +58,6 @@ bot.on("guildBanRemove", async (ban) => {
 
 bot.on("ready", async () => {
     console.log(`Discord: Connected as ${bot.user.tag} (${bot.user.id})`);
-    if (process.env.EXECUTOR === "pm2") {
-        process.send("ready");
-        console.log("PM2: Ready signal sent");
-    }
 
     await uploadStatuses();
 
@@ -78,13 +74,22 @@ bot.on("ready", async () => {
             .then(async (bots) => {
                 const botsToFetch = [];
                 bots.forEach(async (bot) => {
-                    if (guilds.main.members.cache.has(bot._id))
+                    if (guilds.main.members.cache.has(bot._id)) {
                         botsToFetch.push(bot._id);
+                    } else if (guilds.bot.members.cache.has(bot._id)) {
+                        botsToFetch.push(bot._id);
+                    }
                 });
                 guilds.main.members
                     .fetch({ user: botsToFetch })
                     .then((x) =>
-                        console.log(`Discord: Retrieved ${x.size} members!`)
+                        console.log(`Discord main_server: Retrieved ${x.size} members!`)
+                    )
+                    .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
+                guilds.bot.members
+                    .fetch({ user: botsToFetch })
+                    .then((x) =>
+                        console.log(`Discord bot_server: Retrieved ${x.size} members!`)
                     )
                     .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
             })
@@ -167,12 +172,23 @@ export const guilds = {
                       await bot.guilds.fetch(settings.guild.staff);
                   }).call(this)
         ) as Discord.Guild;
+    },
+    get bot() {
+        return (
+            bot.guilds.cache.has(settings.guild.bot)
+                ? bot.guilds.cache.get(settings.guild.bot)
+                : (async () => {
+                      await bot.guilds.fetch(settings.guild.bot);
+                  }).call(this)
+        ) as Discord.Guild;
     }
 };
 
 export async function getMember(id: string) {
     if (guilds.main) {
-        return guilds.main.members.fetch(id).catch(() => {});
+        const mainMember = await guilds.main.members.fetch(id).catch(() => {});
+        if (mainMember) return mainMember;
+        return await guilds.bot.members.fetch(id).catch(() => {});
     } else return undefined;
 }
 

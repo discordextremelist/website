@@ -1948,6 +1948,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         botStatus: botStatus,
         mainServer: settings.guild.main,
         staffServer: settings.guild.staff,
+        botServer: settings.guild.bot,
         webUrl: settings.website.url,
         req: req,
         editors,

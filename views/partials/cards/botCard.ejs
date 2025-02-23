@@ -112,14 +112,12 @@
                             </span>
                             <span><%= __("page.bots.invite.staff") %></span>
                         </a>
-                        <% if (req.user.db.rank.assistant && (!bot.scopes || bot.scopes.bot)) { %>
-                            <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= mainServer %>" target="_blank" rel="noopener" class="button is-link is-outlined">
-                                <span class="icon">
-                                    <i class="fas fa-shield-alt"></i>
-                                </span>
-                                <span><%= __("page.bots.invite.main") %></span>
-                            </a>
-                        <% } %>
+                        <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= botServer %>" target="_blank" rel="noopener" class="button is-link is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </span>
+                            <span><%= __("page.bots.invite.bot") %></span>
+                        </a>
                         <a href="<%= linkPrefix %>/bots/<%= bot._id || bot.id %>/approve" class="button is-success is-outlined">
                             <span class="icon">
                                 <i class="fas fa-check"></i>
@@ -139,11 +137,11 @@
                             </span>
                             <span><%= __("common.view") %></span>
                         </a>
-                        <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= mainServer %>" target="_blank" rel="noopener" class="button is-link is-outlined">
+                        <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot._id || bot.id %>&scope=bot&guild_id=<%= botServer %>" target="_blank" rel="noopener" class="button is-link is-outlined">
                             <span class="icon">
                                 <i class="fas fa-shield-alt"></i>
                             </span>
-                            <span><%= __("page.bots.invite.main") %></span>
+                            <span><%= __("page.bots.invite.bot") %></span>
                         </a>
                     <% } else { %>
                         <a href="<%= linkPrefix %>/bots/<%= bot.vanityUrl ? bot.vanityUrl : (bot._id || bot.id) %>" class="button is-default is-outlined">

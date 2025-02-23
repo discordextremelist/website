@@ -131,6 +131,7 @@ router.get(
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff,
+            botServer: settings.guild.bot,
             parseScopes: functions.parseScopes
         });
     }
@@ -164,7 +165,7 @@ router.get(
 router.get(
     "/invite_queue",
     variables,
-    permission.assistant,
+    permission.mod,
     async (req: Request, res: Response) => {
         const bots: delBot[] = await global.db
             .collection<delBot>("bots")
@@ -174,7 +175,7 @@ router.get(
             .toArray();
 
         for (const bot of bots) {
-            discord.guilds.main.members.cache.has(bot._id)
+            discord.guilds.bot.members.cache.has(bot._id)
                 ? (bot.inServer = true)
                 : (bot.inServer = false);
         }
@@ -194,7 +195,8 @@ router.get(
                     (!scopes || scopes.bot)
             ),
             mainServer: settings.guild.main,
-            staffServer: settings.guild.staff
+            staffServer: settings.guild.staff,
+            botServer: settings.guild.bot
         });
     }
 );

@@ -254,6 +254,10 @@ declare global {
             approved: number;
             edited: number;
         };
+        labels: undefined | {
+            nsfw: boolean;
+            ai: boolean;
+        };
         status: {
             approved: boolean;
             premium: boolean;

@@ -61,6 +61,10 @@ html[data-deltheme=light] {
     --del-button-outer-shadow-alpha: unset !important;
 }
 
+.has-text-shadow-blue {
+    color: #a8b9bf;
+}
+
 .button {
     &.is-outlined:not(.is-loading):not(.is-default) {
         &:hover,

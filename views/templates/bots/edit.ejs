@@ -153,6 +153,26 @@
             </div>
             <br>
             <br>
+            <h3 class="is-size-3 has-text-default"><%= __("common.labels") %></h3>
+            <br>
+            <div class="field">
+                <label for="aiLabelSwitch" class="label has-text-shadow-blue"><%= __("common.label.ai.question") %></label>
+                <p style="padding-bottom: 10px;" class="is-size-7 has-text-shadow-blue">
+                    <%= __("page.bots.theme.useCustomColor.details") %>
+                </p>
+                <input id="form_aiLabelSwitch" type="checkbox" name="useCustomColour" class="switch is-rounded is-shadow-blue" <% if (bot.labels?.ai) { %>checked<% } %>>
+                <label for="form_aiLabelSwitch"></label>
+            </div>
+            <div class="field">
+                <label for="nsfwLabelSwitch" class="label has-text-pink"><%= __("common.label.nsfw.question") %></label>
+                <p style="padding-bottom: 10px;" class="is-size-7 has-text-pink">
+                    <%= __("page.bots.theme.useCustomColor.details") %>
+                </p>
+                <input id="form_nsfwLabelSwitch" type="checkbox" name="useCustomColour" class="switch is-rounded is-pink" <% if (bot.labels?.nsfw) { %>checked<% } %>>
+                <label for="form_nsfwLabelSwitch"></label>
+            </div>
+            <br>
+            <br>
             <h3 class="is-size-3 has-text-default"><%= __("page.form.category.links") %></h3>
             <br>
             <div class="field">

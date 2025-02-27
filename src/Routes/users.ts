@@ -669,20 +669,11 @@ router.post(
                     "Posted score is lower or equal to the user's current high score - no changes were made"
             });
 
-        const user: delUser = await global.db
-            .collection<delUser>("users")
-            .findOne({ _id: req.user.id });
-        const score = user.game.snakes.maxScore + 1;
-
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
             {
-                $set: {
-                    game: {
-                        snakes: {
-                            maxScore: score
-                        }
-                    }
+                $inc: {
+                    "game.snakes.maxScore": 1
                 }
             }
         );

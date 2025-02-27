@@ -5,7 +5,7 @@
         integrations: [
             Sentry.replayIntegration(),
         ],
-        release: "website@<%= req.del.version %>",
+        <% if (del) { %>release: "website@<%= del.version %>",<% } %>
         // Session Replay
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 1.0,

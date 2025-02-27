@@ -1,7 +1,6 @@
 ## Description
 <!-- Describe your changes in detail. What issue does this resolve? -->
 
----
 
 ### Changes Summary
 <!-- Provide a brief summary of the changes made in this PR. -->
@@ -9,12 +8,13 @@
 - 
 - 
 
----
-
 ### Screenshots / Demo (if applicable)
-<!-- Attach relevant screenshots or recordings of your changes. -->
+<details>
+    <summary>Toggle this collapsible list to see images.</summary>
 
----
+    <!-- Attach relevant screenshots or recordings of your changes. -->
+    
+</details>
 
 ## Type of Change
 <!-- Select all that are appropriate. -->
@@ -25,12 +25,10 @@
 - [ ] Breaking change
 - [ ] Performance improvement/reducing time complexity
 
----
-
 ## Additional Information
 <!-- Include any additional notes, concerns, or questions you have regarding this PR. -->
 
----
+
 
 ## Confirmation Checklist
 

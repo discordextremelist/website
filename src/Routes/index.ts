@@ -105,7 +105,14 @@ function sortAll() {
 router.get("/", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.home");
 
-    const bots = await featuring.getFeaturedBots();
+    let bots: delBot[];
+
+    if (req.user?.db?.preferences.hideNSFW) {
+        bots = await featuring.getFeaturedSFWBots();
+    } else {
+        bots = await featuring.getFeaturedBots();
+    }
+
     const servers = await featuring.getFeaturedServers();
     const templates = await featuring.getFeaturedTemplates();
 
@@ -146,12 +153,13 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                     }
                 );
                 bots = (await botCache.getAllBots()).filter(
-                    ({ status, scopes }) =>
+                    ({ status, scopes, labels }) =>
                         status.approved &&
                         !status.siteBot &&
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
+                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
                         scopes?.slashCommands
                 );
                 break;
@@ -160,12 +168,13 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.fun");
                 subtitle = res.__("common.bots.subtitle.filter.fun");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags }) =>
+                    ({ status, tags, labels }) =>
                         status.approved &&
                         !status.siteBot &&
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
+                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
                         tags.includes("Fun")
                 );
                 break;
@@ -174,12 +183,13 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.social");
                 subtitle = res.__("common.bots.subtitle.filter.social");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags }) =>
+                    ({ status, tags, labels }) =>
                         status.approved &&
                         !status.siteBot &&
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
+                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
                         tags.includes("Social")
                 );
                 break;
@@ -188,12 +198,13 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.economy");
                 subtitle = res.__("common.bots.subtitle.filter.economy");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags }) =>
+                    ({ status, tags, labels }) =>
                         status.approved &&
                         !status.siteBot &&
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
+                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
                         tags.includes("Economy")
                 );
                 break;
@@ -202,12 +213,13 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.utility");
                 subtitle = res.__("common.bots.subtitle.filter.utility");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags }) =>
+                    ({ status, tags, labels }) =>
                         status.approved &&
                         !status.siteBot &&
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
+                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
                         tags.includes("Utility")
                 );
                 break;
@@ -216,12 +228,13 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.moderation");
                 subtitle = res.__("common.bots.subtitle.filter.moderation");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags }) =>
+                    ({ status, tags, labels }) =>
                         status.approved &&
                         !status.siteBot &&
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
+                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
                         tags.includes("Moderation")
                 );
                 break;
@@ -230,12 +243,13 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.multipurpose");
                 subtitle = res.__("common.bots.subtitle.filter.multipurpose");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags }) =>
+                    ({ status, tags, labels }) =>
                         status.approved &&
                         !status.siteBot &&
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
+                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
                         tags.includes("Multipurpose")
                 );
                 break;
@@ -244,33 +258,36 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                 title = res.__("common.bots.title.music");
                 subtitle = res.__("common.bots.subtitle.filter.music");
                 bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags }) =>
+                    ({ status, tags, labels }) =>
                         status.approved &&
                         !status.siteBot &&
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
+                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
                         tags.includes("Music")
                 );
                 break;
             default:
                 bots = (await botCache.getAllBots()).filter(
-                    ({ status }) =>
+                    ({ status, labels }) =>
                         status.approved &&
                         !status.siteBot &&
                         !status.archived &&
                         !status.hidden &&
-                        !status.modHidden
+                        !status.modHidden &&
+                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw)
                 );
         }
     } else
         bots = (await botCache.getAllBots()).filter(
-            ({ status }) =>
+            ({ status, labels }) =>
                 status.approved &&
                 !status.siteBot &&
                 !status.archived &&
                 !status.hidden &&
-                !status.modHidden
+                !status.modHidden &&
+                (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw)
         );
 
     res.render("templates/bots/index", {

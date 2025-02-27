@@ -195,6 +195,7 @@ new Promise<void>((resolve, reject) => {
         discord.bot.once("ready", async () => {
             setTimeout(async () => {
                 await featuredCache.updateFeaturedBots();
+                await featuredCache.updateFeaturedSFWBots();
                 await discord.postMetric();
             }, 10000);
 

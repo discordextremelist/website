@@ -744,7 +744,7 @@ router.post(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
-        let gamePreferences: boolean, experiments: boolean, theme: number;
+        let gamePreferences: boolean, experiments: boolean, theme: number, hideNSFW: boolean;
 
         // Refer to docs/THEME.md in the root directory of this project.
         switch (req.body.theme) {
@@ -760,8 +760,8 @@ router.post(
         }
 
         gamePreferences = req.body.noGames !== "on";
-
         experiments = req.body.experiments === "on";
+        hideNSFW = req.body.hideNSFW === "on";
 
         const foreground = functions.getForeground(req.body.iconColour);
 
@@ -775,7 +775,8 @@ router.post(
                         defaultForegroundColour: foreground,
                         enableGames: gamePreferences,
                         experiments: experiments,
-                        theme: theme
+                        theme: theme,
+                        hideNSFW: hideNSFW
                     }
                 }
             }
@@ -797,7 +798,8 @@ router.post(
                             req.user.db.preferences.defaultForegroundColour,
                         enableGames: req.user.db.preferences.enableGames,
                         experiments: req.user.db.preferences.experiments,
-                        theme: theme
+                        theme: theme,
+                        hideNSFW: req.user.db.preferences.hideNSFW
                     }
                 },
                 new: {
@@ -807,7 +809,8 @@ router.post(
                         defaultForegroundColour: foreground,
                         enableGames: gamePreferences,
                         experiments: experiments,
-                        theme: theme
+                        theme: theme,
+                        hideNSFW: hideNSFW
                     }
                 }
             }

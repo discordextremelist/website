@@ -62,7 +62,7 @@ dependencies:
     version: 4.3.7
   del-i18n:
     specifier: github:discordextremelist/i18n
-    version: github.com/discordextremelist/i18n/d0992a45466ea8fb74dd9d926f9384be70d0dc2d
+    version: github.com/discordextremelist/i18n/0cf4664228a69785b7cb3aba81b87af7ba1c979f
   discord.js:
     specifier: ^14.11.0
     version: 14.18.0
@@ -6893,8 +6893,8 @@ packages:
       - yaml
     dev: false
 
-  github.com/discordextremelist/i18n/d0992a45466ea8fb74dd9d926f9384be70d0dc2d:
-    resolution: {tarball: https://codeload.github.com/discordextremelist/i18n/tar.gz/d0992a45466ea8fb74dd9d926f9384be70d0dc2d}
+  github.com/discordextremelist/i18n/0cf4664228a69785b7cb3aba81b87af7ba1c979f:
+    resolution: {tarball: https://codeload.github.com/discordextremelist/i18n/tar.gz/0cf4664228a69785b7cb3aba81b87af7ba1c979f}
     name: del-i18n
     version: 0.0.0
     dev: false

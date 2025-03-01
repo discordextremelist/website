@@ -2050,7 +2050,6 @@ router.post(
                 message: res.__("common.error.report")
             });
         }
-        
     }
 );
 

@@ -110,6 +110,18 @@
                                     <i aria-hidden="true" class="fas fa-arrow-alt-down"></i>
                                 </span>
                             </a>
+                            <% if (req.user && req.user.id !== bot.owner.id) { %>
+                                <%-
+                                    include("../../partials/button.ejs", {
+                                        className: "button is-danger",
+                                        icon: "fas fa-warning",
+                                        tag: "a",
+                                        message: __("common.report"),
+                                        href: "",
+                                        additional: "id=\"report\""
+                                    });
+                                %>
+                            <% } %>
                         </div>
                     <% } else { %>
                         <div class="buttons <% if (mobile) { %>is-centered<% } %>">
@@ -815,7 +827,7 @@
     }
     function resetReportFlow() {
         document.getElementById("reportModalCard").innerHTML = 
-            `<%- include("../../partials/cards/reportModalCard.ejs") %>`;
+            `<%- include("../../partials/cards/reportModalCard.ejs", { isBot: true, name: bot.name }) %>`;
     }
     function doReport() {
         document.getElementById("doReportButton").classList.add("is-loading");
@@ -881,7 +893,7 @@
 <div class="modal report">
     <div class="modal-background" id="transferReportModalBg"></div>
     <div class="modal-card" id="reportModalCard">
-        <%- include("../../partials/cards/reportModalCard.ejs") %>
+        <%- include("../../partials/cards/reportModalCard.ejs", { isBot: true, name: bot.name }) %>
     </div>
 </div>
 

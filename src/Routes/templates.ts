@@ -388,6 +388,67 @@ router.get(
     }
 );
 
+
+
+router.post(
+    "/:id/report",
+    variables,
+    permission.auth,
+    async (req: Request, res: Response) => {
+        const template = await templateCache.getTemplate(req.params.id);
+
+        if (!template)
+            return res.status(404).json({
+                error: true,
+                status: 404,
+                message: res.__("common.error.bot.404")
+            });
+
+        if (template.owner.id === req.user.id)
+            return res.status(403).json({
+                error: true,
+                status: 403,
+                message: res.__("common.error.report.self")
+            });
+
+        try {
+            const embed = new EmbedBuilder();
+            embed.setColor(0x2f3136);
+            embed.setTitle("Template Report");
+            embed.setURL(`${settings.website.url}/bots/${template._id}`);
+            embed.addFields(
+                { name: "Reason", value: req.body.reason ? req.body.reason : "None provided." },
+                { name: "Additional information", value: req.body.additionalInfo ? req.body.additionalInfo : "None provided." },
+            );
+
+        
+            await discord.channels.alerts
+                .send({
+                    content: `${settings.emoji.report} **${functions.escapeFormatting(
+                        req.user.db.fullUsername
+                    )}** \`(${
+                        req.user.id
+                    })\` reported template **${functions.escapeFormatting(
+                        template.name
+                    )}** \`(${template._id})\``,
+                    embeds: [embed]
+                })
+            
+            return res.status(200).json({
+                error: false,
+                status: 200,
+                message: res.__("common.report.done")
+            });
+        } catch (e) {
+            return res.status(500).json({
+                error: true,
+                status: 500,
+                message: res.__("common.error.report")
+            });
+        }
+    }
+);
+
 router.get(
     "/:id/edit",
     variables,

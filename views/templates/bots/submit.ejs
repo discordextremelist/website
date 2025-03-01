@@ -567,8 +567,6 @@ function doSubmit() {
 
             return response.json();
         }
-        
-        let modNotes = document.getElementById("modNotes").value;
 
         fetchPOST("<%= linkPrefix %>/bots/submit", {
             bot: document.getElementById("bot").checked,
@@ -592,7 +590,7 @@ function doSubmit() {
             shortDescription: document.getElementById("form_shortDescription").value,
             longDescription: document.getElementById("longDesc").value,
 
-            modNotes: modNotes,
+            modNotes: document.getElementById("modNotes").value,
 
             supportServer: document.getElementById("form_supportServer").value,
             website: document.getElementById("form_website").value,

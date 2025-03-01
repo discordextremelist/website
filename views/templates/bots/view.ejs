@@ -130,20 +130,22 @@
                                     <i aria-hidden="true" class="fas fa-arrow-alt-down"></i>
                                 </span>
                             </a>
+                            <% if (req.user && req.user.id !== bot.owner.id) { %>
+                                <%-
+                                    include("../../partials/button.ejs", {
+                                        className: "button is-danger",
+                                        icon: "fas fa-warning",
+                                        tag: "a",
+                                        message: __("common.report"),
+                                        href: "",
+                                        additional: "id=\"report\""
+                                    });
+                                %>
+                            <% } %>
                         </div>
                     <% } %>
                     <% if (req.user) { %>
                     <div class="buttons <% if (mobile) { %>is-centered<% } else { %>page<% } %>">
-                        <%-
-                            include("../../partials/button.ejs", {
-                                className: "button is-danger",
-                                icon: "fas fa-warning",
-                                tag: "a",
-                                message: __("common.report"),
-                                href: "",
-                                additional: "id=\"report\""
-                            });
-                        %>
                         <% if (bot.owner.id === req.user.id) { %>
                             <% if (bot.status.approved !== false) { %>
                                 <%-
@@ -783,69 +785,103 @@
     </div>
 </div>
 <script>
-    function reportFlow() {
-        document.getElementById("reportModalInner").innerHTML = 
-                "<label class=\"label\">Additional information</label>" +
-                "<textarea class=\"textarea\" placeholder=\"Please include as much information as possible.\"></textarea>";
+    function reportFlow(reasoni18n, reason) {
+        document.getElementById("reportModalTitle").innerText = reasoni18n;
+
+        document.getElementById("reportModalInner").innerHTML = `
+            <form method="POST">
+                    <div class="field">
+                        <label class="label"><%= __("common.report.additionalInfo") %></label>
+                        <textarea id="report_additionalInfo" name="report_additionalInfo" class="textarea" placeholder="<%= __("common.report.additionalInfo.placeholder") %>"></textarea>
+                    </div>
+                    <input type="hidden" id="report_reason" name="report_reason" value="${reason}" />`;
+
+        document.getElementById("reportModalFooter").innerHTML = `
+                <div class="buttons">
+                    <button class="button is-dark" onclick="resetReportFlow();">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fas fa-circle-arrow-left"></i>
+                        </span>
+                        <span><%= __("common.goback") %></span>
+                    </button>
+                    <button class="button is-success" id="doReportButton" onclick="doReport();">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fas fa-check-circle"></i>
+                        </span>
+                        <span><%= __("common.report") %></span>
+                    </button>
+                </div>
+            </form>`;
+    }
+    function resetReportFlow() {
+        document.getElementById("reportModalCard").innerHTML = 
+            `<%- include("../../partials/cards/reportModalCard.ejs") %>`;
+    }
+    function doReport() {
+        document.getElementById("doReportButton").classList.add("is-loading");
+
+        async function fetchPOST(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: "POST",
+                mode: "cors", 
+                cache: "no-cache", 
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(data)
+            });
+
+            return response.json();
+        }
+
+        fetchPOST("<%= linkPrefix %>/bots/<%= bot._id %>/report", {
+            reason: document.getElementById("report_reason").value,
+            additionalInfo: document.getElementById("report_additionalInfo").value
+        }).then(data => {
+
+            const modal = document.querySelector(".report");
+            const html = document.querySelector("html");
+
+            modal.classList.remove("is-active");
+            html.classList.remove("is-clipped");
+
+            resetReportFlow();
+
+            if (!data.error) {
+                bulmaToast.toast({
+                    message: data.message,
+                    type: "is-success",
+                    position: "bottom-right",
+                    duration: 2000,
+                    opacity: 0.75,
+                    animate: {
+                        in: "fadeInRight",
+                        out: "fadeOutRight"
+                    }
+                });
+            } else {
+                bulmaToast.toast({
+                    message: data.message,
+                    type: "is-danger",
+                    position: "bottom-right",
+                    duration: 2000,
+                    opacity: 0.75,
+                    animate: {
+                        in: "fadeInRight",
+                        out: "fadeOutRight"
+                    }
+                });
+            }
+        });
     }
 </script>
 <div class="modal report">
     <div class="modal-background" id="transferReportModalBg"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title"><%= __("common.report.thing") %></p>
-        </header>
-        <section class="modal-card-body">
-            <div id="reportModalInner">
-                <div class="buttons">
-                    <button class="button is-default is-fullwidth" onclick="reportFlow('NSFW Content');" data-reason="NSFW Content">
-                        <span class="icon">
-                            <i aria-hidden="true" class="fad fa-user-secret"></i>
-                        </span>
-                        <span>NSFW Content</span>
-                    </button>
-                    <button class="button is-default is-fullwidth" data-reason="API Abuse">
-                        <span class="icon">
-                            <i aria-hidden="true" class="fad fa-code"></i>
-                        </span>
-                        <span>API Abuse</span>
-                    </button>
-                    <button class="button is-default is-fullwidth" data-reason="Scam or Fraud">
-                        <span class="icon">
-                            <i aria-hidden="true" class="fad fa-hand-holding-dollar"></i>
-                        </span>
-                        <span>Scam or Fraud</span>
-                    </button>
-                    <button class="button is-default is-fullwidth" data-reason="Copycat">
-                        <span class="icon">
-                            <i aria-hidden="true" class="fad fa-clone"></i>
-                        </span>
-                        <span>Copycat / Clone</span>
-                    </button>
-                    <button class="button is-default is-fullwidth" data-reason="Unknown Application on Invite">
-                        <span class="icon">
-                            <i aria-hidden="true" class="fad fa-question-circle"></i>
-                        </span>
-                        <span>Unknown Application on Invite</span>
-                    </button>
-                    <button class="button is-default is-fullwidth" data-reason="Spam">
-                        <span class="icon">
-                            <i aria-hidden="true" class="fad fa-envelope-open-text"></i>
-                        </span>
-                        <span>Spam</span>
-                    </button>
-                    <button class="button is-default is-fullwidth" data-reason="Other">
-                        <span class="icon">
-                            <i aria-hidden="true" class="fad fa-ellipsis"></i>
-                        </span>
-                        <span>Other</span>
-                    </button>
-                </div>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <%= __("page.bots.report.note") %>
-        </footer>
+    <div class="modal-card" id="reportModalCard">
+        <%- include("../../partials/cards/reportModalCard.ejs") %>
     </div>
 </div>
 

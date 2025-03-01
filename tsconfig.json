@@ -6,7 +6,7 @@
         "module": "nodenext" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
 
         "lib": [
-            "es2021"
+            "es2024"
         ] /* Specify library files to be included in the compilation. */,
 
         "allowImportingTsExtensions": true,

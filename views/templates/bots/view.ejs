@@ -134,6 +134,16 @@
                     <% } %>
                     <% if (req.user) { %>
                     <div class="buttons <% if (mobile) { %>is-centered<% } else { %>page<% } %>">
+                        <%-
+                            include("../../partials/button.ejs", {
+                                className: "button is-danger",
+                                icon: "fas fa-warning",
+                                tag: "a",
+                                message: __("common.report"),
+                                href: "",
+                                additional: "id=\"report\""
+                            });
+                        %>
                         <% if (bot.owner.id === req.user.id) { %>
                             <% if (bot.status.approved !== false) { %>
                                 <%-
@@ -690,6 +700,7 @@
         <% } %>
         <script>document.querySelector("a#transferOwner").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".transferOwner");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal3").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
     <% } %>
+    <script>document.querySelector("a#report").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".report");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal4").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
 </div>
 <div class="modal setVanity">
     <div class="modal-background" id="vanityModalBg"></div>
@@ -770,8 +781,75 @@
             </footer>
         </form>
     </div>
-    <script>const modals=[".transferOwner",".setVanity",".deleteModal"];document.addEventListener("keydown",(e)=>{if(e.key=="Escape")for(const unsModal of modals){const modal=document.querySelector(unsModal);modal.classList.remove("is-active");modal.classList.remove("is-clipped")}})</script>
 </div>
+<script>
+    function reportFlow() {
+        document.getElementById("reportModalInner").innerHTML = 
+                "<label class=\"label\">Additional information</label>" +
+                "<textarea class=\"textarea\" placeholder=\"Please include as much information as possible.\"></textarea>";
+    }
+</script>
+<div class="modal report">
+    <div class="modal-background" id="transferReportModalBg"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title"><%= __("common.report.thing") %></p>
+        </header>
+        <section class="modal-card-body">
+            <div id="reportModalInner">
+                <div class="buttons">
+                    <button class="button is-default is-fullwidth" onclick="reportFlow('NSFW Content');" data-reason="NSFW Content">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fad fa-user-secret"></i>
+                        </span>
+                        <span>NSFW Content</span>
+                    </button>
+                    <button class="button is-default is-fullwidth" data-reason="API Abuse">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fad fa-code"></i>
+                        </span>
+                        <span>API Abuse</span>
+                    </button>
+                    <button class="button is-default is-fullwidth" data-reason="Scam or Fraud">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fad fa-hand-holding-dollar"></i>
+                        </span>
+                        <span>Scam or Fraud</span>
+                    </button>
+                    <button class="button is-default is-fullwidth" data-reason="Copycat">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fad fa-clone"></i>
+                        </span>
+                        <span>Copycat / Clone</span>
+                    </button>
+                    <button class="button is-default is-fullwidth" data-reason="Unknown Application on Invite">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fad fa-question-circle"></i>
+                        </span>
+                        <span>Unknown Application on Invite</span>
+                    </button>
+                    <button class="button is-default is-fullwidth" data-reason="Spam">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fad fa-envelope-open-text"></i>
+                        </span>
+                        <span>Spam</span>
+                    </button>
+                    <button class="button is-default is-fullwidth" data-reason="Other">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fad fa-ellipsis"></i>
+                        </span>
+                        <span>Other</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <%= __("page.bots.report.note") %>
+        </footer>
+    </div>
+</div>
+
+<script>const modals=[".transferOwner",".report",".setVanity",".deleteModal"];document.addEventListener("keydown",(e)=>{if(e.key=="Escape")for(const unsModal of modals){const modal=document.querySelector(unsModal);modal.classList.remove("is-active");modal.classList.remove("is-clipped")}})</script>
 
 <% if (req.user && bot.owner.id === req.user.id || req.user && req.user.db.rank.mod === true) { %>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" integrity="sha384-OHBBOqpYHNsIqQy8hL1U+8OXf9hH6QRxi0+EODezv82DfnZoV7qoHAZDwMwEJvSw" crossorigin="anonymous">

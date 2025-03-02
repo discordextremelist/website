@@ -1,0 +1,65 @@
+<header class="modal-card-head">
+    <p class="modal-card-title" id="reportModalTitle"><%= __("common.report.thing", name) %></p>
+</header>
+<section class="modal-card-body">
+    <div id="reportModalInner">
+        <p><%= __("common.report.note") %></p>
+        <br />
+        <div class="buttons">
+            <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("common.report.reason.nsfw") %>', 'NSFW Content');">
+                <span class="icon">
+                    <i aria-hidden="true" class="fad fa-user-secret"></i>
+                </span>
+                <span><%= __("common.report.reason.nsfw") %></span>
+            </button>
+            <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("common.report.reason.scam") %>', 'Scam or Fraud');">
+                <span class="icon">
+                    <i aria-hidden="true" class="fad fa-hand-holding-dollar"></i>
+                </span>
+                <span><%= __("common.report.reason.scam") %></span>
+            </button>
+            <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("common.report.reason.spam") %>', 'Spam');">
+                <span class="icon">
+                    <i aria-hidden="true" class="fad fa-envelope-open-text"></i>
+                </span>
+                <span><%= __("common.report.reason.spam") %></span>
+            </button>
+            <% if (isBot) { %>
+                <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("page.bots.report.reason.apiAbuse") %>', 'API Abuse');">
+                    <span class="icon">
+                        <i aria-hidden="true" class="fad fa-code"></i>
+                    </span>
+                    <span><%= __("page.bots.report.reason.apiAbuse") %></span>
+                </button>
+                <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("page.bots.report.reason.clone") %>', 'Copycat / Clone');">
+                    <span class="icon">
+                        <i aria-hidden="true" class="fad fa-clone"></i>
+                    </span>
+                    <span><%= __("page.bots.report.reason.clone") %></span>
+                </button>
+                <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("page.bots.report.reason.unknownApplication") %>', 'Unknown Application on Invite');">
+                    <span class="icon">
+                        <i aria-hidden="true" class="fad fa-question-circle"></i>
+                    </span>
+                    <span><%= __("page.bots.report.reason.unknownApplication") %></span>
+                </button>
+            <% } else { %>
+                <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("common.report.reason.brokenLink") %>', 'Unknown Server or Template on Join');">
+                    <span class="icon">
+                        <i aria-hidden="true" class="fad fa-question-circle"></i>
+                    </span>
+                    <span><%= __("common.report.reason.brokenLink") %></span>
+                </button>
+            <% } %>
+            <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("common.report.reason.other") %>', 'Other');">
+                <span class="icon">
+                    <i aria-hidden="true" class="fad fa-ellipsis"></i>
+                </span>
+                <span><%= __("common.report.reason.other") %></span>
+            </button>
+        </div>
+    </div>
+</section>
+<footer class="modal-card-foot" id="reportModalFooter">
+    <%= __("common.report.warning") %>
+</footer>

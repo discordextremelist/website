@@ -79,7 +79,8 @@
     "prepare": "pnpm run snyk-protect",
     "pretty": "npx prettier --write src/",
     "sentry:build": "rm -rf dist/ && tsc",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org=delly --project=website --release=$npm_package_version ./dist && sentry-cli sourcemaps upload --org=delly --project=website --release=$npm_package_version ./dist"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org=delly --project=website --release=$npm_package_version ./dist && sentry-cli sourcemaps upload --org=delly --project=website --release=$npm_package_version ./dist",
+    "i18n:reinstall": "pnpm remove del-i18n && pnpm i discordextremelist/i18n --save"
   },
   "repository": {
     "type": "git",

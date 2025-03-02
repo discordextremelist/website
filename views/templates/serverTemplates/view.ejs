@@ -129,6 +129,18 @@
                             </span>
                             <span><%= __("page.templates.useTemplate") %></span>
                         </a>
+                        <% if (req.user && req.user.id !== template.owner.id) { %>
+                            <%-
+                                include("../../partials/button.ejs", {
+                                    className: "button is-danger",
+                                    icon: "fas fa-warning",
+                                    tag: "a",
+                                    message: __("common.report"),
+                                    href: "",
+                                    additional: "id=\"report\""
+                                });
+                            %>
+                        <% } %>
                     </div>
                     <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
                         <%- 
@@ -411,16 +423,117 @@
             </div>
         </footer>
     </div>
-    <script>
-        document.querySelector("a#deleteModal")?.addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})});
-        (async () => {
-            const template = await (await fetch('https://discord.com/api/v10/guilds/templates/<%= template._id %>')).json()
-            if (!template.name) return
-            document.querySelector('#templateName').innerText = template.name
-            document.querySelector('#uses').innerText = '<%= __("page.templates.used.times") %>'.replace('%s', template.usage_count.toLocaleString("<%= locale %>"))
-        })()
-    </script>
 </div>
+<script>
+    function reportFlow(reasoni18n, reason) {
+        document.getElementById("reportModalTitle").innerText = reasoni18n;
+
+        document.getElementById("reportModalInner").innerHTML = `
+            <form method="POST">
+                    <div class="field">
+                        <label class="label"><%= __("common.report.additionalInfo") %></label>
+                        <textarea id="report_additionalInfo" name="report_additionalInfo" class="textarea" placeholder="<%= __("common.report.additionalInfo.placeholder") %>"></textarea>
+                    </div>
+                    <input type="hidden" id="report_reason" name="report_reason" value="${reason}" />`;
+
+        document.getElementById("reportModalFooter").innerHTML = `
+                <div class="buttons">
+                    <button class="button is-dark" onclick="resetReportFlow();">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fas fa-circle-arrow-left"></i>
+                        </span>
+                        <span><%= __("common.goback") %></span>
+                    </button>
+                    <button class="button is-success" id="doReportButton" onclick="doReport();">
+                        <span class="icon">
+                            <i aria-hidden="true" class="fas fa-check-circle"></i>
+                        </span>
+                        <span><%= __("common.report") %></span>
+                    </button>
+                </div>
+            </form>`;
+    }
+    function resetReportFlow() {
+        document.getElementById("reportModalCard").innerHTML = 
+            `<%- include("../../partials/cards/reportModalCard.ejs", { isBot: false, name: template.name }) %>`;
+    }
+    function doReport() {
+        document.getElementById("doReportButton").classList.add("is-loading");
+
+        async function fetchPOST(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: "POST",
+                mode: "cors", 
+                cache: "no-cache", 
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(data)
+            });
+
+            return response.json();
+        }
+
+        fetchPOST("<%= linkPrefix %>/templates/<%= template._id %>/report", {
+            reason: document.getElementById("report_reason").value,
+            additionalInfo: document.getElementById("report_additionalInfo").value
+        }).then(data => {
+
+            const modal = document.querySelector(".report");
+            const html = document.querySelector("html");
+
+            modal.classList.remove("is-active");
+            html.classList.remove("is-clipped");
+
+            resetReportFlow();
+
+            if (!data.error) {
+                bulmaToast.toast({
+                    message: data.message,
+                    type: "is-success",
+                    position: "bottom-right",
+                    duration: 2000,
+                    opacity: 0.75,
+                    animate: {
+                        in: "fadeInRight",
+                        out: "fadeOutRight"
+                    }
+                });
+            } else {
+                bulmaToast.toast({
+                    message: data.message,
+                    type: "is-danger",
+                    position: "bottom-right",
+                    duration: 2000,
+                    opacity: 0.75,
+                    animate: {
+                        in: "fadeInRight",
+                        out: "fadeOutRight"
+                    }
+                });
+            }
+        });
+    }
+</script>
+<div class="modal report">
+    <div class="modal-background" id="transferReportModalBg"></div>
+    <div class="modal-card" id="reportModalCard">
+        <%- include("../../partials/cards/reportModalCard.ejs", { isBot: false, name: template.name }) %>
+    </div>
+</div>
+<script>
+    document.querySelector("a#deleteModal")?.addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})});
+    document.querySelector("a#report")?.addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".report");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})});
+    (async () => {
+        const template = await (await fetch('https://discord.com/api/v10/guilds/templates/<%= template._id %>')).json()
+        if (!template.name) return
+        document.querySelector('#templateName').innerText = template.name
+        document.querySelector('#uses').innerText = '<%= __("page.templates.used.times") %>'.replace('%s', template.usage_count.toLocaleString("<%= locale %>"))
+    })()
+</script>
 <% if (phone) { %>
     <script>
         function collapseToggle(s, i) {

@@ -67,6 +67,7 @@ declare global {
             enableGames: boolean;
             experiments: boolean;
             theme: number;
+            hideNSFW: undefined | boolean;
         };
         profile: {
             bio: string;
@@ -253,6 +254,10 @@ declare global {
             submitted: number;
             approved: number;
             edited: number;
+        };
+        labels: undefined | {
+            nsfw: boolean;
+            ai: boolean;
         };
         status: {
             approved: boolean;

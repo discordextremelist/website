@@ -95,7 +95,7 @@ dependencies:
     version: 4.28.5
   lib-comparison:
     specifier: github:advaith1/libs
-    version: github.com/advaith1/libs/59e3eed95a49da1bf726b4d29256bc961d5797e6(@types/node@18.19.76)(ioredis@4.28.5)(typescript@5.7.3)
+    version: github.com/advaith1/libs/59e3eed95a49da1bf726b4d29256bc961d5797e6(@types/node@18.19.76)(ioredis@4.28.5)(typescript@5.8.2)
   markdown-it:
     specifier: ^14.1.0
     version: 14.1.0
@@ -124,8 +124,8 @@ dependencies:
     specifier: ^2.12.1
     version: 2.14.0
   typescript:
-    specifier: ^5.3.3
-    version: 5.7.3
+    specifier: ^5.8.2
+    version: 5.8.2
   ua-parser-js:
     specifier: ^2.0.2
     version: 2.0.2
@@ -3243,7 +3243,7 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /astro@5.3.0(@types/node@18.19.76)(ioredis@4.28.5)(sass@1.77.8)(typescript@5.7.3):
+  /astro@5.3.0(@types/node@18.19.76)(ioredis@4.28.5)(sass@1.77.8)(typescript@5.8.2):
     resolution: {integrity: sha512-e88l/Yk/6enR/ZDddLbqtM+oblBFk5mneNSmNesyVYGL/6Dj4UA67GPAZOk79VxT5dbLlclZSyyw/wlxN1aj3A==}
     engines: {node: ^18.17.1 || ^20.3.0 || >=22.0.0, npm: '>=9.6.5', pnpm: '>=7.1.0'}
     hasBin: true
@@ -3293,7 +3293,7 @@ packages:
       semver: 7.7.1
       shiki: 1.29.2
       tinyexec: 0.3.2
-      tsconfck: 3.1.5(typescript@5.7.3)
+      tsconfck: 3.1.5(typescript@5.8.2)
       ultrahtml: 1.5.3
       unist-util-visit: 5.0.0
       unstorage: 1.14.4(ioredis@4.28.5)
@@ -3306,7 +3306,7 @@ packages:
       yocto-spinner: 0.2.0
       zod: 3.24.2
       zod-to-json-schema: 3.24.1(zod@3.24.2)
-      zod-to-ts: 1.2.0(typescript@5.7.3)(zod@3.24.2)
+      zod-to-ts: 1.2.0(typescript@5.8.2)(zod@3.24.2)
     optionalDependencies:
       sharp: 0.33.5
     transitivePeerDependencies:
@@ -6352,7 +6352,7 @@ packages:
     resolution: {integrity: sha512-ufKpbmrugz5Aou4wcr5Wc1UUFWOLhq+Fm6qa6P0w0K5Qw2yhaUoiWszhCVuNQyNwrlGiscHOmqYoAox1PtvgjA==}
     dev: false
 
-  /tsconfck@3.1.5(typescript@5.7.3):
+  /tsconfck@3.1.5(typescript@5.8.2):
     resolution: {integrity: sha512-CLDfGgUp7XPswWnezWwsCRxNmgQjhYq3VXHM0/XIRxhVrKw0M1if9agzryh1QS3nxjCROvV+xWxoJO1YctzzWg==}
     engines: {node: ^18 || >=20}
     hasBin: true
@@ -6362,7 +6362,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      typescript: 5.7.3
+      typescript: 5.8.2
     dev: false
 
   /tslib@2.8.1:
@@ -6382,8 +6382,8 @@ packages:
       mime-types: 2.1.35
     dev: false
 
-  /typescript@5.7.3:
-    resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
+  /typescript@5.8.2:
+    resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: false
@@ -6832,13 +6832,13 @@ packages:
       zod: 3.24.2
     dev: false
 
-  /zod-to-ts@1.2.0(typescript@5.7.3)(zod@3.24.2):
+  /zod-to-ts@1.2.0(typescript@5.8.2)(zod@3.24.2):
     resolution: {integrity: sha512-x30XE43V+InwGpvTySRNz9kB7qFU8DlyEy7BsSTCHPH1R0QasMmHWZDCzYm6bVXtj/9NNJAZF3jW8rzFvH5OFA==}
     peerDependencies:
       typescript: ^4.9.4 || ^5.0.2
       zod: ^3
     dependencies:
-      typescript: 5.7.3
+      typescript: 5.8.2
       zod: 3.24.2
     dev: false
 
@@ -6850,13 +6850,13 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: false
 
-  github.com/advaith1/libs/59e3eed95a49da1bf726b4d29256bc961d5797e6(@types/node@18.19.76)(ioredis@4.28.5)(typescript@5.7.3):
+  github.com/advaith1/libs/59e3eed95a49da1bf726b4d29256bc961d5797e6(@types/node@18.19.76)(ioredis@4.28.5)(typescript@5.8.2):
     resolution: {tarball: https://codeload.github.com/advaith1/libs/tar.gz/59e3eed95a49da1bf726b4d29256bc961d5797e6}
     id: github.com/advaith1/libs/59e3eed95a49da1bf726b4d29256bc961d5797e6
     name: lib-comparison
     version: 0.0.0
     dependencies:
-      astro: 5.3.0(@types/node@18.19.76)(ioredis@4.28.5)(sass@1.77.8)(typescript@5.7.3)
+      astro: 5.3.0(@types/node@18.19.76)(ioredis@4.28.5)(sass@1.77.8)(typescript@5.8.2)
       bulma: 0.9.4
       sass: 1.77.8
     transitivePeerDependencies:

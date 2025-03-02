@@ -153,6 +153,26 @@
             </div>
             <br>
             <br>
+            <h3 class="is-size-3 has-text-default"><%= __("common.labels") %></h3>
+            <br>
+            <div class="field">
+                <label for="aiLabelSwitch" class="label has-text-shadow-blue"><%= __("page.bots.labels.ai.question") %></label>
+                <p style="padding-bottom: 10px;" class="is-size-7 has-text-shadow-blue">
+                    <%= __("page.bots.labels.ai.details") %>
+                </p>
+                <input id="form_aiLabelSwitch" type="checkbox" name="useCustomColour" class="switch is-rounded is-shadow-blue" <% if (bot.labels?.ai) { %>checked<% } %>>
+                <label for="form_aiLabelSwitch"></label>
+            </div>
+            <div class="field">
+                <label for="nsfwLabelSwitch" class="label has-text-pink"><%= __("page.bots.labels.nsfw.question") %></label>
+                <p style="padding-bottom: 10px;" class="is-size-7 has-text-pink">
+                    <%= __("page.bots.labels.nsfw.details") %>
+                </p>
+                <input id="form_nsfwLabelSwitch" type="checkbox" name="useCustomColour" class="switch is-rounded is-pink" <% if (bot.labels?.nsfw) { %>checked<% } %>>
+                <label for="form_nsfwLabelSwitch"></label>
+            </div>
+            <br>
+            <br>
             <h3 class="is-size-3 has-text-default"><%= __("page.form.category.links") %></h3>
             <br>
             <div class="field">
@@ -491,6 +511,9 @@ function doSubmit() {
             moderation: document.getElementById("moderation").checked,
             multipurpose: document.getElementById("multipurpose").checked,
             music: document.getElementById("music").checked,
+
+            ai: document.getElementById("form_aiLabelSwitch").checked,
+            nsfw: document.getElementById("form_nsfwLabelSwitch").checked,
             
             shortDescription: document.getElementById("form_shortDescription").value,
             longDescription: document.getElementById("longDesc").value,

@@ -236,6 +236,55 @@ $switch-focus: 1px dotted $grey !default
 					&:after
 						background: $color
 
+	// .switch.is-grey-lighter
+	$shadow-blue-name: "shadow-blue";
+	$shadow-blue-color: #7697a4;
+	&.is-#{$shadow-blue-name}
+		+ label
+			.switch-active
+				display: none
+			.switch-inactive
+				display: inline-block
+		&:checked
+			+ label
+				&::before,
+				&:before
+					background: $shadow-blue-color
+				.switch-active
+					display: inline-block
+				.switch-inactive
+					display: none
+		&.is-outlined
+			&:checked
+				+ label
+					&::before,
+					&:before
+						background-color: transparent
+						border-color: $shadow-blue-color !important
+					&::after,
+					&:after
+						background: $shadow-blue-color
+		&.is-thin
+			&.is-outlined
+				+ label
+					&::after,
+					&:after
+						box-shadow: none
+	&.is-unchecked-#{$shadow-blue-name}
+		+ label
+			&::before,
+			&:before
+				background: $shadow-blue-color
+		&.is-outlined
+			+ label
+				&::before,
+				&:before
+					background-color: transparent
+					border-color: $shadow-blue-color !important
+				&::after,
+				&:after
+					background: $shadow-blue-color
+
 .field-body
 	.switch[type="checkbox"]
 		+ label

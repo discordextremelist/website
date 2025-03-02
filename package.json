@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "del-website",
-  "version": "5.6.25-Release",
+  "version": "5.7.0-Alpha.1",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
   "main": "src/app.ts",
   "directories": {
@@ -45,7 +45,7 @@
     "passport-discord": "^0.1.4",
     "passport-oauth2-refresh": "^2.1.0",
     "sanitize-html": "^2.12.1",
-    "typescript": "^5.3.3",
+    "typescript": "^5.8.2",
     "ua-parser-js": "^2.0.2"
   },
   "devDependencies": {

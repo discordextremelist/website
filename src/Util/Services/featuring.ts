@@ -25,6 +25,11 @@ export async function getFeaturedBots(): Promise<delBot[]> {
     return JSON.parse(bots);
 }
 
+export async function getFeaturedSFWBots(): Promise<delBot[]> {
+    const bots = await global.redis?.get("featured_sfw_bots");
+    return JSON.parse(bots);
+}
+
 export async function getFeaturedServers(): Promise<delServer[]> {
     const servers = await global.redis?.get("featured_servers");
     return JSON.parse(servers);
@@ -89,6 +94,61 @@ export async function updateFeaturedBots() {
     await global.redis?.set("featured_bots", JSON.stringify(bots));
 }
 
+export async function updateFeaturedSFWBots() {
+    const statuses = (await global.redis?.hgetall("statuses")) as Record<
+        string,
+        PresenceUpdateStatus
+    >;
+    const bots = functions
+        .shuffleArray(
+            (
+                (await global.db
+                    .collection<delBot>("bots")
+                    .find()
+                    .toArray()) as delBot[]
+            ).filter(
+                ({ _id, status, scopes, userFlags, labels }) =>
+                    status.approved &&
+                    !status.siteBot &&
+                    !status.archived &&
+                    !status.hidden &&
+                    !status.modHidden &&
+                    !labels?.nsfw &&
+                    ((statuses[_id] &&
+                        statuses[_id] !== PresenceUpdateStatus.Offline) ||
+                        !scopes?.bot ||
+                        userFlags === undefined ||
+                        (userFlags && UserFlags.BotHTTPInteractions))
+            )
+        )
+        .slice(0, 6);
+
+    for (const bot of bots) {
+        delete bot.clientID;
+        delete bot.prefix;
+        delete bot.library;
+        delete bot.tags;
+        delete bot.serverCount;
+        delete bot.shardCount;
+        delete bot.token;
+        delete bot.longDesc;
+        delete bot.modNotes;
+        delete bot.editors;
+        delete bot.owner;
+        delete bot.votes;
+        delete bot.links.support;
+        delete bot.links.website;
+        delete bot.links.donation;
+        delete bot.links.repo;
+        delete bot.links.privacyPolicy;
+        delete bot.social;
+        delete bot.theme;
+        delete bot.widgetbot;
+    }
+
+    await global.redis?.set("featured_sfw_bots", JSON.stringify(bots));
+}
+
 export async function updateFeaturedServers() {
     const servers = functions
         .shuffleArray(
@@ -146,6 +206,7 @@ export async function updateFeaturedTemplates() {
 
 setInterval(async () => {
     await updateFeaturedBots();
+    await updateFeaturedSFWBots();
     await updateFeaturedServers();
     await updateFeaturedTemplates();
 }, 900000);

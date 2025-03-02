@@ -68,7 +68,7 @@ function botType(bodyType: string): number {
     return type;
 }
 
-router.get("/search", (req: Request, res: Response) => {
+router.get("/search", (_req: Request, res: Response) => {
     res.redirect("/search");
 });
 
@@ -662,8 +662,8 @@ router.post(
                         modHidden: false
                     },
                     labels: {
-                        ai: req.body.ai ? true : false,
-                        nsfw: req.body.nsfw ? true : false
+                        ai: !!req.body.ai,
+                        nsfw: !!req.body.nsfw
                     }
                 } satisfies delBot);
 
@@ -751,8 +751,8 @@ router.post(
                                 modHidden: false
                             },
                             labels: {
-                                ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false
+                                ai: !!req.body.ai,
+                                nsfw: !!req.body.nsfw
                             }
                         } satisfies delBot
                     }
@@ -1134,7 +1134,7 @@ router.get(
             allowVulnerableTags: true,
             disallowedTagsMode: "escape",
             transformTags: {
-                iframe: function (tagName, attribs) {
+                iframe: function (_tagName, attribs) {
                     attribs.sandbox = "allow-forms";
                     return {
                         tagName: "iframe",
@@ -1696,8 +1696,8 @@ router.post(
                                 server: req.body.widgetServer
                             },
                             labels: {
-                                ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false
+                                ai: !!req.body.ai,
+                                nsfw: !!req.body.nsfw
                             },
                             "date.edited": Date.now()
                         }
@@ -1796,8 +1796,8 @@ router.post(
                                 server: req.body.widgetServer
                             },
                             labels: {
-                                ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false
+                                ai: !!req.body.ai,
+                                nsfw: !!req.body.nsfw
                             }
                         } satisfies Partial<delBot>
                     }
@@ -1910,7 +1910,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         allowedAttributes: htmlRef.standard.attributes,
         allowVulnerableTags: true,
         transformTags: {
-            iframe: function (tagName, attribs) {
+            iframe: function (_tagName, attribs) {
                 attribs.sandbox = "allow-forms";
                 return {
                     tagName: "iframe",
@@ -3166,8 +3166,8 @@ router.post(
                                 edited: 0
                             },
                             labels: {
-                                ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false
+                                ai: !!req.body.ai,
+                                nsfw: !!req.body.nsfw
                             },
                             "status.archived": false
                         }
@@ -3272,8 +3272,8 @@ router.post(
                                 archived: false
                             },
                             labels: {
-                                ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false
+                                ai: !!req.body.ai,
+                                nsfw: !!req.body.nsfw
                             }
                         } satisfies partialBot
                     }

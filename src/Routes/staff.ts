@@ -68,7 +68,7 @@ router.get(
     "/queue",
     variables,
     permission.mod,
-    (req: Request, res: Response) => {
+    (_req: Request, res: Response) => {
         res.redirect("/bot_queue");
     }
 );
@@ -962,7 +962,7 @@ router.get(
     "/site-manager",
     variables,
     permission.mod,
-    async (req: Request, res: Response) => {
+    async (_req: Request, res: Response) => {
         res.redirect("/");
     }
 );

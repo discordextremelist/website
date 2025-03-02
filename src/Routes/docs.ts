@@ -25,7 +25,7 @@ import { variables } from "../Util/Function/variables.ts";
 
 const router = express.Router();
 
-router.get("/", variables, async (req: Request, res: Response, next) => {
+router.get("/", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.docs");
 
     res.render("templates/docs/index", {

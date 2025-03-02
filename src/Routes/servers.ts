@@ -51,7 +51,7 @@ import type { ParsedQs } from "qs";
 
 const md = new mdi();
 const router = express.Router();
-let reviewRequired = false; // Needs to be outside of the functions or it cannot be referenced outside of x function - AJ
+let reviewRequired = false; // Needs to be outside the functions, or it cannot be referenced outside x function - AJ
 
 function serverType(bodyType: string): number {
     let type: serverReasons = parseInt(bodyType);

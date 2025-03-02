@@ -34,6 +34,7 @@ const router = express.Router();
 
 const nickSorter = (a, b) =>
     (a.nick || a.user.username).localeCompare(b.nick || b.user.username);
+
 function sortAll() {
     let members = discord.guilds.main.members as GuildMemberManager;
     if (!members) throw new Error("Fetching members failed!");
@@ -322,7 +323,7 @@ router.get("/servers", variables, async (req: Request, res: Response) => {
     const allServers = await serverCache.getAllServers();
     const servers = [...allServers]
         .slice(15 * Number(req.query.page) - 15, 15 * Number(req.query.page))
-        .filter(({ _id, status }) => status && !status.reviewRequired);
+        .filter(({ status }) => status && !status.reviewRequired);
 
     res.render("templates/servers/index", {
         title: res.__("common.servers.discord"),

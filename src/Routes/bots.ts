@@ -663,7 +663,7 @@ router.post(
                     },
                     labels: {
                         ai: req.body.ai ? true : false,
-                        nsfw: req.body.nsfw ? true : false,
+                        nsfw: req.body.nsfw ? true : false
                     }
                 } satisfies delBot);
 
@@ -752,7 +752,7 @@ router.post(
                             },
                             labels: {
                                 ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false,
+                                nsfw: req.body.nsfw ? true : false
                             }
                         } satisfies delBot
                     }
@@ -1697,7 +1697,7 @@ router.post(
                             },
                             labels: {
                                 ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false,
+                                nsfw: req.body.nsfw ? true : false
                             },
                             "date.edited": Date.now()
                         }
@@ -1753,7 +1753,7 @@ router.post(
                             },
                             labels: {
                                 ai: botExists.labels?.ai,
-                                nsfw: botExists.labels?.nsfw,
+                                nsfw: botExists.labels?.nsfw
                             }
                         } satisfies Partial<delBot>,
                         new: {
@@ -1797,7 +1797,7 @@ router.post(
                             },
                             labels: {
                                 ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false,
+                                nsfw: req.body.nsfw ? true : false
                             }
                         } satisfies Partial<delBot>
                     }
@@ -2041,23 +2041,29 @@ router.post(
             embed.setTitle("Bot Report");
             embed.setURL(`${settings.website.url}/bots/${bot._id}`);
             embed.addFields(
-                { name: "Reason", value: req.body.reason ? req.body.reason : "None provided." },
-                { name: "Additional information", value: req.body.additionalInfo ? req.body.additionalInfo : "None provided." },
+                {
+                    name: "Reason",
+                    value: req.body.reason ? req.body.reason : "None provided."
+                },
+                {
+                    name: "Additional information",
+                    value: req.body.additionalInfo
+                        ? req.body.additionalInfo
+                        : "None provided."
+                }
             );
 
-        
-            await discord.channels.alerts
-                .send({
-                    content: `${settings.emoji.report} **${functions.escapeFormatting(
-                        req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
-                    })\` reported bot **${functions.escapeFormatting(
-                        bot.name
-                    )}** \`(${bot._id})\``,
-                    embeds: [embed]
-                })
-            
+            await discord.channels.alerts.send({
+                content: `${settings.emoji.report} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` reported bot **${functions.escapeFormatting(
+                    bot.name
+                )}** \`(${bot._id})\``,
+                embeds: [embed]
+            });
+
             return res.status(200).json({
                 error: false,
                 status: 200,
@@ -3161,7 +3167,7 @@ router.post(
                             },
                             labels: {
                                 ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false,
+                                nsfw: req.body.nsfw ? true : false
                             },
                             "status.archived": false
                         }
@@ -3220,7 +3226,7 @@ router.post(
                             },
                             labels: {
                                 ai: botExists.labels?.ai,
-                                nsfw: botExists.labels?.nsfw,
+                                nsfw: botExists.labels?.nsfw
                             }
                         } satisfies partialBot,
                         new: {
@@ -3267,7 +3273,7 @@ router.post(
                             },
                             labels: {
                                 ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false,
+                                nsfw: req.body.nsfw ? true : false
                             }
                         } satisfies partialBot
                     }
@@ -3359,7 +3365,7 @@ router.get(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            { 
+            {
                 $inc: {
                     "staffTracking.handledBots.allTime.total": 1,
                     "staffTracking.handledBots.allTime.approved": 1,
@@ -3368,7 +3374,7 @@ router.get(
                 }
             }
         );
-        
+
         await userCache.updateUser(req.user.id);
 
         await discord.channels.logs
@@ -3683,7 +3689,7 @@ router.post(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            { 
+            {
                 $inc: {
                     "staffTracking.handledBots.allTime.total": 1,
                     "staffTracking.handledBots.allTime.declined": 1,
@@ -3692,7 +3698,7 @@ router.post(
                 }
             }
         );
-        
+
         await userCache.updateUser(req.user.id);
 
         const type = botType(req.body.type);
@@ -3851,7 +3857,7 @@ router.post(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            { 
+            {
                 $inc: {
                     "staffTracking.handledBots.allTime.total": 1,
                     "staffTracking.handledBots.allTime.unapprove": 1,
@@ -3860,7 +3866,7 @@ router.post(
                 }
             }
         );
-        
+
         await userCache.updateUser(req.user.id);
 
         await global.db.collection("audit").insertOne({
@@ -4015,7 +4021,7 @@ router.post(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            { 
+            {
                 $inc: {
                     "staffTracking.handledBots.allTime.total": 1,
                     "staffTracking.handledBots.allTime.remove": 1,
@@ -4024,7 +4030,7 @@ router.post(
                 }
             }
         );
-        
+
         await userCache.updateUser(req.user.id);
 
         const type = botType(req.body.type);
@@ -4181,7 +4187,7 @@ router.post(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            { 
+            {
                 $inc: {
                     "staffTracking.handledBots.allTime.total": 1,
                     "staffTracking.handledBots.allTime.modHidden": 1,
@@ -4190,7 +4196,7 @@ router.post(
                 }
             }
         );
-        
+
         await userCache.updateUser(req.user.id);
 
         const type = botType(req.body.type);
@@ -4284,14 +4290,14 @@ router.get(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            { 
+            {
                 $inc: {
                     "staffTracking.handledBots.allTime.total": 1,
-                    "staffTracking.handledBots.thisWeek.total": 1,
+                    "staffTracking.handledBots.thisWeek.total": 1
                 }
             }
         );
-        
+
         await userCache.updateUser(req.user.id);
 
         discord.channels.logs

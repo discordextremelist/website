@@ -67,8 +67,12 @@ export async function botStatsUpdate() {
                             "staffTracking.handledBots.prevWeek.modHidden":
                                 user.staffTracking.handledBots.thisWeek
                                     .modHidden,
-                            "staffTracking.handledServers.prevWeek.declined": user.staffTracking.handledServers.thisWeek.declined,
-                            "staffTracking.handledServers.prevWeek.approved": user.staffTracking.handledServers.thisWeek.approved
+                            "staffTracking.handledServers.prevWeek.declined":
+                                user.staffTracking.handledServers.thisWeek
+                                    .declined,
+                            "staffTracking.handledServers.prevWeek.approved":
+                                user.staffTracking.handledServers.thisWeek
+                                    .approved
                         }
                     }
                 );

@@ -735,7 +735,10 @@ router.post(
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
-        let gamePreferences: boolean, experiments: boolean, theme: number, hideNSFW: boolean;
+        let gamePreferences: boolean,
+            experiments: boolean,
+            theme: number,
+            hideNSFW: boolean;
 
         // Refer to docs/THEME.md in the root directory of this project.
         switch (req.body.theme) {

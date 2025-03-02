@@ -388,8 +388,6 @@ router.get(
     }
 );
 
-
-
 router.post(
     "/:id/report",
     variables,
@@ -417,23 +415,29 @@ router.post(
             embed.setTitle("Template Report");
             embed.setURL(`${settings.website.url}/bots/${template._id}`);
             embed.addFields(
-                { name: "Reason", value: req.body.reason ? req.body.reason : "None provided." },
-                { name: "Additional information", value: req.body.additionalInfo ? req.body.additionalInfo : "None provided." },
+                {
+                    name: "Reason",
+                    value: req.body.reason ? req.body.reason : "None provided."
+                },
+                {
+                    name: "Additional information",
+                    value: req.body.additionalInfo
+                        ? req.body.additionalInfo
+                        : "None provided."
+                }
             );
 
-        
-            await discord.channels.alerts
-                .send({
-                    content: `${settings.emoji.report} **${functions.escapeFormatting(
-                        req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
-                    })\` reported template **${functions.escapeFormatting(
-                        template.name
-                    )}** \`(${template._id})\``,
-                    embeds: [embed]
-                })
-            
+            await discord.channels.alerts.send({
+                content: `${settings.emoji.report} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` reported template **${functions.escapeFormatting(
+                    template.name
+                )}** \`(${template._id})\``,
+                embeds: [embed]
+            });
+
             return res.status(200).json({
                 error: false,
                 status: 200,

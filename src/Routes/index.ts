@@ -159,7 +159,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
+                        (!req.user?.db?.preferences.hideNSFW ||
+                            !labels?.nsfw) &&
                         scopes?.slashCommands
                 );
                 break;
@@ -174,7 +175,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
+                        (!req.user?.db?.preferences.hideNSFW ||
+                            !labels?.nsfw) &&
                         tags.includes("Fun")
                 );
                 break;
@@ -189,7 +191,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
+                        (!req.user?.db?.preferences.hideNSFW ||
+                            !labels?.nsfw) &&
                         tags.includes("Social")
                 );
                 break;
@@ -204,7 +207,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
+                        (!req.user?.db?.preferences.hideNSFW ||
+                            !labels?.nsfw) &&
                         tags.includes("Economy")
                 );
                 break;
@@ -219,7 +223,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
+                        (!req.user?.db?.preferences.hideNSFW ||
+                            !labels?.nsfw) &&
                         tags.includes("Utility")
                 );
                 break;
@@ -234,7 +239,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
+                        (!req.user?.db?.preferences.hideNSFW ||
+                            !labels?.nsfw) &&
                         tags.includes("Moderation")
                 );
                 break;
@@ -249,7 +255,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
+                        (!req.user?.db?.preferences.hideNSFW ||
+                            !labels?.nsfw) &&
                         tags.includes("Multipurpose")
                 );
                 break;
@@ -264,7 +271,8 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
                         !status.archived &&
                         !status.hidden &&
                         !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw) &&
+                        (!req.user?.db?.preferences.hideNSFW ||
+                            !labels?.nsfw) &&
                         tags.includes("Music")
                 );
                 break;

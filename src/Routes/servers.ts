@@ -497,23 +497,29 @@ router.post(
             embed.setTitle("Server Report");
             embed.setURL(`${settings.website.url}/bots/${server._id}`);
             embed.addFields(
-                { name: "Reason", value: req.body.reason ? req.body.reason : "None provided." },
-                { name: "Additional information", value: req.body.additionalInfo ? req.body.additionalInfo : "None provided." },
+                {
+                    name: "Reason",
+                    value: req.body.reason ? req.body.reason : "None provided."
+                },
+                {
+                    name: "Additional information",
+                    value: req.body.additionalInfo
+                        ? req.body.additionalInfo
+                        : "None provided."
+                }
             );
 
-        
-            await discord.channels.alerts
-                .send({
-                    content: `${settings.emoji.report} **${functions.escapeFormatting(
-                        req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
-                    })\` reported server **${functions.escapeFormatting(
-                        server.name
-                    )}** \`(${server._id})\``,
-                    embeds: [embed]
-                })
-            
+            await discord.channels.alerts.send({
+                content: `${settings.emoji.report} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` reported server **${functions.escapeFormatting(
+                    server.name
+                )}** \`(${server._id})\``,
+                embeds: [embed]
+            });
+
             return res.status(200).json({
                 error: false,
                 status: 200,
@@ -1000,7 +1006,7 @@ router.post(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            { 
+            {
                 $inc: {
                     "staffTracking.handledServers.allTime.total": 1,
                     "staffTracking.handledServers.allTime.declined": 1,
@@ -1009,7 +1015,7 @@ router.post(
                 }
             }
         );
-        
+
         await userCache.updateUser(req.user.id);
 
         const type = serverType(req.body.type);
@@ -1108,7 +1114,7 @@ router.get(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            { 
+            {
                 $inc: {
                     "staffTracking.handledServers.allTime.total": 1,
                     "staffTracking.handledServers.allTime.approved": 1,
@@ -1117,7 +1123,7 @@ router.get(
                 }
             }
         );
-        
+
         await userCache.updateUser(req.user.id);
 
         await global.db.collection("audit").insertOne({

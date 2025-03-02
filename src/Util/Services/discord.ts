@@ -83,13 +83,17 @@ bot.on("ready", async () => {
                 guilds.main.members
                     .fetch({ user: botsToFetch })
                     .then((x) =>
-                        console.log(`Discord main_server: Retrieved ${x.size} members!`)
+                        console.log(
+                            `Discord main_server: Retrieved ${x.size} members!`
+                        )
                     )
                     .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
                 guilds.bot.members
                     .fetch({ user: botsToFetch })
                     .then((x) =>
-                        console.log(`Discord bot_server: Retrieved ${x.size} members!`)
+                        console.log(
+                            `Discord bot_server: Retrieved ${x.size} members!`
+                        )
                     )
                     .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
             })

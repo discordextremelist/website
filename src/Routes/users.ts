@@ -695,7 +695,7 @@ router.post(
                 new: {
                     game: {
                         snakes: {
-                            maxScore: score
+                            maxScore: req.user.db.game.snakes.maxScore + 1
                         }
                     }
                 }

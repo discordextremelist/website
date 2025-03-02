@@ -36,6 +36,16 @@
                     <label class="is-size-7 has-text-danger"><%= __("page.account.preferences.experiments.warning") %></label>
                 </div>
                 <br />
+                <div class="field">
+                    <label for="hideNSFW" class="label has-text-default"><%= __("page.account.preferences.hideNSFW") %></label>
+                    <input id="hideNSFW" type="checkbox" name="hideNSFW" class="switch is-rounded is-pink" <% if (req.user.db.preferences.hideNSFW) { %>checked<% } %>>
+                    <label for="hideNSFW"></label>
+                    <br />
+                    <p style="padding-bottom: 10px;" class="is-size-7 has-text-pink">
+                        <%= __("page.account.preferences.hideNSFW.details") %>
+                    </p>
+                </div>
+                <br />
                 <label class="label has-text-default"><%= __("page.account.preferences.accent") %></label>
                 <div class="field">
                     <input class="backdrop" name="iconColour" type="color" value="<%= req.user.db.preferences.defaultColour %>" style="width:30%; background-color: transparent; border-color: transparent;">

@@ -58,6 +58,18 @@
                                 <i aria-hidden="true" class="fas fa-star has-text-warning fa-1x"></i>
                             </span>
                         <% } %>
+                        
+                        <% if (bot.labels?.ai) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.labels.ai") %>" class="icon is-medium is-size-3 iconalign">
+                                <i aria-hidden="true" class="fad fa-microchip-ai has-text-shadow-blue fa-1x"></i>
+                            </span>
+                        <% } %>
+
+                        <% if (bot.labels?.nsfw) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.labels.nsfw") %>" class="icon is-medium is-size-3 iconalign">
+                                <i aria-hidden="true" class="fad fa-square-heart has-text-pink-05-invert fa-1x"></i>
+                            </span>
+                        <% } %>
 
                         <% if (bot.status.siteBot) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.rank.siteBot") %>" class="icon is-size-3 is-medium iconalign">
@@ -84,7 +96,7 @@
                         <% } %>
 
                         <% if (phone) { %>
-                            <% if (bot.status.premium || bot.status.siteBot || !bot.status.approved || bot.status.archived) { %><br /><% } %>
+                            <% if (bot.status.premium || bot.status.siteBot || !bot.status.approved || bot.status.archived || bot.status.hidden || bot.status.modHidden || bot.labels?.nsfw || bot.labels?.ai) { %><br /><% } %>
                             <span id="botName">
                                 <%= bot.name %>
                             </span>

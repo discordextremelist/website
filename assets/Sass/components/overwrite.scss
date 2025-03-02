@@ -61,6 +61,20 @@ html[data-deltheme=light] {
     --del-button-outer-shadow-alpha: unset !important;
 }
 
+img.nsfw {
+    filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+img.nsfw:hover {
+    filter: unset;
+    backdrop-filter: unset;
+}
+
+.has-text-shadow-blue {
+    color: #a8b9bf;
+}
+
 .button {
     &.is-outlined:not(.is-loading):not(.is-default) {
         &:hover,

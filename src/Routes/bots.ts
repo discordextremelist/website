@@ -660,6 +660,10 @@ router.post(
                         archived: false,
                         hidden: false,
                         modHidden: false
+                    },
+                    labels: {
+                        ai: req.body.ai ? true : false,
+                        nsfw: req.body.nsfw ? true : false,
                     }
                 } satisfies delBot);
 
@@ -745,6 +749,10 @@ router.post(
                                 archived: false,
                                 hidden: false,
                                 modHidden: false
+                            },
+                            labels: {
+                                ai: req.body.ai ? true : false,
+                                nsfw: req.body.nsfw ? true : false,
                             }
                         } satisfies delBot
                     }
@@ -1687,6 +1695,10 @@ router.post(
                                 options: req.body.widgetOptions,
                                 server: req.body.widgetServer
                             },
+                            labels: {
+                                ai: req.body.ai ? true : false,
+                                nsfw: req.body.nsfw ? true : false,
+                            },
                             "date.edited": Date.now()
                         }
                     }
@@ -1738,6 +1750,10 @@ router.post(
                                 channel: botExists.widgetbot.channel,
                                 options: botExists.widgetbot.options,
                                 server: botExists.widgetbot.server
+                            },
+                            labels: {
+                                ai: botExists.labels?.ai,
+                                nsfw: botExists.labels?.nsfw,
                             }
                         } satisfies Partial<delBot>,
                         new: {
@@ -1778,6 +1794,10 @@ router.post(
                                 channel: req.body.widgetChannel,
                                 options: req.body.widgetOptions,
                                 server: req.body.widgetServer
+                            },
+                            labels: {
+                                ai: req.body.ai ? true : false,
+                                nsfw: req.body.nsfw ? true : false,
                             }
                         } satisfies Partial<delBot>
                     }
@@ -3080,6 +3100,10 @@ router.post(
                                 approved: 0,
                                 edited: 0
                             },
+                            labels: {
+                                ai: req.body.ai ? true : false,
+                                nsfw: req.body.nsfw ? true : false,
+                            },
                             "status.archived": false
                         }
                     }
@@ -3134,6 +3158,10 @@ router.post(
                             },
                             status: {
                                 archived: true
+                            },
+                            labels: {
+                                ai: botExists.labels?.ai,
+                                nsfw: botExists.labels?.nsfw,
                             }
                         } satisfies partialBot,
                         new: {
@@ -3177,6 +3205,10 @@ router.post(
                             },
                             status: {
                                 archived: false
+                            },
+                            labels: {
+                                ai: req.body.ai ? true : false,
+                                nsfw: req.body.nsfw ? true : false,
                             }
                         } satisfies partialBot
                     }

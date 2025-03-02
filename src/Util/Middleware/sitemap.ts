@@ -57,8 +57,7 @@ const url = (path: string, lang: string) =>
 
 export const sitemapGenerator = async (
     req: Request,
-    res: Response,
-    next: () => void
+    res: Response
 ) => {
     const lang = req.params.lang;
     const bots = await botCache.getAllBots();
@@ -101,9 +100,8 @@ export const sitemapGenerator = async (
 };
 
 export const sitemapIndex = async (
-    req: Request,
-    res: Response,
-    next: () => void
+    _req: Request,
+    res: Response
 ) => {
     res.set("Content-Type", "text/xml");
 

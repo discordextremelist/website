@@ -70,7 +70,7 @@ const __dirname = path.resolve();
 
 app.use(helmet());
 
-const corsMiddleware = (req: Request, res: Response, next: () => void) => {
+const corsMiddleware = (_req: Request, res: Response, next: () => void) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
         "Access-Control-Allow-Headers",
@@ -190,7 +190,7 @@ new Promise<void>((resolve, reject) => {
         }
 
         await discord.bot.login(settings.secrets.discord.token);
-        // to replace the needed wait time for the below functions, instead of using a redundant blocking promise
+        // to replace the needed to wait time for the below functions, instead of using a redundant blocking promise
         // just... do it once it is actually ready -AJ
         discord.bot.once("ready", async () => {
             setTimeout(async () => {
@@ -301,7 +301,7 @@ new Promise<void>((resolve, reject) => {
         app.use("/autosync", autosyncRoute);
 
         // Locale handler.
-        // Don't put anything below here that you don't want it's locale to be checked whatever (broken english kthx)
+        // Don't put anything below here that you don't want its locale to be checked whatever (broken english kthx)
         app.use(["/:lang", "/"], languageHandler);
 
         app.use("/:lang/sitemap.xml", sitemapGenerator);
@@ -322,7 +322,7 @@ new Promise<void>((resolve, reject) => {
 
         if (!settings.website.dev) Sentry.setupExpressErrorHandler(app);
 
-        app.use((req: Request, res: Response, next: () => void) => {
+        app.use((_req: Request, _res: Response, next: () => void) => {
             // @ts-expect-error
             next(createError(404));
         });
@@ -331,8 +331,7 @@ new Promise<void>((resolve, reject) => {
             (
                 err: { message: string; status?: number },
                 req: Request,
-                res: Response,
-                next: () => void
+                res: Response
             ) => {
                 res.locals.message = err.message;
                 res.locals.error = err;
@@ -369,5 +368,3 @@ new Promise<void>((resolve, reject) => {
         console.error("Mongo error: ", e);
         process.exit(1);
     });
-
-export default app;

@@ -24,12 +24,6 @@
                 </span>
                 <span><%= __("common.report.reason.spam") %></span>
             </button>
-            <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("common.report.reason.other") %>', 'Other');">
-                <span class="icon">
-                    <i aria-hidden="true" class="fad fa-ellipsis"></i>
-                </span>
-                <span><%= __("common.report.reason.other") %></span>
-            </button>
             <% if (isBot) { %>
                 <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("page.bots.report.reason.apiAbuse") %>', 'API Abuse');">
                     <span class="icon">
@@ -57,6 +51,12 @@
                     <span><%= __("common.report.reason.brokenLink") %></span>
                 </button>
             <% } %>
+            <button class="button is-default is-fullwidth" onclick="reportFlow('<%= __("common.report.reason.other") %>', 'Other');">
+                <span class="icon">
+                    <i aria-hidden="true" class="fad fa-ellipsis"></i>
+                </span>
+                <span><%= __("common.report.reason.other") %></span>
+            </button>
         </div>
     </div>
 </section>

@@ -941,19 +941,17 @@ router.post(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            {
-                $set: {
-                    "staffTracking.handledServers.allTime.total":
-                        (req.user.db.staffTracking.handledServers.allTime.total += 1),
-                    "staffTracking.handledServers.allTime.declined":
-                        (req.user.db.staffTracking.handledServers.allTime.declined += 1),
-                    "staffTracking.handledServers.thisWeek.total":
-                        (req.user.db.staffTracking.handledServers.thisWeek.total += 1),
-                    "staffTracking.handledServers.thisWeek.declined":
-                        (req.user.db.staffTracking.handledServers.thisWeek.declined += 1)
+            { 
+                $inc: {
+                    "staffTracking.handledServers.allTime.total": 1,
+                    "staffTracking.handledServers.allTime.declined": 1,
+                    "staffTracking.handledServers.thisWeek.total": 1,
+                    "staffTracking.handledServers.thisWeek.declined": 1
                 }
             }
         );
+        
+        await userCache.updateUser(req.user.id);
 
         const type = serverType(req.body.type);
 
@@ -1051,19 +1049,17 @@ router.get(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            {
-                $set: {
-                    "staffTracking.handledServers.allTime.total":
-                        (req.user.db.staffTracking.handledServers.allTime.total += 1),
-                    "staffTracking.handledServers.allTime.approved":
-                        (req.user.db.staffTracking.handledServers.allTime.approved += 1),
-                    "staffTracking.handledServers.thisWeek.total":
-                        (req.user.db.staffTracking.handledServers.thisWeek.total += 1),
-                    "staffTracking.handledServers.thisWeek.approved":
-                        (req.user.db.staffTracking.handledServers.thisWeek.approved += 1)
+            { 
+                $inc: {
+                    "staffTracking.handledServers.allTime.total": 1,
+                    "staffTracking.handledServers.allTime.approved": 1,
+                    "staffTracking.handledServers.thisWeek.total": 1,
+                    "staffTracking.handledServers.thisWeek.approved": 1
                 }
             }
         );
+        
+        await userCache.updateUser(req.user.id);
 
         await global.db.collection("audit").insertOne({
             type: "APPROVE_SERVER",

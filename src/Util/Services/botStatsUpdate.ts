@@ -32,10 +32,10 @@ export async function botStatsUpdate() {
     }
 
     const date = moment().diff(moment(botStats.lastUpdate), "days");
-    if (date > 2) {
+    if (date >= 7) {
         const users: delUser[] = await global.db
             .collection<delUser>("users")
-            .find()
+            .find({ "rank.mod": true })
             .toArray();
         for (const user of users) {
             if (user.rank.mod === true) {
@@ -49,6 +49,8 @@ export async function botStatsUpdate() {
                             "staffTracking.handledBots.thisWeek.declined": 0,
                             "staffTracking.handledBots.thisWeek.remove": 0,
                             "staffTracking.handledBots.thisWeek.modHidden": 0,
+                            "staffTracking.handledServers.allTime.declined": 0,
+                            "staffTracking.handledServers.allTime.approved": 0,
                             "staffTracking.handledBots.prevWeek.total":
                                 user.staffTracking.handledBots.thisWeek.total,
                             "staffTracking.handledBots.prevWeek.approved":
@@ -64,7 +66,9 @@ export async function botStatsUpdate() {
                                 user.staffTracking.handledBots.thisWeek.remove,
                             "staffTracking.handledBots.prevWeek.modHidden":
                                 user.staffTracking.handledBots.thisWeek
-                                    .modHidden
+                                    .modHidden,
+                            "staffTracking.handledServers.prevWeek.declined": user.staffTracking.handledServers.thisWeek.declined,
+                            "staffTracking.handledServers.prevWeek.approved": user.staffTracking.handledServers.thisWeek.approved
                         }
                     }
                 );

@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "del-website",
-  "version": "5.6.23-Release",
+  "version": "5.7.0-Alpha.1",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
   "main": "src/app.ts",
   "directories": {
@@ -79,7 +79,7 @@
     "prepare": "pnpm run snyk-protect",
     "pretty": "npx prettier --write src/",
     "sentry:build": "rm -rf dist/ && tsc",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org delly --project website ./dist && sentry-cli sourcemaps upload --org delly --project website ./dist"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org=delly --project=website --release=$npm_package_version ./dist && sentry-cli sourcemaps upload --org=delly --project=website --release=$npm_package_version ./dist"
   },
   "repository": {
     "type": "git",

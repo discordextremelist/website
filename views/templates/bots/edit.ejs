@@ -103,9 +103,17 @@
                 <div class="control has-icons-left">
                     <div class="select is-rounded">
                         <select id="form_library" name="library" required>
-                            <option value="" disabled selected><%= __("common.select") %></option>
-                            <option value="<%= bot.library %>" selected><%= bot.library %></option>
-                            <% for (const lib of libraries) { %><option value="<%- lib._id %>"><%- lib._id %></option><% } %>
+                            <% if (!libraries.some(lib => lib._id === bot.library)) { %>
+                                <option value="<%= bot.library %>" selected><%= bot.library %></option>
+                                <hr>
+                            <% } %>
+                            <% for (const lang of languages) { %>
+                                <optgroup label="<%= lang %>">
+                                    <% for (const lib of libraries.filter(l => l.language === lang)) { %>
+                                        <option value="<%= lib._id %>" <% if (lib._id === bot.library) { %>selected<% } %>><%= lib._id %></option>
+                                    <% } %>
+                                </optgroup>
+                            <% } %>
                         </select>
                     </div>
                     <div class="icon is-small is-left">

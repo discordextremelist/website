@@ -314,12 +314,10 @@
                                         <span class="icon"><i class="fas fa-vial"></i></span>
                                         <span><%= __("page.bots.invite.staff") %></span>
                                     </a>
-                                    <% if (req.user.db.rank.assistant && (!bot.scopes || bot.scopes.bot)) { %>
-                                        <a class="dropdown-item has-text-info" target="_blank" href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= mainServer %>">
-                                            <span class="icon"><i class="fas fa-shield-alt"></i></span>
-                                            <span><%= __("page.bots.invite.main") %></span>
-                                        </a>
-                                    <% } %>
+                                    <a class="dropdown-item has-text-info" target="_blank" href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.clientID || bot._id %>&scope=bot&guild_id=<%= botServer %>">
+                                        <span class="icon"><i class="fas fa-shield-alt"></i></span>
+                                        <span><%= __("page.bots.invite.bot") %></span>
+                                    </a>
                                     <a class="dropdown-item" onclick="copyToClipboard('<%= bot._id %>');">
                                         <span class="icon"><i aria-hidden="true" class="fas fa-copy"></i></span>
                                         <span><%= __("common.copyID") %></span>
@@ -686,7 +684,7 @@
     <% if (bot.owner.id === req.user?.id) { %>
         <script>document.querySelector("#deleteModal").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".deleteModal");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
     <% } %>
-    <% if (bot.owner.id === req.user?.id || req.user?.rank.mod) { %>
+    <% if (bot.owner.id === req.user?.id || req.user?.rank?.mod) { %>
         <% if (bot.status.approved) { %>
             <script>document.querySelector("a#setVanity").addEventListener("click",function(event){event.preventDefault();const modal=document.querySelector(".setVanity");const html=document.querySelector("html");modal.classList.add("is-active");html.classList.add("is-clipped");modal.querySelector(".modal-background").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")});document.querySelector("button#close-modal2").addEventListener("click",function(e){e.preventDefault();modal.classList.remove("is-active");html.classList.remove("is-clipped")})})</script>
         <% } %>

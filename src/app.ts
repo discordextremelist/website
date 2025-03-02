@@ -207,7 +207,8 @@ new Promise<void>((resolve, reject) => {
             await (async function discordBotUndefined() {
                 if (
                     typeof discord.bot.guilds !== "undefined" &&
-                    typeof discord.guilds.main !== "undefined"
+                    typeof discord.guilds.main !== "undefined" &&
+                    typeof discord.guilds.bot !== "undefined"
                 ) {
                     await banned.updateBanlist();
                     await discord.uploadStatuses();

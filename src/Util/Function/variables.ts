@@ -80,7 +80,7 @@ export const variables = async (
     )
         req.session.redirectTo = req.originalUrl;
 
-    req.del = {
+    res.locals.del = {
         version: pkg.version,
         node: "Unavailable"
     };

@@ -65,15 +65,6 @@ router.get(
 );
 
 router.get(
-    "/queue",
-    variables,
-    permission.mod,
-    (_req: Request, res: Response) => {
-        res.redirect("/bot_queue");
-    }
-);
-
-router.get(
     "/bot_queue",
     variables,
     permission.mod,
@@ -955,15 +946,6 @@ router.get(
             req: req,
             notification: res.__("page.staff.announcer.resetSuccess")
         });
-    }
-);
-
-router.get(
-    "/site-manager",
-    variables,
-    permission.mod,
-    async (_req: Request, res: Response) => {
-        res.redirect("/");
     }
 );
 

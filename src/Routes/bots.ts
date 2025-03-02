@@ -3300,19 +3300,17 @@ router.get(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            {
-                $set: {
-                    "staffTracking.handledBots.allTime.total":
-                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
-                    "staffTracking.handledBots.allTime.approved":
-                        (req.user.db.staffTracking.handledBots.allTime.approved += 1),
-                    "staffTracking.handledBots.thisWeek.total":
-                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
-                    "staffTracking.handledBots.thisWeek.approved":
-                        (req.user.db.staffTracking.handledBots.thisWeek.approved += 1)
+            { 
+                $inc: {
+                    "staffTracking.handledBots.allTime.total": 1,
+                    "staffTracking.handledBots.allTime.approved": 1,
+                    "staffTracking.handledBots.thisWeek.total": 1,
+                    "staffTracking.handledBots.thisWeek.approved": 1
                 }
             }
         );
+        
+        await userCache.updateUser(req.user.id);
 
         await discord.channels.logs
             .send(
@@ -3626,19 +3624,17 @@ router.post(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            {
-                $set: {
-                    "staffTracking.handledBots.allTime.total":
-                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
-                    "staffTracking.handledBots.allTime.declined":
-                        (req.user.db.staffTracking.handledBots.allTime.declined += 1),
-                    "staffTracking.handledBots.thisWeek.total":
-                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
-                    "staffTracking.handledBots.thisWeek.declined":
-                        (req.user.db.staffTracking.handledBots.thisWeek.declined += 1)
+            { 
+                $inc: {
+                    "staffTracking.handledBots.allTime.total": 1,
+                    "staffTracking.handledBots.allTime.declined": 1,
+                    "staffTracking.handledBots.thisWeek.total": 1,
+                    "staffTracking.handledBots.thisWeek.declined": 1
                 }
             }
         );
+        
+        await userCache.updateUser(req.user.id);
 
         const type = botType(req.body.type);
 
@@ -3796,19 +3792,17 @@ router.post(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            {
-                $set: {
-                    "staffTracking.handledBots.allTime.total":
-                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
-                    "staffTracking.handledBots.allTime.unapprove":
-                        (req.user.db.staffTracking.handledBots.allTime.unapprove += 1),
-                    "staffTracking.handledBots.thisWeek.total":
-                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
-                    "staffTracking.handledBots.thisWeek.unapprove":
-                        (req.user.db.staffTracking.handledBots.thisWeek.unapprove += 1)
+            { 
+                $inc: {
+                    "staffTracking.handledBots.allTime.total": 1,
+                    "staffTracking.handledBots.allTime.unapprove": 1,
+                    "staffTracking.handledBots.thisWeek.total": 1,
+                    "staffTracking.handledBots.thisWeek.unapprove": 1
                 }
             }
         );
+        
+        await userCache.updateUser(req.user.id);
 
         await global.db.collection("audit").insertOne({
             type: "UNAPPROVE_BOT",
@@ -3962,19 +3956,17 @@ router.post(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            {
-                $set: {
-                    "staffTracking.handledBots.allTime.total":
-                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
-                    "staffTracking.handledBots.allTime.remove":
-                        (req.user.db.staffTracking.handledBots.allTime.remove += 1),
-                    "staffTracking.handledBots.thisWeek.total":
-                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
-                    "staffTracking.handledBots.thisWeek.remove":
-                        (req.user.db.staffTracking.handledBots.thisWeek.remove += 1)
+            { 
+                $inc: {
+                    "staffTracking.handledBots.allTime.total": 1,
+                    "staffTracking.handledBots.allTime.remove": 1,
+                    "staffTracking.handledBots.thisWeek.total": 1,
+                    "staffTracking.handledBots.thisWeek.remove": 1
                 }
             }
         );
+        
+        await userCache.updateUser(req.user.id);
 
         const type = botType(req.body.type);
 
@@ -4130,19 +4122,17 @@ router.post(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            {
-                $set: {
-                    "staffTracking.handledBots.allTime.total":
-                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
-                    "staffTracking.handledBots.allTime.modHidden":
-                        (req.user.db.staffTracking.handledBots.allTime.modHidden += 1),
-                    "staffTracking.handledBots.thisWeek.total":
-                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1),
-                    "staffTracking.handledBots.thisWeek.modHidden":
-                        (req.user.db.staffTracking.handledBots.thisWeek.modHidden += 1)
+            { 
+                $inc: {
+                    "staffTracking.handledBots.allTime.total": 1,
+                    "staffTracking.handledBots.allTime.modHidden": 1,
+                    "staffTracking.handledBots.thisWeek.total": 1,
+                    "staffTracking.handledBots.thisWeek.modHidden": 1
                 }
             }
         );
+        
+        await userCache.updateUser(req.user.id);
 
         const type = botType(req.body.type);
 
@@ -4235,15 +4225,15 @@ router.get(
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
-            {
-                $set: {
-                    "staffTracking.handledBots.allTime.total":
-                        (req.user.db.staffTracking.handledBots.allTime.total += 1),
-                    "staffTracking.handledBots.thisWeek.total":
-                        (req.user.db.staffTracking.handledBots.thisWeek.total += 1)
+            { 
+                $inc: {
+                    "staffTracking.handledBots.allTime.total": 1,
+                    "staffTracking.handledBots.thisWeek.total": 1,
                 }
             }
         );
+        
+        await userCache.updateUser(req.user.id);
 
         discord.channels.logs
             .send(

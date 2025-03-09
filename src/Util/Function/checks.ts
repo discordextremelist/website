@@ -19,17 +19,24 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import type { Request, Response } from "express";
 
-export const botExists = async (req: Request, res: Response, next: () => void) => {
-    const bot = await global.db.collection<delBot>("bots").findOne({ _id: req.params.id });
-    
-    if (!bot) return res.status(404).render("status", {
-        res,
-        title: res.__("common.error"),
-        subtitle: res.__("common.error.bot.404"),
-        status: 404,
-        type: "Error",
-        req
-    });
+export const botExists = async (
+    req: Request,
+    res: Response,
+    next: () => void
+) => {
+    const bot = await global.db
+        .collection<delBot>("bots")
+        .findOne({ _id: req.params.id });
+
+    if (!bot)
+        return res.status(404).render("status", {
+            res,
+            title: res.__("common.error"),
+            subtitle: res.__("common.error.bot.404"),
+            status: 404,
+            type: "Error",
+            req
+        });
 
     req.attached.bot = bot;
     next();

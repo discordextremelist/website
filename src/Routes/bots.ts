@@ -927,13 +927,13 @@ router.post(
             });
 
         if (
-            (req.body.vanity.includes(".") ||
+            req.body.vanity.includes(".") ||
             req.body.vanity.includes("/") ||
-            req.body.vanity.includes("\\")) ||
+            req.body.vanity.includes("\\") ||
             (settings.website.bannedVanityURLs &&
-            settings.website.bannedVanityURLs.includes(
-                req.body.vanity.toLowerCase()
-            ))
+                settings.website.bannedVanityURLs.includes(
+                    req.body.vanity.toLowerCase()
+                ))
         )
             return res.status(400).render("status", {
                 res,
@@ -1102,7 +1102,7 @@ router.post(
     async (req: Request, res: Response) => {
         let error = false;
         let errors: string[] = [];
-        
+
         const bot: delBot | undefined = await global.db
             .collection<delBot>("bots")
             .findOne({ _id: req.params.id });
@@ -2531,7 +2531,7 @@ router.get(
     checks.botExists,
     async (req: Request, res: Response) => {
         const bot = req.attached.bot;
-        
+
         if (bot.status.archived === false)
             return res.status(400).render("status", {
                 res,
@@ -2555,10 +2555,7 @@ router.get(
                 req
             });
 
-        res.locals.premidPageInfo = res.__(
-            "premid.bots.resubmit",
-            bot.name
-        );
+        res.locals.premidPageInfo = res.__("premid.bots.resubmit", bot.name);
 
         res.render("templates/bots/edit", {
             title: res.__("page.bots.resubmit.title"),
@@ -2643,10 +2640,7 @@ router.post(
                 errors: [res.__("common.error.bot.perms.resubmit")]
             });
 
-        res.locals.premidPageInfo = res.__(
-            "premid.bots.resubmit",
-            bot.name
-        );
+        res.locals.premidPageInfo = res.__("premid.bots.resubmit", bot.name);
 
         let invite: string;
 

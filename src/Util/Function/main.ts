@@ -57,8 +57,7 @@ export function standingParseEmoji(standing: string) {
     if (standing === "Good") result = "page.staff.manager.good.emoji";
     if (standing === "Moderate") result = "page.staff.manager.moderate.emoji";
     if (standing === "Moderate-Bad")
-        result = "page.st" +
-            "aff.manager.moderateBad.emoji";
+        result = "page.st" + "aff.manager.moderateBad.emoji";
     if (standing === "Bad") result = "page.staff.manager.bad.emoji";
 
     return result;

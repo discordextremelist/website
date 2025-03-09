@@ -55,10 +55,7 @@ const url = (path: string, lang: string) =>
         <xhtml:link rel="alternate" hreflang="it-IT" href="${base}/it-IT${path}"/>
     </url>`;
 
-export const sitemapGenerator = async (
-    req: Request,
-    res: Response
-) => {
+export const sitemapGenerator = async (req: Request, res: Response) => {
     const lang = req.params.lang;
     const bots = await botCache.getAllBots();
     const servers = await serverCache.getAllServers();
@@ -99,10 +96,7 @@ export const sitemapGenerator = async (
     );
 };
 
-export const sitemapIndex = async (
-    _req: Request,
-    res: Response
-) => {
+export const sitemapIndex = async (_req: Request, res: Response) => {
     res.set("Content-Type", "text/xml");
 
     res.send(

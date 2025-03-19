@@ -64,12 +64,12 @@ import usersRoute from "./Routes/users.ts";
 import templatesRoute from "./Routes/templates.ts";
 import staffRoute from "./Routes/staff.ts";
 import setup from "./setup.ts";
-import { uploadBots } from "./Util/Services/botCaching.js";
+import { uploadBots } from "./Util/Services/botCaching.ts";
 import { uploadStatuses } from "./Util/Services/discord.ts";
-import { uploadUsers } from "./Util/Services/userCaching.js";
-import { uploadAuditLogs } from "./Util/Services/auditCaching.js";
-import { uploadServers } from "./Util/Services/serverCaching.js";
-import { uploadTemplates } from "./Util/Services/templateCaching.js";
+import { uploadUsers } from "./Util/Services/userCaching.ts";
+import { uploadAuditLogs } from "./Util/Services/auditCaching.ts";
+import { uploadServers } from "./Util/Services/serverCaching.ts";
+import { uploadTemplates } from "./Util/Services/templateCaching.ts";
 
 const app = express();
 const __dirname = path.resolve();

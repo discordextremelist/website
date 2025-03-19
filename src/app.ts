@@ -181,12 +181,9 @@ new Promise<void>((resolve, reject) => {
             await global.redis.setex("cache_lock", 300, hostname());
             console.time("Redis");
             console.time("Start to cache users, bots, statuses, audit logs & servers");
-            await uploadUsers();
             await uploadBots();
             await uploadServers();
             await uploadTemplates();
-            await uploadAuditLogs();
-            await uploadStatuses();
             console.timeEnd("Start to cache users, bots, statuses, audit logs & servers");
             await libCache.cacheLibs();
             await announcementCache.updateCache();

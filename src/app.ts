@@ -202,20 +202,22 @@ new Promise<void>((resolve, reject) => {
             console.log("Also acquired the discord lock!");
             await global.redis.setex("cache_lock", 300, hostname());
             console.time("Redis");
-            await userCache.uploadUsers();
-            await botCache.uploadBots();
-            await serverCache.uploadServers();
-            await templateCache.uploadTemplates();
-            await auditCache.uploadAuditLogs();
-            await libCache.cacheLibs();
-            await announcementCache.updateCache();
-            await featuredCache.updateFeaturedServers();
-            await featuredCache.updateFeaturedTemplates();
-            await ddosMode.updateCache();
-            await tokenManager.tokenResetAll();
+            console.log("node_env: " + process.env.NODE_ENV);
+            if (process.env.NODE_ENV != "development") {
+                await userCache.uploadUsers();
+                await botCache.uploadBots();
+                await serverCache.uploadServers();
+                await templateCache.uploadTemplates();
+                await libCache.cacheLibs();
+                await announcementCache.updateCache();
+                await featuredCache.updateFeaturedServers();
+                await featuredCache.updateFeaturedTemplates();
+                await ddosMode.updateCache();
+                await tokenManager.tokenResetAll();
+                await botStatsUpdate();
+            }
             console.timeEnd("Redis");
             console.time("Bot stats update");
-            await botStatsUpdate();
             console.timeEnd("Bot stats update");
             await global.redis.publish("cache_lock", "ready");
             await global.redis.del("cache_lock");

@@ -82,7 +82,7 @@ router.get(
     async (req: Request, res: Response) => {
         const bots: delBot[] = await global.db
             .collection<delBot>("bots")
-            .find()
+            .find({ $and: [{ "status.approved": false, "status.archived": false }] })
             .sort({ "date.submitted": -1 })
             .allowDiskUse()
             .toArray();
@@ -93,9 +93,7 @@ router.get(
             title: res.__("page.staff.queue"),
             subtitle: res.__("page.staff.queue.subtitle"),
             req,
-            bots: bots.filter(
-                ({ status }) => !status.approved && !status.archived
-            ),
+            bots,
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff,
             parseScopes: functions.parseScopes
@@ -110,7 +108,7 @@ router.get(
     async (req: Request, res: Response) => {
         const servers: delServer[] = await global.db
             .collection<delServer>("servers")
-            .find()
+            .find({ $eq: [{ 'status.reviewRequired': true } ]})
             .sort({ "date.submitted": -1 })
             .allowDiskUse()
             .toArray();
@@ -121,9 +119,7 @@ router.get(
             title: res.__("page.staff.server_queue"),
             subtitle: res.__("page.staff.server_queue.subtitle"),
             req,
-            servers: servers.filter(
-                ({ status }) => status && status.reviewRequired
-            )
+            servers
         });
     }
 );
@@ -135,7 +131,7 @@ router.get(
     async (req: Request, res: Response) => {
         const bots: delBot[] = await global.db
             .collection<delBot>("bots")
-            .find()
+            .find({ $and: [{ "inServer": false, "status.archived": false, "status.approved": true, "status.siteBot": false }] })
             .sort({ "date.submitted": -1 })
             .allowDiskUse()
             .toArray();
@@ -153,8 +149,7 @@ router.get(
             subtitle: res.__("page.staff.invite_queue.subtitle"),
             req,
             bots: bots.filter(
-                ({ inServer, status, scopes }) =>
-                    !inServer && !status.archived && status.approved && !status.siteBot && (!scopes || scopes.bot)
+                ({ scopes }) => (!scopes || scopes.bot)
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff
@@ -167,14 +162,14 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
+        console.time("Start audit timing");
         const logs: auditLog[] = ((await global.db
             .collection<auditLog>("audit")
-            .find()
+            .find({ type: { $ne: "GAME_HIGHSCORE_UPDATE" } })
             .sort({ date: -1 })
             .allowDiskUse()
-            .toArray()) as auditLog[]).filter(
-            ({ type }) => type !== "GAME_HIGHSCORE_UPDATE"
-        );
+            .toArray()) as auditLog[]);
+        console.timeEnd("Start audit timing");
 
         if (!req.query.page) req.query.page = "1";
 
@@ -184,6 +179,7 @@ router.get(
         );
 
         for (const log of iteratedLogs) {
+            // TODO: This might be slowing down audit operations.
             log.executor = await functions.auditUserIDParse(log.executor);
             log.target = await functions.auditUserIDParse(log.target);
         }
@@ -210,7 +206,11 @@ router.get(
     async (req: Request, res: Response) => {
         const users: delUser[] = await global.db
             .collection<delUser>("users")
-            .find()
+            .find({ $or: [
+                { 'rank.admin': true },
+                { 'rank.assistant': true },
+                { 'rank.mod': true }
+            ] })
             .toArray();
 
         res.locals.premidPageInfo = res.__("premid.staff.staffManager");

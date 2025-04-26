@@ -230,6 +230,7 @@ router.get(
             logs,
             logsPgArr: iteratedLogs,
             page: req.query.page,
+            pageParam: req.query.page,
             pages: Math.ceil(logs.length / 15),
             functions
         });

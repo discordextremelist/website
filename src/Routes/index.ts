@@ -29,6 +29,7 @@ import * as legalCache from "../Util/Services/legalCaching.ts";
 import * as discord from "../Util/Services/discord.ts";
 import { variables } from "../Util/Function/variables.ts";
 import type { GuildMember, GuildMemberManager } from "discord.js";
+import type { BotTags, BotQueryTagFilterParams } from "../Util/Function/types.js";
 
 const router = express.Router();
 
@@ -127,178 +128,92 @@ router.get("/", variables, async (req: Request, res: Response) => {
     });
 });
 
+const commonFilter = ({ status, labels }: delBot, req: Request) =>  status.approved &&
+    !status.siteBot &&
+    !status.archived &&
+    !status.hidden &&
+    !status.modHidden &&
+    (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw);
+
+// @ts-ignore
+const tagMap: Record<BotTags, BotQueryTagFilterParams> = {
+    slashcommands: {
+        icon: "fa-slash fa-flip-horizontal has-text-blurple",
+        title: "common.bots.title.applicationCommands",
+        subtitle: (res) =>
+            res.__("common.bots.subtitle.filter.applicationCommands", {
+                a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">',
+                a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">',
+                ea: "</a>",
+            }),
+        filter: (bot, req) => bot.scopes?.slashCommands,
+    },
+    fun: {
+        icon: "fa-grin-squint-tears has-text-link",
+        title: "common.bots.title.fun",
+        subtitle: (res) => res.__("common.bots.subtitle.filter.fun"),
+        filter: (bot, req) => bot.tags.includes("Fun"),
+    },
+    social: {
+        icon: "fa-comments-alt has-text-info",
+        title: "common.bots.title.social",
+        subtitle: (res) => res.__("common.bots.subtitle.filter.social"),
+        filter: (bot, req) => bot.tags.includes("Social"),
+    },
+    economy: {
+        icon: "fa-comments-dollar has-text-success",
+        title: "common.bots.title.economy",
+        subtitle: (res) => res.__("common.bots.subtitle.filter.economy"),
+        filter: (bot, req) => bot.tags.includes("Economy"),
+    },
+    utility: {
+        icon: "fa-cogs has-text-orange",
+        title: "common.bots.title.utility",
+        subtitle: (res) => res.__("common.bots.subtitle.filter.utility"),
+        filter: (bot, req) => bot.tags.includes("Utility"),
+    },
+    moderation: {
+        icon: "fa-gavel has-text-danger",
+        title: "common.bots.title.moderation",
+        subtitle: (res) => res.__("common.bots.subtitle.filter.moderation"),
+        filter: (bot, req) => bot.tags.includes("Moderation"),
+    },
+    multipurpose: {
+        icon: "fa-ball-pile has-text-magenta",
+        title: "common.bots.title.multipurpose",
+        subtitle: (res) => res.__("common.bots.subtitle.filter.multipurpose"),
+        filter: (bot, req) => bot.tags.includes("Multipurpose"),
+    },
+    music: {
+        icon: "fa-comment-music has-text-pink",
+        title: "common.bots.title.music",
+        subtitle: (res) => res.__("common.bots.subtitle.filter.music"),
+        filter: (bot, req) => bot.tags.includes("Music"),
+    },
+};
+
 router.get("/bots", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.bots");
-
     if (!req.query.page) req.query.page = "1";
-
     let icon = "fa-robot has-text-default";
     let title = res.__("common.bots.discord");
     let subtitle = res.__("common.bots.subtitle");
-    let bots: delBot[];
     let pageParam = "?page=";
-
+    let bots = (await botCache.getAllBots()).filter((bot) => commonFilter(bot, req));
     if (req.query.tag) {
         pageParam = `?tag=${req.query.tag}&page=`;
-
-        switch ((req.query.tag as string).toLowerCase()) {
-            case "slashcommands":
-                icon = "fa-slash fa-flip-horizontal has-text-blurple";
-                title = res.__("common.bots.title.applicationCommands");
-                subtitle = res.__(
-                    "common.bots.subtitle.filter.applicationCommands",
-                    {
-                        a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">',
-                        a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">',
-                        ea: "</a>"
-                    }
-                );
-                bots = (await botCache.getAllBots()).filter(
-                    ({ status, scopes, labels }) =>
-                        status.approved &&
-                        !status.siteBot &&
-                        !status.archived &&
-                        !status.hidden &&
-                        !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW ||
-                            !labels?.nsfw) &&
-                        scopes?.slashCommands
-                );
-                break;
-            case "fun":
-                icon = "fa-grin-squint-tears has-text-link";
-                title = res.__("common.bots.title.fun");
-                subtitle = res.__("common.bots.subtitle.filter.fun");
-                bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags, labels }) =>
-                        status.approved &&
-                        !status.siteBot &&
-                        !status.archived &&
-                        !status.hidden &&
-                        !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW ||
-                            !labels?.nsfw) &&
-                        tags.includes("Fun")
-                );
-                break;
-            case "social":
-                icon = "fa-comments-alt has-text-info";
-                title = res.__("common.bots.title.social");
-                subtitle = res.__("common.bots.subtitle.filter.social");
-                bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags, labels }) =>
-                        status.approved &&
-                        !status.siteBot &&
-                        !status.archived &&
-                        !status.hidden &&
-                        !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW ||
-                            !labels?.nsfw) &&
-                        tags.includes("Social")
-                );
-                break;
-            case "economy":
-                icon = "fa-comments-dollar has-text-success";
-                title = res.__("common.bots.title.economy");
-                subtitle = res.__("common.bots.subtitle.filter.economy");
-                bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags, labels }) =>
-                        status.approved &&
-                        !status.siteBot &&
-                        !status.archived &&
-                        !status.hidden &&
-                        !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW ||
-                            !labels?.nsfw) &&
-                        tags.includes("Economy")
-                );
-                break;
-            case "utility":
-                icon = "fa-cogs has-text-orange";
-                title = res.__("common.bots.title.utility");
-                subtitle = res.__("common.bots.subtitle.filter.utility");
-                bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags, labels }) =>
-                        status.approved &&
-                        !status.siteBot &&
-                        !status.archived &&
-                        !status.hidden &&
-                        !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW ||
-                            !labels?.nsfw) &&
-                        tags.includes("Utility")
-                );
-                break;
-            case "moderation":
-                icon = "fa-gavel has-text-danger";
-                title = res.__("common.bots.title.moderation");
-                subtitle = res.__("common.bots.subtitle.filter.moderation");
-                bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags, labels }) =>
-                        status.approved &&
-                        !status.siteBot &&
-                        !status.archived &&
-                        !status.hidden &&
-                        !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW ||
-                            !labels?.nsfw) &&
-                        tags.includes("Moderation")
-                );
-                break;
-            case "multipurpose":
-                icon = "fa-ball-pile has-text-magenta";
-                title = res.__("common.bots.title.multipurpose");
-                subtitle = res.__("common.bots.subtitle.filter.multipurpose");
-                bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags, labels }) =>
-                        status.approved &&
-                        !status.siteBot &&
-                        !status.archived &&
-                        !status.hidden &&
-                        !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW ||
-                            !labels?.nsfw) &&
-                        tags.includes("Multipurpose")
-                );
-                break;
-            case "music":
-                icon = "fa-comment-music has-text-pink";
-                title = res.__("common.bots.title.music");
-                subtitle = res.__("common.bots.subtitle.filter.music");
-                bots = (await botCache.getAllBots()).filter(
-                    ({ status, tags, labels }) =>
-                        status.approved &&
-                        !status.siteBot &&
-                        !status.archived &&
-                        !status.hidden &&
-                        !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW ||
-                            !labels?.nsfw) &&
-                        tags.includes("Music")
-                );
-                break;
-            default:
-                bots = (await botCache.getAllBots()).filter(
-                    ({ status, labels }) =>
-                        status.approved &&
-                        !status.siteBot &&
-                        !status.archived &&
-                        !status.hidden &&
-                        !status.modHidden &&
-                        (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw)
-                );
+        let tag = (req.query.tag as string).toLowerCase() as BotTags;
+        let props = tagMap[tag];
+        if (!props) {
+            bots = bots.filter((bot) => commonFilter(bot, req));
+        } else {
+            icon = props.icon;
+            // @ts-ignore
+            title = res.__(props.title);
+            subtitle = props.subtitle(res);
+            bots = bots.filter((bot) => props.filter(bot, req));
         }
-    } else
-        bots = (await botCache.getAllBots()).filter(
-            ({ status, labels }) =>
-                status.approved &&
-                !status.siteBot &&
-                !status.archived &&
-                !status.hidden &&
-                !status.modHidden &&
-                (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw)
-        );
-
+    }
     res.render("templates/bots/index", {
         title,
         subtitle,

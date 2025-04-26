@@ -65,8 +65,6 @@ import templatesRoute from "./Routes/templates.ts";
 import staffRoute from "./Routes/staff.ts";
 import setup from "./setup.ts";
 import { uploadBots } from "./Util/Services/botCaching.ts";
-import { uploadStatuses } from "./Util/Services/discord.ts";
-import { uploadUsers } from "./Util/Services/userCaching.ts";
 import { uploadAuditLogs } from "./Util/Services/auditCaching.ts";
 import { uploadServers } from "./Util/Services/serverCaching.ts";
 import { uploadTemplates } from "./Util/Services/templateCaching.ts";
@@ -191,6 +189,15 @@ new Promise<void>((resolve, reject) => {
             await featuredCache.updateFeaturedTemplates();
             await tokenManager.tokenResetAll();
             await legalCache.updateCache();
+            if (process.env.NODE_ENV === "development") {
+                // This is very time-consuming, only re-cache after the redis key expired.
+                if (!await redis.get("dev_audit_cache_lock")) {
+                    await redis.setex("dev_audit_cache_lock", 3600 * 24, 1);
+                    console.time("Start audit cache");
+                    await uploadAuditLogs();
+                    console.timeEnd("Start audit cache");
+                }
+            }
             console.timeEnd("Redis");
             console.time("Discord: Bot stats update");
             await botStatsUpdate();
@@ -258,7 +265,7 @@ new Promise<void>((resolve, reject) => {
 
         app.use(
             session({
-                store: new RedisStore({ client: global.redis }),
+                store: new RedisStore({ client: global.redis, ttl: 14 * 24 * 60 * 60 * 1000, disableTouch: true }),
                 secret: settings.secrets.cookie,
                 resave: false,
                 saveUninitialized: false,

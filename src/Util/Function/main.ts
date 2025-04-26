@@ -23,6 +23,7 @@ import { URL } from "url";
 import { type APIUser, OAuth2Scopes } from "discord.js";
 // this seems stupid but apparently it should work
 import { createRequire } from "module";
+import type { Nullable } from "./types.js";
 
 export const escapeFormatting = (text: string) => {
     const unescaped = text.replace(/\\([*_`~\\])/g, "$1");
@@ -359,4 +360,28 @@ export function isDiscordAPIError(
     error: RefreshError
 ): error is DiscordAPIError {
     return "statusCode" in error;
+
+}
+
+const roleMap = {
+    admin: 3,
+    assistant: 2,
+    mod: 1
+}
+
+type Role = keyof delUser["rank"];
+
+// I am not sure where we will need strictEq, but we will see.
+export function checkRoleHierarchyStaff(user: delUser, highestPermittedRole: Role, strictEq: boolean): boolean {
+    const entries = Object.entries(user.rank) as [Role, boolean][];
+    let max: Nullable<number> = null;
+    for (const [role, hasRole] of entries) {
+        if (!hasRole) continue;
+        const val = roleMap[role];
+        if (val > max) max = val;
+    }
+    if (max === null) return false;
+    return strictEq ?
+        max === roleMap[highestPermittedRole] :
+        max >= roleMap[highestPermittedRole];
 }

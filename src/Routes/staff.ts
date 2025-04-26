@@ -32,6 +32,11 @@ import * as announcementCache from "../Util/Services/announcementCaching.ts";
 import { variables } from "../Util/Function/variables.ts";
 import * as tokenManager from "../Util/Services/adminTokenManager.ts";
 import * as discord from "../Util/Services/discord.ts";
+import { getAllAuditLogs } from "../Util/Services/auditCaching.ts";
+import { types } from "sass";
+import Null = types.Null;
+import type { Nullable } from "../Util/Function/types.js";
+import { checkRoleHierarchyStaff } from "../Util/Function/main.ts";
 const router = express.Router();
 
 router.get(
@@ -192,14 +197,9 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const logs: auditLog[] = (
-            (await global.db
-                .collection<auditLog>("audit")
-                .find({ type: { $ne: "GAME_HIGHSCORE_UPDATE" } })
-                .sort({ date: -1 })
-                .allowDiskUse()
-                .toArray()) as auditLog[]
-        );
+        const logs: auditLog[] = (await getAllAuditLogs())
+            .filter(x => x.type !== "GAME_HIGHSCORE_UPDATE")
+            .sort((a, b) => b.date - a.date); // Sort descending
 
         if (!req.query.page) req.query.page = "1";
 
@@ -221,7 +221,7 @@ router.get(
             logs,
             logsPgArr: iteratedLogs,
             page: req.query.page,
-            pageParam: req.query.page,
+            pageParam: `?page=`,
             pages: Math.ceil(logs.length / 15),
             functions
         });
@@ -289,7 +289,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: delUser | undefined = await global.db
+        const user: Nullable<delUser> = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
@@ -303,11 +303,7 @@ router.get(
                 type: "Error"
             });
 
-        if (
-            user.rank.assistant === true &&
-            req.user.db.rank.admin === false &&
-            req.user.db.rank.assistant === true
-        )
+        if (user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true))
             return res.status(403).render("status", {
                 res,
                 title: res.__("common.error"),
@@ -351,9 +347,7 @@ router.post(
             });
 
         if (
-            user.rank.assistant === true &&
-            req.user.db.rank.admin === false &&
-            req.user.db.rank.assistant === true
+            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -427,9 +421,7 @@ router.get(
             });
 
         if (
-            user.rank.assistant === true &&
-            req.user.db.rank.admin === false &&
-            req.user.db.rank.assistant === true
+            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -483,7 +475,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: delUser | undefined = await global.db
+        const user: Nullable<delUser> = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
@@ -498,9 +490,7 @@ router.get(
             });
 
         if (
-            user.rank.assistant === true &&
-            req.user.db.rank.admin === false &&
-            req.user.db.rank.assistant === true
+            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -558,7 +548,7 @@ router.post(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: delUser | undefined = await global.db
+        const user: Nullable<delUser> = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
@@ -635,7 +625,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: delUser | undefined = await global.db
+        const user: Nullable<delUser> = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
@@ -650,9 +640,7 @@ router.get(
             });
 
         if (
-            user.rank.assistant === true &&
-            req.user.db.rank.admin === false &&
-            req.user.db.rank.assistant === true
+            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -687,7 +675,7 @@ router.post(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: delUser | undefined = await global.db
+        const user: Nullable<delUser> = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
@@ -702,9 +690,7 @@ router.post(
             });
 
         if (
-            user.rank.assistant === true &&
-            req.user.db.rank.admin === false &&
-            req.user.db.rank.assistant === true
+            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -757,7 +743,7 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: delUser | undefined = await global.db
+        const user: Nullable<delUser> = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
@@ -809,7 +795,7 @@ router.post(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
-        const user: delUser | undefined = await global.db
+        const user: Nullable<delUser> = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
@@ -824,9 +810,7 @@ router.post(
             });
 
         if (
-            user.rank.assistant === true &&
-            req.user.db.rank.admin === false &&
-            req.user.db.rank.assistant === true
+            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,

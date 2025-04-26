@@ -64,6 +64,12 @@ import usersRoute from "./Routes/users.ts";
 import templatesRoute from "./Routes/templates.ts";
 import staffRoute from "./Routes/staff.ts";
 import setup from "./setup.ts";
+import { uploadBots } from "./Util/Services/botCaching.ts";
+import { uploadStatuses } from "./Util/Services/discord.ts";
+import { uploadUsers } from "./Util/Services/userCaching.ts";
+import { uploadAuditLogs } from "./Util/Services/auditCaching.ts";
+import { uploadServers } from "./Util/Services/serverCaching.ts";
+import { uploadTemplates } from "./Util/Services/templateCaching.ts";
 
 const app = express();
 const __dirname = path.resolve();
@@ -174,6 +180,11 @@ new Promise<void>((resolve, reject) => {
             console.log("Discord: Also acquired the discord lock!");
             await global.redis.setex("cache_lock", 300, hostname());
             console.time("Redis");
+            console.time("Start to cache users, bots, statuses, audit logs & servers");
+            await uploadBots();
+            await uploadServers();
+            await uploadTemplates();
+            console.timeEnd("Start to cache users, bots, statuses, audit logs & servers");
             await libCache.cacheLibs();
             await announcementCache.updateCache();
             await featuredCache.updateFeaturedServers();

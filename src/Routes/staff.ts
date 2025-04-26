@@ -160,7 +160,7 @@ router.get(
     async (req: Request, res: Response) => {
         const bots: delBot[] = await global.db
             .collection<delBot>("bots")
-            .find()
+            .find({ $and: [{ "inServer": false, "status.archived": false, "status.approved": true, "status.siteBot": false }] })
             .sort({ "date.submitted": 1 })
             .allowDiskUse()
             .toArray();
@@ -178,12 +178,7 @@ router.get(
             subtitle: res.__("page.staff.invite_queue.subtitle"),
             req,
             bots: bots.filter(
-                ({ inServer, status, scopes }) =>
-                    !inServer &&
-                    !status.archived &&
-                    status.approved &&
-                    !status.siteBot &&
-                    (!scopes || scopes.bot)
+                ({ scopes }) => (!scopes || scopes.bot)
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff,
@@ -200,11 +195,11 @@ router.get(
         const logs: auditLog[] = (
             (await global.db
                 .collection<auditLog>("audit")
-                .find()
+                .find({ type: { $ne: "GAME_HIGHSCORE_UPDATE" } })
                 .sort({ date: -1 })
                 .allowDiskUse()
                 .toArray()) as auditLog[]
-        ).filter(({ type }) => type !== "GAME_HIGHSCORE_UPDATE");
+        );
 
         if (!req.query.page) req.query.page = "1";
 
@@ -226,6 +221,7 @@ router.get(
             logs,
             logsPgArr: iteratedLogs,
             page: req.query.page,
+            pageParam: req.query.page,
             pages: Math.ceil(logs.length / 15),
             functions
         });
@@ -239,7 +235,11 @@ router.get(
     async (req: Request, res: Response) => {
         const users: delUser[] = await global.db
             .collection<delUser>("users")
-            .find()
+            .find({ $or: [
+                { 'rank.admin': true },
+                { 'rank.assistant': true },
+                { 'rank.mod': true }
+            ] })
             .toArray();
 
         res.locals.premidPageInfo = res.__("premid.staff.staffManager");

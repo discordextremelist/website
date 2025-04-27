@@ -41,6 +41,7 @@
     "mongodb": "^4.17.2",
     "morgan": "~1.10.0",
     "node-fetch": "^2.7.0",
+    "node-vibrant": "^4.0.3",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",
     "passport-oauth2-refresh": "^2.1.0",

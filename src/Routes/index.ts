@@ -60,6 +60,7 @@ function sortAll() {
                   : mod
                     ? "mod"
                     : null;
+
             const user = discord.bot.users.cache.get(member.id);
             member.avatar = user.avatar;
             member.username = user.username;

@@ -58,6 +58,7 @@ import { DAPI } from "../Util/Services/discord.ts";
 
 import mdi from "markdown-it";
 import entities from "html-entities";
+import { Vibrant } from "node-vibrant/node";
 const md = new mdi();
 const router = express.Router();
 
@@ -72,6 +73,28 @@ function botType(bodyType: string): number {
 router.get("/search", (_req: Request, res: Response) => {
     res.redirect("/search");
 });
+
+router.get("/:id/accent_color", variables, permission.auth, checks.botExists, async (req: Request, res: Response) => {
+    let bot = req.attached.bot;
+    if (
+        bot.owner.id !== req.user.id &&
+        !bot.editors.includes(req.user.id) &&
+        req.user.db.rank.mod === false
+    )
+        return res.status(403).json({
+            error: true,
+            status: 403,
+            errors: [res.__("common.error.bot.perms.edit")]
+        });
+    let bot_avatar = await fetch(bot.avatar?.url ? bot.avatar!.url : bot.icon!.url);
+    if (!bot_avatar.ok) return res.status(403).json({
+        error: true,
+        status: 403,
+        errors: ["Unable to fetch avatar!"] // TODO: Translate
+    });
+    let palette = (await Vibrant.from(await bot_avatar.buffer()).getPalette()).Vibrant;
+    return res.status(200).json({ color: palette.hex });
+})
 
 router.get(
     "/submit",
@@ -479,6 +502,7 @@ router.post(
             ? req.body.library
             : "Other";
 
+        // TODO: Refractor
         let tags: string[] = [];
         if (req.body.fun === true) tags.push("Fun");
         if (req.body.social === true) tags.push("Social");
@@ -1621,7 +1645,7 @@ router.post(
                                 twitter: req.body.twitter
                             },
                             theme: {
-                                useCustomColour: req.body.useCustomColour,
+                                useCustomColour: req.body.useAutoAccent ? true : req.body.useAutoAccent,
                                 colour: req.body.colour,
                                 banner: req.body.banner
                             },

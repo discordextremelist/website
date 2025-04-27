@@ -37,7 +37,6 @@ export const botExists = async (
             type: "Error",
             req
         });
-
     req.attached.bot = bot;
     next();
 };

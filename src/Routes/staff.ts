@@ -163,18 +163,16 @@ router.get(
     variables,
     permission.mod,
     async (req: Request, res: Response) => {
-        const bots: delBot[] = await global.db
+        const bots: delBot[] = (await global.db
             .collection<delBot>("bots")
-            .find({ $and: [{ "inServer": false, "status.archived": false, "status.approved": true, "status.siteBot": false }] })
+            .find({ $and: [{ "status.archived": false, "status.approved": true, "status.siteBot": false }] })
             .sort({ "date.submitted": 1 })
             .allowDiskUse()
-            .toArray();
-
-        for (const bot of bots) {
-            discord.guilds.bot.members.cache.has(bot._id)
-                ? (bot.inServer = true)
-                : (bot.inServer = false);
-        }
+            .toArray())
+            .map((bot) => {
+                bot.inServer = discord.guilds.bot.members.cache.has(bot._id) || discord.guilds.main.members.cache.has(bot._id);
+                return bot;
+            });
 
         res.locals.premidPageInfo = res.__("premid.staff.invite_queue");
 
@@ -183,7 +181,7 @@ router.get(
             subtitle: res.__("page.staff.invite_queue.subtitle"),
             req,
             bots: bots.filter(
-                ({ scopes }) => (!scopes || scopes.bot)
+                ({ inServer, scopes }) => !inServer && (!scopes || scopes.bot)
             ),
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff,

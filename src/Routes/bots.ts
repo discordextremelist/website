@@ -1645,7 +1645,7 @@ router.post(
                                 twitter: req.body.twitter
                             },
                             theme: {
-                                useCustomColour: req.body.useAutoAccent ? true : req.body.useAutoAccent,
+                                useCustomColour: req.body.useAutoAccent ? true : req.body.useCustomColour,
                                 colour: req.body.colour,
                                 banner: req.body.banner
                             },

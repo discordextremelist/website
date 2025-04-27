@@ -22,9 +22,10 @@ import metrics from "datadog-metrics";
 
 import settings from "../../../settings.json" with { type: "json" };
 import moment from "moment";
-import { PresenceUpdateStatus, GatewayIntentBits } from "discord.js";
+import { PresenceUpdateStatus, GatewayIntentBits, Options, Partials } from "discord.js";
 import * as botCache from "./botCaching.ts";
 import { hostname } from "os";
+import chunk from "chunk";
 
 export const DAPI = "https://discord.com/api/v10";
 
@@ -47,7 +48,11 @@ export const bot = new Discord.Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildPresences
-    ]
+    ],
+    partials: [Partials.GuildMember],
+    makeCache: Options.cacheWithLimits({
+        GuildMemberManager: Infinity,
+    })
 });
 
 bot.on("guildBanRemove", async (ban) => {
@@ -69,36 +74,36 @@ bot.on("ready", async () => {
         );
     } else {
         console.time("Cache: Bot cache");
-        botCache
-            .getAllBots()
-            .then(async (bots) => {
-                const botsToFetch = [];
-                bots.forEach(async (bot) => {
-                    if (guilds.main.members.cache.has(bot._id)) {
-                        botsToFetch.push(bot._id);
-                    } else if (guilds.bot.members.cache.has(bot._id)) {
-                        botsToFetch.push(bot._id);
-                    }
-                });
-                guilds.main.members
-                    .fetch({ user: botsToFetch })
-                    .then((x) =>
-                        console.log(
-                            `Discord main_server: Retrieved ${x.size} members!`
-                        )
-                    )
-                    .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
-                guilds.bot.members
-                    .fetch({ user: botsToFetch })
-                    .then((x) =>
-                        console.log(
-                            `Discord bot_server: Retrieved ${x.size} members!`
-                        )
-                    )
-                    .catch(() => null); // It is most likely that DEL has another instance running to handle this, so catch the error and ignore.
-            })
-            .catch((e) => console.error(e));
-        console.timeEnd("Cache: Bot cache");
+        const bots = await botCache.getAllBots();
+        const botsToFetch: string[] = [];
+        if (bots.length < 1) return console.log("Failed to get cached bots, or array is empty (check cache)!");
+        console.log("Total bots: ", bots.length);
+        console.log(`Total cache entries: main=${guilds.main.members.cache.size}, bots=${guilds.bot.members.cache.size}`);
+        bots.forEach((bot) => {
+            if (!guilds.main.members.cache.has(bot._id)) {
+                botsToFetch.push(bot._id);
+            } else if (!guilds.bot.members.cache.has(bot._id)) {
+                botsToFetch.push(bot._id);
+            }
+        });
+        const beforePrimary = guilds.main.members.cache.size;
+        const beforeSecondary = guilds.bot.members.cache.size;
+        let chunks = chunk<string>(botsToFetch, 750);
+        for (const chunk of chunks) {
+            let botsMain = await guilds.main.members.fetch({ user: chunk }).catch(console.error);
+            if (botsMain) {
+                console.log(`Successfully fetched ${botsMain.size} bots in main server!`);
+                console.log(`Cache size after fetching: ${guilds.main.members.cache.size}`);
+            }
+            let botsSecondary = await guilds.main.members.fetch({ user: chunk }).catch(console.error);
+            if (botsSecondary) {
+                console.log(`Successfully fetched ${botsSecondary.size} bots in bots server!`);
+                console.log(`Cache size after fetching: ${guilds.bot.members.cache.size}`);
+            }
+        }
+        const afterPrimary = guilds.main.members.cache.size;
+        const afterSecondary = guilds.bot.members.cache.size;
+        console.log(`Cache grew by ${afterPrimary - beforePrimary} entries for primary, ${afterSecondary - beforeSecondary} secondary.`);
         await global.redis.del("fetch_lock");
     }
 });

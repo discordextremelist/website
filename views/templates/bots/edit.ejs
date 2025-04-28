@@ -36,7 +36,7 @@
         <article id="errors" style="display: none;" class="message is-danger">
             <div class="message-body content has-background-primary">
                 <ul id="errorList" style="margin-top: unset;">
-                    
+
                 </ul>
             </div>
         </article>
@@ -265,6 +265,14 @@
                 <input id="form_customColourSwitch" id="customColourSwitch" type="checkbox" name="useCustomColour" class="switch is-rounded is-info" <% if (bot.theme && bot.theme.useCustomColour) { %>checked<% } %>>
                 <label for="form_customColourSwitch"></label>
             </div>
+            <div class="field">
+                <label for="useAutoAccent" class="label has-text-default"><%= __("page.bots.theme.useAutoAccent") %></label>
+                <p style="padding-bottom: 10px;" class="is-size-7 has-text-default">
+                    <%= __("page.bots.theme.useAutoAccent.details") %>
+                </p>
+                <input id="form_useAutoAccentSwitch" id="useAutoAccent" type="checkbox" name="useAutoAccent" class="switch is-rounded is-info" <% if (bot.theme && bot.theme.useAutoColour) { %>checked<% } %>>
+                <label for="form_useAutoAccentSwitch"></label>
+            </div>
             <br>
             <div class="field" id="form_customColour" style="display: <% if (bot.theme && bot.theme.useCustomColour) { %>inherit<% } else { %>none<% } %>">
                 <label class="label has-text-default"><%= __("page.bots.theme.color") %></label>
@@ -381,7 +389,7 @@
                     </a>
                 </div>
             </div>
-        </form>    
+        </form>
     </div>
 </div>
 <script>
@@ -415,13 +423,35 @@
 
     bot.addEventListener('change', onScopeChange)
     slashcommands.addEventListener('change', onScopeChange)
-    
+
+    const useCustomColorSwitch = document.querySelector('#form_customColourSwitch');
+    const useAutoAccent = document.querySelector('#form_useAutoAccentSwitch');
+    useAutoAccent.addEventListener('change', async () => {
+        const customColor = document.querySelector('#form_customColour')
+        const customColour = document.querySelector('#form_colour');
+        if (useAutoAccent.checked) {
+            useCustomColorSwitch.disabled = true;
+            const res = await fetch("/bots/<%= bot._id %>/accent_color");
+            let { color } = await res.json();
+            customColor.style.display = 'inherit'
+            customColour.value = color;
+        } else {
+            useCustomColorSwitch.disabled = false;
+            customColor.style.display = 'none'
+        }
+    });
+
     const useCustomColor = document.querySelector('#form_customColourSwitch')
     const customColor = document.querySelector('#form_customColour')
     useCustomColor.addEventListener('change', () => {
+        const useAutoAccent = document.querySelector('#form_useAutoAccentSwitch');
         if (useCustomColor.checked) {
+            useAutoAccent.disabled = true;
             customColor.style.display = 'inherit'
-        } else customColor.style.display = 'none'
+        } else {
+            customColor.style.display = 'none'
+            useAutoAccent.disabled = false;
+        }
     });
 
     // Replace this part of the code:
@@ -476,8 +506,8 @@ function doSubmit() {
     async function fetchPOST(url = '', data = {}) {
             const response = await fetch(url, {
                 method: "POST",
-                mode: "cors", 
-                cache: "no-cache", 
+                mode: "cors",
+                cache: "no-cache",
                 credentials: "same-origin",
                 headers: {
                     "Content-Type": "application/json"
@@ -489,11 +519,11 @@ function doSubmit() {
 
             return response.json();
         }
-        
+
         let modNotes = "";
         <% if (resubmit) { %>
             modNotes = document.getElementById("modNotes").value
-        <% } %> 
+        <% } %>
 
         fetchPOST("<%= postURL %>", {
             bot: document.getElementById("bot").checked,
@@ -514,7 +544,7 @@ function doSubmit() {
 
             ai: document.getElementById("form_aiLabelSwitch").checked,
             nsfw: document.getElementById("form_nsfwLabelSwitch").checked,
-            
+
             shortDescription: document.getElementById("form_shortDescription").value,
             longDescription: document.getElementById("longDesc").value,
 
@@ -528,8 +558,9 @@ function doSubmit() {
 
             twitter: document.getElementById("form_twitter").value,
             privacyPolicy: document.getElementById("form_privacyPolicy").value,
-            
+
             useCustomColour: document.getElementById("form_customColourSwitch").checked,
+            useAutoAccent: document.getElementById("form_useAutoAccentSwitch").checked,
             colour: document.getElementById("form_colour").value,
             banner: document.getElementById("form_banner").value,
 

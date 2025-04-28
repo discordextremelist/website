@@ -42,6 +42,7 @@ import settings from "../../settings.json" with { type: "json" };
 import htmlRef from "../../htmlReference.json" with { type: "json" };
 import * as discord from "../Util/Services/discord.ts";
 import * as permission from "../Util/Function/permissions.ts";
+import * as checks from "../Util/Function/checks.ts";
 import * as functions from "../Util/Function/main.ts";
 import { variables } from "../Util/Function/variables.ts";
 
@@ -57,6 +58,7 @@ import { DAPI } from "../Util/Services/discord.ts";
 
 import mdi from "markdown-it";
 import entities from "html-entities";
+import { Vibrant } from "node-vibrant/node";
 const md = new mdi();
 const router = express.Router();
 
@@ -68,9 +70,31 @@ function botType(bodyType: string): number {
     return type;
 }
 
-router.get("/search", (req: Request, res: Response) => {
+router.get("/search", (_req: Request, res: Response) => {
     res.redirect("/search");
 });
+
+router.get("/:id/accent_color", variables, permission.auth, checks.botExists, async (req: Request, res: Response) => {
+    let bot = req.attached.bot;
+    if (
+        bot.owner.id !== req.user.id &&
+        !bot.editors.includes(req.user.id) &&
+        req.user.db.rank.mod === false
+    )
+        return res.status(403).json({
+            error: true,
+            status: 403,
+            errors: [res.__("common.error.bot.perms.edit")]
+        });
+    let bot_avatar = await fetch(bot.avatar?.url ? bot.avatar!.url : bot.icon!.url);
+    if (!bot_avatar.ok) return res.status(403).json({
+        error: true,
+        status: 403,
+        errors: ["Unable to fetch avatar!"] // TODO: Translate
+    });
+    let palette = (await Vibrant.from(await bot_avatar.buffer()).getPalette()).Vibrant;
+    return res.status(200).json({ color: palette.hex });
+})
 
 router.get(
     "/submit",
@@ -478,6 +502,7 @@ router.post(
             ? req.body.library
             : "Other";
 
+        // TODO: Refractor
         let tags: string[] = [];
         if (req.body.fun === true) tags.push("Fun");
         if (req.body.social === true) tags.push("Social");
@@ -662,8 +687,8 @@ router.post(
                         modHidden: false
                     },
                     labels: {
-                        ai: req.body.ai ? true : false,
-                        nsfw: req.body.nsfw ? true : false
+                        ai: !!req.body.ai,
+                        nsfw: !!req.body.nsfw
                     }
                 } satisfies delBot);
 
@@ -751,8 +776,8 @@ router.post(
                                 modHidden: false
                             },
                             labels: {
-                                ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false
+                                ai: !!req.body.ai,
+                                nsfw: !!req.body.nsfw
                             }
                         } satisfies delBot
                     }
@@ -792,22 +817,12 @@ router.get(
     "/:id/tokenreset",
     variables,
     permission.auth,
+    checks.botExists,
     async (req: Request, res: Response) => {
-        const botExists = await global.db
-            .collection("bots")
-            .findOne({ _id: req.params.id });
-        if (!botExists)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.404"),
-                status: 404,
-                type: "Error",
-                req
-            });
+        const bot = req.attached.bot;
 
         if (
-            botExists.owner.id !== req.user.id &&
+            bot.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
@@ -856,19 +871,9 @@ router.post(
     "/:id/transfer-owner",
     variables,
     permission.assistant,
+    checks.botExists,
     async (req: Request, res: Response) => {
-        const botExists = await global.db
-            .collection("bots")
-            .findOne({ _id: req.params.id });
-        if (!botExists)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                subtitlte: res.__("common.error.bot.404"),
-                status: 404,
-                type: "Error",
-                req
-            });
+        const bot = req.attached.bot;
 
         if (req.user.db.rank.assistant === false) {
             return res.status(403).render("status", {
@@ -913,14 +918,14 @@ router.post(
             date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
-                old: botExists.owner.id,
+                old: bot.owner.id,
                 new: req.body.newOwner
             }
         });
 
         await botCache.updateBot(req.params.id);
 
-        res.redirect(`/bots/${botExists._id}`);
+        res.redirect(`/bots/${req.params.id}`);
     }
 );
 
@@ -928,22 +933,12 @@ router.post(
     "/:id/setvanity",
     variables,
     permission.auth,
+    checks.botExists,
     async (req: Request, res: Response) => {
-        const botExists = await global.db
-            .collection("bots")
-            .findOne({ _id: req.params.id });
-        if (!botExists)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.404"),
-                status: 404,
-                type: "Error",
-                req
-            });
+        const bot = req.attached.bot;
 
         if (
-            botExists.owner.id !== req.user.id &&
+            bot.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
@@ -958,7 +953,11 @@ router.post(
         if (
             req.body.vanity.includes(".") ||
             req.body.vanity.includes("/") ||
-            req.body.vanity.includes("\\")
+            req.body.vanity.includes("\\") ||
+            (settings.website.bannedVanityURLs &&
+                settings.website.bannedVanityURLs.includes(
+                    req.body.vanity.toLowerCase()
+                ))
         )
             return res.status(400).render("status", {
                 res,
@@ -982,7 +981,7 @@ router.post(
                 });
         }
 
-        if (botExists.vanityUrl) {
+        if (bot.vanityUrl) {
             if (req.body.vanity.split(" ").length !== 1)
                 return res.status(400).render("status", {
                     res,
@@ -993,26 +992,11 @@ router.post(
                     req
                 });
 
-            if (req.body.vanity === botExists.vanityUrl)
+            if (req.body.vanity === bot.vanityUrl)
                 return res.status(400).render("status", {
                     res,
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.same"),
-                    status: 400,
-                    type: "Error",
-                    req
-                });
-
-            if (
-                settings.website.bannedVanityURLs &&
-                settings.website.bannedVanityURLs.includes(
-                    req.body.vanity.toLowerCase()
-                )
-            )
-                return res.status(400).render("status", {
-                    res,
-                    title: res.__("common.error"),
-                    subtitle: res.__("common.error.bot.vanity.blacklisted"),
                     status: 400,
                     type: "Error",
                     req
@@ -1034,34 +1018,19 @@ router.post(
                 date: Date.now(),
                 reason: req.body.reason || "None specified.",
                 details: {
-                    old: botExists.vanityUrl,
+                    old: bot.vanityUrl,
                     new: req.body.vanity
                 }
             });
             await botCache.updateBot(req.params.id);
 
             res.redirect(`/bots/${req.params.id}`);
-        } else if (!botExists.vanityUrl) {
+        } else if (!bot.vanityUrl) {
             if (req.body.vanity.split(" ").length !== 1)
                 return res.status(400).render("status", {
                     res,
                     title: res.__("common.error"),
                     subtitle: res.__("common.error.bot.vanity.tooLong"),
-                    status: 400,
-                    type: "Error",
-                    req
-                });
-
-            if (
-                settings.website.bannedVanityURLs &&
-                settings.website.bannedVanityURLs.includes(
-                    req.body.vanity.toLowerCase()
-                )
-            )
-                return res.status(400).render("status", {
-                    res,
-                    title: res.__("common.error"),
-                    subtitle: res.__("common.error.bot.vanity.blacklisted"),
                     status: 400,
                     type: "Error",
                     req
@@ -1087,6 +1056,7 @@ router.post(
                     new: req.body.vanity
                 }
             });
+
             await botCache.updateBot(req.params.id);
 
             res.redirect(`/bots/${req.params.id}`);
@@ -1098,25 +1068,15 @@ router.get(
     "/:id/edit",
     variables,
     permission.auth,
+    checks.botExists,
     async (req: Request, res: Response) => {
-        const botExists = await global.db
-            .collection("bots")
-            .findOne({ _id: req.params.id });
-        if (!botExists)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.404"),
-                status: 404,
-                type: "Error",
-                req
-            });
+        const bot = req.attached.bot;
 
-        res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
+        res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
 
         if (
-            botExists.owner.id !== req.user.id &&
-            !botExists.editors.includes(req.user.id) &&
+            bot.owner.id !== req.user.id &&
+            !bot.editors.includes(req.user.id) &&
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
@@ -1128,13 +1088,13 @@ router.get(
                 req
             });
 
-        const clean = sanitizeHtml(botExists.longDesc, {
+        const clean = sanitizeHtml(bot.longDesc, {
             allowedTags: htmlRef.standard.tags,
             allowedAttributes: htmlRef.standard.attributes,
             allowVulnerableTags: true,
             disallowedTagsMode: "escape",
             transformTags: {
-                iframe: function (tagName, attribs) {
+                iframe: function (_tagName, attribs) {
                     attribs.sandbox = "allow-forms";
                     return {
                         tagName: "iframe",
@@ -1146,12 +1106,12 @@ router.get(
 
         res.render("templates/bots/edit", {
             title: res.__("page.bots.edit.title"),
-            subtitle: res.__("page.bots.edit.subtitle", botExists.name),
+            subtitle: res.__("page.bots.edit.subtitle", bot.name),
             libraries: libraryCache.getLibs(),
             languages: libraryCache.getLanguages(),
             settings,
-            bot: botExists,
-            editors: botExists.editors ? botExists.editors.join(" ") : "",
+            bot: bot,
+            editors: bot.editors ? bot.editors.join(" ") : "",
             req,
             resubmit: false,
             longDesc: clean
@@ -1166,6 +1126,17 @@ router.post(
     async (req: Request, res: Response) => {
         let error = false;
         let errors: string[] = [];
+
+        const bot: delBot | undefined = await global.db
+            .collection<delBot>("bots")
+            .findOne({ _id: req.params.id });
+
+        if (!bot)
+            return res.status(404).json({
+                error: true,
+                status: 404,
+                errors: [res.__("common.error.bot.404")]
+            });
 
         if (!req.body.bot && !req.body.slashCommands) {
             error = true;
@@ -1196,20 +1167,8 @@ router.post(
                     .catch(() => {});
         }
 
-        const botExists: delBot | undefined = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
+        res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
 
-        if (!botExists)
-            return res.status(404).json({
-                error: true,
-                status: 404,
-                errors: [res.__("common.error.bot.404")]
-            });
-
-        res.locals.premidPageInfo = res.__("premid.bots.edit", botExists.name);
-
-        const bot = botExists;
         if (
             bot.owner.id !== req.user.id &&
             !bot.editors.includes(req.user.id) &&
@@ -1631,8 +1590,8 @@ router.post(
 
         if (error === true) {
             req.body.status
-                ? (req.body.status.premium = botExists.status.premium)
-                : (req.body.status = { premium: botExists.status.premium });
+                ? (req.body.status.premium = bot.status.premium)
+                : (req.body.status = { premium: bot.status.premium });
 
             return res.status(400).json({
                 error: true,
@@ -1686,7 +1645,7 @@ router.post(
                                 twitter: req.body.twitter
                             },
                             theme: {
-                                useCustomColour: req.body.useCustomColour,
+                                useCustomColour: req.body.useAutoAccent ? true : req.body.useCustomColour,
                                 colour: req.body.colour,
                                 banner: req.body.banner
                             },
@@ -1696,8 +1655,8 @@ router.post(
                                 server: req.body.widgetServer
                             },
                             labels: {
-                                ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false
+                                ai: !!req.body.ai,
+                                nsfw: !!req.body.nsfw
                             },
                             "date.edited": Date.now()
                         }
@@ -1712,48 +1671,47 @@ router.post(
                     reason: "None specified.",
                     details: {
                         old: {
-                            clientID: botExists.clientID,
-                            name: botExists.name,
-                            prefix: botExists.prefix,
-                            library: botExists.library,
-                            tags: botExists.tags,
-                            shortDesc: botExists.shortDesc,
-                            longDesc: botExists.longDesc,
-                            editors: botExists.editors,
-                            commands: botExists.commands,
+                            clientID: bot.clientID,
+                            name: bot.name,
+                            prefix: bot.prefix,
+                            library: bot.library,
+                            tags: bot.tags,
+                            shortDesc: bot.shortDesc,
+                            longDesc: bot.longDesc,
+                            editors: bot.editors,
+                            commands: bot.commands,
                             icon: {
-                                hash: botExists.icon.hash,
-                                url: botExists.icon.url
+                                hash: bot.icon.hash,
+                                url: bot.icon.url
                             },
                             scopes: {
                                 bot: req.body.bot,
                                 slashCommands: req.body.slashCommands
                             },
                             links: {
-                                invite: botExists.links.invite,
-                                support: botExists.links.support,
-                                website: botExists.links.website,
-                                donation: botExists.links.donation,
-                                repo: botExists.links.repo,
-                                privacyPolicy: botExists.links.privacyPolicy
+                                invite: bot.links.invite,
+                                support: bot.links.support,
+                                website: bot.links.website,
+                                donation: bot.links.donation,
+                                repo: bot.links.repo,
+                                privacyPolicy: bot.links.privacyPolicy
                             },
                             social: {
-                                twitter: botExists.social?.twitter
+                                twitter: bot.social?.twitter
                             },
                             theme: {
-                                useCustomColour:
-                                    botExists.theme?.useCustomColour,
-                                colour: botExists.theme?.colour,
-                                banner: botExists.theme?.banner
+                                useCustomColour: bot.theme?.useCustomColour,
+                                colour: bot.theme?.colour,
+                                banner: bot.theme?.banner
                             },
                             widgetbot: {
-                                channel: botExists.widgetbot.channel,
-                                options: botExists.widgetbot.options,
-                                server: botExists.widgetbot.server
+                                channel: bot.widgetbot.channel,
+                                options: bot.widgetbot.options,
+                                server: bot.widgetbot.server
                             },
                             labels: {
-                                ai: botExists.labels?.ai,
-                                nsfw: botExists.labels?.nsfw
+                                ai: bot.labels?.ai,
+                                nsfw: bot.labels?.nsfw
                             }
                         } satisfies Partial<delBot>,
                         new: {
@@ -1796,8 +1754,8 @@ router.post(
                                 server: req.body.widgetServer
                             },
                             labels: {
-                                ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false
+                                ai: !!req.body.ai,
+                                nsfw: !!req.body.nsfw
                             }
                         } satisfies Partial<delBot>
                     }
@@ -1910,7 +1868,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         allowedAttributes: htmlRef.standard.attributes,
         allowVulnerableTags: true,
         transformTags: {
-            iframe: function (tagName, attribs) {
+            iframe: function (_tagName, attribs) {
                 attribs.sandbox = "allow-forms";
                 return {
                     tagName: "iframe",
@@ -2594,21 +2552,11 @@ router.get(
     variables,
     permission.auth,
     permission.scopes([OAuth2Scopes.GuildsJoin]),
+    checks.botExists,
     async (req: Request, res: Response) => {
-        const botExists = await global.db
-            .collection("bots")
-            .findOne({ _id: req.params.id });
-        if (!botExists)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.404"),
-                status: 404,
-                type: "Error",
-                req
-            });
+        const bot = req.attached.bot;
 
-        if (botExists.status.archived === false)
+        if (bot.status.archived === false)
             return res.status(400).render("status", {
                 res,
                 title: res.__("common.error"),
@@ -2619,7 +2567,7 @@ router.get(
             });
 
         if (
-            botExists.owner.id !== req.user.id &&
+            bot.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
             return res.status(403).render("status", {
@@ -2631,22 +2579,19 @@ router.get(
                 req
             });
 
-        res.locals.premidPageInfo = res.__(
-            "premid.bots.resubmit",
-            botExists.name
-        );
+        res.locals.premidPageInfo = res.__("premid.bots.resubmit", bot.name);
 
         res.render("templates/bots/edit", {
             title: res.__("page.bots.resubmit.title"),
-            subtitle: res.__("page.bots.resubmit.subtitle", botExists.name),
+            subtitle: res.__("page.bots.resubmit.subtitle", bot.name),
             libraries: libraryCache.getLibs(),
             languages: libraryCache.getLanguages(),
             settings,
-            bot: botExists,
-            editors: botExists.editors ? botExists.editors.join(" ") : "",
+            bot: bot,
+            editors: bot.editors ? bot.editors.join(" ") : "",
             req,
             resubmit: true,
-            longDesc: botExists.longDesc
+            longDesc: bot.longDesc
         });
     }
 );
@@ -2659,6 +2604,17 @@ router.post(
     async (req: Request, res: Response) => {
         let error = false;
         let errors: string[] = [];
+
+        const bot: delBot | undefined = await global.db
+            .collection<delBot>("bots")
+            .findOne({ _id: req.params.id });
+
+        if (!bot)
+            return res.status(404).json({
+                error: true,
+                status: 404,
+                errors: [res.__("common.error.bot.404")]
+            });
 
         if (!req.body.bot && !req.body.slashCommands) {
             error = true;
@@ -2691,25 +2647,13 @@ router.post(
                     .catch(() => {});
         }
 
-        const botExists: delBot | undefined = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
-        if (!botExists)
-            return res.status(404).json({
-                error: true,
-                status: 404,
-                errors: [res.__("common.error.bot.404")]
-            });
-
-        if (botExists.status.archived === false)
+        if (bot.status.archived === false)
             return res.status(400).json({
                 error: true,
                 status: 400,
                 errors: [res.__("common.error.bot.notArchived")]
             });
 
-        const bot = botExists;
         if (
             bot.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
@@ -2720,10 +2664,7 @@ router.post(
                 errors: [res.__("common.error.bot.perms.resubmit")]
             });
 
-        res.locals.premidPageInfo = res.__(
-            "premid.bots.resubmit",
-            botExists.name
-        );
+        res.locals.premidPageInfo = res.__("premid.bots.resubmit", bot.name);
 
         let invite: string;
 
@@ -3166,8 +3107,8 @@ router.post(
                                 edited: 0
                             },
                             labels: {
-                                ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false
+                                ai: !!req.body.ai,
+                                nsfw: !!req.body.nsfw
                             },
                             "status.archived": false
                         }
@@ -3182,51 +3123,50 @@ router.post(
                     reason: "None specified.",
                     details: {
                         old: {
-                            clientID: botExists.clientID,
-                            name: botExists.name,
-                            prefix: botExists.prefix,
-                            library: botExists.library,
-                            tags: botExists.tags,
-                            shortDesc: botExists.shortDesc,
-                            longDesc: botExists.longDesc,
-                            editors: botExists.editors,
-                            commands: botExists.commands,
+                            clientID: bot.clientID,
+                            name: bot.name,
+                            prefix: bot.prefix,
+                            library: bot.library,
+                            tags: bot.tags,
+                            shortDesc: bot.shortDesc,
+                            longDesc: bot.longDesc,
+                            editors: bot.editors,
+                            commands: bot.commands,
                             icon: {
-                                hash: botExists.icon.hash,
-                                url: botExists.icon.url
+                                hash: bot.icon.hash,
+                                url: bot.icon.url
                             },
                             scopes: {
                                 bot: req.body.bot,
                                 slashCommands: req.body.slashCommands
                             },
                             links: {
-                                invite: botExists.links.invite,
-                                support: botExists.links.support,
-                                website: botExists.links.website,
-                                donation: botExists.links.donation,
-                                repo: botExists.links.repo,
-                                privacyPolicy: botExists.links.privacyPolicy
+                                invite: bot.links.invite,
+                                support: bot.links.support,
+                                website: bot.links.website,
+                                donation: bot.links.donation,
+                                repo: bot.links.repo,
+                                privacyPolicy: bot.links.privacyPolicy
                             },
                             social: {
-                                twitter: botExists.social?.twitter
+                                twitter: bot.social?.twitter
                             },
                             theme: {
-                                useCustomColour:
-                                    botExists.theme?.useCustomColour,
-                                colour: botExists.theme?.colour,
-                                banner: botExists.theme?.banner
+                                useCustomColour: bot.theme?.useCustomColour,
+                                colour: bot.theme?.colour,
+                                banner: bot.theme?.banner
                             },
                             widgetbot: {
-                                channel: botExists.widgetbot.channel,
-                                options: botExists.widgetbot.options,
-                                server: botExists.widgetbot.server
+                                channel: bot.widgetbot.channel,
+                                options: bot.widgetbot.options,
+                                server: bot.widgetbot.server
                             },
                             status: {
                                 archived: true
                             },
                             labels: {
-                                ai: botExists.labels?.ai,
-                                nsfw: botExists.labels?.nsfw
+                                ai: bot.labels?.ai,
+                                nsfw: bot.labels?.nsfw
                             }
                         } satisfies partialBot,
                         new: {
@@ -3272,12 +3212,13 @@ router.post(
                                 archived: false
                             },
                             labels: {
-                                ai: req.body.ai ? true : false,
-                                nsfw: req.body.nsfw ? true : false
+                                ai: !!req.body.ai,
+                                nsfw: !!req.body.nsfw
                             }
                         } satisfies partialBot
                     }
                 });
+
                 await botCache.updateBot(req.params.id);
 
                 await discord.channels.logs
@@ -4348,19 +4289,9 @@ router.get(
     "/:id/sync",
     variables,
     permission.auth,
+    checks.botExists,
     async (req: Request, res: Response) => {
-        const botExists: delBot | undefined = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
-        if (!botExists)
-            return res.status(404).json({
-                error: true,
-                status: 404,
-                errors: [res.__("common.error.bot.404")]
-            });
-
-        const bot = botExists;
+        const bot = req.attached.bot;
 
         let commands: APIApplicationCommand[] = bot.commands || [];
 
@@ -4432,7 +4363,7 @@ router.get(
         }
 
         discord.bot.rest
-            .get(`/applications/${botExists.clientID || req.params.id}/rpc`)
+            .get(`/applications/${bot.clientID || req.params.id}/rpc`)
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false)
                     // not !app.bot_public; should not trigger when undefined
@@ -4465,12 +4396,12 @@ router.get(
                     reason: "None specified.",
                     details: {
                         old: {
-                            name: botExists.name,
+                            name: bot.name,
                             icon: {
-                                hash: botExists.icon.hash,
-                                url: botExists.icon.url
+                                hash: bot.icon.hash,
+                                url: bot.icon.url
                             },
-                            commands: botExists.commands
+                            commands: bot.commands
                         } satisfies Partial<delBot>,
                         new: {
                             name: app.name,

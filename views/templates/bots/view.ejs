@@ -58,7 +58,7 @@
                                 <i aria-hidden="true" class="fas fa-star has-text-warning fa-1x"></i>
                             </span>
                         <% } %>
-                        
+
                         <% if (bot.labels?.ai) { %>
                             <span style="vertical-align: middle;" title="<%= __("common.labels.ai") %>" class="icon is-medium is-size-3 iconalign">
                                 <i aria-hidden="true" class="fad fa-microchip-ai has-text-shadow-blue fa-1x"></i>
@@ -206,7 +206,7 @@
                                 });
                             %>
                         <% } %>
-                        <% if (bot.owner.id === req.user.id) { %>
+                        <% if (bot.owner.id === req.user.id || req.user.db.rank.admin) { %>
                             <div class="dropdown is-hoverable">
                                 <div class="dropdown-trigger">
                                     <%-
@@ -838,7 +838,7 @@
             </form>`;
     }
     function resetReportFlow() {
-        document.getElementById("reportModalCard").innerHTML = 
+        document.getElementById("reportModalCard").innerHTML =
             `<%- include("../../partials/cards/reportModalCard.ejs", { isBot: true, name: bot.name }) %>`;
     }
     function doReport() {
@@ -847,8 +847,8 @@
         async function fetchPOST(url = '', data = {}) {
             const response = await fetch(url, {
                 method: "POST",
-                mode: "cors", 
-                cache: "no-cache", 
+                mode: "cors",
+                cache: "no-cache",
                 credentials: "same-origin",
                 headers: {
                     "Content-Type": "application/json"

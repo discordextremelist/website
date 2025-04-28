@@ -41,7 +41,7 @@
     </div>
 
     <div id="navbar" class="navbar-menu">
-        <div class="navbar-start"> 
+        <div class="navbar-start">
 
             <a class="navbar-item" href="<%= linkPrefix %>">
                 <span class="icon iconalign">
@@ -169,13 +169,13 @@
                             </span>
                             <span><%= __("page.staff.server_queue") %></span>
                         </a>
-                        <% if (req.user.db.rank.assistant === true) { %>  
-                            <a class="navbar-item" href="<%= linkPrefix %>/staff/invite_queue">
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/invite_queue">
                                 <span class="icon iconalign">
                                     <i class="fad fa-list-ul" aria-hidden="true"></i>
                                 </span>
-                                <span><%= __("page.staff.invite_queue") %></span>
-                            </a>
+                            <span><%= __("page.staff.invite_queue") %></span>
+                        </a>
+                        <% if (req.user.db.rank.assistant === true) { %>
                             <a class="navbar-item" href="<%= linkPrefix %>/staff/staff-manager">
                                 <span class="icon iconalign">
                                     <i class="fad fa-users-cog" aria-hidden="true"></i>
@@ -193,6 +193,14 @@
                                     <i class="fad fa-megaphone" aria-hidden="true"></i>
                                 </span>
                                 <span><%= __("page.staff.announcer") %></span>
+                            </a>
+                        <% } %>
+                        <% if (req.user.db.rank.admin === true) { %>
+                            <a class="navbar-item" href="<%= linkPrefix %>/staff/purge">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-shredder  has-text-red" aria-hidden="true"></i>
+                                </span>
+                                <span class="has-text-red">Purge users</span>
                             </a>
                         <% } %>
                     </div>
@@ -366,7 +374,7 @@
                             </span>
                             <span><%= __("common.nav.me.data") %></span>
                         </a>
-                        <hr class="navbar-divider"> 
+                        <hr class="navbar-divider">
                         <a class="navbar-item" href="<%= linkPrefix %>/bots/submit" tabindex="0">
                             <span class="icon iconalign">
                                 <i class="fad fa-robot" aria-hidden="true"></i>

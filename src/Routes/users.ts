@@ -1096,4 +1096,112 @@ router.post(
     }
 );
 
+/* Similar as above, but for admins */
+router.post(
+    "/account/data/:id/delete",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response) => {
+        if (!req.params.id) return res.status(400);
+        let user = await userCache.getUser(req.params.id);
+        if (user && (user.fullUsername !== req.body.typedUsername)) return res.status(400);
+        const userBotsData: delBot[] = await global.db
+            .collection<delBot>("bots")
+            .find({ "owner.id": req.params.id })
+            .toArray();
+        const userServersData: delServer[] = await global.db
+            .collection<delServer>("servers")
+            .find({ "owner.id": req.params.id })
+            .toArray();
+        const userTemplatesData: delTemplate[] = await global.db
+            .collection<delTemplate>("templates")
+            .find({ "owner.id": req.params.id })
+            .toArray();
+        console.log(userBotsData, userServersData, userTemplatesData);
+
+        // Loops through the user's bots, servers and templates and deletes them from the database.
+        for (const bot of userBotsData) {
+            await global.db.collection("bots").deleteOne({ _id: bot._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_BOT",
+                executor: req.user.id,
+                target: bot._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await botCache.deleteBot(bot._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
+                    bot._id
+                })\``
+            );
+        }
+
+        for (const server of userServersData) {
+            await global.db
+                .collection("servers")
+                .deleteOne({ _id: server._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_SERVER",
+                executor: req.user.id,
+                target: server._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await serverCache.deleteServer(server._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted server **${functions.escapeFormatting(server.name)}** \`(${
+                    server._id
+                })\``
+            );
+        }
+
+        for (const template of userTemplatesData) {
+            await global.db
+                .collection("templates")
+                .deleteOne({ _id: template._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_TEMPLATE",
+                executor: req.user.id,
+                target: template._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await templateCache.deleteTemplate(template._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted template **${functions.escapeFormatting(template.name)}** \`(${
+                    template._id
+                })\``
+            );
+        }
+
+        // Deletes the user's account from the database and cache.
+        await global.db.collection("users").deleteOne({ _id: req.params.id });
+        await userCache.deleteUser(req.params.id);
+        return res.redirect("/");
+    }
+);
+
 export default router;

@@ -40,13 +40,13 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-2">
-                    <% 
+                    <%
                         let statusInfo;
                         if (userStatus === "online") statusInfo = __("page.users.status.online")
                         if (userStatus === "idle") statusInfo = __("page.users.status.idle")
                         if (userStatus === "dnd") statusInfo = __("page.users.status.dnd")
                         if (userStatus === "offline") statusInfo = __("page.users.status.offline")
-                    %> 
+                    %>
                     <img class="image" title="<%= statusInfo %>" style="margin: auto; width: 128px; border-radius: 50%; animation: <%= userStatus %> 2s infinite !important;" src="<%= userProfile.avatar.hash ? userProfile.avatar.url : `${baseURL}/img/defaultavatar` %>.<% if (userProfile.avatar.hash) { %><%= userProfile.avatar.hash.startsWith('a_') ? 'gif' : 'webp' %><% } else { %>webp<% } %>?size=256" alt="<%= userProfile.fullUsername %>'s Avatar" onerror="this.onerror = null;this.src = '/img/defaultavatar.webp';console.log('Failed to load item\'s avatar/icon, using default instead.');" >
                 </div>
                 <div class="column is-10">
@@ -98,7 +98,7 @@
                             <% } %>
 
                             <% if (phone) { %><br><% } %>
-                        <% } %> 
+                        <% } %>
                         <% if (phone) { %>
                             <span id="userName" style="overflow-wrap: break-word;"><%= userProfile.fullUsername %></span>
                         <% } %>
@@ -108,8 +108,8 @@
                         <% if (user && user.db.rank.mod === true || user && userProfile._id === user.id) { %>
                             <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
                                 <% if (userProfile._id === user.id) { %>
-                                    <%- 
-                                        include("../../partials/button.ejs", { 
+                                    <%-
+                                        include("../../partials/button.ejs", {
                                             className: "button is-success",
                                             icon: "fas fa-sync-alt",
                                             tag: "a",
@@ -118,13 +118,13 @@
                                             additional: ""
                                         });
                                     %>
-                                    <%- 
-                                        include("../../partials/button.ejs", { 
-                                            className: "button is-warning", 
-                                            icon: "fas fa-pencil", 
-                                            tag: "a", 
-                                            message: __("common.edit"), 
-                                            href: `${linkPrefix}/users/profile/@me/edit`, 
+                                    <%-
+                                        include("../../partials/button.ejs", {
+                                            className: "button is-warning",
+                                            icon: "fas fa-pencil",
+                                            tag: "a",
+                                            message: __("common.edit"),
+                                            href: `${linkPrefix}/users/profile/@me/edit`,
                                             additional: ""
                                         });
                                     %>
@@ -132,13 +132,13 @@
                                 <% if (user.db.rank.mod) { %>
                                     <div class="dropdown is-hoverable">
                                         <div class="dropdown-trigger">
-                                            <%- 
-                                                include("../../partials/button.ejs", { 
-                                                    className: "button is-dark", 
-                                                    icon: "fas fa-cogs", 
-                                                    tag: "dropdownButton", 
-                                                    message: __("common.staffManagement"), 
-                                                    href: "", 
+                                            <%-
+                                                include("../../partials/button.ejs", {
+                                                    className: "button is-dark",
+                                                    icon: "fas fa-cogs",
+                                                    tag: "dropdownButton",
+                                                    message: __("common.staffManagement"),
+                                                    href: "",
                                                     additional: "style=\"direction: ltr;\""
                                                 });
                                             %>
@@ -161,6 +161,12 @@
                                                     <span><%= __("page.users.modifyRank") %></span>
                                                 </a>
                                             <% } %>
+                                            <% if (user.db.rank.admin === true ) { %>
+                                              <a class="dropdown-item has-text-red" onclick="showDeleteModal()">
+                                                  <span class="icon"><i aria-hidden="true" class="fas fa-shredder"></i></span>
+                                                  <span><%= __("page.account.admin.delete.user.confirm") %></span>
+                                              </a>
+                                            <% }%>
                                             <a class="dropdown-item" onclick="copyToClipboard('<%= userProfile._id %>');">
                                                 <span class="icon"><i aria-hidden="true" class="fas fa-copy"></i></span>
                                                 <span><%= __("common.copyID") %></span>
@@ -173,82 +179,82 @@
                         <% } %>
                         <div class="buttons page <% if (mobile) { %>is-centered<% } %>">
                             <% if (userProfile.profile.links.website) { %>
-                                <%- 
-                                    include("../../partials/button.ejs", { 
-                                        className: "button is-link", 
-                                        icon: "fas fa-globe", 
-                                        tag: "a", 
-                                        message: __("common.website"), 
-                                        href: userProfile.profile.links.website, 
+                                <%-
+                                    include("../../partials/button.ejs", {
+                                        className: "button is-link",
+                                        icon: "fas fa-globe",
+                                        tag: "a",
+                                        message: __("common.website"),
+                                        href: userProfile.profile.links.website,
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });
                                 %>
                             <% } %>
                             <% if (userProfile.profile.links.twitter) { %>
-                                <%- 
-                                    include("../../partials/button.ejs", { 
-                                        className: "button is-white", 
-                                        icon: "fab fa-x-twitter", 
-                                        tag: "a", 
-                                        message: `@${userProfile.profile.links.twitter}`, 
-                                        href: `https://x.com/@${userProfile.profile.links.twitter}`, 
+                                <%-
+                                    include("../../partials/button.ejs", {
+                                        className: "button is-white",
+                                        icon: "fab fa-x-twitter",
+                                        tag: "a",
+                                        message: `@${userProfile.profile.links.twitter}`,
+                                        href: `https://x.com/@${userProfile.profile.links.twitter}`,
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });
                                 %>
                             <% } %>
                             <% if (userProfile.profile.links.instagram) { %>
-                                <%- 
-                                    include("../../partials/button.ejs", { 
-                                        className: "button is-magenta", 
-                                        icon: "fab fa-instagram", 
-                                        tag: "a", 
-                                        message: `@${userProfile.profile.links.instagram}`, 
-                                        href: `https://instagram.com/${userProfile.profile.links.instagram}`, 
+                                <%-
+                                    include("../../partials/button.ejs", {
+                                        className: "button is-magenta",
+                                        icon: "fab fa-instagram",
+                                        tag: "a",
+                                        message: `@${userProfile.profile.links.instagram}`,
+                                        href: `https://instagram.com/${userProfile.profile.links.instagram}`,
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });
                                 %>
                             <% } %>
                             <% if (userProfile.profile.links.snapchat) { %>
-                                <%- 
-                                    include("../../partials/button.ejs", { 
-                                        className: "button is-warning", 
-                                        icon: "fab fa-snapchat-ghost", 
-                                        tag: "a", 
-                                        message: `@${userProfile.profile.links.snapchat}`, 
-                                        href: `https://www.snapchat.com/add/${userProfile.profile.links.snapchat}`, 
+                                <%-
+                                    include("../../partials/button.ejs", {
+                                        className: "button is-warning",
+                                        icon: "fab fa-snapchat-ghost",
+                                        tag: "a",
+                                        message: `@${userProfile.profile.links.snapchat}`,
+                                        href: `https://www.snapchat.com/add/${userProfile.profile.links.snapchat}`,
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });
                                 %>
                             <% } %>
                             <% if (userProfile.profile.links.gitlab) { %>
-                                <%- 
-                                    include("../../partials/button.ejs", { 
-                                        className: "button is-orange", 
-                                        icon: "fab fa-gitlab", 
-                                        tag: "a", 
-                                        message:`@${userProfile.profile.links.gitlab}`, 
-                                        href: `https://gitlab.com/${userProfile.profile.links.gitlab}`, 
+                                <%-
+                                    include("../../partials/button.ejs", {
+                                        className: "button is-orange",
+                                        icon: "fab fa-gitlab",
+                                        tag: "a",
+                                        message:`@${userProfile.profile.links.gitlab}`,
+                                        href: `https://gitlab.com/${userProfile.profile.links.gitlab}`,
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });
                                 %>
                             <% } %>
                             <% if (userProfile.profile.links.github) { %>
-                                <%- 
-                                    include("../../partials/button.ejs", { 
-                                        className: "button is-dark", 
-                                        icon: "fab fa-github", 
-                                        tag: "a", 
-                                        message: `@${userProfile.profile.links.github}`, 
-                                        href: `https://github.com/${userProfile.profile.links.github}`, 
+                                <%-
+                                    include("../../partials/button.ejs", {
+                                        className: "button is-dark",
+                                        icon: "fab fa-github",
+                                        tag: "a",
+                                        message: `@${userProfile.profile.links.github}`,
+                                        href: `https://github.com/${userProfile.profile.links.github}`,
                                         additional: "target=\"_blank\" rel=\"noopener\""
                                     });
                                 %>
                             <% } %>
                         </div>
                         <div class="field is-grouped is-grouped-multiline <% if (mobile) { %>is-grouped-centered<% } %>">
-                            <%- 
-                                include("../../partials/tag.ejs", { 
-                                    contentColour: "is-default", 
+                            <%-
+                                include("../../partials/tag.ejs", {
+                                    contentColour: "is-default",
                                     title: __("page.users.snakeHS"),
                                     content: userProfile.game.snakes.maxScore,
                                     type: "multi"
@@ -324,6 +330,68 @@
             <% } %>
     </div>
 </div>
+<div class="modal" id="deleteModal">
+    <div class="modal-background" style="backdrop-filter: blur(8px);
+        background-color: rgba(255, 0, 0, 0.111) !important;"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title has-text-danger">
+                    <span class="icon">
+                        <i class="fad fa-warning"></i>
+                    </span>
+                <%= __("page.account.admin.delete.user.pre.confirm") %>
+            </p>
+            <button class="delete" aria-label="close" onclick="closeDeleteModal()"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="content">
+                <p class="has-text-danger">
+                    <%= __("page.account.admin.delete.user.text") %>
+                </p>
+                <form method="POST" action="<%= linkPrefix %>/users/account/data/<%= userProfile._id %>/delete">
+                    <div class="field">
+                        <label class="label"><%= __("page.account.data.delete.confirm.type") %></label>
+                        <div class="control">
+                            <input name="typedUsername" id="typedUsername" onpaste="return false;" ondrop="return false;" autocomplete="off" class="input" type="text"
+                                   required
+                                   placeholder="<%= userProfile.fullUsername %>"
+                                   pattern="<%= userProfile.fullUsername %>"
+                                   disabled>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <button type="submit" id="submitButton" class="button is-danger" disabled>
+                                    <span class="icon">
+                                        <i class="fas fa-shredder"></i>
+                                    </span>
+                                <span><%= __("page.account.admin.delete.user.confirm") %></span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+<script>
+    function showDeleteModal() {
+        document.getElementById('deleteModal').classList.add('is-active');
+
+        setTimeout(() => {
+            submitButton.removeAttribute("disabled");
+            typedUsername.removeAttribute("disabled");
+            typedUsername.placeholder = "<%= userProfile.fullUsername %>"
+        }, 5000);
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('is-active');
+    }
+
+    document.querySelector('.modal-background').addEventListener('click', closeDeleteModal);
+</script>
 <script src="/js/bulma-toast.min.js" async></script>
 <%- include("../../partials/isDefaultCSS/notification.ejs") %>
 <script>function copyToClipboard(t){const hideWB=document.createElement("style");hideWB.innerHTML="widgetbot-crate {display: none;}";document.body.appendChild(hideWB);const e=document.createElement("textarea");e.value=t,e.setAttribute("readonly",""),e.style={position:"absolute",left:"-9999px"},document.body.appendChild(e),e.select(),document.execCommand("copy"),document.body.removeChild(e),bulmaToast.toast({message:"Copied to clipboard",type:"is-default",position:"bottom-right",duration:2e3,opacity:.75,animate:{in:"fadeInRight",out:"fadeOutRight"}});setTimeout(()=>{hideWB.innerHTML="widgetbot-crate {display: block;}"},3000)}

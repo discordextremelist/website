@@ -17,26 +17,26 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import express from "express";
 import type { Request, Response } from "express";
 
-import settings from "../../settings.json" with { type: "json" };
-import { variables } from "../Util/Function/variables.ts";
+export const botExists = async (
+    req: Request,
+    res: Response,
+    next: () => void
+) => {
+    const bot = await global.db
+        .collection<delBot>("bots")
+        .findOne({ _id: req.params.id });
 
-const router = express.Router();
-
-router.get("/", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.docs");
-
-    res.render("templates/docs/index", {
-        title: res.__("common.nav.more.docs"),
-        subtitle: res.__("docs.subtitle"),
-        req,
-        settings,
-        tableTdThClr: ["dark", "black"].includes(res.locals.preferredTheme)
-            ? "whitesmoke"
-            : "#000000"
-    });
-});
-
-export default router;
+    if (!bot)
+        return res.status(404).render("status", {
+            res,
+            title: res.__("common.error"),
+            subtitle: res.__("common.error.bot.404"),
+            status: 404,
+            type: "Error",
+            req
+        });
+    req.attached.bot = bot;
+    next();
+};

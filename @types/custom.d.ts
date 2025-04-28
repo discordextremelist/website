@@ -58,6 +58,11 @@ declare module "express-serve-static-core" {
             version: string;
             node: string;
         };
+        attached?: {
+            bot?: delBot;
+            server?: delServer;
+            template?: templateServer;
+        }
     }
 
     interface Response {

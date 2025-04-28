@@ -41,6 +41,7 @@
     "mongodb": "^4.17.2",
     "morgan": "~1.10.0",
     "node-fetch": "^2.7.0",
+    "node-vibrant": "^4.0.3",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",
     "passport-oauth2-refresh": "^2.1.0",
@@ -72,6 +73,7 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "dev": "nodemon --exec \"NODE_ENV=development pnpm start\" --ext \".ts\"",
     "start": "node --max-old-space-size=4096 --experimental-transform-types --import ./src/instrument.ts ./src/app.ts",
     "postinstall": "mkdir -p ./data && tsc node_modules/lib-comparison/libs.ts && cp node_modules/lib-comparison/libs.js ./data/libs.js",
     "css-compile": "sass --no-source-map assets/Sass/themes/black.scss:assets/Public/css/themes/black.css assets/Sass/themes/dark.scss:assets/Public/css/themes/dark.css assets/Sass/themes/light.scss:assets/Public/css/themes/light.css assets/Sass/components/listing.scss:assets/Public/css/listing.css --style=compressed",

@@ -57,7 +57,7 @@ const getNext = (arr: string[], id: string) => {
     return arr[nextIndex];
 };
 
-router.get("/bots", async (req, res) => {
+router.get("/bots", async (_req, res) => {
     let id = await global.redis?.hget("autosync", "nextBot");
 
     const ids = (await global.redis?.hkeys("bots")).sort();
@@ -171,7 +171,7 @@ router.get("/bots", async (req, res) => {
     res.sendStatus(200);
 });
 
-router.get("/servers", async (req, res) => {
+router.get("/servers", async (_req, res) => {
     let id = await global.redis?.hget("autosync", "nextServer");
 
     const ids = (await global.redis?.hkeys("servers")).sort();
@@ -267,7 +267,7 @@ router.get("/servers", async (req, res) => {
     res.sendStatus(200);
 });
 
-router.get("/templates", async (req, res) => {
+router.get("/templates", async (_req, res) => {
     let id = await global.redis?.hget("autosync", "nextTemplate");
 
     const ids = (await global.redis?.hkeys("templates")).sort();

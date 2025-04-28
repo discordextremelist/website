@@ -1132,7 +1132,7 @@ router.get(
             allowedTags: htmlRef.standard.tags,
             allowedAttributes: htmlRef.standard.attributes,
             allowVulnerableTags: true,
-            disallowedTagsMode: "escape",
+            disallowedTagsMode: "completelyDiscard",
             transformTags: {
                 iframe: function (tagName, attribs) {
                     attribs.sandbox = "allow-forms";
@@ -1909,6 +1909,7 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         allowedTags: htmlRef.standard.tags,
         allowedAttributes: htmlRef.standard.attributes,
         allowVulnerableTags: true,
+        disallowedTagsMode: "completelyDiscard",
         transformTags: {
             iframe: function (tagName, attribs) {
                 attribs.sandbox = "allow-forms";

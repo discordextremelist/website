@@ -253,6 +253,42 @@
                     </span>
                 </p>
             </div>
+            <div class="field">
+                <label class="label has-text-default"><%= __("common.social.mastodon") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input id="form_mastodon" class="input is-rounded" type="text" name="mastodon" placeholder="@del@discordextremelist.xyz" pattern="@[A-Za-z0-9\.]+@[A-Za-z0-9\.]+">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="far fa-at"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field">
+                <label class="label has-text-default"><%= __("common.social.bluesky") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input id="form_bluesky" class="input is-rounded" type="text" name="bluesky" placeholder="@discordextremelist.xyz"  pattern="@[A-Za-z0-9\.]+">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="far fa-at"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field">
+                <label class="label has-text-default"><%= __("common.social.gitlab") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input id="form_gitlab" class="input is-rounded" type="text" name="gitlab" placeholder="https://gitlab.com/example" pattern="https://[A-Za-z0-9\.]+/[A-Za-z0-9\._-]+">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="far fa-at"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field">
+                <label class="label has-text-default"><%= __("common.social.forgejo") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input id="form_forgejo" class="input is-rounded" type="text" name="forgejo" placeholder="Y" pattern="https://[A-Za-z0-9\.]+/[A-Za-z0-9\._-]+">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="far fa-at"></i>
+                    </span>
+                </p>
+            </div>
             <br>
             <br>
             <h3 class="is-size-3 has-text-default"><%= __("page.form.category.theme") %></h3>
@@ -557,6 +593,13 @@ function doSubmit() {
             invite: document.getElementById("form_invite").value,
 
             twitter: document.getElementById("form_twitter").value,
+
+            // New socials are below
+            mastodon: document.getElementById("form_mastodon").value,
+            bluesky: document.getElementById("form_bluesky").value,
+            gitlab: document.getElementById("form_gitlab").value,
+            forgejo: document.getElementById("form_forgejo").value,
+
             privacyPolicy: document.getElementById("form_privacyPolicy").value,
 
             useCustomColour: document.getElementById("form_customColourSwitch").checked,

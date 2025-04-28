@@ -135,8 +135,8 @@
             ],
             "iframe": [{
                 "name": "sandbox",
-                "multiple": true,
-                "values": ["allow-forms"]
+                "multiple": false,
+                "values": [""]
             }]
         }
     }

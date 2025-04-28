@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { Db } from "mongodb";
 import { Redis } from "ioredis";
 import strings from "del-i18n/website/en-NZ.json" with { type: "json" };
+import express from "express";
 
 declare global {
     var redis: Redis;
@@ -69,7 +70,7 @@ declare module "express-serve-static-core" {
         session: any;
         user: any;
         /** get i18n string
-         * 
+         *
          * https://github.com/discordextremelist/i18n/tree/master/website
          * https://translate.discordextremelist.xyz
          */

@@ -62,7 +62,6 @@ import { Vibrant } from "node-vibrant/node";
 const md = new mdi();
 const router = express.Router();
 
-
 const patterns = {
     mastodon: /@[A-Za-z0-9.]+@[A-Za-z0-9.]+/gi,
     bluesky: /@[A-Za-z0-9.]+/gi,

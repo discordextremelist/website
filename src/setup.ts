@@ -29,7 +29,7 @@ function cleanLibName(lib: string) {
 
 async function setup() {
     console.log("Setup: Updating libraries...");
-    await global.db.collection("libraries").drop();
+    await global.db.collection("libraries").drop(); // TODO: Why does this exist? What purpose does it serve, upsert below will etiher insert or update.
     for (const lib of libs) {
         await global.db
             .collection("libraries")

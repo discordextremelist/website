@@ -403,4 +403,5 @@ declare global {
         status: delTicketStatus;
         closureReason?: string;
     }
+
 }

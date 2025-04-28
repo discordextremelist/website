@@ -169,13 +169,13 @@
                             </span>
                             <span><%= __("page.staff.server_queue") %></span>
                         </a>
-                        <% if (req.user.db.rank.assistant === true) { %>
-                            <a class="navbar-item" href="<%= linkPrefix %>/staff/invite_queue">
+                        <a class="navbar-item" href="<%= linkPrefix %>/staff/invite_queue">
                                 <span class="icon iconalign">
                                     <i class="fad fa-list-ul" aria-hidden="true"></i>
                                 </span>
-                                <span><%= __("page.staff.invite_queue") %></span>
-                            </a>
+                            <span><%= __("page.staff.invite_queue") %></span>
+                        </a>
+                        <% if (req.user.db.rank.assistant === true) { %>
                             <a class="navbar-item" href="<%= linkPrefix %>/staff/staff-manager">
                                 <span class="icon iconalign">
                                     <i class="fad fa-users-cog" aria-hidden="true"></i>

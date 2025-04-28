@@ -1132,10 +1132,10 @@ router.get(
             allowedTags: htmlRef.standard.tags,
             allowedAttributes: htmlRef.standard.attributes,
             allowVulnerableTags: true,
-            disallowedTagsMode: "completelyDiscard",
+            disallowedTagsMode: "recursiveEscape",
             transformTags: {
                 iframe: function (tagName, attribs) {
-                    attribs.sandbox = "allow-forms";
+                    attribs.sandbox = "";
                     return {
                         tagName: "iframe",
                         attribs: attribs
@@ -1909,10 +1909,10 @@ router.get("/:id", variables, async (req: Request, res: Response) => {
         allowedTags: htmlRef.standard.tags,
         allowedAttributes: htmlRef.standard.attributes,
         allowVulnerableTags: true,
-        disallowedTagsMode: "completelyDiscard",
+        disallowedTagsMode: "recursiveEscape",
         transformTags: {
             iframe: function (tagName, attribs) {
-                attribs.sandbox = "allow-forms";
+                attribs.sandbox = "";
                 return {
                     tagName: "iframe",
                     attribs: attribs

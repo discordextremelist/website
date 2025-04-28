@@ -573,7 +573,7 @@ router.get(
             allowedTags: htmlRef.minimal.tags,
             allowedAttributes: htmlRef.minimal.attributes,
             allowVulnerableTags: true,
-            disallowedTagsMode: "escape"
+            disallowedTagsMode: "recursiveEscape"
         });
 
         res.render("templates/servers/edit", {

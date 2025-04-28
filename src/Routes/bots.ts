@@ -661,7 +661,11 @@ router.post(
                         privacyPolicy: req.body.privacyPolicy
                     },
                     social: {
-                        twitter: req.body.twitter
+                        twitter: req.body.twitter,
+                        mastodon: req.body.mastodon,
+                        bluesky: req.body.bluesky,
+                        gitlab: req.body.gitlab,
+                        forgejo: req.body.forgejo,
                     },
                     theme: {
                         useCustomColour: req.body.useCustomColour,
@@ -1120,7 +1124,7 @@ router.get(
 );
 
 router.post(
-    "/:id/edit",
+    // "/:id/edit",
     variables,
     permission.auth,
     async (req: Request, res: Response) => {
@@ -1642,7 +1646,11 @@ router.post(
                                 privacyPolicy: req.body.privacyPolicy
                             },
                             social: {
-                                twitter: req.body.twitter
+                                twitter: req.body.twitter,
+                                mastodon: req.body.mastodon,
+                                bluesky: req.body.bluesky,
+                                gitlab: req.body.gitlab,
+                                forgejo: req.body.forgejo,
                             },
                             theme: {
                                 useCustomColour: req.body.useAutoAccent ? true : req.body.useCustomColour,

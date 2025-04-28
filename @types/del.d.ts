@@ -239,6 +239,10 @@ declare global {
         };
         social: {
             twitter: string;
+            mastodon?: string;
+            bluesky?: string;
+            gitlab?: string;
+            forgejo?: string;
         };
         theme: {
             useCustomColour: boolean;
@@ -386,13 +390,13 @@ declare global {
         bot: string;
         history?: string; // Optional field using ? syntax
     }
-    
+
     enum delTicketStatus {
         AwaitingResponse = 0,
         AwaitingFixes = 1,
         Closed = 2
     }
-    
+
     interface delTicket {
         _id: string;
         ids: delTicketIds;

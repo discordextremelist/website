@@ -174,7 +174,11 @@ router.get(
             .allowDiskUse()
             .toArray())
             .map((bot) => {
-                bot.inServer = discord.guilds.bot.members.cache.has(bot._id) || discord.guilds.main.members.cache.has(bot._id);
+                if (req.query.migrate === "1") {
+                    bot.inServer = discord.guilds.bot.members.cache.has(bot._id);
+                } else {
+                    bot.inServer = discord.guilds.bot.members.cache.has(bot._id) || discord.guilds.main.members.cache.has(bot._id);
+                }
                 return bot;
             });
 

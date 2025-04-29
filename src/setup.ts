@@ -29,7 +29,7 @@ function cleanLibName(lib: string) {
 
 async function setup() {
     console.log("Setup: Updating libraries...");
-    await global.db.collection("libraries").drop();
+    //await global.db.collection("libraries").drop();
     for (const lib of libs) {
         await global.db
             .collection("libraries")

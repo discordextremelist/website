@@ -195,8 +195,13 @@ router.get(
     variables,
     permission.assistant,
     async (req: Request, res: Response) => {
+        const audit_type = req.query.t ?? "ALL";
+        console.log(audit_type);
         const logs: auditLog[] = (await getAllAuditLogs())
-            .filter(x => x.type !== "GAME_HIGHSCORE_UPDATE")
+            .filter(x => {
+                if (audit_type === "ALL") return x.type !== "GAME_HIGHSCORE_UPDATE";
+                return x.type === audit_type;
+            })
             .sort((a, b) => b.date - a.date); // Sort descending
 
         if (!req.query.page) req.query.page = "1";
@@ -215,6 +220,7 @@ router.get(
         res.render("templates/staff/audit", {
             title: res.__("page.staff.audit"),
             subtitle: res.__("page.staff.audit.subtitle"),
+            audit_type,
             req,
             logs,
             logsPgArr: iteratedLogs,

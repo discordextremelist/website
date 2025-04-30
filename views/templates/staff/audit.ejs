@@ -1,6 +1,6 @@
 <%- include("../../partials/header.ejs") %>
 <%- include("../../partials/nav.ejs") %>
-<% 
+<%
     let defaultColour = "#BA2EFF";
     let foreground = "#ffffff";
 
@@ -22,6 +22,58 @@
                 <span><%= title %></span>
             </h1>
             <h2 class="subtitle"><%= subtitle %></h2>
+            <div class="field">
+                <label class="label has-text-default">Audit Log Type <span class="has-text-danger">*</span></label>
+                <div class="control has-icons-left">
+                    <div class="select is-rounded">
+                        <select name="form_auditType" id="form_auditType">
+                            <option value="MODIFY_RANK" <%= audit_type === 'MODIFY_RANK' ? 'selected' : '' %>>MODIFY_RANK</option>
+                            <option value="SET_VANITY" <%= audit_type === 'SET_VANITY' ? 'selected' : '' %>>SET_VANITY</option>
+                            <option value="MODIFY_VANITY" <%= audit_type === 'MODIFY_VANITY' ? 'selected' : '' %>>MODIFY_VANITY</option>
+                            <option value="GAME_HIGHSCORE_UPDATE" <%= audit_type === 'GAME_HIGHSCORE_UPDATE' ? 'selected' : '' %>>GAME_HIGHSCORE_UPDATE</option>
+                            <option value="MODIFY_PREFERENCES" <%= audit_type === 'MODIFY_PREFERENCES' ? 'selected' : '' %>>MODIFY_PREFERENCES</option>
+                            <option value="MODIFY_PROFILE" <%= audit_type === 'MODIFY_PROFILE' ? 'selected' : '' %>>MODIFY_PROFILE</option>
+                            <option value="SYNC_USER" <%= audit_type === 'SYNC_USER' ? 'selected' : '' %>>SYNC_USER</option>
+                            <option value="APPROVE_BOT" <%= audit_type === 'APPROVE_BOT' ? 'selected' : '' %>>APPROVE_BOT</option>
+                            <option value="UNAPPROVE_BOT" <%= audit_type === 'UNAPPROVE_BOT' ? 'selected' : '' %>>UNAPPROVE_BOT</option>
+                            <option value="DECLINE_BOT" <%= audit_type === 'DECLINE_BOT' ? 'selected' : '' %>>DECLINE_BOT</option>
+                            <option value="DELETE_BOT" <%= audit_type === 'DELETE_BOT' ? 'selected' : '' %>>DELETE_BOT</option>
+                            <option value="ARCHIVE_BOT" <%= audit_type === 'ARCHIVE_BOT' ? 'selected' : '' %>>ARCHIVE_BOT</option>
+                            <option value="HIDE_BOT" <%= audit_type === 'HIDE_BOT' ? 'selected' : '' %>>HIDE_BOT</option>
+                            <option value="UNHIDE_BOT" <%= audit_type === 'UNHIDE_BOT' ? 'selected' : '' %>>UNHIDE_BOT</option>
+                            <option value="MOD_HIDE_BOT" <%= audit_type === 'MOD_HIDE_BOT' ? 'selected' : '' %>>MOD_HIDE_BOT</option>
+                            <option value="MOD_UNHIDE_BOT" <%= audit_type === 'MOD_UNHIDE_BOT' ? 'selected' : '' %>>MOD_UNHIDE_BOT</option>
+                            <option value="REMOVE_BOT" <%= audit_type === 'REMOVE_BOT' ? 'selected' : '' %>>REMOVE_BOT</option>
+                            <option value="RESUBMIT_BOT" <%= audit_type === 'RESUBMIT_BOT' ? 'selected' : '' %>>RESUBMIT_BOT</option>
+                            <option value="EDIT_BOT" <%= audit_type === 'EDIT_BOT' ? 'selected' : '' %>>EDIT_BOT</option>
+                            <option value="RESET_BOT_TOKEN" <%= audit_type === 'RESET_BOT_TOKEN' ? 'selected' : '' %>>RESET_BOT_TOKEN</option>
+                            <option value="SYNC_BOT" <%= audit_type === 'SYNC_BOT' ? 'selected' : '' %>>SYNC_BOT</option>
+                            <option value="PREMIUM_BOT_GIVE" <%= audit_type === 'PREMIUM_BOT_GIVE' ? 'selected' : '' %>>PREMIUM_BOT_GIVE</option>
+                            <option value="PREMIUM_BOT_TAKE" <%= audit_type === 'PREMIUM_BOT_TAKE' ? 'selected' : '' %>>PREMIUM_BOT_TAKE</option>
+                            <option value="SUBMIT_BOT" <%= audit_type === 'SUBMIT_BOT' ? 'selected' : '' %>>SUBMIT_BOT</option>
+                            <option value="UPVOTE_BOT" <%= audit_type === 'UPVOTE_BOT' ? 'selected' : '' %>>UPVOTE_BOT</option>
+                            <option value="DOWNVOTE_BOT" <%= audit_type === 'DOWNVOTE_BOT' ? 'selected' : '' %>>DOWNVOTE_BOT</option>
+                            <option value="SUBMIT_SERVER" <%= audit_type === 'SUBMIT_SERVER' ? 'selected' : '' %>>SUBMIT_SERVER</option>
+                            <option value="EDIT_SERVER" <%= audit_type === 'EDIT_SERVER' ? 'selected' : '' %>>EDIT_SERVER</option>
+                            <option value="SYNC_SERVER" <%= audit_type === 'SYNC_SERVER' ? 'selected' : '' %>>SYNC_SERVER</option>
+                            <option value="DELETE_SERVER" <%= audit_type === 'DELETE_SERVER' ? 'selected' : '' %>>DELETE_SERVER</option>
+                            <option value="REMOVE_SERVER" <%= audit_type === 'REMOVE_SERVER' ? 'selected' : '' %>>REMOVE_SERVER</option>
+                            <option value="SUBMIT_TEMPLATE" <%= audit_type === 'SUBMIT_TEMPLATE' ? 'selected' : '' %>>SUBMIT_TEMPLATE</option>
+                            <option value="EDIT_TEMPLATE" <%= audit_type === 'EDIT_TEMPLATE' ? 'selected' : '' %>>EDIT_TEMPLATE</option>
+                            <option value="SYNC_TEMPLATE" <%= audit_type === 'SYNC_TEMPLATE' ? 'selected' : '' %>>SYNC_TEMPLATE</option>
+                            <option value="DELETE_TEMPLATE" <%= audit_type === 'DELETE_TEMPLATE' ? 'selected' : '' %>>DELETE_TEMPLATE</option>
+                            <option value="REMOVE_TEMPLATE" <%= audit_type === 'REMOVE_TEMPLATE' ? 'selected' : '' %>>REMOVE_TEMPLATE</option>
+                            <option value="UPDATE_AWAY" <%= audit_type === 'UPDATE_AWAY' ? 'selected' : '' %>>UPDATE_AWAY</option>
+                            <option value="RESET_AWAY" <%= audit_type === 'RESET_AWAY' ? 'selected' : '' %>>RESET_AWAY</option>
+                            <option value="MODIFY_STANDING" <%= audit_type === 'MODIFY_STANDING' ? 'selected' : '' %>>MODIFY_STANDING</option>
+                            <option value="ADD_WARNING" <%= audit_type === 'ADD_WARNING' ? 'selected' : '' %>>ADD_WARNING</option>
+                            <option value="ADD_STRIKE" <%= audit_type === 'ADD_STRIKE' ? 'selected' : '' %>>ADD_STRIKE</option>
+                            <option value="UPDATE_ANNOUNCEMENT" <%= audit_type === 'UPDATE_ANNOUNCEMENT' ? 'selected' : '' %>>UPDATE_ANNOUNCEMENT</option>
+                            <option value="RESET_ANNOUNCEMENT" <%= audit_type === 'RESET_ANNOUNCEMENT' ? 'selected' : '' %>>RESET_ANNOUNCEMENT</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -36,7 +88,7 @@
                 <h2 class="is-size-3"><%= __("common.error.fetchFail.logs") %></h2>
             <% } else { %>
                 <%- logsPgArr.map(log => include("../../partials/cards/log.ejs", { log, defaultColour })).join("") %>
-            <% } %> 
+            <% } %>
         <% } %>
         <br />
         <%- include("../../partials/pagination.ejs", { linkLocation: "staff/audit" }) %>
@@ -64,6 +116,15 @@
         const logDocument = document.getElementById(`rawLOG-${log}`);
         document.getElementById(`rawLOG-${log}`).style.display === "none" ? logDocument.style.display = "block" : logDocument.style.display = "none";
     }
+    const select_elem = document.getElementById("form_auditType");
+    select_elem.addEventListener("change", e => {
+        let cur_type = e.target.value;
+        if (cur_type) {
+            let cur_url = new URL(window.location.href);
+            cur_url.searchParams.set("t", cur_type);
+            window.location.href = cur_url.href;
+        }
+    });
 </script>
 <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
 <%- include("../../partials/footer.ejs") %>

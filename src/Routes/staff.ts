@@ -225,7 +225,7 @@ router.get(
             logs,
             logsPgArr: iteratedLogs,
             page: req.query.page,
-            pageParam: `?page=`,
+            pageParam: `?t=${audit_type}&page=`,
             pages: Math.ceil(logs.length / 15),
             functions
         });

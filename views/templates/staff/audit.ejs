@@ -121,6 +121,10 @@
         let cur_type = e.target.value;
         if (cur_type) {
             let cur_url = new URL(window.location.href);
+            let cur_page = cur_url.searchParams.get("page");
+            if (cur_page) {
+                cur_url.searchParams.set("page", cur_page)
+            }
             cur_url.searchParams.set("t", cur_type);
             window.location.href = cur_url.href;
         }

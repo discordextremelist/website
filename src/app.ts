@@ -68,6 +68,7 @@ import { uploadBots } from "./Util/Services/botCaching.ts";
 import { uploadAuditLogs } from "./Util/Services/auditCaching.ts";
 import { uploadServers } from "./Util/Services/serverCaching.ts";
 import { uploadTemplates } from "./Util/Services/templateCaching.ts";
+import { initBotRoutes } from "./Routes/bots/index.ts";
 
 const app = express();
 const __dirname = path.resolve();
@@ -330,7 +331,7 @@ new Promise<void>((resolve, reject) => {
 
         app.use("*", monacoRedirect);
 
-        app.use("/:lang/bots", botsRoute);
+        app.use("/:lang/bots", initBotRoutes());
         app.use("/:lang/servers", serversRoute);
         app.use("/:lang/templates", templatesRoute);
         app.use("/:lang/users", usersRoute);

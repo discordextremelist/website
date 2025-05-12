@@ -22,7 +22,12 @@ import metrics from "datadog-metrics";
 
 import settings from "../../../settings.json" with { type: "json" };
 import moment from "moment";
-import { PresenceUpdateStatus, GatewayIntentBits, Options, Partials } from "discord.js";
+import {
+    PresenceUpdateStatus,
+    GatewayIntentBits,
+    Options,
+    Partials
+} from "discord.js";
 import * as botCache from "./botCaching.ts";
 import { hostname } from "os";
 import chunk from "chunk";
@@ -104,6 +109,24 @@ bot.on("ready", async () => {
         const afterPrimary = guilds.main.members.cache.size;
         const afterSecondary = guilds.bot.members.cache.size;
         console.log(`Cache grew by ${afterPrimary - beforePrimary} entries for primary, ${afterSecondary - beforeSecondary} secondary.`);
+        if (!await redis.get("chan_update_lock")) {
+            await redis.setex("chan_update_lock", 6 * 60 * 60 * 1000, hostname()); // Expire every 6 hours
+        }
+        const member_chan = guilds.main.channels.cache.get("618583328458670090"); // Too lazy to put in settings.json
+        if (member_chan) {
+            await member_chan.edit({
+                name: `Member Count: ${afterPrimary}`,
+            });
+            if (await redis.get("chan_update_lock") == hostname()) {
+                console.log("Updating member channel, every 30 minutes!");
+                setInterval(async () => {
+                    // If this was rust, use of moved value.
+                    await member_chan.edit({
+                        name: `Member Count: ${guilds.bot.members.cache.size}`,
+                    });
+                }, 30 * 60000);
+            }
+        }
         await global.redis.del("fetch_lock");
     }
 });

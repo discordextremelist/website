@@ -37,6 +37,15 @@ export const botExists = async (
             type: "Error",
             req
         });
+    if (bot.status.blacklist) return res.status(403).render("status", {
+        res,
+        title: res.__("common.error"),
+        // @ts-ignore
+        subtitle: res.__("common.error.bot.blacklist"),
+        status: 403,
+        type: "Error",
+        req
+    });
     req.attached.bot = bot;
     next();
 };

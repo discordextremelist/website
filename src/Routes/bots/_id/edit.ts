@@ -24,6 +24,7 @@ import * as userCache from "../../../Util/Services/userCaching.ts";
 import { DAPI } from "../../../Util/Services/discord.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { Response as fetchRes } from "node-fetch";
+import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
 
 export class GetEdit extends PathRoute<"get"> {
 
@@ -31,10 +32,24 @@ export class GetEdit extends PathRoute<"get"> {
         super("get", "/:id/edit", [variables, permission.auth, botExists]);
     }
 
+    // @ts-ignore
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot;
 
         res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
+
+        console.log(await blacklistCheck(req.params.id));
+
+        if (await blacklistCheck(req.params.id))
+            return res.status(403).render("status", {
+                res,
+                title: res.__("common.error"),
+                status: 403,
+                // @ts-ignore
+                subtitle: res.__("common.error.bot.blacklist"),
+                type: "Error",
+                req: req
+            });
 
         if (
             bot.owner.id !== req.user.id &&
@@ -102,10 +117,23 @@ export class PostEdit extends PathRoute<"post"> {
                                         errors: [res.__("common.error.bot.404")]
                                     });
 
+
+
         if (!req.body.bot && !req.body.slashCommands) {
         error = true;
         errors.push(res.__("common.error.bot.arr.noScopes"));
     }
+
+        if (await blacklistCheck(req.params.id))
+            return res.status(403).render("status", {
+                res,
+                title: res.__("common.error"),
+                status: 403,
+                // @ts-ignore
+                subtitle: res.__("common.error.bot.blacklist"),
+                type: "Error",
+                req: req
+            });
 
     if (req.body.clientID) {
         if (

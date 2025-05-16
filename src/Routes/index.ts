@@ -134,6 +134,7 @@ const commonFilter = ({ status, labels }: delBot, req: Request) =>  status.appro
     !status.archived &&
     !status.hidden &&
     !status.modHidden &&
+    !status.blacklist &&
     (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw);
 
 // @ts-ignore

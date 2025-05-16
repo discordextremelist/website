@@ -347,17 +347,7 @@ function botType(bodyType: string): number {
 //                 }
 //             );
 //
-//             await global.db.collection("audit").insertOne({
-//                 type: "SET_VANITY",
-//                 executor: req.user.id,
-//                 target: req.params.id,
-//                 date: Date.now(),
-//                 reason: req.body.reason || "None specified.",
-//                 details: {
-//                     old: "Not available.",
-//                     new: req.body.vanity
-//                 }
-//             });
+//             `1`
 //
 //             await botCache.updateBot(req.params.id);
 //

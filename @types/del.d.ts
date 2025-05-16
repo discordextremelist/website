@@ -270,6 +270,7 @@ declare global {
             archived: boolean;
             hidden: boolean;
             modHidden: boolean;
+            blacklist?: boolean;
         };
     }
 

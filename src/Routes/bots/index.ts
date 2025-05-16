@@ -17,6 +17,7 @@ import { GetResubmitBot, PostResubmitBot } from "./_id/resubmit.ts";
 import { ApproveBot, GetUnapproveBot, GivePremiumBot, PostUnapproveBot, TakePremiumBot } from "./_id/approve.ts";
 import { GetDeclineBot, PostDeclineBot } from "./_id/decline.ts";
 import type { botReasons } from "../../../@types/enums.ts";
+import { BlacklistBot } from "./_id/blacklist.ts";
 
 export function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);
@@ -81,6 +82,7 @@ export const initBotRoutes = (): Router => {
     new PostDeclineBot().register(router);
     new GetUnapproveBot().register(router);
     new PostUnapproveBot().register(router);
+    new BlacklistBot().register(router);
     console.log("Bot routes registered!");
     return router;
 };

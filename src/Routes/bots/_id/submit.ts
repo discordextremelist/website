@@ -23,6 +23,7 @@ import crypto from "crypto";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { Response as fetchRes } from "node-fetch";
+import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
 
 export class GetSubmit extends PathRoute<"get"> {
 
@@ -83,6 +84,17 @@ export class PostSubmit extends PathRoute<"post"> {
                 error: true,
                 status: 409,
                 errors: [res.__("common.error.bot.conflict")]
+            });
+
+        if (await blacklistCheck(req.params.id))
+            return res.status(403).render("status", {
+                res,
+                title: res.__("common.error"),
+                status: 403,
+                // @ts-ignore
+                subtitle: res.__("common.error.bot.blacklist"),
+                type: "Error",
+                req: req
             });
 
         if (!req.body.bot && !req.body.slashCommands) {

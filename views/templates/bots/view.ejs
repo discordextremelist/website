@@ -95,6 +95,12 @@
                             </span>
                         <% } %>
 
+                        <% if (bot.status.blacklist) { %>
+                            <span style="vertical-align: middle;" title="<%= __("common.rank.blacklist") %>" class="icon is-medium is-size-3 iconalign">
+                                <i aria-hidden="true" class="fad fa-lock-keyhole has-text-red fa-1x"></i>
+                            </span>
+                        <% } %>
+
                         <% if (phone) { %>
                             <% if (bot.status.premium || bot.status.siteBot || !bot.status.approved || bot.status.archived || bot.status.hidden || bot.status.modHidden || bot.labels?.nsfw || bot.labels?.ai) { %><br /><% } %>
                             <span id="botName">
@@ -233,7 +239,7 @@
                                   </div>
                                 </div>
                             </div>
-                            <% if (bot.status.hidden && bot.status.approved) { %>
+                            <% if (!bot.status.blacklist && (bot.status.hidden && bot.status.approved)) { %>
                                 <%-
                                     include("../../partials/button.ejs", {
                                         className: "button is-white",
@@ -310,15 +316,19 @@
                                             </span>
                                             <span><%= __("common.edit") %></span>
                                         </a>
+                                        <a class="dropdown-item has-text-danger" href="<%= linkPrefix %>/bots/<%= bot._id %>/blacklist">
+                                            <span class="icon"><i aria-hidden="true" class="<%= bot.status.blacklist ? "fas fa-lock-keyhole-open" : "fas fa-lock-keyhole" %>"></i></span>
+                                            <span><%= bot.status.blacklist ? "Remove Blacklist" : "Blacklist" %></span>
+                                        </a>
                                     <% } %>
-                                    <% if (!bot.status.modHidden && bot.status.approved) { %>
+                                    <% if (!bot.status.blacklist && !bot.status.modHidden && bot.status.approved) { %>
                                         <a class="dropdown-item has-text-grey-light" href="<%= linkPrefix %>/bots/<%= bot._id %>/modhide">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-eye-slash"></i>
                                             </span>
                                             <span><%= __("common.hide") %></span>
                                         </a>
-                                    <% } else if (bot.status.approved) { %>
+                                    <% } else if (!bot.status.blacklist && bot.status.approved) { %>
                                         <a class="dropdown-item has-text-grey-light" href="<%= linkPrefix %>/bots/<%= bot._id %>/modunhide">
                                             <span class="icon">
                                                 <i aria-hidden="true" class="fas fa-eye"></i>

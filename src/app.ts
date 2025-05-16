@@ -353,14 +353,12 @@ new Promise<void>((resolve, reject) => {
                 res: Response,
                 next: any
             ) => {
-                console.log(err.status);
                 res.locals.message = err.message;
                 res.locals.error = err;
 
                 if (!settings.website.dev && err.message !== "Not Found") {
                     Sentry.captureException(err); // Capture the error in Sentry
                 }
-
 
                 if (err.message === "Not Found") {
                     return res.status(404).render("status", {

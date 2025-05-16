@@ -12,6 +12,19 @@ import { GetEdit, PostEdit } from "./_id/edit.ts";
 import { TokenReset } from "./_id/token_reset.ts";
 import { ReportRoute, SrcRoute } from "./_id/src.ts";
 import { ArchiveBot, DeleteBot } from "./_id/archive.ts";
+import { HideBot, UnhideBot } from "./_id/hide_bot.ts";
+import { GetResubmitBot, PostResubmitBot } from "./_id/resubmit.ts";
+import { ApproveBot, GetUnapproveBot, GivePremiumBot, PostUnapproveBot, TakePremiumBot } from "./_id/approve.ts";
+import { GetDeclineBot, PostDeclineBot } from "./_id/decline.ts";
+import type { botReasons } from "../../../@types/enums.ts";
+
+export function botType(bodyType: string): number {
+    let type: botReasons = parseInt(bodyType);
+
+    if (type > 15) type = 0;
+
+    return type;
+}
 
 // Some basic routes do not need their own class.
 export const initBotRoutes = (): Router => {
@@ -57,6 +70,17 @@ export const initBotRoutes = (): Router => {
     new ReportRoute().register(router);
     new DeleteBot().register(router);
     new ArchiveBot().register(router);
+    new HideBot().register(router);
+    new UnhideBot().register(router);
+    new GetResubmitBot().register(router);
+    new PostResubmitBot().register(router);
+    new ApproveBot().register(router);
+    new GivePremiumBot().register(router);
+    new TakePremiumBot().register(router);
+    new GetDeclineBot().register(router);
+    new PostDeclineBot().register(router);
+    new GetUnapproveBot().register(router);
+    new PostUnapproveBot().register(router);
     console.log("Bot routes registered!");
     return router;
 };

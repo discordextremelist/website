@@ -69,6 +69,7 @@ import { uploadAuditLogs } from "./Util/Services/auditCaching.ts";
 import { uploadServers } from "./Util/Services/serverCaching.ts";
 import { uploadTemplates } from "./Util/Services/templateCaching.ts";
 import { initBotRoutes } from "./Routes/bots/index.ts";
+import createHttpError from "http-errors";
 
 const app = express();
 const __dirname = path.resolve();
@@ -341,23 +342,25 @@ new Promise<void>((resolve, reject) => {
 
         if (!settings.website.dev) Sentry.setupExpressErrorHandler(app);
 
-        app.use((_req: Request, _res: Response, next: () => void) => {
-            // @ts-expect-error
-            next(createError(404));
+        app.use((_req, _res, next) => {
+            next(createHttpError(404));
         });
 
         app.use(
             (
                 err: { message: string; status?: number },
                 req: Request,
-                res: Response
+                res: Response,
+                next: any
             ) => {
+                console.log(err.status);
                 res.locals.message = err.message;
                 res.locals.error = err;
 
                 if (!settings.website.dev && err.message !== "Not Found") {
                     Sentry.captureException(err); // Capture the error in Sentry
                 }
+
 
                 if (err.message === "Not Found") {
                     return res.status(404).render("status", {

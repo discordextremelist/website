@@ -63,9 +63,7 @@ router.post("/", variables, async (req: Request, res: Response) => {
     let isStaff = false;
     if (!!only && only.includes("users")) {
         if (req.user && req.user.id) {
-            const user: delUser = await global.db
-                .collection<delUser>("users")
-                .findOne({ _id: req.user.id });
+            const user: delUser = await userCache.getUser(req.user.id);
             if (!user.rank.mod)
                 return res
                     .status(403)

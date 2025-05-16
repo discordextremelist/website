@@ -35,7 +35,7 @@ import * as discord from "../Util/Services/discord.ts";
 import { getAllAuditLogs } from "../Util/Services/auditCaching.ts";
 import { types } from "sass";
 import Null = types.Null;
-import type { Nullable } from "../Util/Function/types.js";
+import type { Nullable } from "../Util/Function/types.ts";
 import { checkRoleHierarchyStaff } from "../Util/Function/main.ts";
 const router = express.Router();
 

@@ -29,7 +29,7 @@ import * as legalCache from "../Util/Services/legalCaching.ts";
 import * as discord from "../Util/Services/discord.ts";
 import { variables } from "../Util/Function/variables.ts";
 import type { GuildMember, GuildMemberManager } from "discord.js";
-import type { BotTags, BotQueryTagFilterParams } from "../Util/Function/types.js";
+import type { BotTags, BotQueryTagFilterParams } from "../Util/Function/types.ts";
 
 const router = express.Router();
 

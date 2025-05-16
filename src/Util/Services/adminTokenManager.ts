@@ -84,6 +84,14 @@ export async function tokenResetAll() {
                         }
                     );
                 }
+            } else {
+                // Handle demotions
+                const token = await global.db
+                    .collection("adminTokens")
+                    .findOne({ _id: user._id });
+                if (token) {
+                    await global.db.collection("adminTokens").deleteOne({ _id: token._id });
+                }
             }
         }
     }
@@ -123,14 +131,8 @@ export async function verifyToken(id: string, token: string) {
     const adminToken = await global.db
         .collection<any>("adminTokens")
         .findOne({ _id: id });
-
     if (!adminToken) return false;
-
-    let pass: boolean;
-    adminToken.token === token && adminToken._id === id
-        ? (pass = true)
-        : (pass = false);
-    return pass;
+    return adminToken.token === token && adminToken._id === id;
 }
 
 setInterval(async () => {

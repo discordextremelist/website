@@ -110,7 +110,7 @@ bot.on("ready", async () => {
         const afterSecondary = guilds.bot.members.cache.size;
         console.log(`Cache grew by ${afterPrimary - beforePrimary} entries for primary, ${afterSecondary - beforeSecondary} secondary.`);
         if (!await redis.get("chan_update_lock")) {
-            await redis.setex("chan_update_lock", 6 * 60 * 60 * 1000, hostname()); // Expire every 6 hours
+            await redis.setex("chan_update_lock", 60 * 60 * 1000, hostname()); // Expire every hour (in-case DEL restarts)
         }
         const member_chan = guilds.main.channels.cache.get("618583328458670090"); // Too lazy to put in settings.json
         if (member_chan) {

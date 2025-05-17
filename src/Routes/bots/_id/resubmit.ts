@@ -21,7 +21,6 @@ import refresh from "passport-oauth2-refresh";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { DAPI } from "../../../Util/Services/discord.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
-import { botExists } from "../../../Util/Function/checks.ts";
 
 export class GetResubmitBot extends PathRoute<"get"> {
 
@@ -76,25 +75,14 @@ export class GetResubmitBot extends PathRoute<"get"> {
 export class PostResubmitBot extends PathRoute<"post"> {
 
     constructor() {
-        super("post", "/:id/resubmit", [variables, permission.auth, permission.member]);
+        super("post", "/:id/resubmit", [variables, permission.auth, checks.botExists, permission.member]);
     }
 
     // @ts-ignore
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         let error = false;
         let errors: string[] = [];
-
-        const bot: delBot | undefined = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
-        if (!bot)
-            return res.status(404).json({
-                error: true,
-                status: 404,
-                errors: [res.__("common.error.bot.404")]
-            });
-
+        const bot = req.attached.bot!;
         if (!req.body.bot && !req.body.slashCommands) {
             error = true;
             errors.push(res.__("common.error.bot.arr.noScopes"));

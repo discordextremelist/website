@@ -12,12 +12,21 @@ import { GetEdit, PostEdit } from "./_id/edit.ts";
 import { TokenReset } from "./_id/token_reset.ts";
 import { ReportRoute, SrcRoute } from "./_id/src.ts";
 import { ArchiveBot, DeleteBot } from "./_id/archive.ts";
-import { HideBot, UnhideBot } from "./_id/hide_bot.ts";
+import {
+    GetModHideBot,
+    GetModUnhideBot,
+    HideBot,
+    PostModHideBot,
+    UnhideBot
+} from "./_id/hide_bot.ts";
 import { GetResubmitBot, PostResubmitBot } from "./_id/resubmit.ts";
 import { ApproveBot, GetUnapproveBot, GivePremiumBot, PostUnapproveBot, TakePremiumBot } from "./_id/approve.ts";
 import { GetDeclineBot, PostDeclineBot } from "./_id/decline.ts";
 import type { botReasons } from "../../../@types/enums.ts";
 import { BlacklistBot } from "./_id/blacklist.ts";
+import { GetDownvote, GetUpvote } from "./_id/upvote.ts";
+import { GetRemoveBot, PostRemoveBot } from "./_id/remove.ts";
+import { SyncBot } from "./_id/sync.ts";
 
 export function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);
@@ -83,6 +92,13 @@ export const initBotRoutes = (): Router => {
     new GetUnapproveBot().register(router);
     new PostUnapproveBot().register(router);
     new BlacklistBot().register(router);
-    console.log("Bot routes registered!");
+    new GetUpvote().register(router);
+    new GetDownvote().register(router);
+    new GetModHideBot().register(router);
+    new PostModHideBot().register(router);
+    new GetModUnhideBot().register(router);
+    new GetRemoveBot().register(router);
+    new PostRemoveBot().register(router);
+    new SyncBot().register(router);
     return router;
 };

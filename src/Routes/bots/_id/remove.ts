@@ -1,6 +1,7 @@
 import { PathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Function/variables.ts";
-import * as permission from "../../../Util/Function/permissions.ts";
+import { auth } from "../../../Util/Function/permissions.ts";
+import { botExists } from "../../../Util/Function/checks.ts";
 import e from "express";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
@@ -9,59 +10,52 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { botType } from "../index.ts";
-import { botExists } from "../../../Util/Function/checks.ts";
 
-export class GetDeclineBot extends PathRoute<"get"> {
+export class GetRemoveBot extends PathRoute<"get"> {
 
     constructor() {
-        super("get", "/:id/decline", [variables, botExists, permission.auth, permission.mod]);
+        super("get", "/:id/remove", [variables, botExists, auth]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
-        const bot = req.attached.bot!;
-        res.locals.premidPageInfo = res.__("premid.bots.decline", bot.name);
-
-        if (bot.status.approved === true)
+        const bot: delBot = req.attached.bot!;
+        if (bot.status.approved === false)
             return res.status(400).render("status", {
                 res,
                 title: res.__("common.error"),
                 status: 400,
-                subtitle: res.__("common.error.bot.notInQueue"),
+                subtitle: res.__("common.error.bot.inQueue"),
                 req,
                 type: "Error"
             });
 
-        let redirect = `/bots/${bot._id}`;
-
-        if (req.query.from && req.query.from === "queue")
-            redirect = "/staff/bot_queue";
+        res.locals.premidPageInfo = res.__("premid.bots.remove", bot.name);
 
         res.render("templates/bots/staffActions/remove", {
-            title: res.__("page.bots.decline.title"),
-            icon: "times",
-            subtitle: res.__("page.bots.decline.subtitle", bot.name),
+            title: res.__("page.bots.remove.title"),
+            icon: "trash",
+            subtitle: res.__("page.bots.remove.subtitle", bot.name),
             req,
-            redirect
+            redirect: `/bots/${bot._id}`
         });
     }
 
 }
 
-export class PostDeclineBot extends PathRoute<"post"> {
+export class PostRemoveBot extends PathRoute<"post"> {
 
     constructor() {
-        super("post", "/:id/decline", [variables, permission.auth, botExists, permission.mod]);
+        super("post", "/:id/remove", [variables, botExists, auth]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
-
-        if (bot.status.approved === true)
+        if (bot.status.approved === false)
             return res.status(400).render("status", {
                 res,
                 title: res.__("common.error"),
                 status: 400,
-                subtitle: res.__("common.error.bot.notInQueue"),
+                subtitle: res.__("common.error.bot.inQueue"),
                 req,
                 type: "Error"
             });
@@ -82,8 +76,8 @@ export class PostDeclineBot extends PathRoute<"post"> {
             {
                 $set: {
                     vanityUrl: "",
-                    lastDenyReason: req.body.reason,
-                    "status.archived": true
+                    "status.archived": true,
+                    "status.approved": false
                 }
             }
         );
@@ -93,9 +87,9 @@ export class PostDeclineBot extends PathRoute<"post"> {
             {
                 $inc: {
                     "staffTracking.handledBots.allTime.total": 1,
-                    "staffTracking.handledBots.allTime.declined": 1,
+                    "staffTracking.handledBots.allTime.remove": 1,
                     "staffTracking.handledBots.thisWeek.total": 1,
-                    "staffTracking.handledBots.thisWeek.declined": 1
+                    "staffTracking.handledBots.thisWeek.remove": 1
                 }
             }
         );
@@ -105,7 +99,7 @@ export class PostDeclineBot extends PathRoute<"post"> {
         const type = botType(req.body.type);
 
         await global.db.collection("audit").insertOne({
-            type: "DECLINE_BOT",
+            type: "REMOVE_BOT",
             executor: req.user.id,
             target: req.params.id,
             date: Date.now(),
@@ -118,26 +112,28 @@ export class PostDeclineBot extends PathRoute<"post"> {
         const embed = new Discord.EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
-        embed.setDescription(req.body.reason || "No reason provided.");
+        embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
         await discord.channels.logs.send({
-            content: `${settings.emoji.cross} **${functions.escapeFormatting(
+            content: `${settings.emoji.delete} **${functions.escapeFormatting(
                 req.user.db.fullUsername
             )}** \`(${
                 req.user.id
-            })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${
+            })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
                 bot._id
             })\``,
             embeds: [embed]
         });
 
-        const member = await discord.getTestingGuildMember(req.params.id);
+        const member = await discord.getMember(req.params.id);
 
-        if (member) {
-            await member.kick("Bot's listing has been declined.").catch((e) => {
-                console.error(e);
-            });
+        if (member && !settings.website.dev) {
+            await member
+                .kick("Bot has been removed from the website.")
+                .catch((e) => {
+                    console.error(e);
+                });
         }
 
         const owner = await discord.getMember(bot.owner.id);
@@ -145,10 +141,10 @@ export class PostDeclineBot extends PathRoute<"post"> {
             owner
                 .send(
                     `${
-                        settings.emoji.cross
+                        settings.emoji.delete
                     } **|** Your bot **${functions.escapeFormatting(
                         bot.name
-                    )}** \`(${bot._id})\` has been declined.\n**Reason:** \`${
+                    )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
                         req.body.reason || "None specified."
                     }\``
                 )
@@ -156,8 +152,7 @@ export class PostDeclineBot extends PathRoute<"post"> {
                     console.error(e);
                 });
 
-        res.redirect("/staff/bot_queue");
+        res.redirect(`/bots/${bot._id}`);
     }
 
 }
-

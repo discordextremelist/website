@@ -40,20 +40,12 @@ export class SrcRoute extends PathRoute<"get"> {
 export class ReportRoute extends PathRoute<"post"> {
 
     constructor() {
-        super("post", "/:id/report", [variables, auth]);
+        super("post", "/:id/report", [variables, auth, botExists]);
     }
 
     // @ts-ignore
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
-        const bot = await botCache.getBot(req.params.id);
-
-        if (!bot)
-            return res.status(404).json({
-                error: true,
-                status: 404,
-                message: res.__("common.error.bot.404")
-            });
-
+        const bot = req.attached.bot!;
         if (bot.owner.id === req.user.id)
             return res.status(403).json({
                 error: true,

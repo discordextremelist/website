@@ -19,7 +19,6 @@ export abstract class PathRoute<T extends RouteMethod> {
     public path: string;
     public handlers: Array<RequestHandler>;
 
-
     constructor(method: T, path: string, handlers: Array<RequestHandler>) {
         this.method = method;
         this.path = path;
@@ -31,6 +30,7 @@ export abstract class PathRoute<T extends RouteMethod> {
     register(router: Router) {
         const routeHandler: RequestHandler[] = [...this.handlers, this.handle];
         (router as any)[this.method](this.path, routeHandler);
+        console.log(`${this.method.toUpperCase()} ${this.path} registered with ${routeHandler.length} handlers!`);
     }
 
 }

@@ -12,23 +12,7 @@ export class GetUpvote extends PathRoute<"get"> {
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
-        let bot = req.attached.bot!;
-        if (!bot) {
-            bot = await global.db
-                .collection<delBot>("bots")
-                .findOne({ vanityUrl: req.params.id });
-
-            if (!bot)
-                return res.status(404).render("status", {
-                    res,
-                    title: res.__("common.error"),
-                    status: 404,
-                    subtitle: res.__("common.error.bot.404"),
-                    type: "Error",
-                    req: req
-                });
-        }
-
+        const bot = req.attached.bot!;
         let upVotes = [...bot.votes.positive];
         let downVotes = [...bot.votes.negative];
 

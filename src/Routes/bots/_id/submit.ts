@@ -87,17 +87,6 @@ export class PostSubmit extends PathRoute<"post"> {
                 errors: [res.__("common.error.bot.conflict")]
             });
 
-        if (await blacklistCheck(req.params.id))
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                // @ts-ignore
-                subtitle: res.__("common.error.bot.blacklist"),
-                type: "Error",
-                req: req
-            });
-
         if (!req.body.bot && !req.body.slashCommands) {
             error = true;
             errors.push(res.__("common.error.bot.arr.noScopes"));

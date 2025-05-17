@@ -3190,578 +3190,577 @@ function botType(bodyType: string): number {
 //     }
 // );
 
-router.get(
-    "/:id/remove",
-    variables,
-    permission.auth,
-    permission.mod,
-    async (req: Request, res: Response) => {
-        const bot: delBot | undefined = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
-        if (!bot)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.bot.404"),
-                req,
-                type: "Error"
-            });
-
-        if (bot.status.approved === false)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.inQueue"),
-                req,
-                type: "Error"
-            });
-
-        res.locals.premidPageInfo = res.__("premid.bots.remove", bot.name);
-
-        res.render("templates/bots/staffActions/remove", {
-            title: res.__("page.bots.remove.title"),
-            icon: "trash",
-            subtitle: res.__("page.bots.remove.subtitle", bot.name),
-            req,
-            redirect: `/bots/${bot._id}`
-        });
-    }
-);
-
-router.post(
-    "/:id/remove",
-    variables,
-    permission.auth,
-    permission.mod,
-    async (req: Request, res: Response) => {
-        const bot: delBot | undefined = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
-        if (!bot)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.bot.404"),
-                req,
-                type: "Error"
-            });
-
-        if (bot.status.approved === false)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.inQueue"),
-                req,
-                type: "Error"
-            });
-
-        if (!req.body.reason && !req.user.db.rank.admin) {
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.reasonRequired"),
-                req,
-                type: "Error"
-            });
-        }
-
-        await global.db.collection("bots").updateOne(
-            { _id: req.params.id },
-            {
-                $set: {
-                    vanityUrl: "",
-                    "status.archived": true,
-                    "status.approved": false
-                }
-            }
-        );
-
-        await global.db.collection("users").updateOne(
-            { _id: req.user.id },
-            {
-                $inc: {
-                    "staffTracking.handledBots.allTime.total": 1,
-                    "staffTracking.handledBots.allTime.remove": 1,
-                    "staffTracking.handledBots.thisWeek.total": 1,
-                    "staffTracking.handledBots.thisWeek.remove": 1
-                }
-            }
-        );
-
-        await userCache.updateUser(req.user.id);
-
-        const type = botType(req.body.type);
-
-        await global.db.collection("audit").insertOne({
-            type: "REMOVE_BOT",
-            executor: req.user.id,
-            target: req.params.id,
-            date: Date.now(),
-            reason: req.body.reason || "None specified.",
-            reasonType: type
-        });
-
-        await botCache.updateBot(req.params.id);
-
-        const embed = new Discord.EmbedBuilder();
-        embed.setColor(0x2f3136);
-        embed.setTitle("Reason");
-        embed.setDescription(req.body.reason);
-        embed.setURL(`${settings.website.url}/bots/${bot._id}`);
-
-        await discord.channels.logs.send({
-            content: `${settings.emoji.delete} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
-            })\``,
-            embeds: [embed]
-        });
-
-        const member = await discord.getMember(req.params.id);
-
-        if (member && !settings.website.dev) {
-            await member
-                .kick("Bot has been removed from the website.")
-                .catch((e) => {
-                    console.error(e);
-                });
-        }
-
-        const owner = await discord.getMember(bot.owner.id);
-        if (owner)
-            owner
-                .send(
-                    `${
-                        settings.emoji.delete
-                    } **|** Your bot **${functions.escapeFormatting(
-                        bot.name
-                    )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
-                        req.body.reason || "None specified."
-                    }\``
-                )
-                .catch((e) => {
-                    console.error(e);
-                });
-
-        res.redirect(`/bots/${bot._id}`);
-    }
-);
-
-router.get(
-    "/:id/modhide",
-    variables,
-    permission.auth,
-    permission.mod,
-    async (req: Request, res: Response) => {
-        const bot: delBot | undefined = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
-        if (!bot)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.bot.404"),
-                req,
-                type: "Error"
-            });
-
-        if (bot.status.approved === false)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.inQueueHide"),
-                req,
-                type: "Error"
-            });
-
-        res.locals.premidPageInfo = res.__("premid.bots.hide", bot.name);
-
-        res.render("templates/bots/staffActions/remove", {
-            title: res.__("page.bots.hide.title"),
-            icon: "eye-slash",
-            subtitle: res.__("page.bots.hide.subtitle", bot.name),
-            req,
-            redirect: `/bots/${bot._id}`
-        });
-    }
-);
-
-router.post(
-    "/:id/modhide",
-    variables,
-    permission.auth,
-    permission.mod,
-    async (req: Request, res: Response) => {
-        const bot: delBot | undefined = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
-        if (!bot)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.bot.404"),
-                req,
-                type: "Error"
-            });
-
-        if (bot.status.approved === false)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.inQueueHide"),
-                req,
-                type: "Error"
-            });
-
-        if (!req.body.reason && !req.user.db.rank.admin) {
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.reasonRequired"),
-                req,
-                type: "Error"
-            });
-        }
-
-        await global.db.collection("bots").updateOne(
-            { _id: req.params.id },
-            {
-                $set: {
-                    "status.modHidden": true
-                }
-            }
-        );
-
-        await global.db.collection("users").updateOne(
-            { _id: req.user.id },
-            {
-                $inc: {
-                    "staffTracking.handledBots.allTime.total": 1,
-                    "staffTracking.handledBots.allTime.modHidden": 1,
-                    "staffTracking.handledBots.thisWeek.total": 1,
-                    "staffTracking.handledBots.thisWeek.modHidden": 1
-                }
-            }
-        );
-
-        await userCache.updateUser(req.user.id);
-
-        const type = botType(req.body.type);
-
-        await global.db.collection("audit").insertOne({
-            type: "MOD_HIDE_BOT",
-            executor: req.user.id,
-            target: req.params.id,
-            date: Date.now(),
-            reason: req.body.reason || "None specified.",
-            reasonType: type
-        });
-
-        await botCache.updateBot(req.params.id);
-
-        const embed = new Discord.EmbedBuilder();
-        embed.setColor(0x2f3136);
-        embed.setTitle("Reason");
-        embed.setDescription(req.body.reason);
-        embed.setURL(`${settings.website.url}/bots/${bot._id}`);
-
-        await discord.channels.logs.send({
-            content: `${settings.emoji.hide} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
-                bot._id
-            })\``,
-            embeds: [embed]
-        });
-
-        const owner = await discord.getMember(bot.owner.id);
-        if (owner)
-            owner
-                .send(
-                    `${
-                        settings.emoji.hide
-                    } **|** Your bot **${functions.escapeFormatting(
-                        bot.name
-                    )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${
-                        req.body.reason || "None specified."
-                    }\``
-                )
-                .catch((e) => {
-                    console.error(e);
-                });
-
-        res.redirect(`/bots/${bot._id}`);
-    }
-);
-
-router.get(
-    "/:id/modunhide",
-    variables,
-    permission.auth,
-    permission.mod,
-    async (req: Request, res: Response) => {
-        const bot: delBot | undefined = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
-        if (!bot)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.bot.404"),
-                req,
-                type: "Error"
-            });
-
-        if (!bot.status.modHidden)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.notHidden"),
-                req,
-                type: "Error"
-            });
-
-        await global.db.collection("bots").updateOne(
-            { _id: req.params.id },
-            {
-                $set: {
-                    "status.modHidden": false
-                }
-            }
-        );
-
-        await global.db.collection("users").updateOne(
-            { _id: req.user.id },
-            {
-                $inc: {
-                    "staffTracking.handledBots.allTime.total": 1,
-                    "staffTracking.handledBots.thisWeek.total": 1
-                }
-            }
-        );
-
-        await userCache.updateUser(req.user.id);
-
-        discord.channels.logs
-            .send(
-                `${settings.emoji.unhide} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` unhid bot **${functions.escapeFormatting(
-                    bot.name
-                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                    bot._id
-                }>`
-            )
-            .catch((e) => {
-                console.error(e);
-            });
-
-        const owner = await discord.getMember(bot.owner.id);
-        if (owner)
-            owner
-                .send(
-                    `${
-                        settings.emoji.check
-                    } **|** Your bot **${functions.escapeFormatting(
-                        bot.name
-                    )}** \`(${bot._id})\` has been unhidden on the website!`
-                )
-                .catch((e) => {
-                    console.error(e);
-                });
-
-        await global.db.collection("audit").insertOne({
-            type: "MOD_UNHIDE_BOT",
-            executor: req.user.id,
-            target: req.params.id,
-            date: Date.now(),
-            reason: "None specified."
-        });
-
-        await botCache.updateBot(req.params.id);
-
-        res.redirect(`/bots/${req.params.id}`);
-    }
-);
-
-router.get(
-    "/:id/sync",
-    variables,
-    permission.auth,
-    checks.botExists,
-    async (req: Request, res: Response) => {
-        const bot = req.attached.bot;
-
-        let commands: APIApplicationCommand[] = bot.commands || [];
-
-        if (bot.scopes?.slashCommands && req.user.db.auth) {
-            if (Date.now() > req.user.db.auth.expires) {
-                await refresh.requestNewAccessToken(
-                    "discord",
-                    req.user.db.auth.refreshToken,
-                    async (
-                        err,
-                        accessToken,
-                        refreshToken,
-                        result: RESTPostOAuth2AccessTokenResult
-                    ) => {
-                        if (err) {
-                            let errors: string[] = [];
-
-                            if (functions.isDiscordAPIError(err)) {
-                                errors.push(`${err.statusCode} ${err.data}`);
-                            } else {
-                                errors.push(err.message);
-                            }
-
-                            return res.status(500).json({
-                                error: true,
-                                status: 500,
-                                errors: [errors]
-                            });
-                        } else {
-                            await global.db.collection("users").updateOne(
-                                { _id: req.user.id },
-                                {
-                                    $set: {
-                                        auth: {
-                                            accessToken,
-                                            refreshToken,
-                                            expires:
-                                                Date.now() +
-                                                result.expires_in * 1000
-                                        }
-                                    }
-                                }
-                            );
-                            await userCache.updateUser(req.user.id);
-                        }
-                    }
-                );
-            }
-
-            const receivedCommands = (await (
-                await fetch(DAPI + Routes.applicationCommands(bot._id), {
-                    headers: {
-                        authorization: `Bearer ${req.user.db.auth.accessToken}`
-                    }
-                })
-            )
-                .json()
-                .catch(() => {})) as APIApplicationCommand[];
-            if (Array.isArray(receivedCommands)) commands = receivedCommands;
-        }
-
-        let userFlags = 0;
-
-        if (bot.scopes?.bot) {
-            const user = (await discord.bot.rest
-                .get(Routes.user(bot._id))
-                .catch(() => {})) as APIUser;
-            if (user.public_flags) userFlags = user.public_flags;
-        }
-
-        discord.bot.rest
-            .get(`/applications/${bot.clientID || req.params.id}/rpc`)
-            .then(async (app: APIApplication) => {
-                if (app.bot_public === false)
-                    // not !app.bot_public; should not trigger when undefined
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.notPublic")]
-                    });
-
-                await global.db.collection("bots").updateOne(
-                    { _id: req.params.id },
-                    {
-                        $set: {
-                            name: app.name,
-                            icon: {
-                                hash: app.icon,
-                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
-                            },
-                            commands,
-                            userFlags
-                        } satisfies Partial<delBot>
-                    }
-                );
-
-                await global.db.collection("audit").insertOne({
-                    type: "SYNC_BOT",
-                    executor: req.user.id,
-                    target: req.params.id,
-                    date: Date.now(),
-                    reason: "None specified.",
-                    details: {
-                        old: {
-                            name: bot.name,
-                            icon: {
-                                hash: bot.icon.hash,
-                                url: bot.icon.url
-                            },
-                            commands: bot.commands
-                        } satisfies Partial<delBot>,
-                        new: {
-                            name: app.name,
-                            icon: {
-                                hash: app.icon,
-                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
-                            },
-                            commands
-                        } satisfies Partial<delBot>
-                    }
-                });
-
-                await botCache.updateBot(req.params.id);
-
-                res.redirect(`/bots/${bot._id}`);
-            })
-            .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownApplication)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.notFound")]
-                    });
-
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [
-                        res.__("common.error.bot.arr.fetchError"),
-                        `${error.name}: ${error.message}`,
-                        `${error.code} ${error.method} ${error.url}`
-                    ]
-                });
-            });
-    }
-);
+// router.get(
+//     "/:id/remove",
+//     variables,
+//     permission.auth,
+//     permission.mod,
+//     async (req: Request, res: Response) => {
+//         const bot: delBot | undefined = await global.db
+//             .collection<delBot>("bots")
+//             .findOne({ _id: req.params.id });
+//
+//         if (!bot)
+//             return res.status(404).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 404,
+//                 subtitle: res.__("common.error.bot.404"),
+//                 req,
+//                 type: "Error"
+//             });
+//
+//         if (bot.status.approved === false)
+//             return res.status(400).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 400,
+//                 subtitle: res.__("common.error.bot.inQueue"),
+//                 req,
+//                 type: "Error"
+//             });
+//
+//         res.locals.premidPageInfo = res.__("premid.bots.remove", bot.name);
+//
+//         res.render("templates/bots/staffActions/remove", {
+//             title: res.__("page.bots.remove.title"),
+//             icon: "trash",
+//             subtitle: res.__("page.bots.remove.subtitle", bot.name),
+//             req,
+//             redirect: `/bots/${bot._id}`
+//         });
+//     }
+// );
+//
+// router.post(
+//     "/:id/remove",
+//     variables,
+//     permission.auth,
+//     permission.mod,
+//     async (req: Request, res: Response) => {
+//         const bot: delBot | undefined = await global.db
+//             .collection<delBot>("bots")
+//             .findOne({ _id: req.params.id });
+//
+//         if (!bot)
+//             return res.status(404).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 404,
+//                 subtitle: res.__("common.error.bot.404"),
+//                 req,
+//                 type: "Error"
+//             });
+//
+//         if (bot.status.approved === false)
+//             return res.status(400).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 400,
+//                 subtitle: res.__("common.error.bot.inQueue"),
+//                 req,
+//                 type: "Error"
+//             });
+//
+//         if (!req.body.reason && !req.user.db.rank.admin) {
+//             return res.status(400).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 400,
+//                 subtitle: res.__("common.error.reasonRequired"),
+//                 req,
+//                 type: "Error"
+//             });
+//         }
+//
+//         await global.db.collection("bots").updateOne(
+//             { _id: req.params.id },
+//             {
+//                 $set: {
+//                     vanityUrl: "",
+//                     "status.archived": true,
+//                     "status.approved": false
+//                 }
+//             }
+//         );
+//
+//         await global.db.collection("users").updateOne(
+//             { _id: req.user.id },
+//             {
+//                 $inc: {
+//                     "staffTracking.handledBots.allTime.total": 1,
+//                     "staffTracking.handledBots.allTime.remove": 1,
+//                     "staffTracking.handledBots.thisWeek.total": 1,
+//                     "staffTracking.handledBots.thisWeek.remove": 1
+//                 }
+//             }
+//         );
+//
+//         await userCache.updateUser(req.user.id);
+//
+//         const type = botType(req.body.type);
+//
+//         await global.db.collection("audit").insertOne({
+//             type: "REMOVE_BOT",
+//             executor: req.user.id,
+//             target: req.params.id,
+//             date: Date.now(),
+//             reason: req.body.reason || "None specified.",
+//             reasonType: type
+//         });
+//
+//         await botCache.updateBot(req.params.id);
+//
+//         const embed = new Discord.EmbedBuilder();
+//         embed.setColor(0x2f3136);
+//         embed.setTitle("Reason");
+//         embed.setDescription(req.body.reason);
+//         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
+//
+//         await discord.channels.logs.send({
+//             content: `${settings.emoji.delete} **${functions.escapeFormatting(
+//                 req.user.db.fullUsername
+//             )}** \`(${
+//                 req.user.id
+//             })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
+//                 bot._id
+//             })\``,
+//             embeds: [embed]
+//         });
+//
+//         const member = await discord.getMember(req.params.id);
+//
+//         if (member && !settings.website.dev) {
+//             await member
+//                 .kick("Bot has been removed from the website.")
+//                 .catch((e) => {
+//                     console.error(e);
+//                 });
+//         }
+//
+//         const owner = await discord.getMember(bot.owner.id);
+//         if (owner)
+//             owner
+//                 .send(
+//                     `${
+//                         settings.emoji.delete
+//                     } **|** Your bot **${functions.escapeFormatting(
+//                         bot.name
+//                     )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
+//                         req.body.reason || "None specified."
+//                     }\``
+//                 )
+//                 .catch((e) => {
+//                     console.error(e);
+//                 });
+//
+//         res.redirect(`/bots/${bot._id}`);
+//     }
+// );
+
+// router.get(
+//     "/:id/modhide",
+//     variables,
+//     permission.auth,
+//     permission.mod,
+//     async (req: Request, res: Response) => {
+//         const bot: delBot | undefined = await global.db
+//             .collection<delBot>("bots")
+//             .findOne({ _id: req.params.id });
+//
+//         if (!bot)
+//             return res.status(404).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 404,
+//                 subtitle: res.__("common.error.bot.404"),
+//                 req,
+//                 type: "Error"
+//             });
+//
+//         if (bot.status.approved === false)
+//             return res.status(400).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 400,
+//                 subtitle: res.__("common.error.bot.inQueueHide"),
+//                 req,
+//                 type: "Error"
+//             });
+//
+//         res.locals.premidPageInfo = res.__("premid.bots.hide", bot.name);
+//
+//         res.render("templates/bots/staffActions/remove", {
+//             title: res.__("page.bots.hide.title"),
+//             icon: "eye-slash",
+//             subtitle: res.__("page.bots.hide.subtitle", bot.name),
+//             req,
+//             redirect: `/bots/${bot._id}`
+//         });
+//     }
+// );
+//
+// router.post(
+//     "/:id/modhide",
+//     variables,
+//     permission.auth,
+//     permission.mod,
+//     async (req: Request, res: Response) => {
+//         const bot: delBot | undefined = await global.db
+//             .collection<delBot>("bots")
+//             .findOne({ _id: req.params.id });
+//
+//         if (!bot)
+//             return res.status(404).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 404,
+//                 subtitle: res.__("common.error.bot.404"),
+//                 req,
+//                 type: "Error"
+//             });
+//
+//         if (bot.status.approved === false)
+//             return res.status(400).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 400,
+//                 subtitle: res.__("common.error.bot.inQueueHide"),
+//                 req,
+//                 type: "Error"
+//             });
+//
+//         if (!req.body.reason && !req.user.db.rank.admin) {
+//             return res.status(400).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 400,
+//                 subtitle: res.__("common.error.reasonRequired"),
+//                 req,
+//                 type: "Error"
+//             });
+//         }
+//
+//         await global.db.collection("bots").updateOne(
+//             { _id: req.params.id },
+//             {
+//                 $set: {
+//                     "status.modHidden": true
+//                 }
+//             }
+//         );
+//
+//         await global.db.collection("users").updateOne(
+//             { _id: req.user.id },
+//             {
+//                 $inc: {
+//                     "staffTracking.handledBots.allTime.total": 1,
+//                     "staffTracking.handledBots.allTime.modHidden": 1,
+//                     "staffTracking.handledBots.thisWeek.total": 1,
+//                     "staffTracking.handledBots.thisWeek.modHidden": 1
+//                 }
+//             }
+//         );
+//
+//         await userCache.updateUser(req.user.id);
+//
+//         const type = botType(req.body.type);
+//
+//         await global.db.collection("audit").insertOne({
+//             type: "MOD_HIDE_BOT",
+//             executor: req.user.id,
+//             target: req.params.id,
+//             date: Date.now(),
+//             reason: req.body.reason || "None specified.",
+//             reasonType: type
+//         });
+//
+//         await botCache.updateBot(req.params.id);
+//
+//         const embed = new Discord.EmbedBuilder();
+//         embed.setColor(0x2f3136);
+//         embed.setTitle("Reason");
+//         embed.setDescription(req.body.reason);
+//         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
+//
+//         await discord.channels.logs.send({
+//             content: `${settings.emoji.hide} **${functions.escapeFormatting(
+//                 req.user.db.fullUsername
+//             )}** \`(${
+//                 req.user.id
+//             })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
+//                 bot._id
+//             })\``,
+//             embeds: [embed]
+//         });
+//
+//         const owner = await discord.getMember(bot.owner.id);
+//         if (owner)
+//             owner
+//                 .send(
+//                     `${
+//                         settings.emoji.hide
+//                     } **|** Your bot **${functions.escapeFormatting(
+//                         bot.name
+//                     )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${
+//                         req.body.reason || "None specified."
+//                     }\``
+//                 )
+//                 .catch((e) => {
+//                     console.error(e);
+//                 });
+//
+//         res.redirect(`/bots/${bot._id}`);
+//     }
+// );
+
+// router.get(
+//     "/:id/modunhide",
+//     variables,
+//     permission.auth,
+//     permission.mod,
+//     async (req: Request, res: Response) => {
+//         const bot: delBot | undefined = await global.db
+//             .collection<delBot>("bots")
+//             .findOne({ _id: req.params.id });
+//
+//         if (!bot)
+//             return res.status(404).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 404,
+//                 subtitle: res.__("common.error.bot.404"),
+//                 req,
+//                 type: "Error"
+//             });
+//
+//         if (!bot.status.modHidden)
+//             return res.status(400).render("status", {
+//                 res,
+//                 title: res.__("common.error"),
+//                 status: 400,
+//                 subtitle: res.__("common.error.bot.notHidden"),
+//                 req,
+//                 type: "Error"
+//             });
+//
+//         await global.db.collection("bots").updateOne(
+//             { _id: req.params.id },
+//             {
+//                 $set: {
+//                     "status.modHidden": false
+//                 }
+//             }
+//         );
+//
+//         await global.db.collection("users").updateOne(
+//             { _id: req.user.id },
+//             {
+//                 $inc: {
+//                     "staffTracking.handledBots.allTime.total": 1,
+//                     "staffTracking.handledBots.thisWeek.total": 1
+//                 }
+//             }
+//         );
+//
+//         await userCache.updateUser(req.user.id);
+//
+//         discord.channels.logs
+//             .send(
+//                 `${settings.emoji.unhide} **${functions.escapeFormatting(
+//                     req.user.db.fullUsername
+//                 )}** \`(${
+//                     req.user.id
+//                 })\` unhid bot **${functions.escapeFormatting(
+//                     bot.name
+//                 )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
+//                     bot._id
+//                 }>`
+//             )
+//             .catch((e) => {
+//                 console.error(e);
+//             });
+//
+//         const owner = await discord.getMember(bot.owner.id);
+//         if (owner)
+//             owner
+//                 .send(
+//                     `${
+//                         settings.emoji.check
+//                     } **|** Your bot **${functions.escapeFormatting(
+//                         bot.name
+//                     )}** \`(${bot._id})\` has been unhidden on the website!`
+//                 )
+//                 .catch((e) => {
+//                     console.error(e);
+//                 });
+//
+//         await global.db.collection("audit").insertOne({
+//             type: "MOD_UNHIDE_BOT",
+//             executor: req.user.id,
+//             target: req.params.id,
+//             date: Date.now(),
+//             reason: "None specified."
+//         });
+//
+//         await botCache.updateBot(req.params.id);
+//
+//         res.redirect(`/bots/${req.params.id}`);
+//     }
+// );
+//
+// router.get(
+//     "/:id/sync",
+//     variables,
+//     permission.auth,
+//     checks.botExists,
+//     async (req: Request, res: Response) => {
+//         const bot = req.attached.bot;
+//
+//         let commands: APIApplicationCommand[] = bot.commands || [];
+//
+//         if (bot.scopes?.slashCommands && req.user.db.auth) {
+//             if (Date.now() > req.user.db.auth.expires) {
+//                 await refresh.requestNewAccessToken(
+//                     "discord",
+//                     req.user.db.auth.refreshToken,
+//                     async (
+//                         err,
+//                         accessToken,
+//                         refreshToken,
+//                         result: RESTPostOAuth2AccessTokenResult
+//                     ) => {
+//                         if (err) {
+//                             let errors: string[] = [];
+//
+//                             if (functions.isDiscordAPIError(err)) {
+//                                 errors.push(`${err.statusCode} ${err.data}`);
+//                             } else {
+//                                 errors.push(err.message);
+//                             }
+//
+//                             return res.status(500).json({
+//                                 error: true,
+//                                 status: 500,
+//                                 errors: [errors]
+//                             });
+//                         } else {
+//                             await global.db.collection("users").updateOne(
+//                                 { _id: req.user.id },
+//                                 {
+//                                     $set: {
+//                                         auth: {
+//                                             accessToken,
+//                                             refreshToken,
+//                                             expires:
+//                                                 Date.now() +
+//                                                 result.expires_in * 1000
+//                                         }
+//                                     }
+//                                 }
+//                             );
+//                             await userCache.updateUser(req.user.id);
+//                         }
+//                     }
+//                 );
+//             }
+//
+//             const receivedCommands = (await (
+//                 await fetch(DAPI + Routes.applicationCommands(bot._id), {
+//                     headers: {
+//                         authorization: `Bearer ${req.user.db.auth.accessToken}`
+//                     }
+//                 })
+//             )
+//                 .json()
+//                 .catch(() => {})) as APIApplicationCommand[];
+//             if (Array.isArray(receivedCommands)) commands = receivedCommands;
+//         }
+//
+//         let userFlags = 0;
+//
+//         if (bot.scopes?.bot) {
+//             const user = (await discord.bot.rest
+//                 .get(Routes.user(bot._id))
+//                 .catch(() => {})) as APIUser;
+//             if (user.public_flags) userFlags = user.public_flags;
+//         }
+//
+//         discord.bot.rest
+//             .get(`/applications/${bot.clientID || req.params.id}/rpc`)
+//             .then(async (app: APIApplication) => {
+//                 if (app.bot_public === false)
+//                     // not !app.bot_public; should not trigger when undefined
+//                     return res.status(400).json({
+//                         error: true,
+//                         status: 400,
+//                         errors: [res.__("common.error.bot.arr.notPublic")]
+//                     });
+//
+//                 await global.db.collection("bots").updateOne(
+//                     { _id: req.params.id },
+//                     {
+//                         $set: {
+//                             name: app.name,
+//                             icon: {
+//                                 hash: app.icon,
+//                                 url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
+//                             },
+//                             commands,
+//                             userFlags
+//                         } satisfies Partial<delBot>
+//                     }
+//                 );
+//
+//                 await global.db.collection("audit").insertOne({
+//                     type: "SYNC_BOT",
+//                     executor: req.user.id,
+//                     target: req.params.id,
+//                     date: Date.now(),
+//                     reason: "None specified.",
+//                     details: {
+//                         old: {
+//                             name: bot.name,
+//                             icon: {
+//                                 hash: bot.icon.hash,
+//                                 url: bot.icon.url
+//                             },
+//                             commands: bot.commands
+//                         } satisfies Partial<delBot>,
+//                         new: {
+//                             name: app.name,
+//                             icon: {
+//                                 hash: app.icon,
+//                                 url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
+//                             },
+//                             commands
+//                         } satisfies Partial<delBot>
+//                     }
+//                 });
+//
+//                 await botCache.updateBot(req.params.id);
+//
+//                 res.redirect(`/bots/${bot._id}`);
+//             })
+//             .catch((error: DiscordAPIError) => {
+//                 if (error.code === RESTJSONErrorCodes.UnknownApplication)
+//                     return res.status(400).json({
+//                         error: true,
+//                         status: 400,
+//                         errors: [res.__("common.error.bot.arr.notFound")]
+//                     });
+//
+//                 return res.status(400).json({
+//                     error: true,
+//                     status: 400,
+//                     errors: [
+//                         res.__("common.error.bot.arr.fetchError"),
+//                         `${error.name}: ${error.message}`,
+//                         `${error.code} ${error.method} ${error.url}`
+//                     ]
+//                 });
+//             });
+//     }
+// );
 
 export default router;
-

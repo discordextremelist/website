@@ -24,6 +24,8 @@ export const botExists = async (
     res: Response,
     next: () => void
 ) => {
+    // TODO: Use redis cache
+    // TODO: For the aforementioned to work, I need to confirm all update operations call botCache.updateBot
     const bot = await global.db
         .collection<delBot>("bots")
         .findOne({ $or: [{ _id: req.params.id }, { vanityUrl: req.params.id }] });

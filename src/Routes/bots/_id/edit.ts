@@ -1,8 +1,7 @@
 import { PathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Function/variables.ts";
 import * as permission from "../../../Util/Function/permissions.ts";
-import { botExists } from "../../../Util/Function/checks.ts";
-import e, { type Request, type Response } from "express";
+import e from "express";
 import sanitizeHtml from "sanitize-html";
 import htmlRef from "../../../../htmlReference.json" with { type: "json" };
 import * as libraryCache from "../../../Util/Services/libCaching.ts";
@@ -25,6 +24,7 @@ import { DAPI } from "../../../Util/Services/discord.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { Response as fetchRes } from "node-fetch";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
+import { botExists } from "../../../Util/Function/checks.ts";
 
 export class GetEdit extends PathRoute<"get"> {
 

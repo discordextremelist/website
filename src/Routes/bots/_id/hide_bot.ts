@@ -6,6 +6,7 @@ import * as discord from "../../../Util/Services/discord.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as functions from "../../../Util/Function/main.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
+import { botExists } from "../../../Util/Function/checks.ts";
 
 export class HideBot extends PathRoute<"get"> {
 

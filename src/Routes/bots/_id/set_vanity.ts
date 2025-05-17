@@ -5,6 +5,7 @@ import * as checks from "../../../Util/Function/checks.ts";
 import e from "express";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
+import { botExists } from "../../../Util/Function/checks.ts";
 
 export class SetVanity extends PathRoute<"post"> {
     constructor() {

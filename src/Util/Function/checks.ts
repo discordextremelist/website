@@ -26,7 +26,7 @@ export const botExists = async (
 ) => {
     const bot = await global.db
         .collection<delBot>("bots")
-        .findOne({ _id: req.params.id });
+        .findOne({ $or: [{ _id: req.params.id }, { vanityUrl: req.params.id }] });
 
     if (!bot)
         return res.status(404).render("status", {

@@ -21,6 +21,7 @@ import refresh from "passport-oauth2-refresh";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { DAPI } from "../../../Util/Services/discord.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
+import { botExists } from "../../../Util/Function/checks.ts";
 
 export class GetResubmitBot extends PathRoute<"get"> {
 

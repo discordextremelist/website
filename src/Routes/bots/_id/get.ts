@@ -11,6 +11,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 import { PresenceUpdateStatus, UserFlags } from "discord.js";
 import * as functions from "../../../Util/Function/main.ts";
 import mdi from "markdown-it";
+import { botExists } from "../../../Util/Function/checks.ts";
 
 const md = new mdi();
 

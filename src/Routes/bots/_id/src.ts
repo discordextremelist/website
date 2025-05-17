@@ -8,6 +8,7 @@ import * as Discord from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
+import { botExists } from "../../../Util/Function/checks.ts";
 
 export class SrcRoute extends PathRoute<"get"> {
 

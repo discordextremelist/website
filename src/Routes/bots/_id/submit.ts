@@ -24,6 +24,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { Response as fetchRes } from "node-fetch";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
+import { botExists } from "../../../Util/Function/checks.ts";
 
 export class GetSubmit extends PathRoute<"get"> {
 

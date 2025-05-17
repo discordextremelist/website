@@ -9,6 +9,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { botType } from "../index.ts";
+import { botExists } from "../../../Util/Function/checks.ts";
 
 export class GetDeclineBot extends PathRoute<"get"> {
 

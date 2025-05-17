@@ -6,34 +6,16 @@ import * as discord from "../../../Util/Services/discord.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as functions from "../../../Util/Function/main.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
+import { botExists } from "../../../Util/Function/checks.ts";
 
 export class ArchiveBot extends PathRoute<"get"> {
 
     constructor() {
-        super("get", "/:id/archive", [variables, permission.auth]);
+        super("get", "/:id/archive", [variables, botExists, permission.auth]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
-        let bot = (await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id })) as delBot;
-
-        if (!bot) {
-            bot = await global.db
-                .collection<delBot>("bots")
-                .findOne({ vanityUrl: req.params.id });
-
-            if (!bot)
-                return res.status(404).render("status", {
-                    res,
-                    title: res.__("common.error"),
-                    status: 404,
-                    subtitle: res.__("common.error.bot.404"),
-                    type: "Error",
-                    req: req
-                });
-        }
-
+        const bot = req.attached.bot!;
         if (!req.user || req.user.id !== bot.owner.id)
             return res.status(403).render("status", {
                 res,
@@ -83,30 +65,11 @@ export class ArchiveBot extends PathRoute<"get"> {
 export class DeleteBot extends PathRoute<"get"> {
 
     constructor() {
-        super("get", "/:id/delete", [variables, permission.auth]);
+        super("get", "/:id/delete", [variables, botExists, permission.auth]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
-        let bot = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
-        if (!bot) {
-            bot = await global.db
-                .collection<delBot>("bots")
-                .findOne({ vanityUrl: req.params.id });
-
-            if (!bot)
-                return res.status(404).render("status", {
-                    res,
-                    title: res.__("common.error"),
-                    status: 404,
-                    subtitle: res.__("common.error.bot.404"),
-                    type: "Error",
-                    req: req
-                });
-        }
-
+        const bot = req.attached.bot!;
         if (!req.user || req.user.id !== bot.owner.id)
             return res.status(403).render("status", {
                 res,

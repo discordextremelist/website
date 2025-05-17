@@ -3,18 +3,16 @@ import { variables } from "../../../Util/Function/variables.ts";
 import * as permission from "../../../Util/Function/permissions.ts";
 import e from "express";
 import * as botCache from "../../../Util/Services/botCaching.ts";
+import { botExists } from "../../../Util/Function/checks.ts";
 
 export class GetUpvote extends PathRoute<"get"> {
 
     constructor() {
-        super("get", "/:id/upvote", [variables, permission.auth]);
+        super("get", "/:id/upvote", [variables, permission.auth, botExists]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
-        let bot = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
+        let bot = req.attached.bot!;
         if (!bot) {
             bot = await global.db
                 .collection<delBot>("bots")
@@ -124,14 +122,11 @@ export class GetUpvote extends PathRoute<"get"> {
 export class GetDownvote extends PathRoute<"get"> {
 
     constructor() {
-        super("get", "/:id/downvote", [variables, permission.auth]);
+        super("get", "/:id/downvote", [variables, permission.auth, botExists]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
-        let bot = await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id });
-
+        let bot = req.attached.bot!;
         if (!bot) {
             bot = await global.db
                 .collection<delBot>("bots")

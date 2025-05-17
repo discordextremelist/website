@@ -4,6 +4,7 @@ import { variables } from "../../../Util/Function/variables.ts";
 import e from "express";
 import { blacklistUpdate } from "../../../Util/Services/blacklist.ts";
 import { updateBot } from "../../../Util/Services/botCaching.ts";
+import { botExists } from "../../../Util/Function/checks.ts";
 
 export class BlacklistBot extends PathRoute<"get"> {
 

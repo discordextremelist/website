@@ -163,20 +163,31 @@ router.get(
     variables,
     permission.mod,
     async (req: Request, res: Response) => {
-        const bots: delBot[] = (await global.db
-            .collection<delBot>("bots")
-            .find({ $and: [{ "status.archived": false, "status.approved": true, "status.siteBot": false }] })
-            .sort({ "date.submitted": 1 })
-            .allowDiskUse()
-            .toArray())
-            .map((bot) => {
-                if (req.query.migrate === "1") {
-                    bot.inServer = discord.guilds.bot.members.cache.has(bot._id);
-                } else {
-                    bot.inServer = discord.guilds.bot.members.cache.has(bot._id) || discord.guilds.main.members.cache.has(bot._id);
-                }
-                return bot;
-            });
+        const bots: delBot[] = (
+            await global.db
+                .collection<delBot>("bots")
+                .find({
+                    $and: [
+                        {
+                            "status.archived": false,
+                            "status.approved": true,
+                            "status.siteBot": false
+                        }
+                    ]
+                })
+                .sort({ "date.submitted": 1 })
+                .allowDiskUse()
+                .toArray()
+        ).map((bot) => {
+            if (req.query.migrate === "1") {
+                bot.inServer = discord.guilds.bot.members.cache.has(bot._id);
+            } else {
+                bot.inServer =
+                    discord.guilds.bot.members.cache.has(bot._id) ||
+                    discord.guilds.main.members.cache.has(bot._id);
+            }
+            return bot;
+        });
 
         res.locals.premidPageInfo = res.__("premid.staff.invite_queue");
 
@@ -202,8 +213,9 @@ router.get(
         const audit_type = req.query.t ?? "ALL";
         console.log(audit_type);
         const logs: auditLog[] = (await getAllAuditLogs())
-            .filter(x => {
-                if (audit_type === "ALL") return x.type !== "GAME_HIGHSCORE_UPDATE";
+            .filter((x) => {
+                if (audit_type === "ALL")
+                    return x.type !== "GAME_HIGHSCORE_UPDATE";
                 return x.type === audit_type;
             })
             .sort((a, b) => b.date - a.date); // Sort descending
@@ -243,11 +255,13 @@ router.get(
     async (req: Request, res: Response) => {
         const users: delUser[] = await global.db
             .collection<delUser>("users")
-            .find({ $or: [
-                { 'rank.admin': true },
-                { 'rank.assistant': true },
-                { 'rank.mod': true }
-            ] })
+            .find({
+                $or: [
+                    { "rank.admin": true },
+                    { "rank.assistant": true },
+                    { "rank.mod": true }
+                ]
+            })
             .toArray();
 
         res.locals.premidPageInfo = res.__("premid.staff.staffManager");
@@ -311,7 +325,10 @@ router.get(
                 type: "Error"
             });
 
-        if (user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true))
+        if (
+            user.rank.assistant === true &&
+            checkRoleHierarchyStaff(req.user.db, "assistant", true)
+        )
             return res.status(403).render("status", {
                 res,
                 title: res.__("common.error"),
@@ -355,7 +372,8 @@ router.post(
             });
 
         if (
-            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
+            user.rank.assistant === true &&
+            checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -429,7 +447,8 @@ router.get(
             });
 
         if (
-            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
+            user.rank.assistant === true &&
+            checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -498,7 +517,8 @@ router.get(
             });
 
         if (
-            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
+            user.rank.assistant === true &&
+            checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -648,7 +668,8 @@ router.get(
             });
 
         if (
-            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
+            user.rank.assistant === true &&
+            checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -698,7 +719,8 @@ router.post(
             });
 
         if (
-            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
+            user.rank.assistant === true &&
+            checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -818,7 +840,8 @@ router.post(
             });
 
         if (
-            user.rank.assistant === true && checkRoleHierarchyStaff(req.user.db, "assistant", true)
+            user.rank.assistant === true &&
+            checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
             return res.status(403).render("status", {
                 res,
@@ -1199,59 +1222,89 @@ router.get(
 
 /* Begin purge routes */
 
-router.get("/purge", variables, permission.auth, permission.admin, async (req: Request, res: Response) => {
-    res.render("templates/staff/purge", {
-        title: "User purge",
-        subtitle: "User purge",
-        user: req.user,
-        req,
-        usersPurged: 0
-    });
-});
+router.get(
+    "/purge",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response) => {
+        res.render("templates/staff/purge", {
+            title: "User purge",
+            subtitle: "User purge",
+            user: req.user,
+            req,
+            usersPurged: 0
+        });
+    }
+);
 
 let cutoff = new Date(2025, 0, 1); // 01/01/2025
-const ranks: (keyof delUser["rank"])[] = ["covid", "mod", "premium", "assistant", "translator", "admin", "tester"]
-router.post("/purge", variables, permission.auth, permission.admin, async (req: Request, res: Response) => {
-    let purgeCounter = 0;
-    for (const user of (await userCache.getAllUsers()).slice(0, 5000)) {
-        if (user.auth?.expires) {
-            let date = new Date(user.auth.expires);
-            console.log(date < cutoff);
-            if (date < cutoff) { // Constraint 1: Less than cutoff date
-                const userBotsData: delBot[] = await global.db
-                    .collection<delBot>("bots")
-                    .find({ "owner.id": user._id })
-                    .toArray();
-                const userServersData: delServer[] = await global.db
-                    .collection<delServer>("servers")
-                    .find({ "owner.id": user._id })
-                    .toArray();
-                const userTemplatesData: delTemplate[] = await global.db
-                    .collection<delTemplate>("templates")
-                    .find({ "owner.id": user._id })
-                    .toArray();
-                if (userBotsData.length < 1 && userServersData.length < 1 && userTemplatesData.length < 1) { // Constraint 2: Delete only if no bots, templates, servers
-                    const hasNoRanks = ranks.every(r => user.rank[r] === false);
-                    if (hasNoRanks) { // Constraint 3: No roles
-                        await global.db.collection<delUser>("users").deleteOne({ _id: user._id });
-                        await userCache.deleteUser(user._id);
-                        purgeCounter++;
+const ranks: (keyof delUser["rank"])[] = [
+    "covid",
+    "mod",
+    "premium",
+    "assistant",
+    "translator",
+    "admin",
+    "tester"
+];
+router.post(
+    "/purge",
+    variables,
+    permission.auth,
+    permission.admin,
+    async (req: Request, res: Response) => {
+        let purgeCounter = 0;
+        for (const user of (await userCache.getAllUsers()).slice(0, 5000)) {
+            if (user.auth?.expires) {
+                let date = new Date(user.auth.expires);
+                console.log(date < cutoff);
+                if (date < cutoff) {
+                    // Constraint 1: Less than cutoff date
+                    const userBotsData: delBot[] = await global.db
+                        .collection<delBot>("bots")
+                        .find({ "owner.id": user._id })
+                        .toArray();
+                    const userServersData: delServer[] = await global.db
+                        .collection<delServer>("servers")
+                        .find({ "owner.id": user._id })
+                        .toArray();
+                    const userTemplatesData: delTemplate[] = await global.db
+                        .collection<delTemplate>("templates")
+                        .find({ "owner.id": user._id })
+                        .toArray();
+                    if (
+                        userBotsData.length < 1 &&
+                        userServersData.length < 1 &&
+                        userTemplatesData.length < 1
+                    ) {
+                        // Constraint 2: Delete only if no bots, templates, servers
+                        const hasNoRanks = ranks.every(
+                            (r) => user.rank[r] === false
+                        );
+                        if (hasNoRanks) {
+                            // Constraint 3: No roles
+                            await global.db
+                                .collection<delUser>("users")
+                                .deleteOne({ _id: user._id });
+                            await userCache.deleteUser(user._id);
+                            purgeCounter++;
+                        }
                     }
                 }
             }
         }
+        console.log(purgeCounter);
+        return res.render("templates/staff/purge", {
+            title: "User purge",
+            subtitle: "User purge",
+            user: req.user,
+            req,
+            usersPurged: purgeCounter
+        });
     }
-    console.log(purgeCounter);
-    return res.render("templates/staff/purge", {
-        title: "User purge",
-        subtitle: "User purge",
-        user: req.user,
-        req,
-        usersPurged: purgeCounter
-    });
-});
+);
 
 /* End purge routes */
-
 
 export default router;

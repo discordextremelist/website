@@ -56,7 +56,7 @@ export const bot = new Discord.Client({
     ],
     partials: [Partials.GuildMember],
     makeCache: Options.cacheWithLimits({
-        GuildMemberManager: Infinity,
+        GuildMemberManager: Infinity
     })
 });
 
@@ -81,9 +81,14 @@ bot.on("ready", async () => {
         console.time("Cache: Bot cache");
         const bots = await botCache.getAllBots();
         const botsToFetch: string[] = [];
-        if (bots.length < 1) return console.log("Failed to get cached bots, or array is empty (check cache)!");
+        if (bots.length < 1)
+            return console.log(
+                "Failed to get cached bots, or array is empty (check cache)!"
+            );
         console.log("Total bots: ", bots.length);
-        console.log(`Total cache entries: main=${guilds.main.members.cache.size}, bots=${guilds.bot.members.cache.size}`);
+        console.log(
+            `Total cache entries: main=${guilds.main.members.cache.size}, bots=${guilds.bot.members.cache.size}`
+        );
         bots.forEach((bot) => {
             if (!guilds.main.members.cache.has(bot._id)) {
                 botsToFetch.push(bot._id);
@@ -95,34 +100,49 @@ bot.on("ready", async () => {
         const beforeSecondary = guilds.bot.members.cache.size;
         let chunks = chunk<string>(botsToFetch, 750);
         for (const chunk of chunks) {
-            let botsMain = await guilds.main.members.fetch({ user: chunk }).catch(console.error);
+            let botsMain = await guilds.main.members
+                .fetch({ user: chunk })
+                .catch(console.error);
             if (botsMain) {
-                console.log(`Successfully fetched ${botsMain.size} bots in main server!`);
-                console.log(`Cache size after fetching: ${guilds.main.members.cache.size}`);
+                console.log(
+                    `Successfully fetched ${botsMain.size} bots in main server!`
+                );
+                console.log(
+                    `Cache size after fetching: ${guilds.main.members.cache.size}`
+                );
             }
-            let botsSecondary = await guilds.main.members.fetch({ user: chunk }).catch(console.error);
+            let botsSecondary = await guilds.main.members
+                .fetch({ user: chunk })
+                .catch(console.error);
             if (botsSecondary) {
-                console.log(`Successfully fetched ${botsSecondary.size} bots in bots server!`);
-                console.log(`Cache size after fetching: ${guilds.bot.members.cache.size}`);
+                console.log(
+                    `Successfully fetched ${botsSecondary.size} bots in bots server!`
+                );
+                console.log(
+                    `Cache size after fetching: ${guilds.bot.members.cache.size}`
+                );
             }
         }
         const afterPrimary = guilds.main.members.cache.size;
         const afterSecondary = guilds.bot.members.cache.size;
-        console.log(`Cache grew by ${afterPrimary - beforePrimary} entries for primary, ${afterSecondary - beforeSecondary} secondary.`);
-        if (!await redis.get("chan_update_lock")) {
+        console.log(
+            `Cache grew by ${afterPrimary - beforePrimary} entries for primary, ${afterSecondary - beforeSecondary} secondary.`
+        );
+        if (!(await redis.get("chan_update_lock"))) {
             await redis.setex("chan_update_lock", 60 * 60 * 1000, hostname()); // Expire every hour (in-case DEL restarts)
         }
-        const member_chan = guilds.main.channels.cache.get("618583328458670090"); // Too lazy to put in settings.json
+        const member_chan =
+            guilds.main.channels.cache.get("618583328458670090"); // Too lazy to put in settings.json
         if (member_chan) {
             await member_chan.edit({
-                name: `Member Count: ${afterPrimary}`,
+                name: `Member Count: ${afterPrimary}`
             });
-            if (await redis.get("chan_update_lock") == hostname()) {
+            if ((await redis.get("chan_update_lock")) == hostname()) {
                 console.log("Updating member channel, every 30 minutes!");
                 setInterval(async () => {
                     // If this was rust, use of moved value.
                     await member_chan.edit({
-                        name: `Member Count: ${guilds.bot.members.cache.size}`,
+                        name: `Member Count: ${guilds.bot.members.cache.size}`
                     });
                 }, 30 * 60000);
             }

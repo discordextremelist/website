@@ -11,7 +11,6 @@ import * as functions from "../../../Util/Function/main.ts";
 import { botExists } from "../../../Util/Function/checks.ts";
 
 export class SrcRoute extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/src", [variables, auth, admin]);
     }
@@ -34,11 +33,9 @@ export class SrcRoute extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
         res.json({ cache: cache, db: db });
     }
-
 }
 
 export class ReportRoute extends PathRoute<"post"> {
-
     constructor() {
         super("post", "/:id/report", [variables, auth, botExists]);
     }
@@ -95,5 +92,4 @@ export class ReportRoute extends PathRoute<"post"> {
             });
         }
     }
-
 }

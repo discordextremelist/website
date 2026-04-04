@@ -90,7 +90,9 @@ export async function tokenResetAll() {
                     .collection("adminTokens")
                     .findOne({ _id: user._id });
                 if (token) {
-                    await global.db.collection("adminTokens").deleteOne({ _id: token._id });
+                    await global.db
+                        .collection("adminTokens")
+                        .deleteOne({ _id: token._id });
                 }
             }
         }

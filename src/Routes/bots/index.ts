@@ -20,7 +20,13 @@ import {
     UnhideBot
 } from "./_id/hide_bot.ts";
 import { GetResubmitBot, PostResubmitBot } from "./_id/resubmit.ts";
-import { ApproveBot, GetUnapproveBot, GivePremiumBot, PostUnapproveBot, TakePremiumBot } from "./_id/approve.ts";
+import {
+    ApproveBot,
+    GetUnapproveBot,
+    GivePremiumBot,
+    PostUnapproveBot,
+    TakePremiumBot
+} from "./_id/approve.ts";
 import { GetDeclineBot, PostDeclineBot } from "./_id/decline.ts";
 import type { botReasons } from "../../../@types/enums.ts";
 import { BlacklistBot } from "./_id/blacklist.ts";
@@ -47,27 +53,38 @@ export const initBotRoutes = (): Router => {
             String(await global.redis?.hexists("bots", req.params.id))
         );
     });
-    router.get("/:id/accent_color", variables, permission.auth, checks.botExists, async (req: Request, res: Response) => {
-        let bot = req.attached.bot;
-        if (
-            bot.owner.id !== req.user.id &&
-            !bot.editors.includes(req.user.id) &&
-            req.user.db.rank.mod === false
-        )
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                errors: [res.__("common.error.bot.perms.edit")]
-            });
-        let bot_avatar = await fetch(bot.avatar?.url ? bot.avatar!.url : bot.icon!.url);
-        if (!bot_avatar.ok) return res.status(403).json({
-            error: true,
-            status: 403,
-            errors: ["Unable to fetch avatar!"] // TODO: Translate
-        });
-        let palette = (await Vibrant.from(await bot_avatar.buffer()).getPalette()).Vibrant;
-        return res.status(200).json({ color: palette.hex });
-    });
+    router.get(
+        "/:id/accent_color",
+        variables,
+        permission.auth,
+        checks.botExists,
+        async (req: Request, res: Response) => {
+            let bot = req.attached.bot;
+            if (
+                bot.owner.id !== req.user.id &&
+                !bot.editors.includes(req.user.id) &&
+                req.user.db.rank.mod === false
+            )
+                return res.status(403).json({
+                    error: true,
+                    status: 403,
+                    errors: [res.__("common.error.bot.perms.edit")]
+                });
+            let bot_avatar = await fetch(
+                bot.avatar?.url ? bot.avatar!.url : bot.icon!.url
+            );
+            if (!bot_avatar.ok)
+                return res.status(403).json({
+                    error: true,
+                    status: 403,
+                    errors: ["Unable to fetch avatar!"] // TODO: Translate
+                });
+            let palette = (
+                await Vibrant.from(await bot_avatar.buffer()).getPalette()
+            ).Vibrant;
+            return res.status(200).json({ color: palette.hex });
+        }
+    );
     new GetSubmit().register(router);
     new PostSubmit().register(router);
     new GetBot().register(router);

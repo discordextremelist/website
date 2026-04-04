@@ -12,9 +12,13 @@ import { botType } from "../index.ts";
 import { botExists } from "../../../Util/Function/checks.ts";
 
 export class GetDeclineBot extends PathRoute<"get"> {
-
     constructor() {
-        super("get", "/:id/decline", [variables, botExists, permission.auth, permission.mod]);
+        super("get", "/:id/decline", [
+            variables,
+            botExists,
+            permission.auth,
+            permission.mod
+        ]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
@@ -44,13 +48,16 @@ export class GetDeclineBot extends PathRoute<"get"> {
             redirect
         });
     }
-
 }
 
 export class PostDeclineBot extends PathRoute<"post"> {
-
     constructor() {
-        super("post", "/:id/decline", [variables, permission.auth, botExists, permission.mod]);
+        super("post", "/:id/decline", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.mod
+        ]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
@@ -158,6 +165,4 @@ export class PostDeclineBot extends PathRoute<"post"> {
 
         res.redirect("/staff/bot_queue");
     }
-
 }
-

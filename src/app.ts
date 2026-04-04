@@ -180,11 +180,15 @@ new Promise<void>((resolve, reject) => {
             console.log("Discord: Also acquired the discord lock!");
             await global.redis.setex("cache_lock", 300, hostname());
             console.time("Redis");
-            console.time("Start to cache users, bots, statuses, audit logs & servers");
+            console.time(
+                "Start to cache users, bots, statuses, audit logs & servers"
+            );
             await uploadBots();
             await uploadServers();
             await uploadTemplates();
-            console.timeEnd("Start to cache users, bots, statuses, audit logs & servers");
+            console.timeEnd(
+                "Start to cache users, bots, statuses, audit logs & servers"
+            );
             await libCache.cacheLibs();
             await announcementCache.updateCache();
             await featuredCache.updateFeaturedServers();
@@ -193,7 +197,7 @@ new Promise<void>((resolve, reject) => {
             await legalCache.updateCache();
             if (process.env.NODE_ENV === "development") {
                 // This is very time-consuming, only re-cache after the redis key expired.
-                if (!await redis.get("dev_audit_cache_lock")) {
+                if (!(await redis.get("dev_audit_cache_lock"))) {
                     await redis.setex("dev_audit_cache_lock", 3600 * 24, 1);
                     console.time("Start audit cache");
                     await uploadAuditLogs();
@@ -267,7 +271,11 @@ new Promise<void>((resolve, reject) => {
 
         app.use(
             session({
-                store: new RedisStore({ client: global.redis, ttl: 14 * 24 * 60 * 60 * 1000, disableTouch: true }),
+                store: new RedisStore({
+                    client: global.redis,
+                    ttl: 14 * 24 * 60 * 60 * 1000,
+                    disableTouch: true
+                }),
                 secret: settings.secrets.cookie,
                 resave: false,
                 saveUninitialized: false,

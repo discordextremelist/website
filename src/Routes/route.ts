@@ -1,4 +1,7 @@
-import type { RequestHandlerParams, RouteParameters } from "express-serve-static-core";
+import type {
+    RequestHandlerParams,
+    RouteParameters
+} from "express-serve-static-core";
 import type { ParsedQs } from "qs";
 import e, {
     type Handler,
@@ -14,7 +17,6 @@ type RouteMethod = "get" | "post" | "put" | "patch" | "delete";
 type HandlerMap<T extends RouteMethod> = `handle_${T}`;
 
 export abstract class PathRoute<T extends RouteMethod> {
-
     public method: RouteMethod;
     public path: string;
     public handlers: Array<RequestHandler>;
@@ -25,12 +27,17 @@ export abstract class PathRoute<T extends RouteMethod> {
         this.handlers = handlers;
     }
 
-    abstract handle(req: Request, res: Response, next: NextFunction): Promise<void>;
+    abstract handle(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void>;
 
     register(router: Router) {
         const routeHandler: RequestHandler[] = [...this.handlers, this.handle];
         (router as any)[this.method](this.path, routeHandler);
-        console.log(`${this.method.toUpperCase()} ${this.path} registered with ${routeHandler.length} handlers!`);
+        console.log(
+            `${this.method.toUpperCase()} ${this.path} registered with ${routeHandler.length} handlers!`
+        );
     }
-
 }

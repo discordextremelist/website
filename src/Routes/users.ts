@@ -1105,7 +1105,8 @@ router.post(
     async (req: Request, res: Response) => {
         if (!req.params.id) return res.status(400);
         let user = await userCache.getUser(req.params.id);
-        if (user && (user.fullUsername !== req.body.typedUsername)) return res.status(400);
+        if (user && user.fullUsername !== req.body.typedUsername)
+            return res.status(400);
         const userBotsData: delBot[] = await global.db
             .collection<delBot>("bots")
             .find({ "owner.id": req.params.id })

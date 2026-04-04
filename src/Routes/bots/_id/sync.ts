@@ -2,7 +2,9 @@ import { PathRoute } from "../../route.ts";
 import {
     type APIApplication,
     type APIApplicationCommand,
-    type APIUser, type DiscordAPIError, RESTJSONErrorCodes,
+    type APIUser,
+    type DiscordAPIError,
+    RESTJSONErrorCodes,
     type RESTPostOAuth2AccessTokenResult,
     Routes
 } from "discord.js";
@@ -19,12 +21,15 @@ import { auth } from "../../../Util/Function/permissions.ts";
 import { botExists } from "../../../Util/Function/checks.ts";
 
 export class SyncBot extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/sync", [variables, auth, botExists]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction): Promise<void> {
+    async handle(
+        req: e.Request,
+        res: e.Response,
+        next: e.NextFunction
+    ): Promise<void> {
         const bot = req.attached.bot;
         let commands: APIApplicationCommand[] = bot.commands || [];
         if (bot.scopes?.slashCommands && req.user.db.auth) {
@@ -169,5 +174,4 @@ export class SyncBot extends PathRoute<"get"> {
                 });
             });
     }
-
 }

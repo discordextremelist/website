@@ -63,8 +63,8 @@ const patterns = {
     mastodon: /@[A-Za-z0-9.]+@[A-Za-z0-9.]+/gi,
     bluesky: /@[A-Za-z0-9.]+/gi,
     gitlab: /https:\/\/[A-Za-z0-9.]+\/[A-Za-z0-9._-]+/gi,
-    forgejo: /https:\/\/[A-Za-z0-9.]+\/[A-Za-z0-9._-]+/gi,
-}
+    forgejo: /https:\/\/[A-Za-z0-9.]+\/[A-Za-z0-9._-]+/gi
+};
 
 function botType(bodyType: string): number {
     let type: botReasons = parseInt(bodyType);

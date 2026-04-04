@@ -9,7 +9,6 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Function/checks.ts";
 
 export class ArchiveBot extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/archive", [variables, botExists, permission.auth]);
     }
@@ -59,11 +58,9 @@ export class ArchiveBot extends PathRoute<"get"> {
 
         res.redirect("/users/@me");
     }
-
 }
 
 export class DeleteBot extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/delete", [variables, botExists, permission.auth]);
     }
@@ -107,5 +104,4 @@ export class DeleteBot extends PathRoute<"get"> {
 
         res.redirect("/users/@me");
     }
-
 }

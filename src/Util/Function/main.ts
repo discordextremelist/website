@@ -360,19 +360,22 @@ export function isDiscordAPIError(
     error: RefreshError
 ): error is DiscordAPIError {
     return "statusCode" in error;
-
 }
 
 const roleMap = {
     admin: 3,
     assistant: 2,
     mod: 1
-}
+};
 
 type Role = keyof delUser["rank"];
 
 // I am not sure where we will need strictEq, but we will see.
-export function checkRoleHierarchyStaff(user: delUser, highestPermittedRole: Role, strictEq: boolean): boolean {
+export function checkRoleHierarchyStaff(
+    user: delUser,
+    highestPermittedRole: Role,
+    strictEq: boolean
+): boolean {
     const entries = Object.entries(user.rank) as [Role, boolean][];
     let max: Nullable<number> = null;
     for (const [role, hasRole] of entries) {
@@ -381,7 +384,7 @@ export function checkRoleHierarchyStaff(user: delUser, highestPermittedRole: Rol
         if (val > max) max = val;
     }
     if (max === null) return false;
-    return strictEq ?
-        max === roleMap[highestPermittedRole] :
-        max >= roleMap[highestPermittedRole];
+    return strictEq
+        ? max === roleMap[highestPermittedRole]
+        : max >= roleMap[highestPermittedRole];
 }

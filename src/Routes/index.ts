@@ -29,7 +29,10 @@ import * as legalCache from "../Util/Services/legalCaching.ts";
 import * as discord from "../Util/Services/discord.ts";
 import { variables } from "../Util/Function/variables.ts";
 import type { GuildMember, GuildMemberManager } from "discord.js";
-import type { BotTags, BotQueryTagFilterParams } from "../Util/Function/types.ts";
+import type {
+    BotTags,
+    BotQueryTagFilterParams
+} from "../Util/Function/types.ts";
 
 const router = express.Router();
 
@@ -129,7 +132,8 @@ router.get("/", variables, async (req: Request, res: Response) => {
     });
 });
 
-const commonFilter = ({ status, labels }: delBot, req: Request) =>  status.approved &&
+const commonFilter = ({ status, labels }: delBot, req: Request) =>
+    status.approved &&
     !status.siteBot &&
     !status.archived &&
     !status.hidden &&
@@ -146,52 +150,52 @@ const tagMap: Record<BotTags, BotQueryTagFilterParams> = {
             res.__("common.bots.subtitle.filter.applicationCommands", {
                 a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">',
                 a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">',
-                ea: "</a>",
+                ea: "</a>"
             }),
-        filter: (bot, req) => bot.scopes?.slashCommands,
+        filter: (bot, req) => bot.scopes?.slashCommands
     },
     fun: {
         icon: "fa-grin-squint-tears has-text-link",
         title: "common.bots.title.fun",
         subtitle: (res) => res.__("common.bots.subtitle.filter.fun"),
-        filter: (bot, req) => bot.tags.includes("Fun"),
+        filter: (bot, req) => bot.tags.includes("Fun")
     },
     social: {
         icon: "fa-comments-alt has-text-info",
         title: "common.bots.title.social",
         subtitle: (res) => res.__("common.bots.subtitle.filter.social"),
-        filter: (bot, req) => bot.tags.includes("Social"),
+        filter: (bot, req) => bot.tags.includes("Social")
     },
     economy: {
         icon: "fa-comments-dollar has-text-success",
         title: "common.bots.title.economy",
         subtitle: (res) => res.__("common.bots.subtitle.filter.economy"),
-        filter: (bot, req) => bot.tags.includes("Economy"),
+        filter: (bot, req) => bot.tags.includes("Economy")
     },
     utility: {
         icon: "fa-cogs has-text-orange",
         title: "common.bots.title.utility",
         subtitle: (res) => res.__("common.bots.subtitle.filter.utility"),
-        filter: (bot, req) => bot.tags.includes("Utility"),
+        filter: (bot, req) => bot.tags.includes("Utility")
     },
     moderation: {
         icon: "fa-gavel has-text-danger",
         title: "common.bots.title.moderation",
         subtitle: (res) => res.__("common.bots.subtitle.filter.moderation"),
-        filter: (bot, req) => bot.tags.includes("Moderation"),
+        filter: (bot, req) => bot.tags.includes("Moderation")
     },
     multipurpose: {
         icon: "fa-ball-pile has-text-magenta",
         title: "common.bots.title.multipurpose",
         subtitle: (res) => res.__("common.bots.subtitle.filter.multipurpose"),
-        filter: (bot, req) => bot.tags.includes("Multipurpose"),
+        filter: (bot, req) => bot.tags.includes("Multipurpose")
     },
     music: {
         icon: "fa-comment-music has-text-pink",
         title: "common.bots.title.music",
         subtitle: (res) => res.__("common.bots.subtitle.filter.music"),
-        filter: (bot, req) => bot.tags.includes("Music"),
-    },
+        filter: (bot, req) => bot.tags.includes("Music")
+    }
 };
 
 router.get("/bots", variables, async (req: Request, res: Response) => {
@@ -201,7 +205,9 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
     let title = res.__("common.bots.discord");
     let subtitle = res.__("common.bots.subtitle");
     let pageParam = "?page=";
-    let bots = (await botCache.getAllBots()).filter((bot) => commonFilter(bot, req));
+    let bots = (await botCache.getAllBots()).filter((bot) =>
+        commonFilter(bot, req)
+    );
     if (req.query.tag) {
         pageParam = `?tag=${req.query.tag}&page=`;
         let tag = (req.query.tag as string).toLowerCase() as BotTags;

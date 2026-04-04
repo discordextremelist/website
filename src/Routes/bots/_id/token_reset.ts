@@ -8,7 +8,11 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 
 export class TokenReset extends PathRoute<"get"> {
     constructor() {
-        super("get", "/:id/tokenreset", [variables, permission.auth, checks.botExists]);
+        super("get", "/:id/tokenreset", [
+            variables,
+            permission.auth,
+            checks.botExists
+        ]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
@@ -58,5 +62,4 @@ export class TokenReset extends PathRoute<"get"> {
             req
         });
     }
-
 }

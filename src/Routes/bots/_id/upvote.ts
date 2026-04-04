@@ -6,7 +6,6 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Function/checks.ts";
 
 export class GetUpvote extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/upvote", [variables, permission.auth, botExists]);
     }
@@ -100,11 +99,9 @@ export class GetUpvote extends PathRoute<"get"> {
 
         res.redirect(`/bots/${bot._id}`);
     }
-
 }
 
 export class GetDownvote extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/downvote", [variables, permission.auth, botExists]);
     }
@@ -214,5 +211,4 @@ export class GetDownvote extends PathRoute<"get"> {
 
         res.redirect(`/bots/${bot._id}`);
     }
-
 }

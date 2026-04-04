@@ -9,7 +9,11 @@ import { botExists } from "../../../Util/Function/checks.ts";
 
 export class SetVanity extends PathRoute<"post"> {
     constructor() {
-        super("post", "/:id/setvanity", [variables, permission.auth, checks.botExists]);
+        super("post", "/:id/setvanity", [
+            variables,
+            permission.auth,
+            checks.botExists
+        ]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
@@ -140,5 +144,4 @@ export class SetVanity extends PathRoute<"post"> {
             res.redirect(`/bots/${req.params.id}`);
         }
     }
-
 }

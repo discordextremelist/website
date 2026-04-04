@@ -4,9 +4,11 @@ import * as permission from "../../../Util/Function/permissions.ts";
 import e from "express";
 import {
     type APIApplication,
-    type APIApplicationCommand, type APIUser,
+    type APIApplicationCommand,
+    type APIUser,
     type DiscordAPIError,
-    OAuth2Scopes, RESTJSONErrorCodes,
+    OAuth2Scopes,
+    RESTJSONErrorCodes,
     type RESTPostOAuth2AccessTokenResult,
     Routes
 } from "discord.js";
@@ -23,9 +25,13 @@ import { DAPI } from "../../../Util/Services/discord.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 
 export class GetResubmitBot extends PathRoute<"get"> {
-
     constructor() {
-        super("get", "/:id/resubmit", [variables, permission.auth, permission.scopes([OAuth2Scopes.GuildsJoin]), checks.botExists]);
+        super("get", "/:id/resubmit", [
+            variables,
+            permission.auth,
+            permission.scopes([OAuth2Scopes.GuildsJoin]),
+            checks.botExists
+        ]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
@@ -69,13 +75,16 @@ export class GetResubmitBot extends PathRoute<"get"> {
             longDesc: bot.longDesc
         });
     }
-
 }
 
 export class PostResubmitBot extends PathRoute<"post"> {
-
     constructor() {
-        super("post", "/:id/resubmit", [variables, permission.auth, checks.botExists, permission.member]);
+        super("post", "/:id/resubmit", [
+            variables,
+            permission.auth,
+            checks.botExists,
+            permission.member
+        ]);
     }
 
     // @ts-ignore
@@ -349,13 +358,25 @@ export class PostResubmitBot extends PathRoute<"post"> {
         // TODO: Improve some of this code below, it is hectic.
 
         // @ts-expect-error
-        if (req.body.mastodon && !patterns.mastodon.test(req.body.mastodon)) { error = true; errors.push(res.__("common.error.listing.edit.mastodonInvalid")) }
+        if (req.body.mastodon && !patterns.mastodon.test(req.body.mastodon)) {
+            error = true;
+            errors.push(res.__("common.error.listing.edit.mastodonInvalid"));
+        }
         // @ts-expect-error
-        if (req.body.bluesky && !patterns.bluesky.test(req.body.bluesky)) { error = true; errors.push(res.__("common.error.listing.edit.blueskyInvalid")) }
+        if (req.body.bluesky && !patterns.bluesky.test(req.body.bluesky)) {
+            error = true;
+            errors.push(res.__("common.error.listing.edit.blueskyInvalid"));
+        }
         // @ts-expect-error
-        if (req.body.gitlab && !patterns.gitlab.test(req.body.gitlab)) { error = true; errors.push(res.__("common.error.listing.edit.gitlabInvalid")) }
+        if (req.body.gitlab && !patterns.gitlab.test(req.body.gitlab)) {
+            error = true;
+            errors.push(res.__("common.error.listing.edit.gitlabInvalid"));
+        }
         // @ts-expect-error
-        if (req.body.forgejo && !patterns.forgejo.test(req.body.forgejo)) { error = true; errors.push(res.__("common.error.listing.edit.forgejoInvalid")) }
+        if (req.body.forgejo && !patterns.forgejo.test(req.body.forgejo)) {
+            error = true;
+            errors.push(res.__("common.error.listing.edit.forgejoInvalid"));
+        }
 
         if (!req.body.shortDescription) {
             error = true;
@@ -629,8 +650,7 @@ export class PostResubmitBot extends PathRoute<"post"> {
                                 privacyPolicy: bot.links.privacyPolicy
                             },
                             social: {
-                                twitter: bot.social?.twitter,
-
+                                twitter: bot.social?.twitter
                             },
                             theme: {
                                 useCustomColour: bot.theme?.useCustomColour,
@@ -743,5 +763,4 @@ export class PostResubmitBot extends PathRoute<"post"> {
                 });
             });
     }
-
 }

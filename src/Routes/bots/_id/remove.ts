@@ -12,7 +12,6 @@ import * as functions from "../../../Util/Function/main.ts";
 import { botType } from "../index.ts";
 
 export class GetRemoveBot extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/remove", [variables, botExists, auth]);
     }
@@ -39,11 +38,9 @@ export class GetRemoveBot extends PathRoute<"get"> {
             redirect: `/bots/${bot._id}`
         });
     }
-
 }
 
 export class PostRemoveBot extends PathRoute<"post"> {
-
     constructor() {
         super("post", "/:id/remove", [variables, botExists, auth]);
     }
@@ -154,5 +151,4 @@ export class PostRemoveBot extends PathRoute<"post"> {
 
         res.redirect(`/bots/${bot._id}`);
     }
-
 }

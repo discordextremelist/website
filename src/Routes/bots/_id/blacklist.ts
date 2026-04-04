@@ -7,14 +7,14 @@ import { updateBot } from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Function/checks.ts";
 
 export class BlacklistBot extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/blacklist", [variables, auth, admin]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
-        let bot = await global.db.collection<delBot>("bots")
-            .findOne({ $or: [{ _id: req.params.id }, { vanityUrl: req.params.id }] });
+        let bot = await global.db.collection<delBot>("bots").findOne({
+            $or: [{ _id: req.params.id }, { vanityUrl: req.params.id }]
+        });
         if (!bot) {
             return res.status(404).render("status", {
                 res,
@@ -42,5 +42,4 @@ export class BlacklistBot extends PathRoute<"get"> {
         await updateBot(req.params.id);
         return res.redirect(`/bots/${req.params.id}`);
     }
-
 }

@@ -12,7 +12,6 @@ import * as Discord from "discord.js";
 import { botType } from "../index.js";
 
 export class HideBot extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/hide", [variables, permission.auth]);
     }
@@ -90,11 +89,9 @@ export class HideBot extends PathRoute<"get"> {
 
         res.redirect(`/bots/${bot._id}`);
     }
-
 }
 
 export class UnhideBot extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/unhide", [variables, permission.auth]);
     }
@@ -162,13 +159,16 @@ export class UnhideBot extends PathRoute<"get"> {
 
         res.redirect(`/bots/${bot._id}`);
     }
-
 }
 
 export class GetModHideBot extends PathRoute<"get"> {
-
     constructor() {
-        super("get", "/:id/modhide", [variables, permission.auth, botExists, permission.mod]);
+        super("get", "/:id/modhide", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.mod
+        ]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
@@ -193,14 +193,16 @@ export class GetModHideBot extends PathRoute<"get"> {
             redirect: `/bots/${bot._id}`
         });
     }
-
 }
 
-
 export class PostModHideBot extends PathRoute<"post"> {
-
     constructor() {
-        super("post", "/:id/modhide", [variables, permission.auth, botExists, permission.mod]);
+        super("post", "/:id/modhide", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.mod
+        ]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
@@ -297,14 +299,16 @@ export class PostModHideBot extends PathRoute<"post"> {
 
         res.redirect(`/bots/${bot._id}`);
     }
-
 }
 
-
 export class GetModUnhideBot extends PathRoute<"get"> {
-
     constructor() {
-        super("get", "/:id/modunhide", [variables, permission.auth, botExists, permission.mod]);
+        super("get", "/:id/modunhide", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.mod
+        ]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
@@ -382,5 +386,4 @@ export class GetModUnhideBot extends PathRoute<"get"> {
 
         res.redirect(`/bots/${req.params.id}`);
     }
-
 }

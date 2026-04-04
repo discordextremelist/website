@@ -9,9 +9,11 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import {
     type APIApplication,
-    type APIApplicationCommand, type APIUser,
+    type APIApplicationCommand,
+    type APIUser,
     type DiscordAPIError,
-    OAuth2Scopes, RESTJSONErrorCodes,
+    OAuth2Scopes,
+    RESTJSONErrorCodes,
     type RESTPostOAuth2AccessTokenResult,
     Routes
 } from "discord.js";
@@ -27,7 +29,6 @@ import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
 import { botExists } from "../../../Util/Function/checks.ts";
 
 export class GetEdit extends PathRoute<"get"> {
-
     constructor() {
         super("get", "/:id/edit", [variables, permission.auth, botExists]);
     }
@@ -81,11 +82,9 @@ export class GetEdit extends PathRoute<"get"> {
             longDesc: clean
         });
     }
-
 }
 
 export class PostEdit extends PathRoute<"post"> {
-
     constructor() {
         super("post", "/:id/edit", [variables, botExists, permission.auth]);
     }
@@ -161,7 +160,7 @@ export class PostEdit extends PathRoute<"post"> {
             } else if (
                 req.body.invite.includes("discord.com") &&
                 ((req.body.bot &&
-                        !req.body.invite.includes(OAuth2Scopes.Bot)) ||
+                    !req.body.invite.includes(OAuth2Scopes.Bot)) ||
                     (req.body.slashCommands &&
                         !req.body.invite.includes(
                             OAuth2Scopes.ApplicationsCommands
@@ -487,13 +486,25 @@ export class PostEdit extends PathRoute<"post"> {
         // TODO: Improve some of this code below, it is hectic.
 
         // @ts-expect-error
-        if (req.body.mastodon && !patterns.mastodon.test(req.body.mastodon)) { error = true; errors.push(res.__("common.error.listing.edit.mastodonInvalid")) }
+        if (req.body.mastodon && !patterns.mastodon.test(req.body.mastodon)) {
+            error = true;
+            errors.push(res.__("common.error.listing.edit.mastodonInvalid"));
+        }
         // @ts-expect-error
-        if (req.body.bluesky && !patterns.bluesky.test(req.body.bluesky)) { error = true; errors.push(res.__("common.error.listing.edit.blueskyInvalid")) }
+        if (req.body.bluesky && !patterns.bluesky.test(req.body.bluesky)) {
+            error = true;
+            errors.push(res.__("common.error.listing.edit.blueskyInvalid"));
+        }
         // @ts-expect-error
-        if (req.body.gitlab && !patterns.gitlab.test(req.body.gitlab)) { error = true; errors.push(res.__("common.error.listing.edit.gitlabInvalid")) }
+        if (req.body.gitlab && !patterns.gitlab.test(req.body.gitlab)) {
+            error = true;
+            errors.push(res.__("common.error.listing.edit.gitlabInvalid"));
+        }
         // @ts-expect-error
-        if (req.body.forgejo && !patterns.forgejo.test(req.body.forgejo)) { error = true; errors.push(res.__("common.error.listing.edit.forgejoInvalid")) }
+        if (req.body.forgejo && !patterns.forgejo.test(req.body.forgejo)) {
+            error = true;
+            errors.push(res.__("common.error.listing.edit.forgejoInvalid"));
+        }
 
         let commands: APIApplicationCommand[] = bot.commands || [];
 
@@ -616,10 +627,12 @@ export class PostEdit extends PathRoute<"post"> {
                                 mastodon: req.body.mastodon,
                                 bluesky: req.body.bluesky,
                                 gitlab: req.body.gitlab,
-                                forgejo: req.body.forgejo,
+                                forgejo: req.body.forgejo
                             },
                             theme: {
-                                useCustomColour: req.body.useAutoAccent ? true : req.body.useCustomColour,
+                                useCustomColour: req.body.useAutoAccent
+                                    ? true
+                                    : req.body.useCustomColour,
                                 colour: req.body.colour,
                                 banner: req.body.banner
                             },
@@ -777,5 +790,4 @@ export class PostEdit extends PathRoute<"post"> {
                 });
             });
     }
-
 }

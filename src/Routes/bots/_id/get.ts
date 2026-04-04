@@ -113,15 +113,15 @@ export class GetBot extends PathRoute<"get"> {
             if (user) {
                 editorsLength !== looped
                     ? (editors += `<a class="has-text-white" href="${
-                        settings.website.url
-                    }${res.locals.linkPrefix}/users/${user._id}">${
-                        sen(user.fullUsername) || "Unknown#0000"
-                    }</a>,&nbsp;`)
+                          settings.website.url
+                      }${res.locals.linkPrefix}/users/${user._id}">${
+                          sen(user.fullUsername) || "Unknown#0000"
+                      }</a>,&nbsp;`)
                     : (editors += `<a class="has-text-white" href="${
-                        settings.website.url
-                    }${res.locals.linkPrefix}/users/${user._id}">${
-                        sen(user.fullUsername) || "Unknown#0000"
-                    }</a>`);
+                          settings.website.url
+                      }${res.locals.linkPrefix}/users/${user._id}">${
+                          sen(user.fullUsername) || "Unknown#0000"
+                      }</a>`);
             } else {
                 if (editorsLength === looped)
                     editors = editors.substring(0, editors.length - 2);
@@ -152,5 +152,4 @@ export class GetBot extends PathRoute<"get"> {
             scopes: functions.parseScopes(bot.scopes)
         });
     }
-
 }

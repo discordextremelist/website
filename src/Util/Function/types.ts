@@ -2,7 +2,15 @@ import type { Request, Response } from "express";
 
 export type Nullable<T> = T | null;
 
-export type BotTags = "slashcommands" | "fun" | "social" | "economy" | "utility" | "moderation" | "multipurpose" | "music";
+export type BotTags =
+    | "slashcommands"
+    | "fun"
+    | "social"
+    | "economy"
+    | "utility"
+    | "moderation"
+    | "multipurpose"
+    | "music";
 
 export type BotQueryTagFilterParams = {
     icon: string;

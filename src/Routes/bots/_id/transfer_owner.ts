@@ -7,7 +7,11 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 
 export class TransferOwner extends PathRoute<"post"> {
     constructor() {
-        super("post", "/:id/transfer-owner", [variables, permission.assistant, checks.botExists]);
+        super("post", "/:id/transfer-owner", [
+            variables,
+            permission.assistant,
+            checks.botExists
+        ]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
@@ -65,5 +69,4 @@ export class TransferOwner extends PathRoute<"post"> {
 
         res.redirect(`/bots/${req.params.id}`);
     }
-
 }

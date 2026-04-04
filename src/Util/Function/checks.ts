@@ -26,9 +26,9 @@ export const botExists = async (
 ) => {
     // TODO: Use redis cache
     // TODO: For the aforementioned to work, I need to confirm all update operations call botCache.updateBot
-    const bot = await global.db
-        .collection<delBot>("bots")
-        .findOne({ $or: [{ _id: req.params.id }, { vanityUrl: req.params.id }] });
+    const bot = await global.db.collection<delBot>("bots").findOne({
+        $or: [{ _id: req.params.id }, { vanityUrl: req.params.id }]
+    });
 
     if (!bot)
         return res.status(404).render("status", {
@@ -39,15 +39,16 @@ export const botExists = async (
             type: "Error",
             req
         });
-    if (bot.status.blacklist) return res.status(403).render("status", {
-        res,
-        title: res.__("common.error"),
-        // @ts-ignore
-        subtitle: res.__("common.error.bot.blacklist"),
-        status: 403,
-        type: "Error",
-        req
-    });
+    if (bot.status.blacklist)
+        return res.status(403).render("status", {
+            res,
+            title: res.__("common.error"),
+            // @ts-ignore
+            subtitle: res.__("common.error.bot.blacklist"),
+            status: 403,
+            type: "Error",
+            req
+        });
     req.attached.bot = bot;
     next();
 };

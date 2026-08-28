@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v7
       - name: Create a Sentry.io release
         uses: discordextremelist/sentry-releases-action@v1.2.3
         env:

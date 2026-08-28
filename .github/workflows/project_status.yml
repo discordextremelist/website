@@ -1,0 +1,78 @@
+name: Move issue to the correct project status when a label is applied
+on:
+  issues:
+    types: [labeled]
+jobs:
+  set-project-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Map label to project status
+        id: map
+        env:
+          LABEL: ${{ github.event.label.name }}
+        run: |
+          case "$LABEL" in
+            "high priority")            status="High Priority" ;;
+            "moderate priority")        status="Moderate Priority" ;;
+            "low priority"|"on hold")   status="Low Priority / Delayed" ;;
+            *) echo "No status mapped for label '$LABEL'; skipping."
+               echo "skip=true" >> "$GITHUB_OUTPUT"
+               exit 0 ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Set the Status field on the project item
+        if: steps.map.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.DELLYBOT_SECRET }}
+          ORG: discordextremelist
+          PROJECT_NUMBER: 1
+          STATUS: ${{ steps.map.outputs.status }}
+          CONTENT_ID: ${{ github.event.issue.node_id }}
+        run: |
+          set -euo pipefail
+
+          project=$(gh api graphql -f query='
+            query($org: String!, $number: Int!) {
+              organization(login: $org) {
+                projectV2(number: $number) {
+                  id
+                  field(name: "Status") {
+                    ... on ProjectV2SingleSelectField {
+                      id
+                      options { id name }
+                    }
+                  }
+                }
+              }
+            }' -f org="$ORG" -F number="$PROJECT_NUMBER")
+
+          project_id=$(jq -r '.data.organization.projectV2.id' <<<"$project")
+          field_id=$(jq -r '.data.organization.projectV2.field.id' <<<"$project")
+          option_id=$(jq -r --arg s "$STATUS" \
+            '.data.organization.projectV2.field.options[] | select(.name == $s) | .id' <<<"$project")
+
+          if [ -z "$option_id" ] || [ "$option_id" = "null" ]; then
+            echo "::error::The project's Status field has no option named '$STATUS'"
+            exit 1
+          fi
+
+          # Idempotent: returns the existing item if the issue is already on the board.
+          item_id=$(gh api graphql -f query='
+            mutation($project: ID!, $content: ID!) {
+              addProjectV2ItemById(input: { projectId: $project, contentId: $content }) {
+                item { id }
+              }
+            }' -f project="$project_id" -f content="$CONTENT_ID" \
+            --jq '.data.addProjectV2ItemById.item.id')
+
+          gh api graphql -f query='
+            mutation($project: ID!, $item: ID!, $field: ID!, $option: String!) {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: $project
+                itemId: $item
+                fieldId: $field
+                value: { singleSelectOptionId: $option }
+              }) { projectV2Item { id } }
+            }' -f project="$project_id" -f item="$item_id" \
+               -f field="$field_id" -f option="$option_id"

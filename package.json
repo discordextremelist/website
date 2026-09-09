@@ -39,7 +39,7 @@
     "markdown-it": "^14.1.0",
     "moment": "^2.29.4",
     "mongodb": "^4.17.2",
-    "morgan": "~1.10.0",
+    "morgan": "~1.12.0",
     "node-fetch": "^2.7.0",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",

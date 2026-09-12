@@ -5,8 +5,12 @@ import type {
     Response,
     Router
 } from "express";
+import { admin, assistant, auth, mod } from "../Util/Middleware/permissions.ts";
 
 type RouteMethod = "get" | "post" | "put" | "patch" | "delete";
+
+/** Middleware that sends logged-out users to login, so req.user is set after it */
+const LOGIN_MIDDLEWARE = new Set<RequestHandler>([auth, mod, assistant, admin]);
 
 export abstract class PathRoute<T extends RouteMethod> {
     public method: T;
@@ -46,6 +50,16 @@ export abstract class PathRoute<T extends RouteMethod> {
 export abstract class AuthedPathRoute<
     T extends RouteMethod
 > extends PathRoute<T> {
+    constructor(method: T, path: string, handlers: Array<RequestHandler>) {
+        super(method, path, handlers);
+        // Fail at startup, not on a logged-out request, if the chain can't
+        // guarantee req.user.
+        if (!handlers.some((handler) => LOGIN_MIDDLEWARE.has(handler)))
+            throw new Error(
+                `${method.toUpperCase()} ${path}: an AuthedPathRoute needs auth, mod, assistant or admin in its middleware`
+            );
+    }
+
     abstract override handle(
         req: AuthedRequest,
         res: Response,

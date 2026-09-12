@@ -78,10 +78,17 @@ router.get("/bots", async (_req, res) => {
             let commands: APIApplicationCommand[] = botExists.commands || [];
 
             if (botExists.scopes?.slashCommands) {
-                const owner = await userCache.getUser(botExists.owner.id);
+                // Fall back to the database on a cache miss, like the
+                // variables middleware. If the owner can't be found at all,
+                // only the command refresh is skipped; the rest still syncs.
+                const owner =
+                    (await userCache.getUser(botExists.owner.id)) ??
+                    (await global.db
+                        .collection<delUser>("users")
+                        .findOne({ _id: botExists.owner.id }));
 
                 if (
-                    owner.auth?.scopes?.includes(
+                    owner?.auth?.scopes?.includes(
                         OAuth2Scopes.ApplicationsCommandsUpdate
                     )
                 ) {

@@ -349,7 +349,11 @@ export class PostEdit extends PathRoute<"post"> {
                 error = true;
                 errors.push(res.__("common.error.bot.arr.privacyTooLong"));
             }
-            if (req.body.privacyPolicy.includes("discord.bot/privacy")) {
+            if (
+                ["discord.bot", "my-cool-app.com"].some((s) =>
+                    req.body.privacyPolicy.includes(s)
+                )
+            ) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.privacyPolicy.placeholder")

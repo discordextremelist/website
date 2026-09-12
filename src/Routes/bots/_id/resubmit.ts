@@ -88,7 +88,6 @@ export class PostResubmitBot extends PathRoute<"post"> {
         ]);
     }
 
-    // @ts-ignore
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         let error = false;
         let errors: string[] = [];

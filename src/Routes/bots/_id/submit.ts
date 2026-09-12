@@ -72,7 +72,6 @@ export class PostSubmit extends PathRoute<"post"> {
         ]);
     }
 
-    // @ts-ignore
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 

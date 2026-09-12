@@ -1,23 +1,15 @@
 import type {
-    RequestHandlerParams,
-    RouteParameters
-} from "express-serve-static-core";
-import type { ParsedQs } from "qs";
-import e, {
-    type Handler,
-    type NextFunction,
-    type Request,
-    type RequestHandler,
-    type Response,
-    type Router
+    NextFunction,
+    Request,
+    RequestHandler,
+    Response,
+    Router
 } from "express";
 
 type RouteMethod = "get" | "post" | "put" | "patch" | "delete";
 
-type HandlerMap<T extends RouteMethod> = `handle_${T}`;
-
 export abstract class PathRoute<T extends RouteMethod> {
-    public method: RouteMethod;
+    public method: T;
     public path: string;
     public handlers: Array<RequestHandler>;
 
@@ -27,15 +19,20 @@ export abstract class PathRoute<T extends RouteMethod> {
         this.handlers = handlers;
     }
 
+    // Handlers may be sync or async. Sync ones must stay sync: Express 4
+    // forwards a thrown error to the error handler, but not a rejected promise.
     abstract handle(
         req: Request,
         res: Response,
         next: NextFunction
-    ): Promise<void>;
+    ): unknown | Promise<unknown>;
 
     register(router: Router) {
-        const routeHandler: RequestHandler[] = [...this.handlers, this.handle];
-        (router as any)[this.method](this.path, routeHandler);
+        const routeHandler: RequestHandler[] = [
+            ...this.handlers,
+            this.handle.bind(this)
+        ];
+        router[this.method](this.path, routeHandler);
         console.log(
             `${this.method.toUpperCase()} ${this.path} registered with ${routeHandler.length} handlers!`
         );

@@ -15,7 +15,6 @@ export class SrcRoute extends PathRoute<"get"> {
         super("get", "/:id/src", [variables, auth, admin]);
     }
 
-    //@ts-ignore
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         if (req.params.id === "@me") {
             if (!req.user) return res.redirect("/auth/login");
@@ -40,7 +39,6 @@ export class ReportRoute extends PathRoute<"post"> {
         super("post", "/:id/report", [variables, auth, botExists]);
     }
 
-    // @ts-ignore
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (bot.owner.id === req.user.id)

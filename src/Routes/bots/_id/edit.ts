@@ -34,7 +34,6 @@ export class GetEdit extends PathRoute<"get"> {
         super("get", "/:id/edit", [variables, permission.auth, botExists]);
     }
 
-    // @ts-ignore
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot;
 
@@ -90,7 +89,6 @@ export class PostEdit extends PathRoute<"post"> {
         super("post", "/:id/edit", [variables, botExists, permission.auth]);
     }
 
-    // @ts-expect-error
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         let error = false;
         let errors: string[] = [];

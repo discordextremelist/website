@@ -20,24 +20,46 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { PresenceUpdateStatus, UserFlags } from "discord.js";
 import * as functions from "../Function/main.ts";
 
-export async function getFeaturedBots(): Promise<delBot[]> {
+/**
+ * `Full` narrowed to `Stripped`'s fields, with the rest still present but
+ * optional, so the update functions can `delete` them before caching.
+ */
+type Strippable<Full, Stripped> = Stripped & {
+    [K in Exclude<keyof Full, keyof Stripped>]?: Full[K];
+};
+
+type strippableBot = Strippable<delBot, featuredBot> & {
+    links: Strippable<delBot["links"], featuredBot["links"]>;
+};
+type strippableServer = Strippable<delServer, featuredServer> & {
+    links: Strippable<delServer["links"], featuredServer["links"]>;
+};
+type strippableTemplate = Strippable<delTemplate, featuredTemplate> & {
+    links: Strippable<delTemplate["links"], featuredTemplate["links"]>;
+};
+
+// Each returns null until its cache has been filled after startup.
+
+export async function getFeaturedBots(): Promise<featuredBot[] | null> {
     const bots = await global.redis?.get("featured_bots");
-    return JSON.parse(bots);
+    return bots === null ? null : JSON.parse(bots);
 }
 
-export async function getFeaturedSFWBots(): Promise<delBot[]> {
+export async function getFeaturedSFWBots(): Promise<featuredBot[] | null> {
     const bots = await global.redis?.get("featured_sfw_bots");
-    return JSON.parse(bots);
+    return bots === null ? null : JSON.parse(bots);
 }
 
-export async function getFeaturedServers(): Promise<delServer[]> {
+export async function getFeaturedServers(): Promise<featuredServer[] | null> {
     const servers = await global.redis?.get("featured_servers");
-    return JSON.parse(servers);
+    return servers === null ? null : JSON.parse(servers);
 }
 
-export async function getFeaturedTemplates(): Promise<delTemplate[]> {
+export async function getFeaturedTemplates(): Promise<
+    featuredTemplate[] | null
+> {
     const templates = await global.redis?.get("featured_templates");
-    return JSON.parse(templates);
+    return templates === null ? null : JSON.parse(templates);
 }
 
 export async function updateFeaturedBots() {
@@ -45,7 +67,7 @@ export async function updateFeaturedBots() {
         string,
         PresenceUpdateStatus
     >;
-    const bots = functions
+    const bots: strippableBot[] = functions
         .shuffleArray(
             (
                 (await global.db
@@ -99,7 +121,7 @@ export async function updateFeaturedSFWBots() {
         string,
         PresenceUpdateStatus
     >;
-    const bots = functions
+    const bots: strippableBot[] = functions
         .shuffleArray(
             (
                 (await global.db
@@ -150,7 +172,7 @@ export async function updateFeaturedSFWBots() {
 }
 
 export async function updateFeaturedServers() {
-    const servers = functions
+    const servers: strippableServer[] = functions
         .shuffleArray(
             (
                 (await global.db
@@ -175,7 +197,7 @@ export async function updateFeaturedServers() {
 }
 
 export async function updateFeaturedTemplates() {
-    const templates = functions
+    const templates: strippableTemplate[] = functions
         .shuffleArray(
             (await global.db
                 .collection<delTemplate>("templates")

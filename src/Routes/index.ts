@@ -113,7 +113,7 @@ function sortAll() {
 router.get("/", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.home");
 
-    let bots: delBot[];
+    let bots: featuredBot[] | null;
 
     if (req.user?.db?.preferences.hideNSFW) {
         bots = await featuring.getFeaturedSFWBots();

@@ -341,6 +341,57 @@ declare global {
         };
     }
 
+    /** A bot as stored in the home page's featured cache, with private fields removed */
+    type featuredBot = Omit<
+        delBot,
+        | "clientID"
+        | "prefix"
+        | "library"
+        | "tags"
+        | "serverCount"
+        | "shardCount"
+        | "token"
+        | "longDesc"
+        | "modNotes"
+        | "editors"
+        | "owner"
+        | "votes"
+        | "links"
+        | "social"
+        | "theme"
+        | "widgetbot"
+    > & { links: Pick<delBot["links"], "invite"> };
+
+    /** A server as stored in the home page's featured cache, with private fields removed */
+    type featuredServer = Omit<
+        delServer,
+        | "inviteCode"
+        | "longDesc"
+        | "previewChannel"
+        | "owner"
+        | "links"
+        | "status"
+    > & { links: Pick<delServer["links"], "invite"> };
+
+    /** A template as stored in the home page's featured cache, with private fields removed */
+    type featuredTemplate = Omit<
+        delTemplate,
+        | "region"
+        | "locale"
+        | "afkTimeout"
+        | "verificationLevel"
+        | "defaultMessageNotifications"
+        | "explicitContent"
+        | "roles"
+        | "channels"
+        | "usageCount"
+        | "longDesc"
+        | "tags"
+        | "fromGuild"
+        | "owner"
+        | "links"
+    > & { links: Pick<delTemplate["links"], "template"> };
+
     interface auditLog {
         _id: string;
         type: string;

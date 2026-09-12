@@ -2,7 +2,6 @@ import { PathRoute } from "../../route.ts";
 import e from "express";
 import { variables } from "../../../Util/Function/variables.ts";
 import * as permission from "../../../Util/Function/permissions.ts";
-import * as checks from "../../../Util/Function/checks.ts";
 import {
     type APIApplication,
     type APIApplicationCommand,
@@ -26,7 +25,6 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { Response as fetchRes } from "node-fetch";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
-import { botExists } from "../../../Util/Function/checks.ts";
 import { patterns } from "../../../Util/Function/patterns.ts";
 
 export class GetSubmit extends PathRoute<"get"> {
@@ -70,7 +68,7 @@ export class PostSubmit extends PathRoute<"post"> {
         super("post", "/submit", [
             variables,
             permission.auth,
-            checks.botExists
+            permission.member
         ]);
     }
 

@@ -39,6 +39,7 @@ import { tagHandler, reviewRequired } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
+import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 
 export class GetEditServer extends PathRoute<"get"> {
     constructor() {
@@ -48,10 +49,7 @@ export class GetEditServer extends PathRoute<"get"> {
     async handle(req: Request, res: Response) {
         const server: delServer | undefined = req.attached.server!;
 
-        if (
-            server.owner.id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
+        if (!ownsOrAssistant(req, server))
             return renderStatus(
                 req,
                 res,
@@ -93,10 +91,7 @@ export class PostEditServer extends PathRoute<"post"> {
                 errors: [res.__("common.error.server.404")]
             });
 
-        if (
-            server.owner.id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
+        if (!ownsOrAssistant(req, server))
             return res.status(403).json({
                 error: true,
                 status: 403,

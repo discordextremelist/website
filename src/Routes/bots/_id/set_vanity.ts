@@ -7,6 +7,7 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 
 export class SetVanity extends PathRoute<"post"> {
     constructor() {
@@ -20,10 +21,7 @@ export class SetVanity extends PathRoute<"post"> {
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot;
 
-        if (
-            bot.owner.id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
+        if (!ownsOrAssistant(req, bot))
             return renderStatus(
                 req,
                 res,

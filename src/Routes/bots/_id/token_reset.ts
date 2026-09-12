@@ -6,6 +6,7 @@ import e from "express";
 import crypto from "crypto";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 
 export class TokenReset extends PathRoute<"get"> {
     constructor() {
@@ -19,10 +20,7 @@ export class TokenReset extends PathRoute<"get"> {
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot;
 
-        if (
-            bot.owner.id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
+        if (!ownsOrAssistant(req, bot))
             return renderStatus(
                 req,
                 res,

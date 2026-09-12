@@ -33,6 +33,7 @@ import {
     widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
 import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
+import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 
 export class GetEdit extends PathRoute<"get"> {
     constructor() {
@@ -44,11 +45,7 @@ export class GetEdit extends PathRoute<"get"> {
 
         res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
 
-        if (
-            bot.owner.id !== req.user.id &&
-            !bot.editors.includes(req.user.id) &&
-            req.user.db.rank.assistant === false
-        )
+        if (!ownsOrAssistant(req, bot, { editors: true }))
             return renderStatus(
                 req,
                 res,
@@ -113,11 +110,7 @@ export class PostEdit extends PathRoute<"post"> {
 
         res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
 
-        if (
-            bot.owner.id !== req.user.id &&
-            !bot.editors.includes(req.user.id) &&
-            req.user.db.rank.assistant === false
-        )
+        if (!ownsOrAssistant(req, bot, { editors: true }))
             return res.status(403).json({
                 error: true,
                 status: 403,

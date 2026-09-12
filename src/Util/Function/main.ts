@@ -434,3 +434,23 @@ export function reasonType(bodyType: string, max: number): number {
 
     return type;
 }
+
+/**
+ * Whether the logged-in user may manage `listing`: they own it, they're one of
+ * its editors (when `editors` is set), or they hold the assistant rank.
+ *
+ * This is the exact negation of the inline guards it replaced, which denied
+ * when \`rank.assistant === false\`. So a user record with no assistant field
+ * counts as allowed, and the checks short-circuit in the same order.
+ */
+export function ownsOrAssistant(
+    req: Request,
+    listing: { owner: { id: string }; editors?: string[] },
+    { editors = false }: { editors?: boolean } = {}
+): boolean {
+    return (
+        listing.owner.id === req.user.id ||
+        (editors && listing.editors.includes(req.user.id)) ||
+        req.user.db.rank.assistant !== false
+    );
+}

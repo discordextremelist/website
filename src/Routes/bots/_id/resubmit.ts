@@ -30,6 +30,7 @@ import {
     privacyPolicyErrors,
     widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
+import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 
 export class GetResubmitBot extends PathRoute<"get"> {
     constructor() {
@@ -52,10 +53,7 @@ export class GetResubmitBot extends PathRoute<"get"> {
                 res.__("common.error.bot.notArchived")
             );
 
-        if (
-            bot.owner.id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
+        if (!ownsOrAssistant(req, bot))
             return renderStatus(
                 req,
                 res,
@@ -132,10 +130,7 @@ export class PostResubmitBot extends PathRoute<"post"> {
                 errors: [res.__("common.error.bot.notArchived")]
             });
 
-        if (
-            bot.owner.id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
+        if (!ownsOrAssistant(req, bot))
             return res.status(403).json({
                 error: true,
                 status: 403,

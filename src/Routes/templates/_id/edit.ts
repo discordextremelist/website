@@ -32,6 +32,7 @@ import { RESTJSONErrorCodes, Routes } from "discord.js";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
+import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 
 export class GetEditTemplate extends PathRoute<"get"> {
     constructor() {
@@ -41,10 +42,7 @@ export class GetEditTemplate extends PathRoute<"get"> {
     async handle(req: Request, res: Response) {
         const template: delTemplate | undefined = req.attached.template!;
 
-        if (
-            template.owner.id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
+        if (!ownsOrAssistant(req, template))
             return renderStatus(
                 req,
                 res,
@@ -89,10 +87,7 @@ export class PostEditTemplate extends PathRoute<"post"> {
                 errors: [res.__("common.error.template.404")]
             });
 
-        if (
-            dbTemplate.owner.id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
+        if (!ownsOrAssistant(req, dbTemplate))
             return res.status(403).json({
                 error: true,
                 status: 403,

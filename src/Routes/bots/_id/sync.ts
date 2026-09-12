@@ -136,10 +136,9 @@ export class SyncBot extends AuthedPathRoute<"get"> {
                     details: {
                         old: {
                             name: bot.name,
-                            icon: {
-                                hash: bot.icon.hash,
-                                url: bot.icon.url
-                            },
+                            // Older bots only have the deprecated avatar; the
+                            // bot page falls back to it, so record that.
+                            icon: bot.icon ?? bot.avatar,
                             commands: bot.commands
                         } satisfies Partial<delBot>,
                         new: {

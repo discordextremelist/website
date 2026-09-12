@@ -51,10 +51,10 @@ export const scopes =
     (scopes: OAuth2Scopes[]) =>
     (req: Request, res: Response, next: () => void) => {
         if (justLoggedOut(req, res)) return;
+        const user = req.user;
+        if (!user) return res.redirect("/auth/login");
 
-        if (
-            !scopes.every((scope) => req.user.db.auth?.scopes?.includes(scope))
-        ) {
+        if (!scopes.every((scope) => user.db.auth?.scopes?.includes(scope))) {
             res.redirect(`/auth/login/callback?scope=${scopes.join(" ")}`);
         } else {
             next();
@@ -63,6 +63,7 @@ export const scopes =
 
 export const member = async (req: Request, res: Response, next: () => void) => {
     if (justLoggedOut(req, res)) return;
+    if (!req.user) return res.redirect("/auth/login");
 
     if (!(await discord.getMember(req.body.id))) {
         await discord.bot.rest

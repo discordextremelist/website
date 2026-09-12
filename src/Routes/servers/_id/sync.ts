@@ -40,8 +40,8 @@ export class SyncServer extends PathRoute<"get"> {
     async handle(req: Request, res: Response) {
         const server: delServer | undefined = req.attached.server!;
 
-        discord.bot.rest
-            .get(Routes.invite(server.inviteCode), {
+        discord
+            .restGet<APIInvite>(Routes.invite(server.inviteCode), {
                 query: makeURLSearchParams({
                     with_counts: true,
                     with_expiration: true

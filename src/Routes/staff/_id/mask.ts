@@ -48,8 +48,8 @@ export class MaskUser extends PathRoute<"get"> {
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
-        await discord.bot.rest
-            .get(Routes.user(req.params.id))
+        await discord
+            .restGet<APIUser>(Routes.user(req.params.id))
             .then(async (discordUser: APIUser) => {
                 if (!user) {
                     await global.db.collection<any>("users").insertOne({

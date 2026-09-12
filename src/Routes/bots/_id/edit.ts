@@ -255,8 +255,10 @@ export class PostEdit extends PathRoute<"post"> {
             });
         }
 
-        discord.bot.rest
-            .get(`/applications/${req.body.clientID || req.body.id}/rpc`)
+        discord
+            .restGet<APIApplication>(
+                `/applications/${req.body.clientID || req.body.id}/rpc`
+            )
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false)
                     // not !app.bot_public; should not trigger when undefined

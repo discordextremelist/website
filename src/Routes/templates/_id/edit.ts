@@ -143,8 +143,8 @@ export class PostEditTemplate extends PathRoute<"post"> {
                 errors: errors
             });
 
-        await discord.bot.rest
-            .get(Routes.template(req.body.code))
+        await discord
+            .restGet<APITemplate>(Routes.template(req.body.code))
             .then(async (template: APITemplate) => {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },

@@ -99,8 +99,10 @@ export class SyncBot extends PathRoute<"get"> {
             if (user.public_flags) userFlags = user.public_flags;
         }
 
-        discord.bot.rest
-            .get(`/applications/${bot.clientID || req.params.id}/rpc`)
+        discord
+            .restGet<APIApplication>(
+                `/applications/${bot.clientID || req.params.id}/rpc`
+            )
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false)
                     // not !app.bot_public; should not trigger when undefined

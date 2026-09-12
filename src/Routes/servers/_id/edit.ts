@@ -136,8 +136,8 @@ export class PostEditServer extends PathRoute<"post"> {
                 errors: errors
             });
 
-        discord.bot.rest
-            .get(Routes.invite(req.body.invite), {
+        discord
+            .restGet<APIInvite>(Routes.invite(req.body.invite), {
                 query: makeURLSearchParams({
                     with_counts: true,
                     with_expiration: true

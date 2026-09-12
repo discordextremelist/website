@@ -36,8 +36,8 @@ export class SyncTemplate extends PathRoute<"get"> {
     async handle(req: Request, res: Response) {
         const dbTemplate: delTemplate | undefined = req.attached.template!;
 
-        await discord.bot.rest
-            .get(Routes.template(req.params.id))
+        await discord
+            .restGet<APITemplate>(Routes.template(req.params.id))
             .then(async (template: APITemplate) => {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },

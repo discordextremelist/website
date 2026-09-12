@@ -60,6 +60,17 @@ export const bot = new Discord.Client({
     })
 });
 
+/**
+ * bot.rest.get with the response typed as T. discord.js types REST#get as
+ * returning Promise<unknown>; this narrows the type and nothing else. The
+ * request is exactly the same.
+ */
+export function restGet<T>(
+    ...args: Parameters<typeof bot.rest.get>
+): Promise<T> {
+    return bot.rest.get(...args) as Promise<T>;
+}
+
 bot.on("guildBanRemove", async (ban) => {
     if (ban.guild.id === settings.guild.main) {
         await global.redis?.hdel("bans", ban.user.id);

@@ -43,8 +43,8 @@ export class SyncUser extends PathRoute<"get"> {
         if (!userProfile)
             return renderStatus(req, res, 404, res.__("common.error.user.404"));
 
-        await discord.bot.rest
-            .get(Routes.user(req.params.id))
+        await discord
+            .restGet<APIUser>(Routes.user(req.params.id))
             .then(async (user: APIUser) => {
                 await global.db.collection("users").updateOne(
                     { _id: req.params.id },

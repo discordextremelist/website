@@ -62,7 +62,8 @@ passport.use(strategy);
 refresh.use(strategy);
 
 passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+// The session holds whatever serializeUser stored, so it's a user object.
+passport.deserializeUser((user, done) => done(null, user as Express.User));
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
@@ -84,7 +85,7 @@ router.get(
         })(req, res, next),
 
     async (req, res, next) => {
-        const user: delUser = await global.db
+        const user: delUser | null = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.user.id });
 

@@ -27,7 +27,8 @@ import {
     fetchSlashCommands,
     fetchUserFlags,
     invalidLinkErrors,
-    parseEditors
+    parseEditors,
+    privacyPolicyErrors
 } from "../../../Util/Function/botListing.ts";
 
 export class GetResubmitBot extends PathRoute<"get"> {
@@ -365,53 +366,9 @@ export class PostResubmitBot extends PathRoute<"post"> {
             errors.push(message);
         }
 
-        if (req.body.privacyPolicy) {
-            if (
-                req.body.privacyPolicy.length > 32 &&
-                !functions.isURL(req.body.privacyPolicy)
-            ) {
-                error = true;
-                errors.push(res.__("common.error.bot.arr.privacyTooLong"));
-            }
-            if (
-                ["discord.bot", "my-cool-app.com"].some((s) =>
-                    req.body.privacyPolicy.includes(s)
-                )
-            ) {
-                error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.privacyPolicy.placeholder")
-                );
-            }
-
-            if (req.body.privacyPolicy.includes("discord.com/privacy")) {
-                error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.privacyPolicy.discord")
-                );
-            }
-
-            if (/(yardım|yardim)/.test(req.body.privacyPolicy)) {
-                error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.privacyPolicy.yardim")
-                );
-            }
-
-            if (
-                req.body.privacyPolicy.includes("help") &&
-                !functions.isURL(req.body.privacyPolicy)
-            ) {
-                error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.privacyPolicy.help")
-                );
-            }
-        } else {
+        for (const message of privacyPolicyErrors(req.body, res)) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.privacyPolicyRequired")
-            );
+            errors.push(message);
         }
 
         const library = libraryCache.hasLib(req.body.library)

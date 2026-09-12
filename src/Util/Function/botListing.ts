@@ -216,3 +216,47 @@ export async function fetchUserFlags(
     }
     return userFlags;
 }
+
+/**
+ * Validation messages for the listing's privacy-policy field, in the order the
+ * handlers have always reported them. The field is required, and it must not
+ * be a placeholder, a Discord link, a "help" page, or too long for a non-URL.
+ */
+export function privacyPolicyErrors(
+    body: Record<string, any>,
+    res: Response
+): string[] {
+    const messages: string[] = [];
+    if (body.privacyPolicy) {
+        if (body.privacyPolicy.length > 32 && !isURL(body.privacyPolicy)) {
+            messages.push(res.__("common.error.bot.arr.privacyTooLong"));
+        }
+        if (
+            ["discord.bot", "my-cool-app.com"].some((s) =>
+                body.privacyPolicy.includes(s)
+            )
+        ) {
+            messages.push(
+                res.__("common.error.listing.arr.privacyPolicy.placeholder")
+            );
+        }
+        if (body.privacyPolicy.includes("discord.com/privacy")) {
+            messages.push(
+                res.__("common.error.listing.arr.privacyPolicy.discord")
+            );
+        }
+        if (/(yardım|yardim)/.test(body.privacyPolicy)) {
+            messages.push(
+                res.__("common.error.listing.arr.privacyPolicy.yardim")
+            );
+        }
+        if (body.privacyPolicy.includes("help") && !isURL(body.privacyPolicy)) {
+            messages.push(
+                res.__("common.error.listing.arr.privacyPolicy.help")
+            );
+        }
+    } else {
+        messages.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
+    }
+    return messages;
+}

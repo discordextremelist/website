@@ -29,7 +29,9 @@ export class GetBot extends PathRoute<"get"> {
             template: false
         };
 
-        let bot = await botCache.getBot(req.params.id);
+        let bot: delBot | null | undefined = await botCache.getBot(
+            req.params.id
+        );
 
         if (!bot) {
             bot = await global.db

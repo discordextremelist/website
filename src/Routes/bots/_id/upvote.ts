@@ -108,7 +108,7 @@ export class GetDownvote extends AuthedPathRoute<"get"> {
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        let bot = req.attached.bot!;
+        let bot: delBot | null | undefined = req.attached.bot;
         if (!bot) {
             bot = await global.db
                 .collection<delBot>("bots")

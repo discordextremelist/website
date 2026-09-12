@@ -67,14 +67,15 @@ export class GetProfileSnakes extends AuthedPathRoute<"get"> {
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        const user: delUser = await global.db
+        const user: delUser | null = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.user.id });
 
         res.status(200).json({
             error: false,
             status: 200,
-            result: user.game.snakes.maxScore
+            // The variables middleware has already loaded this record.
+            result: user!.game.snakes.maxScore
         });
     }
 }

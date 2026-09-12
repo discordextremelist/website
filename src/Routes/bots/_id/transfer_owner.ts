@@ -16,7 +16,7 @@ export class TransferOwner extends AuthedPathRoute<"post"> {
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        const bot = req.attached.bot;
+        const bot = req.attached.bot!;
 
         if (req.user.db.rank.assistant === false) {
             return renderStatus(

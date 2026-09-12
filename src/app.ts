@@ -95,7 +95,8 @@ new Promise<void>((resolve, reject) => {
     console.time("Mongo TTL");
     MongoClient.connect(settings.secrets.mongo.uri, {}, (error, mongo) => {
         if (error) return reject(error);
-        global.db = mongo.db(settings.secrets.mongo.db);
+        // mongo is always set when there's no error.
+        global.db = mongo!.db(settings.secrets.mongo.db);
         console.log(
             "Mongo: Connection established! Released deadlock as a part of startup..."
         );

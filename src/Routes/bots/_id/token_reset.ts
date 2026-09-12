@@ -18,7 +18,7 @@ export class TokenReset extends AuthedPathRoute<"get"> {
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        const bot = req.attached.bot;
+        const bot = req.attached.bot!;
 
         if (!ownsOrAssistant(req, bot))
             return renderStatus(

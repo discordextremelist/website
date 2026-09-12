@@ -57,7 +57,8 @@ declare global {
         flags: UserFlags;
         lastDataRequest: null | number;
         avatar: {
-            hash: string;
+            /** null when the user has no custom avatar; pages show the default */
+            hash: string | null;
             url: string;
         };
         preferences: {

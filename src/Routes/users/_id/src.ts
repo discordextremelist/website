@@ -46,11 +46,9 @@ export class UserSrc extends AuthedPathRoute<"get"> {
         );
         if (tokenCheck === false) return res.json({});
 
-        const cache: delUser | undefined = await userCache.getUser(
-            req.params.id
-        );
+        const cache: delUser | null = await userCache.getUser(req.params.id);
 
-        const db: delUser | undefined = await global.db
+        const db: delUser | null = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 

@@ -21,7 +21,7 @@ export class HideBot extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         let bot = (await global.db
             .collection<delBot>("bots")
-            .findOne({ _id: req.params.id })) as delBot;
+            .findOne({ _id: req.params.id })) as delBot | null;
 
         if (!bot) {
             bot = await global.db
@@ -95,7 +95,7 @@ export class UnhideBot extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         let bot = (await global.db
             .collection<delBot>("bots")
-            .findOne({ _id: req.params.id })) as delBot;
+            .findOne({ _id: req.params.id })) as delBot | null;
 
         if (!bot) {
             bot = await global.db

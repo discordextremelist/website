@@ -44,7 +44,7 @@ export class MaskUser extends AuthedPathRoute<"get"> {
             if (tokenCheck === false) return res.json({});
         }
 
-        let user: delUser | undefined = await global.db
+        let user: delUser | null = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
 
@@ -212,7 +212,8 @@ export class MaskUser extends AuthedPathRoute<"get"> {
                     .findOne({ _id: req.params.id });
                 if (!req.user.impersonator) req.user.impersonator = req.user.id;
                 req.user.id = req.params.id as Snowflake;
-                req.user.db = user;
+                // The record was inserted or updated just above.
+                req.user.db = user!;
                 res.redirect("/");
             })
             .catch(() => {

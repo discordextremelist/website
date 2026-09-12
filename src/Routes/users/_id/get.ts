@@ -48,9 +48,7 @@ export class GetUser extends PathRoute<"get"> {
             req.params.id = req.user.id;
         }
 
-        let delUser: delUser | undefined = await userCache.getUser(
-            req.params.id
-        );
+        let delUser: delUser | null = await userCache.getUser(req.params.id);
         if (!delUser) {
             delUser = await global.db
                 .collection<delUser>("users")

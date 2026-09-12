@@ -34,7 +34,7 @@ export class GetEditProfile extends AuthedPathRoute<"get"> {
             req.params.id = req.user.id;
         }
 
-        const userProfile: delUser = await global.db
+        const userProfile: delUser | null = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
@@ -78,7 +78,7 @@ export class PostEditProfile extends AuthedPathRoute<"post"> {
             req.params.id = req.user.id;
         }
 
-        const userProfile: delUser = await global.db
+        const userProfile: delUser | null = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)

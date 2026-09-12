@@ -58,7 +58,6 @@ import autosyncRoute from "./Routes/autosync.ts";
 import indexRoute from "./Routes/index.ts";
 import searchRoute from "./Routes/search.ts";
 import docsRoute from "./Routes/docs.ts";
-import botsRoute from "./Routes/bots.ts";
 import serversRoute from "./Routes/servers.ts";
 import usersRoute from "./Routes/users.ts";
 import templatesRoute from "./Routes/templates.ts";

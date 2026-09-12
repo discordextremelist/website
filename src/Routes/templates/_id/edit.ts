@@ -78,7 +78,7 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
         let error = false;
         let errors = [];
 
-        const dbTemplate: delTemplate | undefined = await global.db
+        const dbTemplate: delTemplate | null = await global.db
             .collection<delTemplate>("templates")
             .findOne({ _id: req.params.id });
 

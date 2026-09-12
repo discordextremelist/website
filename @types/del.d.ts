@@ -213,7 +213,8 @@ declare global {
         };
         /** app icon */
         icon?: {
-            hash: string;
+            /** null when the app has no icon; pages fall back to the avatar */
+            hash: string | null;
             url: string;
         }
         /** @deprecated bot avatar - fallback for `icon` */

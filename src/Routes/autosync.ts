@@ -65,7 +65,7 @@ router.get("/bots", async (_req, res) => {
 
     if (!id) id = ids[0];
 
-    const botExists: delBot = await global.db
+    const botExists: delBot | null = await global.db
         .collection<delBot>("bots")
         .findOne({ _id: id });
 
@@ -179,7 +179,7 @@ router.get("/servers", async (_req, res) => {
 
     if (!id) id = ids[0];
 
-    const server: delServer = await global.db
+    const server: delServer | null = await global.db
         .collection<delServer>("servers")
         .findOne({ _id: id });
 
@@ -189,11 +189,17 @@ router.get("/servers", async (_req, res) => {
                 Routes.invite(server.inviteCode),
                 {
                     query: makeURLSearchParams({
+                        // Makes approximate_presence_count and
+                        // approximate_member_count always present on the invite.
                         with_counts: true,
                         with_expiration: true
                     } satisfies RESTGetAPIInviteQuery)
                 }
             )) as RESTGetAPIInviteResult;
+            // A group-DM invite has no guild. Throwing takes the same path as
+            // the TypeError reading invite.guild.id used to: the server is
+            // removed as having an invalid invite.
+            if (!invite.guild) throw new Error("Invite isn't for a server");
             if (invite.guild.id !== server._id) throw 3350001; // Invite points to a different server
             if (invite.expires_at) throw 3350002; // This invite is set to expire
 
@@ -203,8 +209,8 @@ router.get("/servers", async (_req, res) => {
                     $set: {
                         name: invite.guild.name,
                         counts: {
-                            online: invite.approximate_presence_count,
-                            members: invite.approximate_member_count
+                            online: invite.approximate_presence_count!,
+                            members: invite.approximate_member_count!
                         },
                         icon: {
                             hash: invite.guild.icon,
@@ -279,7 +285,7 @@ router.get("/templates", async (_req, res) => {
 
     if (!id) id = ids[0];
 
-    const dbTemplate: delTemplate = await global.db
+    const dbTemplate: delTemplate | null = await global.db
         .collection<delTemplate>("templates")
         .findOne({ _id: id });
 

@@ -81,7 +81,7 @@ export class PostSubmitTemplate extends AuthedPathRoute<"post"> {
             errors.push(res.__("common.error.template.arr.invite.dnew"));
         }
 
-        const templateExists: delTemplate | undefined = await global.db
+        const templateExists: delTemplate | null = await global.db
             .collection<delTemplate>("templates")
             .findOne({ _id: req.body.code });
         if (templateExists)

@@ -22,10 +22,11 @@ import type { Request, Response } from "express";
 import type {
     APIApplicationCommand,
     RESTPostOAuth2AccessTokenResult,
-    APIUser
+    APIUser,
+    DiscordAPIError
 } from "discord.js";
 import { Routes } from "discord.js";
-import fetch from "node-fetch";
+import fetch, { type Response as fetchRes } from "node-fetch";
 import refresh from "passport-oauth2-refresh";
 import * as discord from "../Services/discord.ts";
 import { DAPI } from "../Services/discord.ts";
@@ -257,6 +258,148 @@ export function privacyPolicyErrors(
         }
     } else {
         messages.push(res.__("common.error.listing.arr.privacyPolicyRequired"));
+    }
+    return messages;
+}
+
+/**
+ * Validation messages for the listing's widgetbot server and channel, in the
+ * order the handlers have always reported them. When both IDs are set, each is
+ * checked for shape and length, then looked up on Discord and on widgetbot.
+ */
+export async function widgetbotErrors(
+    body: Record<string, any>,
+    res: Response
+): Promise<string[]> {
+    const messages: string[] = [];
+    if (body.widgetServer && !body.widgetChannel) {
+        messages.push(
+            res.__("common.error.listing.arr.widgetbot.serverButNotChannel")
+        );
+    }
+
+    if (body.widgetChannel && !body.widgetServer) {
+        messages.push(
+            res.__("common.error.listing.arr.widgetbot.channelButNotServer")
+        );
+    }
+
+    if (body.widgetServer && body.widgetChannel) {
+        let fetchServer = true;
+
+        if (
+            Number.isNaN(body.widgetServer) ||
+            body.widgetServer.includes(" ")
+        ) {
+            messages.push(
+                res.__("common.error.listing.arr.widgetbot.serverID.invalid")
+            );
+            fetchServer = false;
+        }
+        if (body.widgetServer && body.widgetServer.length > 32) {
+            messages.push(
+                res.__("common.error.listing.arr.widgetbot.serverID.tooLong")
+            );
+            fetchServer = false;
+        }
+
+        if (fetchServer)
+            await discord.bot.rest
+                .get(Routes.guildChannels(body.widgetServer))
+                .catch((e: DiscordAPIError) => {
+                    if ([400, 404].includes(Number(e.code))) {
+                        messages.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.serverID.nonexistent"
+                            )
+                        );
+                        fetchServer = false;
+                    }
+                });
+
+        if (fetchServer)
+            await fetch("https://stonks.widgetbot.io/api/graphql", {
+                method: "post",
+                body: JSON.stringify({
+                    query: `{guild(id:"${body.widgetServer}"){id}}`
+                }),
+                headers: { "Content-Type": "application/json" }
+            })
+                .then(async (fetchRes: fetchRes) => {
+                    const data: any = await fetchRes.json();
+                    if (data && !data.guild?.id) {
+                        messages.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.guildNotFound"
+                            )
+                        );
+                    }
+                })
+                .catch(() => {
+                    messages.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.guildNotFound"
+                        )
+                    );
+                });
+
+        let fetchChannel = true;
+
+        if (
+            Number.isNaN(body.widgetChannel) ||
+            body.widgetChannel.includes(" ")
+        ) {
+            messages.push(
+                res.__("common.error.listing.arr.widgetbot.channelID.invalid")
+            );
+            fetchChannel = false;
+        }
+        if (body.widgetChannel && body.widgetChannel.length > 32) {
+            messages.push(
+                res.__("common.error.listing.arr.widgetbot.channelID.tooLong")
+            );
+            fetchChannel = false;
+        }
+
+        if (fetchChannel)
+            await discord.bot.rest
+                .get(Routes.channel(body.widgetChannel))
+                .catch((e: DiscordAPIError) => {
+                    if ([400, 404].includes(Number(e.code))) {
+                        messages.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelID.nonexistent"
+                            )
+                        );
+                        fetchChannel = false;
+                    }
+                });
+
+        if (fetchChannel)
+            await fetch("https://stonks.widgetbot.io/api/graphql", {
+                method: "post",
+                body: JSON.stringify({
+                    query: `{channel(id:"${body.widgetChannel}"){id}}`
+                }),
+                headers: { "Content-Type": "application/json" }
+            })
+                .then(async (fetchRes: fetchRes) => {
+                    const data: any = await fetchRes.json();
+                    if (!data.channel?.id) {
+                        messages.push(
+                            res.__(
+                                "common.error.listing.arr.widgetbot.channelNotFound"
+                            )
+                        );
+                    }
+                })
+                .catch(() => {
+                    messages.push(
+                        res.__(
+                            "common.error.listing.arr.widgetbot.channelNotFound"
+                        )
+                    );
+                });
     }
     return messages;
 }

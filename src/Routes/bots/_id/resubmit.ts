@@ -16,7 +16,6 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { URL } from "url";
-import fetch, { Response as fetchRes } from "node-fetch";
 
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { patterns } from "../../../Util/Function/patterns.ts";
@@ -28,7 +27,8 @@ import {
     fetchUserFlags,
     invalidLinkErrors,
     parseEditors,
-    privacyPolicyErrors
+    privacyPolicyErrors,
+    widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
 
 export class GetResubmitBot extends PathRoute<"get"> {
@@ -190,154 +190,9 @@ export class PostResubmitBot extends PathRoute<"post"> {
             errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
         }
 
-        if (req.body.widgetServer && !req.body.widgetChannel) {
+        for (const message of await widgetbotErrors(req.body, res)) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.widgetbot.serverButNotChannel")
-            );
-        }
-
-        if (req.body.widgetChannel && !req.body.widgetServer) {
-            error = true;
-            errors.push(
-                res.__("common.error.listing.arr.widgetbot.channelButNotServer")
-            );
-        }
-
-        if (req.body.widgetServer && req.body.widgetChannel) {
-            let fetchServer = true;
-
-            if (
-                Number.isNaN(req.body.widgetServer) ||
-                req.body.widgetServer.includes(" ")
-            ) {
-                error = true;
-                errors.push(
-                    res.__(
-                        "common.error.listing.arr.widgetbot.serverID.invalid"
-                    )
-                );
-                fetchServer = false;
-            }
-            if (req.body.widgetServer && req.body.widgetServer.length > 32) {
-                error = true;
-                errors.push(
-                    res.__(
-                        "common.error.listing.arr.widgetbot.serverID.tooLong"
-                    )
-                );
-                fetchServer = false;
-            }
-
-            if (fetchServer)
-                await discord.bot.rest
-                    .get(Routes.guildChannels(req.body.widgetServer))
-                    .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(Number(e.code))) {
-                            error = true;
-                            errors.push(
-                                res.__(
-                                    "common.error.listing.arr.widgetbot.serverID.nonexistent"
-                                )
-                            );
-                            fetchServer = false;
-                        }
-                    });
-
-            if (fetchServer)
-                await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: "post",
-                    body: JSON.stringify({
-                        query: `{guild(id:"${req.body.widgetServer}"){id}}`
-                    }),
-                    headers: { "Content-Type": "application/json" }
-                })
-                    .then(async (fetchRes: fetchRes) => {
-                        const data: any = await fetchRes.json();
-                        if (data && !data.guild?.id) {
-                            error = true;
-                            errors.push(
-                                res.__(
-                                    "common.error.listing.arr.widgetbot.guildNotFound"
-                                )
-                            );
-                        }
-                    })
-                    .catch(() => {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.guildNotFound"
-                            )
-                        );
-                    });
-
-            let fetchChannel = true;
-
-            if (
-                Number.isNaN(req.body.widgetChannel) ||
-                req.body.widgetChannel.includes(" ")
-            ) {
-                error = true;
-                errors.push(
-                    res.__(
-                        "common.error.listing.arr.widgetbot.channelID.invalid"
-                    )
-                );
-                fetchChannel = false;
-            }
-            if (req.body.widgetChannel && req.body.widgetChannel.length > 32) {
-                error = true;
-                errors.push(
-                    res.__(
-                        "common.error.listing.arr.widgetbot.channelID.tooLong"
-                    )
-                );
-                fetchChannel = false;
-            }
-
-            if (fetchChannel)
-                await discord.bot.rest
-                    .get(Routes.channel(req.body.widgetChannel))
-                    .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(Number(e.code))) {
-                            error = true;
-                            errors.push(
-                                res.__(
-                                    "common.error.listing.arr.widgetbot.channelID.nonexistent"
-                                )
-                            );
-                            fetchChannel = false;
-                        }
-                    });
-
-            if (fetchChannel)
-                await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: "post",
-                    body: JSON.stringify({
-                        query: `{channel(id:"${req.body.widgetChannel}"){id}}`
-                    }),
-                    headers: { "Content-Type": "application/json" }
-                })
-                    .then(async (fetchRes: fetchRes) => {
-                        const data: any = await fetchRes.json();
-                        if (!data.channel?.id) {
-                            error = true;
-                            errors.push(
-                                res.__(
-                                    "common.error.listing.arr.widgetbot.channelNotFound"
-                                )
-                            );
-                        }
-                    })
-                    .catch(() => {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.channelNotFound"
-                            )
-                        );
-                    });
+            errors.push(message);
         }
 
         if (req.body.twitter?.length > 15) {

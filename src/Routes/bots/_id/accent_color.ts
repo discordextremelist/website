@@ -36,9 +36,24 @@ export class GetAccentColor extends AuthedPathRoute<"get"> {
                 status: 403,
                 errors: ["Unable to fetch avatar!"] // TODO: Translate
             });
-        let palette = (
-            await Vibrant.from(await bot_avatar.buffer()).getPalette()
-        ).Vibrant;
-        return res.status(200).json({ color: palette.hex });
+        const palette = await Vibrant.from(
+            await bot_avatar.buffer()
+        ).getPalette();
+        // Greyscale or near-flat avatars have no Vibrant swatch, so fall back
+        // through the others before giving up.
+        const swatch =
+            palette.Vibrant ??
+            palette.Muted ??
+            palette.DarkVibrant ??
+            palette.LightVibrant ??
+            palette.DarkMuted ??
+            palette.LightMuted;
+        if (!swatch)
+            return res.status(422).json({
+                error: true,
+                status: 422,
+                errors: ["Unable to pick a colour from the avatar!"] // TODO: Translate
+            });
+        return res.status(200).json({ color: swatch.hex });
     }
 }

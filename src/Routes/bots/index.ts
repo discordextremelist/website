@@ -1,9 +1,5 @@
 import express, { type Request, type Response, type Router } from "express";
-import { variables } from "../../Util/Middleware/variables.ts";
 import * as permission from "../../Util/Middleware/permissions.ts";
-import * as checks from "../../Util/Middleware/checks.ts";
-import fetch from "node-fetch";
-import { Vibrant } from "node-vibrant/node";
 import { GetSubmit, PostSubmit } from "./_id/submit.ts";
 import { GetBot } from "./_id/get.ts";
 import { TransferOwner } from "./_id/transfer_owner.ts";
@@ -32,6 +28,7 @@ import { BlacklistBot } from "./_id/blacklist.ts";
 import { GetDownvote, GetUpvote } from "./_id/upvote.ts";
 import { GetRemoveBot, PostRemoveBot } from "./_id/remove.ts";
 import { SyncBot } from "./_id/sync.ts";
+import { GetAccentColor } from "./_id/accent_color.ts";
 import { reasonType } from "../../Util/Function/main.ts";
 
 export function botType(bodyType: string): number {
@@ -49,38 +46,7 @@ export const initBotRoutes = (): Router => {
             String(await global.redis?.hexists("bots", req.params.id))
         );
     });
-    router.get(
-        "/:id/accent_color",
-        variables,
-        permission.auth,
-        checks.botExists,
-        async (req: Request, res: Response) => {
-            let bot = req.attached.bot;
-            if (
-                bot.owner.id !== req.user.id &&
-                !bot.editors.includes(req.user.id) &&
-                req.user.db.rank.mod === false
-            )
-                return res.status(403).json({
-                    error: true,
-                    status: 403,
-                    errors: [res.__("common.error.bot.perms.edit")]
-                });
-            let bot_avatar = await fetch(
-                bot.avatar?.url ? bot.avatar!.url : bot.icon!.url
-            );
-            if (!bot_avatar.ok)
-                return res.status(403).json({
-                    error: true,
-                    status: 403,
-                    errors: ["Unable to fetch avatar!"] // TODO: Translate
-                });
-            let palette = (
-                await Vibrant.from(await bot_avatar.buffer()).getPalette()
-            ).Vibrant;
-            return res.status(200).json({ color: palette.hex });
-        }
-    );
+    new GetAccentColor().register(router);
     new GetSubmit().register(router);
     new PostSubmit().register(router);
     new GetBot().register(router);

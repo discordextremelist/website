@@ -39,20 +39,24 @@ type TemplateGuildFields = Pick<
 export function templateGuildFields(
     template: APITemplate
 ): TemplateGuildFields {
+    // discord-api-types reuses the "create a server" request body for this
+    // snapshot, so every field below is typed optional. Discord's template
+    // responses always include them (checked against the example template in
+    // Discord's docs), hence the assertions.
     return {
-        region: template.serialized_source_guild.region,
+        region: template.serialized_source_guild.region!,
         locale: template.serialized_source_guild.preferred_locale,
-        afkTimeout: template.serialized_source_guild.afk_timeout,
-        verificationLevel: template.serialized_source_guild.verification_level,
+        afkTimeout: template.serialized_source_guild.afk_timeout!,
+        verificationLevel: template.serialized_source_guild.verification_level!,
         defaultMessageNotifications:
-            template.serialized_source_guild.default_message_notifications,
+            template.serialized_source_guild.default_message_notifications!,
         explicitContent:
-            template.serialized_source_guild.explicit_content_filter,
-        roles: template.serialized_source_guild.roles.map((c) => {
-            return { name: c.name, color: c.color };
+            template.serialized_source_guild.explicit_content_filter!,
+        roles: template.serialized_source_guild.roles!.map((c) => {
+            return { name: c.name!, color: c.color! };
         }),
-        channels: template.serialized_source_guild.channels.map((c) => {
-            return { name: c.name, type: c.type, nsfw: c.nsfw };
+        channels: template.serialized_source_guild.channels!.map((c) => {
+            return { name: c.name, type: c.type!, nsfw: c.nsfw };
         })
     };
 }

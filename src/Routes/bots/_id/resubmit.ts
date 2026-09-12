@@ -23,6 +23,7 @@ import refresh from "passport-oauth2-refresh";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { DAPI } from "../../../Util/Services/discord.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
+import { patterns } from "../../../Util/Function/patterns.ts";
 
 export class GetResubmitBot extends PathRoute<"get"> {
     constructor() {
@@ -357,24 +358,24 @@ export class PostResubmitBot extends PathRoute<"post"> {
         // TODO: Check instances and verify they do not 404, invalid, etc.
         // TODO: Improve some of this code below, it is hectic.
 
-        // @ts-expect-error
         if (req.body.mastodon && !patterns.mastodon.test(req.body.mastodon)) {
             error = true;
+            // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
             errors.push(res.__("common.error.listing.edit.mastodonInvalid"));
         }
-        // @ts-expect-error
         if (req.body.bluesky && !patterns.bluesky.test(req.body.bluesky)) {
             error = true;
+            // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
             errors.push(res.__("common.error.listing.edit.blueskyInvalid"));
         }
-        // @ts-expect-error
         if (req.body.gitlab && !patterns.gitlab.test(req.body.gitlab)) {
             error = true;
+            // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
             errors.push(res.__("common.error.listing.edit.gitlabInvalid"));
         }
-        // @ts-expect-error
         if (req.body.forgejo && !patterns.forgejo.test(req.body.forgejo)) {
             error = true;
+            // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
             errors.push(res.__("common.error.listing.edit.forgejoInvalid"));
         }
 

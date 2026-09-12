@@ -25,6 +25,7 @@ import { DAPI } from "../../../Util/Services/discord.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { patterns } from "../../../Util/Function/patterns.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { botTags, parseEditors } from "../../../Util/Function/botListing.ts";
 
 export class GetResubmitBot extends PathRoute<"get"> {
     constructor() {
@@ -462,25 +463,8 @@ export class PostResubmitBot extends PathRoute<"post"> {
         const library = libraryCache.hasLib(req.body.library)
             ? req.body.library
             : "Other";
-        let tags: string[] = [];
-        if (req.body.fun === true) tags.push("Fun");
-        if (req.body.social === true) tags.push("Social");
-        if (req.body.economy === true) tags.push("Economy");
-        if (req.body.utility === true) tags.push("Utility");
-        if (req.body.moderation === true) tags.push("Moderation");
-        if (req.body.multipurpose === true) tags.push("Multipurpose");
-        if (req.body.music === true) tags.push("Music");
-
-        let editors: any[];
-
-        if (req.body.editors !== "") {
-            editors = [...new Set(req.body.editors.split(/\D+/g))].filter(
-                (editor) => editor !== ""
-            );
-        } else {
-            editors = [];
-        }
-
+        let tags: string[] = botTags(req.body);
+        let editors: any[] = parseEditors(req.body.editors);
         if (editors.includes(req.user.id) && bot.owner.id === req.user.id) {
             error = true;
             errors.push(

@@ -26,6 +26,7 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import { Response as fetchRes } from "node-fetch";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
 import { patterns } from "../../../Util/Function/patterns.ts";
+import { botTags, parseEditors } from "../../../Util/Function/botListing.ts";
 
 export class GetSubmit extends PathRoute<"get"> {
     constructor() {
@@ -467,25 +468,8 @@ export class PostSubmit extends PathRoute<"post"> {
             : "Other";
 
         // TODO: Refractor
-        let tags: string[] = [];
-        if (req.body.fun === true) tags.push("Fun");
-        if (req.body.social === true) tags.push("Social");
-        if (req.body.economy === true) tags.push("Economy");
-        if (req.body.utility === true) tags.push("Utility");
-        if (req.body.moderation === true) tags.push("Moderation");
-        if (req.body.multipurpose === true) tags.push("Multipurpose");
-        if (req.body.music === true) tags.push("Music");
-
-        let editors: any[];
-
-        if (req.body.editors !== "") {
-            editors = [...new Set(req.body.editors.split(/\D+/g))].filter(
-                (editor) => editor !== ""
-            );
-        } else {
-            editors = [];
-        }
-
+        let tags: string[] = botTags(req.body);
+        let editors: any[] = parseEditors(req.body.editors);
         if (editors.includes(req.user.id)) {
             error = true;
             errors.push(

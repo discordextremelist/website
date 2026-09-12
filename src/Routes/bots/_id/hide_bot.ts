@@ -7,9 +7,9 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as functions from "../../../Util/Function/main.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import * as userCache from "../../../Util/Services/userCaching.js";
+import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as Discord from "discord.js";
-import { botType } from "../index.js";
+import { botType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 

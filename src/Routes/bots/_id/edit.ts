@@ -116,7 +116,7 @@ export class PostEdit extends PathRoute<"post"> {
         if (
             bot.owner.id !== req.user.id &&
             !bot.editors.includes(req.user.id) &&
-            req.user.db.rank.mod === false
+            req.user.db.rank.assistant === false
         )
             return res.status(403).json({
                 error: true,

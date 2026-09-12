@@ -10,6 +10,7 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { botType } from "../index.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class ApproveBot extends PathRoute<"get"> {
     constructor() {
@@ -25,14 +26,12 @@ export class ApproveBot extends PathRoute<"get"> {
         const bot = req.attached.bot!;
 
         if (bot.status.approved === true)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.alreadyApproved"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.alreadyApproved")
+            );
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
@@ -153,14 +152,12 @@ export class GivePremiumBot extends PathRoute<"get"> {
         const bot = req.attached.bot!;
 
         if (bot.status.premium === true)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.alreadyPremium"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.alreadyPremium")
+            );
 
         const botMember = await discord.getMember(bot._id);
 
@@ -223,14 +220,12 @@ export class TakePremiumBot extends PathRoute<"get"> {
         const bot = req.attached.bot!;
 
         if (bot.status.premium === false)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.noPremiumTake"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.noPremiumTake")
+            );
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
@@ -269,14 +264,12 @@ export class GetUnapproveBot extends PathRoute<"get"> {
         const bot = req.attached.bot!;
 
         if (!bot.status.approved)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.alreadyNotApproved"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.alreadyNotApproved")
+            );
 
         res.locals.premidPageInfo = res.__("premid.bots.unapprove", bot.name);
 
@@ -304,24 +297,20 @@ export class PostUnapproveBot extends PathRoute<"post"> {
         const bot = req.attached.bot!;
 
         if (!bot.status.approved)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.inQueue"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.inQueue")
+            );
 
         if (!req.body.reason && !req.user.db.rank.admin) {
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.reasonRequired"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.reasonRequired")
+            );
         }
 
         const type = botType(req.body.type);

@@ -12,6 +12,7 @@ import { PresenceUpdateStatus, UserFlags } from "discord.js";
 import * as functions from "../../../Util/Function/main.ts";
 import mdi from "markdown-it";
 import { botExists } from "../../../Util/Middleware/checks.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 const md = new mdi();
 
@@ -38,15 +39,13 @@ export class GetBot extends PathRoute<"get"> {
                     .collection<delBot>("bots")
                     .findOne({ vanityUrl: req.params.id });
                 if (!bot)
-                    return res.status(404).render("status", {
+                    return renderStatus(
+                        req,
                         res,
-                        title: res.__("common.error"),
-                        status: 404,
-                        subtitle: res.__("common.error.bot.404"),
-                        type: "Error",
-                        req: req,
-                        pageType: { server: false, bot: false }
-                    });
+                        404,
+                        res.__("common.error.bot.404"),
+                        { pageType: { server: false, bot: false } }
+                    );
             }
         }
 
@@ -55,15 +54,13 @@ export class GetBot extends PathRoute<"get"> {
             req.user?.id !== bot.owner.id &&
             !req.user?.db.rank.mod
         )
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__("common.error.bot.archived"),
-                type: "Error",
-                req: req,
-                pageType: { server: false, bot: false }
-            });
+                403,
+                res.__("common.error.bot.archived"),
+                { pageType: { server: false, bot: false } }
+            );
 
         res.locals.premidPageInfo = res.__("premid.bots.view", bot.name);
 

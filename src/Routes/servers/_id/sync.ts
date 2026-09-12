@@ -29,6 +29,7 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class SyncServer extends PathRoute<"get"> {
     constructor() {
@@ -41,14 +42,12 @@ export class SyncServer extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
 
         if (!server)
-            return res.status(404).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.server.404"),
-                type: "Error",
-                req: req
-            });
+                404,
+                res.__("common.error.server.404")
+            );
 
         discord.bot.rest
             .get(Routes.invite(server.inviteCode), {
@@ -132,25 +131,19 @@ export class SyncServer extends PathRoute<"get"> {
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownInvite)
-                    return res.status(400).render("status", {
-                        res,
-                        title: res.__("common.error"),
-                        status: 400,
-                        subtitle: res.__(
-                            "common.error.listing.arr.invite.invalid"
-                        ),
+                    return renderStatus(
                         req,
-                        type: "Error"
-                    });
+                        res,
+                        400,
+                        res.__("common.error.listing.arr.invite.invalid")
+                    );
 
-                return res.status(400).render("status", {
-                    res,
-                    title: res.__("common.error"),
-                    status: 400,
-                    subtitle: `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`,
+                return renderStatus(
                     req,
-                    type: "Error"
-                });
+                    res,
+                    400,
+                    `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`
+                );
             });
     }
 }

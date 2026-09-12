@@ -10,6 +10,7 @@ import { botExists } from "../../../Util/Middleware/checks.ts";
 import * as userCache from "../../../Util/Services/userCaching.js";
 import * as Discord from "discord.js";
 import { botType } from "../index.js";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class HideBot extends PathRoute<"get"> {
     constructor() {
@@ -27,36 +28,30 @@ export class HideBot extends PathRoute<"get"> {
                 .findOne({ vanityUrl: req.params.id });
 
             if (!bot)
-                return res.status(404).render("status", {
+                return renderStatus(
+                    req,
                     res,
-                    title: res.__("common.error"),
-                    status: 404,
-                    subtitle: res.__("common.error.bot.404"),
-                    type: "Error",
-                    req: req
-                });
+                    404,
+                    res.__("common.error.bot.404")
+                );
         }
 
         if (!req.user || req.user.id !== bot.owner.id)
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__("common.error.bot.perms.notOwner"),
-                type: "Error",
-                user: req.user,
-                req: req
-            });
+                403,
+                res.__("common.error.bot.perms.notOwner"),
+                { user: req.user }
+            );
 
         if (bot.status.approved === false)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.inQueueHide"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.inQueueHide")
+            );
 
         await discord.channels.logs.send(
             `${settings.emoji.hide} **${functions.escapeFormatting(
@@ -107,26 +102,22 @@ export class UnhideBot extends PathRoute<"get"> {
                 .findOne({ vanityUrl: req.params.id });
 
             if (!bot)
-                return res.status(404).render("status", {
+                return renderStatus(
+                    req,
                     res,
-                    title: res.__("common.error"),
-                    status: 404,
-                    subtitle: res.__("common.error.bot.404"),
-                    type: "Error",
-                    req: req
-                });
+                    404,
+                    res.__("common.error.bot.404")
+                );
         }
 
         if (!req.user || req.user.id !== bot.owner.id)
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__("common.error.bot.perms.notOwner"),
-                type: "Error",
-                user: req.user,
-                req: req
-            });
+                403,
+                res.__("common.error.bot.perms.notOwner"),
+                { user: req.user }
+            );
 
         await discord.channels.logs.send(
             `${settings.emoji.unhide} **${functions.escapeFormatting(
@@ -174,14 +165,12 @@ export class GetModHideBot extends PathRoute<"get"> {
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (bot.status.approved === false)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.inQueueHide"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.inQueueHide")
+            );
 
         res.locals.premidPageInfo = res.__("premid.bots.hide", bot.name);
 
@@ -208,24 +197,20 @@ export class PostModHideBot extends PathRoute<"post"> {
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (bot.status.approved === false)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.inQueueHide"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.inQueueHide")
+            );
 
         if (!req.body.reason && !req.user.db.rank.admin) {
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.reasonRequired"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.reasonRequired")
+            );
         }
 
         await global.db.collection("bots").updateOne(
@@ -314,14 +299,12 @@ export class GetModUnhideBot extends PathRoute<"get"> {
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (!bot.status.modHidden)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.notHidden"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.notHidden")
+            );
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },

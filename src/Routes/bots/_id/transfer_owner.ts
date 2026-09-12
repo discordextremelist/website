@@ -4,6 +4,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as checks from "../../../Util/Middleware/checks.ts";
 import e from "express";
 import * as botCache from "../../../Util/Services/botCaching.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class TransferOwner extends PathRoute<"post"> {
     constructor() {
@@ -18,14 +19,12 @@ export class TransferOwner extends PathRoute<"post"> {
         const bot = req.attached.bot;
 
         if (req.user.db.rank.assistant === false) {
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.notAssistant"),
-                status: 403,
-                type: "Error",
-                req
-            });
+                403,
+                res.__("common.error.notAssistant")
+            );
         }
 
         const newOwnerExists = await global.db
@@ -33,14 +32,12 @@ export class TransferOwner extends PathRoute<"post"> {
             .findOne({ _id: req.body.newOwner });
 
         if (!newOwnerExists)
-            return res.status(422).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.transferOwnership.422"),
-                status: 422,
-                type: "Error",
-                req
-            });
+                422,
+                res.__("common.error.bot.transferOwnership.422")
+            );
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },

@@ -25,6 +25,7 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class SyncTemplate extends PathRoute<"get"> {
     constructor() {
@@ -37,14 +38,12 @@ export class SyncTemplate extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
 
         if (!dbTemplate)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.template.404"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                404,
+                res.__("common.error.template.404")
+            );
 
         await discord.bot.rest
             .get(Routes.template(req.params.id))
@@ -179,25 +178,19 @@ export class SyncTemplate extends PathRoute<"get"> {
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownGuildTemplate)
-                    return res.status(400).render("status", {
-                        res,
-                        title: res.__("common.error"),
-                        status: 400,
-                        subtitle: res.__(
-                            "common.error.template.arr.invite.invalid"
-                        ),
+                    return renderStatus(
                         req,
-                        type: "Error"
-                    });
+                        res,
+                        400,
+                        res.__("common.error.template.arr.invite.invalid")
+                    );
 
-                return res.status(400).render("status", {
-                    res,
-                    title: res.__("common.error"),
-                    status: 400,
-                    subtitle: `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`,
+                return renderStatus(
                     req,
-                    type: "Error"
-                });
+                    res,
+                    400,
+                    `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`
+                );
             });
     }
 }

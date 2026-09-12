@@ -5,6 +5,7 @@ import * as checks from "../../../Util/Middleware/checks.ts";
 import e from "express";
 import crypto from "crypto";
 import * as botCache from "../../../Util/Services/botCaching.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class TokenReset extends PathRoute<"get"> {
     constructor() {
@@ -22,14 +23,12 @@ export class TokenReset extends PathRoute<"get"> {
             bot.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.perms.tokenReset"),
-                status: 403,
-                type: "Error",
-                req
-            });
+                403,
+                res.__("common.error.bot.perms.tokenReset")
+            );
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },

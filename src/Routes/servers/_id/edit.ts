@@ -36,6 +36,7 @@ import * as functions from "../../../Util/Function/main.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetEditServer extends PathRoute<"get"> {
     constructor() {
@@ -48,27 +49,23 @@ export class GetEditServer extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
 
         if (!server)
-            return res.status(404).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.server.404"),
-                type: "Error",
-                req: req
-            });
+                404,
+                res.__("common.error.server.404")
+            );
 
         if (
             server.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.server.perms.edit"),
-                status: 403,
-                type: "Error",
-                req
-            });
+                403,
+                res.__("common.error.server.perms.edit")
+            );
 
         res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 

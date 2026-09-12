@@ -35,6 +35,7 @@ import { DAPI } from "../Util/Services/discord.ts";
 import settings from "../../settings.json" with { type: "json" };
 import * as tokenManager from "../Util/Services/adminTokenManager.ts";
 import { grabFullUser } from "../Util/Function/main.ts";
+import { renderStatus } from "../Util/Function/main.ts";
 
 const router = express.Router();
 
@@ -250,14 +251,12 @@ router.get(
                     error.code === 403 &&
                     !req.user.impersonator
                 ) {
-                    return res.status(403).render("status", {
-                        res,
-                        title: res.__("common.error"),
-                        status: 403,
-                        subtitle: res.__("common.error.notMember"),
+                    return renderStatus(
                         req,
-                        type: "Error"
-                    });
+                        res,
+                        403,
+                        res.__("common.error.notMember")
+                    );
                 }
                 return next(error);
             }

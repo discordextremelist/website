@@ -28,6 +28,7 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import mdi from "markdown-it";
 import entities from "html-entities";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 const md = new mdi();
 
@@ -51,15 +52,13 @@ export class GetTemplate extends PathRoute<"get"> {
                 .collection<delTemplate>("templates")
                 .findOne({ _id: req.params.id });
             if (!template)
-                return res.status(404).render("status", {
+                return renderStatus(
+                    req,
                     res,
-                    title: res.__("common.error"),
-                    status: 404,
-                    subtitle: res.__("common.error.template.404"),
-                    type: "Error",
-                    req: req,
-                    pageType: { template: false, bot: false, server: false }
-                });
+                    404,
+                    res.__("common.error.template.404"),
+                    { pageType: { template: false, bot: false, server: false } }
+                );
         }
 
         res.locals.premidPageInfo = res.__(

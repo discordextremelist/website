@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import type { Request, Response } from "express";
+import { renderStatus } from "../Function/main.ts";
 
 export const botExists = async (
     req: Request,
@@ -31,14 +32,7 @@ export const botExists = async (
     });
 
     if (!bot)
-        return res.status(404).render("status", {
-            res,
-            title: res.__("common.error"),
-            subtitle: res.__("common.error.bot.404"),
-            status: 404,
-            type: "Error",
-            req
-        });
+        return renderStatus(req, res, 404, res.__("common.error.bot.404"));
     if (bot.status.blacklist)
         return res.status(403).render("status", {
             res,

@@ -4,6 +4,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetUpvote extends PathRoute<"get"> {
     constructor() {
@@ -114,14 +115,12 @@ export class GetDownvote extends PathRoute<"get"> {
                 .findOne({ vanityUrl: req.params.id });
 
             if (!bot)
-                return res.status(404).render("status", {
+                return renderStatus(
+                    req,
                     res,
-                    title: res.__("common.error"),
-                    status: 404,
-                    subtitle: res.__("common.error.bot.404"),
-                    type: "Error",
-                    req: req
-                });
+                    404,
+                    res.__("common.error.bot.404")
+                );
         }
 
         let upVotes = [...bot.votes.positive];

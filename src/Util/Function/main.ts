@@ -24,6 +24,7 @@ import { type APIUser, OAuth2Scopes } from "discord.js";
 // this seems stupid but apparently it should work
 import { createRequire } from "module";
 import type { Nullable } from "./types.js";
+import type { Request, Response } from "express";
 
 export const escapeFormatting = (text: string) => {
     const unescaped = text.replace(/\\([*_`~\\])/g, "$1");
@@ -387,4 +388,33 @@ export function checkRoleHierarchyStaff(
     return strictEq
         ? max === roleMap[highestPermittedRole]
         : max >= roleMap[highestPermittedRole];
+}
+
+/**
+ * Render the standard error page. Equivalent to
+ *
+ *     res.status(status).render("status", {
+ *         res, title: res.__("common.error"), status, subtitle, req,
+ *         type: "Error", ...extra
+ *     });
+ *
+ * `extra` carries the occasional additional template local, such as `user` or
+ * `pageType`.
+ */
+export function renderStatus(
+    req: Request,
+    res: Response,
+    status: number,
+    subtitle: string,
+    extra: Record<string, unknown> = {}
+) {
+    return res.status(status).render("status", {
+        res,
+        title: res.__("common.error"),
+        status,
+        subtitle,
+        req,
+        type: "Error",
+        ...extra
+    });
 }

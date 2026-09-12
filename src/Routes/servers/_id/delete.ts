@@ -25,6 +25,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class DeleteServer extends PathRoute<"get"> {
     constructor() {
@@ -37,24 +38,20 @@ export class DeleteServer extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
 
         if (!server)
-            return res.status(404).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.server.404"),
-                type: "Error",
-                req: req
-            });
+                404,
+                res.__("common.error.server.404")
+            );
 
         if (server.owner.id !== req.user.id)
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.server.perms.delete"),
-                status: 403,
-                type: "Error",
-                req
-            });
+                403,
+                res.__("common.error.server.perms.delete")
+            );
 
         await discord.channels.logs.send(
             `${settings.emoji.delete} **${functions.escapeFormatting(

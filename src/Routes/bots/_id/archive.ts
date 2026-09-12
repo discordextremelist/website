@@ -7,6 +7,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as functions from "../../../Util/Function/main.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class ArchiveBot extends PathRoute<"get"> {
     constructor() {
@@ -16,15 +17,13 @@ export class ArchiveBot extends PathRoute<"get"> {
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (!req.user || req.user.id !== bot.owner.id)
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__("common.error.bot.perms.notOwner"),
-                type: "Error",
-                user: req.user,
-                req: req
-            });
+                403,
+                res.__("common.error.bot.perms.notOwner"),
+                { user: req.user }
+            );
 
         await discord.channels.logs.send(
             `${settings.emoji.archive} **${functions.escapeFormatting(
@@ -68,15 +67,13 @@ export class DeleteBot extends PathRoute<"get"> {
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (!req.user || req.user.id !== bot.owner.id)
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__("common.error.bot.perms.notOwner"),
-                type: "Error",
-                user: req.user,
-                req: req
-            });
+                403,
+                res.__("common.error.bot.perms.notOwner"),
+                { user: req.user }
+            );
 
         await discord.channels.logs.send(
             `${settings.emoji.delete} **${functions.escapeFormatting(

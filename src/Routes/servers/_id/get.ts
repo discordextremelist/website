@@ -27,6 +27,7 @@ import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import mdi from "markdown-it";
 import entities from "html-entities";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 const md = new mdi();
 
@@ -49,15 +50,13 @@ export class GetServer extends PathRoute<"get"> {
                 .collection<delServer>("servers")
                 .findOne({ _id: req.params.id });
             if (!server)
-                return res.status(404).render("status", {
+                return renderStatus(
+                    req,
                     res,
-                    title: res.__("common.error"),
-                    status: 404,
-                    subtitle: res.__("common.error.server.404"),
-                    type: "Error",
-                    req: req,
-                    pageType: { server: false, bot: false }
-                });
+                    404,
+                    res.__("common.error.server.404"),
+                    { pageType: { server: false, bot: false } }
+                );
         }
 
         let serverOwner: delUser | undefined = await userCache.getUser(

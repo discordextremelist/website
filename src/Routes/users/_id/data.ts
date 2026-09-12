@@ -28,6 +28,7 @@ import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetAccountData extends PathRoute<"get"> {
     constructor() {
@@ -64,14 +65,12 @@ export class RequestAccountData extends PathRoute<"get"> {
             req.user.db.lastDataRequest &&
             (Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24
         )
-            return res.status(429).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 429,
-                subtitle: res.__("common.error.account.data.alreadyDownloaded"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                429,
+                res.__("common.error.account.data.alreadyDownloaded")
+            );
 
         const userData: delUser = await global.db
             .collection<delUser>("users")
@@ -148,16 +147,14 @@ export class DeleteOwnAccountData extends PathRoute<"post"> {
     async handle(req: Request, res: Response) {
         // Checks if the user's username is equal to the username they provided in the deletion form
         if (req.user.db.fullUsername !== req.body.typedUsername)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__(
-                    "common.error.account.data.confirmationUsernameIncorrect"
-                ),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__(
+                    "common.error.account.data.confirmationUsernameIncorrect"
+                )
+            );
 
         const userBotsData: delBot[] = await global.db
             .collection<delBot>("bots")
@@ -260,14 +257,7 @@ export class DeleteOwnAccountData extends PathRoute<"post"> {
         req.logout((err) => {
             if (err) {
                 // Returns error page with error log if session termination encounters an error.
-                return res.status(500).render("status", {
-                    res,
-                    title: res.__("common.error"),
-                    status: 500,
-                    subtitle: err,
-                    req,
-                    type: "Error"
-                });
+                return renderStatus(req, res, 500, err);
             }
 
             // Returns success status page if session terminates successfully.

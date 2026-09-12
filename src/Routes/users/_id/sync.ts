@@ -25,6 +25,7 @@ import * as discord from "../../../Util/Services/discord.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class SyncUser extends PathRoute<"get"> {
     constructor() {
@@ -40,14 +41,7 @@ export class SyncUser extends PathRoute<"get"> {
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.user.404"),
-                req: req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 404, res.__("common.error.user.404"));
 
         await discord.bot.rest
             .get(Routes.user(req.params.id))
@@ -96,14 +90,12 @@ export class SyncUser extends PathRoute<"get"> {
                 res.redirect(`/users/${req.params.id}`);
             })
             .catch((error: DiscordAPIError) => {
-                return res.status(400).render("status", {
-                    res,
-                    title: res.__("common.error"),
-                    status: 400,
-                    subtitle: `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`,
+                return renderStatus(
                     req,
-                    type: "Error"
-                });
+                    res,
+                    400,
+                    `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`
+                );
             });
     }
 }

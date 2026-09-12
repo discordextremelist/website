@@ -26,6 +26,7 @@ import * as functions from "../../../Util/Function/main.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class ApproveServer extends PathRoute<"get"> {
     constructor() {
@@ -42,24 +43,20 @@ export class ApproveServer extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
 
         if (!server)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.server.404"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                404,
+                res.__("common.error.server.404")
+            );
 
         if (!server.status || !server.status.reviewRequired)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.server.notInQueue"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.server.notInQueue")
+            );
 
         await global.db.collection("servers").updateOne(
             { _id: req.params.id },

@@ -22,6 +22,7 @@ import type { Request, Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetEditProfile extends PathRoute<"get"> {
     constructor() {
@@ -37,27 +38,18 @@ export class GetEditProfile extends PathRoute<"get"> {
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.user.404"),
-                req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 404, res.__("common.error.user.404"));
 
         if (
             userProfile._id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__("common.error.user.perms.edit"),
-                req: req,
-                type: "Error"
-            });
+                403,
+                res.__("common.error.user.perms.edit")
+            );
 
         res.locals.premidPageInfo = res.__(
             "premid.user.edit",
@@ -90,27 +82,18 @@ export class PostEditProfile extends PathRoute<"post"> {
             .collection<delUser>("users")
             .findOne({ _id: req.params.id });
         if (!userProfile)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.user.404"),
-                req: req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 404, res.__("common.error.user.404"));
 
         if (
             userProfile._id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__("common.error.user.perms.edit"),
-                req: req,
-                type: "Error"
-            });
+                403,
+                res.__("common.error.user.perms.edit")
+            );
 
         let customCss: string = "";
         if (

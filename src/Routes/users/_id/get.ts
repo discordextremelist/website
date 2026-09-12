@@ -26,6 +26,7 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetUser extends PathRoute<"get"> {
     constructor() {
@@ -55,14 +56,12 @@ export class GetUser extends PathRoute<"get"> {
                 .collection<delUser>("users")
                 .findOne({ _id: req.params.id });
             if (!delUser)
-                return res.status(404).render("status", {
-                    res,
-                    title: res.__("common.error"),
-                    status: 404,
-                    subtitle: res.__("common.error.user.404"),
+                return renderStatus(
                     req,
-                    type: "Error"
-                });
+                    res,
+                    404,
+                    res.__("common.error.user.404")
+                );
         }
 
         res.locals.premidPageInfo = res.__("premid.user", delUser.fullUsername);

@@ -24,6 +24,7 @@ import * as userCache from "../../../Util/Services/userCaching.ts";
 import { DAPI } from "../../../Util/Services/discord.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { patterns } from "../../../Util/Function/patterns.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetResubmitBot extends PathRoute<"get"> {
     constructor() {
@@ -39,27 +40,23 @@ export class GetResubmitBot extends PathRoute<"get"> {
         const bot = req.attached.bot;
 
         if (bot.status.archived === false)
-            return res.status(400).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.notArchived"),
-                status: 400,
-                type: "Error",
-                req
-            });
+                400,
+                res.__("common.error.bot.notArchived")
+            );
 
         if (
             bot.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.perms.resubmit"),
-                status: 403,
-                type: "Error",
-                req
-            });
+                403,
+                res.__("common.error.bot.perms.resubmit")
+            );
 
         res.locals.premidPageInfo = res.__("premid.bots.resubmit", bot.name);
 

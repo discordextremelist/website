@@ -6,6 +6,7 @@ import e from "express";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import { botExists } from "../../../Util/Middleware/checks.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class SetVanity extends PathRoute<"post"> {
     constructor() {
@@ -23,14 +24,12 @@ export class SetVanity extends PathRoute<"post"> {
             bot.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.perms.vanity"),
-                status: 403,
-                type: "Error",
-                req
-            });
+                403,
+                res.__("common.error.bot.perms.vanity")
+            );
 
         if (
             req.body.vanity.includes(".") ||
@@ -41,48 +40,40 @@ export class SetVanity extends PathRoute<"post"> {
                     req.body.vanity.toLowerCase()
                 ))
         )
-            return res.status(400).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.vanity.blacklisted"),
-                status: 400,
-                type: "Error",
-                req
-            });
+                400,
+                res.__("common.error.bot.vanity.blacklisted")
+            );
 
         const bots = await botCache.getAllBots();
         for (const bot of bots) {
             if (req.body.vanity === bot.vanityUrl)
-                return res.status(409).render("status", {
+                return renderStatus(
+                    req,
                     res,
-                    title: res.__("common.error"),
-                    subtitle: res.__("common.error.bot.vanity.conflict"),
-                    status: 409,
-                    type: "Error",
-                    req
-                });
+                    409,
+                    res.__("common.error.bot.vanity.conflict")
+                );
         }
 
         if (bot.vanityUrl) {
             if (req.body.vanity.split(" ").length !== 1)
-                return res.status(400).render("status", {
+                return renderStatus(
+                    req,
                     res,
-                    title: res.__("common.error"),
-                    subtitle: res.__("common.error.bot.vanity.tooLong"),
-                    status: 400,
-                    type: "Error",
-                    req
-                });
+                    400,
+                    res.__("common.error.bot.vanity.tooLong")
+                );
 
             if (req.body.vanity === bot.vanityUrl)
-                return res.status(400).render("status", {
+                return renderStatus(
+                    req,
                     res,
-                    title: res.__("common.error"),
-                    subtitle: res.__("common.error.bot.vanity.same"),
-                    status: 400,
-                    type: "Error",
-                    req
-                });
+                    400,
+                    res.__("common.error.bot.vanity.same")
+                );
 
             await global.db.collection("bots").updateOne(
                 { _id: req.params.id },
@@ -109,14 +100,12 @@ export class SetVanity extends PathRoute<"post"> {
             res.redirect(`/bots/${req.params.id}`);
         } else if (!bot.vanityUrl) {
             if (req.body.vanity.split(" ").length !== 1)
-                return res.status(400).render("status", {
+                return renderStatus(
+                    req,
                     res,
-                    title: res.__("common.error"),
-                    subtitle: res.__("common.error.bot.vanity.tooLong"),
-                    status: 400,
-                    type: "Error",
-                    req
-                });
+                    400,
+                    res.__("common.error.bot.vanity.tooLong")
+                );
 
             await global.db.collection("bots").updateOne(
                 { _id: req.params.id },

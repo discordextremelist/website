@@ -21,6 +21,7 @@ import { OAuth2Scopes, Routes } from "discord.js";
 import type { Request, Response } from "express";
 import settings from "../../../settings.json" with { type: "json" };
 import * as discord from "../Services/discord.ts";
+import { renderStatus } from "../Function/main.ts";
 export const auth = (req: Request, res: Response, next: () => void) => {
     if (req.session.logoutJustCont === true) {
         req.session.logoutJust = false;
@@ -82,14 +83,7 @@ export const mod = (req: Request, res: Response, next: () => void) => {
         if (req.user.db.rank.mod === true) {
             next();
         } else {
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__("common.error.notMod"),
-                req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 403, res.__("common.error.notMod"));
         }
     } else auth(req, res, next);
 };
@@ -105,14 +99,12 @@ export const assistant = (req: Request, res: Response, next: () => void) => {
         if (req.user.db.rank.assistant === true) {
             next();
         } else {
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__("common.error.notAssistant"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                403,
+                res.__("common.error.notAssistant")
+            );
         }
     } else auth(req, res, next);
 };
@@ -128,14 +120,7 @@ export const admin = (req: Request, res: Response, next: () => void) => {
         if (req.user.db.rank.admin === true) {
             next();
         } else {
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__("common.error.notAdmin"),
-                req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 403, res.__("common.error.notAdmin"));
         }
     } else auth(req, res, next);
 };

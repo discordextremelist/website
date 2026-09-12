@@ -23,6 +23,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { Nullable } from "../../../Util/Function/types.ts";
 import { checkRoleHierarchyStaff } from "../../../Util/Function/main.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetWarn extends PathRoute<"get"> {
     constructor() {
@@ -38,29 +39,18 @@ export class GetWarn extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
 
         if (!user)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.user.404"),
-                req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 404, res.__("common.error.user.404"));
 
         if (
             user.rank.assistant === true &&
             checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__(
-                    "page.users.modifyRank.assistantHierachyBlock.0"
-                ),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                403,
+                res.__("page.users.modifyRank.assistantHierachyBlock.0")
+            );
 
         res.locals.premidPageInfo = res.__(
             "premid.staff.staffManager.warn",
@@ -93,29 +83,18 @@ export class PostWarn extends PathRoute<"post"> {
             .findOne({ _id: req.params.id });
 
         if (!user)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.user.404"),
-                req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 404, res.__("common.error.user.404"));
 
         if (
             user.rank.assistant === true &&
             checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__(
-                    "page.users.modifyRank.assistantHierachyBlock.0"
-                ),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                403,
+                res.__("page.users.modifyRank.assistantHierachyBlock.0")
+            );
 
         const warnings = user.staffTracking.punishments.warnings;
         warnings.push({
@@ -166,30 +145,19 @@ export class GetStrike extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
 
         if (!user)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.user.404"),
-                req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 404, res.__("common.error.user.404"));
 
         if (
             user.rank.assistant === true &&
             req.user.db.rank.admin === false &&
             req.user.db.rank.assistant === true
         )
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__(
-                    "page.users.modifyRank.assistantHierachyBlock.0"
-                ),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                403,
+                res.__("page.users.modifyRank.assistantHierachyBlock.0")
+            );
 
         res.locals.premidPageInfo = res.__(
             "premid.staff.staffManager.strike",
@@ -222,29 +190,18 @@ export class PostStrike extends PathRoute<"post"> {
             .findOne({ _id: req.params.id });
 
         if (!user)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.user.404"),
-                req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 404, res.__("common.error.user.404"));
 
         if (
             user.rank.assistant === true &&
             checkRoleHierarchyStaff(req.user.db, "assistant", true)
         )
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__(
-                    "page.users.modifyRank.assistantHierachyBlock.0"
-                ),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                403,
+                res.__("page.users.modifyRank.assistantHierachyBlock.0")
+            );
 
         const strikes = user.staffTracking.punishments.strikes;
         strikes.push({

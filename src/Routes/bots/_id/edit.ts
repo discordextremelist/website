@@ -28,6 +28,7 @@ import { Response as fetchRes } from "node-fetch";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { patterns } from "../../../Util/Function/patterns.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetEdit extends PathRoute<"get"> {
     constructor() {
@@ -44,14 +45,12 @@ export class GetEdit extends PathRoute<"get"> {
             !bot.editors.includes(req.user.id) &&
             req.user.db.rank.assistant === false
         )
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.bot.perms.edit"),
-                status: 403,
-                type: "Error",
-                req
-            });
+                403,
+                res.__("common.error.bot.perms.edit")
+            );
 
         const clean = sanitizeHtml(bot.longDesc, {
             allowedTags: htmlRef.standard.tags,

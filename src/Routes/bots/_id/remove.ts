@@ -10,6 +10,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { botType } from "../index.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetRemoveBot extends PathRoute<"get"> {
     constructor() {
@@ -19,14 +20,12 @@ export class GetRemoveBot extends PathRoute<"get"> {
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot: delBot = req.attached.bot!;
         if (bot.status.approved === false)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.inQueue"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.inQueue")
+            );
 
         res.locals.premidPageInfo = res.__("premid.bots.remove", bot.name);
 
@@ -48,24 +47,20 @@ export class PostRemoveBot extends PathRoute<"post"> {
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (bot.status.approved === false)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.inQueue"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.inQueue")
+            );
 
         if (!req.body.reason && !req.user.db.rank.admin) {
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.reasonRequired"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.reasonRequired")
+            );
         }
 
         await global.db.collection("bots").updateOne(

@@ -27,6 +27,7 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { EmbedBuilder } from "discord.js";
 import { templateType } from "../index.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetRemoveTemplate extends PathRoute<"get"> {
     constructor() {
@@ -43,14 +44,12 @@ export class GetRemoveTemplate extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
 
         if (!template)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.template.404"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                404,
+                res.__("common.error.template.404")
+            );
 
         res.locals.premidPageInfo = res.__(
             "premid.templates.remove",
@@ -81,24 +80,20 @@ export class PostRemoveTemplate extends PathRoute<"post"> {
             .findOne({ _id: req.params.id });
 
         if (!template)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.template.404"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                404,
+                res.__("common.error.template.404")
+            );
 
         if (!req.body.reason && !req.user.db.rank.admin) {
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.reasonRequired"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.reasonRequired")
+            );
         }
 
         await global.db

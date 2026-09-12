@@ -29,6 +29,7 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetEditTemplate extends PathRoute<"get"> {
     constructor() {
@@ -41,27 +42,23 @@ export class GetEditTemplate extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
 
         if (!template)
-            return res.status(404).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.template.404"),
-                type: "Error",
-                req: req
-            });
+                404,
+                res.__("common.error.template.404")
+            );
 
         if (
             template.owner.id !== req.user.id &&
             req.user.db.rank.assistant === false
         )
-            return res.status(403).render("status", {
+            return renderStatus(
+                req,
                 res,
-                title: res.__("common.error"),
-                subtitle: res.__("common.error.template.perms.edit"),
-                status: 403,
-                type: "Error",
-                req
-            });
+                403,
+                res.__("common.error.template.perms.edit")
+            );
 
         res.locals.premidPageInfo = res.__(
             "premid.templates.edit",

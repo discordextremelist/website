@@ -69,6 +69,7 @@ import { uploadServers } from "./Util/Services/serverCaching.ts";
 import { uploadTemplates } from "./Util/Services/templateCaching.ts";
 import { initBotRoutes } from "./Routes/bots/index.ts";
 import createHttpError from "http-errors";
+import { renderStatus } from "./Util/Function/main.ts";
 
 const app = express();
 const __dirname = path.resolve();
@@ -368,14 +369,12 @@ new Promise<void>((resolve, reject) => {
                 }
 
                 if (err.message === "Not Found") {
-                    return res.status(404).render("status", {
-                        res,
-                        title: res.__("common.error"),
-                        subtitle: res.__("common.error.404"),
+                    return renderStatus(
                         req,
-                        status: 404,
-                        type: "Error"
-                    });
+                        res,
+                        404,
+                        res.__("common.error.404")
+                    );
                 }
 
                 console.log("ERROR! ", err);

@@ -22,6 +22,7 @@ import type { Request, Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetUserRank extends PathRoute<"get"> {
     constructor() {
@@ -38,14 +39,7 @@ export class GetUserRank extends PathRoute<"get"> {
             .findOne({ _id: req.params.id });
 
         if (!targetUser)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.user.404"),
-                req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 404, res.__("common.error.user.404"));
 
         res.locals.premidPageInfo = res.__(
             "premid.user.modifyRank",
@@ -57,16 +51,12 @@ export class GetUserRank extends PathRoute<"get"> {
             req.user.db.rank.admin === false &&
             req.user.db.rank.assistant === true
         )
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__(
-                    "page.users.modifyRank.assistantHierachyBlock.0"
-                ),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                403,
+                res.__("page.users.modifyRank.assistantHierachyBlock.0")
+            );
 
         res.render("templates/users/staffActions/modifyRank", {
             title: res.__("page.users.modifyRank"),
@@ -96,30 +86,19 @@ export class PostUserRank extends PathRoute<"post"> {
             .findOne({ _id: req.params.id });
 
         if (!targetUser)
-            return res.status(404).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 404,
-                subtitle: res.__("common.error.user.404"),
-                req,
-                type: "Error"
-            });
+            return renderStatus(req, res, 404, res.__("common.error.user.404"));
 
         if (
             targetUser.rank.assistant === true &&
             req.user.db.rank.admin === false &&
             req.user.db.rank.assistant === true
         )
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__(
-                    "page.users.modifyRank.assistantHierachyBlock.0"
-                ),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                403,
+                res.__("page.users.modifyRank.assistantHierachyBlock.0")
+            );
 
         let premium = false;
         let tester = false;
@@ -141,16 +120,12 @@ export class PostUserRank extends PathRoute<"post"> {
                 req.body.rank === "assistant") ||
             (req.user.db.rank.admin === false && req.body.rank === "admin")
         ) {
-            return res.status(403).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 403,
-                subtitle: res.__(
-                    "page.users.modifyRank.assistantHierachyBlock.1"
-                ),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                403,
+                res.__("page.users.modifyRank.assistantHierachyBlock.1")
+            );
         } else {
             if (req.body.rank === "assistant") {
                 mod = true;

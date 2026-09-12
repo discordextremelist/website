@@ -10,6 +10,7 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { botType } from "../index.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
+import { renderStatus } from "../../../Util/Function/main.ts";
 
 export class GetDeclineBot extends PathRoute<"get"> {
     constructor() {
@@ -26,14 +27,12 @@ export class GetDeclineBot extends PathRoute<"get"> {
         res.locals.premidPageInfo = res.__("premid.bots.decline", bot.name);
 
         if (bot.status.approved === true)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.notInQueue"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.notInQueue")
+            );
 
         let redirect = `/bots/${bot._id}`;
 
@@ -64,24 +63,20 @@ export class PostDeclineBot extends PathRoute<"post"> {
         const bot = req.attached.bot!;
 
         if (bot.status.approved === true)
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.bot.notInQueue"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.bot.notInQueue")
+            );
 
         if (!req.body.reason && !req.user.db.rank.admin) {
-            return res.status(400).render("status", {
-                res,
-                title: res.__("common.error"),
-                status: 400,
-                subtitle: res.__("common.error.reasonRequired"),
+            return renderStatus(
                 req,
-                type: "Error"
-            });
+                res,
+                400,
+                res.__("common.error.reasonRequired")
+            );
         }
 
         await global.db.collection("bots").updateOne(

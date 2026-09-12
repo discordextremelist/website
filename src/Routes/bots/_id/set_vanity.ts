@@ -19,7 +19,7 @@ export class SetVanity extends AuthedPathRoute<"post"> {
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        const bot = req.attached.bot;
+        const bot = req.attached.bot!;
 
         if (!ownsOrAssistant(req, bot))
             return renderStatus(
@@ -34,7 +34,9 @@ export class SetVanity extends AuthedPathRoute<"post"> {
             req.body.vanity.includes("/") ||
             req.body.vanity.includes("\\") ||
             (settings.website.bannedVanityURLs &&
-                settings.website.bannedVanityURLs.includes(
+                // The list is empty in settings.example.json, so the JSON
+                // import types it never[]; real configs list strings.
+                (settings.website.bannedVanityURLs as string[]).includes(
                     req.body.vanity.toLowerCase()
                 ))
         )

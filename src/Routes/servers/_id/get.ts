@@ -43,7 +43,7 @@ export class GetServer extends PathRoute<"get"> {
             bot: false
         };
 
-        let server: delServer | undefined = await serverCache.getServer(
+        let server: delServer | null = await serverCache.getServer(
             req.params.id
         );
         if (!server) {
@@ -60,7 +60,7 @@ export class GetServer extends PathRoute<"get"> {
                 );
         }
 
-        let serverOwner: delUser | undefined = await userCache.getUser(
+        let serverOwner: delUser | null = await userCache.getUser(
             server.owner.id
         );
         if (!serverOwner) {

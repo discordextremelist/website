@@ -45,7 +45,7 @@ export class GetTemplate extends PathRoute<"get"> {
             template: true
         };
 
-        let template: delTemplate | undefined = await templateCache.getTemplate(
+        let template: delTemplate | null = await templateCache.getTemplate(
             req.params.id
         );
         if (!template) {
@@ -67,7 +67,7 @@ export class GetTemplate extends PathRoute<"get"> {
             template.name
         );
 
-        let templateOwner: delUser | undefined = await userCache.getUser(
+        let templateOwner: delUser | null = await userCache.getUser(
             template.owner.id
         );
         if (!templateOwner) {

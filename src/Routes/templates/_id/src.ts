@@ -1,0 +1,126 @@
+/*
+Discord Extreme List - Discord's unbiased list.
+
+Copyright (C) 2020-2025 Carolina Mitchell, John Burke, Advaith Jagathesan
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+import { PathRoute } from "../../route.ts";
+import type { Request, Response } from "express";
+import settings from "../../../../settings.json" with { type: "json" };
+import * as discord from "../../../Util/Services/discord.ts";
+import * as permission from "../../../Util/Function/permissions.ts";
+import * as functions from "../../../Util/Function/main.ts";
+import * as templateCache from "../../../Util/Services/templateCaching.ts";
+import { variables } from "../../../Util/Function/variables.ts";
+import * as tokenManager from "../../../Util/Services/adminTokenManager.ts";
+import { EmbedBuilder } from "discord.js";
+
+export class TemplateSrc extends PathRoute<"get"> {
+    constructor() {
+        super("get", "/:id/src", [
+            variables,
+            permission.auth,
+            permission.admin
+        ]);
+    }
+
+    async handle(req: Request, res: Response) {
+        if (req.params.id === "@me") {
+            if (!req.user) return res.redirect("/auth/login");
+            req.params.id = req.user.id;
+        }
+
+        if (!req.query.token) return res.json({});
+        const tokenCheck = await tokenManager.verifyToken(
+            req.user.id,
+            req.query.token as string
+        );
+        if (tokenCheck === false) return res.json({});
+
+        const cache = await templateCache.getTemplate(req.params.id);
+        const db = await global.db
+            .collection("templates")
+            .findOne({ _id: req.params.id });
+
+        return res.json({ cache: cache, db: db });
+    }
+}
+
+export class ReportTemplate extends PathRoute<"post"> {
+    constructor() {
+        super("post", "/:id/report", [variables, permission.auth]);
+    }
+
+    async handle(req: Request, res: Response) {
+        const template = await templateCache.getTemplate(req.params.id);
+
+        if (!template)
+            return res.status(404).json({
+                error: true,
+                status: 404,
+                message: res.__("common.error.bot.404")
+            });
+
+        if (template.owner.id === req.user.id)
+            return res.status(403).json({
+                error: true,
+                status: 403,
+                message: res.__("common.error.report.self")
+            });
+
+        try {
+            const embed = new EmbedBuilder();
+            embed.setColor(0x2f3136);
+            embed.setTitle("Template Report");
+            embed.setURL(`${settings.website.url}/bots/${template._id}`);
+            embed.addFields(
+                {
+                    name: "Reason",
+                    value: req.body.reason ? req.body.reason : "None provided."
+                },
+                {
+                    name: "Additional information",
+                    value: req.body.additionalInfo
+                        ? req.body.additionalInfo
+                        : "None provided."
+                }
+            );
+
+            await discord.channels.alerts.send({
+                content: `${settings.emoji.report} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` reported template **${functions.escapeFormatting(
+                    template.name
+                )}** \`(${template._id})\``,
+                embeds: [embed]
+            });
+
+            return res.status(200).json({
+                error: false,
+                status: 200,
+                message: res.__("common.report.done")
+            });
+        } catch (e) {
+            return res.status(500).json({
+                error: true,
+                status: 500,
+                message: res.__("common.error.report")
+            });
+        }
+    }
+}

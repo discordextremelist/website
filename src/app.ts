@@ -60,7 +60,7 @@ import searchRoute from "./Routes/search.ts";
 import docsRoute from "./Routes/docs.ts";
 import serversRoute from "./Routes/servers.ts";
 import usersRoute from "./Routes/users.ts";
-import templatesRoute from "./Routes/templates.ts";
+import { initTemplateRoutes } from "./Routes/templates/index.ts";
 import staffRoute from "./Routes/staff.ts";
 import setup from "./setup.ts";
 import { uploadBots } from "./Util/Services/botCaching.ts";
@@ -341,7 +341,7 @@ new Promise<void>((resolve, reject) => {
 
         app.use("/:lang/bots", initBotRoutes());
         app.use("/:lang/servers", serversRoute);
-        app.use("/:lang/templates", templatesRoute);
+        app.use("/:lang/templates", initTemplateRoutes());
         app.use("/:lang/users", usersRoute);
         app.use("/:lang/staff", staffRoute);
 

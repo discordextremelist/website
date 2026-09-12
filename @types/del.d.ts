@@ -298,7 +298,8 @@ declare global {
             id: Snowflake;
         };
         icon: {
-            hash: string;
+            /** null when the server has no icon; pages show the default avatar */
+            hash: string | null;
             url: string;
         };
         links: {
@@ -332,7 +333,8 @@ declare global {
         };
         creator: Pick<APIUser, "id" | "username" | "discriminator">;
         icon: {
-            hash: string;
+            /** null when the source server has no icon; pages show the default avatar */
+            hash: string | null;
             url: string;
         };
         links: {

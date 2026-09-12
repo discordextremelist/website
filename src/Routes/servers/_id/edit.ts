@@ -80,7 +80,7 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
         let error = false;
         let errors: string[] = [];
 
-        const server: delServer | undefined = await global.db
+        const server: delServer | null = await global.db
             .collection<delServer>("servers")
             .findOne({ _id: req.params.id });
 
@@ -139,6 +139,8 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
         discord
             .restGet<APIInvite>(Routes.invite(req.body.invite), {
                 query: makeURLSearchParams({
+                    // Makes approximate_presence_count and
+                    // approximate_member_count always present on the invite.
                     with_counts: true,
                     with_expiration: true
                 } satisfies RESTGetAPIInviteQuery)
@@ -171,8 +173,8 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
                             previewChannel: req.body.previewChannel,
                             tags: tags,
                             counts: {
-                                online: invite.approximate_presence_count,
-                                members: invite.approximate_member_count
+                                online: invite.approximate_presence_count!,
+                                members: invite.approximate_member_count!
                             },
                             icon: {
                                 hash: invite.guild.icon,
@@ -216,8 +218,8 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
                             previewChannel: req.body.previewChannel,
                             tags: tags,
                             counts: {
-                                online: invite.approximate_presence_count,
-                                members: invite.approximate_member_count
+                                online: invite.approximate_presence_count!,
+                                members: invite.approximate_member_count!
                             },
                             icon: {
                                 hash: invite.guild.icon,

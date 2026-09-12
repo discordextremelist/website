@@ -43,6 +43,8 @@ export class SyncServer extends AuthedPathRoute<"get"> {
         discord
             .restGet<APIInvite>(Routes.invite(server.inviteCode), {
                 query: makeURLSearchParams({
+                    // Makes approximate_presence_count and
+                    // approximate_member_count always present on the invite.
                     with_counts: true,
                     with_expiration: true
                 } satisfies RESTGetAPIInviteQuery)
@@ -73,8 +75,8 @@ export class SyncServer extends AuthedPathRoute<"get"> {
                         $set: {
                             name: invite.guild.name,
                             counts: {
-                                online: invite.approximate_presence_count,
-                                members: invite.approximate_member_count
+                                online: invite.approximate_presence_count!,
+                                members: invite.approximate_member_count!
                             },
                             icon: {
                                 hash: invite.guild.icon,
@@ -94,8 +96,8 @@ export class SyncServer extends AuthedPathRoute<"get"> {
                         new: {
                             name: invite.guild.name,
                             counts: {
-                                online: invite.approximate_presence_count,
-                                members: invite.approximate_member_count
+                                online: invite.approximate_presence_count!,
+                                members: invite.approximate_member_count!
                             },
                             icon: {
                                 hash: invite.guild.icon,

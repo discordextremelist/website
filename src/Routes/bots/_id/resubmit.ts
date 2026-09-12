@@ -318,17 +318,26 @@ export class PostResubmitBot extends PathRoute<"post"> {
                         query: `{channel(id:"${req.body.widgetChannel}"){id}}`
                     }),
                     headers: { "Content-Type": "application/json" }
-                }).then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (!data.channel?.id) {
+                })
+                    .then(async (fetchRes: fetchRes) => {
+                        const data: any = await fetchRes.json();
+                        if (!data.channel?.id) {
+                            error = true;
+                            errors.push(
+                                res.__(
+                                    "common.error.listing.arr.widgetbot.channelNotFound"
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
                         error = true;
                         errors.push(
                             res.__(
                                 "common.error.listing.arr.widgetbot.channelNotFound"
                             )
                         );
-                    }
-                });
+                    });
         }
 
         if (req.body.twitter?.length > 15) {

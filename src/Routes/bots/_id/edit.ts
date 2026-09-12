@@ -223,7 +223,7 @@ export class PostEdit extends PathRoute<"post"> {
 
             if (fetchServer)
                 await discord.bot.rest
-                    .get(Routes.guildChannels(req.body.widgetChannel))
+                    .get(Routes.guildChannels(req.body.widgetServer))
                     .catch((e: DiscordAPIError) => {
                         if ([400, 404].includes(Number(e.code))) {
                             error = true;

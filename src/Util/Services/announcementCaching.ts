@@ -92,9 +92,12 @@ export async function updateAnnouncement(
 }
 
 export async function updateCache() {
-    global.announcement = await global.db
+    const doc = await global.db
         .collection<announcement>("webOptions")
         .findOne({ _id: "announcement" });
+    // If the document has gone missing, keep the last value: every page's nav
+    // reads announcement.active.
+    if (doc) global.announcement = doc;
     return;
 }
 

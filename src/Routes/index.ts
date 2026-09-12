@@ -61,7 +61,7 @@ function sortAll() {
             // One of the three is set, per the if above.
             member.rank = admin ? "admin" : assistant ? "assistant" : "mod";
 
-            const user = discord.bot.users.cache.get(member.id);
+            const user = member.user;
             member.avatar = user.avatar;
             member.username = user.username;
             member.discriminator = user.discriminator;
@@ -74,7 +74,7 @@ function sortAll() {
             const donator = member.roles.cache.has(settings.roles.donator);
             member.order = booster ? 2 : donator ? 1 : 0;
             member.rank = booster ? "booster" : "donator";
-            const user = discord.bot.users.cache.get(member.id);
+            const user = member.user;
             member.avatar = user.avatar;
             member.username = user.username;
             member.discriminator = user.discriminator;
@@ -89,7 +89,7 @@ function sortAll() {
             const tester = member.roles.cache.has(settings.roles.testers);
             member.order = translator ? 1 : tester ? 2 : 0;
             member.rank = translator ? "translator" : "tester";
-            const user = discord.bot.users.cache.get(member.id);
+            const user = member.user;
             member.avatar = user.avatar;
             member.username = user.username;
             member.discriminator = user.discriminator;

@@ -21,11 +21,13 @@ import { isDiscordAPIError, isURL } from "./main.ts";
 import type { Request, Response } from "express";
 import type {
     APIApplicationCommand,
-    RESTPostOAuth2AccessTokenResult
+    RESTPostOAuth2AccessTokenResult,
+    APIUser
 } from "discord.js";
 import { Routes } from "discord.js";
 import fetch from "node-fetch";
 import refresh from "passport-oauth2-refresh";
+import * as discord from "../Services/discord.ts";
 import { DAPI } from "../Services/discord.ts";
 import * as userCache from "../Services/userCaching.ts";
 
@@ -149,4 +151,68 @@ export async function fetchSlashCommands(
         if (Array.isArray(receivedCommands)) commands = receivedCommands;
     }
     return commands;
+}
+
+/**
+ * Validation messages for the listing's short description, long description
+ * and prefix, in the order the handlers have always reported them.
+ */
+export function descriptionErrors(
+    body: Record<string, any>,
+    res: Response
+): string[] {
+    const messages: string[] = [];
+    if (!body.shortDescription) {
+        messages.push(res.__("common.error.listing.arr.shortDescRequired"));
+    } else if (body.shortDescription.length > 200) {
+        messages.push(res.__("common.error.listing.arr.shortDescTooLong"));
+    }
+
+    if (!body.longDescription) {
+        messages.push(res.__("common.error.listing.arr.longDescRequired"));
+    } else {
+        if (
+            body.longDescription.length < 150 &&
+            !body.longDescription.includes("<iframe ")
+        ) {
+            messages.push(
+                res.__("common.error.listing.arr.notAtMinChars", "150")
+            );
+        }
+
+        if (body.longDescription.includes("http://")) {
+            messages.push(res.__("common.error.listing.arr.containsHttp"));
+        }
+    }
+
+    if (!body.prefix && !body.slashCommands) {
+        messages.push(res.__("common.error.listing.arr.prefixRequired"));
+    } else if (body.prefix?.length > 32) {
+        messages.push(res.__("common.error.bot.arr.prefixTooLong"));
+    } else if (body.prefix === "/" && !body.slashCommands) {
+        messages.push(res.__("common.error.bot.arr.legacySlashPrefix"));
+    }
+
+    return messages;
+}
+
+/**
+ * The bot user's public flags from Discord, or 0 when the listing isn't a bot.
+ *
+ * Known bug, preserved deliberately (ISSUES I-9): if the lookup fails, the
+ * .catch() leaves `user` undefined and reading public_flags throws.
+ */
+export async function fetchUserFlags(
+    wantBot: unknown,
+    applicationId: string
+): Promise<number> {
+    let userFlags = 0;
+
+    if (wantBot) {
+        const user = (await discord.bot.rest
+            .get(Routes.user(applicationId))
+            .catch(() => {})) as APIUser;
+        if (user.public_flags) userFlags = user.public_flags;
+    }
+    return userFlags;
 }

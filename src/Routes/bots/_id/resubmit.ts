@@ -5,7 +5,6 @@ import e from "express";
 import {
     type APIApplication,
     type APIApplicationCommand,
-    type APIUser,
     type DiscordAPIError,
     OAuth2Scopes,
     RESTJSONErrorCodes,
@@ -24,7 +23,9 @@ import { patterns } from "../../../Util/Function/patterns.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import {
     botTags,
+    descriptionErrors,
     fetchSlashCommands,
+    fetchUserFlags,
     invalidLinkErrors,
     parseEditors
 } from "../../../Util/Function/botListing.ts";
@@ -359,43 +360,9 @@ export class PostResubmitBot extends PathRoute<"post"> {
             errors.push(res.__("common.error.listing.edit.forgejoInvalid"));
         }
 
-        if (!req.body.shortDescription) {
+        for (const message of descriptionErrors(req.body, res)) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
-        } else if (req.body.shortDescription.length > 200) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescTooLong"));
-        }
-
-        if (!req.body.longDescription) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.longDescRequired"));
-        } else {
-            if (
-                req.body.longDescription.length < 150 &&
-                !req.body.longDescription.includes("<iframe ")
-            ) {
-                error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.notAtMinChars", "150")
-                );
-            }
-
-            if (req.body.longDescription.includes("http://")) {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.containsHttp"));
-            }
-        }
-
-        if (!req.body.prefix && !req.body.slashCommands) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.prefixRequired"));
-        } else if (req.body.prefix?.length > 32) {
-            error = true;
-            errors.push(res.__("common.error.bot.arr.prefixTooLong"));
-        } else if (req.body.prefix === "/" && !req.body.slashCommands) {
-            error = true;
-            errors.push(res.__("common.error.bot.arr.legacySlashPrefix"));
+            errors.push(message);
         }
 
         if (req.body.privacyPolicy) {
@@ -465,15 +432,7 @@ export class PostResubmitBot extends PathRoute<"post"> {
             }
         );
 
-        let userFlags = 0;
-
-        if (req.body.bot) {
-            const user = (await discord.bot.rest
-                .get(Routes.user(bot._id))
-                .catch(() => {})) as APIUser;
-            if (user.public_flags) userFlags = user.public_flags;
-        }
-
+        let userFlags = await fetchUserFlags(req.body.bot, bot._id);
         if (error === true)
             return res.status(400).json({
                 error: true,

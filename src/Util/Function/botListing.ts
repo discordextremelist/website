@@ -17,8 +17,17 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { isURL } from "./main.ts";
-import type { Response } from "express";
+import { isDiscordAPIError, isURL } from "./main.ts";
+import type { Request, Response } from "express";
+import type {
+    APIApplicationCommand,
+    RESTPostOAuth2AccessTokenResult
+} from "discord.js";
+import { Routes } from "discord.js";
+import fetch from "node-fetch";
+import refresh from "passport-oauth2-refresh";
+import { DAPI } from "../Services/discord.ts";
+import * as userCache from "../Services/userCaching.ts";
 
 // Helpers shared by the bot submit, edit and resubmit handlers, which all read
 // the same listing form.
@@ -69,4 +78,75 @@ export function invalidLinkErrors(
     return fields
         .filter((field) => body[field] && !isURL(body[field]))
         .map((field) => res.__(LINK_ERRORS[field]));
+}
+
+/**
+ * The bot's slash commands. When the user ticked "import slash commands",
+ * they are fetched from Discord with the user's OAuth token; otherwise
+ * `initial` is returned unchanged. Errors are reported through onError, which
+ * the caller uses to set its error flag and push the message.
+ *
+ * Known bug, preserved deliberately (ISSUES I-8): requestNewAccessToken is
+ * callback-style, so the `await` below does not wait for it. An expired token
+ * is refreshed in the background while the fetch still uses the old one, and
+ * refresh errors reach onError late.
+ */
+export async function fetchSlashCommands(
+    req: Request,
+    applicationId: string,
+    initial: APIApplicationCommand[],
+    onError: (message: string) => void
+): Promise<APIApplicationCommand[]> {
+    let commands = initial;
+
+    if (req.body.slashCommands && req.user.db.auth) {
+        if (Date.now() > req.user.db.auth.expires) {
+            await refresh.requestNewAccessToken(
+                "discord",
+                req.user.db.auth.refreshToken,
+                async (
+                    err,
+                    accessToken,
+                    refreshToken,
+                    result: RESTPostOAuth2AccessTokenResult
+                ) => {
+                    if (err) {
+                        if (isDiscordAPIError(err)) {
+                            onError(`${err.statusCode} ${err.data}`);
+                        } else {
+                            onError(err.message);
+                        }
+                    } else {
+                        await global.db.collection("users").updateOne(
+                            { _id: req.user.id },
+                            {
+                                $set: {
+                                    auth: {
+                                        accessToken,
+                                        refreshToken,
+                                        expires:
+                                            Date.now() +
+                                            result.expires_in * 1000
+                                    }
+                                }
+                            }
+                        );
+                        await userCache.updateUser(req.user.id);
+                    }
+                }
+            );
+        }
+
+        const receivedCommands = (await (
+            await fetch(DAPI + Routes.applicationCommands(applicationId), {
+                headers: {
+                    authorization: `Bearer ${req.user.db.auth.accessToken}`
+                }
+            })
+        )
+            .json()
+            .catch(() => {})) as APIApplicationCommand[];
+        if (Array.isArray(receivedCommands)) commands = receivedCommands;
+    }
+    return commands;
 }

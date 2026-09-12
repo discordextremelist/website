@@ -14,15 +14,12 @@ import {
     type DiscordAPIError,
     OAuth2Scopes,
     RESTJSONErrorCodes,
-    type RESTPostOAuth2AccessTokenResult,
     Routes
 } from "discord.js";
 import * as functions from "../../../Util/Function/main.ts";
 import { URL } from "url";
 import fetch from "node-fetch";
-import refresh from "passport-oauth2-refresh";
-import * as userCache from "../../../Util/Services/userCaching.ts";
-import { DAPI } from "../../../Util/Services/discord.ts";
+
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { Response as fetchRes } from "node-fetch";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
@@ -31,6 +28,7 @@ import { patterns } from "../../../Util/Function/patterns.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import {
     botTags,
+    fetchSlashCommands,
     invalidLinkErrors,
     parseEditors
 } from "../../../Util/Function/botListing.ts";
@@ -472,59 +470,15 @@ export class PostEdit extends PathRoute<"post"> {
             errors.push(res.__("common.error.listing.edit.forgejoInvalid"));
         }
 
-        let commands: APIApplicationCommand[] = bot.commands || [];
-
-        if (req.body.slashCommands && req.user.db.auth) {
-            if (Date.now() > req.user.db.auth.expires) {
-                await refresh.requestNewAccessToken(
-                    "discord",
-                    req.user.db.auth.refreshToken,
-                    async (
-                        err,
-                        accessToken,
-                        refreshToken,
-                        result: RESTPostOAuth2AccessTokenResult
-                    ) => {
-                        if (err) {
-                            error = true;
-
-                            if (functions.isDiscordAPIError(err)) {
-                                errors.push(`${err.statusCode} ${err.data}`);
-                            } else {
-                                errors.push(err.message);
-                            }
-                        } else {
-                            await global.db.collection("users").updateOne(
-                                { _id: req.user.id },
-                                {
-                                    $set: {
-                                        auth: {
-                                            accessToken,
-                                            refreshToken,
-                                            expires:
-                                                Date.now() +
-                                                result.expires_in * 1000
-                                        }
-                                    }
-                                }
-                            );
-                            await userCache.updateUser(req.user.id);
-                        }
-                    }
-                );
+        let commands: APIApplicationCommand[] = await fetchSlashCommands(
+            req,
+            bot._id,
+            bot.commands || [],
+            (message) => {
+                error = true;
+                errors.push(message);
             }
-
-            const receivedCommands = (await (
-                await fetch(DAPI + Routes.applicationCommands(bot._id), {
-                    headers: {
-                        authorization: `Bearer ${req.user.db.auth.accessToken}`
-                    }
-                })
-            )
-                .json()
-                .catch(() => {})) as APIApplicationCommand[];
-            if (Array.isArray(receivedCommands)) commands = receivedCommands;
-        }
+        );
 
         let userFlags = 0;
 

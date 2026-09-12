@@ -29,6 +29,7 @@ import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
+import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
 
 export class GetSubmitTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -114,25 +115,7 @@ export class PostSubmitTemplate extends AuthedPathRoute<"post"> {
                 await global.db.collection<delTemplate>("templates").insertOne({
                     _id: template.code,
                     name: template.name,
-                    region: template.serialized_source_guild.region,
-                    locale: template.serialized_source_guild.preferred_locale,
-                    afkTimeout: template.serialized_source_guild.afk_timeout,
-                    verificationLevel:
-                        template.serialized_source_guild.verification_level,
-                    defaultMessageNotifications:
-                        template.serialized_source_guild
-                            .default_message_notifications,
-                    explicitContent:
-                        template.serialized_source_guild
-                            .explicit_content_filter,
-                    roles: template.serialized_source_guild.roles.map((c) => {
-                        return { name: c.name, color: c.color };
-                    }),
-                    channels: template.serialized_source_guild.channels.map(
-                        (c) => {
-                            return { name: c.name, type: c.type, nsfw: c.nsfw };
-                        }
-                    ),
+                    ...templateGuildFields(template),
                     usageCount: template.usage_count,
                     shortDesc: req.body.shortDescription,
                     longDesc: req.body.longDescription,
@@ -176,35 +159,7 @@ export class PostSubmitTemplate extends AuthedPathRoute<"post"> {
                         new: {
                             _id: template.code,
                             name: template.name,
-                            region: template.serialized_source_guild.region,
-                            locale: template.serialized_source_guild
-                                .preferred_locale,
-                            afkTimeout:
-                                template.serialized_source_guild.afk_timeout,
-                            verificationLevel:
-                                template.serialized_source_guild
-                                    .verification_level,
-                            defaultMessageNotifications:
-                                template.serialized_source_guild
-                                    .default_message_notifications,
-                            explicitContent:
-                                template.serialized_source_guild
-                                    .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles.map(
-                                (c) => {
-                                    return { name: c.name, color: c.color };
-                                }
-                            ),
-                            channels:
-                                template.serialized_source_guild.channels.map(
-                                    (c) => {
-                                        return {
-                                            name: c.name,
-                                            type: c.type,
-                                            nsfw: c.nsfw
-                                        };
-                                    }
-                                ),
+                            ...templateGuildFields(template),
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,

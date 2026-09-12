@@ -43,6 +43,7 @@ import type {
 } from "discord.js";
 import settings from "../../settings.json" with { type: "json" };
 import { DAPI } from "../Util/Services/discord.ts";
+import { templateGuildFields } from "../Util/Function/templateListing.ts";
 
 const router = express.Router();
 
@@ -300,33 +301,7 @@ router.get("/templates", async (_req, res) => {
                 {
                     $set: {
                         name: template.name,
-                        region: template.serialized_source_guild.region,
-                        locale: template.serialized_source_guild
-                            .preferred_locale,
-                        afkTimeout:
-                            template.serialized_source_guild.afk_timeout,
-                        verificationLevel:
-                            template.serialized_source_guild.verification_level,
-                        defaultMessageNotifications:
-                            template.serialized_source_guild
-                                .default_message_notifications,
-                        explicitContent:
-                            template.serialized_source_guild
-                                .explicit_content_filter,
-                        roles: template.serialized_source_guild.roles.map(
-                            (c) => {
-                                return { name: c.name, color: c.color };
-                            }
-                        ),
-                        channels: template.serialized_source_guild.channels.map(
-                            (c) => {
-                                return {
-                                    name: c.name,
-                                    type: c.type,
-                                    nsfw: c.nsfw
-                                };
-                            }
-                        ),
+                        ...templateGuildFields(template),
                         usageCount: template.usage_count,
                         creator: {
                             id: template.creator.id,

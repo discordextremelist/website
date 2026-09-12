@@ -35,6 +35,7 @@ import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
 import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
+import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
 
 export class GetEditTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -151,35 +152,7 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
                     {
                         $set: {
                             name: template.name,
-                            region: template.serialized_source_guild.region,
-                            locale: template.serialized_source_guild
-                                .preferred_locale,
-                            afkTimeout:
-                                template.serialized_source_guild.afk_timeout,
-                            verificationLevel:
-                                template.serialized_source_guild
-                                    .verification_level,
-                            defaultMessageNotifications:
-                                template.serialized_source_guild
-                                    .default_message_notifications,
-                            explicitContent:
-                                template.serialized_source_guild
-                                    .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles.map(
-                                (c) => {
-                                    return { name: c.name, color: c.color };
-                                }
-                            ),
-                            channels:
-                                template.serialized_source_guild.channels.map(
-                                    (c) => {
-                                        return {
-                                            name: c.name,
-                                            type: c.type,
-                                            nsfw: c.nsfw
-                                        };
-                                    }
-                                ),
+                            ...templateGuildFields(template),
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,
@@ -222,35 +195,7 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
                     details: {
                         new: {
                             name: template.name,
-                            region: template.serialized_source_guild.region,
-                            locale: template.serialized_source_guild
-                                .preferred_locale,
-                            afkTimeout:
-                                template.serialized_source_guild.afk_timeout,
-                            verificationLevel:
-                                template.serialized_source_guild
-                                    .verification_level,
-                            defaultMessageNotifications:
-                                template.serialized_source_guild
-                                    .default_message_notifications,
-                            explicitContent:
-                                template.serialized_source_guild
-                                    .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles.map(
-                                (c) => {
-                                    return { name: c.name, color: c.color };
-                                }
-                            ),
-                            channels:
-                                template.serialized_source_guild.channels.map(
-                                    (c) => {
-                                        return {
-                                            name: c.name,
-                                            type: c.type,
-                                            nsfw: c.nsfw
-                                        };
-                                    }
-                                ),
+                            ...templateGuildFields(template),
                             usageCount: template.usage_count,
                             shortDesc: req.body.shortDescription,
                             longDesc: req.body.longDescription,

@@ -27,6 +27,7 @@ import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
+import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
 
 export class SyncTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -44,35 +45,7 @@ export class SyncTemplate extends AuthedPathRoute<"get"> {
                     {
                         $set: {
                             name: template.name,
-                            region: template.serialized_source_guild.region,
-                            locale: template.serialized_source_guild
-                                .preferred_locale,
-                            afkTimeout:
-                                template.serialized_source_guild.afk_timeout,
-                            verificationLevel:
-                                template.serialized_source_guild
-                                    .verification_level,
-                            defaultMessageNotifications:
-                                template.serialized_source_guild
-                                    .default_message_notifications,
-                            explicitContent:
-                                template.serialized_source_guild
-                                    .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles.map(
-                                (c) => {
-                                    return { name: c.name, color: c.color };
-                                }
-                            ),
-                            channels:
-                                template.serialized_source_guild.channels.map(
-                                    (c) => {
-                                        return {
-                                            name: c.name,
-                                            type: c.type,
-                                            nsfw: c.nsfw
-                                        };
-                                    }
-                                ),
+                            ...templateGuildFields(template),
                             usageCount: template.usage_count,
                             creator: {
                                 id: template.creator.id,
@@ -97,35 +70,7 @@ export class SyncTemplate extends AuthedPathRoute<"get"> {
                     details: {
                         new: {
                             name: template.name,
-                            region: template.serialized_source_guild.region,
-                            locale: template.serialized_source_guild
-                                .preferred_locale,
-                            afkTimeout:
-                                template.serialized_source_guild.afk_timeout,
-                            verificationLevel:
-                                template.serialized_source_guild
-                                    .verification_level,
-                            defaultMessageNotifications:
-                                template.serialized_source_guild
-                                    .default_message_notifications,
-                            explicitContent:
-                                template.serialized_source_guild
-                                    .explicit_content_filter,
-                            roles: template.serialized_source_guild.roles.map(
-                                (c) => {
-                                    return { name: c.name, color: c.color };
-                                }
-                            ),
-                            channels:
-                                template.serialized_source_guild.channels.map(
-                                    (c) => {
-                                        return {
-                                            name: c.name,
-                                            type: c.type,
-                                            nsfw: c.nsfw
-                                        };
-                                    }
-                                ),
+                            ...templateGuildFields(template),
                             usageCount: template.usage_count,
                             creator: {
                                 id: template.creator.id,

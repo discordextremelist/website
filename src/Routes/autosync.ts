@@ -216,7 +216,11 @@ router.get("/servers", async (_req, res) => {
 
             await serverCache.updateServer(id);
         } catch (e) {
-            if (e != 3350001 && e != 3350002 && e.code != 10006) {
+            if (
+                e != 3350001 &&
+                e != 3350002 &&
+                (e as { code?: unknown }).code != 10006
+            ) {
                 // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
                 await global.db.collection("servers").deleteOne({ _id: id });
                 await global.db.collection("audit").insertOne({
@@ -333,7 +337,7 @@ router.get("/templates", async (_req, res) => {
 
             await templateCache.updateTemplate(id);
         } catch (e) {
-            if (e.code == 10057) {
+            if ((e as { code?: unknown }).code == 10057) {
                 // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
                 // may as well reduce the load on web mods - AJ
                 await global.db.collection("templates").deleteOne({ _id: id });

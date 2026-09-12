@@ -26,7 +26,11 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import { Response as fetchRes } from "node-fetch";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
 import { patterns } from "../../../Util/Function/patterns.ts";
-import { botTags, parseEditors } from "../../../Util/Function/botListing.ts";
+import {
+    botTags,
+    invalidLinkErrors,
+    parseEditors
+} from "../../../Util/Function/botListing.ts";
 
 export class GetSubmit extends PathRoute<"get"> {
     constructor() {
@@ -159,29 +163,14 @@ export class PostSubmit extends PathRoute<"post"> {
             }
         }
 
-        if (
-            req.body.supportServer &&
-            !functions.isURL(req.body.supportServer)
-        ) {
+        for (const message of invalidLinkErrors(req.body, res, [
+            "supportServer",
+            "website",
+            "donationUrl",
+            "repo"
+        ])) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.invalidURL.supportServer")
-            );
-        }
-
-        if (req.body.website && !functions.isURL(req.body.website)) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invalidURL.website"));
-        }
-
-        if (req.body.donationUrl && !functions.isURL(req.body.donationUrl)) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
-        }
-
-        if (req.body.repo && !functions.isURL(req.body.repo)) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invalidURL.repo"));
+            errors.push(message);
         }
 
         if (
@@ -193,9 +182,9 @@ export class PostSubmit extends PathRoute<"post"> {
             errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
         }
 
-        if (req.body.banner && !functions.isURL(req.body.banner)) {
+        for (const message of invalidLinkErrors(req.body, res, ["banner"])) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
+            errors.push(message);
         }
 
         if (req.body.widgetServer && !req.body.widgetChannel) {

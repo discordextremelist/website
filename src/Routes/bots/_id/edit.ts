@@ -29,7 +29,11 @@ import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { patterns } from "../../../Util/Function/patterns.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
-import { botTags, parseEditors } from "../../../Util/Function/botListing.ts";
+import {
+    botTags,
+    invalidLinkErrors,
+    parseEditors
+} from "../../../Util/Function/botListing.ts";
 
 export class GetEdit extends PathRoute<"get"> {
     constructor() {
@@ -172,34 +176,15 @@ export class PostEdit extends PathRoute<"post"> {
             }
         }
 
-        if (
-            req.body.supportServer &&
-            !functions.isURL(req.body.supportServer)
-        ) {
+        for (const message of invalidLinkErrors(req.body, res, [
+            "supportServer",
+            "website",
+            "donationUrl",
+            "repo",
+            "banner"
+        ])) {
             error = true;
-            errors.push(
-                res.__("common.error.listing.arr.invalidURL.supportServer")
-            );
-        }
-
-        if (req.body.website && !functions.isURL(req.body.website)) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invalidURL.website"));
-        }
-
-        if (req.body.donationUrl && !functions.isURL(req.body.donationUrl)) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
-        }
-
-        if (req.body.repo && !functions.isURL(req.body.repo)) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invalidURL.repo"));
-        }
-
-        if (req.body.banner && !functions.isURL(req.body.banner)) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invalidURL.banner"));
+            errors.push(message);
         }
 
         if (

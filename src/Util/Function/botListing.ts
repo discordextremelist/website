@@ -17,6 +17,9 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { isURL } from "./main.ts";
+import type { Response } from "express";
+
 // Helpers shared by the bot submit, edit and resubmit handlers, which all read
 // the same listing form.
 
@@ -44,4 +47,26 @@ export function parseEditors(raw: string): any[] {
         );
     }
     return [];
+}
+
+const LINK_ERRORS = {
+    supportServer: "common.error.listing.arr.invalidURL.supportServer",
+    website: "common.error.listing.arr.invalidURL.website",
+    donationUrl: "common.error.listing.arr.invalidURL.donation",
+    repo: "common.error.listing.arr.invalidURL.repo",
+    banner: "common.error.listing.arr.invalidURL.banner"
+} as const;
+
+/**
+ * For each named link field that is filled in but is not a URL, the translated
+ * error message, in the order the fields were given.
+ */
+export function invalidLinkErrors(
+    body: Record<string, any>,
+    res: Response,
+    fields: (keyof typeof LINK_ERRORS)[]
+): string[] {
+    return fields
+        .filter((field) => body[field] && !isURL(body[field]))
+        .map((field) => res.__(LINK_ERRORS[field]));
 }

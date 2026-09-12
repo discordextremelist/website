@@ -42,7 +42,7 @@ export class GetEdit extends AuthedPathRoute<"get"> {
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        const bot = req.attached.bot;
+        const bot = req.attached.bot!;
 
         res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
 

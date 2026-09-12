@@ -193,14 +193,10 @@ export const variables = async (
         if (isBanned) return res.status(403).render("banned", { req });
     }
 
-    // For whatever reason, req.attached can be undefined. I am really not sure as to why.
+    // Nothing sets req.attached before this, so create it here for the *Exists
+    // checks to fill in.
     if (typeof req.attached === "undefined") {
-        req.attached = {
-            server: null,
-            template: null,
-            bot: null,
-            user: null
-        };
+        req.attached = {};
     }
 
     req.session.logoutJust === true

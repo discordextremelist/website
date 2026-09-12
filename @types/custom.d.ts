@@ -59,7 +59,8 @@ declare module "express-serve-static-core" {
             version: string;
             node: string;
         };
-        attached?: {
+        /** Set to `{}` by the `variables` middleware, then filled by the `*Exists` checks */
+        attached: {
             bot?: delBot;
             server?: delServer;
             template?: delTemplate;

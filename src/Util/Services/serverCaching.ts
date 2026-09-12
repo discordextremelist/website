@@ -26,8 +26,7 @@ export async function getServer(id: string): Promise<delServer> {
 
 export async function getAllServers(): Promise<delServer[]> {
     const servers = await global.redis?.hvals(prefix);
-    // @ts-expect-error
-    return servers.map(JSON.parse);
+    return servers.map((s) => JSON.parse(s));
 }
 
 export async function updateServer(id: string) {

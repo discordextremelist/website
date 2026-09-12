@@ -143,7 +143,6 @@ const commonFilter = ({ status, labels }: delBot, req: Request) =>
     !status.blacklist &&
     (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw);
 
-// @ts-ignore
 const tagMap: Record<BotTags, BotQueryTagFilterParams> = {
     slashcommands: {
         icon: "fa-slash fa-flip-horizontal has-text-blurple",
@@ -218,7 +217,6 @@ router.get("/bots", variables, async (req: Request, res: Response) => {
             bots = bots.filter((bot) => commonFilter(bot, req));
         } else {
             icon = props.icon;
-            // @ts-ignore
             title = res.__(props.title);
             subtitle = props.subtitle(res);
             bots = bots.filter((bot) => props.filter(bot, req));

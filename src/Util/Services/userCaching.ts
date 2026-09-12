@@ -26,8 +26,7 @@ export async function getUser(id: string): Promise<delUser> {
 
 export async function getAllUsers(): Promise<delUser[]> {
     const users = await global.redis?.hvals(prefix);
-    // @ts-expect-error
-    return users.map(JSON.parse);
+    return users.map((s) => JSON.parse(s));
 }
 
 export async function updateUser(id: string) {

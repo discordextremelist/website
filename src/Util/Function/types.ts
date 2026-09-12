@@ -14,7 +14,7 @@ export type BotTags =
 
 export type BotQueryTagFilterParams = {
     icon: string;
-    title: string;
+    title: Parameters<Response["__"]>[0];
     subtitle: (res: Response) => string;
     filter: (bot: delBot, req: Request) => boolean;
 };

@@ -246,11 +246,9 @@ new Promise<void>((resolve, reject) => {
 
         app.use(
             logger(
-                // @ts-expect-error
                 ':req[cf-connecting-ip] - [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
                 {
-                    skip: (r: { url: string }) =>
-                        r.url === "/profile/game/snakes"
+                    skip: (r) => r.url === "/profile/game/snakes"
                 }
             )
         );

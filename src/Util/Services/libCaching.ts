@@ -31,7 +31,6 @@ export function hasLib(name: string) {
 
 export async function cacheLibs() {
     const libraries: library[] = [];
-    // @ts-ignore
     const dbLibs: library[] = await global.db
         .collection<library>("libraries")
         .find()

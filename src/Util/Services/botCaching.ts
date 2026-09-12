@@ -30,8 +30,7 @@ export async function getBot(id: string): Promise<delBot> {
 
 export async function getAllBots(): Promise<delBot[]> {
     const bots = await global.redis?.hvals(prefix);
-    // @ts-expect-error
-    return bots.map(JSON.parse);
+    return bots.map((s) => JSON.parse(s));
 }
 
 export async function updateBot(id: string) {
@@ -50,8 +49,9 @@ export async function uploadBots() {
     if (botsDB.length < 1) return;
 
     for (const bot of botsDB) {
-        // @ts-expect-error
-        if (bot.id) bot._id = bot.id;
+        // Older documents stored the ID as `id`.
+        const legacyId = (bot as delBot & { id?: string }).id;
+        if (legacyId) bot._id = legacyId;
     }
 
     await global.redis?.hmset(

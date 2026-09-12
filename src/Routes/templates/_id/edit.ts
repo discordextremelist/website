@@ -19,9 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
-import sanitizeHtml from "sanitize-html";
+
 import settings from "../../../../settings.json" with { type: "json" };
-import htmlRef from "../../../../htmlReference.json" with { type: "json" };
+
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
@@ -31,6 +31,7 @@ import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
+import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
 
 export class GetEditTemplate extends PathRoute<"get"> {
     constructor() {
@@ -56,12 +57,7 @@ export class GetEditTemplate extends PathRoute<"get"> {
             template.name
         );
 
-        const clean = sanitizeHtml(template.longDesc, {
-            allowedTags: htmlRef.minimal.tags,
-            allowedAttributes: htmlRef.minimal.attributes,
-            allowVulnerableTags: true,
-            disallowedTagsMode: "recursiveEscape"
-        });
+        const clean = sanitizeMinimalHtmlEscaped(template.longDesc);
 
         res.render("templates/serverTemplates/edit", {
             title: res.__("page.templates.edit.title"),

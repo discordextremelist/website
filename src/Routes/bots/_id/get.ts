@@ -6,13 +6,14 @@ import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 import entities from "html-entities";
 import sanitizeHtml from "sanitize-html";
-import htmlRef from "../../../../htmlReference.json" with { type: "json" };
+
 import settings from "../../../../settings.json" with { type: "json" };
 import { PresenceUpdateStatus, UserFlags } from "discord.js";
 import * as functions from "../../../Util/Function/main.ts";
 import mdi from "markdown-it";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
 
 const md = new mdi();
 
@@ -75,21 +76,7 @@ export class GetBot extends PathRoute<"get"> {
 
         const dirty = entities.decode(md.render(bot.longDesc));
 
-        const clean = sanitizeHtml(dirty, {
-            allowedTags: htmlRef.standard.tags,
-            allowedAttributes: htmlRef.standard.attributes,
-            allowVulnerableTags: true,
-            disallowedTagsMode: "recursiveEscape",
-            transformTags: {
-                iframe: function (_tagName, attribs) {
-                    attribs.sandbox = "";
-                    return {
-                        tagName: "iframe",
-                        attribs: attribs
-                    };
-                }
-            }
-        });
+        const clean = sanitizeBotHtml(dirty);
 
         function sen(name: string) {
             return sanitizeHtml(name, {

@@ -19,15 +19,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
-import sanitizeHtml from "sanitize-html";
+
 import settings from "../../../../settings.json" with { type: "json" };
-import htmlRef from "../../../../htmlReference.json" with { type: "json" };
+
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import mdi from "markdown-it";
 import entities from "html-entities";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { sanitizeMinimalHtml } from "../../../Util/Function/sanitize.ts";
 
 const md = new mdi();
 
@@ -72,11 +73,7 @@ export class GetServer extends PathRoute<"get"> {
 
         const dirty = entities.decode(md.render(server.longDesc));
         let clean: string;
-        clean = sanitizeHtml(dirty, {
-            allowedTags: htmlRef.minimal.tags,
-            allowedAttributes: htmlRef.minimal.attributes,
-            allowVulnerableTags: true
-        });
+        clean = sanitizeMinimalHtml(dirty);
 
         res.render("templates/servers/view", {
             title: `${server.name} | ${res.__("common.servers.discord")}`,

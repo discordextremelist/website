@@ -2,8 +2,7 @@ import { PathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
-import sanitizeHtml from "sanitize-html";
-import htmlRef from "../../../../htmlReference.json" with { type: "json" };
+
 import * as libraryCache from "../../../Util/Services/libCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
@@ -33,6 +32,7 @@ import {
     invalidLinkErrors,
     parseEditors
 } from "../../../Util/Function/botListing.ts";
+import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
 
 export class GetEdit extends PathRoute<"get"> {
     constructor() {
@@ -56,21 +56,7 @@ export class GetEdit extends PathRoute<"get"> {
                 res.__("common.error.bot.perms.edit")
             );
 
-        const clean = sanitizeHtml(bot.longDesc, {
-            allowedTags: htmlRef.standard.tags,
-            allowedAttributes: htmlRef.standard.attributes,
-            allowVulnerableTags: true,
-            disallowedTagsMode: "recursiveEscape",
-            transformTags: {
-                iframe: function (_tagName, attribs) {
-                    attribs.sandbox = "";
-                    return {
-                        tagName: "iframe",
-                        attribs: attribs
-                    };
-                }
-            }
-        });
+        const clean = sanitizeBotHtml(bot.longDesc);
 
         res.render("templates/bots/edit", {
             title: res.__("page.bots.edit.title"),

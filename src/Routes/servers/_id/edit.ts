@@ -27,9 +27,9 @@ import type {
 } from "discord.js";
 import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
 import fetch from "node-fetch";
-import sanitizeHtml from "sanitize-html";
+
 import settings from "../../../../settings.json" with { type: "json" };
-import htmlRef from "../../../../htmlReference.json" with { type: "json" };
+
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
@@ -38,6 +38,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
+import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
 
 export class GetEditServer extends PathRoute<"get"> {
     constructor() {
@@ -60,12 +61,7 @@ export class GetEditServer extends PathRoute<"get"> {
 
         res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 
-        const clean = sanitizeHtml(server.longDesc, {
-            allowedTags: htmlRef.minimal.tags,
-            allowedAttributes: htmlRef.minimal.attributes,
-            allowVulnerableTags: true,
-            disallowedTagsMode: "recursiveEscape"
-        });
+        const clean = sanitizeMinimalHtmlEscaped(server.longDesc);
 
         res.render("templates/servers/edit", {
             title: res.__("page.servers.edit.title"),

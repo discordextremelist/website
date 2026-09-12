@@ -418,3 +418,19 @@ export function renderStatus(
         ...extra
     });
 }
+
+/**
+ * Parse the reason type posted by a staff removal/decline form, clamping
+ * anything above `max` to 0 ("other").
+ *
+ * Kept exactly as the three per-resource copies behaved (ISSUES I-11): the bot
+ * bound of 15 is one short of the last botReasons value, and a missing type
+ * comes back as NaN.
+ */
+export function reasonType(bodyType: string, max: number): number {
+    let type = parseInt(bodyType);
+
+    if (type > max) type = 0;
+
+    return type;
+}

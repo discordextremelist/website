@@ -28,18 +28,14 @@ import {
     TakePremiumBot
 } from "./_id/approve.ts";
 import { GetDeclineBot, PostDeclineBot } from "./_id/decline.ts";
-import type { botReasons } from "../../../@types/enums.ts";
 import { BlacklistBot } from "./_id/blacklist.ts";
 import { GetDownvote, GetUpvote } from "./_id/upvote.ts";
 import { GetRemoveBot, PostRemoveBot } from "./_id/remove.ts";
 import { SyncBot } from "./_id/sync.ts";
+import { reasonType } from "../../Util/Function/main.ts";
 
 export function botType(bodyType: string): number {
-    let type: botReasons = parseInt(bodyType);
-
-    if (type > 15) type = 0;
-
-    return type;
+    return reasonType(bodyType, 15);
 }
 
 // Some basic routes do not need their own class.

@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express, { type Router } from "express";
 import * as permission from "../../Util/Middleware/permissions.ts";
-import type { templateReasons } from "../../../@types/enums.ts";
 import { GetSubmitTemplate, PostSubmitTemplate } from "./_id/submit.ts";
 import { GetTemplate } from "./_id/get.ts";
 import { TemplateSrc, ReportTemplate } from "./_id/src.ts";
@@ -27,13 +26,10 @@ import { GetEditTemplate, PostEditTemplate } from "./_id/edit.ts";
 import { DeleteTemplate } from "./_id/delete.ts";
 import { GetRemoveTemplate, PostRemoveTemplate } from "./_id/remove.ts";
 import { SyncTemplate } from "./_id/sync.ts";
+import { reasonType } from "../../Util/Function/main.ts";
 
 export function templateType(bodyType: string): number {
-    let type: templateReasons = parseInt(bodyType);
-
-    if (type > 3) type = 0;
-
-    return type;
+    return reasonType(bodyType, 3);
 }
 
 export const initTemplateRoutes = (): Router => {

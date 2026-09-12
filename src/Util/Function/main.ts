@@ -65,7 +65,11 @@ export function standingParseEmoji(standing: string) {
     return result;
 }
 
-export function parseDate(__, locale: string, rawDate: number): string {
+export function parseDate(
+    __: Response["__"],
+    locale: string,
+    rawDate: number
+): string {
     if (rawDate === 0) return "???";
 
     const date = new Date(rawDate);
@@ -113,7 +117,7 @@ export function parseDate(__, locale: string, rawDate: number): string {
     }
 }
 
-export function parseAudit(__, auditType: string): auditType {
+export function parseAudit(__: Response["__"], auditType: string): auditType {
     let returnType = {
         name: `${__("page.staff.audit.type.UNKNOWN")}: ${auditType}`,
         icon: "far fa-question has-text-white"
@@ -363,7 +367,7 @@ export function isDiscordAPIError(
     return "statusCode" in error;
 }
 
-const roleMap = {
+const roleMap: Partial<Record<Role, number>> = {
     admin: 3,
     assistant: 2,
     mod: 1

@@ -85,6 +85,7 @@
         "alwaysStrict": true,                                /* Zero errors on switch-on; step 5 of the refactor enables strict flags one at a time. */
         "noImplicitThis": true,
         "strictBindCallApply": true,
+        "noImplicitAny": true,
         "useUnknownInCatchVariables": true,
         "strictFunctionTypes": true,
         // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */

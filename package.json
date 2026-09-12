@@ -76,7 +76,7 @@
     "check": "tsc --noEmit",
     "dev": "nodemon --exec \"NODE_ENV=development pnpm start\" --ext \".ts\"",
     "start": "node --max-old-space-size=4096 --experimental-transform-types --import ./src/instrument.ts ./src/app.ts",
-    "postinstall": "mkdir -p ./data && tsc node_modules/lib-comparison/libs.ts && cp node_modules/lib-comparison/libs.js ./data/libs.js",
+    "postinstall": "mkdir -p ./data && tsc --declaration node_modules/lib-comparison/libs.ts && cp node_modules/lib-comparison/libs.js node_modules/lib-comparison/libs.d.ts ./data/",
     "css-compile": "sass --no-source-map assets/Sass/themes/black.scss:assets/Public/css/themes/black.css assets/Sass/themes/dark.scss:assets/Public/css/themes/dark.css assets/Sass/themes/light.scss:assets/Public/css/themes/light.css assets/Sass/components/listing.scss:assets/Public/css/listing.css --style=compressed",
     "snyk-protect": "snyk-protect",
     "prepare": "pnpm run snyk-protect",

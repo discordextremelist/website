@@ -30,7 +30,15 @@ export function getAnnouncement() {
     return global.announcement;
 }
 
-export async function updateAnnouncement(announcement, req: Request) {
+export async function updateAnnouncement(
+    announcement: {
+        active: boolean;
+        message: string;
+        colour: string;
+        foreground: string;
+    },
+    req: Request
+) {
     await global.db.collection("webOptions").updateOne(
         { _id: "announcement" },
         {

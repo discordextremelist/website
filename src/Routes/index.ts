@@ -36,7 +36,9 @@ import type {
 
 const router = express.Router();
 
-const nickSorter = (a, b) =>
+type NamedMember = { nick?: string | null; user: { username: string } };
+
+const nickSorter = (a: NamedMember, b: NamedMember) =>
     (a.nick || a.user.username).localeCompare(b.nick || b.user.username);
 
 function sortAll() {

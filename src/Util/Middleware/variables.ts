@@ -140,7 +140,7 @@ export const variables = async (
 
     let theme = req.user?.db?.preferences?.theme;
 
-    if (req.query.theme) theme = themes[req.query.theme as string];
+    if (req.query.theme) theme = themes[req.query.theme as keyof typeof themes];
 
     switch (theme) {
         case themes.dark:

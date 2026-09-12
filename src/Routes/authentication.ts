@@ -220,13 +220,19 @@ router.get(
                 }
             } as delUser;
 
-            if (user.rank.mod === true)
-                importUser["staffTracking.lastLogin"] = Date.now();
-
             await global.db.collection("users").updateOne(
                 { _id: req.user.id },
                 {
-                    $set: importUser
+                    // For mods, also stamp staffTracking.lastLogin. The dotted
+                    // key is Mongo dot-path syntax, so only that nested field
+                    // is set.
+                    $set:
+                        user.rank.mod === true
+                            ? {
+                                  ...importUser,
+                                  "staffTracking.lastLogin": Date.now()
+                              }
+                            : importUser
                 }
             );
         }

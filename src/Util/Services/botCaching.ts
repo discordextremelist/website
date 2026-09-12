@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 const prefix = "bots";
-export async function getBot(id: string): Promise<delBot> {
+export async function getBot(id: string): Promise<delBot | undefined> {
     const bot = await global.redis?.hget(prefix, id);
     if (!bot) return;
 
@@ -34,7 +34,7 @@ export async function getAllBots(): Promise<delBot[]> {
 }
 
 export async function updateBot(id: string) {
-    const data: delBot = await global.db
+    const data: delBot | null = await global.db
         .collection<delBot>("bots")
         .findOne({ _id: id });
     if (!data) return;

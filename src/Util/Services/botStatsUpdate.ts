@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import moment from "moment";
 
 export async function botStatsUpdate() {
-    const botStats: botStats = await global.db
+    const botStats: botStats | null = await global.db
         .collection<botStats>("webOptions")
         .findOne({ _id: "botStats" });
 

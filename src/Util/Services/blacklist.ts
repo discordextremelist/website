@@ -4,7 +4,7 @@ export async function blacklistCheck(id: string): Promise<boolean> {
         .findOne({ $or: [{ _id: id }, { vanityUrl: id }] });
     console.log(botExists);
     if (!botExists) return false;
-    return botExists.status.blacklist;
+    return botExists.status.blacklist ?? false;
 }
 
 export async function blacklistUpdate(id: string, blacklisted: boolean) {

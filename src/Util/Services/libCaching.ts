@@ -18,7 +18,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 export function getLibs() {
-    return global.libs?.sort((a, b) => a._id.localeCompare(b._id));
+    // `_id` is always set on documents from the DB. Only the unused addLib()
+    // builds libraries without one.
+    return global.libs?.sort((a, b) => a._id!.localeCompare(b._id!));
 }
 
 export function getLanguages() {

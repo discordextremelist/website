@@ -19,14 +19,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 const prefix = "audit";
 
-export async function getAuditLog(id: string): Promise<auditLog> {
+export async function getAuditLog(id: string): Promise<auditLog | null> {
     const log = await global.redis?.hget(prefix, id);
-    return JSON.parse(log);
+    return log === null ? null : JSON.parse(log);
 }
 
-export async function getAllAuditLogs(): Promise<auditLog[]> {
+export async function getAllAuditLogs(): Promise<auditLog[] | null> {
     const logs = await global.redis?.hget(prefix, "all");
-    return JSON.parse(logs);
+    return logs === null ? null : JSON.parse(logs);
 }
 
 export async function uploadAuditLogs() {

@@ -19,9 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 const prefix = "users";
 
-export async function getUser(id: string): Promise<delUser> {
+export async function getUser(id: string): Promise<delUser | null> {
     const user = await global.redis?.hget(prefix, id);
-    return JSON.parse(user);
+    return user === null ? null : JSON.parse(user);
 }
 
 export async function getAllUsers(): Promise<delUser[]> {
@@ -30,7 +30,7 @@ export async function getAllUsers(): Promise<delUser[]> {
 }
 
 export async function updateUser(id: string) {
-    const data: delUser = await global.db
+    const data: delUser | null = await global.db
         .collection<delUser>("users")
         .findOne({ _id: id });
     if (!data) return;

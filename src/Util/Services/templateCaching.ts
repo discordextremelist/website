@@ -19,9 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 const prefix = "templates";
 
-export async function getTemplate(id: string): Promise<delTemplate> {
+export async function getTemplate(id: string): Promise<delTemplate | null> {
     const template = await global.redis?.hget(prefix, id);
-    return JSON.parse(template);
+    return template === null ? null : JSON.parse(template);
 }
 
 export async function getAllTemplates(): Promise<delTemplate[]> {
@@ -30,7 +30,7 @@ export async function getAllTemplates(): Promise<delTemplate[]> {
 }
 
 export async function updateTemplate(id: string) {
-    const data: delTemplate = await global.db
+    const data: delTemplate | null = await global.db
         .collection<delTemplate>("templates")
         .findOne({ _id: id });
     if (!data) return;

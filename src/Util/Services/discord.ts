@@ -77,8 +77,8 @@ bot.on("guildBanRemove", async (ban) => {
     }
 });
 
-bot.on("ready", async () => {
-    console.log(`Discord: Connected as ${bot.user.tag} (${bot.user.id})`);
+bot.on("ready", async (client) => {
+    console.log(`Discord: Connected as ${client.user.tag} (${client.user.id})`);
 
     await uploadStatuses();
 
@@ -386,7 +386,7 @@ export async function postWebMetric(type: string) {
 }
 
 export async function postTodaysGrowth() {
-    const todaysGrowth: botsAddedToday = await global.db
+    const todaysGrowth: botsAddedToday | null = await global.db
         .collection<botsAddedToday>("webOptions")
         .findOne({ _id: "todaysGrowth" });
     if (!todaysGrowth)

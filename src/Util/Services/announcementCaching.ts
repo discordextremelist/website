@@ -58,7 +58,8 @@ export async function updateAnnouncement(
 
     await global.db.collection("audit").insertOne({
         type: type,
-        executor: req.user.id,
+        // Only called from staff routes, which run permission.assistant first.
+        executor: req.user!.id,
         target: "announcement",
         date: Date.now(),
         reason: req.body.reason || "None specified.",

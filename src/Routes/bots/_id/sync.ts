@@ -30,7 +30,7 @@ export class SyncBot extends AuthedPathRoute<"get"> {
         res: e.Response,
         next: e.NextFunction
     ): Promise<void> {
-        const bot = req.attached.bot;
+        const bot = req.attached.bot!;
         let commands: APIApplicationCommand[] = bot.commands || [];
         if (bot.scopes?.slashCommands && req.user.db.auth) {
             if (Date.now() > req.user.db.auth.expires) {

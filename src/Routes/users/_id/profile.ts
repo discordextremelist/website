@@ -1,0 +1,182 @@
+/*
+Discord Extreme List - Discord's unbiased list.
+
+Copyright (C) 2020-2025 Carolina Mitchell, John Burke, Advaith Jagathesan
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+import { PathRoute } from "../../route.ts";
+import type { Request, Response } from "express";
+import { variables } from "../../../Util/Function/variables.ts";
+import * as permission from "../../../Util/Function/permissions.ts";
+import * as userCache from "../../../Util/Services/userCaching.ts";
+
+export class GetEditProfile extends PathRoute<"get"> {
+    constructor() {
+        super("get", "/profile/:id/edit", [variables, permission.auth]);
+    }
+
+    async handle(req: Request, res: Response) {
+        if (req.params.id === "@me") {
+            req.params.id = req.user.id;
+        }
+
+        const userProfile: delUser = await global.db
+            .collection<delUser>("users")
+            .findOne({ _id: req.params.id });
+        if (!userProfile)
+            return res.status(404).render("status", {
+                res,
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.user.404"),
+                req,
+                type: "Error"
+            });
+
+        if (
+            userProfile._id !== req.user.id &&
+            req.user.db.rank.assistant === false
+        )
+            return res.status(403).render("status", {
+                res,
+                title: res.__("common.error"),
+                status: 403,
+                subtitle: res.__("common.error.user.perms.edit"),
+                req: req,
+                type: "Error"
+            });
+
+        res.locals.premidPageInfo = res.__(
+            "premid.user.edit",
+            userProfile.fullUsername
+        );
+
+        res.render("templates/users/editProfile", {
+            title: res.__("page.users.edit.title"),
+            subtitle: res.__(
+                "page.users.edit.subtitle",
+                req.user.db.fullUsername
+            ),
+            req,
+            userProfile: userProfile
+        });
+    }
+}
+
+export class PostEditProfile extends PathRoute<"post"> {
+    constructor() {
+        super("post", "/profile/:id/edit", [variables, permission.auth]);
+    }
+
+    async handle(req: Request, res: Response) {
+        if (req.params.id === "@me") {
+            req.params.id = req.user.id;
+        }
+
+        const userProfile: delUser = await global.db
+            .collection<delUser>("users")
+            .findOne({ _id: req.params.id });
+        if (!userProfile)
+            return res.status(404).render("status", {
+                res,
+                title: res.__("common.error"),
+                status: 404,
+                subtitle: res.__("common.error.user.404"),
+                req: req,
+                type: "Error"
+            });
+
+        if (
+            userProfile._id !== req.user.id &&
+            req.user.db.rank.assistant === false
+        )
+            return res.status(403).render("status", {
+                res,
+                title: res.__("common.error"),
+                status: 403,
+                subtitle: res.__("common.error.user.perms.edit"),
+                req: req,
+                type: "Error"
+            });
+
+        let customCss: string = "";
+        if (
+            userProfile.rank.premium ||
+            userProfile.rank.mod ||
+            userProfile.rank.assistant ||
+            userProfile.rank.admin
+        ) {
+            customCss = req.body.profileCss;
+        }
+
+        await global.db.collection("users").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    profile: {
+                        bio: req.body.bio,
+                        css: customCss,
+                        links: {
+                            website: req.body.website,
+                            github: req.body.github,
+                            gitlab: req.body.gitlab,
+                            twitter: req.body.twitter,
+                            instagram: req.body.instagram,
+                            snapchat: req.body.snapchat
+                        }
+                    }
+                }
+            }
+        );
+
+        await global.db.collection("audit").insertOne({
+            type: "MODIFY_PROFILE",
+            executor: req.user.id,
+            target: userProfile._id,
+            date: Date.now(),
+            reason: req.body.reason || "None specified.",
+            details: {
+                old: {
+                    bio: userProfile.profile.bio,
+                    css: userProfile.profile.css,
+                    links: {
+                        website: userProfile.profile.links.website,
+                        github: userProfile.profile.links.github,
+                        gitlab: userProfile.profile.links.gitlab,
+                        twitter: userProfile.profile.links.twitter,
+                        instagram: userProfile.profile.links.instagram,
+                        snapchat: userProfile.profile.links.snapchat
+                    }
+                },
+                new: {
+                    bio: req.body.bio,
+                    css: customCss,
+                    links: {
+                        website: req.body.website,
+                        github: req.body.github,
+                        gitlab: req.body.gitlab,
+                        twitter: req.body.twitter,
+                        instagram: req.body.instagram,
+                        snapchat: req.body.snapchat
+                    }
+                }
+            }
+        });
+        await userCache.updateUser(req.params.id);
+
+        res.redirect(`/users/${req.params.id}`);
+    }
+}

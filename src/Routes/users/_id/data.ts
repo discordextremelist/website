@@ -1,0 +1,396 @@
+/*
+Discord Extreme List - Discord's unbiased list.
+
+Copyright (C) 2020-2025 Carolina Mitchell, John Burke, Advaith Jagathesan
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+import { PathRoute } from "../../route.ts";
+import type { Request, Response } from "express";
+import * as discord from "../../../Util/Services/discord.ts";
+import { variables } from "../../../Util/Function/variables.ts";
+import * as permission from "../../../Util/Function/permissions.ts";
+import * as functions from "../../../Util/Function/main.ts";
+import * as botCache from "../../../Util/Services/botCaching.ts";
+import * as serverCache from "../../../Util/Services/serverCaching.ts";
+import * as templateCache from "../../../Util/Services/templateCaching.ts";
+import * as userCache from "../../../Util/Services/userCaching.ts";
+import settings from "../../../../settings.json" with { type: "json" };
+
+export class GetAccountData extends PathRoute<"get"> {
+    constructor() {
+        super("get", "/account/data", [variables, permission.auth]);
+    }
+
+    async handle(req: Request, res: Response) {
+        let dataRequestTimeout = false;
+
+        // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
+        if (
+            req.user.db.lastDataRequest &&
+            (Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24
+        )
+            dataRequestTimeout = true;
+
+        res.render("templates/users/data", {
+            title: res.__("common.nav.me.data"),
+            subtitle: res.__("common.nav.me.data.subtitle"),
+            req,
+            dataRequestTimeout
+        });
+    }
+}
+
+export class RequestAccountData extends PathRoute<"get"> {
+    constructor() {
+        super("get", "/account/data/request", [variables, permission.auth]);
+    }
+
+    async handle(req: Request, res: Response) {
+        // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
+        if (
+            req.user.db.lastDataRequest &&
+            (Date.now() - req.user.db.lastDataRequest) / (1000 * 60 * 60) < 24
+        )
+            return res.status(429).render("status", {
+                res,
+                title: res.__("common.error"),
+                status: 429,
+                subtitle: res.__("common.error.account.data.alreadyDownloaded"),
+                req,
+                type: "Error"
+            });
+
+        const userData: delUser = await global.db
+            .collection<delUser>("users")
+            .findOne({ _id: req.user.id });
+
+        const userBotsData: delBot[] = await global.db
+            .collection<delBot>("bots")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        const userServersData: delServer[] = await global.db
+            .collection<delServer>("servers")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        const userTemplateData: delTemplate[] = await global.db
+            .collection<delTemplate>("templates")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        // Filter userData to remove auth Object
+        delete userData.auth;
+
+        // Filter userBots.votes to not expose user ID's of persons who up/downvoted a bot an instead show number inside of the existing string[]
+        for (const bot of userBotsData) {
+            const positiveVotes = bot.votes.positive.length;
+            const negativeVotes = bot.votes.negative.length;
+
+            bot.votes.positive = [positiveVotes.toString()];
+            bot.votes.negative = [negativeVotes.toString()];
+
+            delete bot.token;
+        }
+
+        /*
+        Updates 'lastDataRequest' in the database so that any future attempted requests are checked against this.
+        If the next attempted request is less than 24 hours relative to this current time, it will be denied.
+    */
+        await global.db.collection("users").updateOne(
+            { _id: req.user.id },
+            {
+                $set: {
+                    lastDataRequest: Date.now()
+                }
+            }
+        );
+
+        userCache.updateUser(req.user.id);
+
+        res.setHeader(
+            "Content-disposition",
+            `attachment; filename="del_data_user_${userData._id}.json"`
+        );
+        res.send(
+            JSON.stringify(
+                {
+                    user: userData,
+                    bots: userBotsData,
+                    servers: userServersData,
+                    templates: userTemplateData
+                },
+                null,
+                4
+            )
+        );
+    }
+}
+
+export class DeleteOwnAccountData extends PathRoute<"post"> {
+    constructor() {
+        super("post", "/account/data/delete", [variables, permission.auth]);
+    }
+
+    async handle(req: Request, res: Response) {
+        // Checks if the user's username is equal to the username they provided in the deletion form
+        if (req.user.db.fullUsername !== req.body.typedUsername)
+            return res.status(400).render("status", {
+                res,
+                title: res.__("common.error"),
+                status: 400,
+                subtitle: res.__(
+                    "common.error.account.data.confirmationUsernameIncorrect"
+                ),
+                req,
+                type: "Error"
+            });
+
+        const userBotsData: delBot[] = await global.db
+            .collection<delBot>("bots")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        const userServersData: delServer[] = await global.db
+            .collection<delServer>("servers")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        const userTemplatesData: delTemplate[] = await global.db
+            .collection<delTemplate>("templates")
+            .find({ "owner.id": req.user.id })
+            .toArray();
+
+        // Loops through the user's bots, servers and templates and deletes them from the database.
+        for (const bot of userBotsData) {
+            await global.db.collection("bots").deleteOne({ _id: bot._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_BOT",
+                executor: req.user.id,
+                target: bot._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await botCache.deleteBot(bot._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
+                    bot._id
+                })\``
+            );
+        }
+
+        for (const server of userServersData) {
+            await global.db
+                .collection("servers")
+                .deleteOne({ _id: server._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_SERVER",
+                executor: req.user.id,
+                target: server._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await serverCache.deleteServer(server._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted server **${functions.escapeFormatting(server.name)}** \`(${
+                    server._id
+                })\``
+            );
+        }
+
+        for (const template of userTemplatesData) {
+            await global.db
+                .collection("templates")
+                .deleteOne({ _id: template._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_TEMPLATE",
+                executor: req.user.id,
+                target: template._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await templateCache.deleteTemplate(template._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted template **${functions.escapeFormatting(template.name)}** \`(${
+                    template._id
+                })\``
+            );
+        }
+
+        // Deletes the user's account from the database and cache.
+        await global.db.collection("users").deleteOne({ _id: req.user.id });
+
+        await userCache.deleteUser(req.user.id);
+
+        // Terminates the user's session.
+        req.logout((err) => {
+            if (err) {
+                // Returns error page with error log if session termination encounters an error.
+                return res.status(500).render("status", {
+                    res,
+                    title: res.__("common.error"),
+                    status: 500,
+                    subtitle: err,
+                    req,
+                    type: "Error"
+                });
+            }
+
+            // Returns success status page if session terminates successfully.
+            return res.status(200).render("status", {
+                res,
+                title: res.__("common.success"),
+                subtitle: res.__("common.success.account.delete"),
+                status: 200,
+                type: "Success",
+                req
+            });
+        });
+    }
+}
+
+export class DeleteUserAccountData extends PathRoute<"post"> {
+    constructor() {
+        super("post", "/account/data/:id/delete", [
+            variables,
+            permission.auth,
+            permission.admin
+        ]);
+    }
+
+    async handle(req: Request, res: Response) {
+        if (!req.params.id) return res.status(400);
+        let user = await userCache.getUser(req.params.id);
+        if (user && user.fullUsername !== req.body.typedUsername)
+            return res.status(400);
+        const userBotsData: delBot[] = await global.db
+            .collection<delBot>("bots")
+            .find({ "owner.id": req.params.id })
+            .toArray();
+        const userServersData: delServer[] = await global.db
+            .collection<delServer>("servers")
+            .find({ "owner.id": req.params.id })
+            .toArray();
+        const userTemplatesData: delTemplate[] = await global.db
+            .collection<delTemplate>("templates")
+            .find({ "owner.id": req.params.id })
+            .toArray();
+        console.log(userBotsData, userServersData, userTemplatesData);
+
+        // Loops through the user's bots, servers and templates and deletes them from the database.
+        for (const bot of userBotsData) {
+            await global.db.collection("bots").deleteOne({ _id: bot._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_BOT",
+                executor: req.user.id,
+                target: bot._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await botCache.deleteBot(bot._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
+                    bot._id
+                })\``
+            );
+        }
+
+        for (const server of userServersData) {
+            await global.db
+                .collection("servers")
+                .deleteOne({ _id: server._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_SERVER",
+                executor: req.user.id,
+                target: server._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await serverCache.deleteServer(server._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted server **${functions.escapeFormatting(server.name)}** \`(${
+                    server._id
+                })\``
+            );
+        }
+
+        for (const template of userTemplatesData) {
+            await global.db
+                .collection("templates")
+                .deleteOne({ _id: template._id });
+
+            await global.db.collection("audit").insertOne({
+                type: "DELETE_TEMPLATE",
+                executor: req.user.id,
+                target: template._id,
+                date: Date.now(),
+                reason: "Owner deleted their data and account."
+            });
+
+            await templateCache.deleteTemplate(template._id);
+
+            await discord.channels.logs.send(
+                `${settings.emoji.delete} **${functions.escapeFormatting(
+                    req.user.db.fullUsername
+                )}** \`(${
+                    req.user.id
+                })\` deleted template **${functions.escapeFormatting(template.name)}** \`(${
+                    template._id
+                })\``
+            );
+        }
+
+        // Deletes the user's account from the database and cache.
+        await global.db.collection("users").deleteOne({ _id: req.params.id });
+        await userCache.deleteUser(req.params.id);
+        return res.redirect("/");
+    }
+}

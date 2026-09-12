@@ -59,7 +59,7 @@ import indexRoute from "./Routes/index.ts";
 import searchRoute from "./Routes/search.ts";
 import docsRoute from "./Routes/docs.ts";
 import { initServerRoutes } from "./Routes/servers/index.ts";
-import usersRoute from "./Routes/users.ts";
+import { initUserRoutes } from "./Routes/users/index.ts";
 import { initTemplateRoutes } from "./Routes/templates/index.ts";
 import staffRoute from "./Routes/staff.ts";
 import setup from "./setup.ts";
@@ -342,7 +342,7 @@ new Promise<void>((resolve, reject) => {
         app.use("/:lang/bots", initBotRoutes());
         app.use("/:lang/servers", initServerRoutes());
         app.use("/:lang/templates", initTemplateRoutes());
-        app.use("/:lang/users", usersRoute);
+        app.use("/:lang/users", initUserRoutes());
         app.use("/:lang/staff", staffRoute);
 
         app.use(variables);

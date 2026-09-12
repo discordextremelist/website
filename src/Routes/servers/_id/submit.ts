@@ -110,6 +110,16 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
                 } satisfies RESTGetAPIInviteQuery)
             })
             .then(async (invite: APIInvite) => {
+                // A group-DM invite has no guild, so there's no server to list.
+                if (!invite.guild)
+                    return res.status(400).json({
+                        error: true,
+                        status: 400,
+                        errors: [
+                            res.__("common.error.listing.arr.invite.invalid")
+                        ]
+                    });
+
                 const serverExists: delServer | null = await global.db
                     .collection<delServer>("servers")
                     .findOne({ _id: invite.guild.id });

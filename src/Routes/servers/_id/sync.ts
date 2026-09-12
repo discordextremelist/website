@@ -50,6 +50,15 @@ export class SyncServer extends AuthedPathRoute<"get"> {
                 } satisfies RESTGetAPIInviteQuery)
             })
             .then(async (invite: APIInvite) => {
+                // A group-DM invite has no guild, so there's no server to sync.
+                if (!invite.guild)
+                    return renderStatus(
+                        req,
+                        res,
+                        400,
+                        res.__("common.error.listing.arr.invite.invalid")
+                    );
+
                 if (invite.guild.id !== server._id)
                     return res.status(400).render("status", {
                         res,

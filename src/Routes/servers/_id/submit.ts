@@ -19,14 +19,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
-import { Response as fetchRes } from "node-fetch";
 import type {
     APIInvite,
     DiscordAPIError,
     RESTGetAPIInviteQuery
 } from "discord.js";
 import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
-import fetch from "node-fetch";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
@@ -35,6 +33,7 @@ import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
 
 export class GetSubmitServer extends PathRoute<"get"> {
     constructor() {
@@ -87,95 +86,9 @@ export class PostSubmitServer extends PathRoute<"post"> {
             errors.push(res.__("common.error.server.arr.invite.dgg"));
         }
 
-        if (req.body.website && !functions.isURL(req.body.website)) {
+        for (const message of await serverListingErrors(req.body, res)) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.invalidURL.website"));
-        }
-
-        if (req.body.donationUrl && !functions.isURL(req.body.donationUrl)) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invalidURL.donation"));
-        }
-
-        if (req.body.previewChannel) {
-            let fetchChannel = true;
-
-            if (
-                Number.isNaN(req.body.previewChannel) ||
-                req.body.previewChannel.includes(" ")
-            ) {
-                error = true;
-                errors.push(
-                    res.__("common.error.server.arr.previewChannel.invalid")
-                );
-                fetchChannel = false;
-            }
-            if (
-                req.body.previewChannel &&
-                req.body.previewChannel.length > 32
-            ) {
-                error = true;
-                errors.push(
-                    res.__("common.error.server.arr.previewChannel.tooLong")
-                );
-                fetchChannel = false;
-            }
-
-            if (fetchChannel)
-                await discord.bot.rest
-                    .get(Routes.channel(req.body.previewChannel))
-                    .catch((e: DiscordAPIError) => {
-                        if ([400, 404].includes(Number(e.code))) {
-                            error = true;
-                            errors.push(
-                                res.__(
-                                    "common.error.server.arr.previewChannel.nonexistent"
-                                )
-                            );
-                            fetchChannel = false;
-                        }
-                    });
-
-            if (fetchChannel)
-                await fetch("https://stonks.widgetbot.io/api/graphql", {
-                    method: "post",
-                    body: JSON.stringify({
-                        query: `{channel(id:"${req.body.previewChannel}"){id}}`
-                    }),
-                    headers: { "Content-Type": "application/json" }
-                })
-                    .then(async (fetchRes: fetchRes) => {
-                        const data: any = await fetchRes.json();
-                        if (!data.channel?.id) {
-                            error = true;
-                            errors.push(
-                                res.__(
-                                    "common.error.listing.arr.widgetbot.channelNotFound"
-                                )
-                            );
-                        }
-                    })
-                    .catch(() => {
-                        error = true;
-                        errors.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.channelNotFound"
-                            )
-                        );
-                    });
-        }
-
-        if (!req.body.shortDescription) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescRequired"));
-        } else if (req.body.shortDescription.length > 200) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.shortDescTooLong"));
-        }
-
-        if (!req.body.longDescription) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.longDescRequired"));
+            errors.push(message);
         }
 
         let tags: string[] = tagHandler(req, false);

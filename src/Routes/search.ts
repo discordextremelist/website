@@ -63,8 +63,8 @@ router.post("/", variables, async (req: Request, res: Response) => {
     let isStaff = false;
     if (!!only && only.includes("users")) {
         if (req.user && req.user.id) {
-            const user: delUser = await userCache.getUser(req.user.id);
-            if (!user.rank.mod)
+            // The variables middleware has already loaded this record.
+            if (!req.user.db.rank.mod)
                 return res
                     .status(403)
                     .json({ error: true, status: 403, message: "Forbidden" });

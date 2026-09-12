@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
@@ -34,12 +34,12 @@ const ranks: (keyof delUser["rank"])[] = [
     "tester"
 ];
 
-export class GetPurge extends PathRoute<"get"> {
+export class GetPurge extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/purge", [variables, permission.auth, permission.admin]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         res.render("templates/staff/purge", {
             title: "User purge",
             subtitle: "User purge",
@@ -50,12 +50,12 @@ export class GetPurge extends PathRoute<"get"> {
     }
 }
 
-export class PostPurge extends PathRoute<"post"> {
+export class PostPurge extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/purge", [variables, permission.auth, permission.admin]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         let purgeCounter = 0;
         for (const user of (await userCache.getAllUsers()).slice(0, 5000)) {
             if (user.auth?.expires) {

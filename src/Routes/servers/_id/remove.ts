@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import { EmbedBuilder } from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
@@ -31,7 +31,7 @@ import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class GetRemoveServer extends PathRoute<"get"> {
+export class GetRemoveServer extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/remove", [
             variables,
@@ -41,7 +41,7 @@ export class GetRemoveServer extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const server: delServer | undefined = req.attached.server!;
 
         res.locals.premidPageInfo = res.__(
@@ -59,7 +59,7 @@ export class GetRemoveServer extends PathRoute<"get"> {
     }
 }
 
-export class PostRemoveServer extends PathRoute<"post"> {
+export class PostRemoveServer extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/remove", [
             variables,
@@ -69,7 +69,7 @@ export class PostRemoveServer extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const server: delServer | undefined = req.attached.server!;
 
         if (!req.body.reason && !req.user.db.rank.admin) {

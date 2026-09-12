@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { admin, auth } from "../../../Util/Middleware/permissions.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import e from "express";
@@ -7,12 +7,12 @@ import { updateBot } from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 
-export class BlacklistBot extends PathRoute<"get"> {
+export class BlacklistBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/blacklist", [variables, auth, admin]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         let bot = await global.db.collection<delBot>("bots").findOne({
             $or: [{ _id: req.params.id }, { vanityUrl: req.params.id }]
         });

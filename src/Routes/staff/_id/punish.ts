@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { Nullable } from "../../../Util/Function/types.ts";
@@ -26,7 +26,7 @@ import { checkRoleHierarchyStaff } from "../../../Util/Function/main.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
 
-export class GetWarn extends PathRoute<"get"> {
+export class GetWarn extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/staff-manager/punish/warn/:id", [
             variables,
@@ -35,7 +35,7 @@ export class GetWarn extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
 
         if (
@@ -66,7 +66,7 @@ export class GetWarn extends PathRoute<"get"> {
     }
 }
 
-export class PostWarn extends PathRoute<"post"> {
+export class PostWarn extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/staff-manager/punish/warn/:id", [
             variables,
@@ -75,7 +75,7 @@ export class PostWarn extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
 
         if (
@@ -124,7 +124,7 @@ export class PostWarn extends PathRoute<"post"> {
     }
 }
 
-export class GetStrike extends PathRoute<"get"> {
+export class GetStrike extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/staff-manager/punish/strike/:id", [
             variables,
@@ -133,7 +133,7 @@ export class GetStrike extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
 
         if (
@@ -165,7 +165,7 @@ export class GetStrike extends PathRoute<"get"> {
     }
 }
 
-export class PostStrike extends PathRoute<"post"> {
+export class PostStrike extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/staff-manager/punish/strike/:id", [
             variables,
@@ -174,7 +174,7 @@ export class PostStrike extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
 
         if (

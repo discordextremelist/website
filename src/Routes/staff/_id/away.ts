@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { Nullable } from "../../../Util/Function/types.ts";
@@ -26,7 +26,7 @@ import { checkRoleHierarchyStaff } from "../../../Util/Function/main.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
 
-export class GetAway extends PathRoute<"get"> {
+export class GetAway extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/staff-manager/away/:id", [
             variables,
@@ -35,7 +35,7 @@ export class GetAway extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
 
         if (
@@ -61,7 +61,7 @@ export class GetAway extends PathRoute<"get"> {
     }
 }
 
-export class PostAway extends PathRoute<"post"> {
+export class PostAway extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/staff-manager/away/:id", [
             variables,
@@ -70,7 +70,7 @@ export class PostAway extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const user: delUser | undefined = req.attached.user!;
 
         if (
@@ -125,7 +125,7 @@ export class PostAway extends PathRoute<"post"> {
     }
 }
 
-export class ResetAway extends PathRoute<"get"> {
+export class ResetAway extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/staff-manager/away/:id/reset", [
             variables,
@@ -134,7 +134,7 @@ export class ResetAway extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const user: delUser | undefined = req.attached.user!;
 
         if (

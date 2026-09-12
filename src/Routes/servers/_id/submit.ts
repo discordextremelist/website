@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import type {
     APIInvite,
     DiscordAPIError,
@@ -35,12 +35,12 @@ import { tagHandler, reviewRequired } from "../index.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
 
-export class GetSubmitServer extends PathRoute<"get"> {
+export class GetSubmitServer extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/submit", [variables, permission.auth]);
     }
 
-    handle(req: Request, res: Response) {
+    handle(req: AuthedRequest, res: Response) {
         res.locals.premidPageInfo = res.__("premid.servers.submit");
 
         res.render("templates/servers/submit", {
@@ -51,12 +51,12 @@ export class GetSubmitServer extends PathRoute<"get"> {
     }
 }
 
-export class PostSubmitServer extends PathRoute<"post"> {
+export class PostSubmitServer extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/submit", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         res.locals.premidPageInfo = res.__("premid.servers.submit");
 
         let error = false;

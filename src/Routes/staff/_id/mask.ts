@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import type { APIUser, Snowflake } from "discord.js";
 import { Routes } from "discord.js";
 import * as permission from "../../../Util/Middleware/permissions.ts";
@@ -27,12 +27,12 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import * as tokenManager from "../../../Util/Services/adminTokenManager.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 
-export class MaskUser extends PathRoute<"get"> {
+export class MaskUser extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/mask/:id", [variables, permission.admin]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         if (req.params.id === req.user.id) return res.redirect("/staff");
 
         if (global.env_prod) {

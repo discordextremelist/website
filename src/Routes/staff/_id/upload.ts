@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
@@ -26,7 +26,7 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as tokenManager from "../../../Util/Services/adminTokenManager.ts";
 
-export class UploadBots extends PathRoute<"get"> {
+export class UploadBots extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/upload_bots", [
             variables,
@@ -35,7 +35,7 @@ export class UploadBots extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         if (!req.query.token) return res.json({});
 
         const tokenCheck = await tokenManager.verifyToken(
@@ -51,7 +51,7 @@ export class UploadBots extends PathRoute<"get"> {
     }
 }
 
-export class UploadServers extends PathRoute<"get"> {
+export class UploadServers extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/upload_servers", [
             variables,
@@ -60,7 +60,7 @@ export class UploadServers extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         if (!req.query.token) return res.json({});
 
         const tokenCheck = await tokenManager.verifyToken(
@@ -76,7 +76,7 @@ export class UploadServers extends PathRoute<"get"> {
     }
 }
 
-export class UploadTemplates extends PathRoute<"get"> {
+export class UploadTemplates extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/upload_templates", [
             variables,
@@ -85,7 +85,7 @@ export class UploadTemplates extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         if (!req.query.token) return res.json({});
 
         const tokenCheck = await tokenManager.verifyToken(

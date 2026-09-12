@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
@@ -28,12 +28,12 @@ import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class DeleteServer extends PathRoute<"get"> {
+export class DeleteServer extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/delete", [variables, permission.auth, serverExists]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const server: delServer | undefined = req.attached.server!;
 
         if (server.owner.id !== req.user.id)

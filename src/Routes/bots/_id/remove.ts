@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { auth, mod } from "../../../Util/Middleware/permissions.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
@@ -13,12 +13,12 @@ import { botType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class GetRemoveBot extends PathRoute<"get"> {
+export class GetRemoveBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/remove", [variables, auth, botExists, mod]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot: delBot = req.attached.bot!;
         if (bot.status.approved === false)
             return renderStatus(
@@ -40,12 +40,12 @@ export class GetRemoveBot extends PathRoute<"get"> {
     }
 }
 
-export class PostRemoveBot extends PathRoute<"post"> {
+export class PostRemoveBot extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/remove", [variables, auth, botExists, mod]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (bot.status.approved === false)
             return renderStatus(

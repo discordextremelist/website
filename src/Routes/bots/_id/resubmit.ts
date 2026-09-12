@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
@@ -33,7 +33,7 @@ import {
 import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class GetResubmitBot extends PathRoute<"get"> {
+export class GetResubmitBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/resubmit", [
             variables,
@@ -43,7 +43,7 @@ export class GetResubmitBot extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot;
 
         if (bot.status.archived === false)
@@ -79,7 +79,7 @@ export class GetResubmitBot extends PathRoute<"get"> {
     }
 }
 
-export class PostResubmitBot extends PathRoute<"post"> {
+export class PostResubmitBot extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/resubmit", [
             variables,
@@ -89,7 +89,7 @@ export class PostResubmitBot extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         let error = false;
         let errors: string[] = [];
         const bot = req.attached.bot!;

@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
@@ -26,12 +26,12 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 
-export class StaffHome extends PathRoute<"get"> {
+export class StaffHome extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/", [variables, permission.mod]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const bots = await botCache.getAllBots();
         const users = await userCache.getAllUsers();
         const servers = await serverCache.getAllServers();

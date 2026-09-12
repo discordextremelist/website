@@ -17,15 +17,15 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
 
-export class GetUserRank extends PathRoute<"get"> {
+export class GetUserRank extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/rank", [
             variables,
@@ -35,7 +35,7 @@ export class GetUserRank extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const targetUser: delUser = req.attached.user!;
 
         res.locals.premidPageInfo = res.__(
@@ -68,7 +68,7 @@ export class GetUserRank extends PathRoute<"get"> {
     }
 }
 
-export class PostUserRank extends PathRoute<"post"> {
+export class PostUserRank extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/rank", [
             variables,
@@ -78,7 +78,7 @@ export class PostUserRank extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const targetUser: delUser = req.attached.user!;
 
         if (

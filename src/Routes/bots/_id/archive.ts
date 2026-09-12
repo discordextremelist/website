@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
@@ -9,12 +9,12 @@ import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class ArchiveBot extends PathRoute<"get"> {
+export class ArchiveBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/archive", [variables, botExists, permission.auth]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (!req.user || req.user.id !== bot.owner.id)
             return renderStatus(
@@ -59,12 +59,12 @@ export class ArchiveBot extends PathRoute<"get"> {
     }
 }
 
-export class DeleteBot extends PathRoute<"get"> {
+export class DeleteBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/delete", [variables, botExists, permission.auth]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (!req.user || req.user.id !== bot.owner.id)
             return renderStatus(

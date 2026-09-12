@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as checks from "../../../Util/Middleware/checks.ts";
@@ -9,7 +9,7 @@ import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 
-export class SetVanity extends PathRoute<"post"> {
+export class SetVanity extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/setvanity", [
             variables,
@@ -18,7 +18,7 @@ export class SetVanity extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot;
 
         if (!ownsOrAssistant(req, bot))

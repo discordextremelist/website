@@ -17,19 +17,19 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 
-export class StaffManager extends PathRoute<"get"> {
+export class StaffManager extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/staff-manager", [variables, permission.assistant]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const users: delUser[] = await global.db
             .collection<delUser>("users")
             .find({

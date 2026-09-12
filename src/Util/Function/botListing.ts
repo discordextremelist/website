@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { isDiscordAPIError, isURL } from "./main.ts";
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import type {
     APIApplicationCommand,
     RESTPostOAuth2AccessTokenResult,
@@ -95,7 +95,7 @@ export function invalidLinkErrors(
  * refresh errors reach onError late.
  */
 export async function fetchSlashCommands(
-    req: Request,
+    req: AuthedRequest,
     applicationId: string,
     initial: APIApplicationCommand[],
     onError: (message: string) => void

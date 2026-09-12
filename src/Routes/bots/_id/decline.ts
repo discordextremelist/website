@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
@@ -13,7 +13,7 @@ import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class GetDeclineBot extends PathRoute<"get"> {
+export class GetDeclineBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/decline", [
             variables,
@@ -23,7 +23,7 @@ export class GetDeclineBot extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         res.locals.premidPageInfo = res.__("premid.bots.decline", bot.name);
 
@@ -50,7 +50,7 @@ export class GetDeclineBot extends PathRoute<"get"> {
     }
 }
 
-export class PostDeclineBot extends PathRoute<"post"> {
+export class PostDeclineBot extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/decline", [
             variables,
@@ -60,7 +60,7 @@ export class PostDeclineBot extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
         if (bot.status.approved === true)

@@ -38,3 +38,17 @@ export abstract class PathRoute<T extends RouteMethod> {
         );
     }
 }
+
+/**
+ * A route whose middleware chain logs the user in first (`auth`, or a rank
+ * check like `mod`), so `req.user` is always set by the time handle() runs.
+ */
+export abstract class AuthedPathRoute<
+    T extends RouteMethod
+> extends PathRoute<T> {
+    abstract override handle(
+        req: AuthedRequest,
+        res: Response,
+        next: NextFunction
+    ): unknown | Promise<unknown>;
+}

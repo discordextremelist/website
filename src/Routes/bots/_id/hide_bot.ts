@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
@@ -13,12 +13,12 @@ import { botType } from "../index.js";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class HideBot extends PathRoute<"get"> {
+export class HideBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/hide", [variables, permission.auth]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         let bot = (await global.db
             .collection<delBot>("bots")
             .findOne({ _id: req.params.id })) as delBot;
@@ -87,12 +87,12 @@ export class HideBot extends PathRoute<"get"> {
     }
 }
 
-export class UnhideBot extends PathRoute<"get"> {
+export class UnhideBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/unhide", [variables, permission.auth]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         let bot = (await global.db
             .collection<delBot>("bots")
             .findOne({ _id: req.params.id })) as delBot;
@@ -153,7 +153,7 @@ export class UnhideBot extends PathRoute<"get"> {
     }
 }
 
-export class GetModHideBot extends PathRoute<"get"> {
+export class GetModHideBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/modhide", [
             variables,
@@ -163,7 +163,7 @@ export class GetModHideBot extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (bot.status.approved === false)
             return renderStatus(
@@ -185,7 +185,7 @@ export class GetModHideBot extends PathRoute<"get"> {
     }
 }
 
-export class PostModHideBot extends PathRoute<"post"> {
+export class PostModHideBot extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/modhide", [
             variables,
@@ -195,7 +195,7 @@ export class PostModHideBot extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (bot.status.approved === false)
             return renderStatus(
@@ -287,7 +287,7 @@ export class PostModHideBot extends PathRoute<"post"> {
     }
 }
 
-export class GetModUnhideBot extends PathRoute<"get"> {
+export class GetModUnhideBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/modunhide", [
             variables,
@@ -297,7 +297,7 @@ export class GetModUnhideBot extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (!bot.status.modHidden)
             return renderStatus(

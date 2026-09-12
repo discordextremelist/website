@@ -28,6 +28,9 @@ declare global {
     var libs: library[];
     var db: Db;
     var env_prod: boolean;
+
+    /** A request that has passed `auth` (or a rank check), so `user` is set */
+    type AuthedRequest = express.Request & { user: authUser };
 }
 
 declare module "sanitize-html" {

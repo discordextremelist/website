@@ -17,18 +17,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute, PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 
-export class GetSnake extends PathRoute<"get"> {
+export class GetSnake extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/game/snake", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         res.locals.premidPageInfo = res.__("premid.snake");
 
         res.render("templates/users/snake", {
@@ -61,12 +61,12 @@ export class GetSnakeLeaderboard extends PathRoute<"get"> {
     }
 }
 
-export class GetProfileSnakes extends PathRoute<"get"> {
+export class GetProfileSnakes extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/profile/game/snakes", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const user: delUser = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.user.id });
@@ -79,12 +79,12 @@ export class GetProfileSnakes extends PathRoute<"get"> {
     }
 }
 
-export class PostProfileSnakes extends PathRoute<"post"> {
+export class PostProfileSnakes extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/profile/game/snakes", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         if (req.body.score <= req.user.db.game.snakes.maxScore)
             return res.status(202).json({
                 error: false,

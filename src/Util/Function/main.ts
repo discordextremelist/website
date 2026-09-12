@@ -449,7 +449,7 @@ export function reasonType(bodyType: string, max: number): number {
  * counts as allowed, and the checks short-circuit in the same order.
  */
 export function ownsOrAssistant(
-    req: Request,
+    req: AuthedRequest,
     listing: { owner: { id: string }; editors?: string[] },
     { editors = false }: { editors?: boolean } = {}
 ): boolean {
@@ -472,7 +472,7 @@ export function ownsOrAssistant(
  * usually "\n<link>". Not for the moderator-only alerts channel.
  */
 export function websiteLogMessage(
-    req: Request,
+    req: AuthedRequest,
     emoji: string,
     action: string,
     name: string,

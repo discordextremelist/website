@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 
 import settings from "../../../../settings.json" with { type: "json" };
 
@@ -36,12 +36,12 @@ import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
 
-export class GetEditTemplate extends PathRoute<"get"> {
+export class GetEditTemplate extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/edit", [variables, permission.auth, templateExists]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const template: delTemplate | undefined = req.attached.template!;
 
         if (!ownsOrAssistant(req, template))
@@ -69,12 +69,12 @@ export class GetEditTemplate extends PathRoute<"get"> {
     }
 }
 
-export class PostEditTemplate extends PathRoute<"post"> {
+export class PostEditTemplate extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/edit", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         let error = false;
         let errors = [];
 

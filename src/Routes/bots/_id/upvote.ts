@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
@@ -6,12 +6,12 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 
-export class GetUpvote extends PathRoute<"get"> {
+export class GetUpvote extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/upvote", [variables, permission.auth, botExists]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         let upVotes = [...bot.votes.positive];
         let downVotes = [...bot.votes.negative];
@@ -102,12 +102,12 @@ export class GetUpvote extends PathRoute<"get"> {
     }
 }
 
-export class GetDownvote extends PathRoute<"get"> {
+export class GetDownvote extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/downvote", [variables, permission.auth, botExists]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         let bot = req.attached.bot!;
         if (!bot) {
             bot = await global.db

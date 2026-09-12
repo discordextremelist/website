@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import * as discord from "../../../Util/Services/discord.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
@@ -30,12 +30,12 @@ import settings from "../../../../settings.json" with { type: "json" };
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class GetAccountData extends PathRoute<"get"> {
+export class GetAccountData extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/account/data", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         let dataRequestTimeout = false;
 
         // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
@@ -54,12 +54,12 @@ export class GetAccountData extends PathRoute<"get"> {
     }
 }
 
-export class RequestAccountData extends PathRoute<"get"> {
+export class RequestAccountData extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/account/data/request", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         // Checks if req.user.db.lastDataRequest is not null; if it is not, checks whether lastDataRequest occurred less than 24 hours ago. If so, returns true.
         if (
             req.user.db.lastDataRequest &&
@@ -139,12 +139,12 @@ export class RequestAccountData extends PathRoute<"get"> {
     }
 }
 
-export class DeleteOwnAccountData extends PathRoute<"post"> {
+export class DeleteOwnAccountData extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/account/data/delete", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         // Checks if the user's username is equal to the username they provided in the deletion form
         if (req.user.db.fullUsername !== req.body.typedUsername)
             return renderStatus(
@@ -273,7 +273,7 @@ export class DeleteOwnAccountData extends PathRoute<"post"> {
     }
 }
 
-export class DeleteUserAccountData extends PathRoute<"post"> {
+export class DeleteUserAccountData extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/account/data/:id/delete", [
             variables,
@@ -282,7 +282,7 @@ export class DeleteUserAccountData extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         if (!req.params.id) return res.status(400);
         let user = await userCache.getUser(req.params.id);
         if (user && user.fullUsername !== req.body.typedUsername)

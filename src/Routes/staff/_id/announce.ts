@@ -17,19 +17,19 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import * as announcementCache from "../../../Util/Services/announcementCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 
-export class GetAnnounce extends PathRoute<"get"> {
+export class GetAnnounce extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/announce", [variables, permission.assistant]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         res.locals.premidPageInfo = res.__("premid.staff.announcer");
 
         res.render("templates/staff/announce", {
@@ -40,12 +40,12 @@ export class GetAnnounce extends PathRoute<"get"> {
     }
 }
 
-export class PostAnnounce extends PathRoute<"post"> {
+export class PostAnnounce extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/announce", [variables, permission.assistant]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         let foreground: string;
         let colour: string = req.body.colour;
 
@@ -77,12 +77,12 @@ export class PostAnnounce extends PathRoute<"post"> {
     }
 }
 
-export class ResetAnnounce extends PathRoute<"get"> {
+export class ResetAnnounce extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/announce/reset", [variables, permission.assistant]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         await announcementCache.updateAnnouncement(
             {
                 active: false,

@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
@@ -27,7 +27,7 @@ import { checkRoleHierarchyStaff } from "../../../Util/Function/main.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
 
-export class GetStanding extends PathRoute<"get"> {
+export class GetStanding extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/staff-manager/standing/:id", [
             variables,
@@ -36,7 +36,7 @@ export class GetStanding extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
 
         if (
@@ -90,7 +90,7 @@ export class GetStanding extends PathRoute<"get"> {
     }
 }
 
-export class PostStanding extends PathRoute<"post"> {
+export class PostStanding extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/staff-manager/standing/:id", [
             variables,
@@ -99,7 +99,7 @@ export class PostStanding extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
 
         if (

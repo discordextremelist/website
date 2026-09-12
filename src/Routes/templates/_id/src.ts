@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
@@ -28,7 +28,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import * as tokenManager from "../../../Util/Services/adminTokenManager.ts";
 import { EmbedBuilder } from "discord.js";
 
-export class TemplateSrc extends PathRoute<"get"> {
+export class TemplateSrc extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/src", [
             variables,
@@ -37,7 +37,7 @@ export class TemplateSrc extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         if (req.params.id === "@me") {
             if (!req.user) return res.redirect("/auth/login");
             req.params.id = req.user.id;
@@ -59,12 +59,12 @@ export class TemplateSrc extends PathRoute<"get"> {
     }
 }
 
-export class ReportTemplate extends PathRoute<"post"> {
+export class ReportTemplate extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/report", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const template = await templateCache.getTemplate(req.params.id);
 
         if (!template)

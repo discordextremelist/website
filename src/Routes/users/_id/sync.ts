@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import type { APIUser, DiscordAPIError } from "discord.js";
 import { Routes } from "discord.js";
 import * as discord from "../../../Util/Services/discord.ts";
@@ -27,12 +27,12 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 
-export class SyncUser extends PathRoute<"get"> {
+export class SyncUser extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/sync", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         if (req.params.id === "@me") {
             req.params.id = req.user.id;
         }

@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
@@ -36,12 +36,12 @@ import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
 import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class GetEdit extends PathRoute<"get"> {
+export class GetEdit extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/edit", [variables, permission.auth, botExists]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot;
 
         res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
@@ -71,12 +71,12 @@ export class GetEdit extends PathRoute<"get"> {
     }
 }
 
-export class PostEdit extends PathRoute<"post"> {
+export class PostEdit extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/edit", [variables, botExists, permission.auth]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         let error = false;
         let errors: string[] = [];
         const bot = req.attached.bot!;

@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
@@ -13,7 +13,7 @@ import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class ApproveBot extends PathRoute<"get"> {
+export class ApproveBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/approve", [
             variables,
@@ -23,7 +23,7 @@ export class ApproveBot extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
         if (bot.status.approved === true)
@@ -138,7 +138,7 @@ export class ApproveBot extends PathRoute<"get"> {
     }
 }
 
-export class GivePremiumBot extends PathRoute<"get"> {
+export class GivePremiumBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/give-premium", [
             variables,
@@ -148,7 +148,7 @@ export class GivePremiumBot extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
         if (bot.status.premium === true)
@@ -206,7 +206,7 @@ export class GivePremiumBot extends PathRoute<"get"> {
     }
 }
 
-export class TakePremiumBot extends PathRoute<"get"> {
+export class TakePremiumBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/take-premium", [
             variables,
@@ -216,7 +216,7 @@ export class TakePremiumBot extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
         if (bot.status.premium === false)
@@ -250,7 +250,7 @@ export class TakePremiumBot extends PathRoute<"get"> {
     }
 }
 
-export class GetUnapproveBot extends PathRoute<"get"> {
+export class GetUnapproveBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/unapprove", [
             variables,
@@ -260,7 +260,7 @@ export class GetUnapproveBot extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
         if (!bot.status.approved)
@@ -283,7 +283,7 @@ export class GetUnapproveBot extends PathRoute<"get"> {
     }
 }
 
-export class PostUnapproveBot extends PathRoute<"post"> {
+export class PostUnapproveBot extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/unapprove", [
             variables,
@@ -293,7 +293,7 @@ export class PostUnapproveBot extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
         if (!bot.status.approved)

@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import {
     type APIApplication,
     type APIApplicationCommand,
@@ -20,13 +20,13 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { auth } from "../../../Util/Middleware/permissions.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 
-export class SyncBot extends PathRoute<"get"> {
+export class SyncBot extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/sync", [variables, auth, botExists]);
     }
 
     async handle(
-        req: e.Request,
+        req: AuthedRequest,
         res: e.Response,
         next: e.NextFunction
     ): Promise<void> {

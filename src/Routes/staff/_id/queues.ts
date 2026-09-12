@@ -17,20 +17,20 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 
-export class BotQueue extends PathRoute<"get"> {
+export class BotQueue extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/bot_queue", [variables, permission.mod]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const bots = await global.db
             .collection<delQueueBot>("bots")
             .aggregate([
@@ -90,12 +90,12 @@ export class BotQueue extends PathRoute<"get"> {
     }
 }
 
-export class ServerQueue extends PathRoute<"get"> {
+export class ServerQueue extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/server_queue", [variables, permission.mod]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const servers: delServer[] = await global.db
             .collection<delServer>("servers")
             .find()
@@ -116,12 +116,12 @@ export class ServerQueue extends PathRoute<"get"> {
     }
 }
 
-export class InviteQueue extends PathRoute<"get"> {
+export class InviteQueue extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/invite_queue", [variables, permission.mod]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const bots: delBot[] = (
             await global.db
                 .collection<delBot>("bots")

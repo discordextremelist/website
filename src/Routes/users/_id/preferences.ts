@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
@@ -26,12 +26,12 @@ import * as userCache from "../../../Util/Services/userCaching.ts";
 import { themes } from "../../../../@types/enums.ts";
 import entities from "html-entities";
 
-export class GetPreferences extends PathRoute<"get"> {
+export class GetPreferences extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/account/preferences", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         res.locals.premidPageInfo = res.__("premid.preferences");
 
         res.render("templates/users/accountPreferences", {
@@ -45,12 +45,12 @@ export class GetPreferences extends PathRoute<"get"> {
     }
 }
 
-export class PostPreferences extends PathRoute<"post"> {
+export class PostPreferences extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/account/preferences", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         let gamePreferences: boolean,
             experiments: boolean,
             theme: number,
@@ -132,7 +132,7 @@ export class PostPreferences extends PathRoute<"post"> {
     }
 }
 
-export class ResetPreferences extends PathRoute<"get"> {
+export class ResetPreferences extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/account/preferences/reset", [
             variables,
@@ -140,7 +140,7 @@ export class ResetPreferences extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         await global.db.collection("users").updateOne(
             { _id: req.user.id },
             {

@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import type {
     APIInvite,
     DiscordAPIError,
@@ -32,12 +32,12 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 
-export class SyncServer extends PathRoute<"get"> {
+export class SyncServer extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/sync", [variables, permission.auth, serverExists]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const server: delServer | undefined = req.attached.server!;
 
         discord

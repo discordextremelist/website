@@ -17,8 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PathRoute } from "../../route.ts";
-import type { Request, Response } from "express";
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
 import type {
     APIInvite,
     DiscordAPIError,
@@ -41,12 +41,12 @@ import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
 
-export class GetEditServer extends PathRoute<"get"> {
+export class GetEditServer extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/edit", [variables, permission.auth, serverExists]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         const server: delServer | undefined = req.attached.server!;
 
         if (!ownsOrAssistant(req, server))
@@ -71,12 +71,12 @@ export class GetEditServer extends PathRoute<"get"> {
     }
 }
 
-export class PostEditServer extends PathRoute<"post"> {
+export class PostEditServer extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/edit", [variables, permission.auth]);
     }
 
-    async handle(req: Request, res: Response) {
+    async handle(req: AuthedRequest, res: Response) {
         let error = false;
         let errors: string[] = [];
 

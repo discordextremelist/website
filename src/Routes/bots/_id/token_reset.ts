@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as checks from "../../../Util/Middleware/checks.ts";
@@ -8,7 +8,7 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 
-export class TokenReset extends PathRoute<"get"> {
+export class TokenReset extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/tokenreset", [
             variables,
@@ -17,7 +17,7 @@ export class TokenReset extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot;
 
         if (!ownsOrAssistant(req, bot))

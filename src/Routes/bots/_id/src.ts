@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { admin, auth } from "../../../Util/Middleware/permissions.ts";
 import e from "express";
@@ -10,12 +10,12 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 
-export class SrcRoute extends PathRoute<"get"> {
+export class SrcRoute extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/src", [variables, auth, admin]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         if (req.params.id === "@me") {
             if (!req.user) return res.redirect("/auth/login");
             req.params.id = req.user.id;
@@ -34,12 +34,12 @@ export class SrcRoute extends PathRoute<"get"> {
     }
 }
 
-export class ReportRoute extends PathRoute<"post"> {
+export class ReportRoute extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/report", [variables, auth, botExists]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (bot.owner.id === req.user.id)
             return res.status(403).json({

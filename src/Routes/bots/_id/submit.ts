@@ -1,4 +1,4 @@
-import { PathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../../route.ts";
 import e from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
@@ -32,7 +32,7 @@ import {
 } from "../../../Util/Function/botListing.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
-export class GetSubmit extends PathRoute<"get"> {
+export class GetSubmit extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/submit", [
             variables,
@@ -41,7 +41,7 @@ export class GetSubmit extends PathRoute<"get"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         // in this specific instance it makes more sense to make a mongo query than filtering through the entire redis cache
         const showResubmitNote = await global.db
             .collection<delBot>("bots")
@@ -68,7 +68,7 @@ export class GetSubmit extends PathRoute<"get"> {
     }
 }
 
-export class PostSubmit extends PathRoute<"post"> {
+export class PostSubmit extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/submit", [
             variables,
@@ -77,7 +77,7 @@ export class PostSubmit extends PathRoute<"post"> {
         ]);
     }
 
-    async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         res.locals.premidPageInfo = res.__("premid.bots.submit");
 
         let error = false;

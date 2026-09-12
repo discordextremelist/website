@@ -27,7 +27,7 @@ jobs:
                   GH_TOKEN: ${{ secrets.DELLYBOT_SECRET }}
                   GITHUB_TOKEN: ""
                   ORG: discordextremelist
-                  PROJECT_NUMBER: 1
+                  PROJECT_NUMBER: 4
                   STATUS: ${{ steps.map.outputs.status }}
                   CONTENT_ID: ${{ github.event.issue.node_id }}
               run: |

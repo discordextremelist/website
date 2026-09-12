@@ -58,13 +58,8 @@ function sortAll() {
             const assistant = member.roles.cache.has(settings.roles.assistant);
             const mod = member.roles.cache.has(settings.roles.mod);
             member.order = admin ? 3 : assistant ? 2 : mod ? 1 : 0;
-            member.rank = admin
-                ? "admin"
-                : assistant
-                  ? "assistant"
-                  : mod
-                    ? "mod"
-                    : null;
+            // One of the three is set, per the if above.
+            member.rank = admin ? "admin" : assistant ? "assistant" : "mod";
 
             const user = discord.bot.users.cache.get(member.id);
             member.avatar = user.avatar;
@@ -101,12 +96,13 @@ function sortAll() {
             contributors.push(member);
         }
     }
+    // Every member in these lists had order set above.
     return {
-        staff: staff.sort(nickSorter).sort((a, b) => b.order - a.order),
-        donators: donators.sort(nickSorter).sort((a, b) => b.order - a.order),
+        staff: staff.sort(nickSorter).sort((a, b) => b.order! - a.order!),
+        donators: donators.sort(nickSorter).sort((a, b) => b.order! - a.order!),
         contributors: contributors
             .sort(nickSorter)
-            .sort((a, b) => a.order - b.order)
+            .sort((a, b) => a.order! - b.order!)
     };
 }
 
@@ -153,7 +149,7 @@ const tagMap: Record<BotTags, BotQueryTagFilterParams> = {
                 a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">',
                 ea: "</a>"
             }),
-        filter: (bot, req) => bot.scopes?.slashCommands
+        filter: (bot, req) => bot.scopes?.slashCommands ?? false
     },
     fun: {
         icon: "fa-grin-squint-tears has-text-link",

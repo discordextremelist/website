@@ -85,6 +85,10 @@ router.get(
         })(req, res, next),
 
     async (req, res, next) => {
+        // passport.authenticate above only calls this handler after a
+        // successful login, so this redirect shouldn't run.
+        if (!req.user) return res.redirect("/auth/login");
+
         const user: delUser | null = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.user.id });

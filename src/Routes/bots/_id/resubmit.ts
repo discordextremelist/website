@@ -31,6 +31,7 @@ import {
     widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
 import { ownsOrAssistant } from "../../../Util/Function/main.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetResubmitBot extends PathRoute<"get"> {
     constructor() {
@@ -423,15 +424,14 @@ export class PostResubmitBot extends PathRoute<"post"> {
 
                 await discord.channels.logs
                     .send(
-                        `${settings.emoji.resubmit} **${functions.escapeFormatting(
-                            req.user.db.fullUsername
-                        )}** \`(${
-                            req.user.id
-                        })\` resubmitted bot **${functions.escapeFormatting(
-                            app.name
-                        )}** \`(${app.id})\`\n<${settings.website.url}/bots/${
-                            app.id
-                        }>`
+                        websiteLogMessage(
+                            req,
+                            settings.emoji.resubmit,
+                            "resubmitted bot",
+                            app.name,
+                            app.id,
+                            `\n<${settings.website.url}/bots/${app.id}>`
+                        )
                     )
                     .catch((e) => {
                         console.error(e);

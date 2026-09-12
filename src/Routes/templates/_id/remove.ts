@@ -29,6 +29,7 @@ import { EmbedBuilder } from "discord.js";
 import { templateType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetRemoveTemplate extends PathRoute<"get"> {
     constructor() {
@@ -102,13 +103,13 @@ export class PostRemoveTemplate extends PathRoute<"post"> {
         embed.setDescription(req.body.reason);
 
         await discord.channels.logs.send({
-            content: `${settings.emoji.delete} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` removed template **${functions.escapeFormatting(
-                template.name
-            )}** \`(${template._id})\``,
+            content: websiteLogMessage(
+                req,
+                settings.emoji.delete,
+                "removed template",
+                template.name,
+                template._id
+            ),
             embeds: [embed]
         });
 

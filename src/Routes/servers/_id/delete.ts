@@ -22,11 +22,11 @@ import type { Request, Response } from "express";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class DeleteServer extends PathRoute<"get"> {
     constructor() {
@@ -45,13 +45,13 @@ export class DeleteServer extends PathRoute<"get"> {
             );
 
         await discord.channels.logs.send(
-            `${settings.emoji.delete} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` deleted server **${functions.escapeFormatting(
-                server.name
-            )}** \`(${server._id})\``
+            websiteLogMessage(
+                req,
+                settings.emoji.delete,
+                "deleted server",
+                server.name,
+                server._id
+            )
         );
 
         await global.db.collection("servers").deleteOne({ _id: req.params.id });

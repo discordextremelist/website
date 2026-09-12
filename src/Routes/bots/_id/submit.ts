@@ -30,6 +30,7 @@ import {
     privacyPolicyErrors,
     widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetSubmit extends PathRoute<"get"> {
     constructor() {
@@ -363,15 +364,14 @@ export class PostSubmit extends PathRoute<"post"> {
                 } satisfies delBot);
 
                 await discord.channels.logs.send(
-                    `${settings.emoji.add} **${functions.escapeFormatting(
-                        req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
-                    })\` added bot **${functions.escapeFormatting(
-                        app.name
-                    )}** \`(${req.body.id})\`\n<${settings.website.url}/bots/${
-                        req.body.id
-                    }>`
+                    websiteLogMessage(
+                        req,
+                        settings.emoji.add,
+                        "added bot",
+                        app.name,
+                        req.body.id,
+                        `\n<${settings.website.url}/bots/${req.body.id}>`
+                    )
                 );
 
                 await global.db.collection("audit").insertOne({

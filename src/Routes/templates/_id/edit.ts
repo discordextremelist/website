@@ -33,6 +33,7 @@ import { renderStatus } from "../../../Util/Function/main.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
 import { ownsOrAssistant } from "../../../Util/Function/main.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetEditTemplate extends PathRoute<"get"> {
     constructor() {
@@ -215,15 +216,14 @@ export class PostEditTemplate extends PathRoute<"post"> {
                 );
 
                 await discord.channels.logs.send(
-                    `${settings.emoji.edit} **${functions.escapeFormatting(
-                        req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
-                    })\` edited template **${functions.escapeFormatting(
-                        template.name
-                    )}** \`(${template.code})\`\n<${
-                        settings.website.url
-                    }/templates/${template.code}>`
+                    websiteLogMessage(
+                        req,
+                        settings.emoji.edit,
+                        "edited template",
+                        template.name,
+                        template.code,
+                        `\n<${settings.website.url}/templates/${template.code}>`
+                    )
                 );
 
                 await global.db.collection("audit").insertOne({

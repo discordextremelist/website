@@ -34,6 +34,7 @@ import {
 } from "../../../Util/Function/botListing.ts";
 import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
 import { ownsOrAssistant } from "../../../Util/Function/main.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetEdit extends PathRoute<"get"> {
     constructor() {
@@ -424,15 +425,14 @@ export class PostEdit extends PathRoute<"post"> {
 
                 discord.channels.logs
                     .send(
-                        `${settings.emoji.edit} **${functions.escapeFormatting(
-                            req.user.db.fullUsername
-                        )}** \`(${
-                            req.user.id
-                        })\` edited bot **${functions.escapeFormatting(
-                            app.name
-                        )}** \`(${app.id})\`\n<${settings.website.url}/bots/${
-                            req.params.id
-                        }>`
+                        websiteLogMessage(
+                            req,
+                            settings.emoji.edit,
+                            "edited bot",
+                            app.name,
+                            app.id,
+                            `\n<${settings.website.url}/bots/${req.params.id}>`
+                        )
                     )
                     .catch((e) => {
                         console.error(e);

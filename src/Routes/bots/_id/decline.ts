@@ -11,6 +11,7 @@ import * as functions from "../../../Util/Function/main.ts";
 import { botType } from "../index.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetDeclineBot extends PathRoute<"get"> {
     constructor() {
@@ -124,13 +125,13 @@ export class PostDeclineBot extends PathRoute<"post"> {
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
         await discord.channels.logs.send({
-            content: `${settings.emoji.cross} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` declined bot **${functions.escapeFormatting(bot.name)}** \`(${
+            content: websiteLogMessage(
+                req,
+                settings.emoji.cross,
+                "declined bot",
+                bot.name,
                 bot._id
-            })\``,
+            ),
             embeds: [embed]
         });
 

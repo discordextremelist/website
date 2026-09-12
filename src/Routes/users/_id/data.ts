@@ -22,13 +22,13 @@ import type { Request, Response } from "express";
 import * as discord from "../../../Util/Services/discord.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetAccountData extends PathRoute<"get"> {
     constructor() {
@@ -186,13 +186,13 @@ export class DeleteOwnAccountData extends PathRoute<"post"> {
             await botCache.deleteBot(bot._id);
 
             await discord.channels.logs.send(
-                `${settings.emoji.delete} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
+                websiteLogMessage(
+                    req,
+                    settings.emoji.delete,
+                    "deleted bot",
+                    bot.name,
                     bot._id
-                })\``
+                )
             );
         }
 
@@ -212,13 +212,13 @@ export class DeleteOwnAccountData extends PathRoute<"post"> {
             await serverCache.deleteServer(server._id);
 
             await discord.channels.logs.send(
-                `${settings.emoji.delete} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` deleted server **${functions.escapeFormatting(server.name)}** \`(${
+                websiteLogMessage(
+                    req,
+                    settings.emoji.delete,
+                    "deleted server",
+                    server.name,
                     server._id
-                })\``
+                )
             );
         }
 
@@ -238,13 +238,13 @@ export class DeleteOwnAccountData extends PathRoute<"post"> {
             await templateCache.deleteTemplate(template._id);
 
             await discord.channels.logs.send(
-                `${settings.emoji.delete} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` deleted template **${functions.escapeFormatting(template.name)}** \`(${
+                websiteLogMessage(
+                    req,
+                    settings.emoji.delete,
+                    "deleted template",
+                    template.name,
                     template._id
-                })\``
+                )
             );
         }
 
@@ -316,13 +316,13 @@ export class DeleteUserAccountData extends PathRoute<"post"> {
             await botCache.deleteBot(bot._id);
 
             await discord.channels.logs.send(
-                `${settings.emoji.delete} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
+                websiteLogMessage(
+                    req,
+                    settings.emoji.delete,
+                    "deleted bot",
+                    bot.name,
                     bot._id
-                })\``
+                )
             );
         }
 
@@ -342,13 +342,13 @@ export class DeleteUserAccountData extends PathRoute<"post"> {
             await serverCache.deleteServer(server._id);
 
             await discord.channels.logs.send(
-                `${settings.emoji.delete} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` deleted server **${functions.escapeFormatting(server.name)}** \`(${
+                websiteLogMessage(
+                    req,
+                    settings.emoji.delete,
+                    "deleted server",
+                    server.name,
                     server._id
-                })\``
+                )
             );
         }
 
@@ -368,13 +368,13 @@ export class DeleteUserAccountData extends PathRoute<"post"> {
             await templateCache.deleteTemplate(template._id);
 
             await discord.channels.logs.send(
-                `${settings.emoji.delete} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` deleted template **${functions.escapeFormatting(template.name)}** \`(${
+                websiteLogMessage(
+                    req,
+                    settings.emoji.delete,
+                    "deleted template",
+                    template.name,
                     template._id
-                })\``
+                )
             );
         }
 

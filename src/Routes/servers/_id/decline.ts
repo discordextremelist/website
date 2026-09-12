@@ -30,6 +30,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetDeclineServer extends PathRoute<"get"> {
     constructor() {
@@ -158,13 +159,13 @@ export class PostDeclineServer extends PathRoute<"post"> {
         });
 
         await discord.channels.logs.send({
-            content: `${settings.emoji.cross} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` declined server **${functions.escapeFormatting(
-                server.name
-            )}** \`(${server._id})\``,
+            content: websiteLogMessage(
+                req,
+                settings.emoji.cross,
+                "declined server",
+                server.name,
+                server._id
+            ),
             embeds: [embed]
         });
 

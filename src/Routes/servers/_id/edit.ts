@@ -40,6 +40,7 @@ import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
 import { ownsOrAssistant } from "../../../Util/Function/main.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetEditServer extends PathRoute<"get"> {
     constructor() {
@@ -277,15 +278,14 @@ export class PostEditServer extends PathRoute<"post"> {
                 );
 
                 await discord.channels.logs.send(
-                    `${settings.emoji.edit} **${functions.escapeFormatting(
-                        req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
-                    })\` edited server **${functions.escapeFormatting(
-                        invite.guild.name
-                    )}** \`(${invite.guild.id})\`\n<${
-                        settings.website.url
-                    }/servers/${invite.guild.id}>`
+                    websiteLogMessage(
+                        req,
+                        settings.emoji.edit,
+                        "edited server",
+                        invite.guild.name,
+                        invite.guild.id,
+                        `\n<${settings.website.url}/servers/${invite.guild.id}>`
+                    )
                 );
 
                 await global.db.collection("audit").insertOne({

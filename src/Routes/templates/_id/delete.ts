@@ -22,11 +22,11 @@ import type { Request, Response } from "express";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class DeleteTemplate extends PathRoute<"get"> {
     constructor() {
@@ -49,13 +49,13 @@ export class DeleteTemplate extends PathRoute<"get"> {
             );
 
         await discord.channels.logs.send(
-            `${settings.emoji.delete} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` deleted template **${functions.escapeFormatting(
-                template.name
-            )}** \`(${template._id})\``
+            websiteLogMessage(
+                req,
+                settings.emoji.delete,
+                "deleted template",
+                template.name,
+                template._id
+            )
         );
 
         await global.db

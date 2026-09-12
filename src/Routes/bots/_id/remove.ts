@@ -11,6 +11,7 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { botType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetRemoveBot extends PathRoute<"get"> {
     constructor() {
@@ -108,13 +109,13 @@ export class PostRemoveBot extends PathRoute<"post"> {
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
         await discord.channels.logs.send({
-            content: `${settings.emoji.delete} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` removed bot **${functions.escapeFormatting(bot.name)}** \`(${
+            content: websiteLogMessage(
+                req,
+                settings.emoji.delete,
+                "removed bot",
+                bot.name,
                 bot._id
-            })\``,
+            ),
             embeds: [embed]
         });
 

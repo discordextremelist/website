@@ -29,6 +29,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetRemoveServer extends PathRoute<"get"> {
     constructor() {
@@ -101,13 +102,13 @@ export class PostRemoveServer extends PathRoute<"post"> {
         embed.setDescription(req.body.reason);
 
         await discord.channels.logs.send({
-            content: `${settings.emoji.delete} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` removed server **${functions.escapeFormatting(
-                server.name
-            )}** \`(${server._id})\``,
+            content: websiteLogMessage(
+                req,
+                settings.emoji.delete,
+                "removed server",
+                server.name,
+                server._id
+            ),
             embeds: [embed]
         });
 

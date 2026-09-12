@@ -11,6 +11,7 @@ import * as userCache from "../../../Util/Services/userCaching.js";
 import * as Discord from "discord.js";
 import { botType } from "../index.js";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class HideBot extends PathRoute<"get"> {
     constructor() {
@@ -54,13 +55,13 @@ export class HideBot extends PathRoute<"get"> {
             );
 
         await discord.channels.logs.send(
-            `${settings.emoji.hide} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
+            websiteLogMessage(
+                req,
+                settings.emoji.hide,
+                "hid bot",
+                bot.name,
                 bot._id
-            })\``
+            )
         );
 
         await global.db.collection("bots").updateOne(
@@ -120,13 +121,13 @@ export class UnhideBot extends PathRoute<"get"> {
             );
 
         await discord.channels.logs.send(
-            `${settings.emoji.unhide} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` unhid bot **${functions.escapeFormatting(bot.name)}** \`(${
+            websiteLogMessage(
+                req,
+                settings.emoji.unhide,
+                "unhid bot",
+                bot.name,
                 bot._id
-            })\``
+            )
         );
 
         await global.db.collection("bots").updateOne(
@@ -256,13 +257,13 @@ export class PostModHideBot extends PathRoute<"post"> {
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
         await discord.channels.logs.send({
-            content: `${settings.emoji.hide} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` hid bot **${functions.escapeFormatting(bot.name)}** \`(${
+            content: websiteLogMessage(
+                req,
+                settings.emoji.hide,
+                "hid bot",
+                bot.name,
                 bot._id
-            })\``,
+            ),
             embeds: [embed]
         });
 
@@ -329,15 +330,14 @@ export class GetModUnhideBot extends PathRoute<"get"> {
 
         discord.channels.logs
             .send(
-                `${settings.emoji.unhide} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` unhid bot **${functions.escapeFormatting(
-                    bot.name
-                )}** \`(${bot._id})\`\n<${settings.website.url}/bots/${
-                    bot._id
-                }>`
+                websiteLogMessage(
+                    req,
+                    settings.emoji.unhide,
+                    "unhid bot",
+                    bot.name,
+                    bot._id,
+                    `\n<${settings.website.url}/bots/${bot._id}>`
+                )
             )
             .catch((e) => {
                 console.error(e);

@@ -34,6 +34,7 @@ import * as functions from "../../../Util/Function/main.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetSubmitServer extends PathRoute<"get"> {
     constructor() {
@@ -241,15 +242,14 @@ export class PostSubmitServer extends PathRoute<"post"> {
                 } satisfies delServer);
 
                 await discord.channels.logs.send(
-                    `${settings.emoji.add} **${functions.escapeFormatting(
-                        req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
-                    })\` added server **${functions.escapeFormatting(
-                        invite.guild.name
-                    )}** \`(${invite.guild.id})\`\n<${
-                        settings.website.url
-                    }/servers/${invite.guild.id}>`
+                    websiteLogMessage(
+                        req,
+                        settings.emoji.add,
+                        "added server",
+                        invite.guild.name,
+                        invite.guild.id,
+                        `\n<${settings.website.url}/servers/${invite.guild.id}>`
+                    )
                 );
 
                 await global.db.collection("audit").insertOne({

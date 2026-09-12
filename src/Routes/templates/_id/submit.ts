@@ -27,6 +27,7 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetSubmitTemplate extends PathRoute<"get"> {
     constructor() {
@@ -170,15 +171,14 @@ export class PostSubmitTemplate extends PathRoute<"post"> {
                 } satisfies delTemplate);
 
                 await discord.channels.logs.send(
-                    `${settings.emoji.add} **${functions.escapeFormatting(
-                        req.user.db.fullUsername
-                    )}** \`(${
-                        req.user.id
-                    })\` added template **${functions.escapeFormatting(
-                        template.name
-                    )}** \`(${template.code})\`\n<${
-                        settings.website.url
-                    }/templates/${template.code}>`
+                    websiteLogMessage(
+                        req,
+                        settings.emoji.add,
+                        "added template",
+                        template.name,
+                        template.code,
+                        `\n<${settings.website.url}/templates/${template.code}>`
+                    )
                 );
 
                 await global.db.collection("audit").insertOne({

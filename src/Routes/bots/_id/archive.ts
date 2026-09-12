@@ -4,10 +4,10 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import * as discord from "../../../Util/Services/discord.ts";
 import settings from "../../../../settings.json" with { type: "json" };
-import * as functions from "../../../Util/Function/main.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class ArchiveBot extends PathRoute<"get"> {
     constructor() {
@@ -26,13 +26,13 @@ export class ArchiveBot extends PathRoute<"get"> {
             );
 
         await discord.channels.logs.send(
-            `${settings.emoji.archive} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` archived bot **${functions.escapeFormatting(bot.name)}** \`(${
+            websiteLogMessage(
+                req,
+                settings.emoji.archive,
+                "archived bot",
+                bot.name,
                 bot._id
-            })\``
+            )
         );
 
         await global.db.collection("bots").updateOne(
@@ -76,13 +76,13 @@ export class DeleteBot extends PathRoute<"get"> {
             );
 
         await discord.channels.logs.send(
-            `${settings.emoji.delete} **${functions.escapeFormatting(
-                req.user.db.fullUsername
-            )}** \`(${
-                req.user.id
-            })\` deleted bot **${functions.escapeFormatting(bot.name)}** \`(${
+            websiteLogMessage(
+                req,
+                settings.emoji.delete,
+                "deleted bot",
+                bot.name,
                 bot._id
-            })\``
+            )
         );
 
         await global.db.collection("bots").deleteOne({ _id: req.params.id });

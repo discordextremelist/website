@@ -28,6 +28,7 @@ import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
+import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class ApproveServer extends PathRoute<"get"> {
     constructor() {
@@ -85,15 +86,16 @@ export class ApproveServer extends PathRoute<"get"> {
 
         discord.channels.logs
             .send(
-                `${settings.emoji.check} **${functions.escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` approved server **${functions.escapeFormatting(
-                    server.name
-                )}** \`(${server._id})\` to be listed as an LGBTQ+ community.\n<${
-                    settings.website.url
-                }/servers/${server._id}>`
+                websiteLogMessage(
+                    req,
+                    settings.emoji.check,
+                    "approved server",
+                    server.name,
+                    server._id,
+                    ` to be listed as an LGBTQ+ community.\n<${
+                        settings.website.url
+                    }/servers/${server._id}>`
+                )
             )
             .catch((e) => {
                 console.error(e);

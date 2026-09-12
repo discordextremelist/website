@@ -46,3 +46,42 @@ export const botExists = async (
     req.attached.bot = bot;
     next();
 };
+
+/**
+ * Build a middleware that loads the document named by :id, renders the
+ * standard 404 page if it does not exist, and otherwise attaches it to
+ * req.attached for the route handler.
+ *
+ * Put it last in a route's chain, after auth and rank checks, so a request
+ * is authorised before the lookup happens.
+ */
+const exists =
+    <T>(
+        fetch: (id: string) => Promise<T | null | undefined>,
+        notFound: Parameters<Response["__"]>[0],
+        attach: (req: Request, doc: T) => void
+    ) =>
+    async (req: Request, res: Response, next: () => void) => {
+        const doc = await fetch(req.params.id);
+        if (!doc) return renderStatus(req, res, 404, res.__(notFound));
+        attach(req, doc);
+        next();
+    };
+
+export const serverExists = exists(
+    (id) => global.db.collection<delServer>("servers").findOne({ _id: id }),
+    "common.error.server.404",
+    (req, server) => (req.attached.server = server)
+);
+
+export const templateExists = exists(
+    (id) => global.db.collection<delTemplate>("templates").findOne({ _id: id }),
+    "common.error.template.404",
+    (req, template) => (req.attached.template = template)
+);
+
+export const userExists = exists(
+    (id) => global.db.collection<delUser>("users").findOne({ _id: id }),
+    "common.error.user.404",
+    (req, user) => (req.attached.user = user)
+);

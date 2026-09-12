@@ -198,7 +198,8 @@ export const variables = async (
         req.attached = {
             server: null,
             template: null,
-            bot: null
+            bot: null,
+            user: null
         };
     }
 

@@ -23,23 +23,20 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { userExists } from "../../../Util/Middleware/checks.ts";
 
 export class GetUserRank extends PathRoute<"get"> {
     constructor() {
         super("get", "/:id/rank", [
             variables,
             permission.auth,
-            permission.assistant
+            permission.assistant,
+            userExists
         ]);
     }
 
     async handle(req: Request, res: Response) {
-        const targetUser: delUser = await global.db
-            .collection<delUser>("users")
-            .findOne({ _id: req.params.id });
-
-        if (!targetUser)
-            return renderStatus(req, res, 404, res.__("common.error.user.404"));
+        const targetUser: delUser = req.attached.user!;
 
         res.locals.premidPageInfo = res.__(
             "premid.user.modifyRank",
@@ -76,17 +73,13 @@ export class PostUserRank extends PathRoute<"post"> {
         super("post", "/:id/rank", [
             variables,
             permission.auth,
-            permission.assistant
+            permission.assistant,
+            userExists
         ]);
     }
 
     async handle(req: Request, res: Response) {
-        const targetUser: delUser = await global.db
-            .collection<delUser>("users")
-            .findOne({ _id: req.params.id });
-
-        if (!targetUser)
-            return renderStatus(req, res, 404, res.__("common.error.user.404"));
+        const targetUser: delUser = req.attached.user!;
 
         if (
             targetUser.rank.assistant === true &&

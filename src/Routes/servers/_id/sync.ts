@@ -30,24 +30,15 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { serverExists } from "../../../Util/Middleware/checks.ts";
 
 export class SyncServer extends PathRoute<"get"> {
     constructor() {
-        super("get", "/:id/sync", [variables, permission.auth]);
+        super("get", "/:id/sync", [variables, permission.auth, serverExists]);
     }
 
     async handle(req: Request, res: Response) {
-        const server: delServer | undefined = await global.db
-            .collection<delServer>("servers")
-            .findOne({ _id: req.params.id });
-
-        if (!server)
-            return renderStatus(
-                req,
-                res,
-                404,
-                res.__("common.error.server.404")
-            );
+        const server: delServer | undefined = req.attached.server!;
 
         discord.bot.rest
             .get(Routes.invite(server.inviteCode), {

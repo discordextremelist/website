@@ -37,24 +37,15 @@ import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { serverExists } from "../../../Util/Middleware/checks.ts";
 
 export class GetEditServer extends PathRoute<"get"> {
     constructor() {
-        super("get", "/:id/edit", [variables, permission.auth]);
+        super("get", "/:id/edit", [variables, permission.auth, serverExists]);
     }
 
     async handle(req: Request, res: Response) {
-        const server: delServer | undefined = await global.db
-            .collection<delServer>("servers")
-            .findOne({ _id: req.params.id });
-
-        if (!server)
-            return renderStatus(
-                req,
-                res,
-                404,
-                res.__("common.error.server.404")
-            );
+        const server: delServer | undefined = req.attached.server!;
 
         if (
             server.owner.id !== req.user.id &&

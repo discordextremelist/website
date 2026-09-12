@@ -27,28 +27,20 @@ import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { serverExists } from "../../../Util/Middleware/checks.ts";
 
 export class ApproveServer extends PathRoute<"get"> {
     constructor() {
         super("get", "/:id/approve", [
             variables,
             permission.auth,
-            permission.mod
+            permission.mod,
+            serverExists
         ]);
     }
 
     async handle(req: Request, res: Response) {
-        const server: delServer | undefined = await global.db
-            .collection<delServer>("servers")
-            .findOne({ _id: req.params.id });
-
-        if (!server)
-            return renderStatus(
-                req,
-                res,
-                404,
-                res.__("common.error.server.404")
-            );
+        const server: delServer | undefined = req.attached.server!;
 
         if (!server.status || !server.status.reviewRequired)
             return renderStatus(

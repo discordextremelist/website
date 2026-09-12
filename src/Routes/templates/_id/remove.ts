@@ -28,28 +28,20 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { EmbedBuilder } from "discord.js";
 import { templateType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { templateExists } from "../../../Util/Middleware/checks.ts";
 
 export class GetRemoveTemplate extends PathRoute<"get"> {
     constructor() {
         super("get", "/:id/remove", [
             variables,
             permission.auth,
-            permission.mod
+            permission.mod,
+            templateExists
         ]);
     }
 
     async handle(req: Request, res: Response) {
-        const template: delTemplate | undefined = await global.db
-            .collection<delTemplate>("templates")
-            .findOne({ _id: req.params.id });
-
-        if (!template)
-            return renderStatus(
-                req,
-                res,
-                404,
-                res.__("common.error.template.404")
-            );
+        const template: delTemplate | undefined = req.attached.template!;
 
         res.locals.premidPageInfo = res.__(
             "premid.templates.remove",
@@ -70,22 +62,13 @@ export class PostRemoveTemplate extends PathRoute<"post"> {
         super("post", "/:id/remove", [
             variables,
             permission.auth,
-            permission.mod
+            permission.mod,
+            templateExists
         ]);
     }
 
     async handle(req: Request, res: Response) {
-        const template: delTemplate | undefined = await global.db
-            .collection<delTemplate>("templates")
-            .findOne({ _id: req.params.id });
-
-        if (!template)
-            return renderStatus(
-                req,
-                res,
-                404,
-                res.__("common.error.template.404")
-            );
+        const template: delTemplate | undefined = req.attached.template!;
 
         if (!req.body.reason && !req.user.db.rank.admin) {
             return renderStatus(

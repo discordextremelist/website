@@ -26,24 +26,19 @@ import * as functions from "../../../Util/Function/main.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { templateExists } from "../../../Util/Middleware/checks.ts";
 
 export class DeleteTemplate extends PathRoute<"get"> {
     constructor() {
-        super("get", "/:id/delete", [variables, permission.auth]);
+        super("get", "/:id/delete", [
+            variables,
+            permission.auth,
+            templateExists
+        ]);
     }
 
     async handle(req: Request, res: Response) {
-        const template: delTemplate | undefined = await global.db
-            .collection<delTemplate>("templates")
-            .findOne({ _id: req.params.id });
-
-        if (!template)
-            return renderStatus(
-                req,
-                res,
-                404,
-                res.__("common.error.template.404")
-            );
+        const template: delTemplate | undefined = req.attached.template!;
 
         if (template.owner.id !== req.user.id)
             return renderStatus(

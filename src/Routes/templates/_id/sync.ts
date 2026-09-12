@@ -26,24 +26,15 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { templateExists } from "../../../Util/Middleware/checks.ts";
 
 export class SyncTemplate extends PathRoute<"get"> {
     constructor() {
-        super("get", "/:id/sync", [variables, permission.auth]);
+        super("get", "/:id/sync", [variables, permission.auth, templateExists]);
     }
 
     async handle(req: Request, res: Response) {
-        const dbTemplate: delTemplate | undefined = await global.db
-            .collection<delTemplate>("templates")
-            .findOne({ _id: req.params.id });
-
-        if (!dbTemplate)
-            return renderStatus(
-                req,
-                res,
-                404,
-                res.__("common.error.template.404")
-            );
+        const dbTemplate: delTemplate | undefined = req.attached.template!;
 
         await discord.bot.rest
             .get(Routes.template(req.params.id))

@@ -30,24 +30,15 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { templateExists } from "../../../Util/Middleware/checks.ts";
 
 export class GetEditTemplate extends PathRoute<"get"> {
     constructor() {
-        super("get", "/:id/edit", [variables, permission.auth]);
+        super("get", "/:id/edit", [variables, permission.auth, templateExists]);
     }
 
     async handle(req: Request, res: Response) {
-        const template: delTemplate | undefined = await global.db
-            .collection<delTemplate>("templates")
-            .findOne({ _id: req.params.id });
-
-        if (!template)
-            return renderStatus(
-                req,
-                res,
-                404,
-                res.__("common.error.template.404")
-            );
+        const template: delTemplate | undefined = req.attached.template!;
 
         if (
             template.owner.id !== req.user.id &&

@@ -62,8 +62,10 @@ declare module "express-serve-static-core" {
         attached?: {
             bot?: delBot;
             server?: delServer;
-            template?: templateServer;
-        }
+            template?: delTemplate;
+            // The user named by :id (not the logged-in user, which is req.user).
+            user?: delUser;
+        };
     }
 
     interface Response {

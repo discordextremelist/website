@@ -25,22 +25,19 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import type { Nullable } from "../../../Util/Function/types.ts";
 import { checkRoleHierarchyStaff } from "../../../Util/Function/main.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
+import { userExists } from "../../../Util/Middleware/checks.ts";
 
 export class GetStanding extends PathRoute<"get"> {
     constructor() {
         super("get", "/staff-manager/standing/:id", [
             variables,
-            permission.assistant
+            permission.assistant,
+            userExists
         ]);
     }
 
     async handle(req: Request, res: Response) {
-        const user: Nullable<delUser> = await global.db
-            .collection<delUser>("users")
-            .findOne({ _id: req.params.id });
-
-        if (!user)
-            return renderStatus(req, res, 404, res.__("common.error.user.404"));
+        const user: Nullable<delUser> = req.attached.user!;
 
         if (
             user.rank.assistant === true &&
@@ -97,17 +94,13 @@ export class PostStanding extends PathRoute<"post"> {
     constructor() {
         super("post", "/staff-manager/standing/:id", [
             variables,
-            permission.assistant
+            permission.assistant,
+            userExists
         ]);
     }
 
     async handle(req: Request, res: Response) {
-        const user: Nullable<delUser> = await global.db
-            .collection<delUser>("users")
-            .findOne({ _id: req.params.id });
-
-        if (!user)
-            return renderStatus(req, res, 404, res.__("common.error.user.404"));
+        const user: Nullable<delUser> = req.attached.user!;
 
         if (
             user.rank.assistant === true &&

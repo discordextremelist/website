@@ -302,10 +302,10 @@ export function parseAudit(__: Response["__"], auditType: string): auditType {
 }
 
 export async function auditUserIDParse(id: string) {
-    const user: delUser = await userCache.getUser(id);
+    const user: delUser | null = await userCache.getUser(id);
     if (user) return `${user.fullUsername} (${id})`;
 
-    const bot: delBot = await botCache.getBot(id);
+    const bot: delBot | undefined = await botCache.getBot(id);
     if (bot) return `${bot.name} (${id})`;
 
     return id;
@@ -386,12 +386,13 @@ export function checkRoleHierarchyStaff(
     for (const [role, hasRole] of entries) {
         if (!hasRole) continue;
         const val = roleMap[role];
-        if (val > max) max = val;
+        // Ranks outside roleMap don't count. (The old `val > null` was `val > 0`.)
+        if (val !== undefined && (max === null || val > max)) max = val;
     }
-    if (max === null) return false;
-    return strictEq
-        ? max === roleMap[highestPermittedRole]
-        : max >= roleMap[highestPermittedRole];
+    const target = roleMap[highestPermittedRole];
+    // Comparing with an undefined target was always false.
+    if (max === null || target === undefined) return false;
+    return strictEq ? max === target : max >= target;
 }
 
 /**
@@ -454,7 +455,8 @@ export function ownsOrAssistant(
 ): boolean {
     return (
         listing.owner.id === req.user.id ||
-        (editors && listing.editors.includes(req.user.id)) ||
+        // Only bot routes pass `editors: true`, and delBot.editors is required.
+        (editors && listing.editors!.includes(req.user.id)) ||
         req.user.db.rank.assistant !== false
     );
 }

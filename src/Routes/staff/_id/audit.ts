@@ -22,7 +22,6 @@ import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { getAllAuditLogs } from "../../../Util/Services/auditCaching.ts";
 
 export class AuditLog extends AuthedPathRoute<"get"> {
     constructor() {
@@ -32,13 +31,18 @@ export class AuditLog extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: Response) {
         const audit_type = req.query.t ?? "ALL";
         console.log(audit_type);
-        const logs: auditLog[] = (await getAllAuditLogs())
-            .filter((x) => {
-                if (audit_type === "ALL")
-                    return x.type !== "GAME_HIGHSCORE_UPDATE";
-                return x.type === audit_type;
-            })
-            .sort((a, b) => b.date - a.date); // Sort descending
+        // Read from the database, like main: the Redis audit cache is only
+        // filled in development. String() stops ?t[$ne]=… reaching the query.
+        const logs: auditLog[] = await global.db
+            .collection<auditLog>("audit")
+            .find(
+                audit_type === "ALL"
+                    ? { type: { $ne: "GAME_HIGHSCORE_UPDATE" } }
+                    : { type: String(audit_type) }
+            )
+            .sort({ date: -1 })
+            .allowDiskUse()
+            .toArray();
 
         if (!req.query.page) req.query.page = "1";
 

@@ -4,7 +4,37 @@ on:
         tags:
             - "v*-Release"
 jobs:
+    # Runs first: every other job waits for it, so a release whose tag doesn't
+    # match package.json never gets built or deployed.
+    check-version:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  sparse-checkout: package.json
+                  sparse-checkout-cone-mode: false
+            - name: Check package.json version matches the release tag
+              run: |
+                  version=$(jq -r .version package.json)
+                  tag="$GITHUB_REF_NAME"
+                  if [ "$tag" = "v$version" ]; then
+                      echo "package.json version $version matches release tag $tag."
+                      exit 0
+                  fi
+
+                  reason="The release tag is \"$tag\", but package.json says the version is \"$version\" (which needs the tag \"v$version\"). Deploy blocked so the site isn't released with the wrong version."
+                  steps="To fix it:
+                  1. Delete the GitHub release \"$tag\" (Releases page > the release > Delete).
+                  2. Delete its tag too, since deleting a release keeps the tag: git push --delete origin $tag (and git tag -d $tag locally).
+                  3. Fix \"version\" in package.json to the version you're releasing, then commit and push. The tag must be \"v\" followed by exactly that version.
+                  4. Re-create the release and its tag."
+
+                  # Annotations need newlines encoded as %0A.
+                  echo "::error title=package.json version doesn't match the release tag::$reason%0A%0A${steps//$'\n'/%0A}"
+                  printf '## Deploy blocked: version mismatch\n\n%s\n\n%s\n' "$reason" "$steps" >> "$GITHUB_STEP_SUMMARY"
+                  exit 1
     sentry-sourcemaps:
+        needs: check-version
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v7
@@ -25,6 +55,7 @@ jobs:
           env:
             SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
     build:
+        needs: check-version
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v7

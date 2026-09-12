@@ -335,10 +335,9 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
                             longDesc: bot.longDesc,
                             editors: bot.editors,
                             commands: bot.commands,
-                            icon: {
-                                hash: bot.icon.hash,
-                                url: bot.icon.url
-                            },
+                            // Older bots only have the deprecated avatar; the
+                            // bot page falls back to it, so record that.
+                            icon: bot.icon ?? bot.avatar,
                             scopes: {
                                 bot: req.body.bot,
                                 slashCommands: req.body.slashCommands

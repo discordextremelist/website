@@ -32,7 +32,7 @@ import { UAParser } from "ua-parser-js";
 export const variables = async (
     req: Request,
     res: Response,
-    next: () => void
+    next: (err?: unknown) => void
 ) => {
     if (req.query.setLang || req.query.localeLayout) {
         let params = new URLSearchParams(
@@ -164,16 +164,27 @@ export const variables = async (
     }
 
     if (req.user) {
-        let user: delUser;
-        user = await userCache.getUser(req.user.id);
-
-        if (!user)
-            user = await global.db
+        const user =
+            (await userCache.getUser(req.user.id)) ??
+            (await global.db
                 .collection<delUser>("users")
-                .findOne({ _id: req.user.id });
+                .findOne({ _id: req.user.id }));
 
-        req.user.db = user;
+        if (user) {
+            req.user.db = user;
+        } else {
+            // The session's user record is gone (for example the account was
+            // deleted while it was logged in). Log the session out and carry
+            // on as a guest, instead of failing every request.
+            const logoutError = await new Promise<unknown>((resolve) =>
+                req.logout((err) => resolve(err))
+            );
+            if (logoutError) return next(logoutError);
+        }
+    }
 
+    // Still logged in with a record (logging out above clears req.user).
+    if (req.user) {
         if (
             req.user.db.rank.mod === true &&
             req.url !== "/profile/game/snakes"

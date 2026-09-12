@@ -58,7 +58,7 @@ import autosyncRoute from "./Routes/autosync.ts";
 import indexRoute from "./Routes/index.ts";
 import searchRoute from "./Routes/search.ts";
 import docsRoute from "./Routes/docs.ts";
-import serversRoute from "./Routes/servers.ts";
+import { initServerRoutes } from "./Routes/servers/index.ts";
 import usersRoute from "./Routes/users.ts";
 import { initTemplateRoutes } from "./Routes/templates/index.ts";
 import staffRoute from "./Routes/staff.ts";
@@ -340,7 +340,7 @@ new Promise<void>((resolve, reject) => {
         app.use("*", monacoRedirect);
 
         app.use("/:lang/bots", initBotRoutes());
-        app.use("/:lang/servers", serversRoute);
+        app.use("/:lang/servers", initServerRoutes());
         app.use("/:lang/templates", initTemplateRoutes());
         app.use("/:lang/users", usersRoute);
         app.use("/:lang/staff", staffRoute);

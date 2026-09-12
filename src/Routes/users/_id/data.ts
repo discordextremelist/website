@@ -72,9 +72,10 @@ export class RequestAccountData extends AuthedPathRoute<"get"> {
                 res.__("common.error.account.data.alreadyDownloaded")
             );
 
-        const userData: delUser = await global.db
+        // The variables middleware has already loaded this user's record.
+        const userData = (await global.db
             .collection<delUser>("users")
-            .findOne({ _id: req.user.id });
+            .findOne({ _id: req.user.id }))!;
 
         const userBotsData: delBot[] = await global.db
             .collection<delBot>("bots")
@@ -91,8 +92,8 @@ export class RequestAccountData extends AuthedPathRoute<"get"> {
             .find({ "owner.id": req.user.id })
             .toArray();
 
-        // Filter userData to remove auth Object
-        delete userData.auth;
+        // Leave out auth (the user's login tokens).
+        const { auth: _auth, ...userExport } = userData;
 
         // Filter userBots.votes to not expose user ID's of persons who up/downvoted a bot an instead show number inside of the existing string[]
         for (const bot of userBotsData) {
@@ -101,9 +102,10 @@ export class RequestAccountData extends AuthedPathRoute<"get"> {
 
             bot.votes.positive = [positiveVotes.toString()];
             bot.votes.negative = [negativeVotes.toString()];
-
-            delete bot.token;
         }
+
+        // Leave out each bot's API token.
+        const botsExport = userBotsData.map(({ token: _token, ...bot }) => bot);
 
         /*
         Updates 'lastDataRequest' in the database so that any future attempted requests are checked against this.
@@ -127,8 +129,8 @@ export class RequestAccountData extends AuthedPathRoute<"get"> {
         res.send(
             JSON.stringify(
                 {
-                    user: userData,
-                    bots: userBotsData,
+                    user: userExport,
+                    bots: botsExport,
                     servers: userServersData,
                     templates: userTemplateData
                 },

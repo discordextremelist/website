@@ -32,6 +32,7 @@ import { DeleteServer } from "./_id/delete.ts";
 import { GetRemoveServer, PostRemoveServer } from "./_id/remove.ts";
 import { SyncServer } from "./_id/sync.ts";
 import { reasonType } from "../../Util/Function/main.ts";
+import { communityTags } from "../../Util/Function/serverListing.ts";
 
 export let reviewRequired = false; // Needs to be outside the functions, or it cannot be referenced outside x function - AJ
 
@@ -43,19 +44,8 @@ export function tagHandler(
     req: express.Request<ParamsDictionary, any, any, ParsedQs>,
     server: false | delServer
 ) {
-    let tags: string[] = [];
+    let tags: string[] = communityTags(req.body);
 
-    if (req.body.gaming === true) tags.push("Gaming");
-    if (req.body.music === true) tags.push("Music");
-    if (req.body.mediaEntertain === true) tags.push("Media & Entertainment");
-    if (req.body.createArts === true) tags.push("Creative Arts");
-    if (req.body.sciTech === true) tags.push("Science & Tech");
-    if (req.body.edu === true) tags.push("Education");
-    if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
-    if (req.body.relIdentity === true) tags.push("Relationships & Identity");
-    if (req.body.travelCuis === true) tags.push("Travel & Food");
-    if (req.body.fitHealth === true) tags.push("Fitness & Health");
-    if (req.body.finance === true) tags.push("Finance");
     if (req.body.contCreat === true) tags.push("Content Creation");
     if (req.body.nsfw === true) tags.push("NSFW");
 

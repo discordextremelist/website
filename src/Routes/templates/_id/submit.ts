@@ -28,6 +28,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { communityTags } from "../../../Util/Function/serverListing.ts";
 
 export class GetSubmitTemplate extends PathRoute<"get"> {
     constructor() {
@@ -98,22 +99,7 @@ export class PostSubmitTemplate extends PathRoute<"post"> {
             errors.push(res.__("common.error.listing.arr.shortDescTooLong"));
         }
 
-        let tags: string[] = [];
-
-        if (req.body.gaming === true) tags.push("Gaming");
-        if (req.body.music === true) tags.push("Music");
-        if (req.body.mediaEntertain === true)
-            tags.push("Media & Entertainment");
-        if (req.body.createArts === true) tags.push("Creative Arts");
-        if (req.body.sciTech === true) tags.push("Science & Tech");
-        if (req.body.edu === true) tags.push("Education");
-        if (req.body.fashBeaut === true) tags.push("Fashion & Beauty");
-
-        if (req.body.relIdentity === true)
-            tags.push("Relationships & Identity");
-        if (req.body.travelCuis === true) tags.push("Travel & Food");
-        if (req.body.fitHealth === true) tags.push("Fitness & Health");
-        if (req.body.finance === true) tags.push("Finance");
+        let tags: string[] = communityTags(req.body);
 
         if (error === true)
             return res.status(400).json({

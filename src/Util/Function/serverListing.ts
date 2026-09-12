@@ -114,3 +114,23 @@ export async function serverListingErrors(
     }
     return messages;
 }
+
+/**
+ * Display names of the community tag checkboxes ticked on a server or template
+ * listing form. Servers add a few more of their own (see tagHandler).
+ */
+export function communityTags(body: Record<string, unknown>): string[] {
+    const tags: string[] = [];
+    if (body.gaming === true) tags.push("Gaming");
+    if (body.music === true) tags.push("Music");
+    if (body.mediaEntertain === true) tags.push("Media & Entertainment");
+    if (body.createArts === true) tags.push("Creative Arts");
+    if (body.sciTech === true) tags.push("Science & Tech");
+    if (body.edu === true) tags.push("Education");
+    if (body.fashBeaut === true) tags.push("Fashion & Beauty");
+    if (body.relIdentity === true) tags.push("Relationships & Identity");
+    if (body.travelCuis === true) tags.push("Travel & Food");
+    if (body.fitHealth === true) tags.push("Fitness & Health");
+    if (body.finance === true) tags.push("Finance");
+    return tags;
+}

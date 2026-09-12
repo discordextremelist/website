@@ -288,9 +288,13 @@ router.get("/logout", async (req, res, next) => {
             }
             res.redirect(req.session.redirectTo || "/");
         });
-    } else {
+    } else if (req.user?.impersonator) {
+        // An admin ending a /staff/mask session: switch back to their own ID.
         req.user.id = req.user.impersonator;
         req.user.impersonator = undefined;
+        res.redirect("/");
+    } else {
+        // Not logged in (an old tab, or logout clicked twice).
         res.redirect("/");
     }
 });

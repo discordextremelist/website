@@ -16,7 +16,7 @@ export class GetAccentColor extends AuthedPathRoute<"get"> {
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        let bot = req.attached.bot;
+        let bot = req.attached.bot!;
         if (
             bot.owner.id !== req.user.id &&
             !bot.editors.includes(req.user.id) &&

@@ -51,7 +51,9 @@ export class StaffManager extends AuthedPathRoute<"get"> {
                         .findOne({ _id: warning.executor });
                 }
 
-                warning.executorName = executor.fullUsername;
+                // The issuer's record may be gone; show their ID instead.
+                warning.executorName =
+                    executor?.fullUsername ?? warning.executor;
             }
 
             for (const strike of user.staffTracking.punishments.strikes) {
@@ -62,7 +64,8 @@ export class StaffManager extends AuthedPathRoute<"get"> {
                         .findOne({ _id: strike.executor });
                 }
 
-                strike.executorName = executor.fullUsername;
+                // The issuer's record may be gone; show their ID instead.
+                strike.executorName = executor?.fullUsername ?? strike.executor;
             }
         }
 

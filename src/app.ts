@@ -42,7 +42,7 @@ import * as tokenManager from "./Util/Services/adminTokenManager.ts";
 import languageHandler from "./Util/Middleware/languageHandler.ts";
 
 import { botStatsUpdate } from "./Util/Services/botStatsUpdate.ts";
-import { variables } from "./Util/Function/variables.ts";
+import { variables } from "./Util/Middleware/variables.ts";
 import { monacoRedirect } from "./Util/Middleware/monacoRedirect.ts";
 import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap.ts";
 

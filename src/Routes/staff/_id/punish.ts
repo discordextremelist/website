@@ -19,8 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
-import * as permission from "../../../Util/Function/permissions.ts";
-import { variables } from "../../../Util/Function/variables.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
 import type { Nullable } from "../../../Util/Function/types.ts";
 import { checkRoleHierarchyStaff } from "../../../Util/Function/main.ts";
 

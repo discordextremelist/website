@@ -27,7 +27,7 @@ import * as serverCache from "../Util/Services/serverCaching.ts";
 import * as templateCache from "../Util/Services/templateCaching.ts";
 import * as legalCache from "../Util/Services/legalCaching.ts";
 import * as discord from "../Util/Services/discord.ts";
-import { variables } from "../Util/Function/variables.ts";
+import { variables } from "../Util/Middleware/variables.ts";
 import type { GuildMember, GuildMemberManager } from "discord.js";
 import type {
     BotTags,

@@ -1,6 +1,6 @@
 import { PathRoute } from "../../route.ts";
-import { variables } from "../../../Util/Function/variables.ts";
-import * as permission from "../../../Util/Function/permissions.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
@@ -9,7 +9,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { botType } from "../index.ts";
-import { botExists } from "../../../Util/Function/checks.ts";
+import { botExists } from "../../../Util/Middleware/checks.ts";
 
 export class ApproveBot extends PathRoute<"get"> {
     constructor() {

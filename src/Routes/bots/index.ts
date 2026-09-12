@@ -1,7 +1,7 @@
 import express, { type Request, type Response, type Router } from "express";
-import { variables } from "../../Util/Function/variables.ts";
-import * as permission from "../../Util/Function/permissions.ts";
-import * as checks from "../../Util/Function/checks.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import * as checks from "../../Util/Middleware/checks.ts";
 import fetch from "node-fetch";
 import { Vibrant } from "node-vibrant/node";
 import { GetSubmit, PostSubmit } from "./_id/submit.ts";

@@ -1,10 +1,10 @@
 import { PathRoute } from "../../route.ts";
-import { admin, auth } from "../../../Util/Function/permissions.ts";
-import { variables } from "../../../Util/Function/variables.ts";
+import { admin, auth } from "../../../Util/Middleware/permissions.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
 import e from "express";
 import { blacklistUpdate } from "../../../Util/Services/blacklist.ts";
 import { updateBot } from "../../../Util/Services/botCaching.ts";
-import { botExists } from "../../../Util/Function/checks.ts";
+import { botExists } from "../../../Util/Middleware/checks.ts";
 
 export class BlacklistBot extends PathRoute<"get"> {
     constructor() {

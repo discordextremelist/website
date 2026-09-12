@@ -1,9 +1,9 @@
 import { PathRoute } from "../../route.ts";
-import { variables } from "../../../Util/Function/variables.ts";
-import * as permission from "../../../Util/Function/permissions.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import * as botCache from "../../../Util/Services/botCaching.ts";
-import { botExists } from "../../../Util/Function/checks.ts";
+import { botExists } from "../../../Util/Middleware/checks.ts";
 
 export class GetUpvote extends PathRoute<"get"> {
     constructor() {

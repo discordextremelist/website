@@ -1,6 +1,6 @@
 import { PathRoute } from "../../route.ts";
-import { variables } from "../../../Util/Function/variables.ts";
-import * as permission from "../../../Util/Function/permissions.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import {
     type APIApplication,
@@ -12,7 +12,7 @@ import {
     type RESTPostOAuth2AccessTokenResult,
     Routes
 } from "discord.js";
-import * as checks from "../../../Util/Function/checks.ts";
+import * as checks from "../../../Util/Middleware/checks.ts";
 import * as libraryCache from "../../../Util/Services/libCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";

@@ -16,9 +16,9 @@ import { DAPI } from "../../../Util/Services/discord.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as e from "express";
-import { variables } from "../../../Util/Function/variables.ts";
-import { auth } from "../../../Util/Function/permissions.ts";
-import { botExists } from "../../../Util/Function/checks.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import { auth } from "../../../Util/Middleware/permissions.ts";
+import { botExists } from "../../../Util/Middleware/checks.ts";
 
 export class SyncBot extends PathRoute<"get"> {
     constructor() {

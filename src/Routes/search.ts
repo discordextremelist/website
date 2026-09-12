@@ -29,7 +29,7 @@ import * as botCache from "../Util/Services/botCaching.ts";
 import * as userCache from "../Util/Services/userCaching.ts";
 import * as serverCache from "../Util/Services/serverCaching.ts";
 import * as templateCache from "../Util/Services/templateCaching.ts";
-import { variables } from "../Util/Function/variables.ts";
+import { variables } from "../Util/Middleware/variables.ts";
 import type { ParsedQs } from "qs";
 
 const renderPath = path.join(process.cwd(), "views/partials");

@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express, { type Router } from "express";
-import * as permission from "../../Util/Function/permissions.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
 import * as functions from "../../Util/Function/main.ts";
 import type { serverReasons } from "../../../@types/enums.ts";
 import type { ParamsDictionary } from "express-serve-static-core";

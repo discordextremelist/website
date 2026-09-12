@@ -19,9 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
-import * as permission from "../../../Util/Function/permissions.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
-import { variables } from "../../../Util/Function/variables.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
 
 let cutoff = new Date(2025, 0, 1); // 01/01/2025
 const ranks: (keyof delUser["rank"])[] = [

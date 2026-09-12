@@ -21,9 +21,9 @@ import { PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
 import type { APIUser, Snowflake } from "discord.js";
 import { Routes } from "discord.js";
-import * as permission from "../../../Util/Function/permissions.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
-import { variables } from "../../../Util/Function/variables.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
 import * as tokenManager from "../../../Util/Services/adminTokenManager.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 

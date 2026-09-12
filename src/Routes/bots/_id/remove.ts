@@ -1,7 +1,7 @@
 import { PathRoute } from "../../route.ts";
-import { variables } from "../../../Util/Function/variables.ts";
-import { auth, mod } from "../../../Util/Function/permissions.ts";
-import { botExists } from "../../../Util/Function/checks.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import { auth, mod } from "../../../Util/Middleware/permissions.ts";
+import { botExists } from "../../../Util/Middleware/checks.ts";
 import e from "express";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";

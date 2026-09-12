@@ -22,8 +22,8 @@ import type { Request, Response } from "express";
 import type { APIUser, DiscordAPIError } from "discord.js";
 import { Routes } from "discord.js";
 import * as discord from "../../../Util/Services/discord.ts";
-import { variables } from "../../../Util/Function/variables.ts";
-import * as permission from "../../../Util/Function/permissions.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 
 export class SyncUser extends PathRoute<"get"> {

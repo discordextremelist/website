@@ -26,9 +26,9 @@ import type {
 } from "discord.js";
 import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
 import * as discord from "../../../Util/Services/discord.ts";
-import * as permission from "../../../Util/Function/permissions.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
-import { variables } from "../../../Util/Function/variables.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
 
 export class SyncServer extends PathRoute<"get"> {
     constructor() {

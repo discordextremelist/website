@@ -1,7 +1,7 @@
 import { PathRoute } from "../../route.ts";
 import e from "express";
-import { variables } from "../../../Util/Function/variables.ts";
-import * as permission from "../../../Util/Function/permissions.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import {
     type APIApplication,
     type APIApplicationCommand,

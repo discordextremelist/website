@@ -21,7 +21,7 @@ import { PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
 import * as discord from "../../../Util/Services/discord.ts";
 import * as banned from "../../../Util/Services/banned.ts";
-import { variables } from "../../../Util/Function/variables.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";

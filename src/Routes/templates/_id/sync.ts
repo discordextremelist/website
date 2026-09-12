@@ -20,9 +20,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
 import * as discord from "../../../Util/Services/discord.ts";
-import * as permission from "../../../Util/Function/permissions.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
-import { variables } from "../../../Util/Function/variables.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
 

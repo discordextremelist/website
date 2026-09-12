@@ -1,12 +1,12 @@
 import { PathRoute } from "../../route.ts";
-import { variables } from "../../../Util/Function/variables.ts";
-import * as permission from "../../../Util/Function/permissions.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import * as discord from "../../../Util/Services/discord.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as functions from "../../../Util/Function/main.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
-import { botExists } from "../../../Util/Function/checks.ts";
+import { botExists } from "../../../Util/Middleware/checks.ts";
 import * as userCache from "../../../Util/Services/userCaching.js";
 import * as Discord from "discord.js";
 import { botType } from "../index.js";

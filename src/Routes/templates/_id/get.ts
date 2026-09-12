@@ -25,7 +25,7 @@ import htmlRef from "../../../../htmlReference.json" with { type: "json" };
 import * as functions from "../../../Util/Function/main.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
-import { variables } from "../../../Util/Function/variables.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
 import mdi from "markdown-it";
 import entities from "html-entities";
 

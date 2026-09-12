@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express, { type Router } from "express";
-import * as permission from "../../Util/Function/permissions.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
 import type { templateReasons } from "../../../@types/enums.ts";
 import { GetSubmitTemplate, PostSubmitTemplate } from "./_id/submit.ts";
 import { GetTemplate } from "./_id/get.ts";

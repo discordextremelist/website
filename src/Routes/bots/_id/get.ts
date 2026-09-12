@@ -1,6 +1,6 @@
 import { PathRoute } from "../../route.ts";
 import e from "express";
-import { variables } from "../../../Util/Function/variables.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as discord from "../../../Util/Services/discord.ts";
@@ -11,7 +11,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 import { PresenceUpdateStatus, UserFlags } from "discord.js";
 import * as functions from "../../../Util/Function/main.ts";
 import mdi from "markdown-it";
-import { botExists } from "../../../Util/Function/checks.ts";
+import { botExists } from "../../../Util/Middleware/checks.ts";
 
 const md = new mdi();
 

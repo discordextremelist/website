@@ -23,10 +23,10 @@ import sanitizeHtml from "sanitize-html";
 import settings from "../../../../settings.json" with { type: "json" };
 import htmlRef from "../../../../htmlReference.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
-import * as permission from "../../../Util/Function/permissions.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
-import { variables } from "../../../Util/Function/variables.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
 

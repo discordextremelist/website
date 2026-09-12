@@ -1,6 +1,6 @@
 import { PathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Function/variables.ts";
-import { auth } from "../../../Util/Function/permissions.ts";
+import { auth, mod } from "../../../Util/Function/permissions.ts";
 import { botExists } from "../../../Util/Function/checks.ts";
 import e from "express";
 import * as userCache from "../../../Util/Services/userCaching.ts";
@@ -13,7 +13,7 @@ import { botType } from "../index.ts";
 
 export class GetRemoveBot extends PathRoute<"get"> {
     constructor() {
-        super("get", "/:id/remove", [variables, botExists, auth]);
+        super("get", "/:id/remove", [variables, auth, botExists, mod]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {
@@ -42,7 +42,7 @@ export class GetRemoveBot extends PathRoute<"get"> {
 
 export class PostRemoveBot extends PathRoute<"post"> {
     constructor() {
-        super("post", "/:id/remove", [variables, botExists, auth]);
+        super("post", "/:id/remove", [variables, auth, botExists, mod]);
     }
 
     async handle(req: e.Request, res: e.Response, next: e.NextFunction) {

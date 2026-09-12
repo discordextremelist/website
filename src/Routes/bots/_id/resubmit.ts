@@ -366,10 +366,7 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
                             status: {
                                 archived: true
                             },
-                            labels: {
-                                ai: bot.labels?.ai,
-                                nsfw: bot.labels?.nsfw
-                            }
+                            labels: bot.labels
                         } satisfies partialBot,
                         new: {
                             clientID: req.body.clientID,

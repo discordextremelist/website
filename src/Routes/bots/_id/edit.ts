@@ -371,10 +371,7 @@ export class PostEdit extends AuthedPathRoute<"post"> {
                                 options: bot.widgetbot.options,
                                 server: bot.widgetbot.server
                             },
-                            labels: {
-                                ai: bot.labels?.ai,
-                                nsfw: bot.labels?.nsfw
-                            }
+                            labels: bot.labels
                         } satisfies Partial<delBot>,
                         new: {
                             clientID: req.body.clientID,

@@ -24,25 +24,19 @@ import { Routes } from "discord.js";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import * as tokenManager from "../../../Util/Services/adminTokenManager.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 
 export class MaskUser extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/mask/:id", [variables, permission.admin]);
+        super("get", "/mask/:id", [
+            variables,
+            permission.admin,
+            permission.adminTokenInProd
+        ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         if (req.params.id === req.user.id) return res.redirect("/staff");
-
-        if (global.env_prod) {
-            if (!req.query.token) return res.json({});
-            const tokenCheck = await tokenManager.verifyToken(
-                req.user.id,
-                req.query.token as string
-            );
-            if (tokenCheck === false) return res.json({});
-        }
 
         let user: delUser | null = await global.db
             .collection<delUser>("users")

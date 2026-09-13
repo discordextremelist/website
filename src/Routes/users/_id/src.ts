@@ -22,14 +22,14 @@ import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
-import * as tokenManager from "../../../Util/Services/adminTokenManager.ts";
 
 export class UserSrc extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/src", [
             variables,
             permission.auth,
-            permission.admin
+            permission.admin,
+            permission.adminToken
         ]);
     }
 
@@ -38,13 +38,6 @@ export class UserSrc extends AuthedPathRoute<"get"> {
             if (!req.user) return res.redirect("/auth/login");
             req.params.id = req.user.id;
         }
-
-        if (!req.query.token) return res.json({});
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            req.query.token as string
-        );
-        if (tokenCheck === false) return res.json({});
 
         const cache: delUser | null = await userCache.getUser(req.params.id);
 
@@ -61,18 +54,12 @@ export class SessionSrc extends AuthedPathRoute<"get"> {
         super("get", "/@me/src/session", [
             variables,
             permission.auth,
-            permission.admin
+            permission.admin,
+            permission.adminToken
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        if (!req.query.token) return res.json({});
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            req.query.token as string
-        );
-        if (tokenCheck === false) return res.json({});
-
         return res.json(req.user);
     }
 }

@@ -21,6 +21,7 @@ import { OAuth2Scopes, Routes } from "discord.js";
 import type { Request, Response } from "express";
 import settings from "../../../settings.json" with { type: "json" };
 import * as discord from "../Services/discord.ts";
+import * as tokenManager from "../Services/adminTokenManager.ts";
 import { renderStatus } from "../Function/main.ts";
 /**
  * Consume the one-shot "just logged out" session flag. If it is set, clear it
@@ -100,3 +101,32 @@ const requireRank =
 export const mod = requireRank("mod", "common.error.notMod");
 export const assistant = requireRank("assistant", "common.error.notAssistant");
 export const admin = requireRank("admin", "common.error.notAdmin");
+
+/**
+ * Require the admin's current token as ?token=. Put it after `admin`. A
+ * missing or wrong token gets an empty JSON object, as these routes have
+ * always answered.
+ */
+export const adminToken = async (
+    req: Request,
+    res: Response,
+    next: () => void
+) => {
+    if (!req.query.token) return res.json({});
+
+    // `admin` runs first and only continues when req.user is set.
+    const valid = await tokenManager.verifyToken(
+        req.user!.id,
+        req.query.token as string
+    );
+    if (!valid) return res.json({});
+
+    next();
+};
+
+/** adminToken, enforced only in production. */
+export const adminTokenInProd = (
+    req: Request,
+    res: Response,
+    next: () => void
+) => (global.env_prod ? adminToken(req, res, next) : next());

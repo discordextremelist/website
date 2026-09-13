@@ -24,27 +24,18 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import * as tokenManager from "../../../Util/Services/adminTokenManager.ts";
 
 export class UploadBots extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/upload_bots", [
             variables,
             permission.auth,
-            permission.admin
+            permission.admin,
+            permission.adminToken
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        if (!req.query.token) return res.json({});
-
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            req.query.token as string
-        );
-
-        if (tokenCheck === false) return res.json({});
-
         await botCache.uploadBots();
 
         return res.sendStatus(200);
@@ -56,20 +47,12 @@ export class UploadServers extends AuthedPathRoute<"get"> {
         super("get", "/upload_servers", [
             variables,
             permission.auth,
-            permission.admin
+            permission.admin,
+            permission.adminToken
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        if (!req.query.token) return res.json({});
-
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            req.query.token as string
-        );
-
-        if (tokenCheck === false) return res.json({});
-
         await serverCache.uploadServers();
 
         return res.sendStatus(200);
@@ -81,20 +64,12 @@ export class UploadTemplates extends AuthedPathRoute<"get"> {
         super("get", "/upload_templates", [
             variables,
             permission.auth,
-            permission.admin
+            permission.admin,
+            permission.adminToken
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        if (!req.query.token) return res.json({});
-
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            req.query.token as string
-        );
-
-        if (tokenCheck === false) return res.json({});
-
         await templateCache.uploadTemplates();
 
         return res.sendStatus(200);

@@ -1,8 +1,11 @@
 import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { admin, auth } from "../../../Util/Middleware/permissions.ts";
+import {
+    admin,
+    adminToken,
+    auth
+} from "../../../Util/Middleware/permissions.ts";
 import e from "express";
-import * as tokenManager from "../../../Util/Services/adminTokenManager.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as Discord from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
@@ -12,7 +15,7 @@ import { botExists } from "../../../Util/Middleware/checks.ts";
 
 export class SrcRoute extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/:id/src", [variables, auth, admin]);
+        super("get", "/:id/src", [variables, auth, admin, adminToken]);
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
@@ -20,12 +23,6 @@ export class SrcRoute extends AuthedPathRoute<"get"> {
             if (!req.user) return res.redirect("/auth/login");
             req.params.id = req.user.id;
         }
-        if (!req.query.token) return res.json({});
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            req.query.token as string
-        );
-        if (tokenCheck === false) return res.json({});
         const cache = await botCache.getBot(req.params.id);
         const db = await global.db
             .collection("bots")

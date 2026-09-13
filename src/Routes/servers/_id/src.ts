@@ -26,14 +26,14 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import * as tokenManager from "../../../Util/Services/adminTokenManager.ts";
 
 export class ServerSrc extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/src", [
             variables,
             permission.auth,
-            permission.admin
+            permission.admin,
+            permission.adminToken
         ]);
     }
 
@@ -42,14 +42,6 @@ export class ServerSrc extends AuthedPathRoute<"get"> {
             if (!req.user) return res.redirect("/auth/login");
             req.params.id = req.user.id;
         }
-
-        if (!req.query.token) return res.json({});
-
-        const tokenCheck = await tokenManager.verifyToken(
-            req.user.id,
-            req.query.token as string
-        );
-        if (tokenCheck === false) return res.json({});
 
         const cache = await serverCache.getServer(req.params.id);
         const db = await global.db

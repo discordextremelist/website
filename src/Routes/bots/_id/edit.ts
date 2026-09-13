@@ -235,7 +235,8 @@ export class PostEdit extends AuthedPathRoute<"post"> {
         }
 
         let commands: APIApplicationCommand[] = await fetchSlashCommands(
-            req,
+            req.user.db,
+            req.body.slashCommands,
             bot._id,
             bot.commands || [],
             (message) => {

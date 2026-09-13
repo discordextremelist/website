@@ -34,7 +34,7 @@ import { DAPI } from "../Services/discord.ts";
 import * as userCache from "../Services/userCaching.ts";
 
 // Helpers shared by the bot submit, edit and resubmit handlers, which all read
-// the same listing form.
+// the same listing form, and by bot sync and AutoSync.
 
 /** Display names of the tag checkboxes ticked on the bot listing form. */
 export function botTags(body: Record<string, unknown>): string[] {
@@ -85,10 +85,10 @@ export function invalidLinkErrors(
 }
 
 /**
- * The bot's slash commands. When the user ticked "import slash commands",
- * they are fetched from Discord with the user's OAuth token; otherwise
- * `initial` is returned unchanged. Errors are reported through onError, which
- * the caller uses to set its error flag and push the message.
+ * The bot's slash commands. When `wanted` is set (the form's or the listing's
+ * slash-commands flag) and `user` has an OAuth token, they are fetched from
+ * Discord with that token, refreshing it first if it has expired; otherwise
+ * `initial` is returned unchanged. Refresh errors go to onError, if given.
  *
  * Known bug, preserved deliberately (ISSUES I-8): requestNewAccessToken is
  * callback-style, so the `await` below does not wait for it. An expired token
@@ -96,18 +96,19 @@ export function invalidLinkErrors(
  * refresh errors reach onError late.
  */
 export async function fetchSlashCommands(
-    req: AuthedRequest,
+    user: delUser,
+    wanted: unknown,
     applicationId: string,
     initial: APIApplicationCommand[],
-    onError: (message: string) => void
+    onError?: (message: string) => void
 ): Promise<APIApplicationCommand[]> {
     let commands = initial;
 
-    if (req.body.slashCommands && req.user.db.auth) {
-        if (Date.now() > req.user.db.auth.expires) {
+    if (wanted && user.auth) {
+        if (Date.now() > user.auth.expires) {
             await refresh.requestNewAccessToken(
                 "discord",
-                req.user.db.auth.refreshToken,
+                user.auth.refreshToken,
                 async (
                     err,
                     accessToken,
@@ -116,13 +117,13 @@ export async function fetchSlashCommands(
                 ) => {
                     if (err) {
                         if (isDiscordAPIError(err)) {
-                            onError(`${err.statusCode} ${err.data}`);
+                            onError?.(`${err.statusCode} ${err.data}`);
                         } else {
-                            onError(err.message);
+                            onError?.(err.message);
                         }
                     } else {
                         await global.db.collection("users").updateOne(
-                            { _id: req.user.id },
+                            { _id: user._id },
                             {
                                 $set: {
                                     auth: {
@@ -135,7 +136,7 @@ export async function fetchSlashCommands(
                                 }
                             }
                         );
-                        await userCache.updateUser(req.user.id);
+                        await userCache.updateUser(user._id);
                     }
                 }
             );
@@ -144,7 +145,7 @@ export async function fetchSlashCommands(
         const receivedCommands = (await (
             await fetch(DAPI + Routes.applicationCommands(applicationId), {
                 headers: {
-                    authorization: `Bearer ${req.user.db.auth.accessToken}`
+                    authorization: `Bearer ${user.auth.accessToken}`
                 }
             })
         )

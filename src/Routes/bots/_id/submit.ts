@@ -247,7 +247,8 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
         }
 
         let commands: APIApplicationCommand[] = await fetchSlashCommands(
-            req,
+            req.user.db,
+            req.body.slashCommands,
             req.body.id,
             [],
             (message) => {

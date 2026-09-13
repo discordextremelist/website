@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import fetch from "node-fetch";
 import refresh from "passport-oauth2-refresh";
 import * as discord from "../Util/Services/discord.ts";
 import * as botCache from "../Util/Services/botCaching.ts";
@@ -35,16 +34,17 @@ import {
 import type {
     APITemplate,
     RESTGetAPIInviteQuery,
-    RESTPostOAuth2AccessTokenResult,
     APIApplicationCommand,
     APIApplication,
-    APIUser,
     RESTGetAPIInviteResult
 } from "discord.js";
 import settings from "../../settings.json" with { type: "json" };
-import { DAPI } from "../Util/Services/discord.ts";
 import { templateGuildFields } from "../Util/Function/templateListing.ts";
 import { logWebsiteAction } from "../Util/Function/websiteLog.ts";
+import {
+    fetchSlashCommands,
+    fetchUserFlags
+} from "../Util/Function/botListing.ts";
 
 const router = express.Router();
 
@@ -92,63 +92,18 @@ router.get("/bots", async (_req, res) => {
                     owner?.auth?.scopes?.includes(
                         OAuth2Scopes.ApplicationsCommandsUpdate
                     )
-                ) {
-                    if (Date.now() > owner.auth.expires) {
-                        await refresh.requestNewAccessToken(
-                            "discord",
-                            owner.auth.refreshToken,
-                            async (
-                                err,
-                                accessToken,
-                                refreshToken,
-                                result: RESTPostOAuth2AccessTokenResult
-                            ) => {
-                                if (!err) {
-                                    await global.db
-                                        .collection("users")
-                                        .updateOne(
-                                            { _id: owner._id },
-                                            {
-                                                $set: {
-                                                    auth: {
-                                                        accessToken,
-                                                        refreshToken,
-                                                        expires:
-                                                            Date.now() +
-                                                            result.expires_in *
-                                                                1000
-                                                    }
-                                                }
-                                            }
-                                        );
-                                    await userCache.updateUser(owner._id);
-                                }
-                            }
-                        );
-                    }
-
-                    const receivedCommands = (await (
-                        await fetch(DAPI + Routes.applicationCommands(app.id), {
-                            headers: {
-                                authorization: `Bearer ${owner.auth.accessToken}`
-                            }
-                        })
-                    )
-                        .json()
-                        .catch(() => {})) as APIApplicationCommand[];
-                    if (Array.isArray(receivedCommands))
-                        commands = receivedCommands;
-                }
+                )
+                    // Refresh errors are ignored here: there's no one to show
+                    // them to.
+                    commands = await fetchSlashCommands(
+                        owner,
+                        true,
+                        app.id,
+                        commands
+                    );
             }
 
-            let userFlags = 0;
-
-            if (botExists.scopes?.bot) {
-                const user = (await discord.bot.rest
-                    .get(Routes.user(id))
-                    .catch(() => {})) as APIUser;
-                if (user.public_flags) userFlags = user.public_flags;
-            }
+            const userFlags = await fetchUserFlags(botExists.scopes?.bot, id);
 
             await global.db.collection("bots").updateOne(
                 { _id: id },

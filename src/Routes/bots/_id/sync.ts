@@ -2,17 +2,9 @@ import { AuthedPathRoute } from "../../route.ts";
 import {
     type APIApplication,
     type APIApplicationCommand,
-    type APIUser,
     type DiscordAPIError,
-    RESTJSONErrorCodes,
-    type RESTPostOAuth2AccessTokenResult,
-    Routes
+    RESTJSONErrorCodes
 } from "discord.js";
-import refresh from "passport-oauth2-refresh";
-import { isDiscordAPIError } from "../../../Util/Function/discordErrors.ts";
-import * as userCache from "../../../Util/Services/userCaching.ts";
-import fetch from "node-fetch";
-import { DAPI } from "../../../Util/Services/discord.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as e from "express";
@@ -23,6 +15,10 @@ import {
     discordErrorJson,
     jsonError
 } from "../../../Util/Function/responses.ts";
+import {
+    fetchSlashCommands,
+    fetchUserFlags
+} from "../../../Util/Function/botListing.ts";
 
 export class SyncBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -35,69 +31,16 @@ export class SyncBot extends AuthedPathRoute<"get"> {
         next: e.NextFunction
     ): Promise<void> {
         const bot = req.attached.bot!;
-        let commands: APIApplicationCommand[] = bot.commands || [];
-        if (bot.scopes?.slashCommands && req.user.db.auth) {
-            if (Date.now() > req.user.db.auth.expires) {
-                await refresh.requestNewAccessToken(
-                    "discord",
-                    req.user.db.auth.refreshToken,
-                    async (
-                        err,
-                        accessToken,
-                        refreshToken,
-                        result: RESTPostOAuth2AccessTokenResult
-                    ) => {
-                        if (err) {
-                            let errors: string[] = [];
+        const commands: APIApplicationCommand[] = await fetchSlashCommands(
+            req.user.db,
+            bot.scopes?.slashCommands,
+            bot._id,
+            bot.commands || [],
+            // The body sync has always sent: errors holds one list of one message.
+            (message) => jsonError(res, 500, [[message]])
+        );
 
-                            if (isDiscordAPIError(err)) {
-                                errors.push(`${err.statusCode} ${err.data}`);
-                            } else {
-                                errors.push(err.message);
-                            }
-
-                            return jsonError(res, 500, [errors]);
-                        } else {
-                            await global.db.collection("users").updateOne(
-                                { _id: req.user.id },
-                                {
-                                    $set: {
-                                        auth: {
-                                            accessToken,
-                                            refreshToken,
-                                            expires:
-                                                Date.now() +
-                                                result.expires_in * 1000
-                                        }
-                                    }
-                                }
-                            );
-                            await userCache.updateUser(req.user.id);
-                        }
-                    }
-                );
-            }
-
-            const receivedCommands = (await (
-                await fetch(DAPI + Routes.applicationCommands(bot._id), {
-                    headers: {
-                        authorization: `Bearer ${req.user.db.auth.accessToken}`
-                    }
-                })
-            )
-                .json()
-                .catch(() => {})) as APIApplicationCommand[];
-            if (Array.isArray(receivedCommands)) commands = receivedCommands;
-        }
-
-        let userFlags = 0;
-
-        if (bot.scopes?.bot) {
-            const user = (await discord.bot.rest
-                .get(Routes.user(bot._id))
-                .catch(() => {})) as APIUser;
-            if (user.public_flags) userFlags = user.public_flags;
-        }
+        const userFlags = await fetchUserFlags(bot.scopes?.bot, bot._id);
 
         discord
             .restGet<APIApplication>(

@@ -17,38 +17,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const prefix = "servers";
+import { ListingCache } from "./listingCache.ts";
 
-export async function getServer(id: string): Promise<delServer | null> {
-    const server = await global.redis?.hget(prefix, id);
-    return server === null ? null : JSON.parse(server);
+class ServerCache extends ListingCache<delServer> {
+    constructor() {
+        super("servers");
+    }
 }
 
-export async function getAllServers(): Promise<delServer[]> {
-    const servers = await global.redis?.hvals(prefix);
-    return servers.map((s) => JSON.parse(s));
-}
+const cache = new ServerCache();
 
-export async function updateServer(id: string) {
-    const data: delServer | null = await global.db
-        .collection<delServer>("servers")
-        .findOne({ _id: id });
-    if (!data) return;
-    await global.redis?.hmset(prefix, id, JSON.stringify(data));
-}
-
-export async function uploadServers() {
-    const servers: delServer[] = await global.db
-        .collection<delServer>("servers")
-        .find()
-        .toArray();
-    if (servers.length < 1) return;
-    await global.redis?.hmset(
-        prefix,
-        ...servers.map((s: delServer) => [s._id, JSON.stringify(s)])
-    );
-}
-
-export async function deleteServer(id: string) {
-    await global.redis?.hdel(prefix, id);
-}
+export const getServer = (id: string) => cache.get(id);
+export const getAllServers = () => cache.getAll();
+export const updateServer = (id: string) => cache.update(id);
+export const uploadServers = () => cache.upload();
+export const deleteServer = (id: string) => cache.delete(id);

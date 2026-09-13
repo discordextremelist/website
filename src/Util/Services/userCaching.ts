@@ -17,38 +17,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const prefix = "users";
+import { ListingCache } from "./listingCache.ts";
 
-export async function getUser(id: string): Promise<delUser | null> {
-    const user = await global.redis?.hget(prefix, id);
-    return user === null ? null : JSON.parse(user);
+class UserCache extends ListingCache<delUser> {
+    constructor() {
+        super("users");
+    }
 }
 
-export async function getAllUsers(): Promise<delUser[]> {
-    const users = await global.redis?.hvals(prefix);
-    return users.map((s) => JSON.parse(s));
-}
+const cache = new UserCache();
 
-export async function updateUser(id: string) {
-    const data: delUser | null = await global.db
-        .collection<delUser>("users")
-        .findOne({ _id: id });
-    if (!data) return;
-    await global.redis?.hmset(prefix, id, JSON.stringify(data));
-}
-
-export async function uploadUsers() {
-    const usersDB: delUser[] = await global.db
-        .collection<delUser>("users")
-        .find()
-        .toArray();
-    if (usersDB.length < 1) return;
-    await global.redis?.hmset(
-        prefix,
-        ...usersDB.map((u: delUser) => [u._id, JSON.stringify(u)])
-    );
-}
-
-export async function deleteUser(id: string) {
-    await global.redis?.hdel(prefix, id);
-}
+export const getUser = (id: string) => cache.get(id);
+export const getAllUsers = () => cache.getAll();
+export const updateUser = (id: string) => cache.update(id);
+export const uploadUsers = () => cache.upload();
+export const deleteUser = (id: string) => cache.delete(id);

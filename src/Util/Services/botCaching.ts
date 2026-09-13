@@ -17,49 +17,45 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const prefix = "bots";
-export async function getBot(id: string): Promise<delBot | undefined> {
-    const bot = await global.redis?.hget(prefix, id);
-    if (!bot) return;
+import { ListingCache } from "./listingCache.ts";
 
-    const parsedBot = JSON.parse(bot);
-    if (parsedBot.id) parsedBot._id = parsedBot.id;
-
-    return parsedBot;
-}
-
-export async function getAllBots(): Promise<delBot[]> {
-    const bots = await global.redis?.hvals(prefix);
-    return bots.map((s) => JSON.parse(s));
-}
-
-export async function updateBot(id: string) {
-    const data: delBot | null = await global.db
-        .collection<delBot>("bots")
-        .findOne({ _id: id });
-    if (!data) return;
-    await global.redis?.hmset(prefix, id, JSON.stringify(data));
-}
-
-export async function uploadBots() {
-    const botsDB: delBot[] = await global.db
-        .collection<delBot>("bots")
-        .find()
-        .toArray();
-    if (botsDB.length < 1) return;
-
-    for (const bot of botsDB) {
-        // Older documents stored the ID as `id`.
-        const legacyId = (bot as delBot & { id?: string }).id;
-        if (legacyId) bot._id = legacyId;
+/**
+ * Bots differ from the other caches in two ways: get() returns undefined for
+ * a bot that isn't cached, and older documents stored the ID as `id`, which is
+ * copied to `_id` when reading from the cache and when uploading to it.
+ */
+class BotCache extends ListingCache<delBot, undefined> {
+    constructor() {
+        super("bots");
     }
 
-    await global.redis?.hmset(
-        prefix,
-        ...botsDB.map((bot: delBot) => [bot._id, JSON.stringify(bot)])
-    );
+    override async get(id: string): Promise<delBot | undefined> {
+        const bot = await global.redis?.hget(this.name, id);
+        if (!bot) return;
+
+        const parsedBot = JSON.parse(bot);
+        if (parsedBot.id) parsedBot._id = parsedBot.id;
+
+        return parsedBot;
+    }
+
+    protected override async load(): Promise<delBot[]> {
+        const botsDB = await super.load();
+
+        for (const bot of botsDB) {
+            // Older documents stored the ID as `id`.
+            const legacyId = (bot as delBot & { id?: string }).id;
+            if (legacyId) bot._id = legacyId;
+        }
+
+        return botsDB;
+    }
 }
 
-export async function deleteBot(id: string) {
-    await global.redis?.hdel(prefix, id);
-}
+const cache = new BotCache();
+
+export const getBot = (id: string) => cache.get(id);
+export const getAllBots = () => cache.getAll();
+export const updateBot = (id: string) => cache.update(id);
+export const uploadBots = () => cache.upload();
+export const deleteBot = (id: string) => cache.delete(id);

@@ -21,8 +21,94 @@ import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import type { Nullable } from "../../../Util/Function/types.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
+
+// What differs between a warning and a strike.
+const PUNISHMENTS = {
+    warn: {
+        list: "warnings",
+        audit: "ADD_WARNING",
+        template: "templates/staff/staffManagement/warn",
+        premid: "premid.staff.staffManager.warn",
+        title: "page.staff.manager.warn",
+        subtitle: "page.staff.manager.warn.subtitle"
+    },
+    strike: {
+        list: "strikes",
+        audit: "ADD_STRIKE",
+        template: "templates/staff/staffManagement/strike",
+        premid: "premid.staff.staffManager.strike",
+        title: "page.staff.manager.strike",
+        subtitle: "page.staff.manager.strike.subtitle"
+    }
+} as const;
+
+type Punishment = keyof typeof PUNISHMENTS;
+
+/** The warn or strike form for the staff member userExists attached. */
+function renderPunishmentForm(
+    req: AuthedRequest,
+    res: Response,
+    kind: Punishment
+) {
+    const user = req.attached.user!;
+    const punishment = PUNISHMENTS[kind];
+
+    res.locals.premidPageInfo = res.__(punishment.premid, user.fullUsername);
+
+    res.render(punishment.template, {
+        title: res.__(punishment.title),
+        subtitle: res.__(punishment.subtitle, user.fullUsername),
+        req,
+        user
+    });
+}
+
+/**
+ * Add the posted warning or strike to the staff member's record, audit it,
+ * and go back to the staff manager.
+ */
+async function addPunishment(
+    req: AuthedRequest,
+    res: Response,
+    kind: Punishment
+) {
+    const user = req.attached.user!;
+    const punishment = PUNISHMENTS[kind];
+
+    const list = user.staffTracking.punishments[punishment.list];
+    list.push({
+        executor: req.user.id,
+        reason: req.body.reason,
+        date: Date.now()
+    });
+
+    await global.db.collection("users").updateOne(
+        { _id: req.params.id },
+        {
+            $set: {
+                [`staffTracking.punishments.${punishment.list}`]: list
+            }
+        }
+    );
+
+    await global.db.collection("audit").insertOne({
+        type: punishment.audit,
+        executor: req.user.id,
+        target: req.params.id,
+        date: Date.now(),
+        reason: req.body.reason || "None specified.",
+        details: {
+            new: {
+                executor: req.user.id,
+                reason: req.body.reason,
+                date: Date.now()
+            }
+        }
+    });
+
+    res.redirect("/staff/staff-manager");
+}
 
 export class GetWarn extends AuthedPathRoute<"get"> {
     constructor() {
@@ -35,22 +121,7 @@ export class GetWarn extends AuthedPathRoute<"get"> {
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        const user: Nullable<delUser> = req.attached.user!;
-
-        res.locals.premidPageInfo = res.__(
-            "premid.staff.staffManager.warn",
-            user.fullUsername
-        );
-
-        res.render("templates/staff/staffManagement/warn", {
-            title: res.__("page.staff.manager.warn"),
-            subtitle: res.__(
-                "page.staff.manager.warn.subtitle",
-                user.fullUsername
-            ),
-            req,
-            user
-        });
+        renderPunishmentForm(req, res, "warn");
     }
 }
 
@@ -65,40 +136,7 @@ export class PostWarn extends AuthedPathRoute<"post"> {
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        const user: Nullable<delUser> = req.attached.user!;
-
-        const warnings = user.staffTracking.punishments.warnings;
-        warnings.push({
-            executor: req.user.id,
-            reason: req.body.reason,
-            date: Date.now()
-        });
-
-        await global.db.collection("users").updateOne(
-            { _id: req.params.id },
-            {
-                $set: {
-                    "staffTracking.punishments.warnings": warnings
-                }
-            }
-        );
-
-        await global.db.collection("audit").insertOne({
-            type: "ADD_WARNING",
-            executor: req.user.id,
-            target: req.params.id,
-            date: Date.now(),
-            reason: req.body.reason || "None specified.",
-            details: {
-                new: {
-                    executor: req.user.id,
-                    reason: req.body.reason,
-                    date: Date.now()
-                }
-            }
-        });
-
-        res.redirect("/staff/staff-manager");
+        await addPunishment(req, res, "warn");
     }
 }
 
@@ -113,22 +151,7 @@ export class GetStrike extends AuthedPathRoute<"get"> {
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        const user: Nullable<delUser> = req.attached.user!;
-
-        res.locals.premidPageInfo = res.__(
-            "premid.staff.staffManager.strike",
-            user.fullUsername
-        );
-
-        res.render("templates/staff/staffManagement/strike", {
-            title: res.__("page.staff.manager.strike"),
-            subtitle: res.__(
-                "page.staff.manager.strike.subtitle",
-                user.fullUsername
-            ),
-            req,
-            user
-        });
+        renderPunishmentForm(req, res, "strike");
     }
 }
 
@@ -143,39 +166,6 @@ export class PostStrike extends AuthedPathRoute<"post"> {
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        const user: Nullable<delUser> = req.attached.user!;
-
-        const strikes = user.staffTracking.punishments.strikes;
-        strikes.push({
-            executor: req.user.id,
-            reason: req.body.reason,
-            date: Date.now()
-        });
-
-        await global.db.collection("users").updateOne(
-            { _id: req.params.id },
-            {
-                $set: {
-                    "staffTracking.punishments.strikes": strikes
-                }
-            }
-        );
-
-        await global.db.collection("audit").insertOne({
-            type: "ADD_STRIKE",
-            executor: req.user.id,
-            target: req.params.id,
-            date: Date.now(),
-            reason: req.body.reason || "None specified.",
-            details: {
-                new: {
-                    executor: req.user.id,
-                    reason: req.body.reason,
-                    date: Date.now()
-                }
-            }
-        });
-
-        res.redirect("/staff/staff-manager");
+        await addPunishment(req, res, "strike");
     }
 }

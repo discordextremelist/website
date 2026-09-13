@@ -23,57 +23,42 @@ import type * as Discord from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import { bot } from "./client.ts";
 
+// There is a chance this will fail on recent bot restart if it didn't cache the channel yet.
+// Using .fetch() will by default cache the channel on success, and then from there it shouldn't need to again
+// (So on a cold cache these return the fetch's promise, cast to the type the
+// caller expects: ISSUES I-23.)
+const cachedChannel = (id: string) =>
+    (bot.channels.cache.has(id)
+        ? bot.channels.cache.get(id)
+        : (async () => {
+              await bot.channels.fetch(id);
+          })()) as Discord.TextChannel;
+
+const cachedGuild = (id: string) =>
+    (bot.guilds.cache.has(id)
+        ? bot.guilds.cache.get(id)
+        : (async () => {
+              await bot.guilds.fetch(id);
+          })()) as Discord.Guild;
+
 export const channels = {
-    // There is a chance this will fail on recent bot restart if it didn't cache the channel yet.
-    // Using .fetch() will by default cache the channel on success, and then from there it shouldn't need to again
     get logs() {
-        return (
-            bot.channels.cache.has(settings.channels.webLog)
-                ? bot.channels.cache.get(settings.channels.webLog)
-                : (async () => {
-                      await bot.channels.fetch(settings.channels.webLog);
-                  }).call(this)
-        ) as Discord.TextChannel;
+        return cachedChannel(settings.channels.webLog);
     },
     get alerts() {
-        return (
-            bot.channels.cache.has(settings.channels.alerts)
-                ? bot.channels.cache.get(settings.channels.alerts)
-                : (async () => {
-                      await bot.channels.fetch(settings.channels.alerts);
-                  }).call(this)
-        ) as Discord.TextChannel;
+        return cachedChannel(settings.channels.alerts);
     }
 };
 
 export const guilds = {
-    // same thing as the channels above
     get main() {
-        return (
-            bot.guilds.cache.has(settings.guild.main)
-                ? bot.guilds.cache.get(settings.guild.main)
-                : (async () => {
-                      await bot.guilds.fetch(settings.guild.main);
-                  }).call(this)
-        ) as Discord.Guild;
+        return cachedGuild(settings.guild.main);
     },
     get testing() {
-        return (
-            bot.guilds.cache.has(settings.guild.staff)
-                ? bot.guilds.cache.get(settings.guild.staff)
-                : (async () => {
-                      await bot.guilds.fetch(settings.guild.staff);
-                  }).call(this)
-        ) as Discord.Guild;
+        return cachedGuild(settings.guild.staff);
     },
     get bot() {
-        return (
-            bot.guilds.cache.has(settings.guild.bot)
-                ? bot.guilds.cache.get(settings.guild.bot)
-                : (async () => {
-                      await bot.guilds.fetch(settings.guild.bot);
-                  }).call(this)
-        ) as Discord.Guild;
+        return cachedGuild(settings.guild.bot);
     }
 };
 

@@ -29,6 +29,15 @@ import { guilds } from "./guilds.ts";
 if (settings.secrets.datadog)
     metrics.init({ host: "", prefix: "", apiKey: settings.secrets.datadog });
 
+/** Send a website gauge, named del.website.dev.<name> in development. */
+function websiteGauge(name: string, value: number) {
+    if (settings.secrets.datadog)
+        metrics.gauge(
+            `del.website.${settings.website.dev ? "dev." : ""}${name}`,
+            value
+        );
+}
+
 export async function postMetric() {
     const guild = guilds.main;
     if (guild && settings.secrets.datadog)
@@ -46,10 +55,7 @@ export async function postWebMetric(type: string) {
             const bots = await global.db
                 .collection<delBot>("bots")
                 .estimatedDocumentCount();
-            if (settings.secrets.datadog)
-                settings.website.dev
-                    ? metrics.gauge("del.website.dev.botCount", bots)
-                    : metrics.gauge("del.website.botCount", bots);
+            websiteGauge("botCount", bots);
 
             const todaysGrowth = await global.db
                 .collection("webOptions")
@@ -82,16 +88,7 @@ export async function postWebMetric(type: string) {
                     ]
                 });
 
-            if (settings.secrets.datadog)
-                settings.website.dev
-                    ? metrics.gauge(
-                          "del.website.dev.botCount.unapproved",
-                          unapprovedBots
-                      )
-                    : metrics.gauge(
-                          "del.website.botCount.unapproved",
-                          unapprovedBots
-                      );
+            websiteGauge("botCount.unapproved", unapprovedBots);
             break;
         case "server":
             const servers = settings.secrets.datadog
@@ -100,10 +97,7 @@ export async function postWebMetric(type: string) {
                       .estimatedDocumentCount()
                 : 0;
 
-            if (settings.secrets.datadog)
-                settings.website.dev
-                    ? metrics.gauge("del.website.dev.serverCount", servers)
-                    : metrics.gauge("del.website.serverCount", servers);
+            websiteGauge("serverCount", servers);
             break;
         case "template":
             // if they aren't using datadog, don't make an unnecessary query
@@ -112,19 +106,13 @@ export async function postWebMetric(type: string) {
                       .collection<delTemplate>("templates")
                       .estimatedDocumentCount()
                 : 0;
-            if (settings.secrets.datadog)
-                settings.website.dev
-                    ? metrics.gauge("del.website.dev.templateCount", templates)
-                    : metrics.gauge("del.website.templateCount", templates);
+            websiteGauge("templateCount", templates);
             break;
         case "user":
             const users = await global.db
                 .collection<delUser>("users")
                 .estimatedDocumentCount();
-            if (settings.secrets.datadog)
-                settings.website.dev
-                    ? metrics.gauge("del.website.dev.userCount", users)
-                    : metrics.gauge("del.website.userCount", users);
+            websiteGauge("userCount", users);
             break;
     }
 }
@@ -143,16 +131,7 @@ export async function postTodaysGrowth() {
     const date = moment().diff(moment(todaysGrowth.lastPosted), "days");
 
     if (date >= 1) {
-        if (settings.secrets.datadog)
-            settings.website.dev
-                ? metrics.gauge(
-                      "del.website.dev.addedBotsToday",
-                      todaysGrowth.count
-                  )
-                : metrics.gauge(
-                      "del.website.addedBotsToday",
-                      todaysGrowth.count
-                  );
+        websiteGauge("addedBotsToday", todaysGrowth.count);
 
         await global.db.collection("webOptions").updateOne(
             { _id: "todaysGrowth" },

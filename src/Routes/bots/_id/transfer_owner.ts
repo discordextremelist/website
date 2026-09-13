@@ -18,15 +18,6 @@ export class TransferOwner extends AuthedPathRoute<"post"> {
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
-        if (req.user.db.rank.assistant === false) {
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.notAssistant")
-            );
-        }
-
         const newOwnerExists = await global.db
             .collection("users")
             .findOne({ _id: req.body.newOwner });

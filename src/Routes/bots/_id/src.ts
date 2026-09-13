@@ -8,8 +8,8 @@ import {
 import e from "express";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { sendSource } from "../../../Util/Function/adminSource.ts";
-import { sendReport } from "../../../Util/Function/report.ts";
+import { sendSource } from "../../../Util/Function/staff/adminSource.ts";
+import { sendReport } from "../../../Util/Function/listings/report.ts";
 
 export class SrcRoute extends AuthedPathRoute<"get"> {
     constructor() {

@@ -20,6 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // The helpers the EJS views call. Routes pass this module to res.render as
 // `functions`, which is the name the templates use.
 
-export { getForeground, parseDate } from "./format.ts";
-export { parseAudit } from "./audit.ts";
-export { standingParseEmoji } from "./staff.ts";
+export { getForeground, parseDate } from "../common/format.ts";
+export { parseAudit } from "../staff/audit.ts";
+export { standingParseEmoji } from "../staff/staff.ts";

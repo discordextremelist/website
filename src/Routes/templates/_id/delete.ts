@@ -24,7 +24,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
-import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 
 export class DeleteTemplate extends AuthedPathRoute<"get"> {
     constructor() {

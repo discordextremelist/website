@@ -19,8 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Audit log display and the reason types posted by staff forms.
 
-import * as botCache from "../Services/cache/botCaching.ts";
-import * as userCache from "../Services/cache/userCaching.ts";
+import * as botCache from "../../Services/cache/botCaching.ts";
+import * as userCache from "../../Services/cache/userCaching.ts";
 import type { Response } from "express";
 
 // The icon for each audit type the log knows how to show. Its name is the

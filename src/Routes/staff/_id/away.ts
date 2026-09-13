@@ -21,7 +21,7 @@ import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import type { Nullable } from "../../../Util/Function/types.ts";
+import type { Nullable } from "../../../Util/Function/common/types.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
 
 export class GetAway extends AuthedPathRoute<"get"> {

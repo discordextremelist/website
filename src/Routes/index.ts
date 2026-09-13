@@ -32,7 +32,7 @@ import type { GuildMember, GuildMemberManager } from "discord.js";
 import type {
     BotTags,
     BotQueryTagFilterParams
-} from "../Util/Function/types.ts";
+} from "../Util/Function/common/types.ts";
 
 const router = express.Router();
 

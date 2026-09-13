@@ -22,8 +22,8 @@ import type { Response } from "express";
 import type { APIUser, Snowflake } from "discord.js";
 import { Routes } from "discord.js";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { grabFullUser } from "../../../Util/Function/format.ts";
-import { newUserRecord } from "../../../Util/Function/userRecords.ts";
+import { grabFullUser } from "../../../Util/Function/common/format.ts";
+import { newUserRecord } from "../../../Util/Function/users/userRecords.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as discord from "../../../Util/Services/discord/index.ts";
 

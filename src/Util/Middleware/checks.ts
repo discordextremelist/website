@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import type { Request, Response } from "express";
-import { jsonError, renderStatus } from "../Function/responses.ts";
+import { jsonError, renderStatus } from "../Function/web/responses.ts";
 
 export const botExists = async (
     req: Request,

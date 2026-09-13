@@ -13,16 +13,16 @@ import * as discord from "../../../Util/Services/discord/index.ts";
 
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { blacklistCheck } from "../../../Util/Services/access/blacklist.ts";
-import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import {
     discordErrorJson,
     jsonError
-} from "../../../Util/Function/responses.ts";
-import { validateBotListing } from "../../../Util/Function/botListing.ts";
+} from "../../../Util/Function/web/responses.ts";
+import { validateBotListing } from "../../../Util/Function/bots/botListing.ts";
 import {
     submittedBot,
     submittedBotAudit
-} from "../../../Util/Function/botRecords.ts";
+} from "../../../Util/Function/bots/botRecords.ts";
 
 export class GetSubmit extends AuthedPathRoute<"get"> {
     constructor() {

@@ -25,12 +25,12 @@ import * as templateCache from "../../../Util/Services/cache/templateCaching.ts"
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
-import { discordErrorPage } from "../../../Util/Function/responses.ts";
+import { discordErrorPage } from "../../../Util/Function/web/responses.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
 import {
     syncedTemplateAuditBefore,
     syncedTemplateFields
-} from "../../../Util/Function/templateRecords.ts";
+} from "../../../Util/Function/templates/templateRecords.ts";
 
 export class SyncTemplate extends AuthedPathRoute<"get"> {
     constructor() {

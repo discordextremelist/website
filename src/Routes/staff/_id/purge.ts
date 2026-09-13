@@ -22,7 +22,7 @@ import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { ownedListings } from "../../../Util/Function/ownedListings.ts";
+import { ownedListings } from "../../../Util/Function/users/ownedListings.ts";
 
 let cutoff = new Date(2025, 0, 1); // 01/01/2025
 const ranks: (keyof delUser["rank"])[] = [

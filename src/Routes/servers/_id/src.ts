@@ -22,9 +22,9 @@ import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { jsonErrorMessage } from "../../../Util/Function/responses.ts";
-import { sendSource } from "../../../Util/Function/adminSource.ts";
-import { sendReport } from "../../../Util/Function/report.ts";
+import { jsonErrorMessage } from "../../../Util/Function/web/responses.ts";
+import { sendSource } from "../../../Util/Function/staff/adminSource.ts";
+import { sendReport } from "../../../Util/Function/listings/report.ts";
 
 export class ServerSrc extends AuthedPathRoute<"get"> {
     constructor() {

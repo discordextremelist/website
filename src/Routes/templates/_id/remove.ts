@@ -22,13 +22,13 @@ import type { Response } from "express";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord/index.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { escapeFormatting } from "../../../Util/Function/format.ts";
+import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { templateType } from "../index.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
-import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
-import { reasonMissing } from "../../../Util/Function/staffActions.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import { reasonMissing } from "../../../Util/Function/staff/staffActions.ts";
 
 export class GetRemoveTemplate extends AuthedPathRoute<"get"> {
     constructor() {

@@ -23,7 +23,7 @@ import * as botCache from "../Util/Services/cache/botCaching.ts";
 import * as serverCache from "../Util/Services/cache/serverCaching.ts";
 import * as templateCache from "../Util/Services/cache/templateCaching.ts";
 import * as userCache from "../Util/Services/cache/userCaching.ts";
-import { escapeFormatting } from "../Util/Function/format.ts";
+import { escapeFormatting } from "../Util/Function/common/format.ts";
 import { makeURLSearchParams, OAuth2Scopes, Routes } from "discord.js";
 import type {
     APITemplate,
@@ -33,13 +33,13 @@ import type {
     RESTGetAPIInviteResult
 } from "discord.js";
 import settings from "../../settings.json" with { type: "json" };
-import { logListingEvent } from "../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../Util/Function/listings/websiteLog.ts";
 import {
     fetchSlashCommands,
     fetchUserFlags
-} from "../Util/Function/botListing.ts";
-import { syncedServerFields } from "../Util/Function/serverRecords.ts";
-import { syncedTemplateFields } from "../Util/Function/templateRecords.ts";
+} from "../Util/Function/bots/botListing.ts";
+import { syncedServerFields } from "../Util/Function/servers/serverRecords.ts";
+import { syncedTemplateFields } from "../Util/Function/templates/templateRecords.ts";
 
 const router = express.Router();
 

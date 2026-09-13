@@ -20,8 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // Shared by the staff actions on listings: approve, decline, remove, hide.
 
 import type { Response } from "express";
-import * as userCache from "../Services/cache/userCaching.ts";
-import { renderStatus } from "./responses.ts";
+import * as userCache from "../../Services/cache/userCaching.ts";
+import { renderStatus } from "../web/responses.ts";
 
 type StaffAction =
     "approved" | "unapprove" | "declined" | "remove" | "modHidden";

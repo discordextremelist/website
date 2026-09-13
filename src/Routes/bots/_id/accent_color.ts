@@ -5,7 +5,7 @@ import * as checks from "../../../Util/Middleware/checks.ts";
 import type { Response } from "express";
 import fetch from "node-fetch";
 import { Vibrant } from "node-vibrant/node";
-import { jsonError } from "../../../Util/Function/responses.ts";
+import { jsonError } from "../../../Util/Function/web/responses.ts";
 
 export class GetAccentColor extends AuthedPathRoute<"get"> {
     constructor() {

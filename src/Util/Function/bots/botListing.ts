@@ -17,9 +17,9 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { isURL, parseScopes } from "./listing.ts";
+import { isURL, parseScopes } from "../listings/listing.ts";
 import { patterns } from "./patterns.ts";
-import { isDiscordAPIError } from "./discordErrors.ts";
+import { isDiscordAPIError } from "../common/discordErrors.ts";
 import type { Response } from "express";
 import type {
     APIApplicationCommand,
@@ -31,10 +31,10 @@ import { OAuth2Scopes, Routes } from "discord.js";
 import { URL } from "url";
 import fetch, { type Response as fetchRes } from "node-fetch";
 import refresh from "passport-oauth2-refresh";
-import * as discord from "../Services/discord/index.ts";
-import { DAPI } from "../Services/discord/index.ts";
-import * as userCache from "../Services/cache/userCaching.ts";
-import * as libraryCache from "../Services/cache/libCaching.ts";
+import * as discord from "../../Services/discord/index.ts";
+import { DAPI } from "../../Services/discord/index.ts";
+import * as userCache from "../../Services/cache/userCaching.ts";
+import * as libraryCache from "../../Services/cache/libCaching.ts";
 
 // Helpers shared by the bot submit, edit and resubmit handlers, which all read
 // the same listing form, and by bot sync and AutoSync.

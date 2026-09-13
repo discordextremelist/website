@@ -22,7 +22,7 @@ import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
-import { sendSource } from "../../../Util/Function/adminSource.ts";
+import { sendSource } from "../../../Util/Function/staff/adminSource.ts";
 
 export class UserSrc extends AuthedPathRoute<"get"> {
     constructor() {

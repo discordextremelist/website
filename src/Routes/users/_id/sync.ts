@@ -28,7 +28,7 @@ import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import {
     discordErrorPage,
     renderStatus
-} from "../../../Util/Function/responses.ts";
+} from "../../../Util/Function/web/responses.ts";
 
 export class SyncUser extends AuthedPathRoute<"get"> {
     constructor() {

@@ -21,18 +21,18 @@ import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import * as discord from "../../../Util/Services/discord/index.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { listingCodeError } from "../../../Util/Function/listingCode.ts";
+import { listingCodeError } from "../../../Util/Function/listings/listingCode.ts";
 import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
-import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
-import { communityTags } from "../../../Util/Function/serverListing.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import { communityTags } from "../../../Util/Function/servers/serverListing.ts";
 import {
     discordErrorJson,
     jsonError
-} from "../../../Util/Function/responses.ts";
-import { submittedTemplate } from "../../../Util/Function/templateRecords.ts";
+} from "../../../Util/Function/web/responses.ts";
+import { submittedTemplate } from "../../../Util/Function/templates/templateRecords.ts";
 
 export class GetSubmitTemplate extends AuthedPathRoute<"get"> {
     constructor() {

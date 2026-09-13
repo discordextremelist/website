@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import sanitizeHtml from "sanitize-html";
-import htmlRef from "../../../htmlReference.json" with { type: "json" };
+import htmlRef from "../../../../htmlReference.json" with { type: "json" };
 
 /**
  * Bot long descriptions: the standard tag set, disallowed tags escaped,

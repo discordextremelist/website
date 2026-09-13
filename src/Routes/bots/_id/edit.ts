@@ -15,18 +15,18 @@ import {
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { blacklistCheck } from "../../../Util/Services/access/blacklist.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
-import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
+import { sanitizeBotHtml } from "../../../Util/Function/web/sanitize.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import {
     discordErrorJson,
     jsonError
-} from "../../../Util/Function/responses.ts";
-import { validateBotListing } from "../../../Util/Function/botListing.ts";
+} from "../../../Util/Function/web/responses.ts";
+import { validateBotListing } from "../../../Util/Function/bots/botListing.ts";
 import {
     botAuditAfter,
     botAuditBefore,
     editedBotFields
-} from "../../../Util/Function/botRecords.ts";
+} from "../../../Util/Function/bots/botRecords.ts";
 
 export class GetEdit extends AuthedPathRoute<"get"> {
     constructor() {

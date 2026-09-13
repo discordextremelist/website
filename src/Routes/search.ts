@@ -31,7 +31,7 @@ import * as serverCache from "../Util/Services/cache/serverCaching.ts";
 import * as templateCache from "../Util/Services/cache/templateCaching.ts";
 import { variables } from "../Util/Middleware/variables.ts";
 import type { ParsedQs } from "qs";
-import { jsonErrorMessage } from "../Util/Function/responses.ts";
+import { jsonErrorMessage } from "../Util/Function/web/responses.ts";
 
 const renderPath = path.join(process.cwd(), "views/partials");
 

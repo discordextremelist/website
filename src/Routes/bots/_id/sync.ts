@@ -14,11 +14,11 @@ import { botExists } from "../../../Util/Middleware/checks.ts";
 import {
     discordErrorJson,
     jsonError
-} from "../../../Util/Function/responses.ts";
+} from "../../../Util/Function/web/responses.ts";
 import {
     fetchSlashCommands,
     fetchUserFlags
-} from "../../../Util/Function/botListing.ts";
+} from "../../../Util/Function/bots/botListing.ts";
 
 export class SyncBot extends AuthedPathRoute<"get"> {
     constructor() {

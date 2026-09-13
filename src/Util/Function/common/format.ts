@@ -58,7 +58,7 @@ export function parseDate(
 
     const date = new Date(rawDate);
     const dateFormat = require(
-        `../../../node_modules/del-i18n/website/${locale}.json`
+        `../../../../node_modules/del-i18n/website/${locale}.json`
     );
     if (dateFormat["common.dateFormat"].includes("{{amPM}}")) {
         let amPM: string;

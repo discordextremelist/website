@@ -24,7 +24,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
-import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 
 export class DeleteServer extends AuthedPathRoute<"get"> {
     constructor() {

@@ -26,7 +26,7 @@ import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
-import { renderStatus } from "../../../Util/Function/responses.ts";
+import { renderStatus } from "../../../Util/Function/web/responses.ts";
 
 export class GetUser extends PathRoute<"get"> {
     constructor() {

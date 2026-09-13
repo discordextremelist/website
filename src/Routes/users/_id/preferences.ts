@@ -21,7 +21,7 @@ import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { getForeground } from "../../../Util/Function/format.ts";
+import { getForeground } from "../../../Util/Function/common/format.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import { themes } from "../../../../@types/enums.ts";
 import entities from "html-entities";

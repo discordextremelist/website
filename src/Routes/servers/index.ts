@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express, { type Router } from "express";
 import * as permission from "../../Util/Middleware/permissions.ts";
-import { reasonType } from "../../Util/Function/audit.ts";
+import { reasonType } from "../../Util/Function/staff/audit.ts";
 import type { ParamsDictionary } from "express-serve-static-core";
 import type { ParsedQs } from "qs";
 import { GetSubmitServer, PostSubmitServer } from "./_id/submit.ts";
@@ -31,7 +31,7 @@ import { ApproveServer } from "./_id/approve.ts";
 import { DeleteServer } from "./_id/delete.ts";
 import { GetRemoveServer, PostRemoveServer } from "./_id/remove.ts";
 import { SyncServer } from "./_id/sync.ts";
-import { communityTags } from "../../Util/Function/serverListing.ts";
+import { communityTags } from "../../Util/Function/servers/serverListing.ts";
 
 export let reviewRequired = false; // Needs to be outside the functions, or it cannot be referenced outside x function - AJ
 

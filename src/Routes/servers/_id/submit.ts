@@ -27,20 +27,20 @@ import type {
 import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
 import * as discord from "../../../Util/Services/discord/index.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { listingCodeError } from "../../../Util/Function/listingCode.ts";
+import { listingCodeError } from "../../../Util/Function/listings/listingCode.ts";
 import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
-import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
-import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import { serverListingErrors } from "../../../Util/Function/servers/serverListing.ts";
 import {
     discordErrorJson,
     jsonError
-} from "../../../Util/Function/responses.ts";
+} from "../../../Util/Function/web/responses.ts";
 import {
     submittedServer,
     submittedServerAudit
-} from "../../../Util/Function/serverRecords.ts";
+} from "../../../Util/Function/servers/serverRecords.ts";
 
 export class GetSubmitServer extends AuthedPathRoute<"get"> {
     constructor() {

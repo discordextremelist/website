@@ -9,12 +9,12 @@ import sanitizeHtml from "sanitize-html";
 
 import settings from "../../../../settings.json" with { type: "json" };
 import { PresenceUpdateStatus, UserFlags } from "discord.js";
-import { isURL, parseScopes } from "../../../Util/Function/listing.ts";
-import { renderStatus } from "../../../Util/Function/responses.ts";
-import * as functions from "../../../Util/Function/viewHelpers.ts";
+import { isURL, parseScopes } from "../../../Util/Function/listings/listing.ts";
+import { renderStatus } from "../../../Util/Function/web/responses.ts";
+import * as functions from "../../../Util/Function/web/viewHelpers.ts";
 import mdi from "markdown-it";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
+import { sanitizeBotHtml } from "../../../Util/Function/web/sanitize.ts";
 
 const md = new mdi();
 

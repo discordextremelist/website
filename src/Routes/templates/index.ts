@@ -26,7 +26,7 @@ import { GetEditTemplate, PostEditTemplate } from "./_id/edit.ts";
 import { DeleteTemplate } from "./_id/delete.ts";
 import { GetRemoveTemplate, PostRemoveTemplate } from "./_id/remove.ts";
 import { SyncTemplate } from "./_id/sync.ts";
-import { reasonType } from "../../Util/Function/audit.ts";
+import { reasonType } from "../../Util/Function/staff/audit.ts";
 
 export function templateType(bodyType: string): number {
     return reasonType(bodyType, 3);

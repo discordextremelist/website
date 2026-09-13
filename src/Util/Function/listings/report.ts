@@ -19,10 +19,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import type { Response } from "express";
 import { EmbedBuilder } from "discord.js";
-import settings from "../../../settings.json" with { type: "json" };
-import * as discord from "../Services/discord/index.ts";
-import { escapeFormatting } from "./format.ts";
-import { jsonErrorMessage } from "./responses.ts";
+import settings from "../../../../settings.json" with { type: "json" };
+import * as discord from "../../Services/discord/index.ts";
+import { escapeFormatting } from "../common/format.ts";
+import { jsonErrorMessage } from "../web/responses.ts";
 
 const TITLES = {
     bot: "Bot Report",

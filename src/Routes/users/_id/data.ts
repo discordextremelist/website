@@ -22,11 +22,11 @@ import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
-import { renderStatus } from "../../../Util/Function/responses.ts";
+import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import {
     deleteListings,
     ownedListings
-} from "../../../Util/Function/ownedListings.ts";
+} from "../../../Util/Function/users/ownedListings.ts";
 
 export class GetAccountData extends AuthedPathRoute<"get"> {
     constructor() {

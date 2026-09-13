@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Staff standing and rank hierarchy.
 
-import type { Nullable } from "./types.js";
+import type { Nullable } from "../common/types.js";
 
 /**
  * The standings a staff member can have, in the order the standing form

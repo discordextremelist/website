@@ -34,9 +34,9 @@ import { DAPI } from "../Util/Services/discord/index.ts";
 
 import settings from "../../settings.json" with { type: "json" };
 import * as tokenManager from "../Util/Services/access/adminTokenManager.ts";
-import { grabFullUser } from "../Util/Function/format.ts";
-import { renderStatus } from "../Util/Function/responses.ts";
-import { newUserRecord } from "../Util/Function/userRecords.ts";
+import { grabFullUser } from "../Util/Function/common/format.ts";
+import { renderStatus } from "../Util/Function/web/responses.ts";
+import { newUserRecord } from "../Util/Function/users/userRecords.ts";
 
 const router = express.Router();
 

@@ -16,16 +16,16 @@ import {
     discordErrorJson,
     jsonError,
     renderStatus
-} from "../../../Util/Function/responses.ts";
+} from "../../../Util/Function/web/responses.ts";
 
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
-import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
-import { validateBotListing } from "../../../Util/Function/botListing.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import { validateBotListing } from "../../../Util/Function/bots/botListing.ts";
 import {
     botAuditAfter,
     botAuditBefore,
     resubmittedBotFields
-} from "../../../Util/Function/botRecords.ts";
+} from "../../../Util/Function/bots/botRecords.ts";
 
 export class GetResubmitBot extends AuthedPathRoute<"get"> {
     constructor() {

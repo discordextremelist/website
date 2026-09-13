@@ -33,12 +33,12 @@ import {
     discordErrorPage,
     jsonError,
     renderStatus
-} from "../../../Util/Function/responses.ts";
+} from "../../../Util/Function/web/responses.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import {
     syncedServerAuditBefore,
     syncedServerFields
-} from "../../../Util/Function/serverRecords.ts";
+} from "../../../Util/Function/servers/serverRecords.ts";
 
 export class SyncServer extends AuthedPathRoute<"get"> {
     constructor() {

@@ -23,8 +23,8 @@ import type { Response } from "express";
 import type { DiscordAPIError } from "discord.js";
 import { Routes } from "discord.js";
 import fetch, { type Response as fetchRes } from "node-fetch";
-import { isURL } from "./listing.ts";
-import * as discord from "../Services/discord/index.ts";
+import { isURL } from "../listings/listing.ts";
+import * as discord from "../../Services/discord/index.ts";
 
 /**
  * Validation messages for a server listing's links, preview channel and

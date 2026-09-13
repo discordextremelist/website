@@ -69,7 +69,7 @@ import { uploadServers } from "./Util/Services/cache/serverCaching.ts";
 import { uploadTemplates } from "./Util/Services/cache/templateCaching.ts";
 import { initBotRoutes } from "./Routes/bots/index.ts";
 import createHttpError from "http-errors";
-import { renderStatus } from "./Util/Function/responses.ts";
+import { renderStatus } from "./Util/Function/web/responses.ts";
 import { startSchedules } from "./Util/Services/jobs/scheduler.ts";
 
 startSchedules();

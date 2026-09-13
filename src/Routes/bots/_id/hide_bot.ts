@@ -4,16 +4,16 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import * as discord from "../../../Util/Services/discord/index.ts";
 import settings from "../../../../settings.json" with { type: "json" };
-import { escapeFormatting } from "../../../Util/Function/format.ts";
-import { renderStatus } from "../../../Util/Function/responses.ts";
+import { escapeFormatting } from "../../../Util/Function/common/format.ts";
+import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { botType } from "../index.ts";
-import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import {
     reasonMissing,
     recordStaffAction
-} from "../../../Util/Function/staffActions.ts";
+} from "../../../Util/Function/staff/staffActions.ts";
 
 export class HideBot extends AuthedPathRoute<"get"> {
     constructor() {

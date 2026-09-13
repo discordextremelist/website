@@ -48,36 +48,72 @@ export const botExists = async (
 };
 
 /**
- * Build a middleware that loads the document named by :id, renders the
- * standard 404 page if it does not exist, and otherwise attaches it to
- * req.attached for the route handler.
+ * Build a middleware that loads the document named by :id, answers 404 if it
+ * does not exist, and otherwise attaches it to req.attached for the route
+ * handler. The 404 is the standard error page, or a JSON error for a listing
+ * form's POST (`json: true`).
  *
- * Put it last in a route's chain, after auth and rank checks, so a request
- * is authorised before the lookup happens.
+ * Put it after auth and rank checks, so a request is authorised before the
+ * lookup happens, and before ownerOrAssistant, which reads what it attached.
  */
 const exists =
     <T>(
         fetch: (id: string) => Promise<T | null | undefined>,
         notFound: Parameters<Response["__"]>[0],
-        attach: (req: Request, doc: T) => void
+        attach: (req: Request, doc: T) => void,
+        { json = false }: { json?: boolean } = {}
     ) =>
     async (req: Request, res: Response, next: () => void) => {
         const doc = await fetch(req.params.id);
-        if (!doc) return renderStatus(req, res, 404, res.__(notFound));
+        if (!doc) {
+            if (json)
+                return res.status(404).json({
+                    error: true,
+                    status: 404,
+                    errors: [res.__(notFound)]
+                });
+            return renderStatus(req, res, 404, res.__(notFound));
+        }
         attach(req, doc);
         next();
     };
 
+const findServer = (id: string) =>
+    global.db.collection<delServer>("servers").findOne({ _id: id });
+const attachServer = (req: Request, server: delServer) =>
+    (req.attached.server = server);
+
 export const serverExists = exists(
-    (id) => global.db.collection<delServer>("servers").findOne({ _id: id }),
+    findServer,
     "common.error.server.404",
-    (req, server) => (req.attached.server = server)
+    attachServer
 );
 
+/** serverExists for the edit form's POST, which expects a JSON error. */
+export const serverExistsJson = exists(
+    findServer,
+    "common.error.server.404",
+    attachServer,
+    { json: true }
+);
+
+const findTemplate = (id: string) =>
+    global.db.collection<delTemplate>("templates").findOne({ _id: id });
+const attachTemplate = (req: Request, template: delTemplate) =>
+    (req.attached.template = template);
+
 export const templateExists = exists(
-    (id) => global.db.collection<delTemplate>("templates").findOne({ _id: id }),
+    findTemplate,
     "common.error.template.404",
-    (req, template) => (req.attached.template = template)
+    attachTemplate
+);
+
+/** templateExists for the edit form's POST, which expects a JSON error. */
+export const templateExistsJson = exists(
+    findTemplate,
+    "common.error.template.404",
+    attachTemplate,
+    { json: true }
 );
 
 export const userExists = exists(

@@ -29,29 +29,30 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
-import { renderStatus } from "../../../Util/Function/main.ts";
-import { templateExists } from "../../../Util/Middleware/checks.ts";
+import {
+    templateExists,
+    templateExistsJson
+} from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
-import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
 import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
 
 export class GetEditTemplate extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/:id/edit", [variables, permission.auth, templateExists]);
+        super("get", "/:id/edit", [
+            variables,
+            permission.auth,
+            templateExists,
+            permission.ownerOrAssistant(
+                "template",
+                "common.error.template.perms.edit"
+            )
+        ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const template: delTemplate | undefined = req.attached.template!;
-
-        if (!ownsOrAssistant(req, template))
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.template.perms.edit")
-            );
 
         res.locals.premidPageInfo = res.__(
             "premid.templates.edit",
@@ -72,30 +73,23 @@ export class GetEditTemplate extends AuthedPathRoute<"get"> {
 
 export class PostEditTemplate extends AuthedPathRoute<"post"> {
     constructor() {
-        super("post", "/:id/edit", [variables, permission.auth]);
+        super("post", "/:id/edit", [
+            variables,
+            permission.auth,
+            templateExistsJson,
+            permission.ownerOrAssistant(
+                "template",
+                "common.error.template.perms.edit",
+                { json: true }
+            )
+        ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         let error = false;
         let errors = [];
 
-        const dbTemplate: delTemplate | null = await global.db
-            .collection<delTemplate>("templates")
-            .findOne({ _id: req.params.id });
-
-        if (!dbTemplate)
-            return res.status(404).json({
-                error: true,
-                status: 404,
-                errors: [res.__("common.error.template.404")]
-            });
-
-        if (!ownsOrAssistant(req, dbTemplate))
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                errors: [res.__("common.error.template.perms.edit")]
-            });
+        const dbTemplate: delTemplate = req.attached.template!;
 
         res.locals.premidPageInfo = res.__(
             "premid.templates.edit",

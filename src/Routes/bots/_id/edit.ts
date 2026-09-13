@@ -21,7 +21,6 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { patterns } from "../../../Util/Function/patterns.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
 import {
     botTags,
     descriptionErrors,
@@ -33,26 +32,24 @@ import {
     widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
 import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
-import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetEdit extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/:id/edit", [variables, permission.auth, botExists]);
+        super("get", "/:id/edit", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.ownerOrAssistant("bot", "common.error.bot.perms.edit", {
+                editors: true
+            })
+        ]);
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
         res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
-
-        if (!ownsOrAssistant(req, bot, { editors: true }))
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.bot.perms.edit")
-            );
 
         const clean = sanitizeBotHtml(bot.longDesc);
 
@@ -73,7 +70,15 @@ export class GetEdit extends AuthedPathRoute<"get"> {
 
 export class PostEdit extends AuthedPathRoute<"post"> {
     constructor() {
-        super("post", "/:id/edit", [variables, botExists, permission.auth]);
+        super("post", "/:id/edit", [
+            variables,
+            botExists,
+            permission.auth,
+            permission.ownerOrAssistant("bot", "common.error.bot.perms.edit", {
+                editors: true,
+                json: true
+            })
+        ]);
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
@@ -110,13 +115,6 @@ export class PostEdit extends AuthedPathRoute<"post"> {
         }
 
         res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
-
-        if (!ownsOrAssistant(req, bot, { editors: true }))
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                errors: [res.__("common.error.bot.perms.edit")]
-            });
 
         let invite: string;
 

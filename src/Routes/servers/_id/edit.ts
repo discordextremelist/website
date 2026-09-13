@@ -34,28 +34,29 @@ import * as functions from "../../../Util/Function/main.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
-import { serverExists } from "../../../Util/Middleware/checks.ts";
+import {
+    serverExists,
+    serverExistsJson
+} from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
-import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
 
 export class GetEditServer extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/:id/edit", [variables, permission.auth, serverExists]);
+        super("get", "/:id/edit", [
+            variables,
+            permission.auth,
+            serverExists,
+            permission.ownerOrAssistant(
+                "server",
+                "common.error.server.perms.edit"
+            )
+        ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const server: delServer | undefined = req.attached.server!;
-
-        if (!ownsOrAssistant(req, server))
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.server.perms.edit")
-            );
 
         res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 
@@ -73,30 +74,23 @@ export class GetEditServer extends AuthedPathRoute<"get"> {
 
 export class PostEditServer extends AuthedPathRoute<"post"> {
     constructor() {
-        super("post", "/:id/edit", [variables, permission.auth]);
+        super("post", "/:id/edit", [
+            variables,
+            permission.auth,
+            serverExistsJson,
+            permission.ownerOrAssistant(
+                "server",
+                "common.error.server.perms.edit",
+                { json: true }
+            )
+        ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         let error = false;
         let errors: string[] = [];
 
-        const server: delServer | null = await global.db
-            .collection<delServer>("servers")
-            .findOne({ _id: req.params.id });
-
-        if (!server)
-            return res.status(404).json({
-                error: true,
-                status: 404,
-                errors: [res.__("common.error.server.404")]
-            });
-
-        if (!ownsOrAssistant(req, server))
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                errors: [res.__("common.error.server.perms.edit")]
-            });
+        const server: delServer = req.attached.server!;
 
         res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 

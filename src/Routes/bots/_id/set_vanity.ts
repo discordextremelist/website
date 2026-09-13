@@ -7,27 +7,19 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
-import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 
 export class SetVanity extends AuthedPathRoute<"post"> {
     constructor() {
         super("post", "/:id/setvanity", [
             variables,
             permission.auth,
-            checks.botExists
+            checks.botExists,
+            permission.ownerOrAssistant("bot", "common.error.bot.perms.vanity")
         ]);
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
-
-        if (!ownsOrAssistant(req, bot))
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.bot.perms.vanity")
-            );
 
         if (
             req.body.vanity.includes(".") ||

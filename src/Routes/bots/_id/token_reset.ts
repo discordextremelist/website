@@ -5,29 +5,21 @@ import * as checks from "../../../Util/Middleware/checks.ts";
 import e from "express";
 import crypto from "crypto";
 import * as botCache from "../../../Util/Services/botCaching.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
-import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 
 export class TokenReset extends AuthedPathRoute<"get"> {
     constructor() {
         super("get", "/:id/tokenreset", [
             variables,
             permission.auth,
-            checks.botExists
+            checks.botExists,
+            permission.ownerOrAssistant(
+                "bot",
+                "common.error.bot.perms.tokenReset"
+            )
         ]);
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        const bot = req.attached.bot!;
-
-        if (!ownsOrAssistant(req, bot))
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.bot.perms.tokenReset")
-            );
-
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
             {

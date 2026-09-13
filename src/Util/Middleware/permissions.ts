@@ -22,7 +22,11 @@ import type { Request, Response } from "express";
 import settings from "../../../settings.json" with { type: "json" };
 import * as discord from "../Services/discord.ts";
 import * as tokenManager from "../Services/adminTokenManager.ts";
-import { checkRoleHierarchyStaff, renderStatus } from "../Function/main.ts";
+import {
+    checkRoleHierarchyStaff,
+    ownsOrAssistant,
+    renderStatus
+} from "../Function/main.ts";
 /**
  * Consume the one-shot "just logged out" session flag. If it is set, clear it
  * and send the user home instead of continuing with a stale request.
@@ -150,6 +154,40 @@ export const staffHierarchy = (
 
     next();
 };
+
+/**
+ * Require the logged-in user to own the listing a *Exists check attached as
+ * `kind`, be one of its editors (`editors: true`, bots only), or hold the
+ * assistant rank. Otherwise answer 403 with `denied`: the error page, or a
+ * JSON error for a listing form's POST (`json: true`).
+ */
+export const ownerOrAssistant =
+    (
+        kind: "bot" | "server" | "template",
+        denied: Parameters<Response["__"]>[0],
+        {
+            editors = false,
+            json = false
+        }: { editors?: boolean; json?: boolean } = {}
+    ) =>
+    (req: Request, res: Response, next: () => void) => {
+        // The *Exists check attached the listing, and auth before it set
+        // req.user.
+        if (
+            ownsOrAssistant(req as AuthedRequest, req.attached[kind]!, {
+                editors
+            })
+        )
+            return next();
+
+        if (json)
+            return res.status(403).json({
+                error: true,
+                status: 403,
+                errors: [res.__(denied)]
+            });
+        return renderStatus(req, res, 403, res.__(denied));
+    };
 
 /** adminToken, enforced only in production. */
 export const adminTokenInProd = (

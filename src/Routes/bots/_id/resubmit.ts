@@ -30,7 +30,6 @@ import {
     privacyPolicyErrors,
     widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
-import { ownsOrAssistant } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class GetResubmitBot extends AuthedPathRoute<"get"> {
@@ -39,7 +38,11 @@ export class GetResubmitBot extends AuthedPathRoute<"get"> {
             variables,
             permission.auth,
             permission.scopes([OAuth2Scopes.GuildsJoin]),
-            checks.botExists
+            checks.botExists,
+            permission.ownerOrAssistant(
+                "bot",
+                "common.error.bot.perms.resubmit"
+            )
         ]);
     }
 
@@ -52,14 +55,6 @@ export class GetResubmitBot extends AuthedPathRoute<"get"> {
                 res,
                 400,
                 res.__("common.error.bot.notArchived")
-            );
-
-        if (!ownsOrAssistant(req, bot))
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.bot.perms.resubmit")
             );
 
         res.locals.premidPageInfo = res.__("premid.bots.resubmit", bot.name);
@@ -85,6 +80,11 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
             variables,
             permission.auth,
             checks.botExists,
+            permission.ownerOrAssistant(
+                "bot",
+                "common.error.bot.perms.resubmit",
+                { json: true }
+            ),
             permission.member
         ]);
     }
@@ -129,13 +129,6 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
                 error: true,
                 status: 400,
                 errors: [res.__("common.error.bot.notArchived")]
-            });
-
-        if (!ownsOrAssistant(req, bot))
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                errors: [res.__("common.error.bot.perms.resubmit")]
             });
 
         res.locals.premidPageInfo = res.__("premid.bots.resubmit", bot.name);

@@ -23,81 +23,10 @@ import type { Request, Response } from "express";
 import settings from "../../settings.json" with { type: "json" };
 import * as featuring from "../Util/Services/cache/featuring.ts";
 import * as legalCache from "../Util/Services/cache/legalCaching.ts";
-import * as discord from "../Util/Services/discord/index.ts";
 import { variables } from "../Util/Middleware/variables.ts";
-import type { GuildMember, GuildMemberManager } from "discord.js";
+import { aboutPageMembers } from "../Util/Function/web/about.ts";
 
 const router = express.Router();
-
-type NamedMember = { nick?: string | null; user: { username: string } };
-
-const nickSorter = (a: NamedMember, b: NamedMember) =>
-    (a.nick || a.user.username).localeCompare(b.nick || b.user.username);
-
-function sortAll() {
-    let members = discord.guilds.main.members as GuildMemberManager;
-    if (!members) throw new Error("Fetching members failed!");
-    const staff: GuildMember[] = [],
-        donators: GuildMember[] = [],
-        contributors: GuildMember[] = [];
-    for (const item of members.cache.filter((m) => !m.user.bot)) {
-        const member = item[1];
-        if (
-            member.roles.cache.has(settings.roles.admin) ||
-            member.roles.cache.has(settings.roles.assistant) ||
-            member.roles.cache.has(settings.roles.mod)
-        ) {
-            const admin = member.roles.cache.has(settings.roles.admin);
-            const assistant = member.roles.cache.has(settings.roles.assistant);
-            const mod = member.roles.cache.has(settings.roles.mod);
-            member.order = admin ? 3 : assistant ? 2 : mod ? 1 : 0;
-            // One of the three is set, per the if above.
-            member.rank = admin ? "admin" : assistant ? "assistant" : "mod";
-
-            const user = member.user;
-            member.avatar = user.avatar;
-            member.username = user.username;
-            member.discriminator = user.discriminator;
-            staff.push(member);
-        } else if (
-            member.roles.cache.has(settings.roles.booster) ||
-            member.roles.cache.has(settings.roles.donator)
-        ) {
-            const booster = member.roles.cache.has(settings.roles.booster);
-            const donator = member.roles.cache.has(settings.roles.donator);
-            member.order = booster ? 2 : donator ? 1 : 0;
-            member.rank = booster ? "booster" : "donator";
-            const user = member.user;
-            member.avatar = user.avatar;
-            member.username = user.username;
-            member.discriminator = user.discriminator;
-            donators.push(member);
-        } else if (
-            member.roles.cache.has(settings.roles.translators) ||
-            member.roles.cache.has(settings.roles.testers)
-        ) {
-            const translator = member.roles.cache.has(
-                settings.roles.translators
-            );
-            const tester = member.roles.cache.has(settings.roles.testers);
-            member.order = translator ? 1 : tester ? 2 : 0;
-            member.rank = translator ? "translator" : "tester";
-            const user = member.user;
-            member.avatar = user.avatar;
-            member.username = user.username;
-            member.discriminator = user.discriminator;
-            contributors.push(member);
-        }
-    }
-    // Every member in these lists had order set above.
-    return {
-        staff: staff.sort(nickSorter).sort((a, b) => b.order! - a.order!),
-        donators: donators.sort(nickSorter).sort((a, b) => b.order! - a.order!),
-        contributors: contributors
-            .sort(nickSorter)
-            .sort((a, b) => a.order! - b.order!)
-    };
-}
 
 router.get("/", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.home");
@@ -123,38 +52,36 @@ router.get("/", variables, async (req: Request, res: Response) => {
     });
 });
 
-router.get("/terms", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.terms");
+/**
+ * The terms, privacy and guidelines pages, showing the cached markdown `file`.
+ */
+async function renderLegal(
+    req: Request,
+    res: Response,
+    page: "terms" | "privacy" | "guidelines",
+    file: string
+) {
+    res.locals.premidPageInfo = res.__(`premid.${page}`);
 
-    res.render("templates/legal/terms", {
-        title: res.__("common.nav.more.terms"),
-        subtitle: res.__("common.nav.more.terms.subtitle"),
+    res.render(`templates/legal/${page}`, {
+        title: res.__(`common.nav.more.${page}`),
+        subtitle: res.__(`common.nav.more.${page}.subtitle`),
         req,
-        terms: await legalCache.getFile("terms")
+        [page]: await legalCache.getFile(file)
     });
-});
+}
 
-router.get("/privacy", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.privacy");
+router.get("/terms", variables, (req: Request, res: Response) =>
+    renderLegal(req, res, "terms", "terms")
+);
 
-    res.render("templates/legal/privacy", {
-        title: res.__("common.nav.more.privacy"),
-        subtitle: res.__("common.nav.more.privacy.subtitle"),
-        req,
-        privacy: await legalCache.getFile("privacy")
-    });
-});
+router.get("/privacy", variables, (req: Request, res: Response) =>
+    renderLegal(req, res, "privacy", "privacy")
+);
 
-router.get("/guidelines", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.guidelines");
-
-    res.render("templates/legal/guidelines", {
-        title: res.__("common.nav.more.guidelines"),
-        subtitle: res.__("common.nav.more.guidelines.subtitle"),
-        req,
-        guidelines: await legalCache.getFile("guidelines-" + req.locale)
-    });
-});
+router.get("/guidelines", variables, (req: Request, res: Response) =>
+    renderLegal(req, res, "guidelines", "guidelines-" + req.locale)
+);
 
 router.get("/widgetbot", variables, (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.widgetbot");
@@ -170,7 +97,7 @@ router.get("/widgetbot", variables, (req: Request, res: Response) => {
 router.get("/about", variables, async (req: Request, res: Response) => {
     res.locals.premidPageInfo = res.__("premid.about");
 
-    const { staff, donators, contributors } = sortAll();
+    const { staff, donators, contributors } = aboutPageMembers();
     res.render("templates/about", {
         title: res.__("common.nav.more.about"),
         subtitle: res.__("common.nav.more.about.subtitle"),

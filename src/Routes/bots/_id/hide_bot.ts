@@ -15,36 +15,16 @@ import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class HideBot extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/:id/hide", [variables, permission.auth]);
+        super("get", "/:id/hide", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.ownerOnly("bot", "common.error.bot.perms.notOwner")
+        ]);
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        let bot = (await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id })) as delBot | null;
-
-        if (!bot) {
-            bot = await global.db
-                .collection<delBot>("bots")
-                .findOne({ vanityUrl: req.params.id });
-
-            if (!bot)
-                return renderStatus(
-                    req,
-                    res,
-                    404,
-                    res.__("common.error.bot.404")
-                );
-        }
-
-        if (!req.user || req.user.id !== bot.owner.id)
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.bot.perms.notOwner"),
-                { user: req.user }
-            );
+        const bot = req.attached.bot!;
 
         if (bot.status.approved === false)
             return renderStatus(
@@ -89,36 +69,16 @@ export class HideBot extends AuthedPathRoute<"get"> {
 
 export class UnhideBot extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/:id/unhide", [variables, permission.auth]);
+        super("get", "/:id/unhide", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.ownerOnly("bot", "common.error.bot.perms.notOwner")
+        ]);
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        let bot = (await global.db
-            .collection<delBot>("bots")
-            .findOne({ _id: req.params.id })) as delBot | null;
-
-        if (!bot) {
-            bot = await global.db
-                .collection<delBot>("bots")
-                .findOne({ vanityUrl: req.params.id });
-
-            if (!bot)
-                return renderStatus(
-                    req,
-                    res,
-                    404,
-                    res.__("common.error.bot.404")
-                );
-        }
-
-        if (!req.user || req.user.id !== bot.owner.id)
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.bot.perms.notOwner"),
-                { user: req.user }
-            );
+        const bot = req.attached.bot!;
 
         await discord.channels.logs.send(
             websiteLogMessage(

@@ -29,7 +29,11 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { jsonError, renderStatus } from "../../../Util/Function/responses.ts";
+import {
+    discordErrorPage,
+    jsonError,
+    renderStatus
+} from "../../../Util/Function/responses.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 
 export class SyncServer extends AuthedPathRoute<"get"> {
@@ -129,21 +133,14 @@ export class SyncServer extends AuthedPathRoute<"get"> {
 
                 res.redirect(`/servers/${req.params.id}`);
             })
-            .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownInvite)
-                    return renderStatus(
-                        req,
-                        res,
-                        400,
-                        res.__("common.error.listing.arr.invite.invalid")
-                    );
-
-                return renderStatus(
+            .catch((error: DiscordAPIError) =>
+                discordErrorPage(
                     req,
                     res,
-                    400,
-                    `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`
-                );
-            });
+                    error,
+                    RESTJSONErrorCodes.UnknownInvite,
+                    res.__("common.error.listing.arr.invite.invalid")
+                )
+            );
     }
 }

@@ -34,7 +34,10 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
-import { jsonError } from "../../../Util/Function/responses.ts";
+import {
+    discordErrorJson,
+    jsonError
+} from "../../../Util/Function/responses.ts";
 
 export class GetSubmitServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -213,16 +216,13 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
                     id: invite.guild.id
                 });
             })
-            .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownInvite)
-                    return jsonError(res, 400, [
-                        res.__("common.error.listing.arr.invite.invalid")
-                    ]);
-
-                return jsonError(res, 400, [
-                    `${error.name}: ${error.message}`,
-                    `${error.code} ${error.method} ${error.url}`
-                ]);
-            });
+            .catch((error: DiscordAPIError) =>
+                discordErrorJson(
+                    res,
+                    error,
+                    RESTJSONErrorCodes.UnknownInvite,
+                    res.__("common.error.listing.arr.invite.invalid")
+                )
+            );
     }
 }

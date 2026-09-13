@@ -25,7 +25,7 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
-import { renderStatus } from "../../../Util/Function/responses.ts";
+import { discordErrorPage } from "../../../Util/Function/responses.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
 import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
 
@@ -112,21 +112,14 @@ export class SyncTemplate extends AuthedPathRoute<"get"> {
 
                 res.redirect(`/templates/${req.params.id}`);
             })
-            .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownGuildTemplate)
-                    return renderStatus(
-                        req,
-                        res,
-                        400,
-                        res.__("common.error.template.arr.invite.invalid")
-                    );
-
-                return renderStatus(
+            .catch((error: DiscordAPIError) =>
+                discordErrorPage(
                     req,
                     res,
-                    400,
-                    `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`
-                );
-            });
+                    error,
+                    RESTJSONErrorCodes.UnknownGuildTemplate,
+                    res.__("common.error.template.arr.invite.invalid")
+                )
+            );
     }
 }

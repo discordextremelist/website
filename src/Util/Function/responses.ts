@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import type { Request, Response } from "express";
+import type { DiscordAPIError, RESTJSONErrorCodes } from "discord.js";
 
 /**
  * Render the standard error page. Equivalent to
@@ -55,6 +56,49 @@ export function renderStatus(
  */
 export function jsonError(res: Response, status: number, errors: unknown[]) {
     return res.status(status).json({ error: true, status, errors });
+}
+
+/**
+ * Answer a listing form whose Discord lookup failed with a 400 JSON error:
+ * just `known` when Discord answered `knownCode` (an unknown application,
+ * invite or template), otherwise the error's details, after `prefix` if given.
+ */
+export function discordErrorJson(
+    res: Response,
+    error: DiscordAPIError,
+    knownCode: RESTJSONErrorCodes,
+    known: string,
+    prefix?: string
+) {
+    if (error.code === knownCode) return jsonError(res, 400, [known]);
+
+    return jsonError(res, 400, [
+        ...(prefix === undefined ? [] : [prefix]),
+        `${error.name}: ${error.message}`,
+        `${error.code} ${error.method} ${error.url}`
+    ]);
+}
+
+/**
+ * discordErrorJson for pages: the 400 error page with `known`, or with the
+ * error's details on one line. `knownCode` is optional.
+ */
+export function discordErrorPage(
+    req: Request,
+    res: Response,
+    error: DiscordAPIError,
+    knownCode?: RESTJSONErrorCodes,
+    known?: string
+) {
+    if (knownCode !== undefined && error.code === knownCode)
+        return renderStatus(req, res, 400, known!);
+
+    return renderStatus(
+        req,
+        res,
+        400,
+        `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`
+    );
 }
 
 /**

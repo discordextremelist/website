@@ -19,7 +19,10 @@ import * as e from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { auth } from "../../../Util/Middleware/permissions.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { jsonError } from "../../../Util/Function/responses.ts";
+import {
+    discordErrorJson,
+    jsonError
+} from "../../../Util/Function/responses.ts";
 
 export class SyncBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -151,17 +154,14 @@ export class SyncBot extends AuthedPathRoute<"get"> {
 
                 res.redirect(`/bots/${bot._id}`);
             })
-            .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownApplication)
-                    return jsonError(res, 400, [
-                        res.__("common.error.bot.arr.notFound")
-                    ]);
-
-                return jsonError(res, 400, [
-                    res.__("common.error.bot.arr.fetchError"),
-                    `${error.name}: ${error.message}`,
-                    `${error.code} ${error.method} ${error.url}`
-                ]);
-            });
+            .catch((error: DiscordAPIError) =>
+                discordErrorJson(
+                    res,
+                    error,
+                    RESTJSONErrorCodes.UnknownApplication,
+                    res.__("common.error.bot.arr.notFound"),
+                    res.__("common.error.bot.arr.fetchError")
+                )
+            );
     }
 }

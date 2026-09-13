@@ -15,7 +15,11 @@ import * as libraryCache from "../../../Util/Services/libCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import { isURL, parseScopes } from "../../../Util/Function/listing.ts";
-import { jsonError, renderStatus } from "../../../Util/Function/responses.ts";
+import {
+    discordErrorJson,
+    jsonError,
+    renderStatus
+} from "../../../Util/Function/responses.ts";
 import { URL } from "url";
 
 import * as botCache from "../../../Util/Services/botCaching.ts";
@@ -421,17 +425,14 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
                     errors: []
                 });
             })
-            .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownApplication)
-                    return jsonError(res, 400, [
-                        res.__("common.error.bot.arr.notFound")
-                    ]);
-
-                return jsonError(res, 400, [
-                    res.__("common.error.bot.arr.fetchError"),
-                    `${error.name}: ${error.message}`,
-                    `${error.code} ${error.method} ${error.url}`
-                ]);
-            });
+            .catch((error: DiscordAPIError) =>
+                discordErrorJson(
+                    res,
+                    error,
+                    RESTJSONErrorCodes.UnknownApplication,
+                    res.__("common.error.bot.arr.notFound"),
+                    res.__("common.error.bot.arr.fetchError")
+                )
+            );
     }
 }

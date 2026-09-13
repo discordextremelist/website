@@ -25,7 +25,10 @@ import * as discord from "../../../Util/Services/discord.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
-import { renderStatus } from "../../../Util/Function/responses.ts";
+import {
+    discordErrorPage,
+    renderStatus
+} from "../../../Util/Function/responses.ts";
 
 export class SyncUser extends AuthedPathRoute<"get"> {
     constructor() {
@@ -89,13 +92,8 @@ export class SyncUser extends AuthedPathRoute<"get"> {
 
                 res.redirect(`/users/${req.params.id}`);
             })
-            .catch((error: DiscordAPIError) => {
-                return renderStatus(
-                    req,
-                    res,
-                    400,
-                    `${error.name}: ${error.message} | ${error.code} ${error.method} ${error.url}`
-                );
-            });
+            .catch((error: DiscordAPIError) =>
+                discordErrorPage(req, res, error)
+            );
     }
 }

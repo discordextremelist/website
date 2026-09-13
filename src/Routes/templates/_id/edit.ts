@@ -37,7 +37,10 @@ import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
 import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
-import { jsonError } from "../../../Util/Function/responses.ts";
+import {
+    discordErrorJson,
+    jsonError
+} from "../../../Util/Function/responses.ts";
 
 export class GetEditTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -248,16 +251,13 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
                     id: template.code
                 });
             })
-            .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownGuildTemplate)
-                    return jsonError(res, 400, [
-                        res.__("common.error.template.arr.invite.invalid")
-                    ]);
-
-                return jsonError(res, 400, [
-                    `${error.name}: ${error.message}`,
-                    `${error.code} ${error.method} ${error.url}`
-                ]);
-            });
+            .catch((error: DiscordAPIError) =>
+                discordErrorJson(
+                    res,
+                    error,
+                    RESTJSONErrorCodes.UnknownGuildTemplate,
+                    res.__("common.error.template.arr.invite.invalid")
+                )
+            );
     }
 }

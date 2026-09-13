@@ -33,7 +33,10 @@ import {
 } from "../../../Util/Function/botListing.ts";
 import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
-import { jsonError } from "../../../Util/Function/responses.ts";
+import {
+    discordErrorJson,
+    jsonError
+} from "../../../Util/Function/responses.ts";
 
 export class GetEdit extends AuthedPathRoute<"get"> {
     constructor() {
@@ -433,17 +436,14 @@ export class PostEdit extends AuthedPathRoute<"post"> {
                     errors: []
                 });
             })
-            .catch((error: DiscordAPIError) => {
-                if (error.code === RESTJSONErrorCodes.UnknownApplication)
-                    return jsonError(res, 400, [
-                        res.__("common.error.bot.arr.notFound")
-                    ]);
-
-                return jsonError(res, 400, [
-                    res.__("common.error.bot.arr.fetchError"),
-                    `${error.name}: ${error.message}`,
-                    `${error.code} ${error.method} ${error.url}`
-                ]);
-            });
+            .catch((error: DiscordAPIError) =>
+                discordErrorJson(
+                    res,
+                    error,
+                    RESTJSONErrorCodes.UnknownApplication,
+                    res.__("common.error.bot.arr.notFound"),
+                    res.__("common.error.bot.arr.fetchError")
+                )
+            );
     }
 }

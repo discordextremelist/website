@@ -22,18 +22,18 @@ import passport from "passport";
 import { Strategy } from "passport-discord";
 import type { VerifyCallback } from "passport-oauth2";
 import refresh from "passport-oauth2-refresh";
-import * as discord from "../Util/Services/discord.ts";
+import * as discord from "../Util/Services/discord/index.ts";
 import type {
     RESTPostOAuth2AccessTokenResult,
     RESTPutAPIGuildMemberJSONBody
 } from "discord.js";
 import { OAuth2Scopes, Routes, DiscordAPIError } from "discord.js";
 import fetch from "node-fetch";
-import * as userCache from "../Util/Services/userCaching.ts";
-import { DAPI } from "../Util/Services/discord.ts";
+import * as userCache from "../Util/Services/cache/userCaching.ts";
+import { DAPI } from "../Util/Services/discord/index.ts";
 
 import settings from "../../settings.json" with { type: "json" };
-import * as tokenManager from "../Util/Services/adminTokenManager.ts";
+import * as tokenManager from "../Util/Services/access/adminTokenManager.ts";
 import { grabFullUser } from "../Util/Function/format.ts";
 import { renderStatus } from "../Util/Function/responses.ts";
 import { newUserRecord } from "../Util/Function/userRecords.ts";

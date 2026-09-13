@@ -31,17 +31,17 @@ import passport from "passport";
 import logger from "morgan";
 import helmet from "helmet";
 
-import * as libCache from "./Util/Services/libCaching.ts";
-import * as announcementCache from "./Util/Services/announcementCaching.ts";
-import * as legalCache from "./Util/Services/legalCaching.ts";
-import * as featuredCache from "./Util/Services/featuring.ts";
-import * as banned from "./Util/Services/banned.ts";
-import * as discord from "./Util/Services/discord.ts";
-import * as tokenManager from "./Util/Services/adminTokenManager.ts";
+import * as libCache from "./Util/Services/cache/libCaching.ts";
+import * as announcementCache from "./Util/Services/cache/announcementCaching.ts";
+import * as legalCache from "./Util/Services/cache/legalCaching.ts";
+import * as featuredCache from "./Util/Services/cache/featuring.ts";
+import * as banned from "./Util/Services/access/banned.ts";
+import * as discord from "./Util/Services/discord/index.ts";
+import * as tokenManager from "./Util/Services/access/adminTokenManager.ts";
 
 import languageHandler from "./Util/Middleware/languageHandler.ts";
 
-import { botStatsUpdate } from "./Util/Services/botStatsUpdate.ts";
+import { botStatsUpdate } from "./Util/Services/jobs/botStatsUpdate.ts";
 import { variables } from "./Util/Middleware/variables.ts";
 import { monacoRedirect } from "./Util/Middleware/monacoRedirect.ts";
 import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap.ts";
@@ -63,14 +63,14 @@ import { initUserRoutes } from "./Routes/users/index.ts";
 import { initTemplateRoutes } from "./Routes/templates/index.ts";
 import { initStaffRoutes } from "./Routes/staff/index.ts";
 import setup from "./setup.ts";
-import { uploadBots } from "./Util/Services/botCaching.ts";
-import { uploadAuditLogs } from "./Util/Services/auditCaching.ts";
-import { uploadServers } from "./Util/Services/serverCaching.ts";
-import { uploadTemplates } from "./Util/Services/templateCaching.ts";
+import { uploadBots } from "./Util/Services/cache/botCaching.ts";
+import { uploadAuditLogs } from "./Util/Services/cache/auditCaching.ts";
+import { uploadServers } from "./Util/Services/cache/serverCaching.ts";
+import { uploadTemplates } from "./Util/Services/cache/templateCaching.ts";
 import { initBotRoutes } from "./Routes/bots/index.ts";
 import createHttpError from "http-errors";
 import { renderStatus } from "./Util/Function/responses.ts";
-import { startSchedules } from "./Util/Services/scheduler.ts";
+import { startSchedules } from "./Util/Services/jobs/scheduler.ts";
 
 startSchedules();
 

@@ -21,7 +21,7 @@ import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as userCache from "../../../Util/Services/userCaching.ts";
+import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
 

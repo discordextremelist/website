@@ -21,10 +21,10 @@ import type { Request, Response } from "express";
 
 import settings from "../../../settings.json" with { type: "json" };
 
-import * as botCache from "../../Util/Services/botCaching.ts";
-import * as serverCache from "../../Util/Services/serverCaching.ts";
-import * as templateCache from "../../Util/Services/templateCaching.ts";
-import * as userCache from "../../Util/Services/userCaching.ts";
+import * as botCache from "../Services/cache/botCaching.ts";
+import * as serverCache from "../Services/cache/serverCaching.ts";
+import * as templateCache from "../Services/cache/templateCaching.ts";
+import * as userCache from "../Services/cache/userCaching.ts";
 import { escapeXML } from "ejs";
 
 const base = settings.website.url;

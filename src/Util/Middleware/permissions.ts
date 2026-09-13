@@ -20,8 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { OAuth2Scopes, Routes } from "discord.js";
 import type { Request, Response } from "express";
 import settings from "../../../settings.json" with { type: "json" };
-import * as discord from "../Services/discord.ts";
-import * as tokenManager from "../Services/adminTokenManager.ts";
+import * as discord from "../Services/discord/index.ts";
+import * as tokenManager from "../Services/access/adminTokenManager.ts";
 import { checkRoleHierarchyStaff } from "../Function/staff.ts";
 import { ownsOrAssistant } from "../Function/listing.ts";
 import { jsonError, renderStatus } from "../Function/responses.ts";

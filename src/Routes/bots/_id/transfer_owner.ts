@@ -3,7 +3,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as checks from "../../../Util/Middleware/checks.ts";
 import e from "express";
-import * as botCache from "../../../Util/Services/botCaching.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
 
 export class TransferOwner extends AuthedPathRoute<"post"> {

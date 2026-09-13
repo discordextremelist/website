@@ -3,17 +3,17 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 
-import * as libraryCache from "../../../Util/Services/libCaching.ts";
+import * as libraryCache from "../../../Util/Services/cache/libCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
-import * as discord from "../../../Util/Services/discord.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
 import {
     type APIApplication,
     type DiscordAPIError,
     RESTJSONErrorCodes
 } from "discord.js";
 
-import * as botCache from "../../../Util/Services/botCaching.ts";
-import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
+import { blacklistCheck } from "../../../Util/Services/access/blacklist.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
 import { logListingEvent } from "../../../Util/Function/websiteLog.ts";

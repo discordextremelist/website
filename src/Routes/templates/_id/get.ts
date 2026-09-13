@@ -24,8 +24,8 @@ import settings from "../../../../settings.json" with { type: "json" };
 
 import { renderStatus } from "../../../Util/Function/responses.ts";
 import * as functions from "../../../Util/Function/viewHelpers.ts";
-import * as userCache from "../../../Util/Services/userCaching.ts";
-import * as templateCache from "../../../Util/Services/templateCaching.ts";
+import * as userCache from "../../../Util/Services/cache/userCaching.ts";
+import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import mdi from "markdown-it";
 import entities from "html-entities";

@@ -17,18 +17,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { tokenResetAll } from "./adminTokenManager.ts";
-import * as announcementCache from "./announcementCaching.ts";
-import { updateBanlist } from "./banned.ts";
+import { tokenResetAll } from "../access/adminTokenManager.ts";
+import * as announcementCache from "../cache/announcementCaching.ts";
+import { updateBanlist } from "../access/banned.ts";
 import { botStatsUpdate } from "./botStatsUpdate.ts";
-import { postTodaysGrowth, postWebMetric } from "./discord.ts";
+import { postTodaysGrowth, postWebMetric } from "../discord/index.ts";
 import {
     updateFeaturedBots,
     updateFeaturedSFWBots,
     updateFeaturedServers,
     updateFeaturedTemplates
-} from "./featuring.ts";
-import { cacheLibs } from "./libCaching.ts";
+} from "../cache/featuring.ts";
+import { cacheLibs } from "../cache/libCaching.ts";
 
 /**
  * Start the website's recurring jobs. app.ts calls this once, straight after

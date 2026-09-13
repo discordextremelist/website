@@ -31,10 +31,10 @@ import { OAuth2Scopes, Routes } from "discord.js";
 import { URL } from "url";
 import fetch, { type Response as fetchRes } from "node-fetch";
 import refresh from "passport-oauth2-refresh";
-import * as discord from "../Services/discord.ts";
-import { DAPI } from "../Services/discord.ts";
-import * as userCache from "../Services/userCaching.ts";
-import * as libraryCache from "../Services/libCaching.ts";
+import * as discord from "../Services/discord/index.ts";
+import { DAPI } from "../Services/discord/index.ts";
+import * as userCache from "../Services/cache/userCaching.ts";
+import * as libraryCache from "../Services/cache/libCaching.ts";
 
 // Helpers shared by the bot submit, edit and resubmit handlers, which all read
 // the same listing form, and by bot sync and AutoSync.

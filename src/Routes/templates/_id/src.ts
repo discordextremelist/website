@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as templateCache from "../../../Util/Services/templateCaching.ts";
+import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { jsonErrorMessage } from "../../../Util/Function/responses.ts";
 import { sendSource } from "../../../Util/Function/adminSource.ts";

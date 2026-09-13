@@ -25,9 +25,9 @@ import type {
     RESTGetAPIInviteQuery
 } from "discord.js";
 import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
-import * as discord from "../../../Util/Services/discord.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as serverCache from "../../../Util/Services/serverCaching.ts";
+import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import {
     discordErrorPage,

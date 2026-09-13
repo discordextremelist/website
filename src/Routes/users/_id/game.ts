@@ -21,7 +21,7 @@ import { AuthedPathRoute, PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as userCache from "../../../Util/Services/userCaching.ts";
+import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 
 export class GetSnake extends AuthedPathRoute<"get"> {
     constructor() {

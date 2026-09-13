@@ -22,8 +22,8 @@ import type { Request, Response } from "express";
 
 import settings from "../../../../settings.json" with { type: "json" };
 
-import * as userCache from "../../../Util/Services/userCaching.ts";
-import * as serverCache from "../../../Util/Services/serverCaching.ts";
+import * as userCache from "../../../Util/Services/cache/userCaching.ts";
+import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import mdi from "markdown-it";
 import entities from "html-entities";

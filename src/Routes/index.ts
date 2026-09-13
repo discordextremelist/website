@@ -21,12 +21,12 @@ import express from "express";
 import type { Request, Response } from "express";
 
 import settings from "../../settings.json" with { type: "json" };
-import * as featuring from "../Util/Services/featuring.ts";
-import * as botCache from "../Util/Services/botCaching.ts";
-import * as serverCache from "../Util/Services/serverCaching.ts";
-import * as templateCache from "../Util/Services/templateCaching.ts";
-import * as legalCache from "../Util/Services/legalCaching.ts";
-import * as discord from "../Util/Services/discord.ts";
+import * as featuring from "../Util/Services/cache/featuring.ts";
+import * as botCache from "../Util/Services/cache/botCaching.ts";
+import * as serverCache from "../Util/Services/cache/serverCaching.ts";
+import * as templateCache from "../Util/Services/cache/templateCaching.ts";
+import * as legalCache from "../Util/Services/cache/legalCaching.ts";
+import * as discord from "../Util/Services/discord/index.ts";
 import { variables } from "../Util/Middleware/variables.ts";
 import type { GuildMember, GuildMemberManager } from "discord.js";
 import type {

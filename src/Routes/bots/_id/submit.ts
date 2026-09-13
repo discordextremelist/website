@@ -8,11 +8,11 @@ import {
     OAuth2Scopes,
     RESTJSONErrorCodes
 } from "discord.js";
-import * as libraryCache from "../../../Util/Services/libCaching.ts";
-import * as discord from "../../../Util/Services/discord.ts";
+import * as libraryCache from "../../../Util/Services/cache/libCaching.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
 
-import * as botCache from "../../../Util/Services/botCaching.ts";
-import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
+import { blacklistCheck } from "../../../Util/Services/access/blacklist.ts";
 import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import {
     discordErrorJson,

@@ -1,9 +1,9 @@
 import { PathRoute } from "../../route.ts";
 import e from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import * as botCache from "../../../Util/Services/botCaching.ts";
-import * as userCache from "../../../Util/Services/userCaching.ts";
-import * as discord from "../../../Util/Services/discord.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
+import * as userCache from "../../../Util/Services/cache/userCaching.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
 import entities from "html-entities";
 import sanitizeHtml from "sanitize-html";
 

@@ -5,8 +5,8 @@ import {
     type DiscordAPIError,
     RESTJSONErrorCodes
 } from "discord.js";
-import * as discord from "../../../Util/Services/discord.ts";
-import * as botCache from "../../../Util/Services/botCaching.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import * as e from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { auth } from "../../../Util/Middleware/permissions.ts";

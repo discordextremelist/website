@@ -21,8 +21,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // discord/. This file re-exports them so `import * as discord` keeps working,
 // and loads the event handlers.
 
-export * from "./discord/client.ts";
-export * from "./discord/guilds.ts";
-export * from "./discord/statuses.ts";
-export * from "./discord/metrics.ts";
-import "./discord/events.ts";
+export * from "./client.ts";
+export * from "./guilds.ts";
+export * from "./statuses.ts";
+export * from "./metrics.ts";
+import "./events.ts";

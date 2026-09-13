@@ -4,7 +4,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as checks from "../../../Util/Middleware/checks.ts";
 import e from "express";
 import crypto from "crypto";
-import * as botCache from "../../../Util/Services/botCaching.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 
 export class TokenReset extends AuthedPathRoute<"get"> {
     constructor() {

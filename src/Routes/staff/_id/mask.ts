@@ -25,7 +25,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import { grabFullUser } from "../../../Util/Function/format.ts";
 import { newUserRecord } from "../../../Util/Function/userRecords.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import * as discord from "../../../Util/Services/discord.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
 
 export class MaskUser extends AuthedPathRoute<"get"> {
     constructor() {

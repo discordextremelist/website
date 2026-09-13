@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { PresenceUpdateStatus, UserFlags } from "discord.js";
-import { shuffleArray } from "../Function/array.ts";
+import { shuffleArray } from "../../Function/array.ts";
 
 /**
  * `Full` narrowed to `Stripped`'s fields, with the rest still present but

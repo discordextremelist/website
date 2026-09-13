@@ -19,13 +19,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { PathRoute } from "../../route.ts";
 import type { Request, Response } from "express";
-import * as discord from "../../../Util/Services/discord.ts";
-import * as banned from "../../../Util/Services/banned.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
+import * as banned from "../../../Util/Services/access/banned.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import * as botCache from "../../../Util/Services/botCaching.ts";
-import * as serverCache from "../../../Util/Services/serverCaching.ts";
-import * as templateCache from "../../../Util/Services/templateCaching.ts";
-import * as userCache from "../../../Util/Services/userCaching.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
+import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
+import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
+import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
 
 export class GetUser extends PathRoute<"get"> {

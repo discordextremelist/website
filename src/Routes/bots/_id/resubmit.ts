@@ -9,16 +9,16 @@ import {
     RESTJSONErrorCodes
 } from "discord.js";
 import * as checks from "../../../Util/Middleware/checks.ts";
-import * as libraryCache from "../../../Util/Services/libCaching.ts";
+import * as libraryCache from "../../../Util/Services/cache/libCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
-import * as discord from "../../../Util/Services/discord.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
 import {
     discordErrorJson,
     jsonError,
     renderStatus
 } from "../../../Util/Function/responses.ts";
 
-import * as botCache from "../../../Util/Services/botCaching.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import { validateBotListing } from "../../../Util/Function/botListing.ts";
 import {

@@ -22,7 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import settings from "../../../../settings.json" with { type: "json" };
 import { hostname } from "os";
 import chunk from "chunk";
-import * as botCache from "../botCaching.ts";
+import * as botCache from "../cache/botCaching.ts";
 import { bot } from "./client.ts";
 import { guilds } from "./guilds.ts";
 import { uploadStatuses } from "./statuses.ts";

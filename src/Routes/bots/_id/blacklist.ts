@@ -2,8 +2,8 @@ import { AuthedPathRoute } from "../../route.ts";
 import { admin, auth } from "../../../Util/Middleware/permissions.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import e from "express";
-import { blacklistUpdate } from "../../../Util/Services/blacklist.ts";
-import { updateBot } from "../../../Util/Services/botCaching.ts";
+import { blacklistUpdate } from "../../../Util/Services/access/blacklist.ts";
+import { updateBot } from "../../../Util/Services/cache/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
 

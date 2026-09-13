@@ -17,9 +17,9 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as botCache from "../Services/botCaching.ts";
-import * as serverCache from "../Services/serverCaching.ts";
-import * as templateCache from "../Services/templateCaching.ts";
+import * as botCache from "../Services/cache/botCaching.ts";
+import * as serverCache from "../Services/cache/serverCaching.ts";
+import * as templateCache from "../Services/cache/templateCaching.ts";
 import { logListingEvent } from "./websiteLog.ts";
 
 type OwnedListings = {

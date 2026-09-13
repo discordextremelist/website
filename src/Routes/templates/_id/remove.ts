@@ -20,10 +20,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import settings from "../../../../settings.json" with { type: "json" };
-import * as discord from "../../../Util/Services/discord.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { escapeFormatting } from "../../../Util/Function/format.ts";
-import * as templateCache from "../../../Util/Services/templateCaching.ts";
+import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { templateType } from "../index.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";

@@ -6,7 +6,7 @@ import {
     auth
 } from "../../../Util/Middleware/permissions.ts";
 import e from "express";
-import * as botCache from "../../../Util/Services/botCaching.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { sendSource } from "../../../Util/Function/adminSource.ts";
 import { sendReport } from "../../../Util/Function/report.ts";

@@ -21,7 +21,7 @@ import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as functions from "../../../Util/Function/viewHelpers.ts";
-import * as userCache from "../../../Util/Services/userCaching.ts";
+import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 
 export class StaffManager extends AuthedPathRoute<"get"> {

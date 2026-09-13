@@ -20,9 +20,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as botCache from "../../../Util/Services/botCaching.ts";
-import * as serverCache from "../../../Util/Services/serverCaching.ts";
-import * as templateCache from "../../../Util/Services/templateCaching.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
+import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
+import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 
 export class UploadBots extends AuthedPathRoute<"get"> {

@@ -2,8 +2,8 @@ import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
-import * as discord from "../../../Util/Services/discord.ts";
-import * as botCache from "../../../Util/Services/botCaching.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 

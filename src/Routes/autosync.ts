@@ -18,11 +18,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import * as discord from "../Util/Services/discord.ts";
-import * as botCache from "../Util/Services/botCaching.ts";
-import * as serverCache from "../Util/Services/serverCaching.ts";
-import * as templateCache from "../Util/Services/templateCaching.ts";
-import * as userCache from "../Util/Services/userCaching.ts";
+import * as discord from "../Util/Services/discord/index.ts";
+import * as botCache from "../Util/Services/cache/botCaching.ts";
+import * as serverCache from "../Util/Services/cache/serverCaching.ts";
+import * as templateCache from "../Util/Services/cache/templateCaching.ts";
+import * as userCache from "../Util/Services/cache/userCaching.ts";
 import { escapeFormatting } from "../Util/Function/format.ts";
 import { makeURLSearchParams, OAuth2Scopes, Routes } from "discord.js";
 import type {

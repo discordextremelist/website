@@ -30,7 +30,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { isURL } from "../../../Util/Function/listing.ts";
+import { listingCodeError } from "../../../Util/Function/listingCode.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
@@ -98,26 +98,10 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
 
         res.locals.premidPageInfo = res.__("premid.servers.edit", server.name);
 
-        if (!req.body.invite) {
+        const codeError = listingCodeError(req.body.invite, res, "invite", 32);
+        if (codeError) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.invite.invalid"));
-        } else {
-            if (
-                typeof req.body.invite !== "string" ||
-                req.body.invite.includes(" ")
-            ) {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.invite.invalid"));
-            } else if (req.body.invite.length > 32) {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (isURL(req.body.invite)) {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.invite.isURL"));
-            } else if (req.body.invite.includes("discord.gg")) {
-                error = true;
-                errors.push(res.__("common.error.server.arr.invite.dgg"));
-            }
+            errors.push(codeError);
         }
 
         for (const message of await serverListingErrors(req.body, res)) {

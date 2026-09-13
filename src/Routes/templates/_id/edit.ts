@@ -24,7 +24,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { isURL } from "../../../Util/Function/listing.ts";
+import { listingCodeError } from "../../../Util/Function/listingCode.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
@@ -100,26 +100,15 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
             dbTemplate.name
         );
 
-        if (!req.body.code) {
+        const codeError = listingCodeError(
+            req.body.code,
+            res,
+            "template",
+            2000
+        );
+        if (codeError) {
             error = true;
-            errors.push(res.__("common.error.template.arr.invite.invalid"));
-        } else {
-            if (
-                typeof req.body.code !== "string" ||
-                req.body.code.includes(" ")
-            ) {
-                error = true;
-                errors.push(res.__("common.error.template.arr.invite.invalid"));
-            } else if (req.body.code.length > 2000) {
-                error = true;
-                errors.push(res.__("common.error.template.arr.invite.tooLong"));
-            } else if (isURL(req.body.code)) {
-                error = true;
-                errors.push(res.__("common.error.template.arr.invite.isURL"));
-            } else if (req.body.code.includes("discord.new")) {
-                error = true;
-                errors.push(res.__("common.error.template.arr.invite.dnew"));
-            }
+            errors.push(codeError);
         }
 
         let linkToServerPage = false;

@@ -28,7 +28,7 @@ import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { isURL } from "../../../Util/Function/listing.ts";
+import { listingCodeError } from "../../../Util/Function/listingCode.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
@@ -66,28 +66,15 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
         let error = false;
         let errors: string[] = [];
 
-        if (
-            !req.body.invite ||
-            typeof req.body.invite !== "string" ||
-            req.body.invite.includes(" ")
-        ) {
+        const codeError = listingCodeError(
+            req.body.invite,
+            res,
+            "invite",
+            2000
+        );
+        if (codeError) {
             error = true;
-            errors.push(res.__("common.error.listing.arr.invite.invalid"));
-        }
-
-        if (req.body.invite.length > 2000) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-        }
-
-        if (isURL(req.body.invite)) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.invite.isURL"));
-        }
-
-        if (req.body.invite.includes("discord.gg")) {
-            error = true;
-            errors.push(res.__("common.error.server.arr.invite.dgg"));
+            errors.push(codeError);
         }
 
         for (const message of await serverListingErrors(req.body, res)) {

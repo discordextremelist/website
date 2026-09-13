@@ -32,7 +32,7 @@ import {
     widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
 import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class GetEdit extends AuthedPathRoute<"get"> {
     constructor() {
@@ -419,20 +419,18 @@ export class PostEdit extends AuthedPathRoute<"post"> {
                 });
                 await botCache.updateBot(req.params.id);
 
-                discord.channels.logs
-                    .send(
-                        websiteLogMessage(
-                            req,
-                            settings.emoji.edit,
-                            "edited bot",
-                            app.name,
-                            app.id,
-                            `\n<${settings.website.url}/bots/${req.params.id}>`
-                        )
-                    )
-                    .catch((e) => {
-                        console.error(e);
-                    });
+                logWebsiteAction(
+                    req,
+                    settings.emoji.edit,
+                    "edited bot",
+                    app.name,
+                    app.id,
+                    {
+                        suffix: `\n<${settings.website.url}/bots/${req.params.id}>`
+                    }
+                ).catch((e) => {
+                    console.error(e);
+                });
 
                 return res.status(200).json({
                     error: false,

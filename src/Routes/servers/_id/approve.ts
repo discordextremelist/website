@@ -28,7 +28,7 @@ import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class ApproveServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -84,22 +84,20 @@ export class ApproveServer extends AuthedPathRoute<"get"> {
 
         await serverCache.updateServer(req.params.id);
 
-        discord.channels.logs
-            .send(
-                websiteLogMessage(
-                    req,
-                    settings.emoji.check,
-                    "approved server",
-                    server.name,
-                    server._id,
-                    ` to be listed as an LGBTQ+ community.\n<${
-                        settings.website.url
-                    }/servers/${server._id}>`
-                )
-            )
-            .catch((e) => {
-                console.error(e);
-            });
+        logWebsiteAction(
+            req,
+            settings.emoji.check,
+            "approved server",
+            server.name,
+            server._id,
+            {
+                suffix: ` to be listed as an LGBTQ+ community.\n<${
+                    settings.website.url
+                }/servers/${server._id}>`
+            }
+        ).catch((e) => {
+            console.error(e);
+        });
 
         const owner = await discord.getMember(server.owner.id);
         if (owner)

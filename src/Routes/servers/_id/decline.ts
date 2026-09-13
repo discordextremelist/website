@@ -30,7 +30,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class GetDeclineServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -158,16 +158,14 @@ export class PostDeclineServer extends AuthedPathRoute<"post"> {
             text: "It will still be shown as a normal server, it was declined from being listed as an LGBTQ+ community."
         });
 
-        await discord.channels.logs.send({
-            content: websiteLogMessage(
-                req,
-                settings.emoji.cross,
-                "declined server",
-                server.name,
-                server._id
-            ),
-            embeds: [embed]
-        });
+        await logWebsiteAction(
+            req,
+            settings.emoji.cross,
+            "declined server",
+            server.name,
+            server._id,
+            { embeds: [embed] }
+        );
 
         const owner = await discord.getMember(server.owner.id);
         if (owner)

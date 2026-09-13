@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import * as discord from "../../../Util/Services/discord.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
@@ -28,7 +27,7 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import { renderStatus } from "../../../Util/Function/main.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class GetAccountData extends AuthedPathRoute<"get"> {
     constructor() {
@@ -187,14 +186,12 @@ export class DeleteOwnAccountData extends AuthedPathRoute<"post"> {
 
             await botCache.deleteBot(bot._id);
 
-            await discord.channels.logs.send(
-                websiteLogMessage(
-                    req,
-                    settings.emoji.delete,
-                    "deleted bot",
-                    bot.name,
-                    bot._id
-                )
+            await logWebsiteAction(
+                req,
+                settings.emoji.delete,
+                "deleted bot",
+                bot.name,
+                bot._id
             );
         }
 
@@ -213,14 +210,12 @@ export class DeleteOwnAccountData extends AuthedPathRoute<"post"> {
 
             await serverCache.deleteServer(server._id);
 
-            await discord.channels.logs.send(
-                websiteLogMessage(
-                    req,
-                    settings.emoji.delete,
-                    "deleted server",
-                    server.name,
-                    server._id
-                )
+            await logWebsiteAction(
+                req,
+                settings.emoji.delete,
+                "deleted server",
+                server.name,
+                server._id
             );
         }
 
@@ -239,14 +234,12 @@ export class DeleteOwnAccountData extends AuthedPathRoute<"post"> {
 
             await templateCache.deleteTemplate(template._id);
 
-            await discord.channels.logs.send(
-                websiteLogMessage(
-                    req,
-                    settings.emoji.delete,
-                    "deleted template",
-                    template.name,
-                    template._id
-                )
+            await logWebsiteAction(
+                req,
+                settings.emoji.delete,
+                "deleted template",
+                template.name,
+                template._id
             );
         }
 
@@ -324,14 +317,12 @@ export class DeleteUserAccountData extends AuthedPathRoute<"post"> {
 
             await botCache.deleteBot(bot._id);
 
-            await discord.channels.logs.send(
-                websiteLogMessage(
-                    req,
-                    settings.emoji.delete,
-                    "deleted bot",
-                    bot.name,
-                    bot._id
-                )
+            await logWebsiteAction(
+                req,
+                settings.emoji.delete,
+                "deleted bot",
+                bot.name,
+                bot._id
             );
         }
 
@@ -350,14 +341,12 @@ export class DeleteUserAccountData extends AuthedPathRoute<"post"> {
 
             await serverCache.deleteServer(server._id);
 
-            await discord.channels.logs.send(
-                websiteLogMessage(
-                    req,
-                    settings.emoji.delete,
-                    "deleted server",
-                    server.name,
-                    server._id
-                )
+            await logWebsiteAction(
+                req,
+                settings.emoji.delete,
+                "deleted server",
+                server.name,
+                server._id
             );
         }
 
@@ -376,14 +365,12 @@ export class DeleteUserAccountData extends AuthedPathRoute<"post"> {
 
             await templateCache.deleteTemplate(template._id);
 
-            await discord.channels.logs.send(
-                websiteLogMessage(
-                    req,
-                    settings.emoji.delete,
-                    "deleted template",
-                    template.name,
-                    template._id
-                )
+            await logWebsiteAction(
+                req,
+                settings.emoji.delete,
+                "deleted template",
+                template.name,
+                template._id
             );
         }
 

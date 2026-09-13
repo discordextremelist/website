@@ -30,7 +30,7 @@ import {
     privacyPolicyErrors,
     widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class GetSubmit extends AuthedPathRoute<"get"> {
     constructor() {
@@ -365,15 +365,15 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
                     }
                 } satisfies delBot);
 
-                await discord.channels.logs.send(
-                    websiteLogMessage(
-                        req,
-                        settings.emoji.add,
-                        "added bot",
-                        app.name,
-                        req.body.id,
-                        `\n<${settings.website.url}/bots/${req.body.id}>`
-                    )
+                await logWebsiteAction(
+                    req,
+                    settings.emoji.add,
+                    "added bot",
+                    app.name,
+                    req.body.id,
+                    {
+                        suffix: `\n<${settings.website.url}/bots/${req.body.id}>`
+                    }
                 );
 
                 await global.db.collection("audit").insertOne({

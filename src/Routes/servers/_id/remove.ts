@@ -29,7 +29,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class GetRemoveServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -101,16 +101,14 @@ export class PostRemoveServer extends AuthedPathRoute<"post"> {
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        await discord.channels.logs.send({
-            content: websiteLogMessage(
-                req,
-                settings.emoji.delete,
-                "removed server",
-                server.name,
-                server._id
-            ),
-            embeds: [embed]
-        });
+        await logWebsiteAction(
+            req,
+            settings.emoji.delete,
+            "removed server",
+            server.name,
+            server._id,
+            { embeds: [embed] }
+        );
 
         const owner = await discord.getMember(server.owner.id);
         if (owner)

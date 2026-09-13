@@ -6,7 +6,7 @@ import * as discord from "../../../Util/Services/discord.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class ArchiveBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -21,14 +21,12 @@ export class ArchiveBot extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
-        await discord.channels.logs.send(
-            websiteLogMessage(
-                req,
-                settings.emoji.archive,
-                "archived bot",
-                bot.name,
-                bot._id
-            )
+        await logWebsiteAction(
+            req,
+            settings.emoji.archive,
+            "archived bot",
+            bot.name,
+            bot._id
         );
 
         await global.db.collection("bots").updateOne(
@@ -68,14 +66,12 @@ export class DeleteBot extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
-        await discord.channels.logs.send(
-            websiteLogMessage(
-                req,
-                settings.emoji.delete,
-                "deleted bot",
-                bot.name,
-                bot._id
-            )
+        await logWebsiteAction(
+            req,
+            settings.emoji.delete,
+            "deleted bot",
+            bot.name,
+            bot._id
         );
 
         await global.db.collection("bots").deleteOne({ _id: req.params.id });

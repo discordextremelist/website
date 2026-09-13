@@ -44,6 +44,7 @@ import type {
 import settings from "../../settings.json" with { type: "json" };
 import { DAPI } from "../Util/Services/discord.ts";
 import { templateGuildFields } from "../Util/Function/templateListing.ts";
+import { logWebsiteAction } from "../Util/Function/websiteLog.ts";
 
 const router = express.Router();
 
@@ -255,12 +256,14 @@ router.get("/servers", async (_req, res) => {
                     "Failed to autosync server, assuming the invite is invalid, for another server, or can expire."
                 );
 
-                await discord.channels.logs.send({
-                    content: `${settings.emoji.delete} **AutoSync System** removed server **${functions.escapeFormatting(
-                        server.name
-                    )}** \`(${server._id})\``,
-                    embeds: [embed]
-                });
+                await logWebsiteAction(
+                    "AutoSync System",
+                    settings.emoji.delete,
+                    "removed server",
+                    server.name,
+                    server._id,
+                    { embeds: [embed] }
+                );
 
                 const owner = await discord.getMember(server.owner.id);
                 if (owner)
@@ -348,12 +351,14 @@ router.get("/templates", async (_req, res) => {
                     "Failed to autosync template, assuming the template is invalid."
                 );
 
-                await discord.channels.logs.send({
-                    content: `${settings.emoji.delete} **AutoSync System** removed template **${functions.escapeFormatting(
-                        dbTemplate.name
-                    )}** \`(${id})\``,
-                    embeds: [embed]
-                });
+                await logWebsiteAction(
+                    "AutoSync System",
+                    settings.emoji.delete,
+                    "removed template",
+                    dbTemplate.name,
+                    id,
+                    { embeds: [embed] }
+                );
 
                 const owner = await discord.getMember(dbTemplate.creator.id);
                 if (owner)

@@ -30,7 +30,7 @@ import {
     privacyPolicyErrors,
     widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class GetResubmitBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -413,20 +413,16 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
 
                 await botCache.updateBot(req.params.id);
 
-                await discord.channels.logs
-                    .send(
-                        websiteLogMessage(
-                            req,
-                            settings.emoji.resubmit,
-                            "resubmitted bot",
-                            app.name,
-                            app.id,
-                            `\n<${settings.website.url}/bots/${app.id}>`
-                        )
-                    )
-                    .catch((e) => {
-                        console.error(e);
-                    });
+                await logWebsiteAction(
+                    req,
+                    settings.emoji.resubmit,
+                    "resubmitted bot",
+                    app.name,
+                    app.id,
+                    { suffix: `\n<${settings.website.url}/bots/${app.id}>` }
+                ).catch((e) => {
+                    console.error(e);
+                });
 
                 return res.status(200).json({
                     error: false,

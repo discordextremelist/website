@@ -34,7 +34,7 @@ import {
     templateExistsJson
 } from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
 import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
 
@@ -169,15 +169,15 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
                     }
                 );
 
-                await discord.channels.logs.send(
-                    websiteLogMessage(
-                        req,
-                        settings.emoji.edit,
-                        "edited template",
-                        template.name,
-                        template.code,
-                        `\n<${settings.website.url}/templates/${template.code}>`
-                    )
+                await logWebsiteAction(
+                    req,
+                    settings.emoji.edit,
+                    "edited template",
+                    template.name,
+                    template.code,
+                    {
+                        suffix: `\n<${settings.website.url}/templates/${template.code}>`
+                    }
                 );
 
                 await global.db.collection("audit").insertOne({

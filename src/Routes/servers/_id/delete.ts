@@ -25,7 +25,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class DeleteServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -40,14 +40,12 @@ export class DeleteServer extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: Response) {
         const server: delServer | undefined = req.attached.server!;
 
-        await discord.channels.logs.send(
-            websiteLogMessage(
-                req,
-                settings.emoji.delete,
-                "deleted server",
-                server.name,
-                server._id
-            )
+        await logWebsiteAction(
+            req,
+            settings.emoji.delete,
+            "deleted server",
+            server.name,
+            server._id
         );
 
         await global.db.collection("servers").deleteOne({ _id: req.params.id });

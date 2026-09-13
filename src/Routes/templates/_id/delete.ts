@@ -25,7 +25,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class DeleteTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -43,14 +43,12 @@ export class DeleteTemplate extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: Response) {
         const template: delTemplate | undefined = req.attached.template!;
 
-        await discord.channels.logs.send(
-            websiteLogMessage(
-                req,
-                settings.emoji.delete,
-                "deleted template",
-                template.name,
-                template._id
-            )
+        await logWebsiteAction(
+            req,
+            settings.emoji.delete,
+            "deleted template",
+            template.name,
+            template._id
         );
 
         await global.db

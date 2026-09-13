@@ -32,7 +32,7 @@ import * as functions from "../../../Util/Function/main.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
 
 export class GetSubmitServer extends AuthedPathRoute<"get"> {
@@ -166,15 +166,15 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
                     }
                 } satisfies delServer);
 
-                await discord.channels.logs.send(
-                    websiteLogMessage(
-                        req,
-                        settings.emoji.add,
-                        "added server",
-                        invite.guild.name,
-                        invite.guild.id,
-                        `\n<${settings.website.url}/servers/${invite.guild.id}>`
-                    )
+                await logWebsiteAction(
+                    req,
+                    settings.emoji.add,
+                    "added server",
+                    invite.guild.name,
+                    invite.guild.id,
+                    {
+                        suffix: `\n<${settings.website.url}/servers/${invite.guild.id}>`
+                    }
                 );
 
                 await global.db.collection("audit").insertOne({

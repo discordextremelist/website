@@ -11,7 +11,7 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as functions from "../../../Util/Function/main.ts";
 import { botType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class GetRemoveBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -108,16 +108,14 @@ export class PostRemoveBot extends AuthedPathRoute<"post"> {
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        await discord.channels.logs.send({
-            content: websiteLogMessage(
-                req,
-                settings.emoji.delete,
-                "removed bot",
-                bot.name,
-                bot._id
-            ),
-            embeds: [embed]
-        });
+        await logWebsiteAction(
+            req,
+            settings.emoji.delete,
+            "removed bot",
+            bot.name,
+            bot._id,
+            { embeds: [embed] }
+        );
 
         const member = await discord.getMember(req.params.id);
 

@@ -11,7 +11,7 @@ import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as Discord from "discord.js";
 import { botType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class HideBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -34,14 +34,12 @@ export class HideBot extends AuthedPathRoute<"get"> {
                 res.__("common.error.bot.inQueueHide")
             );
 
-        await discord.channels.logs.send(
-            websiteLogMessage(
-                req,
-                settings.emoji.hide,
-                "hid bot",
-                bot.name,
-                bot._id
-            )
+        await logWebsiteAction(
+            req,
+            settings.emoji.hide,
+            "hid bot",
+            bot.name,
+            bot._id
         );
 
         await global.db.collection("bots").updateOne(
@@ -80,14 +78,12 @@ export class UnhideBot extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
-        await discord.channels.logs.send(
-            websiteLogMessage(
-                req,
-                settings.emoji.unhide,
-                "unhid bot",
-                bot.name,
-                bot._id
-            )
+        await logWebsiteAction(
+            req,
+            settings.emoji.unhide,
+            "unhid bot",
+            bot.name,
+            bot._id
         );
 
         await global.db.collection("bots").updateOne(
@@ -216,16 +212,14 @@ export class PostModHideBot extends AuthedPathRoute<"post"> {
         embed.setDescription(req.body.reason);
         embed.setURL(`${settings.website.url}/bots/${bot._id}`);
 
-        await discord.channels.logs.send({
-            content: websiteLogMessage(
-                req,
-                settings.emoji.hide,
-                "hid bot",
-                bot.name,
-                bot._id
-            ),
-            embeds: [embed]
-        });
+        await logWebsiteAction(
+            req,
+            settings.emoji.hide,
+            "hid bot",
+            bot.name,
+            bot._id,
+            { embeds: [embed] }
+        );
 
         const owner = await discord.getMember(bot.owner.id);
         if (owner)
@@ -288,20 +282,16 @@ export class GetModUnhideBot extends AuthedPathRoute<"get"> {
 
         await userCache.updateUser(req.user.id);
 
-        discord.channels.logs
-            .send(
-                websiteLogMessage(
-                    req,
-                    settings.emoji.unhide,
-                    "unhid bot",
-                    bot.name,
-                    bot._id,
-                    `\n<${settings.website.url}/bots/${bot._id}>`
-                )
-            )
-            .catch((e) => {
-                console.error(e);
-            });
+        logWebsiteAction(
+            req,
+            settings.emoji.unhide,
+            "unhid bot",
+            bot.name,
+            bot._id,
+            { suffix: `\n<${settings.website.url}/bots/${bot._id}>` }
+        ).catch((e) => {
+            console.error(e);
+        });
 
         const owner = await discord.getMember(bot.owner.id);
         if (owner)

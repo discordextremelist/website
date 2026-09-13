@@ -460,24 +460,3 @@ export function ownsOrAssistant(
         req.user.db.rank.assistant !== false
     );
 }
-
-/**
- * The standard line posted to the website log channel (discord.channels.logs,
- * the public channel anyone on the DEL server can read) when a user acts on a
- * listing:
- *
- *     <emoji> **<user>** (`<user id>`) <action> **<name>** (`<id>`)<suffix>
- *
- * Both names are escaped for Discord markdown. `suffix` is appended verbatim,
- * usually "\n<link>". Not for the moderator-only alerts channel.
- */
-export function websiteLogMessage(
-    req: AuthedRequest,
-    emoji: string,
-    action: string,
-    name: string,
-    id: string,
-    suffix = ""
-): string {
-    return `${emoji} **${escapeFormatting(req.user.db.fullUsername)}** \`(${req.user.id})\` ${action} **${escapeFormatting(name)}** \`(${id})\`${suffix}`;
-}

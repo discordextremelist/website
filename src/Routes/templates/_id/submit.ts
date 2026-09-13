@@ -27,7 +27,7 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
 import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
 
@@ -139,15 +139,15 @@ export class PostSubmitTemplate extends AuthedPathRoute<"post"> {
                     }
                 } satisfies delTemplate);
 
-                await discord.channels.logs.send(
-                    websiteLogMessage(
-                        req,
-                        settings.emoji.add,
-                        "added template",
-                        template.name,
-                        template.code,
-                        `\n<${settings.website.url}/templates/${template.code}>`
-                    )
+                await logWebsiteAction(
+                    req,
+                    settings.emoji.add,
+                    "added template",
+                    template.name,
+                    template.code,
+                    {
+                        suffix: `\n<${settings.website.url}/templates/${template.code}>`
+                    }
                 );
 
                 await global.db.collection("audit").insertOne({

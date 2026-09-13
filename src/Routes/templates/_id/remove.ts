@@ -29,7 +29,7 @@ import { EmbedBuilder } from "discord.js";
 import { templateType } from "../index.ts";
 import { renderStatus } from "../../../Util/Function/main.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class GetRemoveTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -102,16 +102,14 @@ export class PostRemoveTemplate extends AuthedPathRoute<"post"> {
         embed.setTitle("Reason");
         embed.setDescription(req.body.reason);
 
-        await discord.channels.logs.send({
-            content: websiteLogMessage(
-                req,
-                settings.emoji.delete,
-                "removed template",
-                template.name,
-                template._id
-            ),
-            embeds: [embed]
-        });
+        await logWebsiteAction(
+            req,
+            settings.emoji.delete,
+            "removed template",
+            template.name,
+            template._id,
+            { embeds: [embed] }
+        );
 
         const owner = await discord.getMember(template.owner.id);
         if (owner)

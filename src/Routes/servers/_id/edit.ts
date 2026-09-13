@@ -39,7 +39,7 @@ import {
     serverExistsJson
 } from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
-import { websiteLogMessage } from "../../../Util/Function/main.ts";
+import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
 
 export class GetEditServer extends AuthedPathRoute<"get"> {
@@ -196,15 +196,15 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
                     }
                 );
 
-                await discord.channels.logs.send(
-                    websiteLogMessage(
-                        req,
-                        settings.emoji.edit,
-                        "edited server",
-                        invite.guild.name,
-                        invite.guild.id,
-                        `\n<${settings.website.url}/servers/${invite.guild.id}>`
-                    )
+                await logWebsiteAction(
+                    req,
+                    settings.emoji.edit,
+                    "edited server",
+                    invite.guild.name,
+                    invite.guild.id,
+                    {
+                        suffix: `\n<${settings.website.url}/servers/${invite.guild.id}>`
+                    }
                 );
 
                 await global.db.collection("audit").insertOne({

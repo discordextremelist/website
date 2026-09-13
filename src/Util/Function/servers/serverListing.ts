@@ -24,8 +24,7 @@ import type { ParamsDictionary } from "express-serve-static-core";
 import type { ParsedQs } from "qs";
 import type { DiscordAPIError } from "discord.js";
 import { Routes } from "discord.js";
-import fetch, { type Response as fetchRes } from "node-fetch";
-import { isURL } from "../listings/listing.ts";
+import { isURL, widgetbotFinds } from "../listings/listing.ts";
 import * as discord from "../../Services/discord/index.ts";
 
 /**
@@ -78,31 +77,13 @@ export async function serverListingErrors(
                     }
                 });
 
-        if (fetchChannel)
-            await fetch("https://stonks.widgetbot.io/api/graphql", {
-                method: "post",
-                body: JSON.stringify({
-                    query: `{channel(id:"${body.previewChannel}"){id}}`
-                }),
-                headers: { "Content-Type": "application/json" }
-            })
-                .then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (!data.channel?.id) {
-                        messages.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.channelNotFound"
-                            )
-                        );
-                    }
-                })
-                .catch(() => {
-                    messages.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.channelNotFound"
-                        )
-                    );
-                });
+        if (
+            fetchChannel &&
+            (await widgetbotFinds("channel", body.previewChannel)) !== true
+        )
+            messages.push(
+                res.__("common.error.listing.arr.widgetbot.channelNotFound")
+            );
     }
 
     if (!body.shortDescription) {

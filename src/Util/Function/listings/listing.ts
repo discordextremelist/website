@@ -21,6 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { URL } from "url";
 import { OAuth2Scopes } from "discord.js";
+import fetch from "node-fetch";
 
 export function isURL(string: string) {
     try {
@@ -63,4 +64,27 @@ export function ownsOrAssistant(
         (editors && listing.editors!.includes(req.user.id)) ||
         req.user.db.rank[staffRank] !== false
     );
+}
+
+/**
+ * Ask WidgetBot's API whether it can see the guild or channel `id`: true if
+ * its reply has that id, false if it doesn't or the request fails, and null
+ * for an empty reply (the bot form's server check has never reported those).
+ */
+export async function widgetbotFinds(
+    kind: "guild" | "channel",
+    id: string
+): Promise<boolean | null> {
+    try {
+        const reply = await fetch("https://stonks.widgetbot.io/api/graphql", {
+            method: "post",
+            body: JSON.stringify({ query: `{${kind}(id:"${id}"){id}}` }),
+            headers: { "Content-Type": "application/json" }
+        });
+        const data: any = await reply.json();
+        if (!data) return null;
+        return Boolean(data[kind]?.id);
+    } catch {
+        return false;
+    }
 }

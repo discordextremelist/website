@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { isURL, parseScopes } from "../listings/listing.ts";
+import { isURL, parseScopes, widgetbotFinds } from "../listings/listing.ts";
 import { patterns } from "./patterns.ts";
 import { isDiscordAPIError } from "../common/discordErrors.ts";
 import type { Response } from "express";
@@ -30,7 +30,7 @@ import type {
 } from "discord.js";
 import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord.js";
 import { URL } from "url";
-import fetch, { type Response as fetchRes } from "node-fetch";
+import fetch from "node-fetch";
 import refresh from "passport-oauth2-refresh";
 import * as discord from "../../Services/discord/index.ts";
 import { DAPI } from "../../Services/discord/index.ts";
@@ -324,31 +324,13 @@ export async function widgetbotErrors(
                     }
                 });
 
-        if (fetchServer)
-            await fetch("https://stonks.widgetbot.io/api/graphql", {
-                method: "post",
-                body: JSON.stringify({
-                    query: `{guild(id:"${body.widgetServer}"){id}}`
-                }),
-                headers: { "Content-Type": "application/json" }
-            })
-                .then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (data && !data.guild?.id) {
-                        messages.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.guildNotFound"
-                            )
-                        );
-                    }
-                })
-                .catch(() => {
-                    messages.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.guildNotFound"
-                        )
-                    );
-                });
+        if (
+            fetchServer &&
+            (await widgetbotFinds("guild", body.widgetServer)) === false
+        )
+            messages.push(
+                res.__("common.error.listing.arr.widgetbot.guildNotFound")
+            );
 
         let fetchChannel = true;
 
@@ -382,31 +364,13 @@ export async function widgetbotErrors(
                     }
                 });
 
-        if (fetchChannel)
-            await fetch("https://stonks.widgetbot.io/api/graphql", {
-                method: "post",
-                body: JSON.stringify({
-                    query: `{channel(id:"${body.widgetChannel}"){id}}`
-                }),
-                headers: { "Content-Type": "application/json" }
-            })
-                .then(async (fetchRes: fetchRes) => {
-                    const data: any = await fetchRes.json();
-                    if (!data.channel?.id) {
-                        messages.push(
-                            res.__(
-                                "common.error.listing.arr.widgetbot.channelNotFound"
-                            )
-                        );
-                    }
-                })
-                .catch(() => {
-                    messages.push(
-                        res.__(
-                            "common.error.listing.arr.widgetbot.channelNotFound"
-                        )
-                    );
-                });
+        if (
+            fetchChannel &&
+            (await widgetbotFinds("channel", body.widgetChannel)) !== true
+        )
+            messages.push(
+                res.__("common.error.listing.arr.widgetbot.channelNotFound")
+            );
     }
     return messages;
 }

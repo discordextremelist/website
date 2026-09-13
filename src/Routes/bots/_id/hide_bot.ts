@@ -8,10 +8,13 @@ import { escapeFormatting } from "../../../Util/Function/format.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import * as userCache from "../../../Util/Services/userCaching.ts";
-import * as Discord from "discord.js";
 import { botType } from "../index.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import {
+    reasonEmbed,
+    reasonMissing,
+    recordStaffAction
+} from "../../../Util/Function/staffActions.ts";
 
 export class HideBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -161,14 +164,7 @@ export class PostModHideBot extends AuthedPathRoute<"post"> {
                 res.__("common.error.bot.inQueueHide")
             );
 
-        if (!req.body.reason && !req.user.db.rank.admin) {
-            return renderStatus(
-                req,
-                res,
-                400,
-                res.__("common.error.reasonRequired")
-            );
-        }
+        if (reasonMissing(req, res)) return;
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
@@ -179,19 +175,7 @@ export class PostModHideBot extends AuthedPathRoute<"post"> {
             }
         );
 
-        await global.db.collection("users").updateOne(
-            { _id: req.user.id },
-            {
-                $inc: {
-                    "staffTracking.handledBots.allTime.total": 1,
-                    "staffTracking.handledBots.allTime.modHidden": 1,
-                    "staffTracking.handledBots.thisWeek.total": 1,
-                    "staffTracking.handledBots.thisWeek.modHidden": 1
-                }
-            }
-        );
-
-        await userCache.updateUser(req.user.id);
+        await recordStaffAction(req.user.id, "Bots", "modHidden");
 
         const type = botType(req.body.type);
 
@@ -206,11 +190,10 @@ export class PostModHideBot extends AuthedPathRoute<"post"> {
 
         await botCache.updateBot(req.params.id);
 
-        const embed = new Discord.EmbedBuilder();
-        embed.setColor(0x2f3136);
-        embed.setTitle("Reason");
-        embed.setDescription(req.body.reason);
-        embed.setURL(`${settings.website.url}/bots/${bot._id}`);
+        const embed = reasonEmbed(
+            req.body.reason,
+            `${settings.website.url}/bots/${bot._id}`
+        );
 
         await logWebsiteAction(
             req,
@@ -221,19 +204,14 @@ export class PostModHideBot extends AuthedPathRoute<"post"> {
             { embeds: [embed] }
         );
 
-        const owner = await discord.getMember(bot.owner.id);
-        if (owner)
-            owner
-                .send(
-                    `${settings.emoji.hide} **|** Your bot **${escapeFormatting(
-                        bot.name
-                    )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${
-                        req.body.reason || "None specified."
-                    }\``
-                )
-                .catch((e) => {
-                    console.error(e);
-                });
+        await discord.messageMember(
+            bot.owner.id,
+            `${settings.emoji.hide} **|** Your bot **${escapeFormatting(
+                bot.name
+            )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${
+                req.body.reason || "None specified."
+            }\``
+        );
 
         res.redirect(`/bots/${bot._id}`);
     }
@@ -268,17 +246,7 @@ export class GetModUnhideBot extends AuthedPathRoute<"get"> {
             }
         );
 
-        await global.db.collection("users").updateOne(
-            { _id: req.user.id },
-            {
-                $inc: {
-                    "staffTracking.handledBots.allTime.total": 1,
-                    "staffTracking.handledBots.thisWeek.total": 1
-                }
-            }
-        );
-
-        await userCache.updateUser(req.user.id);
+        await recordStaffAction(req.user.id, "Bots");
 
         logWebsiteAction(
             req,
@@ -291,19 +259,12 @@ export class GetModUnhideBot extends AuthedPathRoute<"get"> {
             console.error(e);
         });
 
-        const owner = await discord.getMember(bot.owner.id);
-        if (owner)
-            owner
-                .send(
-                    `${
-                        settings.emoji.check
-                    } **|** Your bot **${escapeFormatting(
-                        bot.name
-                    )}** \`(${bot._id})\` has been unhidden on the website!`
-                )
-                .catch((e) => {
-                    console.error(e);
-                });
+        await discord.messageMember(
+            bot.owner.id,
+            `${settings.emoji.check} **|** Your bot **${escapeFormatting(
+                bot.name
+            )}** \`(${bot._id})\` has been unhidden on the website!`
+        );
 
         await global.db.collection("audit").insertOne({
             type: "MOD_UNHIDE_BOT",

@@ -18,19 +18,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express from "express";
-import refresh from "passport-oauth2-refresh";
 import * as discord from "../Util/Services/discord.ts";
 import * as botCache from "../Util/Services/botCaching.ts";
 import * as serverCache from "../Util/Services/serverCaching.ts";
 import * as templateCache from "../Util/Services/templateCaching.ts";
 import * as userCache from "../Util/Services/userCaching.ts";
 import { escapeFormatting } from "../Util/Function/format.ts";
-import {
-    EmbedBuilder,
-    makeURLSearchParams,
-    OAuth2Scopes,
-    Routes
-} from "discord.js";
+import { makeURLSearchParams, OAuth2Scopes, Routes } from "discord.js";
 import type {
     APITemplate,
     RESTGetAPIInviteQuery,
@@ -45,6 +39,7 @@ import {
     fetchSlashCommands,
     fetchUserFlags
 } from "../Util/Function/botListing.ts";
+import { reasonEmbed } from "../Util/Function/staffActions.ts";
 
 const router = express.Router();
 
@@ -204,10 +199,7 @@ router.get("/servers", async (_req, res) => {
 
                 await serverCache.deleteServer(id);
 
-                const embed = new EmbedBuilder();
-                embed.setColor(0x2f3136);
-                embed.setTitle("Reason");
-                embed.setDescription(
+                const embed = reasonEmbed(
                     "Failed to autosync server, assuming the invite is invalid, for another server, or can expire."
                 );
 
@@ -220,19 +212,14 @@ router.get("/servers", async (_req, res) => {
                     { embeds: [embed] }
                 );
 
-                const owner = await discord.getMember(server.owner.id);
-                if (owner)
-                    owner
-                        .send(
-                            `${
-                                settings.emoji.delete
-                            } **|** Your server **${escapeFormatting(
-                                server.name
-                            )}** \`(${server._id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this server has either been deleted, or the invite provided to us has expired. If your server is still active, please repost it with a permanent invite!\``
-                        )
-                        .catch((e: string) => {
-                            console.error(e);
-                        });
+                await discord.messageMember(
+                    server.owner.id,
+                    `${
+                        settings.emoji.delete
+                    } **|** Your server **${escapeFormatting(
+                        server.name
+                    )}** \`(${server._id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this server has either been deleted, or the invite provided to us has expired. If your server is still active, please repost it with a permanent invite!\``
+                );
 
                 await discord.postWebMetric("server");
             }
@@ -299,10 +286,7 @@ router.get("/templates", async (_req, res) => {
 
                 await templateCache.deleteTemplate(id);
 
-                const embed = new EmbedBuilder();
-                embed.setColor(0x2f3136);
-                embed.setTitle("Reason");
-                embed.setDescription(
+                const embed = reasonEmbed(
                     "Failed to autosync template, assuming the template is invalid."
                 );
 
@@ -315,19 +299,14 @@ router.get("/templates", async (_req, res) => {
                     { embeds: [embed] }
                 );
 
-                const owner = await discord.getMember(dbTemplate.creator.id);
-                if (owner)
-                    owner
-                        .send(
-                            `${
-                                settings.emoji.delete
-                            } **|** Your template **${escapeFormatting(
-                                dbTemplate.name
-                            )}** \`(${id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this template has been deleted from discord.\``
-                        )
-                        .catch((e) => {
-                            console.error(e);
-                        });
+                await discord.messageMember(
+                    dbTemplate.creator.id,
+                    `${
+                        settings.emoji.delete
+                    } **|** Your template **${escapeFormatting(
+                        dbTemplate.name
+                    )}** \`(${id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this template has been deleted from discord.\``
+                );
 
                 await discord.postWebMetric("template");
             }

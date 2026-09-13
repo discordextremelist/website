@@ -3,15 +3,18 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { auth, mod } from "../../../Util/Middleware/permissions.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import e from "express";
-import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
-import * as Discord from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import { escapeFormatting } from "../../../Util/Function/format.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
 import { botType } from "../index.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import {
+    reasonEmbed,
+    reasonMissing,
+    recordStaffAction
+} from "../../../Util/Function/staffActions.ts";
 
 export class GetRemoveBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -55,14 +58,7 @@ export class PostRemoveBot extends AuthedPathRoute<"post"> {
                 res.__("common.error.bot.inQueue")
             );
 
-        if (!req.body.reason && !req.user.db.rank.admin) {
-            return renderStatus(
-                req,
-                res,
-                400,
-                res.__("common.error.reasonRequired")
-            );
-        }
+        if (reasonMissing(req, res)) return;
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
@@ -75,19 +71,7 @@ export class PostRemoveBot extends AuthedPathRoute<"post"> {
             }
         );
 
-        await global.db.collection("users").updateOne(
-            { _id: req.user.id },
-            {
-                $inc: {
-                    "staffTracking.handledBots.allTime.total": 1,
-                    "staffTracking.handledBots.allTime.remove": 1,
-                    "staffTracking.handledBots.thisWeek.total": 1,
-                    "staffTracking.handledBots.thisWeek.remove": 1
-                }
-            }
-        );
-
-        await userCache.updateUser(req.user.id);
+        await recordStaffAction(req.user.id, "Bots", "remove");
 
         const type = botType(req.body.type);
 
@@ -102,11 +86,10 @@ export class PostRemoveBot extends AuthedPathRoute<"post"> {
 
         await botCache.updateBot(req.params.id);
 
-        const embed = new Discord.EmbedBuilder();
-        embed.setColor(0x2f3136);
-        embed.setTitle("Reason");
-        embed.setDescription(req.body.reason);
-        embed.setURL(`${settings.website.url}/bots/${bot._id}`);
+        const embed = reasonEmbed(
+            req.body.reason,
+            `${settings.website.url}/bots/${bot._id}`
+        );
 
         await logWebsiteAction(
             req,
@@ -127,21 +110,14 @@ export class PostRemoveBot extends AuthedPathRoute<"post"> {
                 });
         }
 
-        const owner = await discord.getMember(bot.owner.id);
-        if (owner)
-            owner
-                .send(
-                    `${
-                        settings.emoji.delete
-                    } **|** Your bot **${escapeFormatting(
-                        bot.name
-                    )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
-                        req.body.reason || "None specified."
-                    }\``
-                )
-                .catch((e) => {
-                    console.error(e);
-                });
+        await discord.messageMember(
+            bot.owner.id,
+            `${settings.emoji.delete} **|** Your bot **${escapeFormatting(
+                bot.name
+            )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
+                req.body.reason || "None specified."
+            }\``
+        );
 
         res.redirect(`/bots/${bot._id}`);
     }

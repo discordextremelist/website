@@ -19,18 +19,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import { EmbedBuilder } from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { escapeFormatting } from "../../../Util/Function/format.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
-import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverType } from "../index.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import {
+    reasonEmbed,
+    reasonMissing,
+    recordStaffAction
+} from "../../../Util/Function/staffActions.ts";
 
 export class GetDeclineServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -100,14 +103,7 @@ export class PostDeclineServer extends AuthedPathRoute<"post"> {
                 res.__("common.error.server.notInQueue")
             );
 
-        if (!req.body.reason && !req.user.db.rank.admin) {
-            return renderStatus(
-                req,
-                res,
-                400,
-                res.__("common.error.reasonRequired")
-            );
-        }
+        if (reasonMissing(req, res)) return;
 
         const tags = new Set(server.tags);
         tags.delete("LGBT");
@@ -122,19 +118,7 @@ export class PostDeclineServer extends AuthedPathRoute<"post"> {
             }
         );
 
-        await global.db.collection("users").updateOne(
-            { _id: req.user.id },
-            {
-                $inc: {
-                    "staffTracking.handledServers.allTime.total": 1,
-                    "staffTracking.handledServers.allTime.declined": 1,
-                    "staffTracking.handledServers.thisWeek.total": 1,
-                    "staffTracking.handledServers.thisWeek.declined": 1
-                }
-            }
-        );
-
-        await userCache.updateUser(req.user.id);
+        await recordStaffAction(req.user.id, "Servers", "declined");
 
         const type = serverType(req.body.type);
 
@@ -149,11 +133,10 @@ export class PostDeclineServer extends AuthedPathRoute<"post"> {
 
         await serverCache.updateServer(req.params.id);
 
-        const embed = new EmbedBuilder();
-        embed.setColor(0x2f3136);
-        embed.setTitle("Reason");
-        embed.setDescription(req.body.reason);
-        embed.setURL(`${settings.website.url}/servers/${server._id}`);
+        const embed = reasonEmbed(
+            req.body.reason,
+            `${settings.website.url}/servers/${server._id}`
+        );
         embed.setFooter({
             text: "It will still be shown as a normal server, it was declined from being listed as an LGBTQ+ community."
         });
@@ -167,23 +150,16 @@ export class PostDeclineServer extends AuthedPathRoute<"post"> {
             { embeds: [embed] }
         );
 
-        const owner = await discord.getMember(server.owner.id);
-        if (owner)
-            owner
-                .send(
-                    `${
-                        settings.emoji.cross
-                    } **|** Your server **${escapeFormatting(
-                        server.name
-                    )}** \`(${
-                        server._id
-                    })\` was declined from being listed as an LGBTQ+ community. It will still appear as a normal server.\n**Reason:** \`${
-                        req.body.reason || "None specified."
-                    }\``
-                )
-                .catch((e) => {
-                    console.error(e);
-                });
+        await discord.messageMember(
+            server.owner.id,
+            `${settings.emoji.cross} **|** Your server **${escapeFormatting(
+                server.name
+            )}** \`(${
+                server._id
+            })\` was declined from being listed as an LGBTQ+ community. It will still appear as a normal server.\n**Reason:** \`${
+                req.body.reason || "None specified."
+            }\``
+        );
 
         res.redirect("/staff/server_queue");
     }

@@ -70,6 +70,18 @@ export async function getMember(id: string) {
     } else return undefined;
 }
 
+/**
+ * DM a member of the DEL servers, if they're in one. The send isn't waited
+ * for, and a failure (closed DMs, say) is logged.
+ */
+export async function messageMember(id: string, content: string) {
+    const member = await getMember(id);
+    if (member)
+        member.send(content).catch((e) => {
+            console.error(e);
+        });
+}
+
 export async function getTestingGuildMember(id: string) {
     if (guilds.testing) {
         return guilds.testing.members.fetch(id).catch(() => {});

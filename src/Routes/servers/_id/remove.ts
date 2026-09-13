@@ -19,17 +19,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import { EmbedBuilder } from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { escapeFormatting } from "../../../Util/Function/format.ts";
-import { renderStatus } from "../../../Util/Function/responses.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverType } from "../index.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import {
+    reasonEmbed,
+    reasonMissing
+} from "../../../Util/Function/staffActions.ts";
 
 export class GetRemoveServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -72,14 +74,7 @@ export class PostRemoveServer extends AuthedPathRoute<"post"> {
     async handle(req: AuthedRequest, res: Response) {
         const server: delServer | undefined = req.attached.server!;
 
-        if (!req.body.reason && !req.user.db.rank.admin) {
-            return renderStatus(
-                req,
-                res,
-                400,
-                res.__("common.error.reasonRequired")
-            );
-        }
+        if (reasonMissing(req, res)) return;
 
         await global.db.collection("servers").deleteOne({ _id: req.params.id });
 
@@ -96,10 +91,7 @@ export class PostRemoveServer extends AuthedPathRoute<"post"> {
 
         await serverCache.deleteServer(req.params.id);
 
-        const embed = new EmbedBuilder();
-        embed.setColor(0x2f3136);
-        embed.setTitle("Reason");
-        embed.setDescription(req.body.reason);
+        const embed = reasonEmbed(req.body.reason);
 
         await logWebsiteAction(
             req,
@@ -110,21 +102,14 @@ export class PostRemoveServer extends AuthedPathRoute<"post"> {
             { embeds: [embed] }
         );
 
-        const owner = await discord.getMember(server.owner.id);
-        if (owner)
-            owner
-                .send(
-                    `${
-                        settings.emoji.delete
-                    } **|** Your server **${escapeFormatting(
-                        server.name
-                    )}** \`(${server._id})\` has been removed!\n**Reason:** \`${
-                        req.body.reason || "None specified."
-                    }\``
-                )
-                .catch((e: string) => {
-                    console.error(e);
-                });
+        await discord.messageMember(
+            server.owner.id,
+            `${settings.emoji.delete} **|** Your server **${escapeFormatting(
+                server.name
+            )}** \`(${server._id})\` has been removed!\n**Reason:** \`${
+                req.body.reason || "None specified."
+            }\``
+        );
 
         await discord.postWebMetric("server");
 

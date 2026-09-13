@@ -23,13 +23,15 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { escapeFormatting } from "../../../Util/Function/format.ts";
-import { renderStatus } from "../../../Util/Function/responses.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { EmbedBuilder } from "discord.js";
 import { templateType } from "../index.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import {
+    reasonEmbed,
+    reasonMissing
+} from "../../../Util/Function/staffActions.ts";
 
 export class GetRemoveTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -71,14 +73,7 @@ export class PostRemoveTemplate extends AuthedPathRoute<"post"> {
     async handle(req: AuthedRequest, res: Response) {
         const template: delTemplate | undefined = req.attached.template!;
 
-        if (!req.body.reason && !req.user.db.rank.admin) {
-            return renderStatus(
-                req,
-                res,
-                400,
-                res.__("common.error.reasonRequired")
-            );
-        }
+        if (reasonMissing(req, res)) return;
 
         await global.db
             .collection("templates")
@@ -97,10 +92,7 @@ export class PostRemoveTemplate extends AuthedPathRoute<"post"> {
 
         await templateCache.deleteTemplate(req.params.id);
 
-        const embed = new EmbedBuilder();
-        embed.setColor(0x2f3136);
-        embed.setTitle("Reason");
-        embed.setDescription(req.body.reason);
+        const embed = reasonEmbed(req.body.reason);
 
         await logWebsiteAction(
             req,
@@ -111,23 +103,14 @@ export class PostRemoveTemplate extends AuthedPathRoute<"post"> {
             { embeds: [embed] }
         );
 
-        const owner = await discord.getMember(template.owner.id);
-        if (owner)
-            owner
-                .send(
-                    `${
-                        settings.emoji.delete
-                    } **|** Your template **${escapeFormatting(
-                        template.name
-                    )}** \`(${
-                        template._id
-                    })\` has been removed!\n**Reason:** \`${
-                        req.body.reason || "None specified."
-                    }\``
-                )
-                .catch((e) => {
-                    console.error(e);
-                });
+        await discord.messageMember(
+            template.owner.id,
+            `${settings.emoji.delete} **|** Your template **${escapeFormatting(
+                template.name
+            )}** \`(${template._id})\` has been removed!\n**Reason:** \`${
+                req.body.reason || "None specified."
+            }\``
+        );
 
         await discord.postWebMetric("template");
 

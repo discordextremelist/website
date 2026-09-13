@@ -24,11 +24,11 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { escapeFormatting } from "../../../Util/Function/format.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
-import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { recordStaffAction } from "../../../Util/Function/staffActions.ts";
 
 export class ApproveServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -60,19 +60,7 @@ export class ApproveServer extends AuthedPathRoute<"get"> {
             }
         );
 
-        await global.db.collection("users").updateOne(
-            { _id: req.user.id },
-            {
-                $inc: {
-                    "staffTracking.handledServers.allTime.total": 1,
-                    "staffTracking.handledServers.allTime.approved": 1,
-                    "staffTracking.handledServers.thisWeek.total": 1,
-                    "staffTracking.handledServers.thisWeek.approved": 1
-                }
-            }
-        );
-
-        await userCache.updateUser(req.user.id);
+        await recordStaffAction(req.user.id, "Servers", "approved");
 
         await global.db.collection("audit").insertOne({
             type: "APPROVE_SERVER",
@@ -99,21 +87,14 @@ export class ApproveServer extends AuthedPathRoute<"get"> {
             console.error(e);
         });
 
-        const owner = await discord.getMember(server.owner.id);
-        if (owner)
-            owner
-                .send(
-                    `${
-                        settings.emoji.check
-                    } **|** Your server **${escapeFormatting(
-                        server.name
-                    )}** \`(${
-                        server._id
-                    })\` was approved as being listed as an LGBTQ+ community.`
-                )
-                .catch((e) => {
-                    console.error(e);
-                });
+        await discord.messageMember(
+            server.owner.id,
+            `${settings.emoji.check} **|** Your server **${escapeFormatting(
+                server.name
+            )}** \`(${
+                server._id
+            })\` was approved as being listed as an LGBTQ+ community.`
+        );
 
         res.redirect("/staff/server_queue");
     }

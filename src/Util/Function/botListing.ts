@@ -17,7 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { isURL } from "./listing.ts";
+import { isURL, parseScopes } from "./listing.ts";
+import { patterns } from "./patterns.ts";
 import { isDiscordAPIError } from "./discordErrors.ts";
 import type { Response } from "express";
 import type {
@@ -26,12 +27,14 @@ import type {
     APIUser,
     DiscordAPIError
 } from "discord.js";
-import { Routes } from "discord.js";
+import { OAuth2Scopes, Routes } from "discord.js";
+import { URL } from "url";
 import fetch, { type Response as fetchRes } from "node-fetch";
 import refresh from "passport-oauth2-refresh";
 import * as discord from "../Services/discord.ts";
 import { DAPI } from "../Services/discord.ts";
 import * as userCache from "../Services/userCaching.ts";
+import * as libraryCache from "../Services/libCaching.ts";
 
 // Helpers shared by the bot submit, edit and resubmit handlers, which all read
 // the same listing form, and by bot sync and AutoSync.
@@ -404,4 +407,167 @@ export async function widgetbotErrors(
                 });
     }
     return messages;
+}
+
+/**
+ * Check a bot listing form, and work out the values the submit, edit and
+ * resubmit handlers save. `bot` is the listing being edited or resubmitted
+ * (unset on submit). `inviteScopes` also rejects a discord.com invite that
+ * lacks the chosen scopes; only edit asks for that.
+ *
+ * Errors come back in one fixed order. As before, fetchSlashCommands can add
+ * a token refresh error to the list after this returns (ISSUES I-8).
+ */
+export async function validateBotListing(
+    req: AuthedRequest,
+    res: Response,
+    { bot, inviteScopes = false }: { bot?: delBot; inviteScopes?: boolean } = {}
+) {
+    const body = req.body;
+    const errors: string[] = [];
+
+    if (!body.bot && !body.slashCommands) {
+        errors.push(res.__("common.error.bot.arr.noScopes"));
+    }
+
+    if (!bot) {
+        if (!body.id) {
+            errors.push(res.__("common.error.listing.arr.IDRequired"));
+        }
+
+        if (Number.isNaN(body.id) || body.id.includes(" ")) {
+            errors.push(res.__("common.error.bot.arr.invalidID"));
+        }
+
+        if (body.id.length > 32) {
+            errors.push(res.__("common.error.bot.arr.idTooLong"));
+        }
+    }
+
+    if (body.clientID) {
+        if (Number.isNaN(body.clientID) || body.clientID.includes(" ")) {
+            errors.push(res.__("common.error.bot.arr.invalidClientID"));
+        }
+
+        if (body.clientID && body.clientID.length > 32) {
+            errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
+        }
+
+        // A client ID that is a user can't be a bot's application. Edit and
+        // resubmit skip the lookup when it's the bot's own ID.
+        if (!bot || body.clientID !== req.params.id)
+            await discord.bot.rest
+                .get(Routes.user(body.clientID))
+                .then(() => {
+                    errors.push(res.__("common.error.bot.arr.clientIDIsUser"));
+                })
+                .catch(() => {});
+    }
+
+    let invite: string | undefined;
+
+    if (body.invite === "") {
+        invite = `https://discord.com/api/oauth2/authorize?client_id=${body.clientID || (bot ? req.params.id : body.id)}&scope=${parseScopes(body)}`;
+    } else if (typeof body.invite !== "string") {
+        errors.push(res.__("common.error.listing.arr.invite.invalid"));
+    } else if (body.invite.length > 2000) {
+        errors.push(res.__("common.error.listing.arr.invite.tooLong"));
+    } else if (!isURL(body.invite)) {
+        errors.push(res.__("common.error.listing.arr.invite.urlInvalid"));
+    } else if (body.invite.includes("discordapp.com")) {
+        errors.push(res.__("common.error.listing.arr.invite.discordapp"));
+    } else if (
+        inviteScopes &&
+        body.invite.includes("discord.com") &&
+        ((body.bot && !body.invite.includes(OAuth2Scopes.Bot)) ||
+            (body.slashCommands &&
+                !body.invite.includes(OAuth2Scopes.ApplicationsCommands)))
+    ) {
+        errors.push(res.__("common.error.bot.arr.scopesNotInInvite"));
+    } else {
+        invite = body.invite;
+    }
+
+    errors.push(
+        ...invalidLinkErrors(body, res, [
+            "supportServer",
+            "website",
+            "donationUrl",
+            "repo",
+            "banner"
+        ])
+    );
+
+    if (
+        body.invite &&
+        isURL(body.invite) &&
+        Number(new URL(body.invite).searchParams.get("permissions")) & 8
+    ) {
+        errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
+    }
+
+    errors.push(...(await widgetbotErrors(body, res)));
+
+    if (body.twitter?.length > 15) {
+        errors.push(res.__("common.error.bot.arr.twitterInvalid"));
+    }
+
+    // Start of new URL checks go here
+    // TODO: Check instances and verify they do not 404, invalid, etc.
+
+    if (body.mastodon && !patterns.mastodon.test(body.mastodon)) {
+        // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
+        errors.push(res.__("common.error.listing.edit.mastodonInvalid"));
+    }
+    if (body.bluesky && !patterns.bluesky.test(body.bluesky)) {
+        // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
+        errors.push(res.__("common.error.listing.edit.blueskyInvalid"));
+    }
+    if (body.gitlab && !patterns.gitlab.test(body.gitlab)) {
+        // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
+        errors.push(res.__("common.error.listing.edit.gitlabInvalid"));
+    }
+    if (body.forgejo && !patterns.forgejo.test(body.forgejo)) {
+        // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
+        errors.push(res.__("common.error.listing.edit.forgejoInvalid"));
+    }
+
+    errors.push(...descriptionErrors(body, res));
+    errors.push(...privacyPolicyErrors(body, res));
+
+    const library = libraryCache.hasLib(body.library) ? body.library : "Other";
+    const tags: string[] = botTags(body);
+    const editors: any[] = parseEditors(body.editors);
+    // Only the owner can be told to take themselves off; on submit, that's
+    // whoever is submitting.
+    if (
+        editors.includes(req.user.id) &&
+        (!bot || bot.owner.id === req.user.id)
+    ) {
+        errors.push(res.__("common.error.listing.arr.removeYourselfEditor"));
+    }
+
+    const commands: APIApplicationCommand[] = await fetchSlashCommands(
+        req.user.db,
+        body.slashCommands,
+        bot ? bot._id : body.id,
+        bot ? bot.commands || [] : [],
+        (message) => {
+            errors.push(message);
+        }
+    );
+
+    const userFlags = await fetchUserFlags(body.bot, bot ? bot._id : body.id);
+
+    return {
+        errors,
+        // Every branch above either sets invite or adds an error, and the
+        // handlers only save when there are no errors.
+        invite: invite!,
+        library,
+        tags,
+        editors,
+        commands,
+        userFlags
+    };
 }

@@ -8,35 +8,20 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import {
     type APIApplication,
-    type APIApplicationCommand,
     type DiscordAPIError,
-    OAuth2Scopes,
-    RESTJSONErrorCodes,
-    Routes
+    RESTJSONErrorCodes
 } from "discord.js";
-import { isURL, parseScopes } from "../../../Util/Function/listing.ts";
-import { URL } from "url";
 
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { patterns } from "../../../Util/Function/patterns.ts";
-import {
-    botTags,
-    descriptionErrors,
-    fetchSlashCommands,
-    fetchUserFlags,
-    invalidLinkErrors,
-    parseEditors,
-    privacyPolicyErrors,
-    widgetbotErrors
-} from "../../../Util/Function/botListing.ts";
 import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import {
     discordErrorJson,
     jsonError
 } from "../../../Util/Function/responses.ts";
+import { validateBotListing } from "../../../Util/Function/botListing.ts";
 
 export class GetEdit extends AuthedPathRoute<"get"> {
     constructor() {
@@ -86,173 +71,13 @@ export class PostEdit extends AuthedPathRoute<"post"> {
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        let error = false;
-        let errors: string[] = [];
         const bot = req.attached.bot!;
-        if (!req.body.bot && !req.body.slashCommands) {
-            error = true;
-            errors.push(res.__("common.error.bot.arr.noScopes"));
-        }
-
-        if (req.body.clientID) {
-            if (
-                Number.isNaN(req.body.clientID) ||
-                req.body.clientID.includes(" ")
-            ) {
-                error = true;
-                errors.push(res.__("common.error.bot.arr.invalidClientID"));
-            }
-            if (req.body.clientID && req.body.clientID.length > 32) {
-                error = true;
-                errors.push(res.__("common.error.bot.arr.clientIDTooLong"));
-            }
-            if (req.body.clientID !== req.params.id)
-                await discord.bot.rest
-                    .get(Routes.user(req.body.clientID))
-                    .then(() => {
-                        error = true;
-                        errors.push(
-                            res.__("common.error.bot.arr.clientIDIsUser")
-                        );
-                    })
-                    .catch(() => {});
-        }
 
         res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
 
-        let invite: string;
-
-        if (req.body.invite === "") {
-            invite = `https://discord.com/api/oauth2/authorize?client_id=${req.body.clientID || req.params.id}&scope=${parseScopes(req.body)}`;
-        } else {
-            if (typeof req.body.invite !== "string") {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.invite.invalid"));
-            } else if (req.body.invite.length > 2000) {
-                error = true;
-                errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (!isURL(req.body.invite)) {
-                error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.invite.urlInvalid")
-                );
-            } else if (req.body.invite.includes("discordapp.com")) {
-                error = true;
-                errors.push(
-                    res.__("common.error.listing.arr.invite.discordapp")
-                );
-            } else if (
-                req.body.invite.includes("discord.com") &&
-                ((req.body.bot &&
-                    !req.body.invite.includes(OAuth2Scopes.Bot)) ||
-                    (req.body.slashCommands &&
-                        !req.body.invite.includes(
-                            OAuth2Scopes.ApplicationsCommands
-                        )))
-            ) {
-                error = true;
-                errors.push(res.__("common.error.bot.arr.scopesNotInInvite"));
-            } else {
-                invite = req.body.invite;
-            }
-        }
-
-        for (const message of invalidLinkErrors(req.body, res, [
-            "supportServer",
-            "website",
-            "donationUrl",
-            "repo",
-            "banner"
-        ])) {
-            error = true;
-            errors.push(message);
-        }
-
-        if (
-            req.body.invite &&
-            isURL(req.body.invite) &&
-            Number(new URL(req.body.invite).searchParams.get("permissions")) & 8
-        ) {
-            error = true;
-            errors.push(res.__("common.error.listing.arr.inviteHasAdmin"));
-        }
-
-        for (const message of await widgetbotErrors(req.body, res)) {
-            error = true;
-            errors.push(message);
-        }
-
-        if (req.body.twitter?.length > 15) {
-            error = true;
-            errors.push(res.__("common.error.bot.arr.twitterInvalid"));
-        }
-
-        for (const message of descriptionErrors(req.body, res)) {
-            error = true;
-            errors.push(message);
-        }
-
-        for (const message of privacyPolicyErrors(req.body, res)) {
-            error = true;
-            errors.push(message);
-        }
-
-        let library = libraryCache.hasLib(req.body.library)
-            ? req.body.library
-            : "Other";
-        let tags: string[] = botTags(req.body);
-        let editors: any[] = parseEditors(req.body.editors);
-        if (editors.includes(req.user.id) && bot.owner.id === req.user.id) {
-            error = true;
-            errors.push(
-                res.__("common.error.listing.arr.removeYourselfEditor")
-            );
-        }
-
-        // Start of new URL checks go here
-        // TODO: Check instances and verify they do not 404, invalid, etc.
-        // TODO: Improve some of this code below, it is hectic.
-
-        if (req.body.mastodon && !patterns.mastodon.test(req.body.mastodon)) {
-            error = true;
-            // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
-            errors.push(res.__("common.error.listing.edit.mastodonInvalid"));
-        }
-        if (req.body.bluesky && !patterns.bluesky.test(req.body.bluesky)) {
-            error = true;
-            // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
-            errors.push(res.__("common.error.listing.edit.blueskyInvalid"));
-        }
-        if (req.body.gitlab && !patterns.gitlab.test(req.body.gitlab)) {
-            error = true;
-            // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
-            errors.push(res.__("common.error.listing.edit.gitlabInvalid"));
-        }
-        if (req.body.forgejo && !patterns.forgejo.test(req.body.forgejo)) {
-            error = true;
-            // @ts-expect-error TODO(B-8): key does not exist in del-i18n; add it in the socials PR.
-            errors.push(res.__("common.error.listing.edit.forgejoInvalid"));
-        }
-
-        let commands: APIApplicationCommand[] = await fetchSlashCommands(
-            req.user.db,
-            req.body.slashCommands,
-            bot._id,
-            bot.commands || [],
-            (message) => {
-                error = true;
-                errors.push(message);
-            }
-        );
-
-        let userFlags = await fetchUserFlags(req.body.bot, bot._id);
-        if (error === true) {
-            req.body.status
-                ? (req.body.status.premium = bot.status.premium)
-                : (req.body.status = { premium: bot.status.premium });
-
-            return jsonError(res, 400, errors);
-        }
+        const { errors, invite, library, tags, editors, commands, userFlags } =
+            await validateBotListing(req, res, { bot, inviteScopes: true });
+        if (errors.length > 0) return jsonError(res, 400, errors);
 
         discord
             .restGet<APIApplication>(

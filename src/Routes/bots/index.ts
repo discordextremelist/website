@@ -30,11 +30,6 @@ import { GetRemoveBot, PostRemoveBot } from "./_id/remove.ts";
 import { SyncBot } from "./_id/sync.ts";
 import { GetAccentColor } from "./_id/accent_color.ts";
 import { GetBots } from "./list.ts";
-import { reasonType } from "../../Util/Function/staff/audit.ts";
-
-export function botType(bodyType: string): number {
-    return reasonType(bodyType, 15);
-}
 
 // Some basic routes do not need their own class.
 export const initBotRoutes = (): Router => {

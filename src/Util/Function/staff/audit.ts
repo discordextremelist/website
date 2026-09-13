@@ -112,3 +112,18 @@ export function reasonType(bodyType: string, max: number): number {
 
     return type;
 }
+
+/** reasonType for the bot staff forms. */
+export function botType(bodyType: string): number {
+    return reasonType(bodyType, 15);
+}
+
+/** reasonType for the server staff forms. */
+export function serverType(bodyType: string): number {
+    return reasonType(bodyType, 5);
+}
+
+/** reasonType for the template staff forms. */
+export function templateType(bodyType: string): number {
+    return reasonType(bodyType, 3);
+}

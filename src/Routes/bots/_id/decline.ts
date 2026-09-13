@@ -7,7 +7,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord/index.ts";
 import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
-import { botType } from "../index.ts";
+import { botType } from "../../../Util/Function/staff/audit.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import {

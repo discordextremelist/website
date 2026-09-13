@@ -31,14 +31,17 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import { listingCodeError } from "../../../Util/Function/listings/listingCode.ts";
 import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { tagHandler, reviewRequired } from "../index.ts";
 import {
     serverExists,
     serverExistsJson
 } from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/web/sanitize.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
-import { serverListingErrors } from "../../../Util/Function/servers/serverListing.ts";
+import {
+    reviewRequired,
+    serverListingErrors,
+    tagHandler
+} from "../../../Util/Function/servers/serverListing.ts";
 import {
     discordErrorJson,
     jsonError

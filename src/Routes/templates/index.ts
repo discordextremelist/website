@@ -27,11 +27,6 @@ import { DeleteTemplate } from "./_id/delete.ts";
 import { GetRemoveTemplate, PostRemoveTemplate } from "./_id/remove.ts";
 import { SyncTemplate } from "./_id/sync.ts";
 import { GetTemplates } from "./list.ts";
-import { reasonType } from "../../Util/Function/staff/audit.ts";
-
-export function templateType(bodyType: string): number {
-    return reasonType(bodyType, 3);
-}
 
 export const initTemplateRoutes = (): Router => {
     const router = express.Router();

@@ -26,7 +26,7 @@ import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { serverType } from "../index.ts";
+import { serverType } from "../../../Util/Function/staff/audit.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import {

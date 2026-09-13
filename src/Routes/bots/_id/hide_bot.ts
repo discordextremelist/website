@@ -8,7 +8,7 @@ import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { botType } from "../index.ts";
+import { botType } from "../../../Util/Function/staff/audit.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import {
     reasonMissing,

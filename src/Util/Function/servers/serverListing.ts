@@ -19,7 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Helpers shared by the server and template submit and edit handlers.
 
-import type { Response } from "express";
+import type { Request, Response } from "express";
+import type { ParamsDictionary } from "express-serve-static-core";
+import type { ParsedQs } from "qs";
 import type { DiscordAPIError } from "discord.js";
 import { Routes } from "discord.js";
 import fetch, { type Response as fetchRes } from "node-fetch";
@@ -132,5 +134,31 @@ export function communityTags(body: Record<string, unknown>): string[] {
     if (body.travelCuis === true) tags.push("Travel & Food");
     if (body.fitHealth === true) tags.push("Fitness & Health");
     if (body.finance === true) tags.push("Finance");
+    return tags;
+}
+
+export let reviewRequired = false; // Needs to be outside the functions, or it cannot be referenced outside x function - AJ
+
+export function tagHandler(
+    req: Request<ParamsDictionary, any, any, ParsedQs>,
+    server: false | delServer
+) {
+    let tags: string[] = communityTags(req.body);
+
+    if (req.body.contCreat === true) tags.push("Content Creation");
+    if (req.body.nsfw === true) tags.push("NSFW");
+
+    if (req.body.lgbt === true) {
+        tags.push("LGBT");
+        if (server) {
+            if (!server.tags.includes("LGBT")) reviewRequired = true;
+            if (
+                server.tags.includes("LGBT") &&
+                server.status.reviewRequired === true
+            )
+                reviewRequired = true;
+        } else reviewRequired = true;
+    }
+
     return tags;
 }

@@ -19,9 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express, { type Router } from "express";
 import * as permission from "../../Util/Middleware/permissions.ts";
-import { reasonType } from "../../Util/Function/staff/audit.ts";
-import type { ParamsDictionary } from "express-serve-static-core";
-import type { ParsedQs } from "qs";
 import { GetSubmitServer, PostSubmitServer } from "./submit.ts";
 import { GetServer } from "./_id/get.ts";
 import { ServerSrc, ReportServer } from "./_id/src.ts";
@@ -32,37 +29,6 @@ import { DeleteServer } from "./_id/delete.ts";
 import { GetRemoveServer, PostRemoveServer } from "./_id/remove.ts";
 import { SyncServer } from "./_id/sync.ts";
 import { GetServers } from "./list.ts";
-import { communityTags } from "../../Util/Function/servers/serverListing.ts";
-
-export let reviewRequired = false; // Needs to be outside the functions, or it cannot be referenced outside x function - AJ
-
-export function serverType(bodyType: string): number {
-    return reasonType(bodyType, 5);
-}
-
-export function tagHandler(
-    req: express.Request<ParamsDictionary, any, any, ParsedQs>,
-    server: false | delServer
-) {
-    let tags: string[] = communityTags(req.body);
-
-    if (req.body.contCreat === true) tags.push("Content Creation");
-    if (req.body.nsfw === true) tags.push("NSFW");
-
-    if (req.body.lgbt === true) {
-        tags.push("LGBT");
-        if (server) {
-            if (!server.tags.includes("LGBT")) reviewRequired = true;
-            if (
-                server.tags.includes("LGBT") &&
-                server.status.reviewRequired === true
-            )
-                reviewRequired = true;
-        } else reviewRequired = true;
-    }
-
-    return tags;
-}
 
 export const initServerRoutes = (): Router => {
     const router = express.Router();

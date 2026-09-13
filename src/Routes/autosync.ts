@@ -23,7 +23,6 @@ import * as botCache from "../Util/Services/cache/botCaching.ts";
 import * as serverCache from "../Util/Services/cache/serverCaching.ts";
 import * as templateCache from "../Util/Services/cache/templateCaching.ts";
 import * as userCache from "../Util/Services/cache/userCaching.ts";
-import { escapeFormatting } from "../Util/Function/common/format.ts";
 import { OAuth2Scopes, Routes } from "discord.js";
 import type {
     APITemplate,
@@ -39,6 +38,7 @@ import {
 import { syncedServerFields } from "../Util/Function/servers/serverRecords.ts";
 import { syncedTemplateFields } from "../Util/Function/templates/templateRecords.ts";
 import { recordAudit } from "../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../Util/Function/listings/ownerMessage.ts";
 
 const router = express.Router();
 
@@ -187,13 +187,14 @@ router.get("/servers", async (_req, res) => {
                     }
                 );
 
-                await discord.messageMember(
+                await messageListingOwner(
                     server.owner.id,
-                    `${
-                        settings.emoji.delete
-                    } **|** Your server **${escapeFormatting(
-                        server.name
-                    )}** \`(${server._id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this server has either been deleted, or the invite provided to us has expired. If your server is still active, please repost it with a permanent invite!\``
+                    "server",
+                    "removed",
+                    server,
+                    {
+                        reason: "Our AutoSync system has determined this server has either been deleted, or the invite provided to us has expired. If your server is still active, please repost it with a permanent invite!"
+                    }
                 );
 
                 await discord.postWebMetric("server");
@@ -257,13 +258,14 @@ router.get("/templates", async (_req, res) => {
                     }
                 );
 
-                await discord.messageMember(
+                await messageListingOwner(
                     dbTemplate.creator.id,
-                    `${
-                        settings.emoji.delete
-                    } **|** Your template **${escapeFormatting(
-                        dbTemplate.name
-                    )}** \`(${id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this template has been deleted from discord.\``
+                    "template",
+                    "removed",
+                    { _id: id, name: dbTemplate.name },
+                    {
+                        reason: "Our AutoSync system has determined this template has been deleted from discord."
+                    }
                 );
 
                 await discord.postWebMetric("template");

@@ -19,10 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord/index.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { templateType } from "../../../Util/Function/staff/audit.ts";
@@ -30,6 +28,7 @@ import { templateExists } from "../../../Util/Middleware/checks.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import { reasonMissing } from "../../../Util/Function/staff/staffActions.ts";
 import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../../../Util/Function/listings/ownerMessage.ts";
 
 export class GetRemoveTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -93,13 +92,12 @@ export class PostRemoveTemplate extends AuthedPathRoute<"post"> {
             reason: req.body.reason
         });
 
-        await discord.messageMember(
+        await messageListingOwner(
             template.owner.id,
-            `${settings.emoji.delete} **|** Your template **${escapeFormatting(
-                template.name
-            )}** \`(${template._id})\` has been removed!\n**Reason:** \`${
-                req.body.reason || "None specified."
-            }\``
+            "template",
+            "removed",
+            template,
+            { reason: req.body.reason }
         );
 
         await discord.postWebMetric("template");

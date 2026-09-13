@@ -6,7 +6,6 @@ import e from "express";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord/index.ts";
-import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import { botType } from "../../../Util/Function/staff/audit.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
@@ -15,6 +14,7 @@ import {
     recordStaffAction
 } from "../../../Util/Function/staff/staffActions.ts";
 import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../../../Util/Function/listings/ownerMessage.ts";
 
 export class GetRemoveBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -99,14 +99,9 @@ export class PostRemoveBot extends AuthedPathRoute<"post"> {
                 });
         }
 
-        await discord.messageMember(
-            bot.owner.id,
-            `${settings.emoji.delete} **|** Your bot **${escapeFormatting(
-                bot.name
-            )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
-                req.body.reason || "None specified."
-            }\``
-        );
+        await messageListingOwner(bot.owner.id, "bot", "removed", bot, {
+            reason: req.body.reason
+        });
 
         res.redirect(`/bots/${bot._id}`);
     }

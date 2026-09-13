@@ -19,10 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import settings from "../../../../settings.json" with { type: "json" };
-import * as discord from "../../../Util/Services/discord/index.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
@@ -30,6 +27,7 @@ import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import { recordStaffAction } from "../../../Util/Function/staff/staffActions.ts";
 import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../../../Util/Function/listings/ownerMessage.ts";
 
 export class ApproveServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -76,13 +74,11 @@ export class ApproveServer extends AuthedPathRoute<"get"> {
             console.error(e);
         });
 
-        await discord.messageMember(
+        await messageListingOwner(
             server.owner.id,
-            `${settings.emoji.check} **|** Your server **${escapeFormatting(
-                server.name
-            )}** \`(${
-                server._id
-            })\` was approved as being listed as an LGBTQ+ community.`
+            "server",
+            "approved",
+            server
         );
 
         res.redirect("/staff/server_queue");

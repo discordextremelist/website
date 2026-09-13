@@ -19,10 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import settings from "../../../../settings.json" with { type: "json" };
-import * as discord from "../../../Util/Services/discord/index.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
@@ -34,6 +31,7 @@ import {
     recordStaffAction
 } from "../../../Util/Function/staff/staffActions.ts";
 import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../../../Util/Function/listings/ownerMessage.ts";
 
 export class GetDeclineServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -136,15 +134,12 @@ export class PostDeclineServer extends AuthedPathRoute<"post"> {
             reason: req.body.reason
         });
 
-        await discord.messageMember(
+        await messageListingOwner(
             server.owner.id,
-            `${settings.emoji.cross} **|** Your server **${escapeFormatting(
-                server.name
-            )}** \`(${
-                server._id
-            })\` was declined from being listed as an LGBTQ+ community. It will still appear as a normal server.\n**Reason:** \`${
-                req.body.reason || "None specified."
-            }\``
+            "server",
+            "declined",
+            server,
+            { reason: req.body.reason }
         );
 
         res.redirect("/staff/server_queue");

@@ -3,9 +3,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
-import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord/index.ts";
-import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import { botType } from "../../../Util/Function/staff/audit.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
@@ -15,6 +13,7 @@ import {
     recordStaffAction
 } from "../../../Util/Function/staff/staffActions.ts";
 import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../../../Util/Function/listings/ownerMessage.ts";
 
 export class GetDeclineBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -113,14 +112,9 @@ export class PostDeclineBot extends AuthedPathRoute<"post"> {
             });
         }
 
-        await discord.messageMember(
-            bot.owner.id,
-            `${settings.emoji.cross} **|** Your bot **${escapeFormatting(
-                bot.name
-            )}** \`(${bot._id})\` has been declined.\n**Reason:** \`${
-                req.body.reason || "None specified."
-            }\``
-        );
+        await messageListingOwner(bot.owner.id, "bot", "declined", bot, {
+            reason: req.body.reason
+        });
 
         res.redirect("/staff/bot_queue");
     }

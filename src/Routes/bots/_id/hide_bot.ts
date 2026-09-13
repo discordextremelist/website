@@ -2,9 +2,6 @@ import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
-import * as discord from "../../../Util/Services/discord/index.ts";
-import settings from "../../../../settings.json" with { type: "json" };
-import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
@@ -15,6 +12,7 @@ import {
     recordStaffAction
 } from "../../../Util/Function/staff/staffActions.ts";
 import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../../../Util/Function/listings/ownerMessage.ts";
 
 export class HideBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -179,14 +177,9 @@ export class PostModHideBot extends AuthedPathRoute<"post"> {
             reason: req.body.reason
         });
 
-        await discord.messageMember(
-            bot.owner.id,
-            `${settings.emoji.hide} **|** Your bot **${escapeFormatting(
-                bot.name
-            )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${
-                req.body.reason || "None specified."
-            }\``
-        );
+        await messageListingOwner(bot.owner.id, "bot", "hidden", bot, {
+            reason: req.body.reason
+        });
 
         res.redirect(`/bots/${bot._id}`);
     }
@@ -227,12 +220,7 @@ export class GetModUnhideBot extends AuthedPathRoute<"get"> {
             console.error(e);
         });
 
-        await discord.messageMember(
-            bot.owner.id,
-            `${settings.emoji.check} **|** Your bot **${escapeFormatting(
-                bot.name
-            )}** \`(${bot._id})\` has been unhidden on the website!`
-        );
+        await messageListingOwner(bot.owner.id, "bot", "unhidden", bot);
 
         await recordAudit({
             type: "MOD_UNHIDE_BOT",

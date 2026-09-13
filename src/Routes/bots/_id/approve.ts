@@ -5,7 +5,6 @@ import e from "express";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord/index.ts";
-import { escapeFormatting } from "../../../Util/Function/common/format.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import { botType } from "../../../Util/Function/staff/audit.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
@@ -15,6 +14,7 @@ import {
     recordStaffAction
 } from "../../../Util/Function/staff/staffActions.ts";
 import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../../../Util/Function/listings/ownerMessage.ts";
 
 export class ApproveBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -53,16 +53,12 @@ export class ApproveBot extends AuthedPathRoute<"get"> {
             console.error(e);
         });
 
-        await discord.messageMember(
-            bot.owner.id,
-            `${settings.emoji.check} **|** Your bot **${escapeFormatting(
-                bot.name
-            )}** \`(${bot._id})\` has been approved on the website!${
+        await messageListingOwner(bot.owner.id, "bot", "approved", bot, {
+            note:
                 !bot.scopes || bot.scopes.bot
                     ? "\n\nYour bot will be added to our server within the next 24 hours."
                     : ""
-            }`
-        );
+        });
 
         const mainGuildOwner = await discord.getMember(bot.owner.id);
         if (mainGuildOwner)
@@ -313,14 +309,9 @@ export class PostUnapproveBot extends AuthedPathRoute<"post"> {
             });
         }
 
-        await discord.messageMember(
-            bot.owner.id,
-            `${settings.emoji.unapprove} **|** Your bot **${escapeFormatting(
-                bot.name
-            )}** \`(${bot._id})\` has been unapproved!\n**Reason:** \`${
-                req.body.reason || "None specified."
-            }\``
-        );
+        await messageListingOwner(bot.owner.id, "bot", "unapproved", bot, {
+            reason: req.body.reason
+        });
 
         res.redirect(`/bots/${bot._id}`);
     }

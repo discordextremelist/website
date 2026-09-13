@@ -11,7 +11,6 @@ import {
 import * as libraryCache from "../../../Util/Services/libCaching.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 
-import crypto from "crypto";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
@@ -21,6 +20,10 @@ import {
     jsonError
 } from "../../../Util/Function/responses.ts";
 import { validateBotListing } from "../../../Util/Function/botListing.ts";
+import {
+    submittedBot,
+    submittedBotAudit
+} from "../../../Util/Function/botRecords.ts";
 
 export class GetSubmit extends AuthedPathRoute<"get"> {
     constructor() {
@@ -77,8 +80,7 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
         if (botExists)
             return jsonError(res, 409, [res.__("common.error.bot.conflict")]);
 
-        const { errors, invite, library, tags, editors, commands, userFlags } =
-            await validateBotListing(req, res);
+        const { errors, ...form } = await validateBotListing(req, res);
         if (errors.length > 0) return jsonError(res, 400, errors);
 
         discord
@@ -97,86 +99,9 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
                         res.__("common.error.bot.arr.noBot")
                     ]);
 
-                await global.db.collection<delBot>("bots").insertOne({
-                    _id: req.body.id,
-                    clientID: req.body.clientID,
-                    name: app.name,
-                    prefix: req.body.prefix,
-                    library,
-                    tags,
-                    vanityUrl: "",
-                    serverCount: 0,
-                    shardCount: 0,
-                    token:
-                        "DELAPI_" +
-                        crypto.randomBytes(16).toString("hex") +
-                        `-${req.body.id}`,
-                    shortDesc: req.body.shortDescription,
-                    longDesc: req.body.longDescription,
-                    modNotes: req.body.modNotes,
-                    lastDenyReason: "",
-                    reviewNotes: [],
-                    editors,
-                    commands,
-                    userFlags,
-                    owner: {
-                        id: req.user.id
-                    },
-                    icon: {
-                        hash: app.icon,
-                        url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
-                    },
-                    votes: {
-                        positive: [],
-                        negative: []
-                    },
-                    scopes: {
-                        bot: req.body.bot,
-                        slashCommands: req.body.slashCommands
-                    },
-                    links: {
-                        invite: invite,
-                        support: req.body.supportServer,
-                        website: req.body.website,
-                        donation: req.body.donationUrl,
-                        repo: req.body.repo,
-                        privacyPolicy: req.body.privacyPolicy
-                    },
-                    social: {
-                        twitter: req.body.twitter,
-                        mastodon: req.body.mastodon,
-                        bluesky: req.body.bluesky,
-                        gitlab: req.body.gitlab,
-                        forgejo: req.body.forgejo
-                    },
-                    theme: {
-                        useCustomColour: req.body.useCustomColour,
-                        colour: req.body.colour,
-                        banner: req.body.banner
-                    },
-                    widgetbot: {
-                        channel: req.body.widgetChannel,
-                        options: req.body.widgetOptions,
-                        server: req.body.widgetServer
-                    },
-                    date: {
-                        submitted: Date.now(),
-                        approved: 0,
-                        edited: 0
-                    },
-                    status: {
-                        approved: false,
-                        premium: false,
-                        siteBot: false,
-                        archived: false,
-                        hidden: false,
-                        modHidden: false
-                    },
-                    labels: {
-                        ai: !!req.body.ai,
-                        nsfw: !!req.body.nsfw
-                    }
-                } satisfies delBot);
+                await global.db
+                    .collection<delBot>("bots")
+                    .insertOne(submittedBot(req, app, form));
 
                 await logWebsiteAction(
                     req,
@@ -196,75 +121,7 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
                     date: Date.now(),
                     reason: "None specified.",
                     details: {
-                        new: {
-                            _id: req.body.id,
-                            name: app.name,
-                            prefix: req.body.prefix,
-                            library,
-                            tags,
-                            vanityUrl: "",
-                            serverCount: 0,
-                            shardCount: 0,
-                            token:
-                                "DELAPI_" +
-                                crypto.randomBytes(16).toString("hex") +
-                                `-${req.body.id}`,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            modNotes: req.body.modNotes,
-                            lastDenyReason: "",
-                            reviewNotes: [],
-                            editors,
-                            commands,
-                            owner: {
-                                id: req.user.id
-                            },
-                            icon: {
-                                hash: app.icon,
-                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
-                            },
-                            votes: {
-                                positive: [],
-                                negative: []
-                            },
-                            scopes: {
-                                bot: req.body.bot,
-                                slashCommands: req.body.slashCommands
-                            },
-                            links: {
-                                invite: invite,
-                                support: req.body.supportServer,
-                                website: req.body.website,
-                                donation: req.body.donationUrl,
-                                repo: req.body.repo,
-                                privacyPolicy: req.body.privacyPolicy
-                            },
-                            social: {
-                                twitter: req.body.twitter
-                            },
-                            theme: {
-                                useCustomColour: req.body.useCustomColour,
-                                colour: req.body.colour,
-                                banner: req.body.banner
-                            },
-                            widgetbot: {
-                                channel: req.body.widgetChannel,
-                                options: req.body.widgetOptions,
-                                server: req.body.widgetServer
-                            },
-                            status: {
-                                approved: false,
-                                premium: false,
-                                siteBot: false,
-                                archived: false,
-                                hidden: false,
-                                modHidden: false
-                            },
-                            labels: {
-                                ai: !!req.body.ai,
-                                nsfw: !!req.body.nsfw
-                            }
-                        } satisfies delBot
+                        new: submittedBotAudit(req, app, form)
                     }
                 });
                 await botCache.updateBot(req.body.id);

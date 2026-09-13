@@ -21,6 +21,11 @@ import {
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { validateBotListing } from "../../../Util/Function/botListing.ts";
+import {
+    botAuditAfter,
+    botAuditBefore,
+    resubmittedBotFields
+} from "../../../Util/Function/botRecords.ts";
 
 export class GetResubmitBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -89,8 +94,7 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
 
         res.locals.premidPageInfo = res.__("premid.bots.resubmit", bot.name);
 
-        const { errors, invite, library, tags, editors, commands, userFlags } =
-            await validateBotListing(req, res, { bot });
+        const { errors, ...form } = await validateBotListing(req, res, { bot });
         if (errors.length > 0) return jsonError(res, 400, errors);
 
         discord
@@ -107,44 +111,7 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
-                        $set: {
-                            clientID: req.body.clientID,
-                            name: app.name,
-                            prefix: req.body.prefix,
-                            library,
-                            tags,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            editors,
-                            commands,
-                            userFlags,
-                            icon: {
-                                hash: app.icon,
-                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
-                            },
-                            scopes: {
-                                bot: req.body.bot,
-                                slashCommands: req.body.slashCommands
-                            },
-                            links: {
-                                invite: invite,
-                                support: req.body.supportServer,
-                                website: req.body.website,
-                                donation: req.body.donationUrl,
-                                repo: req.body.repo,
-                                privacyPolicy: req.body.privacyPolicy
-                            },
-                            date: {
-                                submitted: Date.now(),
-                                approved: 0,
-                                edited: 0
-                            },
-                            labels: {
-                                ai: !!req.body.ai,
-                                nsfw: !!req.body.nsfw
-                            },
-                            "status.archived": false
-                        }
+                        $set: resubmittedBotFields(req, app, form)
                     }
                 );
 
@@ -155,96 +122,8 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
                     date: Date.now(),
                     reason: "None specified.",
                     details: {
-                        old: {
-                            clientID: bot.clientID,
-                            name: bot.name,
-                            prefix: bot.prefix,
-                            library: bot.library,
-                            tags: bot.tags,
-                            shortDesc: bot.shortDesc,
-                            longDesc: bot.longDesc,
-                            editors: bot.editors,
-                            commands: bot.commands,
-                            // Older bots only have the deprecated avatar; the
-                            // bot page falls back to it, so record that.
-                            icon: bot.icon ?? bot.avatar,
-                            scopes: {
-                                bot: req.body.bot,
-                                slashCommands: req.body.slashCommands
-                            },
-                            links: {
-                                invite: bot.links.invite,
-                                support: bot.links.support,
-                                website: bot.links.website,
-                                donation: bot.links.donation,
-                                repo: bot.links.repo,
-                                privacyPolicy: bot.links.privacyPolicy
-                            },
-                            social: {
-                                twitter: bot.social?.twitter
-                            },
-                            theme: {
-                                useCustomColour: bot.theme?.useCustomColour,
-                                colour: bot.theme?.colour,
-                                banner: bot.theme?.banner
-                            },
-                            widgetbot: {
-                                channel: bot.widgetbot.channel,
-                                options: bot.widgetbot.options,
-                                server: bot.widgetbot.server
-                            },
-                            status: {
-                                archived: true
-                            },
-                            labels: bot.labels
-                        } satisfies partialBot,
-                        new: {
-                            clientID: req.body.clientID,
-                            name: app.name,
-                            prefix: req.body.prefix,
-                            library,
-                            tags,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            editors,
-                            commands,
-                            icon: {
-                                hash: app.icon,
-                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
-                            },
-                            scopes: {
-                                bot: req.body.bot,
-                                slashCommands: req.body.slashCommands
-                            },
-                            links: {
-                                invite: invite,
-                                support: req.body.supportServer,
-                                website: req.body.website,
-                                donation: req.body.donationUrl,
-                                repo: req.body.repo,
-                                privacyPolicy: req.body.privacyPolicy
-                            },
-                            social: {
-                                twitter: req.body.twitter
-                            },
-                            theme: {
-                                useCustomColour: req.body.useCustomColour,
-                                colour: req.body.colour,
-                                banner: req.body.banner
-                            },
-                            widgetbot: {
-                                channel: req.body.widgetChannel,
-                                options: req.body.widgetOptions,
-                                server: req.body.widgetServer
-                            },
-                            status: {
-                                archived: false
-                            },
-                            labels: {
-                                ai: !!req.body.ai,
-                                nsfw: !!req.body.nsfw
-                            }
-                        } satisfies partialBot
+                        old: botAuditBefore(req, bot, { resubmit: true }),
+                        new: botAuditAfter(req, app, form, { resubmit: true })
                     }
                 });
 

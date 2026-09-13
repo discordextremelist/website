@@ -22,6 +22,11 @@ import {
     jsonError
 } from "../../../Util/Function/responses.ts";
 import { validateBotListing } from "../../../Util/Function/botListing.ts";
+import {
+    botAuditAfter,
+    botAuditBefore,
+    editedBotFields
+} from "../../../Util/Function/botRecords.ts";
 
 export class GetEdit extends AuthedPathRoute<"get"> {
     constructor() {
@@ -75,8 +80,10 @@ export class PostEdit extends AuthedPathRoute<"post"> {
 
         res.locals.premidPageInfo = res.__("premid.bots.edit", bot.name);
 
-        const { errors, invite, library, tags, editors, commands, userFlags } =
-            await validateBotListing(req, res, { bot, inviteScopes: true });
+        const { errors, ...form } = await validateBotListing(req, res, {
+            bot,
+            inviteScopes: true
+        });
         if (errors.length > 0) return jsonError(res, 400, errors);
 
         discord
@@ -93,58 +100,7 @@ export class PostEdit extends AuthedPathRoute<"post"> {
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
                     {
-                        $set: {
-                            clientID: req.body.clientID,
-                            name: app.name,
-                            prefix: req.body.prefix,
-                            library,
-                            tags,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            editors,
-                            commands,
-                            userFlags,
-                            icon: {
-                                hash: app.icon,
-                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
-                            },
-                            scopes: {
-                                bot: req.body.bot,
-                                slashCommands: req.body.slashCommands
-                            },
-                            links: {
-                                invite: invite,
-                                support: req.body.supportServer,
-                                website: req.body.website,
-                                donation: req.body.donationUrl,
-                                repo: req.body.repo,
-                                privacyPolicy: req.body.privacyPolicy
-                            },
-                            social: {
-                                twitter: req.body.twitter,
-                                mastodon: req.body.mastodon,
-                                bluesky: req.body.bluesky,
-                                gitlab: req.body.gitlab,
-                                forgejo: req.body.forgejo
-                            },
-                            theme: {
-                                useCustomColour: req.body.useAutoAccent
-                                    ? true
-                                    : req.body.useCustomColour,
-                                colour: req.body.colour,
-                                banner: req.body.banner
-                            },
-                            widgetbot: {
-                                channel: req.body.widgetChannel,
-                                options: req.body.widgetOptions,
-                                server: req.body.widgetServer
-                            },
-                            labels: {
-                                ai: !!req.body.ai,
-                                nsfw: !!req.body.nsfw
-                            },
-                            "date.edited": Date.now()
-                        }
+                        $set: editedBotFields(req, app, form)
                     }
                 );
 
@@ -155,90 +111,8 @@ export class PostEdit extends AuthedPathRoute<"post"> {
                     date: Date.now(),
                     reason: "None specified.",
                     details: {
-                        old: {
-                            clientID: bot.clientID,
-                            name: bot.name,
-                            prefix: bot.prefix,
-                            library: bot.library,
-                            tags: bot.tags,
-                            shortDesc: bot.shortDesc,
-                            longDesc: bot.longDesc,
-                            editors: bot.editors,
-                            commands: bot.commands,
-                            // Older bots only have the deprecated avatar; the
-                            // bot page falls back to it, so record that.
-                            icon: bot.icon ?? bot.avatar,
-                            scopes: {
-                                bot: req.body.bot,
-                                slashCommands: req.body.slashCommands
-                            },
-                            links: {
-                                invite: bot.links.invite,
-                                support: bot.links.support,
-                                website: bot.links.website,
-                                donation: bot.links.donation,
-                                repo: bot.links.repo,
-                                privacyPolicy: bot.links.privacyPolicy
-                            },
-                            social: {
-                                twitter: bot.social?.twitter
-                            },
-                            theme: {
-                                useCustomColour: bot.theme?.useCustomColour,
-                                colour: bot.theme?.colour,
-                                banner: bot.theme?.banner
-                            },
-                            widgetbot: {
-                                channel: bot.widgetbot.channel,
-                                options: bot.widgetbot.options,
-                                server: bot.widgetbot.server
-                            },
-                            labels: bot.labels
-                        } satisfies Partial<delBot>,
-                        new: {
-                            clientID: req.body.clientID,
-                            name: app.name,
-                            prefix: req.body.prefix,
-                            library,
-                            tags,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            editors,
-                            commands,
-                            icon: {
-                                hash: app.icon,
-                                url: `https://cdn.discordapp.com/app-icons/${app.id}/${app.icon}`
-                            },
-                            scopes: {
-                                bot: req.body.bot,
-                                slashCommands: req.body.slashCommands
-                            },
-                            links: {
-                                invite: invite,
-                                support: req.body.supportServer,
-                                website: req.body.website,
-                                donation: req.body.donationUrl,
-                                repo: req.body.repo,
-                                privacyPolicy: req.body.privacyPolicy
-                            },
-                            social: {
-                                twitter: req.body.twitter
-                            },
-                            theme: {
-                                useCustomColour: req.body.useCustomColour,
-                                colour: req.body.colour,
-                                banner: req.body.banner
-                            },
-                            widgetbot: {
-                                channel: req.body.widgetChannel,
-                                options: req.body.widgetOptions,
-                                server: req.body.widgetServer
-                            },
-                            labels: {
-                                ai: !!req.body.ai,
-                                nsfw: !!req.body.nsfw
-                            }
-                        } satisfies Partial<delBot>
+                        old: botAuditBefore(req, bot),
+                        new: botAuditAfter(req, app, form)
                     }
                 });
                 await botCache.updateBot(req.params.id);

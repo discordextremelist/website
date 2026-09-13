@@ -37,6 +37,7 @@ import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
 import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
+import { jsonError } from "../../../Util/Function/responses.ts";
 
 export class GetEditTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -131,12 +132,7 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
 
         let tags: string[] = communityTags(req.body);
 
-        if (error === true)
-            return res.status(400).json({
-                error: true,
-                status: 400,
-                errors: errors
-            });
+        if (error === true) return jsonError(res, 400, errors);
 
         await discord
             .restGet<APITemplate>(Routes.template(req.body.code))
@@ -254,22 +250,14 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownGuildTemplate)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [
-                            res.__("common.error.template.arr.invite.invalid")
-                        ]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.template.arr.invite.invalid")
+                    ]);
 
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [
-                        `${error.name}: ${error.message}`,
-                        `${error.code} ${error.method} ${error.url}`
-                    ]
-                });
+                return jsonError(res, 400, [
+                    `${error.name}: ${error.message}`,
+                    `${error.code} ${error.method} ${error.url}`
+                ]);
             });
     }
 }

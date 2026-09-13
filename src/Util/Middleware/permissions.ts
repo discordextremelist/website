@@ -24,7 +24,7 @@ import * as discord from "../Services/discord.ts";
 import * as tokenManager from "../Services/adminTokenManager.ts";
 import { checkRoleHierarchyStaff } from "../Function/staff.ts";
 import { ownsOrAssistant } from "../Function/listing.ts";
-import { renderStatus } from "../Function/responses.ts";
+import { jsonError, renderStatus } from "../Function/responses.ts";
 /**
  * Consume the one-shot "just logged out" session flag. If it is set, clear it
  * and send the user home instead of continuing with a stale request.
@@ -178,12 +178,7 @@ export const ownerOrAssistant =
         )
             return next();
 
-        if (json)
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                errors: [res.__(denied)]
-            });
+        if (json) return jsonError(res, 403, [res.__(denied)]);
         return renderStatus(req, res, 403, res.__(denied));
     };
 

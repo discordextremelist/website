@@ -12,6 +12,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import { escapeFormatting } from "../../../Util/Function/format.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
+import { jsonErrorMessage } from "../../../Util/Function/responses.ts";
 
 export class SrcRoute extends AuthedPathRoute<"get"> {
     constructor() {
@@ -39,11 +40,11 @@ export class ReportRoute extends AuthedPathRoute<"post"> {
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
         if (bot.owner.id === req.user.id)
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                message: res.__("common.error.report.self")
-            });
+            return jsonErrorMessage(
+                res,
+                403,
+                res.__("common.error.report.self")
+            );
 
         try {
             const embed = new Discord.EmbedBuilder();
@@ -78,11 +79,7 @@ export class ReportRoute extends AuthedPathRoute<"post"> {
                 message: res.__("common.report.done")
             });
         } catch (e) {
-            return res.status(500).json({
-                error: true,
-                status: 500,
-                message: res.__("common.error.report")
-            });
+            return jsonErrorMessage(res, 500, res.__("common.error.report"));
         }
     }
 }

@@ -26,6 +26,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import { escapeFormatting } from "../../../Util/Function/format.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
+import { jsonErrorMessage } from "../../../Util/Function/responses.ts";
 
 export class ServerSrc extends AuthedPathRoute<"get"> {
     constructor() {
@@ -61,18 +62,14 @@ export class ReportServer extends AuthedPathRoute<"post"> {
         const server = await serverCache.getServer(req.params.id);
 
         if (!server)
-            return res.status(404).json({
-                error: true,
-                status: 404,
-                message: res.__("common.error.bot.404")
-            });
+            return jsonErrorMessage(res, 404, res.__("common.error.bot.404"));
 
         if (server.owner.id === req.user.id)
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                message: res.__("common.error.report.self")
-            });
+            return jsonErrorMessage(
+                res,
+                403,
+                res.__("common.error.report.self")
+            );
 
         try {
             const embed = new EmbedBuilder();
@@ -107,11 +104,7 @@ export class ReportServer extends AuthedPathRoute<"post"> {
                 message: res.__("common.report.done")
             });
         } catch (e) {
-            return res.status(500).json({
-                error: true,
-                status: 500,
-                message: res.__("common.error.report")
-            });
+            return jsonErrorMessage(res, 500, res.__("common.error.report"));
         }
     }
 }

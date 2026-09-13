@@ -41,6 +41,7 @@ import {
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
+import { jsonError } from "../../../Util/Function/responses.ts";
 
 export class GetEditServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -123,12 +124,7 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
 
         let tags: string[] = tagHandler(req, server);
 
-        if (error === true)
-            return res.status(400).json({
-                error: true,
-                status: 400,
-                errors: errors
-            });
+        if (error === true) return jsonError(res, 400, errors);
 
         discord
             .restGet<APIInvite>(Routes.invite(req.body.invite), {
@@ -142,29 +138,19 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
             .then(async (invite: APIInvite) => {
                 // A group-DM invite has no guild, so there's no server to list.
                 if (!invite.guild)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [
-                            res.__("common.error.listing.arr.invite.invalid")
-                        ]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.listing.arr.invite.invalid")
+                    ]);
 
                 if (invite.guild.id !== server._id)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [
-                            res.__("common.error.server.arr.invite.sameServer")
-                        ]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.server.arr.invite.sameServer")
+                    ]);
 
                 if (invite.expires_at)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.server.invite.expires")]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.server.invite.expires")
+                    ]);
 
                 await global.db.collection("servers").updateOne(
                     { _id: req.params.id },
@@ -276,22 +262,14 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownInvite)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [
-                            res.__("common.error.listing.arr.invite.invalid")
-                        ]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.listing.arr.invite.invalid")
+                    ]);
 
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [
-                        `${error.name}: ${error.message}`,
-                        `${error.code} ${error.method} ${error.url}`
-                    ]
-                });
+                return jsonError(res, 400, [
+                    `${error.name}: ${error.message}`,
+                    `${error.code} ${error.method} ${error.url}`
+                ]);
             });
     }
 }

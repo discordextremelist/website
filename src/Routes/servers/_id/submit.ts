@@ -34,6 +34,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
+import { jsonError } from "../../../Util/Function/responses.ts";
 
 export class GetSubmitServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -93,12 +94,7 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
 
         let tags: string[] = tagHandler(req, false);
 
-        if (error === true)
-            return res.status(400).json({
-                error: true,
-                status: 400,
-                errors: errors
-            });
+        if (error === true) return jsonError(res, 400, errors);
 
         discord
             .restGet<APIInvite>(Routes.invite(req.body.invite), {
@@ -112,30 +108,22 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
             .then(async (invite: APIInvite) => {
                 // A group-DM invite has no guild, so there's no server to list.
                 if (!invite.guild)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [
-                            res.__("common.error.listing.arr.invite.invalid")
-                        ]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.listing.arr.invite.invalid")
+                    ]);
 
                 const serverExists: delServer | null = await global.db
                     .collection<delServer>("servers")
                     .findOne({ _id: invite.guild.id });
                 if (serverExists)
-                    return res.status(409).json({
-                        error: true,
-                        status: 409,
-                        errors: [res.__("common.error.server.conflict")]
-                    });
+                    return jsonError(res, 409, [
+                        res.__("common.error.server.conflict")
+                    ]);
 
                 if (invite.expires_at)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.server.invite.expires")]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.server.invite.expires")
+                    ]);
 
                 await global.db.collection<delServer>("servers").insertOne({
                     _id: invite.guild.id,
@@ -227,22 +215,14 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownInvite)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [
-                            res.__("common.error.listing.arr.invite.invalid")
-                        ]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.listing.arr.invite.invalid")
+                    ]);
 
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [
-                        `${error.name}: ${error.message}`,
-                        `${error.code} ${error.method} ${error.url}`
-                    ]
-                });
+                return jsonError(res, 400, [
+                    `${error.name}: ${error.message}`,
+                    `${error.code} ${error.method} ${error.url}`
+                ]);
             });
     }
 }

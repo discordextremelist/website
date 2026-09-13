@@ -47,3 +47,24 @@ export function renderStatus(
         ...extra
     });
 }
+
+/**
+ * Answer with the JSON error body the listing forms and JSON endpoints use:
+ *
+ *     res.status(status).json({ error: true, status, errors })
+ */
+export function jsonError(res: Response, status: number, errors: unknown[]) {
+    return res.status(status).json({ error: true, status, errors });
+}
+
+/**
+ * jsonError for the endpoints that send a single `message` instead of an
+ * `errors` array (the report routes and search).
+ */
+export function jsonErrorMessage(
+    res: Response,
+    status: number,
+    message: string
+) {
+    return res.status(status).json({ error: true, status, message });
+}

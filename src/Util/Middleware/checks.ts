@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import type { Request, Response } from "express";
-import { renderStatus } from "../Function/responses.ts";
+import { jsonError, renderStatus } from "../Function/responses.ts";
 
 export const botExists = async (
     req: Request,
@@ -66,12 +66,7 @@ const exists =
     async (req: Request, res: Response, next: () => void) => {
         const doc = await fetch(req.params.id);
         if (!doc) {
-            if (json)
-                return res.status(404).json({
-                    error: true,
-                    status: 404,
-                    errors: [res.__(notFound)]
-                });
+            if (json) return jsonError(res, 404, [res.__(notFound)]);
             return renderStatus(req, res, 404, res.__(notFound));
         }
         attach(req, doc);

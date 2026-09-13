@@ -5,6 +5,7 @@ import * as checks from "../../../Util/Middleware/checks.ts";
 import type { Response } from "express";
 import fetch from "node-fetch";
 import { Vibrant } from "node-vibrant/node";
+import { jsonError } from "../../../Util/Function/responses.ts";
 
 export class GetAccentColor extends AuthedPathRoute<"get"> {
     constructor() {
@@ -22,20 +23,14 @@ export class GetAccentColor extends AuthedPathRoute<"get"> {
             !bot.editors.includes(req.user.id) &&
             req.user.db.rank.mod === false
         )
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                errors: [res.__("common.error.bot.perms.edit")]
-            });
+            return jsonError(res, 403, [res.__("common.error.bot.perms.edit")]);
         let bot_avatar = await fetch(
             bot.avatar?.url ? bot.avatar!.url : bot.icon!.url
         );
         if (!bot_avatar.ok)
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                errors: ["Unable to fetch avatar!"] // TODO: Translate
-            });
+            return jsonError(res, 403, [
+                "Unable to fetch avatar!" // TODO: Translate
+            ]);
         const palette = await Vibrant.from(
             await bot_avatar.buffer()
         ).getPalette();
@@ -49,11 +44,9 @@ export class GetAccentColor extends AuthedPathRoute<"get"> {
             palette.DarkMuted ??
             palette.LightMuted;
         if (!swatch)
-            return res.status(422).json({
-                error: true,
-                status: 422,
-                errors: ["Unable to pick a colour from the avatar!"] // TODO: Translate
-            });
+            return jsonError(res, 422, [
+                "Unable to pick a colour from the avatar!" // TODO: Translate
+            ]);
         return res.status(200).json({ color: swatch.hex });
     }
 }

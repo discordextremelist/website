@@ -26,6 +26,7 @@ import { escapeFormatting } from "../../../Util/Function/format.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { EmbedBuilder } from "discord.js";
+import { jsonErrorMessage } from "../../../Util/Function/responses.ts";
 
 export class TemplateSrc extends AuthedPathRoute<"get"> {
     constructor() {
@@ -61,18 +62,14 @@ export class ReportTemplate extends AuthedPathRoute<"post"> {
         const template = await templateCache.getTemplate(req.params.id);
 
         if (!template)
-            return res.status(404).json({
-                error: true,
-                status: 404,
-                message: res.__("common.error.bot.404")
-            });
+            return jsonErrorMessage(res, 404, res.__("common.error.bot.404"));
 
         if (template.owner.id === req.user.id)
-            return res.status(403).json({
-                error: true,
-                status: 403,
-                message: res.__("common.error.report.self")
-            });
+            return jsonErrorMessage(
+                res,
+                403,
+                res.__("common.error.report.self")
+            );
 
         try {
             const embed = new EmbedBuilder();
@@ -109,11 +106,7 @@ export class ReportTemplate extends AuthedPathRoute<"post"> {
                 message: res.__("common.report.done")
             });
         } catch (e) {
-            return res.status(500).json({
-                error: true,
-                status: 500,
-                message: res.__("common.error.report")
-            });
+            return jsonErrorMessage(res, 500, res.__("common.error.report"));
         }
     }
 }

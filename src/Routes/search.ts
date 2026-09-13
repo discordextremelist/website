@@ -31,6 +31,7 @@ import * as serverCache from "../Util/Services/serverCaching.ts";
 import * as templateCache from "../Util/Services/templateCaching.ts";
 import { variables } from "../Util/Middleware/variables.ts";
 import type { ParsedQs } from "qs";
+import { jsonErrorMessage } from "../Util/Function/responses.ts";
 
 const renderPath = path.join(process.cwd(), "views/partials");
 
@@ -53,11 +54,7 @@ router.get("/", variables, (req: Request, res: Response) => {
 router.post("/", variables, async (req: Request, res: Response) => {
     let { query, only }: { query: string; only: string[] } = req.body;
     if (!query || typeof query !== "string" || typeof only !== "object")
-        return res.status(400).json({
-            error: true,
-            status: 400,
-            message: "Missing body parameter"
-        });
+        return jsonErrorMessage(res, 400, "Missing body parameter");
     const originalQuery = query;
     query = query.toLowerCase();
     let isStaff = false;
@@ -65,14 +62,10 @@ router.post("/", variables, async (req: Request, res: Response) => {
         if (req.user && req.user.id) {
             // The variables middleware has already loaded this record.
             if (!req.user.db.rank.mod)
-                return res
-                    .status(403)
-                    .json({ error: true, status: 403, message: "Forbidden" });
+                return jsonErrorMessage(res, 403, "Forbidden");
             isStaff = true;
         } else {
-            return res
-                .status(403)
-                .json({ error: true, status: 403, message: "Forbidden" });
+            return jsonErrorMessage(res, 403, "Forbidden");
         }
     }
     const [users, bots, servers, templates] = await Promise.all([

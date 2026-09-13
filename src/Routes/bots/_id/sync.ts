@@ -19,6 +19,7 @@ import * as e from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { auth } from "../../../Util/Middleware/permissions.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
+import { jsonError } from "../../../Util/Function/responses.ts";
 
 export class SyncBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -52,11 +53,7 @@ export class SyncBot extends AuthedPathRoute<"get"> {
                                 errors.push(err.message);
                             }
 
-                            return res.status(500).json({
-                                error: true,
-                                status: 500,
-                                errors: [errors]
-                            });
+                            return jsonError(res, 500, [errors]);
                         } else {
                             await global.db.collection("users").updateOne(
                                 { _id: req.user.id },
@@ -106,11 +103,9 @@ export class SyncBot extends AuthedPathRoute<"get"> {
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false)
                     // not !app.bot_public; should not trigger when undefined
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.notPublic")]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.bot.arr.notPublic")
+                    ]);
 
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
@@ -158,21 +153,15 @@ export class SyncBot extends AuthedPathRoute<"get"> {
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownApplication)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.notFound")]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.bot.arr.notFound")
+                    ]);
 
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [
-                        res.__("common.error.bot.arr.fetchError"),
-                        `${error.name}: ${error.message}`,
-                        `${error.code} ${error.method} ${error.url}`
-                    ]
-                });
+                return jsonError(res, 400, [
+                    res.__("common.error.bot.arr.fetchError"),
+                    `${error.name}: ${error.message}`,
+                    `${error.code} ${error.method} ${error.url}`
+                ]);
             });
     }
 }

@@ -29,7 +29,7 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { renderStatus } from "../../../Util/Function/responses.ts";
+import { jsonError, renderStatus } from "../../../Util/Function/responses.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 
 export class SyncServer extends AuthedPathRoute<"get"> {
@@ -72,11 +72,9 @@ export class SyncServer extends AuthedPathRoute<"get"> {
                     });
 
                 if (invite.expires_at)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.server.invite.expires")]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.server.invite.expires")
+                    ]);
 
                 await global.db.collection("servers").updateOne(
                     { _id: req.params.id },

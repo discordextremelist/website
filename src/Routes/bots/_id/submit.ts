@@ -31,6 +31,7 @@ import {
     widgetbotErrors
 } from "../../../Util/Function/botListing.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { jsonError } from "../../../Util/Function/responses.ts";
 
 export class GetSubmit extends AuthedPathRoute<"get"> {
     constructor() {
@@ -90,11 +91,7 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
             .findOne({ _id: req.body.id });
 
         if (botExists)
-            return res.status(409).json({
-                error: true,
-                status: 409,
-                errors: [res.__("common.error.bot.conflict")]
-            });
+            return jsonError(res, 409, [res.__("common.error.bot.conflict")]);
 
         if (!req.body.bot && !req.body.slashCommands) {
             error = true;
@@ -257,12 +254,7 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
         );
 
         let userFlags = await fetchUserFlags(req.body.bot, req.body.id);
-        if (error === true)
-            return res.status(400).json({
-                error: true,
-                status: 400,
-                errors: errors
-            });
+        if (error === true) return jsonError(res, 400, errors);
 
         discord
             .restGet<APIApplication>(
@@ -271,18 +263,14 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false)
                     // not !app.bot_public; should not trigger when undefined
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.notPublic")]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.bot.arr.notPublic")
+                    ]);
 
                 if (req.body.bot && !("bot_public" in app))
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.noBot")]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.bot.arr.noBot")
+                    ]);
 
                 await global.db.collection<delBot>("bots").insertOne({
                     _id: req.body.id,
@@ -466,21 +454,15 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownApplication)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.notFound")]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.bot.arr.notFound")
+                    ]);
 
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [
-                        res.__("common.error.bot.arr.fetchError"),
-                        `${error.name}: ${error.message}`,
-                        `${error.code} ${error.method} ${error.url}`
-                    ]
-                });
+                return jsonError(res, 400, [
+                    res.__("common.error.bot.arr.fetchError"),
+                    `${error.name}: ${error.message}`,
+                    `${error.code} ${error.method} ${error.url}`
+                ]);
             });
     }
 }

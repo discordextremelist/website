@@ -15,7 +15,7 @@ import * as libraryCache from "../../../Util/Services/libCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import { isURL, parseScopes } from "../../../Util/Function/listing.ts";
-import { renderStatus } from "../../../Util/Function/responses.ts";
+import { jsonError, renderStatus } from "../../../Util/Function/responses.ts";
 import { URL } from "url";
 
 import * as botCache from "../../../Util/Services/botCaching.ts";
@@ -125,11 +125,9 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
         }
 
         if (bot.status.archived === false)
-            return res.status(400).json({
-                error: true,
-                status: 400,
-                errors: [res.__("common.error.bot.notArchived")]
-            });
+            return jsonError(res, 400, [
+                res.__("common.error.bot.notArchived")
+            ]);
 
         res.locals.premidPageInfo = res.__("premid.bots.resubmit", bot.name);
 
@@ -247,12 +245,7 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
         );
 
         let userFlags = await fetchUserFlags(req.body.bot, bot._id);
-        if (error === true)
-            return res.status(400).json({
-                error: true,
-                status: 400,
-                errors: errors
-            });
+        if (error === true) return jsonError(res, 400, errors);
 
         discord
             .restGet<APIApplication>(
@@ -261,11 +254,9 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
             .then(async (app: APIApplication) => {
                 if (app.bot_public === false)
                     // not !app.bot_public; should not trigger when undefined
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.notPublic")]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.bot.arr.notPublic")
+                    ]);
 
                 await global.db.collection("bots").updateOne(
                     { _id: req.params.id },
@@ -432,21 +423,15 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
             })
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownApplication)
-                    return res.status(400).json({
-                        error: true,
-                        status: 400,
-                        errors: [res.__("common.error.bot.arr.notFound")]
-                    });
+                    return jsonError(res, 400, [
+                        res.__("common.error.bot.arr.notFound")
+                    ]);
 
-                return res.status(400).json({
-                    error: true,
-                    status: 400,
-                    errors: [
-                        res.__("common.error.bot.arr.fetchError"),
-                        `${error.name}: ${error.message}`,
-                        `${error.code} ${error.method} ${error.url}`
-                    ]
-                });
+                return jsonError(res, 400, [
+                    res.__("common.error.bot.arr.fetchError"),
+                    `${error.name}: ${error.message}`,
+                    `${error.code} ${error.method} ${error.url}`
+                ]);
             });
     }
 }

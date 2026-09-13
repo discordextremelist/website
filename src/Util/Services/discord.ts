@@ -207,7 +207,7 @@ export const channels = {
     },
     get alerts() {
         return (
-            bot.channels.cache.has(settings.channels.webLog)
+            bot.channels.cache.has(settings.channels.alerts)
                 ? bot.channels.cache.get(settings.channels.alerts)
                 : (async () => {
                       await bot.channels.fetch(settings.channels.alerts);

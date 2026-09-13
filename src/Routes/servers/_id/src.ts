@@ -23,7 +23,7 @@ import { EmbedBuilder } from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { escapeFormatting } from "../../../Util/Function/format.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 
@@ -93,11 +93,9 @@ export class ReportServer extends AuthedPathRoute<"post"> {
             );
 
             await discord.channels.alerts.send({
-                content: `${settings.emoji.report} **${functions.escapeFormatting(
+                content: `${settings.emoji.report} **${escapeFormatting(
                     req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` reported server **${functions.escapeFormatting(
+                )}** \`(${req.user.id})\` reported server **${escapeFormatting(
                     server.name
                 )}** \`(${server._id})\``,
                 embeds: [embed]

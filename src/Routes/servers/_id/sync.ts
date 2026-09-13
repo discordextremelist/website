@@ -29,7 +29,7 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 
 export class SyncServer extends AuthedPathRoute<"get"> {

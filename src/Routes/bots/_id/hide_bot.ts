@@ -4,13 +4,13 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import * as discord from "../../../Util/Services/discord.ts";
 import settings from "../../../../settings.json" with { type: "json" };
-import * as functions from "../../../Util/Function/main.ts";
+import { escapeFormatting } from "../../../Util/Function/format.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as Discord from "discord.js";
 import { botType } from "../index.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class HideBot extends AuthedPathRoute<"get"> {
@@ -225,9 +225,7 @@ export class PostModHideBot extends AuthedPathRoute<"post"> {
         if (owner)
             owner
                 .send(
-                    `${
-                        settings.emoji.hide
-                    } **|** Your bot **${functions.escapeFormatting(
+                    `${settings.emoji.hide} **|** Your bot **${escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been hidden!\n**Reason:** \`${
                         req.body.reason || "None specified."
@@ -299,7 +297,7 @@ export class GetModUnhideBot extends AuthedPathRoute<"get"> {
                 .send(
                     `${
                         settings.emoji.check
-                    } **|** Your bot **${functions.escapeFormatting(
+                    } **|** Your bot **${escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been unhidden on the website!`
                 )

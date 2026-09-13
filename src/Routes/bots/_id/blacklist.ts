@@ -5,7 +5,7 @@ import e from "express";
 import { blacklistUpdate } from "../../../Util/Services/blacklist.ts";
 import { updateBot } from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
 
 export class BlacklistBot extends AuthedPathRoute<"get"> {
     constructor() {

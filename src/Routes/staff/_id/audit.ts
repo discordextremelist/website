@@ -20,7 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { auditUserIDParse } from "../../../Util/Function/audit.ts";
+import * as functions from "../../../Util/Function/viewHelpers.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 
 export class AuditLog extends AuthedPathRoute<"get"> {
@@ -52,8 +53,8 @@ export class AuditLog extends AuthedPathRoute<"get"> {
         );
 
         for (const log of iteratedLogs) {
-            log.executor = await functions.auditUserIDParse(log.executor);
-            log.target = await functions.auditUserIDParse(log.target);
+            log.executor = await auditUserIDParse(log.executor);
+            log.target = await auditUserIDParse(log.target);
         }
 
         res.locals.premidPageInfo = res.__("premid.staff.audit");

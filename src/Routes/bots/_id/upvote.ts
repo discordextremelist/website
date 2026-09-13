@@ -4,7 +4,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
 
 export class GetUpvote extends AuthedPathRoute<"get"> {
     constructor() {

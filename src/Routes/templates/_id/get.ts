@@ -22,13 +22,13 @@ import type { Request, Response } from "express";
 
 import settings from "../../../../settings.json" with { type: "json" };
 
-import * as functions from "../../../Util/Function/main.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
+import * as functions from "../../../Util/Function/viewHelpers.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import mdi from "markdown-it";
 import entities from "html-entities";
-import { renderStatus } from "../../../Util/Function/main.ts";
 import { sanitizeMinimalHtml } from "../../../Util/Function/sanitize.ts";
 
 const md = new mdi();

@@ -9,7 +9,7 @@ import {
     Routes
 } from "discord.js";
 import refresh from "passport-oauth2-refresh";
-import * as functions from "../../../Util/Function/main.ts";
+import { isDiscordAPIError } from "../../../Util/Function/discordErrors.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import fetch from "node-fetch";
 import { DAPI } from "../../../Util/Services/discord.ts";
@@ -46,7 +46,7 @@ export class SyncBot extends AuthedPathRoute<"get"> {
                         if (err) {
                             let errors: string[] = [];
 
-                            if (functions.isDiscordAPIError(err)) {
+                            if (isDiscordAPIError(err)) {
                                 errors.push(`${err.statusCode} ${err.data}`);
                             } else {
                                 errors.push(err.message);

@@ -14,7 +14,7 @@ import {
     RESTJSONErrorCodes,
     Routes
 } from "discord.js";
-import * as functions from "../../../Util/Function/main.ts";
+import { isURL, parseScopes } from "../../../Util/Function/listing.ts";
 import { URL } from "url";
 
 import * as botCache from "../../../Util/Services/botCaching.ts";
@@ -119,7 +119,7 @@ export class PostEdit extends AuthedPathRoute<"post"> {
         let invite: string;
 
         if (req.body.invite === "") {
-            invite = `https://discord.com/api/oauth2/authorize?client_id=${req.body.clientID || req.params.id}&scope=${functions.parseScopes(req.body)}`;
+            invite = `https://discord.com/api/oauth2/authorize?client_id=${req.body.clientID || req.params.id}&scope=${parseScopes(req.body)}`;
         } else {
             if (typeof req.body.invite !== "string") {
                 error = true;
@@ -127,7 +127,7 @@ export class PostEdit extends AuthedPathRoute<"post"> {
             } else if (req.body.invite.length > 2000) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (!functions.isURL(req.body.invite)) {
+            } else if (!isURL(req.body.invite)) {
                 error = true;
                 errors.push(
                     res.__("common.error.listing.arr.invite.urlInvalid")
@@ -166,7 +166,7 @@ export class PostEdit extends AuthedPathRoute<"post"> {
 
         if (
             req.body.invite &&
-            functions.isURL(req.body.invite) &&
+            isURL(req.body.invite) &&
             Number(new URL(req.body.invite).searchParams.get("permissions")) & 8
         ) {
             error = true;

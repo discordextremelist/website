@@ -27,7 +27,7 @@ import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import mdi from "markdown-it";
 import entities from "html-entities";
-import { renderStatus } from "../../../Util/Function/main.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
 import { sanitizeMinimalHtml } from "../../../Util/Function/sanitize.ts";
 
 const md = new mdi();

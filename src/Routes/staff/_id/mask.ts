@@ -22,7 +22,7 @@ import type { Response } from "express";
 import type { APIUser, Snowflake } from "discord.js";
 import { Routes } from "discord.js";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { grabFullUser } from "../../../Util/Function/format.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 
@@ -58,7 +58,7 @@ export class MaskUser extends AuthedPathRoute<"get"> {
                         token: "",
                         name: discordUser.username,
                         discrim: discordUser.discriminator,
-                        fullUsername: functions.grabFullUser(discordUser),
+                        fullUsername: grabFullUser(discordUser),
                         locale: "",
                         avatar: {
                             hash: discordUser.avatar,
@@ -190,8 +190,7 @@ export class MaskUser extends AuthedPathRoute<"get"> {
                             $set: {
                                 name: discordUser.username,
                                 discrim: discordUser.discriminator,
-                                fullUsername:
-                                    functions.grabFullUser(discordUser),
+                                fullUsername: grabFullUser(discordUser),
                                 avatar: {
                                     hash: discordUser.avatar,
                                     url: `https://cdn.discordapp.com/avatars/${req.params.id}/${discordUser.avatar}`

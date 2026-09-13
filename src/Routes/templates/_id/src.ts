@@ -22,7 +22,7 @@ import type { Response } from "express";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { escapeFormatting } from "../../../Util/Function/format.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { EmbedBuilder } from "discord.js";
@@ -93,11 +93,11 @@ export class ReportTemplate extends AuthedPathRoute<"post"> {
             );
 
             await discord.channels.alerts.send({
-                content: `${settings.emoji.report} **${functions.escapeFormatting(
+                content: `${settings.emoji.report} **${escapeFormatting(
                     req.user.db.fullUsername
                 )}** \`(${
                     req.user.id
-                })\` reported template **${functions.escapeFormatting(
+                })\` reported template **${escapeFormatting(
                     template.name
                 )}** \`(${template._id})\``,
                 embeds: [embed]

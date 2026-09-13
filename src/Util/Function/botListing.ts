@@ -17,7 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { isDiscordAPIError, isURL } from "./main.ts";
+import { isURL } from "./listing.ts";
+import { isDiscordAPIError } from "./discordErrors.ts";
 import type { Response } from "express";
 import type {
     APIApplicationCommand,

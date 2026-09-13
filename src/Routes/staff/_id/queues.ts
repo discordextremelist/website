@@ -21,7 +21,7 @@ import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { parseScopes } from "../../../Util/Function/listing.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 
@@ -85,7 +85,7 @@ export class BotQueue extends AuthedPathRoute<"get"> {
             mainServer: settings.guild.main,
             staffServer: settings.guild.staff,
             botServer: settings.guild.bot,
-            parseScopes: functions.parseScopes
+            parseScopes: parseScopes
         });
     }
 }

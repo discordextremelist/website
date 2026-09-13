@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { getForeground } from "../../../Util/Function/format.ts";
 import * as announcementCache from "../../../Util/Services/announcementCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 
@@ -53,9 +53,9 @@ export class PostAnnounce extends AuthedPathRoute<"post"> {
             foreground = "preferred";
         } else if (req.body.colour === "custom") {
             colour = req.body.customColour;
-            foreground = functions.getForeground(req.body.customColour);
+            foreground = getForeground(req.body.customColour);
         } else {
-            foreground = functions.getForeground(req.body.colour);
+            foreground = getForeground(req.body.colour);
         }
 
         await announcementCache.updateAnnouncement(

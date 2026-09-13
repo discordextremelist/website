@@ -69,7 +69,7 @@ import { uploadServers } from "./Util/Services/serverCaching.ts";
 import { uploadTemplates } from "./Util/Services/templateCaching.ts";
 import { initBotRoutes } from "./Routes/bots/index.ts";
 import createHttpError from "http-errors";
-import { renderStatus } from "./Util/Function/main.ts";
+import { renderStatus } from "./Util/Function/responses.ts";
 
 const app = express();
 const __dirname = path.resolve();

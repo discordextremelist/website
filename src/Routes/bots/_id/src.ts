@@ -10,7 +10,7 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as Discord from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { escapeFormatting } from "../../../Util/Function/format.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 
 export class SrcRoute extends AuthedPathRoute<"get"> {
@@ -64,11 +64,9 @@ export class ReportRoute extends AuthedPathRoute<"post"> {
             );
 
             await discord.channels.alerts.send({
-                content: `${settings.emoji.report} **${functions.escapeFormatting(
+                content: `${settings.emoji.report} **${escapeFormatting(
                     req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` reported bot **${functions.escapeFormatting(
+                )}** \`(${req.user.id})\` reported bot **${escapeFormatting(
                     bot.name
                 )}** \`(${bot._id})\``,
                 embeds: [embed]

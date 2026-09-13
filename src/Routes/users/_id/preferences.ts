@@ -21,7 +21,7 @@ import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { getForeground } from "../../../Util/Function/format.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { themes } from "../../../../@types/enums.ts";
 import entities from "html-entities";
@@ -73,7 +73,7 @@ export class PostPreferences extends AuthedPathRoute<"post"> {
         experiments = req.body.experiments === "on";
         hideNSFW = req.body.hideNSFW === "on";
 
-        const foreground = functions.getForeground(req.body.iconColour);
+        const foreground = getForeground(req.body.iconColour);
 
         await global.db.collection("users").updateOne(
             { _id: req.user.id },

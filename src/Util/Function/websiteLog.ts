@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import type { MessageCreateOptions } from "discord.js";
 import * as discord from "../Services/discord.ts";
-import { escapeFormatting } from "./main.ts";
+import { escapeFormatting } from "./format.ts";
 
 /**
  * Post the standard line to the website log channel (discord.channels.logs,

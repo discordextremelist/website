@@ -25,7 +25,7 @@ import * as botCache from "../Util/Services/botCaching.ts";
 import * as serverCache from "../Util/Services/serverCaching.ts";
 import * as templateCache from "../Util/Services/templateCaching.ts";
 import * as userCache from "../Util/Services/userCaching.ts";
-import * as functions from "../Util/Function/main.ts";
+import { escapeFormatting } from "../Util/Function/format.ts";
 import {
     EmbedBuilder,
     makeURLSearchParams,
@@ -271,7 +271,7 @@ router.get("/servers", async (_req, res) => {
                         .send(
                             `${
                                 settings.emoji.delete
-                            } **|** Your server **${functions.escapeFormatting(
+                            } **|** Your server **${escapeFormatting(
                                 server.name
                             )}** \`(${server._id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this server has either been deleted, or the invite provided to us has expired. If your server is still active, please repost it with a permanent invite!\``
                         )
@@ -366,7 +366,7 @@ router.get("/templates", async (_req, res) => {
                         .send(
                             `${
                                 settings.emoji.delete
-                            } **|** Your template **${functions.escapeFormatting(
+                            } **|** Your template **${escapeFormatting(
                                 dbTemplate.name
                             )}** \`(${id})\` has been removed!\n**Reason:** \`Our AutoSync system has determined this template has been deleted from discord.\``
                         )

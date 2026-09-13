@@ -22,11 +22,9 @@ import type { Request, Response } from "express";
 import settings from "../../../settings.json" with { type: "json" };
 import * as discord from "../Services/discord.ts";
 import * as tokenManager from "../Services/adminTokenManager.ts";
-import {
-    checkRoleHierarchyStaff,
-    ownsOrAssistant,
-    renderStatus
-} from "../Function/main.ts";
+import { checkRoleHierarchyStaff } from "../Function/staff.ts";
+import { ownsOrAssistant } from "../Function/listing.ts";
+import { renderStatus } from "../Function/responses.ts";
 /**
  * Consume the one-shot "just logged out" session flag. If it is set, clear it
  * and send the user home instead of continuing with a stale request.

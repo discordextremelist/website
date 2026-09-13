@@ -30,7 +30,7 @@ import settings from "../../../../settings.json" with { type: "json" };
 
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { isURL } from "../../../Util/Function/listing.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
@@ -107,7 +107,7 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
             } else if (req.body.invite.length > 32) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.tooLong"));
-            } else if (functions.isURL(req.body.invite)) {
+            } else if (isURL(req.body.invite)) {
                 error = true;
                 errors.push(res.__("common.error.listing.arr.invite.isURL"));
             } else if (req.body.invite.includes("discord.gg")) {

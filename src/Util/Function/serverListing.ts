@@ -23,7 +23,7 @@ import type { Response } from "express";
 import type { DiscordAPIError } from "discord.js";
 import { Routes } from "discord.js";
 import fetch, { type Response as fetchRes } from "node-fetch";
-import { isURL } from "./main.ts";
+import { isURL } from "./listing.ts";
 import * as discord from "../Services/discord.ts";
 
 /**

@@ -22,7 +22,7 @@ import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
 
 export class GetEditProfile extends AuthedPathRoute<"get"> {
     constructor() {

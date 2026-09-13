@@ -26,7 +26,7 @@ import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
-import { renderStatus } from "../../../Util/Function/main.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class GetAccountData extends AuthedPathRoute<"get"> {

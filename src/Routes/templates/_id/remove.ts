@@ -22,12 +22,12 @@ import type { Response } from "express";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { escapeFormatting } from "../../../Util/Function/format.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { EmbedBuilder } from "discord.js";
 import { templateType } from "../index.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
@@ -117,7 +117,7 @@ export class PostRemoveTemplate extends AuthedPathRoute<"post"> {
                 .send(
                     `${
                         settings.emoji.delete
-                    } **|** Your template **${functions.escapeFormatting(
+                    } **|** Your template **${escapeFormatting(
                         template.name
                     )}** \`(${
                         template._id

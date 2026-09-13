@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { PresenceUpdateStatus, UserFlags } from "discord.js";
-import * as functions from "../Function/main.ts";
+import { shuffleArray } from "../Function/array.ts";
 
 /**
  * `Full` narrowed to `Stripped`'s fields, with the rest still present but
@@ -67,28 +67,26 @@ export async function updateFeaturedBots() {
         string,
         PresenceUpdateStatus
     >;
-    const bots: strippableBot[] = functions
-        .shuffleArray(
-            (
-                (await global.db
-                    .collection<delBot>("bots")
-                    .find()
-                    .toArray()) as delBot[]
-            ).filter(
-                ({ _id, status, scopes, userFlags }) =>
-                    status.approved &&
-                    !status.siteBot &&
-                    !status.archived &&
-                    !status.hidden &&
-                    !status.modHidden &&
-                    ((statuses[_id] &&
-                        statuses[_id] !== PresenceUpdateStatus.Offline) ||
-                        !scopes?.bot ||
-                        userFlags === undefined ||
-                        (userFlags && UserFlags.BotHTTPInteractions))
-            )
+    const bots: strippableBot[] = shuffleArray(
+        (
+            (await global.db
+                .collection<delBot>("bots")
+                .find()
+                .toArray()) as delBot[]
+        ).filter(
+            ({ _id, status, scopes, userFlags }) =>
+                status.approved &&
+                !status.siteBot &&
+                !status.archived &&
+                !status.hidden &&
+                !status.modHidden &&
+                ((statuses[_id] &&
+                    statuses[_id] !== PresenceUpdateStatus.Offline) ||
+                    !scopes?.bot ||
+                    userFlags === undefined ||
+                    (userFlags && UserFlags.BotHTTPInteractions))
         )
-        .slice(0, 6);
+    ).slice(0, 6);
 
     for (const bot of bots) {
         delete bot.clientID;
@@ -121,29 +119,27 @@ export async function updateFeaturedSFWBots() {
         string,
         PresenceUpdateStatus
     >;
-    const bots: strippableBot[] = functions
-        .shuffleArray(
-            (
-                (await global.db
-                    .collection<delBot>("bots")
-                    .find()
-                    .toArray()) as delBot[]
-            ).filter(
-                ({ _id, status, scopes, userFlags, labels }) =>
-                    status.approved &&
-                    !status.siteBot &&
-                    !status.archived &&
-                    !status.hidden &&
-                    !status.modHidden &&
-                    !labels?.nsfw &&
-                    ((statuses[_id] &&
-                        statuses[_id] !== PresenceUpdateStatus.Offline) ||
-                        !scopes?.bot ||
-                        userFlags === undefined ||
-                        (userFlags && UserFlags.BotHTTPInteractions))
-            )
+    const bots: strippableBot[] = shuffleArray(
+        (
+            (await global.db
+                .collection<delBot>("bots")
+                .find()
+                .toArray()) as delBot[]
+        ).filter(
+            ({ _id, status, scopes, userFlags, labels }) =>
+                status.approved &&
+                !status.siteBot &&
+                !status.archived &&
+                !status.hidden &&
+                !status.modHidden &&
+                !labels?.nsfw &&
+                ((statuses[_id] &&
+                    statuses[_id] !== PresenceUpdateStatus.Offline) ||
+                    !scopes?.bot ||
+                    userFlags === undefined ||
+                    (userFlags && UserFlags.BotHTTPInteractions))
         )
-        .slice(0, 6);
+    ).slice(0, 6);
 
     for (const bot of bots) {
         delete bot.clientID;
@@ -172,16 +168,14 @@ export async function updateFeaturedSFWBots() {
 }
 
 export async function updateFeaturedServers() {
-    const servers: strippableServer[] = functions
-        .shuffleArray(
-            (
-                (await global.db
-                    .collection<delServer>("servers")
-                    .find()
-                    .toArray()) as delServer[]
-            ).filter(({ status }) => status && !status.reviewRequired)
-        )
-        .slice(0, 6);
+    const servers: strippableServer[] = shuffleArray(
+        (
+            (await global.db
+                .collection<delServer>("servers")
+                .find()
+                .toArray()) as delServer[]
+        ).filter(({ status }) => status && !status.reviewRequired)
+    ).slice(0, 6);
 
     for (const server of servers) {
         delete server.inviteCode;
@@ -197,14 +191,12 @@ export async function updateFeaturedServers() {
 }
 
 export async function updateFeaturedTemplates() {
-    const templates: strippableTemplate[] = functions
-        .shuffleArray(
-            (await global.db
-                .collection<delTemplate>("templates")
-                .find()
-                .toArray()) as delTemplate[]
-        )
-        .slice(0, 6);
+    const templates: strippableTemplate[] = shuffleArray(
+        (await global.db
+            .collection<delTemplate>("templates")
+            .find()
+            .toArray()) as delTemplate[]
+    ).slice(0, 6);
 
     for (const template of templates) {
         delete template.region;

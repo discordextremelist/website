@@ -29,7 +29,7 @@ import { GetDownvote, GetUpvote } from "./_id/upvote.ts";
 import { GetRemoveBot, PostRemoveBot } from "./_id/remove.ts";
 import { SyncBot } from "./_id/sync.ts";
 import { GetAccentColor } from "./_id/accent_color.ts";
-import { reasonType } from "../../Util/Function/main.ts";
+import { reasonType } from "../../Util/Function/audit.ts";
 
 export function botType(bodyType: string): number {
     return reasonType(bodyType, 15);

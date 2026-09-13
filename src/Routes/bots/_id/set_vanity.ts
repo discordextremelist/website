@@ -6,7 +6,7 @@ import e from "express";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
 
 export class SetVanity extends AuthedPathRoute<"post"> {
     constructor() {

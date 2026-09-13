@@ -28,7 +28,7 @@ import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { isURL } from "../../../Util/Function/listing.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
@@ -76,7 +76,7 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
             errors.push(res.__("common.error.listing.arr.invite.tooLong"));
         }
 
-        if (functions.isURL(req.body.invite)) {
+        if (isURL(req.body.invite)) {
             error = true;
             errors.push(res.__("common.error.listing.arr.invite.isURL"));
         }

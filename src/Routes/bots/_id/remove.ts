@@ -8,9 +8,9 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import * as Discord from "discord.js";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
-import * as functions from "../../../Util/Function/main.ts";
+import { escapeFormatting } from "../../../Util/Function/format.ts";
+import { renderStatus } from "../../../Util/Function/responses.ts";
 import { botType } from "../index.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 
 export class GetRemoveBot extends AuthedPathRoute<"get"> {
@@ -133,7 +133,7 @@ export class PostRemoveBot extends AuthedPathRoute<"post"> {
                 .send(
                     `${
                         settings.emoji.delete
-                    } **|** Your bot **${functions.escapeFormatting(
+                    } **|** Your bot **${escapeFormatting(
                         bot.name
                     )}** \`(${bot._id})\` has been removed!\n**Reason:** \`${
                         req.body.reason || "None specified."

@@ -11,10 +11,9 @@ import {
 import * as libraryCache from "../../../Util/Services/libCaching.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 
-import settings from "../../../../settings.json" with { type: "json" };
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import {
     discordErrorJson,
     jsonError
@@ -103,16 +102,10 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
                     .collection<delBot>("bots")
                     .insertOne(submittedBot(req, app, form));
 
-                await logWebsiteAction(
-                    req,
-                    settings.emoji.add,
-                    "added bot",
-                    app.name,
-                    req.body.id,
-                    {
-                        suffix: `\n<${settings.website.url}/bots/${req.body.id}>`
-                    }
-                );
+                await logListingEvent(req, "bot", "added", {
+                    _id: req.body.id,
+                    name: app.name
+                });
 
                 await global.db.collection("audit").insertOne({
                     type: "SUBMIT_BOT",

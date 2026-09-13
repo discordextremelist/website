@@ -20,7 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // Shared by the staff actions on listings: approve, decline, remove, hide.
 
 import type { Response } from "express";
-import { EmbedBuilder } from "discord.js";
 import * as userCache from "../Services/userCaching.ts";
 import { renderStatus } from "./responses.ts";
 
@@ -47,19 +46,6 @@ export async function recordStaffAction(
         .collection("users")
         .updateOne({ _id: userId }, { $inc: counts });
     await userCache.updateUser(userId);
-}
-
-/**
- * The "Reason" embed posted to the website log with a removal, decline or
- * hide, linking to the listing when `url` is given.
- */
-export function reasonEmbed(description: string, url?: string) {
-    const embed = new EmbedBuilder();
-    embed.setColor(0x2f3136);
-    embed.setTitle("Reason");
-    embed.setDescription(description);
-    if (url !== undefined) embed.setURL(url);
-    return embed;
 }
 
 /**

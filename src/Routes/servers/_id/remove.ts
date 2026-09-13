@@ -27,11 +27,8 @@ import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverType } from "../index.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
-import {
-    reasonEmbed,
-    reasonMissing
-} from "../../../Util/Function/staffActions.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
+import { reasonMissing } from "../../../Util/Function/staffActions.ts";
 
 export class GetRemoveServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -91,16 +88,9 @@ export class PostRemoveServer extends AuthedPathRoute<"post"> {
 
         await serverCache.deleteServer(req.params.id);
 
-        const embed = reasonEmbed(req.body.reason);
-
-        await logWebsiteAction(
-            req,
-            settings.emoji.delete,
-            "removed server",
-            server.name,
-            server._id,
-            { embeds: [embed] }
-        );
+        await logListingEvent(req, "server", "removed", server, {
+            reason: req.body.reason
+        });
 
         await discord.messageMember(
             server.owner.id,

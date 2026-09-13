@@ -27,7 +27,7 @@ import { renderStatus } from "../../../Util/Function/responses.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import { recordStaffAction } from "../../../Util/Function/staffActions.ts";
 
 export class ApproveServer extends AuthedPathRoute<"get"> {
@@ -72,18 +72,7 @@ export class ApproveServer extends AuthedPathRoute<"get"> {
 
         await serverCache.updateServer(req.params.id);
 
-        logWebsiteAction(
-            req,
-            settings.emoji.check,
-            "approved server",
-            server.name,
-            server._id,
-            {
-                suffix: ` to be listed as an LGBTQ+ community.\n<${
-                    settings.website.url
-                }/servers/${server._id}>`
-            }
-        ).catch((e) => {
+        logListingEvent(req, "server", "approved", server).catch((e) => {
             console.error(e);
         });
 

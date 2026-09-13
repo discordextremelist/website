@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { listingCodeError } from "../../../Util/Function/listingCode.ts";
@@ -27,7 +26,7 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
 import {
     discordErrorJson,
@@ -100,16 +99,10 @@ export class PostSubmitTemplate extends AuthedPathRoute<"post"> {
                     .collection<delTemplate>("templates")
                     .insertOne(submittedTemplate(req, template, tags));
 
-                await logWebsiteAction(
-                    req,
-                    settings.emoji.add,
-                    "added template",
-                    template.name,
-                    template.code,
-                    {
-                        suffix: `\n<${settings.website.url}/templates/${template.code}>`
-                    }
-                );
+                await logListingEvent(req, "template", "added", {
+                    _id: template.code,
+                    name: template.name
+                });
 
                 await global.db.collection("audit").insertOne({
                     type: "SUBMIT_TEMPLATE",

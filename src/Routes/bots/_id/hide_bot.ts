@@ -9,9 +9,8 @@ import { renderStatus } from "../../../Util/Function/responses.ts";
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { botType } from "../index.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import {
-    reasonEmbed,
     reasonMissing,
     recordStaffAction
 } from "../../../Util/Function/staffActions.ts";
@@ -37,13 +36,7 @@ export class HideBot extends AuthedPathRoute<"get"> {
                 res.__("common.error.bot.inQueueHide")
             );
 
-        await logWebsiteAction(
-            req,
-            settings.emoji.hide,
-            "hid bot",
-            bot.name,
-            bot._id
-        );
+        await logListingEvent(req, "bot", "hidden", bot);
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
@@ -81,13 +74,7 @@ export class UnhideBot extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
 
-        await logWebsiteAction(
-            req,
-            settings.emoji.unhide,
-            "unhid bot",
-            bot.name,
-            bot._id
-        );
+        await logListingEvent(req, "bot", "unhidden", bot);
 
         await global.db.collection("bots").updateOne(
             { _id: req.params.id },
@@ -190,19 +177,9 @@ export class PostModHideBot extends AuthedPathRoute<"post"> {
 
         await botCache.updateBot(req.params.id);
 
-        const embed = reasonEmbed(
-            req.body.reason,
-            `${settings.website.url}/bots/${bot._id}`
-        );
-
-        await logWebsiteAction(
-            req,
-            settings.emoji.hide,
-            "hid bot",
-            bot.name,
-            bot._id,
-            { embeds: [embed] }
-        );
+        await logListingEvent(req, "bot", "hidden", bot, {
+            reason: req.body.reason
+        });
 
         await discord.messageMember(
             bot.owner.id,
@@ -248,14 +225,7 @@ export class GetModUnhideBot extends AuthedPathRoute<"get"> {
 
         await recordStaffAction(req.user.id, "Bots");
 
-        logWebsiteAction(
-            req,
-            settings.emoji.unhide,
-            "unhid bot",
-            bot.name,
-            bot._id,
-            { suffix: `\n<${settings.website.url}/bots/${bot._id}>` }
-        ).catch((e) => {
+        logListingEvent(req, "bot", "modUnhidden", bot).catch((e) => {
             console.error(e);
         });
 

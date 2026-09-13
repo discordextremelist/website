@@ -33,12 +33,11 @@ import type {
     RESTGetAPIInviteResult
 } from "discord.js";
 import settings from "../../settings.json" with { type: "json" };
-import { logWebsiteAction } from "../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../Util/Function/websiteLog.ts";
 import {
     fetchSlashCommands,
     fetchUserFlags
 } from "../Util/Function/botListing.ts";
-import { reasonEmbed } from "../Util/Function/staffActions.ts";
 import { syncedServerFields } from "../Util/Function/serverRecords.ts";
 import { syncedTemplateFields } from "../Util/Function/templateRecords.ts";
 
@@ -190,17 +189,14 @@ router.get("/servers", async (_req, res) => {
 
                 await serverCache.deleteServer(id);
 
-                const embed = reasonEmbed(
-                    "Failed to autosync server, assuming the invite is invalid, for another server, or can expire."
-                );
-
-                await logWebsiteAction(
+                await logListingEvent(
                     "AutoSync System",
-                    settings.emoji.delete,
-                    "removed server",
-                    server.name,
-                    server._id,
-                    { embeds: [embed] }
+                    "server",
+                    "removed",
+                    server,
+                    {
+                        reason: "Failed to autosync server, assuming the invite is invalid, for another server, or can expire."
+                    }
                 );
 
                 await discord.messageMember(
@@ -264,17 +260,14 @@ router.get("/templates", async (_req, res) => {
 
                 await templateCache.deleteTemplate(id);
 
-                const embed = reasonEmbed(
-                    "Failed to autosync template, assuming the template is invalid."
-                );
-
-                await logWebsiteAction(
+                await logListingEvent(
                     "AutoSync System",
-                    settings.emoji.delete,
-                    "removed template",
-                    dbTemplate.name,
-                    id,
-                    { embeds: [embed] }
+                    "template",
+                    "removed",
+                    { _id: id, name: dbTemplate.name },
+                    {
+                        reason: "Failed to autosync template, assuming the template is invalid."
+                    }
                 );
 
                 await discord.messageMember(

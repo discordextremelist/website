@@ -9,9 +9,8 @@ import * as discord from "../../../Util/Services/discord.ts";
 import { escapeFormatting } from "../../../Util/Function/format.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
 import { botType } from "../index.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import {
-    reasonEmbed,
     reasonMissing,
     recordStaffAction
 } from "../../../Util/Function/staffActions.ts";
@@ -86,19 +85,9 @@ export class PostRemoveBot extends AuthedPathRoute<"post"> {
 
         await botCache.updateBot(req.params.id);
 
-        const embed = reasonEmbed(
-            req.body.reason,
-            `${settings.website.url}/bots/${bot._id}`
-        );
-
-        await logWebsiteAction(
-            req,
-            settings.emoji.delete,
-            "removed bot",
-            bot.name,
-            bot._id,
-            { embeds: [embed] }
-        );
+        await logListingEvent(req, "bot", "removed", bot, {
+            reason: req.body.reason
+        });
 
         const member = await discord.getMember(req.params.id);
 

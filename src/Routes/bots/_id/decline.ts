@@ -9,9 +9,8 @@ import { escapeFormatting } from "../../../Util/Function/format.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
 import { botType } from "../index.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import {
-    reasonEmbed,
     reasonMissing,
     recordStaffAction
 } from "../../../Util/Function/staffActions.ts";
@@ -102,19 +101,9 @@ export class PostDeclineBot extends AuthedPathRoute<"post"> {
 
         await botCache.updateBot(req.params.id);
 
-        const embed = reasonEmbed(
-            req.body.reason || "No reason provided.",
-            `${settings.website.url}/bots/${bot._id}`
-        );
-
-        await logWebsiteAction(
-            req,
-            settings.emoji.cross,
-            "declined bot",
-            bot.name,
-            bot._id,
-            { embeds: [embed] }
-        );
+        await logListingEvent(req, "bot", "declined", bot, {
+            reason: req.body.reason || "No reason provided."
+        });
 
         const member = await discord.getTestingGuildMember(req.params.id);
 

@@ -17,11 +17,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import settings from "../../../settings.json" with { type: "json" };
 import * as botCache from "../Services/botCaching.ts";
 import * as serverCache from "../Services/serverCaching.ts";
 import * as templateCache from "../Services/templateCaching.ts";
-import { logWebsiteAction } from "./websiteLog.ts";
+import { logListingEvent } from "./websiteLog.ts";
 
 type OwnedListings = {
     bots: delBot[];
@@ -71,13 +70,7 @@ export async function deleteListings(
 
         await botCache.deleteBot(bot._id);
 
-        await logWebsiteAction(
-            req,
-            settings.emoji.delete,
-            "deleted bot",
-            bot.name,
-            bot._id
-        );
+        await logListingEvent(req, "bot", "deleted", bot);
     }
 
     for (const server of servers) {
@@ -93,13 +86,7 @@ export async function deleteListings(
 
         await serverCache.deleteServer(server._id);
 
-        await logWebsiteAction(
-            req,
-            settings.emoji.delete,
-            "deleted server",
-            server.name,
-            server._id
-        );
+        await logListingEvent(req, "server", "deleted", server);
     }
 
     for (const template of templates) {
@@ -117,12 +104,6 @@ export async function deleteListings(
 
         await templateCache.deleteTemplate(template._id);
 
-        await logWebsiteAction(
-            req,
-            settings.emoji.delete,
-            "deleted template",
-            template.name,
-            template._id
-        );
+        await logListingEvent(req, "template", "deleted", template);
     }
 }

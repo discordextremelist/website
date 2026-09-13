@@ -9,9 +9,8 @@ import { escapeFormatting } from "../../../Util/Function/format.ts";
 import { renderStatus } from "../../../Util/Function/responses.ts";
 import { botType } from "../index.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import {
-    reasonEmbed,
     reasonMissing,
     recordStaffAction
 } from "../../../Util/Function/staffActions.ts";
@@ -49,14 +48,7 @@ export class ApproveBot extends AuthedPathRoute<"get"> {
 
         await recordStaffAction(req.user.id, "Bots", "approved");
 
-        await logWebsiteAction(
-            req,
-            settings.emoji.check,
-            "approved bot",
-            bot.name,
-            bot._id,
-            { suffix: `\n<${settings.website.url}/bots/${bot._id}>` }
-        ).catch((e) => {
+        await logListingEvent(req, "bot", "approved", bot).catch((e) => {
             console.error(e);
         });
 
@@ -312,19 +304,9 @@ export class PostUnapproveBot extends AuthedPathRoute<"post"> {
 
         await botCache.updateBot(req.params.id);
 
-        const embed = reasonEmbed(
-            req.body.reason,
-            `${settings.website.url}/bots/${bot._id}`
-        );
-
-        await logWebsiteAction(
-            req,
-            settings.emoji.unapprove,
-            "unapproved bot",
-            bot.name,
-            bot._id,
-            { embeds: [embed] }
-        );
+        await logListingEvent(req, "bot", "unapproved", bot, {
+            reason: req.body.reason
+        });
 
         const member = await discord.getMember(req.params.id);
 

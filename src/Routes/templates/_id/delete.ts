@@ -19,13 +19,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 
 export class DeleteTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -43,13 +42,7 @@ export class DeleteTemplate extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: Response) {
         const template: delTemplate | undefined = req.attached.template!;
 
-        await logWebsiteAction(
-            req,
-            settings.emoji.delete,
-            "deleted template",
-            template.name,
-            template._id
-        );
+        await logListingEvent(req, "template", "deleted", template);
 
         await global.db
             .collection("templates")

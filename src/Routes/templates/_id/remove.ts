@@ -27,11 +27,8 @@ import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { templateType } from "../index.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
-import {
-    reasonEmbed,
-    reasonMissing
-} from "../../../Util/Function/staffActions.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
+import { reasonMissing } from "../../../Util/Function/staffActions.ts";
 
 export class GetRemoveTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -92,16 +89,9 @@ export class PostRemoveTemplate extends AuthedPathRoute<"post"> {
 
         await templateCache.deleteTemplate(req.params.id);
 
-        const embed = reasonEmbed(req.body.reason);
-
-        await logWebsiteAction(
-            req,
-            settings.emoji.delete,
-            "removed template",
-            template.name,
-            template._id,
-            { embeds: [embed] }
-        );
+        await logListingEvent(req, "template", "removed", template, {
+            reason: req.body.reason
+        });
 
         await discord.messageMember(
             template.owner.id,

@@ -26,8 +26,6 @@ import type {
 } from "discord.js";
 import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
 
-import settings from "../../../../settings.json" with { type: "json" };
-
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { listingCodeError } from "../../../Util/Function/listingCode.ts";
@@ -39,7 +37,7 @@ import {
     serverExistsJson
 } from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
 import {
     discordErrorJson,
@@ -156,16 +154,10 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
                     }
                 );
 
-                await logWebsiteAction(
-                    req,
-                    settings.emoji.edit,
-                    "edited server",
-                    invite.guild.name,
-                    invite.guild.id,
-                    {
-                        suffix: `\n<${settings.website.url}/servers/${invite.guild.id}>`
-                    }
-                );
+                await logListingEvent(req, "server", "edited", {
+                    _id: invite.guild.id,
+                    name: invite.guild.name
+                });
 
                 await global.db.collection("audit").insertOne({
                     type: "EDIT_SERVER",

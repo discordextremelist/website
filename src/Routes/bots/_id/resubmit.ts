@@ -19,7 +19,7 @@ import {
 } from "../../../Util/Function/responses.ts";
 
 import * as botCache from "../../../Util/Services/botCaching.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import { validateBotListing } from "../../../Util/Function/botListing.ts";
 import {
     botAuditAfter,
@@ -129,14 +129,10 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
 
                 await botCache.updateBot(req.params.id);
 
-                await logWebsiteAction(
-                    req,
-                    settings.emoji.resubmit,
-                    "resubmitted bot",
-                    app.name,
-                    app.id,
-                    { suffix: `\n<${settings.website.url}/bots/${app.id}>` }
-                ).catch((e) => {
+                await logListingEvent(req, "bot", "resubmitted", {
+                    _id: app.id,
+                    name: app.name
+                }).catch((e) => {
                     console.error(e);
                 });
 

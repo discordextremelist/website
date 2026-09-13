@@ -25,14 +25,13 @@ import type {
     RESTGetAPIInviteQuery
 } from "discord.js";
 import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
-import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { listingCodeError } from "../../../Util/Function/listingCode.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { tagHandler, reviewRequired } from "../index.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import { serverListingErrors } from "../../../Util/Function/serverListing.ts";
 import {
     discordErrorJson,
@@ -131,16 +130,10 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
                         )
                     );
 
-                await logWebsiteAction(
-                    req,
-                    settings.emoji.add,
-                    "added server",
-                    invite.guild.name,
-                    invite.guild.id,
-                    {
-                        suffix: `\n<${settings.website.url}/servers/${invite.guild.id}>`
-                    }
-                );
+                await logListingEvent(req, "server", "added", {
+                    _id: invite.guild.id,
+                    name: invite.guild.name
+                });
 
                 await global.db.collection("audit").insertOne({
                     type: "SUBMIT_SERVER",

@@ -28,9 +28,8 @@ import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverType } from "../index.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import {
-    reasonEmbed,
     reasonMissing,
     recordStaffAction
 } from "../../../Util/Function/staffActions.ts";
@@ -133,22 +132,9 @@ export class PostDeclineServer extends AuthedPathRoute<"post"> {
 
         await serverCache.updateServer(req.params.id);
 
-        const embed = reasonEmbed(
-            req.body.reason,
-            `${settings.website.url}/servers/${server._id}`
-        );
-        embed.setFooter({
-            text: "It will still be shown as a normal server, it was declined from being listed as an LGBTQ+ community."
+        await logListingEvent(req, "server", "declined", server, {
+            reason: req.body.reason
         });
-
-        await logWebsiteAction(
-            req,
-            settings.emoji.cross,
-            "declined server",
-            server.name,
-            server._id,
-            { embeds: [embed] }
-        );
 
         await discord.messageMember(
             server.owner.id,

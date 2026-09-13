@@ -20,8 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 
-import settings from "../../../../settings.json" with { type: "json" };
-
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { listingCodeError } from "../../../Util/Function/listingCode.ts";
@@ -34,7 +32,7 @@ import {
     templateExistsJson
 } from "../../../Util/Middleware/checks.ts";
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
 import {
     discordErrorJson,
@@ -146,16 +144,10 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
                     }
                 );
 
-                await logWebsiteAction(
-                    req,
-                    settings.emoji.edit,
-                    "edited template",
-                    template.name,
-                    template.code,
-                    {
-                        suffix: `\n<${settings.website.url}/templates/${template.code}>`
-                    }
-                );
+                await logListingEvent(req, "template", "edited", {
+                    _id: template.code,
+                    name: template.name
+                });
 
                 await global.db.collection("audit").insertOne({
                     type: "EDIT_TEMPLATE",

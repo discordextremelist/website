@@ -16,7 +16,7 @@ import * as botCache from "../../../Util/Services/botCaching.ts";
 import { blacklistCheck } from "../../../Util/Services/blacklist.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { sanitizeBotHtml } from "../../../Util/Function/sanitize.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 import {
     discordErrorJson,
     jsonError
@@ -117,15 +117,12 @@ export class PostEdit extends AuthedPathRoute<"post"> {
                 });
                 await botCache.updateBot(req.params.id);
 
-                logWebsiteAction(
+                logListingEvent(
                     req,
-                    settings.emoji.edit,
-                    "edited bot",
-                    app.name,
-                    app.id,
-                    {
-                        suffix: `\n<${settings.website.url}/bots/${req.params.id}>`
-                    }
+                    "bot",
+                    "edited",
+                    { _id: app.id, name: app.name },
+                    { linkId: req.params.id }
                 ).catch((e) => {
                     console.error(e);
                 });

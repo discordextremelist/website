@@ -19,13 +19,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import settings from "../../../../settings.json" with { type: "json" };
 import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import { logListingEvent } from "../../../Util/Function/websiteLog.ts";
 
 export class DeleteServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -40,13 +39,7 @@ export class DeleteServer extends AuthedPathRoute<"get"> {
     async handle(req: AuthedRequest, res: Response) {
         const server: delServer | undefined = req.attached.server!;
 
-        await logWebsiteAction(
-            req,
-            settings.emoji.delete,
-            "deleted server",
-            server.name,
-            server._id
-        );
+        await logListingEvent(req, "server", "deleted", server);
 
         await global.db.collection("servers").deleteOne({ _id: req.params.id });
 

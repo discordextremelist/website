@@ -36,11 +36,15 @@ import {
 import { sanitizeMinimalHtmlEscaped } from "../../../Util/Function/sanitize.ts";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
-import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
 import {
     discordErrorJson,
     jsonError
 } from "../../../Util/Function/responses.ts";
+import {
+    editedTemplateAuditAfter,
+    editedTemplateAuditBefore,
+    editedTemplateFields
+} from "../../../Util/Function/templateRecords.ts";
 
 export class GetEditTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -132,28 +136,13 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
                     {
-                        $set: {
-                            name: template.name,
-                            ...templateGuildFields(template),
-                            usageCount: template.usage_count,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            tags: tags,
-                            creator: {
-                                id: template.creator.id,
-                                username: template.creator.username,
-                                discriminator: template.creator.discriminator
-                            },
-                            icon: {
-                                hash: template.serialized_source_guild
-                                    .icon_hash,
-                                url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
-                            },
-                            links: {
-                                linkToServerPage: linkToServerPage,
-                                template: `https://discord.new/${dbTemplate._id}`
-                            }
-                        } satisfies Partial<delTemplate>
+                        $set: editedTemplateFields(
+                            req,
+                            template,
+                            dbTemplate,
+                            tags,
+                            linkToServerPage
+                        )
                     }
                 );
 
@@ -175,59 +164,18 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
                     date: Date.now(),
                     reason: "None specified.",
                     details: {
-                        new: {
-                            name: template.name,
-                            ...templateGuildFields(template),
-                            usageCount: template.usage_count,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            tags: tags,
-                            fromGuild: dbTemplate.fromGuild,
-                            creator: {
-                                id: template.creator.id,
-                                username: template.creator.username,
-                                discriminator: template.creator.discriminator
-                            },
-                            icon: {
-                                hash: template.serialized_source_guild
-                                    .icon_hash,
-                                url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
-                            },
-                            links: {
-                                linkToServerPage: linkToServerPage,
-                                template: `https://discord.new/${dbTemplate._id}`
-                            }
-                        } satisfies Partial<delTemplate>,
-                        old: {
-                            name: dbTemplate.name,
-                            region: dbTemplate.region,
-                            locale: dbTemplate.locale,
-                            afkTimeout: dbTemplate.afkTimeout,
-                            verificationLevel: dbTemplate.verificationLevel,
-                            defaultMessageNotifications:
-                                dbTemplate.defaultMessageNotifications,
-                            explicitContent: dbTemplate.explicitContent,
-                            roles: dbTemplate.roles,
-                            channels: dbTemplate.channels,
-                            usageCount: dbTemplate.usageCount,
-                            shortDesc: dbTemplate.shortDesc,
-                            longDesc: dbTemplate.longDesc,
-                            tags: dbTemplate.tags,
-                            fromGuild: dbTemplate.fromGuild,
-                            creator: {
-                                id: template.creator.id,
-                                username: template.creator.username,
-                                discriminator: template.creator.discriminator
-                            },
-                            icon: {
-                                hash: dbTemplate.icon.hash,
-                                url: dbTemplate.icon.url
-                            },
-                            links: {
-                                linkToServerPage: linkToServerPage,
-                                template: `https://discord.new/${dbTemplate._id}`
-                            }
-                        } satisfies Partial<delTemplate>
+                        new: editedTemplateAuditAfter(
+                            req,
+                            template,
+                            dbTemplate,
+                            tags,
+                            linkToServerPage
+                        ),
+                        old: editedTemplateAuditBefore(
+                            template,
+                            dbTemplate,
+                            linkToServerPage
+                        )
                     }
                 });
 

@@ -33,13 +33,14 @@ import type {
     RESTGetAPIInviteResult
 } from "discord.js";
 import settings from "../../settings.json" with { type: "json" };
-import { templateGuildFields } from "../Util/Function/templateListing.ts";
 import { logWebsiteAction } from "../Util/Function/websiteLog.ts";
 import {
     fetchSlashCommands,
     fetchUserFlags
 } from "../Util/Function/botListing.ts";
 import { reasonEmbed } from "../Util/Function/staffActions.ts";
+import { syncedServerFields } from "../Util/Function/serverRecords.ts";
+import { syncedTemplateFields } from "../Util/Function/templateRecords.ts";
 
 const router = express.Router();
 
@@ -165,17 +166,7 @@ router.get("/servers", async (_req, res) => {
             await global.db.collection("servers").updateOne(
                 { _id: id },
                 {
-                    $set: {
-                        name: invite.guild.name,
-                        counts: {
-                            online: invite.approximate_presence_count!,
-                            members: invite.approximate_member_count!
-                        },
-                        icon: {
-                            hash: invite.guild.icon,
-                            url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
-                        }
-                    } satisfies Partial<delServer>
+                    $set: syncedServerFields(invite, invite.guild)
                 }
             );
 
@@ -251,20 +242,7 @@ router.get("/templates", async (_req, res) => {
             await global.db.collection("templates").updateOne(
                 { _id: id },
                 {
-                    $set: {
-                        name: template.name,
-                        ...templateGuildFields(template),
-                        usageCount: template.usage_count,
-                        creator: {
-                            id: template.creator.id,
-                            username: template.creator.username,
-                            discriminator: template.creator.discriminator
-                        },
-                        icon: {
-                            hash: template.serialized_source_guild.icon_hash,
-                            url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
-                        }
-                    } satisfies Partial<delTemplate>
+                    $set: syncedTemplateFields(template)
                 }
             );
 

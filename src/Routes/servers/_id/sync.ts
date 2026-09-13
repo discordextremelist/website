@@ -35,6 +35,10 @@ import {
     renderStatus
 } from "../../../Util/Function/responses.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
+import {
+    syncedServerAuditBefore,
+    syncedServerFields
+} from "../../../Util/Function/serverRecords.ts";
 
 export class SyncServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -83,17 +87,7 @@ export class SyncServer extends AuthedPathRoute<"get"> {
                 await global.db.collection("servers").updateOne(
                     { _id: req.params.id },
                     {
-                        $set: {
-                            name: invite.guild.name,
-                            counts: {
-                                online: invite.approximate_presence_count!,
-                                members: invite.approximate_member_count!
-                            },
-                            icon: {
-                                hash: invite.guild.icon,
-                                url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
-                            }
-                        } satisfies Partial<delServer>
+                        $set: syncedServerFields(invite, invite.guild)
                     }
                 );
 
@@ -104,28 +98,8 @@ export class SyncServer extends AuthedPathRoute<"get"> {
                     date: Date.now(),
                     reason: "None specified.",
                     details: {
-                        new: {
-                            name: invite.guild.name,
-                            counts: {
-                                online: invite.approximate_presence_count!,
-                                members: invite.approximate_member_count!
-                            },
-                            icon: {
-                                hash: invite.guild.icon,
-                                url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
-                            }
-                        } satisfies Partial<delServer>,
-                        old: {
-                            name: server.name,
-                            counts: {
-                                online: server.counts.online,
-                                members: server.counts.members
-                            },
-                            icon: {
-                                hash: server.icon.hash,
-                                url: server.icon.url
-                            }
-                        } satisfies Partial<delServer>
+                        new: syncedServerFields(invite, invite.guild),
+                        old: syncedServerAuditBefore(server)
                     }
                 });
 

@@ -38,6 +38,10 @@ import {
     discordErrorJson,
     jsonError
 } from "../../../Util/Function/responses.ts";
+import {
+    submittedServer,
+    submittedServerAudit
+} from "../../../Util/Function/serverRecords.ts";
 
 export class GetSubmitServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -115,34 +119,17 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
                         res.__("common.error.server.invite.expires")
                     ]);
 
-                await global.db.collection<delServer>("servers").insertOne({
-                    _id: invite.guild.id,
-                    inviteCode: req.body.invite,
-                    name: invite.guild.name,
-                    shortDesc: req.body.shortDescription,
-                    longDesc: req.body.longDescription,
-                    previewChannel: req.body.previewChannel,
-                    tags: tags,
-                    counts: {
-                        online: invite.approximate_presence_count!,
-                        members: invite.approximate_member_count!
-                    },
-                    owner: {
-                        id: req.user.id
-                    },
-                    icon: {
-                        hash: invite.guild.icon,
-                        url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
-                    },
-                    links: {
-                        invite: `https://discord.gg/${req.body.invite}`,
-                        website: req.body.website,
-                        donation: req.body.donationUrl
-                    },
-                    status: {
-                        reviewRequired: reviewRequired
-                    }
-                } satisfies delServer);
+                await global.db
+                    .collection<delServer>("servers")
+                    .insertOne(
+                        submittedServer(
+                            req,
+                            invite,
+                            invite.guild,
+                            tags,
+                            reviewRequired
+                        )
+                    );
 
                 await logWebsiteAction(
                     req,
@@ -161,34 +148,13 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
                     date: Date.now(),
                     reason: "None specified.",
                     details: {
-                        new: {
-                            _id: invite.guild.id,
-                            inviteCode: req.body.invite,
-                            name: invite.guild.name,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            previewChannel: req.body.previewChannel,
-                            tags: tags,
-                            owner: {
-                                id: req.user.id
-                            },
-                            counts: {
-                                online: invite.approximate_presence_count!,
-                                members: invite.approximate_member_count!
-                            },
-                            icon: {
-                                hash: invite.guild.icon,
-                                url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
-                            },
-                            links: {
-                                invite: `https://discord.gg/${req.body.invite}`,
-                                website: req.body.website,
-                                donation: req.body.donationUrl
-                            },
-                            status: {
-                                reviewRequired: reviewRequired
-                            }
-                        } satisfies delServer
+                        new: submittedServerAudit(
+                            req,
+                            invite,
+                            invite.guild,
+                            tags,
+                            reviewRequired
+                        )
                     }
                 });
 

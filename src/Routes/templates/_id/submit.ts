@@ -29,11 +29,11 @@ import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
 import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
 import { communityTags } from "../../../Util/Function/serverListing.ts";
-import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
 import {
     discordErrorJson,
     jsonError
 } from "../../../Util/Function/responses.ts";
+import { submittedTemplate } from "../../../Util/Function/templateRecords.ts";
 
 export class GetSubmitTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -96,32 +96,9 @@ export class PostSubmitTemplate extends AuthedPathRoute<"post"> {
         await discord
             .restGet<APITemplate>(Routes.template(req.body.code))
             .then(async (template: APITemplate) => {
-                await global.db.collection<delTemplate>("templates").insertOne({
-                    _id: template.code,
-                    name: template.name,
-                    ...templateGuildFields(template),
-                    usageCount: template.usage_count,
-                    shortDesc: req.body.shortDescription,
-                    longDesc: req.body.longDescription,
-                    tags: tags,
-                    fromGuild: template.source_guild_id,
-                    owner: {
-                        id: req.user.id
-                    },
-                    creator: {
-                        id: template.creator.id,
-                        username: template.creator.username,
-                        discriminator: template.creator.discriminator
-                    },
-                    icon: {
-                        hash: template.serialized_source_guild.icon_hash,
-                        url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
-                    },
-                    links: {
-                        linkToServerPage: false,
-                        template: `https://discord.new/${template.code}`
-                    }
-                } satisfies delTemplate);
+                await global.db
+                    .collection<delTemplate>("templates")
+                    .insertOne(submittedTemplate(req, template, tags));
 
                 await logWebsiteAction(
                     req,
@@ -140,33 +117,7 @@ export class PostSubmitTemplate extends AuthedPathRoute<"post"> {
                     date: Date.now(),
                     reason: "None specified.",
                     details: {
-                        new: {
-                            _id: template.code,
-                            name: template.name,
-                            ...templateGuildFields(template),
-                            usageCount: template.usage_count,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            tags: tags,
-                            fromGuild: template.source_guild_id,
-                            owner: {
-                                id: req.user.id
-                            },
-                            creator: {
-                                id: template.creator.id,
-                                username: template.creator.username,
-                                discriminator: template.creator.discriminator
-                            },
-                            icon: {
-                                hash: template.serialized_source_guild
-                                    .icon_hash,
-                                url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
-                            },
-                            links: {
-                                linkToServerPage: false,
-                                template: `https://discord.new/${template.code}`
-                            }
-                        } satisfies delTemplate
+                        new: submittedTemplate(req, template, tags)
                     }
                 });
 

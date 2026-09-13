@@ -45,6 +45,10 @@ import {
     discordErrorJson,
     jsonError
 } from "../../../Util/Function/responses.ts";
+import {
+    editedServerAuditBefore,
+    editedServerFields
+} from "../../../Util/Function/serverRecords.ts";
 
 export class GetEditServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -142,30 +146,13 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
                 await global.db.collection("servers").updateOne(
                     { _id: req.params.id },
                     {
-                        $set: {
-                            name: invite.guild.name,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            inviteCode: req.body.invite,
-                            previewChannel: req.body.previewChannel,
-                            tags: tags,
-                            counts: {
-                                online: invite.approximate_presence_count!,
-                                members: invite.approximate_member_count!
-                            },
-                            icon: {
-                                hash: invite.guild.icon,
-                                url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
-                            },
-                            links: {
-                                invite: `https://discord.gg/${req.body.invite}`,
-                                website: req.body.website,
-                                donation: req.body.donationUrl
-                            },
-                            status: {
-                                reviewRequired: reviewRequired
-                            }
-                        } satisfies Partial<delServer>
+                        $set: editedServerFields(
+                            req,
+                            invite,
+                            invite.guild,
+                            tags,
+                            reviewRequired
+                        )
                     }
                 );
 
@@ -187,54 +174,14 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
                     date: Date.now(),
                     reason: "None specified.",
                     details: {
-                        new: {
-                            name: invite.guild.name,
-                            shortDesc: req.body.shortDescription,
-                            longDesc: req.body.longDescription,
-                            inviteCode: req.body.invite,
-                            previewChannel: req.body.previewChannel,
-                            tags: tags,
-                            counts: {
-                                online: invite.approximate_presence_count!,
-                                members: invite.approximate_member_count!
-                            },
-                            icon: {
-                                hash: invite.guild.icon,
-                                url: `https://cdn.discordapp.com/icons/${invite.guild.id}/${invite.guild.icon}`
-                            },
-                            links: {
-                                invite: `https://discord.gg/${req.body.invite}`,
-                                website: req.body.website,
-                                donation: req.body.donationUrl
-                            },
-                            status: {
-                                reviewRequired: reviewRequired
-                            }
-                        } satisfies Partial<delServer>,
-                        old: {
-                            name: server.name,
-                            shortDesc: server.shortDesc,
-                            longDesc: server.longDesc,
-                            inviteCode: server.inviteCode,
-                            previewChannel: server.previewChannel,
-                            tags: server.tags,
-                            counts: {
-                                online: server.counts.online,
-                                members: server.counts.members
-                            },
-                            icon: {
-                                hash: server.icon.hash,
-                                url: server.icon.url
-                            },
-                            links: {
-                                invite: server.links.invite,
-                                website: server.links.website,
-                                donation: server.links.donation
-                            },
-                            status: {
-                                reviewRequired: server.status.reviewRequired
-                            }
-                        } satisfies Partial<delServer>
+                        new: editedServerFields(
+                            req,
+                            invite,
+                            invite.guild,
+                            tags,
+                            reviewRequired
+                        ),
+                        old: editedServerAuditBefore(server)
                     }
                 });
 

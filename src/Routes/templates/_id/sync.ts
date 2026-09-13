@@ -27,7 +27,10 @@ import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
 import { discordErrorPage } from "../../../Util/Function/responses.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
-import { templateGuildFields } from "../../../Util/Function/templateListing.ts";
+import {
+    syncedTemplateAuditBefore,
+    syncedTemplateFields
+} from "../../../Util/Function/templateRecords.ts";
 
 export class SyncTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -43,21 +46,7 @@ export class SyncTemplate extends AuthedPathRoute<"get"> {
                 await global.db.collection("templates").updateOne(
                     { _id: req.params.id },
                     {
-                        $set: {
-                            name: template.name,
-                            ...templateGuildFields(template),
-                            usageCount: template.usage_count,
-                            creator: {
-                                id: template.creator.id,
-                                username: template.creator.username,
-                                discriminator: template.creator.discriminator
-                            },
-                            icon: {
-                                hash: template.serialized_source_guild
-                                    .icon_hash,
-                                url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
-                            }
-                        } satisfies Partial<delTemplate>
+                        $set: syncedTemplateFields(template)
                     }
                 );
 
@@ -68,43 +57,8 @@ export class SyncTemplate extends AuthedPathRoute<"get"> {
                     date: Date.now(),
                     reason: "None specified.",
                     details: {
-                        new: {
-                            name: template.name,
-                            ...templateGuildFields(template),
-                            usageCount: template.usage_count,
-                            creator: {
-                                id: template.creator.id,
-                                username: template.creator.username,
-                                discriminator: template.creator.discriminator
-                            },
-                            icon: {
-                                hash: template.serialized_source_guild
-                                    .icon_hash,
-                                url: `https://cdn.discordapp.com/icons/${template.source_guild_id}/${template.serialized_source_guild.icon_hash}`
-                            }
-                        } satisfies Partial<delTemplate>,
-                        old: {
-                            name: dbTemplate.name,
-                            region: dbTemplate.region,
-                            locale: dbTemplate.locale,
-                            afkTimeout: dbTemplate.afkTimeout,
-                            verificationLevel: dbTemplate.verificationLevel,
-                            defaultMessageNotifications:
-                                dbTemplate.defaultMessageNotifications,
-                            explicitContent: dbTemplate.explicitContent,
-                            roles: dbTemplate.roles,
-                            channels: dbTemplate.channels,
-                            usageCount: dbTemplate.usageCount,
-                            creator: {
-                                id: template.creator.id,
-                                username: template.creator.username,
-                                discriminator: template.creator.discriminator
-                            },
-                            icon: {
-                                hash: dbTemplate.icon.hash,
-                                url: dbTemplate.icon.url
-                            }
-                        } satisfies Partial<delTemplate>
+                        new: syncedTemplateFields(template),
+                        old: syncedTemplateAuditBefore(template, dbTemplate)
                     }
                 });
 

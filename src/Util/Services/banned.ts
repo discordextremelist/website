@@ -37,7 +37,3 @@ export async function updateBanlist() {
         })
         .catch((e) => console.error(e));
 }
-
-setInterval(async () => {
-    await updateBanlist();
-}, 900000);

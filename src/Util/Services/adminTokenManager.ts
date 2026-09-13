@@ -136,7 +136,3 @@ export async function verifyToken(id: string, token: string) {
     if (!adminToken) return false;
     return adminToken.token === token && adminToken._id === id;
 }
-
-setInterval(async () => {
-    await tokenResetAll();
-}, 30000);

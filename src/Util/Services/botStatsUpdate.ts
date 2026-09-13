@@ -89,7 +89,3 @@ export async function botStatsUpdate() {
         );
     }
 }
-
-setInterval(async () => {
-    await botStatsUpdate();
-}, 900000);

@@ -100,7 +100,3 @@ export async function updateCache() {
     if (doc) global.announcement = doc;
     return;
 }
-
-setInterval(async () => {
-    await updateCache();
-}, 60000);

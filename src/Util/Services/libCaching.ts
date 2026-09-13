@@ -69,7 +69,3 @@ export async function removeLib(name: string) {
         await global.db.collection("libraries").deleteOne({ _id: name });
     }
 }
-
-setInterval(async () => {
-    await cacheLibs();
-}, 900000);

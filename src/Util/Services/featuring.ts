@@ -217,10 +217,3 @@ export async function updateFeaturedTemplates() {
 
     await global.redis?.set("featured_templates", JSON.stringify(templates));
 }
-
-setInterval(async () => {
-    await updateFeaturedBots();
-    await updateFeaturedSFWBots();
-    await updateFeaturedServers();
-    await updateFeaturedTemplates();
-}, 900000);

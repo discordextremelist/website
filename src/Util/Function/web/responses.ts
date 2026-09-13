@@ -122,3 +122,15 @@ export function jsonErrorMessage(
 ) {
     return res.status(status).json({ error: true, status, message });
 }
+
+/**
+ * Answer "true" or "false" as text: whether the listing cache holds `id` in
+ * `hash`. For the listing forms' /:id/exists check.
+ */
+export async function sendExists(
+    res: Response,
+    hash: "bots" | "servers" | "templates",
+    id: string
+) {
+    res.type("text").send(String(await global.redis?.hexists(hash, id)));
+}

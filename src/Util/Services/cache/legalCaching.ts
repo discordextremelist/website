@@ -19,11 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import mdi from "markdown-it";
+import { renderMarkdown } from "../../Function/web/markdown.ts";
 
 import settings from "../../../../settings.json" with { type: "json" };
-
-const md = new mdi();
 
 const legalMarkdown = ["terms", "privacy"];
 const prefix = "legalMarkdown";
@@ -37,7 +35,11 @@ export async function updateCache() {
         const file = readFileSync(
             path.join(process.cwd() + `/assets/Markdown/${item}.md`)
         );
-        await global.redis?.hmset(prefix, item, md.render(file.toString()));
+        await global.redis?.hmset(
+            prefix,
+            item,
+            renderMarkdown(file.toString())
+        );
     }
 
     for (const locale of settings.website.locales.all) {
@@ -50,7 +52,7 @@ export async function updateCache() {
         await global.redis?.hmset(
             prefix,
             "guidelines-" + locale,
-            md.render(file.toString())
+            renderMarkdown(file.toString())
         );
     }
 }

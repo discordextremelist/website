@@ -21,6 +21,7 @@ import type { Request, Response } from "express";
 import { PathRoute } from "../route.ts";
 import * as templateCache from "../../Util/Services/cache/templateCaching.ts";
 import { variables } from "../../Util/Middleware/variables.ts";
+import { pageCount, pageOf } from "../../Util/Function/common/array.ts";
 
 /** The template list. */
 export class GetTemplates extends PathRoute<"get"> {
@@ -40,12 +41,9 @@ export class GetTemplates extends PathRoute<"get"> {
             subtitle: res.__("common.templates.subtitle"),
             req,
             templates,
-            templatesPgArr: templates.slice(
-                15 * Number(req.query.page) - 15,
-                15 * Number(req.query.page)
-            ),
+            templatesPgArr: pageOf(templates, req.query.page),
             page: req.query.page,
-            pages: Math.ceil(templates.length / 15),
+            pages: pageCount(templates.length),
             pageParam: "?page="
         });
     }

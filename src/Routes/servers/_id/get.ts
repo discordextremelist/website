@@ -25,12 +25,9 @@ import settings from "../../../../settings.json" with { type: "json" };
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import mdi from "markdown-it";
-import entities from "html-entities";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import { sanitizeMinimalHtml } from "../../../Util/Function/web/sanitize.ts";
-
-const md = new mdi();
+import { renderLongDescription } from "../../../Util/Function/web/markdown.ts";
 
 export class GetServer extends PathRoute<"get"> {
     constructor() {
@@ -71,7 +68,7 @@ export class GetServer extends PathRoute<"get"> {
 
         res.locals.premidPageInfo = res.__("premid.servers.view", server.name);
 
-        const dirty = entities.decode(md.render(server.longDesc));
+        const dirty = renderLongDescription(server.longDesc);
         let clean: string;
         clean = sanitizeMinimalHtml(dirty);
 

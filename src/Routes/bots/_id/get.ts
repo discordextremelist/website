@@ -4,7 +4,6 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import * as discord from "../../../Util/Services/discord/index.ts";
-import entities from "html-entities";
 import sanitizeHtml from "sanitize-html";
 
 import settings from "../../../../settings.json" with { type: "json" };
@@ -12,11 +11,9 @@ import { PresenceUpdateStatus, UserFlags } from "discord.js";
 import { isURL, parseScopes } from "../../../Util/Function/listings/listing.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import * as functions from "../../../Util/Function/web/viewHelpers.ts";
-import mdi from "markdown-it";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { sanitizeBotHtml } from "../../../Util/Function/web/sanitize.ts";
-
-const md = new mdi();
+import { renderLongDescription } from "../../../Util/Function/web/markdown.ts";
 
 export class GetBot extends PathRoute<"get"> {
     constructor() {
@@ -77,7 +74,7 @@ export class GetBot extends PathRoute<"get"> {
 
         let botStatus = await discord.getStatus(bot._id);
 
-        const dirty = entities.decode(md.render(bot.longDesc));
+        const dirty = renderLongDescription(bot.longDesc);
 
         const clean = sanitizeBotHtml(dirty);
 

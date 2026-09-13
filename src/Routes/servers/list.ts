@@ -21,6 +21,7 @@ import type { Request, Response } from "express";
 import { PathRoute } from "../route.ts";
 import * as serverCache from "../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../Util/Middleware/variables.ts";
+import { pageCount, pageOf } from "../../Util/Function/common/array.ts";
 
 /** The server list. */
 export class GetServers extends PathRoute<"get"> {
@@ -34,12 +35,9 @@ export class GetServers extends PathRoute<"get"> {
         if (!req.query.page) req.query.page = "1";
         // Can't calculate total pages with sliced value - AJ
         const allServers = await serverCache.getAllServers();
-        const servers = [...allServers]
-            .slice(
-                15 * Number(req.query.page) - 15,
-                15 * Number(req.query.page)
-            )
-            .filter(({ status }) => status && !status.reviewRequired);
+        const servers = pageOf(allServers, req.query.page).filter(
+            ({ status }) => status && !status.reviewRequired
+        );
 
         res.render("templates/servers/index", {
             title: res.__("common.servers.discord"),
@@ -48,7 +46,7 @@ export class GetServers extends PathRoute<"get"> {
             servers,
             serversPgArr: servers,
             page: req.query.page,
-            pages: Math.ceil(allServers.length / 15),
+            pages: pageCount(allServers.length),
             pageParam: "?page="
         });
     }

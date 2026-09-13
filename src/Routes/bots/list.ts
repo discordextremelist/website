@@ -25,6 +25,7 @@ import type {
     BotTags,
     BotQueryTagFilterParams
 } from "../../Util/Function/common/types.ts";
+import { pageCount, pageOf } from "../../Util/Function/common/array.ts";
 
 const commonFilter = ({ status, labels }: delBot, req: Request) =>
     status.approved &&
@@ -127,12 +128,9 @@ export class GetBots extends PathRoute<"get"> {
             bots,
             icon: icon,
             pageParam,
-            botsPgArr: bots.slice(
-                15 * Number(req.query.page) - 15,
-                15 * Number(req.query.page)
-            ),
+            botsPgArr: pageOf(bots, req.query.page),
             page: req.query.page,
-            pages: Math.ceil(bots.length / 15)
+            pages: pageCount(bots.length)
         });
     }
 }

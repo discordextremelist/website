@@ -32,3 +32,19 @@ export function shuffleArray<T>(array: T[]) {
 
     return array;
 }
+
+/** Listings and the audit log show this many entries a page. */
+export const PAGE_SIZE = 15;
+
+/** The entries on page `page` (counted from 1, as ?page= sends it). */
+export function pageOf<T>(items: T[], page: unknown): T[] {
+    return items.slice(
+        PAGE_SIZE * Number(page) - PAGE_SIZE,
+        PAGE_SIZE * Number(page)
+    );
+}
+
+/** How many pages `count` entries fill. */
+export function pageCount(count: number) {
+    return Math.ceil(count / PAGE_SIZE);
+}

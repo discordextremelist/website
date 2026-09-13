@@ -27,11 +27,8 @@ import * as functions from "../../../Util/Function/web/viewHelpers.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import mdi from "markdown-it";
-import entities from "html-entities";
 import { sanitizeMinimalHtml } from "../../../Util/Function/web/sanitize.ts";
-
-const md = new mdi();
+import { renderLongDescription } from "../../../Util/Function/web/markdown.ts";
 
 export class GetTemplate extends PathRoute<"get"> {
     constructor() {
@@ -76,7 +73,7 @@ export class GetTemplate extends PathRoute<"get"> {
                 .findOne({ _id: template.owner.id });
         }
 
-        const dirty = entities.decode(md.render(template.longDesc));
+        const dirty = renderLongDescription(template.longDesc);
         let clean: string;
         clean = sanitizeMinimalHtml(dirty);
 

@@ -23,6 +23,7 @@ import * as permission from "../../Util/Middleware/permissions.ts";
 import { auditUserIDParse } from "../../Util/Function/staff/audit.ts";
 import * as functions from "../../Util/Function/web/viewHelpers.ts";
 import { variables } from "../../Util/Middleware/variables.ts";
+import { pageCount, pageOf } from "../../Util/Function/common/array.ts";
 
 export class AuditLog extends AuthedPathRoute<"get"> {
     constructor() {
@@ -47,10 +48,7 @@ export class AuditLog extends AuthedPathRoute<"get"> {
 
         if (!req.query.page) req.query.page = "1";
 
-        let iteratedLogs: auditLog[] = logs.slice(
-            15 * Number(req.query.page) - 15,
-            15 * Number(req.query.page)
-        );
+        let iteratedLogs: auditLog[] = pageOf(logs, req.query.page);
 
         for (const log of iteratedLogs) {
             log.executor = await auditUserIDParse(log.executor);
@@ -67,7 +65,7 @@ export class AuditLog extends AuthedPathRoute<"get"> {
             logsPgArr: iteratedLogs,
             page: req.query.page,
             pageParam: `?t=${audit_type}&page=`,
-            pages: Math.ceil(logs.length / 15),
+            pages: pageCount(logs.length),
             functions
         });
     }

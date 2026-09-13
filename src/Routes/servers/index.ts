@@ -29,6 +29,7 @@ import { DeleteServer } from "./_id/delete.ts";
 import { GetRemoveServer, PostRemoveServer } from "./_id/remove.ts";
 import { SyncServer } from "./_id/sync.ts";
 import { GetServers } from "./list.ts";
+import { sendExists } from "../../Util/Function/web/responses.ts";
 
 export const initServerRoutes = (): Router => {
     const router = express.Router();
@@ -36,11 +37,9 @@ export const initServerRoutes = (): Router => {
     new GetSubmitServer().register(router);
     new PostSubmitServer().register(router);
     new GetServer().register(router);
-    router.get("/:id/exists", permission.auth, async (req, res) => {
-        res.type("text").send(
-            String(await global.redis?.hexists("servers", req.params.id))
-        );
-    });
+    router.get("/:id/exists", permission.auth, async (req, res) =>
+        sendExists(res, "servers", req.params.id)
+    );
     new ServerSrc().register(router);
     new ReportServer().register(router);
     new GetEditServer().register(router);

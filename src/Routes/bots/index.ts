@@ -30,6 +30,7 @@ import { GetRemoveBot, PostRemoveBot } from "./_id/remove.ts";
 import { SyncBot } from "./_id/sync.ts";
 import { GetAccentColor } from "./_id/accent_color.ts";
 import { GetBots } from "./list.ts";
+import { sendExists } from "../../Util/Function/web/responses.ts";
 
 // Some basic routes do not need their own class.
 export const initBotRoutes = (): Router => {
@@ -38,11 +39,9 @@ export const initBotRoutes = (): Router => {
     router.get("/search", (_req: Request, res: Response) => {
         res.redirect("/search");
     });
-    router.get("/:id/exists", permission.auth, async (req, res) => {
-        res.type("text").send(
-            String(await global.redis?.hexists("bots", req.params.id))
-        );
-    });
+    router.get("/:id/exists", permission.auth, async (req, res) =>
+        sendExists(res, "bots", req.params.id)
+    );
     new GetAccentColor().register(router);
     new GetSubmit().register(router);
     new PostSubmit().register(router);

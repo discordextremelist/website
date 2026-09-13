@@ -27,6 +27,7 @@ import { DeleteTemplate } from "./_id/delete.ts";
 import { GetRemoveTemplate, PostRemoveTemplate } from "./_id/remove.ts";
 import { SyncTemplate } from "./_id/sync.ts";
 import { GetTemplates } from "./list.ts";
+import { sendExists } from "../../Util/Function/web/responses.ts";
 
 export const initTemplateRoutes = (): Router => {
     const router = express.Router();
@@ -34,11 +35,9 @@ export const initTemplateRoutes = (): Router => {
     new GetSubmitTemplate().register(router);
     new PostSubmitTemplate().register(router);
     new GetTemplate().register(router);
-    router.get("/:id/exists", permission.auth, async (req, res) => {
-        res.type("text").send(
-            String(await global.redis?.hexists("templates", req.params.id))
-        );
-    });
+    router.get("/:id/exists", permission.auth, async (req, res) =>
+        sendExists(res, "templates", req.params.id)
+    );
     new TemplateSrc().register(router);
     new ReportTemplate().register(router);
     new GetEditTemplate().register(router);

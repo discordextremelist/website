@@ -23,6 +23,7 @@ import type { APIUser, Snowflake } from "discord.js";
 import { Routes } from "discord.js";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { grabFullUser } from "../../../Util/Function/format.ts";
+import { newUserRecord } from "../../../Util/Function/userRecords.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as discord from "../../../Util/Services/discord.ts";
 
@@ -46,143 +47,28 @@ export class MaskUser extends AuthedPathRoute<"get"> {
             .restGet<APIUser>(Routes.user(req.params.id))
             .then(async (discordUser: APIUser) => {
                 if (!user) {
-                    await global.db.collection<any>("users").insertOne({
-                        auth: {
-                            accessToken: "",
-                            expires: 0,
-                            refreshToken: "",
-                            scopes: []
-                        },
-                        flags: undefined,
-                        _id: req.params.id,
-                        token: "",
-                        name: discordUser.username,
-                        discrim: discordUser.discriminator,
-                        fullUsername: grabFullUser(discordUser),
-                        locale: "",
-                        avatar: {
-                            hash: discordUser.avatar,
-                            url: `https://cdn.discordapp.com/avatars/${req.params.id}/${discordUser.avatar}`
-                        },
-                        preferences: {
-                            customGlobalCss: "",
-                            defaultColour: "#BA2EFF",
-                            defaultForegroundColour: "#ffffff",
-                            enableGames: true,
-                            experiments: false
-                        },
-                        profile: {
-                            bio: "",
-                            css: "",
-                            links: {
-                                website: "",
-                                github: "",
-                                gitlab: "",
-                                twitter: "",
-                                instagram: "",
-                                snapchat: ""
+                    // Someone who has never logged in: no OAuth token or
+                    // flags yet, so the record isn't a full delUser.
+                    await global.db.collection<any>("users").insertOne(
+                        newUserRecord({
+                            _id: req.params.id,
+                            auth: {
+                                accessToken: "",
+                                expires: 0,
+                                refreshToken: "",
+                                scopes: []
+                            },
+                            name: discordUser.username,
+                            discrim: discordUser.discriminator,
+                            fullUsername: grabFullUser(discordUser),
+                            locale: "",
+                            flags: undefined,
+                            avatar: {
+                                hash: discordUser.avatar,
+                                url: `https://cdn.discordapp.com/avatars/${req.params.id}/${discordUser.avatar}`
                             }
-                        },
-                        game: {
-                            snakes: {
-                                maxScore: 0
-                            }
-                        },
-                        rank: {
-                            admin: false,
-                            assistant: false,
-                            mod: false,
-                            verified: false,
-                            tester: false,
-                            translator: false,
-                            covid: false
-                        },
-                        staffTracking: {
-                            details: {
-                                away: {
-                                    status: false,
-                                    message: ""
-                                },
-                                standing: "Unmeasured",
-                                country: "",
-                                timezone: "",
-                                managementNotes: "",
-                                languages: []
-                            },
-                            lastLogin: 0,
-                            lastAccessed: {
-                                time: 0,
-                                page: ""
-                            },
-                            punishments: {
-                                strikes: [],
-                                warnings: []
-                            },
-                            handledBots: {
-                                allTime: {
-                                    total: 0,
-                                    approved: 0,
-                                    unapprove: 0,
-                                    declined: 0,
-                                    remove: 0
-                                },
-                                prevWeek: {
-                                    total: 0,
-                                    approved: 0,
-                                    unapprove: 0,
-                                    declined: 0,
-                                    remove: 0
-                                },
-                                thisWeek: {
-                                    total: 0,
-                                    approved: 0,
-                                    unapprove: 0,
-                                    declined: 0,
-                                    remove: 0
-                                }
-                            },
-                            handledServers: {
-                                allTime: {
-                                    total: 0,
-                                    approved: 0,
-                                    declined: 0,
-                                    remove: 0
-                                },
-                                prevWeek: {
-                                    total: 0,
-                                    approved: 0,
-                                    declined: 0,
-                                    remove: 0
-                                },
-                                thisWeek: {
-                                    total: 0,
-                                    approved: 0,
-                                    declined: 0,
-                                    remove: 0
-                                }
-                            },
-                            handledTemplates: {
-                                allTime: {
-                                    total: 0,
-                                    approved: 0,
-                                    declined: 0,
-                                    remove: 0
-                                },
-                                prevWeek: {
-                                    total: 0,
-                                    approved: 0,
-                                    declined: 0,
-                                    remove: 0
-                                },
-                                thisWeek: {
-                                    total: 0,
-                                    approved: 0,
-                                    declined: 0,
-                                    remove: 0
-                                }
-                            }
-                        }
-                    });
+                        })
+                    );
                 } else {
                     await global.db.collection("users").updateOne(
                         { _id: req.params.id },

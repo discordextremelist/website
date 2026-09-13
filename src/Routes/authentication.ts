@@ -36,6 +36,7 @@ import settings from "../../settings.json" with { type: "json" };
 import * as tokenManager from "../Util/Services/adminTokenManager.ts";
 import { grabFullUser } from "../Util/Function/format.ts";
 import { renderStatus } from "../Util/Function/responses.ts";
+import { newUserRecord } from "../Util/Function/userRecords.ts";
 
 const router = express.Router();
 
@@ -100,112 +101,26 @@ router.get(
         ).json()) as { scopes: OAuth2Scopes[] };
 
         if (!user) {
-            const handleDefault: delUser["staffTracking"]["handledBots"] = {
-                allTime: {
-                    total: 0,
-                    approved: 0,
-                    unapprove: 0,
-                    declined: 0,
-                    remove: 0,
-                    modHidden: 0
-                },
-                prevWeek: {
-                    total: 0,
-                    approved: 0,
-                    unapprove: 0,
-                    declined: 0,
-                    remove: 0,
-                    modHidden: 0
-                },
-                thisWeek: {
-                    total: 0,
-                    approved: 0,
-                    unapprove: 0,
-                    declined: 0,
-                    remove: 0,
-                    modHidden: 0
-                }
-            };
-
-            await global.db.collection<delUser>("users").insertOne({
-                _id: req.user.id,
-                auth: {
-                    accessToken: req.user.accessToken,
-                    refreshToken: req.user.refreshToken,
-                    expires: Date.now() + req.user.expires_in * 1000,
-                    scopes
-                },
-                name: req.user.username,
-                discrim: req.user.discriminator,
-                fullUsername: grabFullUser(req.user),
-                locale: req.user.locale,
-                flags: req.user.flags,
-                lastDataRequest: null,
-                avatar: {
-                    hash: req.user.avatar,
-                    url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
-                },
-                preferences: {
-                    customGlobalCss: "",
-                    defaultColour: "#BA2EFF",
-                    defaultForegroundColour: "#ffffff",
-                    enableGames: true,
-                    experiments: false,
-                    theme: 0,
-                    hideNSFW: false
-                },
-                profile: {
-                    bio: "",
-                    css: "",
-                    links: {
-                        website: "",
-                        github: "",
-                        gitlab: "",
-                        twitter: "",
-                        instagram: "",
-                        snapchat: ""
+            await global.db.collection<delUser>("users").insertOne(
+                newUserRecord({
+                    _id: req.user.id,
+                    auth: {
+                        accessToken: req.user.accessToken,
+                        refreshToken: req.user.refreshToken,
+                        expires: Date.now() + req.user.expires_in * 1000,
+                        scopes
+                    },
+                    name: req.user.username,
+                    discrim: req.user.discriminator,
+                    fullUsername: grabFullUser(req.user),
+                    locale: req.user.locale,
+                    flags: req.user.flags,
+                    avatar: {
+                        hash: req.user.avatar,
+                        url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
                     }
-                },
-                game: {
-                    snakes: {
-                        maxScore: 0
-                    }
-                },
-                rank: {
-                    admin: false,
-                    assistant: false,
-                    mod: false,
-                    premium: false,
-                    tester: false,
-                    translator: false,
-                    covid: false
-                },
-                staffTracking: {
-                    details: {
-                        away: {
-                            status: false,
-                            message: ""
-                        },
-                        standing: "Unmeasured",
-                        country: "",
-                        timezone: "",
-                        managementNotes: "",
-                        languages: []
-                    },
-                    lastLogin: 0,
-                    lastAccessed: {
-                        time: 0,
-                        page: ""
-                    },
-                    punishments: {
-                        strikes: [],
-                        warnings: []
-                    },
-                    handledBots: handleDefault,
-                    handledServers: handleDefault,
-                    handledTemplates: handleDefault
-                }
-            } satisfies delUser);
+                })
+            );
         } else {
             const importUser = {
                 auth: {

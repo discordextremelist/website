@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "del-website",
-  "version": "5.7.0-Alpha.1",
+  "version": "5.7.0-Alpha.2",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
   "main": "src/app.ts",
   "directories": {

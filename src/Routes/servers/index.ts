@@ -22,7 +22,7 @@ import * as permission from "../../Util/Middleware/permissions.ts";
 import { reasonType } from "../../Util/Function/staff/audit.ts";
 import type { ParamsDictionary } from "express-serve-static-core";
 import type { ParsedQs } from "qs";
-import { GetSubmitServer, PostSubmitServer } from "./_id/submit.ts";
+import { GetSubmitServer, PostSubmitServer } from "./submit.ts";
 import { GetServer } from "./_id/get.ts";
 import { ServerSrc, ReportServer } from "./_id/src.ts";
 import { GetEditServer, PostEditServer } from "./_id/edit.ts";

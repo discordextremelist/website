@@ -17,11 +17,11 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { AuthedPathRoute, PathRoute } from "../../route.ts";
+import { AuthedPathRoute, PathRoute } from "../route.ts";
 import type { Request, Response } from "express";
-import { variables } from "../../../Util/Middleware/variables.ts";
-import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as userCache from "../../../Util/Services/cache/userCaching.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import * as userCache from "../../Util/Services/cache/userCaching.ts";
 
 export class GetSnake extends AuthedPathRoute<"get"> {
     constructor() {

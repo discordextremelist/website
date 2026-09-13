@@ -17,22 +17,22 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { AuthedPathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../route.ts";
 import type { Response } from "express";
-import * as discord from "../../../Util/Services/discord/index.ts";
-import * as permission from "../../../Util/Middleware/permissions.ts";
-import { listingCodeError } from "../../../Util/Function/listings/listingCode.ts";
-import * as templateCache from "../../../Util/Services/cache/templateCaching.ts";
-import { variables } from "../../../Util/Middleware/variables.ts";
+import * as discord from "../../Util/Services/discord/index.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import { listingCodeError } from "../../Util/Function/listings/listingCode.ts";
+import * as templateCache from "../../Util/Services/cache/templateCaching.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
 import type { APITemplate, DiscordAPIError } from "discord.js";
 import { RESTJSONErrorCodes, Routes } from "discord.js";
-import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
-import { communityTags } from "../../../Util/Function/servers/serverListing.ts";
+import { logListingEvent } from "../../Util/Function/listings/websiteLog.ts";
+import { communityTags } from "../../Util/Function/servers/serverListing.ts";
 import {
     discordErrorJson,
     jsonError
-} from "../../../Util/Function/web/responses.ts";
-import { submittedTemplate } from "../../../Util/Function/templates/templateRecords.ts";
+} from "../../Util/Function/web/responses.ts";
+import { submittedTemplate } from "../../Util/Function/templates/templateRecords.ts";
 
 export class GetSubmitTemplate extends AuthedPathRoute<"get"> {
     constructor() {

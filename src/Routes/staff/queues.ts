@@ -17,13 +17,13 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { AuthedPathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../route.ts";
 import type { Response } from "express";
-import settings from "../../../../settings.json" with { type: "json" };
-import * as permission from "../../../Util/Middleware/permissions.ts";
-import { parseScopes } from "../../../Util/Function/listings/listing.ts";
-import { variables } from "../../../Util/Middleware/variables.ts";
-import * as discord from "../../../Util/Services/discord/index.ts";
+import settings from "../../../settings.json" with { type: "json" };
+import * as permission from "../../Util/Middleware/permissions.ts";
+import { parseScopes } from "../../Util/Function/listings/listing.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import * as discord from "../../Util/Services/discord/index.ts";
 
 export class BotQueue extends AuthedPathRoute<"get"> {
     constructor() {

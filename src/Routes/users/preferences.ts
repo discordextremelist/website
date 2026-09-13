@@ -17,13 +17,13 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { AuthedPathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../route.ts";
 import type { Response } from "express";
-import { variables } from "../../../Util/Middleware/variables.ts";
-import * as permission from "../../../Util/Middleware/permissions.ts";
-import { getForeground } from "../../../Util/Function/common/format.ts";
-import * as userCache from "../../../Util/Services/cache/userCaching.ts";
-import { themes } from "../../../../@types/enums.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import { getForeground } from "../../Util/Function/common/format.ts";
+import * as userCache from "../../Util/Services/cache/userCaching.ts";
+import { themes } from "../../../@types/enums.ts";
 import entities from "html-entities";
 
 export class GetPreferences extends AuthedPathRoute<"get"> {

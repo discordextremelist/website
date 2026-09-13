@@ -1,28 +1,28 @@
-import { AuthedPathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../route.ts";
 import e from "express";
-import { variables } from "../../../Util/Middleware/variables.ts";
-import * as permission from "../../../Util/Middleware/permissions.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
 import {
     type APIApplication,
     type DiscordAPIError,
     OAuth2Scopes,
     RESTJSONErrorCodes
 } from "discord.js";
-import * as libraryCache from "../../../Util/Services/cache/libCaching.ts";
-import * as discord from "../../../Util/Services/discord/index.ts";
+import * as libraryCache from "../../Util/Services/cache/libCaching.ts";
+import * as discord from "../../Util/Services/discord/index.ts";
 
-import * as botCache from "../../../Util/Services/cache/botCaching.ts";
-import { blacklistCheck } from "../../../Util/Services/access/blacklist.ts";
-import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import * as botCache from "../../Util/Services/cache/botCaching.ts";
+import { blacklistCheck } from "../../Util/Services/access/blacklist.ts";
+import { logListingEvent } from "../../Util/Function/listings/websiteLog.ts";
 import {
     discordErrorJson,
     jsonError
-} from "../../../Util/Function/web/responses.ts";
-import { validateBotListing } from "../../../Util/Function/bots/botListing.ts";
+} from "../../Util/Function/web/responses.ts";
+import { validateBotListing } from "../../Util/Function/bots/botListing.ts";
 import {
     submittedBot,
     submittedBotAudit
-} from "../../../Util/Function/bots/botRecords.ts";
+} from "../../Util/Function/bots/botRecords.ts";
 
 export class GetSubmit extends AuthedPathRoute<"get"> {
     constructor() {

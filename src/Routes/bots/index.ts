@@ -1,6 +1,6 @@
 import express, { type Request, type Response, type Router } from "express";
 import * as permission from "../../Util/Middleware/permissions.ts";
-import { GetSubmit, PostSubmit } from "./_id/submit.ts";
+import { GetSubmit, PostSubmit } from "./submit.ts";
 import { GetBot } from "./_id/get.ts";
 import { TransferOwner } from "./_id/transfer_owner.ts";
 import { SetVanity } from "./_id/set_vanity.ts";

@@ -17,12 +17,12 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { AuthedPathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../route.ts";
 import type { Response } from "express";
-import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as userCache from "../../../Util/Services/cache/userCaching.ts";
-import { variables } from "../../../Util/Middleware/variables.ts";
-import { ownedListings } from "../../../Util/Function/users/ownedListings.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import * as userCache from "../../Util/Services/cache/userCaching.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import { ownedListings } from "../../Util/Function/users/ownedListings.ts";
 
 let cutoff = new Date(2025, 0, 1); // 01/01/2025
 const ranks: (keyof delUser["rank"])[] = [

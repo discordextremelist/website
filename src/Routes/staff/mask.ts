@@ -17,15 +17,15 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { AuthedPathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../route.ts";
 import type { Response } from "express";
 import type { APIUser, Snowflake } from "discord.js";
 import { Routes } from "discord.js";
-import * as permission from "../../../Util/Middleware/permissions.ts";
-import { grabFullUser } from "../../../Util/Function/common/format.ts";
-import { newUserRecord } from "../../../Util/Function/users/userRecords.ts";
-import { variables } from "../../../Util/Middleware/variables.ts";
-import * as discord from "../../../Util/Services/discord/index.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import { grabFullUser } from "../../Util/Function/common/format.ts";
+import { newUserRecord } from "../../Util/Function/users/userRecords.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import * as discord from "../../Util/Services/discord/index.ts";
 
 export class MaskUser extends AuthedPathRoute<"get"> {
     constructor() {

@@ -18,17 +18,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import express, { type Router } from "express";
-import { StaffHome } from "./_id/home.ts";
-import { BotQueue, ServerQueue, InviteQueue } from "./_id/queues.ts";
-import { AuditLog } from "./_id/audit.ts";
-import { StaffManager } from "./_id/staff_manager.ts";
-import { GetAway, PostAway, ResetAway } from "./_id/away.ts";
-import { GetStanding, PostStanding } from "./_id/standing.ts";
-import { GetWarn, PostWarn, GetStrike, PostStrike } from "./_id/punish.ts";
-import { GetAnnounce, PostAnnounce, ResetAnnounce } from "./_id/announce.ts";
-import { MaskUser } from "./_id/mask.ts";
-import { UploadBots, UploadServers, UploadTemplates } from "./_id/upload.ts";
-import { GetPurge, PostPurge } from "./_id/purge.ts";
+import { StaffHome } from "./home.ts";
+import { BotQueue, ServerQueue, InviteQueue } from "./queues.ts";
+import { AuditLog } from "./audit.ts";
+import { StaffManager } from "./staff_manager.ts";
+import { GetAway, PostAway, ResetAway } from "./away.ts";
+import { GetStanding, PostStanding } from "./standing.ts";
+import { GetWarn, PostWarn, GetStrike, PostStrike } from "./punish.ts";
+import { GetAnnounce, PostAnnounce, ResetAnnounce } from "./announce.ts";
+import { MaskUser } from "./mask.ts";
+import { UploadBots, UploadServers, UploadTemplates } from "./upload.ts";
+import { GetPurge, PostPurge } from "./purge.ts";
 
 export const initStaffRoutes = (): Router => {
     const router = express.Router();

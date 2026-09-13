@@ -17,11 +17,11 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { AuthedPathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../route.ts";
 import type { Response } from "express";
-import * as permission from "../../../Util/Middleware/permissions.ts";
-import { variables } from "../../../Util/Middleware/variables.ts";
-import { userExists } from "../../../Util/Middleware/checks.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import { userExists } from "../../Util/Middleware/checks.ts";
 
 // What differs between a warning and a strike.
 const PUNISHMENTS = {

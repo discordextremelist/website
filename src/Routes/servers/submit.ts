@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { AuthedPathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../route.ts";
 import type { Response } from "express";
 import type {
     APIInvite,
@@ -25,22 +25,22 @@ import type {
     RESTGetAPIInviteQuery
 } from "discord.js";
 import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
-import * as discord from "../../../Util/Services/discord/index.ts";
-import * as permission from "../../../Util/Middleware/permissions.ts";
-import { listingCodeError } from "../../../Util/Function/listings/listingCode.ts";
-import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
-import { variables } from "../../../Util/Middleware/variables.ts";
-import { tagHandler, reviewRequired } from "../index.ts";
-import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
-import { serverListingErrors } from "../../../Util/Function/servers/serverListing.ts";
+import * as discord from "../../Util/Services/discord/index.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import { listingCodeError } from "../../Util/Function/listings/listingCode.ts";
+import * as serverCache from "../../Util/Services/cache/serverCaching.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import { tagHandler, reviewRequired } from "./index.ts";
+import { logListingEvent } from "../../Util/Function/listings/websiteLog.ts";
+import { serverListingErrors } from "../../Util/Function/servers/serverListing.ts";
 import {
     discordErrorJson,
     jsonError
-} from "../../../Util/Function/web/responses.ts";
+} from "../../Util/Function/web/responses.ts";
 import {
     submittedServer,
     submittedServerAudit
-} from "../../../Util/Function/servers/serverRecords.ts";
+} from "../../Util/Function/servers/serverRecords.ts";
 
 export class GetSubmitServer extends AuthedPathRoute<"get"> {
     constructor() {

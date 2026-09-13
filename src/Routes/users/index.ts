@@ -28,18 +28,18 @@ import {
     GetSnakeLeaderboard,
     GetProfileSnakes,
     PostProfileSnakes
-} from "./_id/game.ts";
+} from "./game.ts";
 import {
     GetPreferences,
     PostPreferences,
     ResetPreferences
-} from "./_id/preferences.ts";
+} from "./preferences.ts";
 import {
     GetAccountData,
     RequestAccountData,
     DeleteOwnAccountData,
     DeleteUserAccountData
-} from "./_id/data.ts";
+} from "./data.ts";
 
 export const initUserRoutes = (): Router => {
     const router = express.Router();

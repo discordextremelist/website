@@ -17,14 +17,14 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { AuthedPathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../route.ts";
 import type { Response } from "express";
-import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as functions from "../../../Util/Function/web/viewHelpers.ts";
-import { variables } from "../../../Util/Middleware/variables.ts";
-import type { Nullable } from "../../../Util/Function/common/types.ts";
-import { userExists } from "../../../Util/Middleware/checks.ts";
-import { STANDINGS } from "../../../Util/Function/staff/staff.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import * as functions from "../../Util/Function/web/viewHelpers.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import type { Nullable } from "../../Util/Function/common/types.ts";
+import { userExists } from "../../Util/Middleware/checks.ts";
+import { STANDINGS } from "../../Util/Function/staff/staff.ts";
 
 export class GetStanding extends AuthedPathRoute<"get"> {
     constructor() {

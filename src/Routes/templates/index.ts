@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import express, { type Router } from "express";
 import * as permission from "../../Util/Middleware/permissions.ts";
-import { GetSubmitTemplate, PostSubmitTemplate } from "./_id/submit.ts";
+import { GetSubmitTemplate, PostSubmitTemplate } from "./submit.ts";
 import { GetTemplate } from "./_id/get.ts";
 import { TemplateSrc, ReportTemplate } from "./_id/src.ts";
 import { GetEditTemplate, PostEditTemplate } from "./_id/edit.ts";

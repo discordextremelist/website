@@ -17,16 +17,16 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { AuthedPathRoute } from "../../route.ts";
+import { AuthedPathRoute } from "../route.ts";
 import type { Response } from "express";
-import { variables } from "../../../Util/Middleware/variables.ts";
-import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as userCache from "../../../Util/Services/cache/userCaching.ts";
-import { renderStatus } from "../../../Util/Function/web/responses.ts";
+import { variables } from "../../Util/Middleware/variables.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import * as userCache from "../../Util/Services/cache/userCaching.ts";
+import { renderStatus } from "../../Util/Function/web/responses.ts";
 import {
     deleteListings,
     ownedListings
-} from "../../../Util/Function/users/ownedListings.ts";
+} from "../../Util/Function/users/ownedListings.ts";
 
 export class GetAccountData extends AuthedPathRoute<"get"> {
     constructor() {

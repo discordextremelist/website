@@ -7,12 +7,9 @@ import {
 } from "../../../Util/Middleware/permissions.ts";
 import e from "express";
 import * as botCache from "../../../Util/Services/botCaching.ts";
-import * as Discord from "discord.js";
-import settings from "../../../../settings.json" with { type: "json" };
-import * as discord from "../../../Util/Services/discord.ts";
-import { escapeFormatting } from "../../../Util/Function/format.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { jsonErrorMessage } from "../../../Util/Function/responses.ts";
+import { sendSource } from "../../../Util/Function/adminSource.ts";
+import { sendReport } from "../../../Util/Function/report.ts";
 
 export class SrcRoute extends AuthedPathRoute<"get"> {
     constructor() {
@@ -20,15 +17,7 @@ export class SrcRoute extends AuthedPathRoute<"get"> {
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        if (req.params.id === "@me") {
-            if (!req.user) return res.redirect("/auth/login");
-            req.params.id = req.user.id;
-        }
-        const cache = await botCache.getBot(req.params.id);
-        const db = await global.db
-            .collection("bots")
-            .findOne({ _id: req.params.id });
-        res.json({ cache: cache, db: db });
+        return sendSource(req, res, "bots", botCache.getBot);
     }
 }
 
@@ -38,48 +27,6 @@ export class ReportRoute extends AuthedPathRoute<"post"> {
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
-        const bot = req.attached.bot!;
-        if (bot.owner.id === req.user.id)
-            return jsonErrorMessage(
-                res,
-                403,
-                res.__("common.error.report.self")
-            );
-
-        try {
-            const embed = new Discord.EmbedBuilder();
-            embed.setColor(0x2f3136);
-            embed.setTitle("Bot Report");
-            embed.setURL(`${settings.website.url}/bots/${bot._id}`);
-            embed.addFields(
-                {
-                    name: "Reason",
-                    value: req.body.reason ? req.body.reason : "None provided."
-                },
-                {
-                    name: "Additional information",
-                    value: req.body.additionalInfo
-                        ? req.body.additionalInfo
-                        : "None provided."
-                }
-            );
-
-            await discord.channels.alerts.send({
-                content: `${settings.emoji.report} **${escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${req.user.id})\` reported bot **${escapeFormatting(
-                    bot.name
-                )}** \`(${bot._id})\``,
-                embeds: [embed]
-            });
-
-            return res.status(200).json({
-                error: false,
-                status: 200,
-                message: res.__("common.report.done")
-            });
-        } catch (e) {
-            return jsonErrorMessage(res, 500, res.__("common.error.report"));
-        }
+        return sendReport(req, res, req.attached.bot!, "bot");
     }
 }

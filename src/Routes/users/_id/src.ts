@@ -22,6 +22,7 @@ import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
+import { sendSource } from "../../../Util/Function/adminSource.ts";
 
 export class UserSrc extends AuthedPathRoute<"get"> {
     constructor() {
@@ -34,18 +35,7 @@ export class UserSrc extends AuthedPathRoute<"get"> {
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        if (req.params.id === "@me") {
-            if (!req.user) return res.redirect("/auth/login");
-            req.params.id = req.user.id;
-        }
-
-        const cache: delUser | null = await userCache.getUser(req.params.id);
-
-        const db: delUser | null = await global.db
-            .collection<delUser>("users")
-            .findOne({ _id: req.params.id });
-
-        return res.json({ cache: cache, db: db });
+        return sendSource(req, res, "users", userCache.getUser);
     }
 }
 

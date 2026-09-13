@@ -19,14 +19,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import settings from "../../../../settings.json" with { type: "json" };
-import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import { escapeFormatting } from "../../../Util/Function/format.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { EmbedBuilder } from "discord.js";
 import { jsonErrorMessage } from "../../../Util/Function/responses.ts";
+import { sendSource } from "../../../Util/Function/adminSource.ts";
+import { sendReport } from "../../../Util/Function/report.ts";
 
 export class TemplateSrc extends AuthedPathRoute<"get"> {
     constructor() {
@@ -39,17 +37,7 @@ export class TemplateSrc extends AuthedPathRoute<"get"> {
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        if (req.params.id === "@me") {
-            if (!req.user) return res.redirect("/auth/login");
-            req.params.id = req.user.id;
-        }
-
-        const cache = await templateCache.getTemplate(req.params.id);
-        const db = await global.db
-            .collection("templates")
-            .findOne({ _id: req.params.id });
-
-        return res.json({ cache: cache, db: db });
+        return sendSource(req, res, "templates", templateCache.getTemplate);
     }
 }
 
@@ -64,49 +52,6 @@ export class ReportTemplate extends AuthedPathRoute<"post"> {
         if (!template)
             return jsonErrorMessage(res, 404, res.__("common.error.bot.404"));
 
-        if (template.owner.id === req.user.id)
-            return jsonErrorMessage(
-                res,
-                403,
-                res.__("common.error.report.self")
-            );
-
-        try {
-            const embed = new EmbedBuilder();
-            embed.setColor(0x2f3136);
-            embed.setTitle("Template Report");
-            embed.setURL(`${settings.website.url}/bots/${template._id}`);
-            embed.addFields(
-                {
-                    name: "Reason",
-                    value: req.body.reason ? req.body.reason : "None provided."
-                },
-                {
-                    name: "Additional information",
-                    value: req.body.additionalInfo
-                        ? req.body.additionalInfo
-                        : "None provided."
-                }
-            );
-
-            await discord.channels.alerts.send({
-                content: `${settings.emoji.report} **${escapeFormatting(
-                    req.user.db.fullUsername
-                )}** \`(${
-                    req.user.id
-                })\` reported template **${escapeFormatting(
-                    template.name
-                )}** \`(${template._id})\``,
-                embeds: [embed]
-            });
-
-            return res.status(200).json({
-                error: false,
-                status: 200,
-                message: res.__("common.report.done")
-            });
-        } catch (e) {
-            return jsonErrorMessage(res, 500, res.__("common.error.report"));
-        }
+        return sendReport(req, res, template, "template");
     }
 }

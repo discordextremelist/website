@@ -38,83 +38,54 @@ type strippableTemplate = Strippable<delTemplate, featuredTemplate> & {
     links: Strippable<delTemplate["links"], featuredTemplate["links"]>;
 };
 
-// Each returns null until its cache has been filled after startup.
-
-export async function getFeaturedBots(): Promise<featuredBot[] | null> {
-    const bots = await global.redis?.get("featured_bots");
-    return bots === null ? null : JSON.parse(bots);
+/** A cached featured list, or null until it has been filled after startup. */
+async function readFeatured<T>(key: string): Promise<T[] | null> {
+    const cached = await global.redis?.get(key);
+    return cached === null ? null : JSON.parse(cached);
 }
 
-export async function getFeaturedSFWBots(): Promise<featuredBot[] | null> {
-    const bots = await global.redis?.get("featured_sfw_bots");
-    return bots === null ? null : JSON.parse(bots);
+export const getFeaturedBots = () => readFeatured<featuredBot>("featured_bots");
+export const getFeaturedSFWBots = () =>
+    readFeatured<featuredBot>("featured_sfw_bots");
+export const getFeaturedServers = () =>
+    readFeatured<featuredServer>("featured_servers");
+export const getFeaturedTemplates = () =>
+    readFeatured<featuredTemplate>("featured_templates");
+
+/** Drop the fields a featured bot is cached without. */
+function stripBot(bot: strippableBot) {
+    delete bot.clientID;
+    delete bot.prefix;
+    delete bot.library;
+    delete bot.tags;
+    delete bot.serverCount;
+    delete bot.shardCount;
+    delete bot.token;
+    delete bot.longDesc;
+    delete bot.modNotes;
+    delete bot.editors;
+    delete bot.owner;
+    delete bot.votes;
+    delete bot.links.support;
+    delete bot.links.website;
+    delete bot.links.donation;
+    delete bot.links.repo;
+    delete bot.links.privacyPolicy;
+    delete bot.social;
+    delete bot.theme;
+    delete bot.widgetbot;
 }
 
-export async function getFeaturedServers(): Promise<featuredServer[] | null> {
-    const servers = await global.redis?.get("featured_servers");
-    return servers === null ? null : JSON.parse(servers);
-}
-
-export async function getFeaturedTemplates(): Promise<
-    featuredTemplate[] | null
-> {
-    const templates = await global.redis?.get("featured_templates");
-    return templates === null ? null : JSON.parse(templates);
-}
-
-export async function updateFeaturedBots() {
-    const statuses = (await global.redis?.hgetall("statuses")) as Record<
-        string,
-        PresenceUpdateStatus
-    >;
-    const bots: strippableBot[] = shuffleArray(
-        (
-            (await global.db
-                .collection<delBot>("bots")
-                .find()
-                .toArray()) as delBot[]
-        ).filter(
-            ({ _id, status, scopes, userFlags }) =>
-                status.approved &&
-                !status.siteBot &&
-                !status.archived &&
-                !status.hidden &&
-                !status.modHidden &&
-                ((statuses[_id] &&
-                    statuses[_id] !== PresenceUpdateStatus.Offline) ||
-                    !scopes?.bot ||
-                    userFlags === undefined ||
-                    (userFlags && UserFlags.BotHTTPInteractions))
-        )
-    ).slice(0, 6);
-
-    for (const bot of bots) {
-        delete bot.clientID;
-        delete bot.prefix;
-        delete bot.library;
-        delete bot.tags;
-        delete bot.serverCount;
-        delete bot.shardCount;
-        delete bot.token;
-        delete bot.longDesc;
-        delete bot.modNotes;
-        delete bot.editors;
-        delete bot.owner;
-        delete bot.votes;
-        delete bot.links.support;
-        delete bot.links.website;
-        delete bot.links.donation;
-        delete bot.links.repo;
-        delete bot.links.privacyPolicy;
-        delete bot.social;
-        delete bot.theme;
-        delete bot.widgetbot;
-    }
-
-    await global.redis?.set("featured_bots", JSON.stringify(bots));
-}
-
-export async function updateFeaturedSFWBots() {
+/**
+ * Pick up to six listed bots at random for the home page and cache them under
+ * `key`: approved and visible, and online, or with nothing to be online with
+ * (no bot scope, unknown flags, or HTTP interactions). `sfwOnly` leaves out
+ * bots labelled NSFW.
+ *
+ * `userFlags && UserFlags.BotHTTPInteractions` is true for any bot with
+ * flags; the `&` it should be is ISSUES I-15.
+ */
+async function refreshFeaturedBots(key: string, sfwOnly: boolean) {
     const statuses = (await global.redis?.hgetall("statuses")) as Record<
         string,
         PresenceUpdateStatus
@@ -132,7 +103,7 @@ export async function updateFeaturedSFWBots() {
                 !status.archived &&
                 !status.hidden &&
                 !status.modHidden &&
-                !labels?.nsfw &&
+                (!sfwOnly || !labels?.nsfw) &&
                 ((statuses[_id] &&
                     statuses[_id] !== PresenceUpdateStatus.Offline) ||
                     !scopes?.bot ||
@@ -141,31 +112,15 @@ export async function updateFeaturedSFWBots() {
         )
     ).slice(0, 6);
 
-    for (const bot of bots) {
-        delete bot.clientID;
-        delete bot.prefix;
-        delete bot.library;
-        delete bot.tags;
-        delete bot.serverCount;
-        delete bot.shardCount;
-        delete bot.token;
-        delete bot.longDesc;
-        delete bot.modNotes;
-        delete bot.editors;
-        delete bot.owner;
-        delete bot.votes;
-        delete bot.links.support;
-        delete bot.links.website;
-        delete bot.links.donation;
-        delete bot.links.repo;
-        delete bot.links.privacyPolicy;
-        delete bot.social;
-        delete bot.theme;
-        delete bot.widgetbot;
-    }
+    for (const bot of bots) stripBot(bot);
 
-    await global.redis?.set("featured_sfw_bots", JSON.stringify(bots));
+    await global.redis?.set(key, JSON.stringify(bots));
 }
+
+export const updateFeaturedBots = () =>
+    refreshFeaturedBots("featured_bots", false);
+export const updateFeaturedSFWBots = () =>
+    refreshFeaturedBots("featured_sfw_bots", true);
 
 export async function updateFeaturedServers() {
     const servers: strippableServer[] = shuffleArray(

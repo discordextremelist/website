@@ -21,13 +21,12 @@ import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
-import * as botCache from "../../../Util/Services/botCaching.ts";
-import * as serverCache from "../../../Util/Services/serverCaching.ts";
-import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
-import settings from "../../../../settings.json" with { type: "json" };
 import { renderStatus } from "../../../Util/Function/responses.ts";
-import { logWebsiteAction } from "../../../Util/Function/websiteLog.ts";
+import {
+    deleteListings,
+    ownedListings
+} from "../../../Util/Function/ownedListings.ts";
 
 export class GetAccountData extends AuthedPathRoute<"get"> {
     constructor() {
@@ -76,20 +75,11 @@ export class RequestAccountData extends AuthedPathRoute<"get"> {
             .collection<delUser>("users")
             .findOne({ _id: req.user.id }))!;
 
-        const userBotsData: delBot[] = await global.db
-            .collection<delBot>("bots")
-            .find({ "owner.id": req.user.id })
-            .toArray();
-
-        const userServersData: delServer[] = await global.db
-            .collection<delServer>("servers")
-            .find({ "owner.id": req.user.id })
-            .toArray();
-
-        const userTemplateData: delTemplate[] = await global.db
-            .collection<delTemplate>("templates")
-            .find({ "owner.id": req.user.id })
-            .toArray();
+        const {
+            bots: userBotsData,
+            servers: userServersData,
+            templates: userTemplateData
+        } = await ownedListings(req.user.id);
 
         // Leave out auth (the user's login tokens).
         const { auth: _auth, ...userExport } = userData;
@@ -157,91 +147,8 @@ export class DeleteOwnAccountData extends AuthedPathRoute<"post"> {
                 )
             );
 
-        const userBotsData: delBot[] = await global.db
-            .collection<delBot>("bots")
-            .find({ "owner.id": req.user.id })
-            .toArray();
-
-        const userServersData: delServer[] = await global.db
-            .collection<delServer>("servers")
-            .find({ "owner.id": req.user.id })
-            .toArray();
-
-        const userTemplatesData: delTemplate[] = await global.db
-            .collection<delTemplate>("templates")
-            .find({ "owner.id": req.user.id })
-            .toArray();
-
-        // Loops through the user's bots, servers and templates and deletes them from the database.
-        for (const bot of userBotsData) {
-            await global.db.collection("bots").deleteOne({ _id: bot._id });
-
-            await global.db.collection("audit").insertOne({
-                type: "DELETE_BOT",
-                executor: req.user.id,
-                target: bot._id,
-                date: Date.now(),
-                reason: "Owner deleted their data and account."
-            });
-
-            await botCache.deleteBot(bot._id);
-
-            await logWebsiteAction(
-                req,
-                settings.emoji.delete,
-                "deleted bot",
-                bot.name,
-                bot._id
-            );
-        }
-
-        for (const server of userServersData) {
-            await global.db
-                .collection("servers")
-                .deleteOne({ _id: server._id });
-
-            await global.db.collection("audit").insertOne({
-                type: "DELETE_SERVER",
-                executor: req.user.id,
-                target: server._id,
-                date: Date.now(),
-                reason: "Owner deleted their data and account."
-            });
-
-            await serverCache.deleteServer(server._id);
-
-            await logWebsiteAction(
-                req,
-                settings.emoji.delete,
-                "deleted server",
-                server.name,
-                server._id
-            );
-        }
-
-        for (const template of userTemplatesData) {
-            await global.db
-                .collection("templates")
-                .deleteOne({ _id: template._id });
-
-            await global.db.collection("audit").insertOne({
-                type: "DELETE_TEMPLATE",
-                executor: req.user.id,
-                target: template._id,
-                date: Date.now(),
-                reason: "Owner deleted their data and account."
-            });
-
-            await templateCache.deleteTemplate(template._id);
-
-            await logWebsiteAction(
-                req,
-                settings.emoji.delete,
-                "deleted template",
-                template.name,
-                template._id
-            );
-        }
+        // Deletes the user's bots, servers and templates.
+        await deleteListings(req, await ownedListings(req.user.id));
 
         // Deletes the user's account from the database and cache.
         await global.db.collection("users").deleteOne({ _id: req.user.id });
@@ -289,90 +196,11 @@ export class DeleteUserAccountData extends AuthedPathRoute<"post"> {
                     "common.error.account.data.confirmationUsernameIncorrect"
                 )
             );
-        const userBotsData: delBot[] = await global.db
-            .collection<delBot>("bots")
-            .find({ "owner.id": req.params.id })
-            .toArray();
-        const userServersData: delServer[] = await global.db
-            .collection<delServer>("servers")
-            .find({ "owner.id": req.params.id })
-            .toArray();
-        const userTemplatesData: delTemplate[] = await global.db
-            .collection<delTemplate>("templates")
-            .find({ "owner.id": req.params.id })
-            .toArray();
-        console.log(userBotsData, userServersData, userTemplatesData);
+        const listings = await ownedListings(req.params.id);
+        console.log(listings.bots, listings.servers, listings.templates);
 
-        // Loops through the user's bots, servers and templates and deletes them from the database.
-        for (const bot of userBotsData) {
-            await global.db.collection("bots").deleteOne({ _id: bot._id });
-
-            await global.db.collection("audit").insertOne({
-                type: "DELETE_BOT",
-                executor: req.user.id,
-                target: bot._id,
-                date: Date.now(),
-                reason: "Owner deleted their data and account."
-            });
-
-            await botCache.deleteBot(bot._id);
-
-            await logWebsiteAction(
-                req,
-                settings.emoji.delete,
-                "deleted bot",
-                bot.name,
-                bot._id
-            );
-        }
-
-        for (const server of userServersData) {
-            await global.db
-                .collection("servers")
-                .deleteOne({ _id: server._id });
-
-            await global.db.collection("audit").insertOne({
-                type: "DELETE_SERVER",
-                executor: req.user.id,
-                target: server._id,
-                date: Date.now(),
-                reason: "Owner deleted their data and account."
-            });
-
-            await serverCache.deleteServer(server._id);
-
-            await logWebsiteAction(
-                req,
-                settings.emoji.delete,
-                "deleted server",
-                server.name,
-                server._id
-            );
-        }
-
-        for (const template of userTemplatesData) {
-            await global.db
-                .collection("templates")
-                .deleteOne({ _id: template._id });
-
-            await global.db.collection("audit").insertOne({
-                type: "DELETE_TEMPLATE",
-                executor: req.user.id,
-                target: template._id,
-                date: Date.now(),
-                reason: "Owner deleted their data and account."
-            });
-
-            await templateCache.deleteTemplate(template._id);
-
-            await logWebsiteAction(
-                req,
-                settings.emoji.delete,
-                "deleted template",
-                template.name,
-                template._id
-            );
-        }
+        // Deletes the user's bots, servers and templates.
+        await deleteListings(req, listings);
 
         // Deletes the user's account from the database and cache.
         await global.db.collection("users").deleteOne({ _id: req.params.id });

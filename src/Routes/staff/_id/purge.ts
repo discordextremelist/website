@@ -22,6 +22,7 @@ import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/userCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
+import { ownedListings } from "../../../Util/Function/ownedListings.ts";
 
 let cutoff = new Date(2025, 0, 1); // 01/01/2025
 const ranks: (keyof delUser["rank"])[] = [
@@ -63,22 +64,13 @@ export class PostPurge extends AuthedPathRoute<"post"> {
                 console.log(date < cutoff);
                 if (date < cutoff) {
                     // Constraint 1: Less than cutoff date
-                    const userBotsData: delBot[] = await global.db
-                        .collection<delBot>("bots")
-                        .find({ "owner.id": user._id })
-                        .toArray();
-                    const userServersData: delServer[] = await global.db
-                        .collection<delServer>("servers")
-                        .find({ "owner.id": user._id })
-                        .toArray();
-                    const userTemplatesData: delTemplate[] = await global.db
-                        .collection<delTemplate>("templates")
-                        .find({ "owner.id": user._id })
-                        .toArray();
+                    const { bots, servers, templates } = await ownedListings(
+                        user._id
+                    );
                     if (
-                        userBotsData.length < 1 &&
-                        userServersData.length < 1 &&
-                        userTemplatesData.length < 1
+                        bots.length < 1 &&
+                        servers.length < 1 &&
+                        templates.length < 1
                     ) {
                         // Constraint 2: Delete only if no bots, templates, servers
                         const hasNoRanks = ranks.every(

@@ -22,7 +22,7 @@ import type { Request, Response } from "express";
 import settings from "../../../settings.json" with { type: "json" };
 import * as discord from "../Services/discord.ts";
 import * as tokenManager from "../Services/adminTokenManager.ts";
-import { renderStatus } from "../Function/main.ts";
+import { checkRoleHierarchyStaff, renderStatus } from "../Function/main.ts";
 /**
  * Consume the one-shot "just logged out" session flag. If it is set, clear it
  * and send the user home instead of continuing with a stale request.
@@ -120,6 +120,33 @@ export const adminToken = async (
         req.query.token as string
     );
     if (!valid) return res.json({});
+
+    next();
+};
+
+/**
+ * Stop an assistant who isn't an admin from acting on another assistant's
+ * user or staff record. Put it after `userExists`, which attaches the target.
+ */
+export const staffHierarchy = (
+    req: Request,
+    res: Response,
+    next: () => void
+) => {
+    // userExists attached the target, and the rank check before it set
+    // req.user.
+    const target = req.attached.user!;
+
+    if (
+        target.rank.assistant === true &&
+        checkRoleHierarchyStaff(req.user!.db, "assistant", true)
+    )
+        return renderStatus(
+            req,
+            res,
+            403,
+            res.__("page.users.modifyRank.assistantHierachyBlock.0")
+        );
 
     next();
 };

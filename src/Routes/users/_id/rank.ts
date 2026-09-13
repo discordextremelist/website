@@ -31,7 +31,8 @@ export class GetUserRank extends AuthedPathRoute<"get"> {
             variables,
             permission.auth,
             permission.assistant,
-            userExists
+            userExists,
+            permission.staffHierarchy
         ]);
     }
 
@@ -42,18 +43,6 @@ export class GetUserRank extends AuthedPathRoute<"get"> {
             "premid.user.modifyRank",
             targetUser.fullUsername
         );
-
-        if (
-            targetUser.rank.assistant === true &&
-            req.user.db.rank.admin === false &&
-            req.user.db.rank.assistant === true
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("page.users.modifyRank.assistantHierachyBlock.0")
-            );
 
         res.render("templates/users/staffActions/modifyRank", {
             title: res.__("page.users.modifyRank"),
@@ -74,24 +63,13 @@ export class PostUserRank extends AuthedPathRoute<"post"> {
             variables,
             permission.auth,
             permission.assistant,
-            userExists
+            userExists,
+            permission.staffHierarchy
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const targetUser: delUser = req.attached.user!;
-
-        if (
-            targetUser.rank.assistant === true &&
-            req.user.db.rank.admin === false &&
-            req.user.db.rank.assistant === true
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("page.users.modifyRank.assistantHierachyBlock.0")
-            );
 
         let premium = false;
         let tester = false;

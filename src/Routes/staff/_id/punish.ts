@@ -22,8 +22,6 @@ import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { Nullable } from "../../../Util/Function/types.ts";
-import { checkRoleHierarchyStaff } from "../../../Util/Function/main.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
 
 export class GetWarn extends AuthedPathRoute<"get"> {
@@ -31,23 +29,13 @@ export class GetWarn extends AuthedPathRoute<"get"> {
         super("get", "/staff-manager/punish/warn/:id", [
             variables,
             permission.assistant,
-            userExists
+            userExists,
+            permission.staffHierarchy
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
-
-        if (
-            user.rank.assistant === true &&
-            checkRoleHierarchyStaff(req.user.db, "assistant", true)
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("page.users.modifyRank.assistantHierachyBlock.0")
-            );
 
         res.locals.premidPageInfo = res.__(
             "premid.staff.staffManager.warn",
@@ -71,23 +59,13 @@ export class PostWarn extends AuthedPathRoute<"post"> {
         super("post", "/staff-manager/punish/warn/:id", [
             variables,
             permission.assistant,
-            userExists
+            userExists,
+            permission.staffHierarchy
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
-
-        if (
-            user.rank.assistant === true &&
-            checkRoleHierarchyStaff(req.user.db, "assistant", true)
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("page.users.modifyRank.assistantHierachyBlock.0")
-            );
 
         const warnings = user.staffTracking.punishments.warnings;
         warnings.push({
@@ -129,24 +107,13 @@ export class GetStrike extends AuthedPathRoute<"get"> {
         super("get", "/staff-manager/punish/strike/:id", [
             variables,
             permission.assistant,
-            userExists
+            userExists,
+            permission.staffHierarchy
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
-
-        if (
-            user.rank.assistant === true &&
-            req.user.db.rank.admin === false &&
-            req.user.db.rank.assistant === true
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("page.users.modifyRank.assistantHierachyBlock.0")
-            );
 
         res.locals.premidPageInfo = res.__(
             "premid.staff.staffManager.strike",
@@ -170,23 +137,13 @@ export class PostStrike extends AuthedPathRoute<"post"> {
         super("post", "/staff-manager/punish/strike/:id", [
             variables,
             permission.assistant,
-            userExists
+            userExists,
+            permission.staffHierarchy
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
-
-        if (
-            user.rank.assistant === true &&
-            checkRoleHierarchyStaff(req.user.db, "assistant", true)
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("page.users.modifyRank.assistantHierachyBlock.0")
-            );
 
         const strikes = user.staffTracking.punishments.strikes;
         strikes.push({

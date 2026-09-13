@@ -22,8 +22,6 @@ import type { Response } from "express";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { Nullable } from "../../../Util/Function/types.ts";
-import { checkRoleHierarchyStaff } from "../../../Util/Function/main.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
 
 export class GetAway extends AuthedPathRoute<"get"> {
@@ -31,23 +29,13 @@ export class GetAway extends AuthedPathRoute<"get"> {
         super("get", "/staff-manager/away/:id", [
             variables,
             permission.assistant,
-            userExists
+            userExists,
+            permission.staffHierarchy
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
-
-        if (
-            user.rank.assistant === true &&
-            checkRoleHierarchyStaff(req.user.db, "assistant", true)
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("page.users.modifyRank.assistantHierachyBlock.0")
-            );
 
         res.render("templates/staff/staffManagement/away", {
             title: res.__("page.staff.manager.setAway"),
@@ -66,23 +54,13 @@ export class PostAway extends AuthedPathRoute<"post"> {
         super("post", "/staff-manager/away/:id", [
             variables,
             permission.assistant,
-            userExists
+            userExists,
+            permission.staffHierarchy
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const user: delUser | undefined = req.attached.user!;
-
-        if (
-            user.rank.assistant === true &&
-            checkRoleHierarchyStaff(req.user.db, "assistant", true)
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("page.users.modifyRank.assistantHierachyBlock.0")
-            );
 
         res.locals.premidPageInfo = res.__(
             "premid.staff.staffManager.updateAway",
@@ -130,23 +108,13 @@ export class ResetAway extends AuthedPathRoute<"get"> {
         super("get", "/staff-manager/away/:id/reset", [
             variables,
             permission.assistant,
-            userExists
+            userExists,
+            permission.staffHierarchy
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const user: delUser | undefined = req.attached.user!;
-
-        if (
-            user.rank.assistant === true &&
-            checkRoleHierarchyStaff(req.user.db, "assistant", true)
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("page.users.modifyRank.assistantHierachyBlock.0")
-            );
 
         await global.db.collection("users").updateOne(
             { _id: req.params.id },

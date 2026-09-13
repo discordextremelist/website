@@ -102,7 +102,7 @@ export class PostDeclineBot extends AuthedPathRoute<"post"> {
         await botCache.updateBot(req.params.id);
 
         await logListingEvent(req, "bot", "declined", bot, {
-            reason: req.body.reason || "No reason provided."
+            reason: req.body.reason
         });
 
         const member = await discord.getTestingGuildMember(req.params.id);

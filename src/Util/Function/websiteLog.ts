@@ -68,9 +68,9 @@ const listingURL = (kind: Kind, id: string) =>
  * `by` is the acting user's request, shown as their escaped name and ID, or a
  * system name such as "AutoSync System", shown as it is. Pass `reason` (even
  * when it's undefined) for events staff give a reason for; it goes out as a
- * "Reason" embed, linking to the listing if it still exists. `linkId` links
- * the line to another ID than the one shown (bot edit, ISSUES I-33). The line
- * and the embed link to the listing whenever it still exists afterwards.
+ * "Reason" embed ("No reason provided." when it's blank). `linkId` links the
+ * line to another ID than the one shown (bot edit, ISSUES I-33). The line and
+ * the embed link to the listing whenever it still exists afterwards.
  *
  * Server approvals and declines are LGBTQ+ reviews, and say so. Returns the
  * send() promise for the caller to await or catch. Not for the moderator-only
@@ -103,7 +103,7 @@ export function logListingEvent(
         embed = new EmbedBuilder();
         embed.setColor(0x2f3136);
         embed.setTitle("Reason");
-        embed.setDescription(options.reason!);
+        embed.setDescription(options.reason || "No reason provided.");
         if (!gone(kind, event)) embed.setURL(listingURL(kind, listing._id));
         if (lgbtReview && event === "declined")
             embed.setFooter({

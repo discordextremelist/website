@@ -20,6 +20,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import * as crypto from "crypto";
 import { ObjectId } from "mongodb";
 
+/** A new admin token for the user `id`. */
+function newAdminToken(id: string) {
+    return "DELadminKey_" + crypto.randomBytes(16).toString("hex") + `-${id}`;
+}
+
 export async function tokenResetAll() {
     const users: delUser[] = await global.db
         .collection<delUser>("users")
@@ -62,10 +67,7 @@ export async function tokenResetAll() {
                 if (!token) {
                     await global.db.collection<any>("adminTokens").insertOne({
                         _id: user._id,
-                        token:
-                            "DELadminKey_" +
-                            crypto.randomBytes(16).toString("hex") +
-                            `-${user._id}`,
+                        token: newAdminToken(user._id),
                         lastUpdate: Date.now(),
                         validUntil: validUntil
                     });
@@ -74,10 +76,7 @@ export async function tokenResetAll() {
                         { _id: user._id },
                         {
                             $set: {
-                                token:
-                                    "DELadminKey_" +
-                                    crypto.randomBytes(16).toString("hex") +
-                                    `-${user._id}`,
+                                token: newAdminToken(user._id),
                                 lastUpdate: Date.now(),
                                 validUntil: validUntil
                             }
@@ -107,10 +106,7 @@ export async function tokenReset(id: string) {
     if (!token) {
         return await global.db.collection("adminTokens").insertOne({
             _id: new ObjectId(id),
-            token:
-                "DELadminKey_" +
-                crypto.randomBytes(16).toString("hex") +
-                `-${id}`,
+            token: newAdminToken(id),
             lastUpdate: Date.now()
         });
     } else {
@@ -118,10 +114,7 @@ export async function tokenReset(id: string) {
             { _id: id },
             {
                 $set: {
-                    token:
-                        "DELadminKey_" +
-                        crypto.randomBytes(16).toString("hex") +
-                        `-${id}`,
+                    token: newAdminToken(id),
                     lastUpdate: Date.now()
                 }
             }

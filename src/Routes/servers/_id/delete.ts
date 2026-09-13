@@ -24,25 +24,21 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class DeleteServer extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/:id/delete", [variables, permission.auth, serverExists]);
+        super("get", "/:id/delete", [
+            variables,
+            permission.auth,
+            serverExists,
+            permission.ownerOnly("server", "common.error.server.perms.delete")
+        ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const server: delServer | undefined = req.attached.server!;
-
-        if (server.owner.id !== req.user.id)
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.server.perms.delete")
-            );
 
         await discord.channels.logs.send(
             websiteLogMessage(

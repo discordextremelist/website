@@ -189,6 +189,22 @@ export const ownerOrAssistant =
         return renderStatus(req, res, 403, res.__(denied));
     };
 
+/**
+ * Require the logged-in user to own the listing a *Exists check attached as
+ * `kind`. Otherwise render the 403 page with `denied`.
+ */
+export const ownerOnly =
+    (
+        kind: "bot" | "server" | "template",
+        denied: Parameters<Response["__"]>[0]
+    ) =>
+    (req: Request, res: Response, next: () => void) => {
+        // The *Exists check attached the listing, and auth set req.user.
+        if (req.user!.id === req.attached[kind]!.owner.id) return next();
+
+        return renderStatus(req, res, 403, res.__(denied));
+    };
+
 /** adminToken, enforced only in production. */
 export const adminTokenInProd = (
     req: Request,

@@ -6,24 +6,20 @@ import * as discord from "../../../Util/Services/discord.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import * as botCache from "../../../Util/Services/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
 export class ArchiveBot extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/:id/archive", [variables, botExists, permission.auth]);
+        super("get", "/:id/archive", [
+            variables,
+            botExists,
+            permission.auth,
+            permission.ownerOnly("bot", "common.error.bot.perms.notOwner")
+        ]);
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
-        if (!req.user || req.user.id !== bot.owner.id)
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.bot.perms.notOwner"),
-                { user: req.user }
-            );
 
         await discord.channels.logs.send(
             websiteLogMessage(
@@ -61,19 +57,16 @@ export class ArchiveBot extends AuthedPathRoute<"get"> {
 
 export class DeleteBot extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/:id/delete", [variables, botExists, permission.auth]);
+        super("get", "/:id/delete", [
+            variables,
+            botExists,
+            permission.auth,
+            permission.ownerOnly("bot", "common.error.bot.perms.notOwner")
+        ]);
     }
 
     async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
         const bot = req.attached.bot!;
-        if (!req.user || req.user.id !== bot.owner.id)
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.bot.perms.notOwner"),
-                { user: req.user }
-            );
 
         await discord.channels.logs.send(
             websiteLogMessage(

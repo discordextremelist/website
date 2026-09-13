@@ -24,7 +24,6 @@ import * as discord from "../../../Util/Services/discord.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as templateCache from "../../../Util/Services/templateCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
-import { renderStatus } from "../../../Util/Function/main.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
 import { websiteLogMessage } from "../../../Util/Function/main.ts";
 
@@ -33,20 +32,16 @@ export class DeleteTemplate extends AuthedPathRoute<"get"> {
         super("get", "/:id/delete", [
             variables,
             permission.auth,
-            templateExists
+            templateExists,
+            permission.ownerOnly(
+                "template",
+                "common.error.template.perms.delete"
+            )
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         const template: delTemplate | undefined = req.attached.template!;
-
-        if (template.owner.id !== req.user.id)
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.template.perms.delete")
-            );
 
         await discord.channels.logs.send(
             websiteLogMessage(

@@ -1,0 +1,108 @@
+import { AuthedPathRoute } from "../../route.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import { auth, mod } from "../../../Util/Middleware/permissions.ts";
+import { botExists } from "../../../Util/Middleware/checks.ts";
+import e from "express";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
+import settings from "../../../../settings.json" with { type: "json" };
+import * as discord from "../../../Util/Services/discord/index.ts";
+import { renderStatus } from "../../../Util/Function/web/responses.ts";
+import { botType } from "../../../Util/Function/staff/audit.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import {
+    reasonMissing,
+    recordStaffAction
+} from "../../../Util/Function/staff/staffActions.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../../../Util/Function/listings/ownerMessage.ts";
+
+export class GetRemoveBot extends AuthedPathRoute<"get"> {
+    constructor() {
+        super("get", "/:id/remove", [variables, auth, botExists, mod]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        const bot: delBot = req.attached.bot!;
+        if (bot.status.approved === false)
+            return renderStatus(
+                req,
+                res,
+                400,
+                res.__("common.error.bot.inQueue")
+            );
+
+        res.locals.premidPageInfo = res.__("premid.bots.remove", bot.name);
+
+        res.render("templates/bots/staffActions/remove", {
+            title: res.__("page.bots.remove.title"),
+            icon: "trash",
+            subtitle: res.__("page.bots.remove.subtitle", bot.name),
+            req,
+            redirect: `/bots/${bot._id}`
+        });
+    }
+}
+
+export class PostRemoveBot extends AuthedPathRoute<"post"> {
+    constructor() {
+        super("post", "/:id/remove", [variables, auth, botExists, mod]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        const bot = req.attached.bot!;
+        if (bot.status.approved === false)
+            return renderStatus(
+                req,
+                res,
+                400,
+                res.__("common.error.bot.inQueue")
+            );
+
+        if (reasonMissing(req, res)) return;
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    vanityUrl: "",
+                    "status.archived": true,
+                    "status.approved": false
+                }
+            }
+        );
+
+        await recordStaffAction(req.user.id, "Bots", "remove");
+
+        const type = botType(req.body.type);
+
+        await recordAudit({
+            type: "REMOVE_BOT",
+            executor: req.user.id,
+            target: req.params.id,
+            reason: req.body.reason || "None specified.",
+            reasonType: type
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        await logListingEvent(req, "bot", "removed", bot, {
+            reason: req.body.reason
+        });
+
+        const member = await discord.getMember(req.params.id);
+
+        if (member && !settings.website.dev) {
+            await member
+                .kick("Bot has been removed from the website.")
+                .catch((e) => {
+                    console.error(e);
+                });
+        }
+
+        await messageListingOwner(bot.owner.id, "bot", "removed", bot, {
+            reason: req.body.reason
+        });
+
+        res.redirect(`/bots/${bot._id}`);
+    }
+}

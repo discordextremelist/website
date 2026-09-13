@@ -1,0 +1,121 @@
+import { AuthedPathRoute } from "../../route.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
+import e from "express";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
+import * as discord from "../../../Util/Services/discord/index.ts";
+import { renderStatus } from "../../../Util/Function/web/responses.ts";
+import { botType } from "../../../Util/Function/staff/audit.ts";
+import { botExists } from "../../../Util/Middleware/checks.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import {
+    reasonMissing,
+    recordStaffAction
+} from "../../../Util/Function/staff/staffActions.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../../../Util/Function/listings/ownerMessage.ts";
+
+export class GetDeclineBot extends AuthedPathRoute<"get"> {
+    constructor() {
+        super("get", "/:id/decline", [
+            variables,
+            botExists,
+            permission.auth,
+            permission.mod
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        const bot = req.attached.bot!;
+        res.locals.premidPageInfo = res.__("premid.bots.decline", bot.name);
+
+        if (bot.status.approved === true)
+            return renderStatus(
+                req,
+                res,
+                400,
+                res.__("common.error.bot.notInQueue")
+            );
+
+        let redirect = `/bots/${bot._id}`;
+
+        if (req.query.from && req.query.from === "queue")
+            redirect = "/staff/bot_queue";
+
+        res.render("templates/bots/staffActions/remove", {
+            title: res.__("page.bots.decline.title"),
+            icon: "times",
+            subtitle: res.__("page.bots.decline.subtitle", bot.name),
+            req,
+            redirect
+        });
+    }
+}
+
+export class PostDeclineBot extends AuthedPathRoute<"post"> {
+    constructor() {
+        super("post", "/:id/decline", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.mod
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        const bot = req.attached.bot!;
+
+        if (bot.status.approved === true)
+            return renderStatus(
+                req,
+                res,
+                400,
+                res.__("common.error.bot.notInQueue")
+            );
+
+        if (reasonMissing(req, res)) return;
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    vanityUrl: "",
+                    lastDenyReason: req.body.reason,
+                    "status.archived": true
+                }
+            }
+        );
+
+        await recordStaffAction(req.user.id, "Bots", "declined");
+
+        const type = botType(req.body.type);
+
+        await recordAudit({
+            type: "DECLINE_BOT",
+            executor: req.user.id,
+            target: req.params.id,
+            reason: req.body.reason || "None specified.",
+            reasonType: type
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        await logListingEvent(req, "bot", "declined", bot, {
+            reason: req.body.reason
+        });
+
+        const member = await discord.getTestingGuildMember(req.params.id);
+
+        if (member) {
+            await member.kick("Bot's listing has been declined.").catch((e) => {
+                console.error(e);
+            });
+        }
+
+        await messageListingOwner(bot.owner.id, "bot", "declined", bot, {
+            reason: req.body.reason
+        });
+
+        res.redirect("/staff/bot_queue");
+    }
+}

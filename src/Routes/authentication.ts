@@ -22,19 +22,21 @@ import passport from "passport";
 import { Strategy } from "passport-discord";
 import type { VerifyCallback } from "passport-oauth2";
 import refresh from "passport-oauth2-refresh";
-import * as discord from "../Util/Services/discord.ts";
+import * as discord from "../Util/Services/discord/index.ts";
 import type {
     RESTPostOAuth2AccessTokenResult,
     RESTPutAPIGuildMemberJSONBody
 } from "discord.js";
 import { OAuth2Scopes, Routes, DiscordAPIError } from "discord.js";
 import fetch from "node-fetch";
-import * as userCache from "../Util/Services/userCaching.ts";
-import { DAPI } from "../Util/Services/discord.ts";
+import * as userCache from "../Util/Services/cache/userCaching.ts";
+import { DAPI } from "../Util/Services/discord/index.ts";
 
 import settings from "../../settings.json" with { type: "json" };
-import * as tokenManager from "../Util/Services/adminTokenManager.ts";
-import { grabFullUser } from "../Util/Function/main.ts";
+import * as tokenManager from "../Util/Services/access/adminTokenManager.ts";
+import { grabFullUser } from "../Util/Function/common/format.ts";
+import { renderStatus } from "../Util/Function/web/responses.ts";
+import { newUserRecord } from "../Util/Function/users/userRecords.ts";
 
 const router = express.Router();
 
@@ -61,7 +63,8 @@ passport.use(strategy);
 refresh.use(strategy);
 
 passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+// The session holds whatever serializeUser stored, so it's a user object.
+passport.deserializeUser((user, done) => done(null, user as Express.User));
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
@@ -83,7 +86,11 @@ router.get(
         })(req, res, next),
 
     async (req, res, next) => {
-        const user: delUser = await global.db
+        // passport.authenticate above only calls this handler after a
+        // successful login, so this redirect shouldn't run.
+        if (!req.user) return res.redirect("/auth/login");
+
+        const user: delUser | null = await global.db
             .collection<delUser>("users")
             .findOne({ _id: req.user.id });
 
@@ -94,112 +101,26 @@ router.get(
         ).json()) as { scopes: OAuth2Scopes[] };
 
         if (!user) {
-            const handleDefault: delUser["staffTracking"]["handledBots"] = {
-                allTime: {
-                    total: 0,
-                    approved: 0,
-                    unapprove: 0,
-                    declined: 0,
-                    remove: 0,
-                    modHidden: 0
-                },
-                prevWeek: {
-                    total: 0,
-                    approved: 0,
-                    unapprove: 0,
-                    declined: 0,
-                    remove: 0,
-                    modHidden: 0
-                },
-                thisWeek: {
-                    total: 0,
-                    approved: 0,
-                    unapprove: 0,
-                    declined: 0,
-                    remove: 0,
-                    modHidden: 0
-                }
-            };
-
-            await global.db.collection<delUser>("users").insertOne({
-                _id: req.user.id,
-                auth: {
-                    accessToken: req.user.accessToken,
-                    refreshToken: req.user.refreshToken,
-                    expires: Date.now() + req.user.expires_in * 1000,
-                    scopes
-                },
-                name: req.user.username,
-                discrim: req.user.discriminator,
-                fullUsername: grabFullUser(req.user),
-                locale: req.user.locale,
-                flags: req.user.flags,
-                lastDataRequest: null,
-                avatar: {
-                    hash: req.user.avatar,
-                    url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
-                },
-                preferences: {
-                    customGlobalCss: "",
-                    defaultColour: "#BA2EFF",
-                    defaultForegroundColour: "#ffffff",
-                    enableGames: true,
-                    experiments: false,
-                    theme: 0,
-                    hideNSFW: false
-                },
-                profile: {
-                    bio: "",
-                    css: "",
-                    links: {
-                        website: "",
-                        github: "",
-                        gitlab: "",
-                        twitter: "",
-                        instagram: "",
-                        snapchat: ""
+            await global.db.collection<delUser>("users").insertOne(
+                newUserRecord({
+                    _id: req.user.id,
+                    auth: {
+                        accessToken: req.user.accessToken,
+                        refreshToken: req.user.refreshToken,
+                        expires: Date.now() + req.user.expires_in * 1000,
+                        scopes
+                    },
+                    name: req.user.username,
+                    discrim: req.user.discriminator,
+                    fullUsername: grabFullUser(req.user),
+                    locale: req.user.locale,
+                    flags: req.user.flags,
+                    avatar: {
+                        hash: req.user.avatar,
+                        url: `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}`
                     }
-                },
-                game: {
-                    snakes: {
-                        maxScore: 0
-                    }
-                },
-                rank: {
-                    admin: false,
-                    assistant: false,
-                    mod: false,
-                    premium: false,
-                    tester: false,
-                    translator: false,
-                    covid: false
-                },
-                staffTracking: {
-                    details: {
-                        away: {
-                            status: false,
-                            message: ""
-                        },
-                        standing: "Unmeasured",
-                        country: "",
-                        timezone: "",
-                        managementNotes: "",
-                        languages: []
-                    },
-                    lastLogin: 0,
-                    lastAccessed: {
-                        time: 0,
-                        page: ""
-                    },
-                    punishments: {
-                        strikes: [],
-                        warnings: []
-                    },
-                    handledBots: handleDefault,
-                    handledServers: handleDefault,
-                    handledTemplates: handleDefault
-                }
-            } satisfies delUser);
+                })
+            );
         } else {
             const importUser = {
                 auth: {
@@ -219,13 +140,19 @@ router.get(
                 }
             } as delUser;
 
-            if (user.rank.mod === true)
-                importUser["staffTracking.lastLogin"] = Date.now();
-
             await global.db.collection("users").updateOne(
                 { _id: req.user.id },
                 {
-                    $set: importUser
+                    // For mods, also stamp staffTracking.lastLogin. The dotted
+                    // key is Mongo dot-path syntax, so only that nested field
+                    // is set.
+                    $set:
+                        user.rank.mod === true
+                            ? {
+                                  ...importUser,
+                                  "staffTracking.lastLogin": Date.now()
+                              }
+                            : importUser
                 }
             );
         }
@@ -250,14 +177,12 @@ router.get(
                     error.code === 403 &&
                     !req.user.impersonator
                 ) {
-                    return res.status(403).render("status", {
-                        res,
-                        title: res.__("common.error"),
-                        status: 403,
-                        subtitle: res.__("common.error.notMember"),
+                    return renderStatus(
                         req,
-                        type: "Error"
-                    });
+                        res,
+                        403,
+                        res.__("common.error.notMember")
+                    );
                 }
                 return next(error);
             }
@@ -278,9 +203,13 @@ router.get("/logout", async (req, res, next) => {
             }
             res.redirect(req.session.redirectTo || "/");
         });
-    } else {
+    } else if (req.user?.impersonator) {
+        // An admin ending a /staff/mask session: switch back to their own ID.
         req.user.id = req.user.impersonator;
         req.user.impersonator = undefined;
+        res.redirect("/");
+    } else {
+        // Not logged in (an old tab, or logout clicked twice).
         res.redirect("/");
     }
 });

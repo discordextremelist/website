@@ -1,0 +1,57 @@
+/*
+Discord Extreme List - Discord's unbiased list.
+
+Copyright (C) 2020-2025 Carolina Mitchell, John Burke, Advaith Jagathesan
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+import { AuthedPathRoute } from "../../route.ts";
+import type { Response } from "express";
+import * as permission from "../../../Util/Middleware/permissions.ts";
+import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import { jsonErrorMessage } from "../../../Util/Function/web/responses.ts";
+import { sendSource } from "../../../Util/Function/staff/adminSource.ts";
+import { sendReport } from "../../../Util/Function/listings/report.ts";
+
+export class ServerSrc extends AuthedPathRoute<"get"> {
+    constructor() {
+        super("get", "/:id/src", [
+            variables,
+            permission.auth,
+            permission.admin,
+            permission.adminToken
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: Response) {
+        return sendSource(req, res, "servers", serverCache.getServer);
+    }
+}
+
+export class ReportServer extends AuthedPathRoute<"post"> {
+    constructor() {
+        super("post", "/:id/report", [variables, permission.auth]);
+    }
+
+    async handle(req: AuthedRequest, res: Response) {
+        const server = await serverCache.getServer(req.params.id);
+
+        if (!server)
+            return jsonErrorMessage(res, 404, res.__("common.error.bot.404"));
+
+        return sendReport(req, res, server, "server");
+    }
+}

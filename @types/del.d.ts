@@ -57,7 +57,8 @@ declare global {
         flags: UserFlags;
         lastDataRequest: null | number;
         avatar: {
-            hash: string;
+            /** null when the user has no custom avatar; pages show the default */
+            hash: string | null;
             url: string;
         };
         preferences: {
@@ -213,7 +214,8 @@ declare global {
         };
         /** app icon */
         icon?: {
-            hash: string;
+            /** null when the app has no icon; pages fall back to the avatar */
+            hash: string | null;
             url: string;
         }
         /** @deprecated bot avatar - fallback for `icon` */
@@ -239,6 +241,10 @@ declare global {
         };
         social: {
             twitter: string;
+            mastodon?: string;
+            bluesky?: string;
+            gitlab?: string;
+            forgejo?: string;
         };
         theme: {
             useCustomColour: boolean;
@@ -266,6 +272,7 @@ declare global {
             archived: boolean;
             hidden: boolean;
             modHidden: boolean;
+            blacklist?: boolean;
         };
     }
 
@@ -293,7 +300,8 @@ declare global {
             id: Snowflake;
         };
         icon: {
-            hash: string;
+            /** null when the server has no icon; pages show the default avatar */
+            hash: string | null;
             url: string;
         };
         links: {
@@ -327,7 +335,8 @@ declare global {
         };
         creator: Pick<APIUser, "id" | "username" | "discriminator">;
         icon: {
-            hash: string;
+            /** null when the source server has no icon; pages show the default avatar */
+            hash: string | null;
             url: string;
         };
         links: {
@@ -335,6 +344,57 @@ declare global {
             template: string;
         };
     }
+
+    /** A bot as stored in the home page's featured cache, with private fields removed */
+    type featuredBot = Omit<
+        delBot,
+        | "clientID"
+        | "prefix"
+        | "library"
+        | "tags"
+        | "serverCount"
+        | "shardCount"
+        | "token"
+        | "longDesc"
+        | "modNotes"
+        | "editors"
+        | "owner"
+        | "votes"
+        | "links"
+        | "social"
+        | "theme"
+        | "widgetbot"
+    > & { links: Pick<delBot["links"], "invite"> };
+
+    /** A server as stored in the home page's featured cache, with private fields removed */
+    type featuredServer = Omit<
+        delServer,
+        | "inviteCode"
+        | "longDesc"
+        | "previewChannel"
+        | "owner"
+        | "links"
+        | "status"
+    > & { links: Pick<delServer["links"], "invite"> };
+
+    /** A template as stored in the home page's featured cache, with private fields removed */
+    type featuredTemplate = Omit<
+        delTemplate,
+        | "region"
+        | "locale"
+        | "afkTimeout"
+        | "verificationLevel"
+        | "defaultMessageNotifications"
+        | "explicitContent"
+        | "roles"
+        | "channels"
+        | "usageCount"
+        | "longDesc"
+        | "tags"
+        | "fromGuild"
+        | "owner"
+        | "links"
+    > & { links: Pick<delTemplate["links"], "template"> };
 
     interface auditLog {
         _id: string;
@@ -386,17 +446,18 @@ declare global {
         bot: string;
         history?: string; // Optional field using ? syntax
     }
-    
+
     enum delTicketStatus {
         AwaitingResponse = 0,
         AwaitingFixes = 1,
         Closed = 2
     }
-    
+
     interface delTicket {
         _id: string;
         ids: delTicketIds;
         status: delTicketStatus;
         closureReason?: string;
     }
+
 }

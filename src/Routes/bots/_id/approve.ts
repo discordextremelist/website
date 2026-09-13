@@ -1,0 +1,318 @@
+import { AuthedPathRoute } from "../../route.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
+import e from "express";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
+import settings from "../../../../settings.json" with { type: "json" };
+import * as discord from "../../../Util/Services/discord/index.ts";
+import { renderStatus } from "../../../Util/Function/web/responses.ts";
+import { botType } from "../../../Util/Function/staff/audit.ts";
+import { botExists } from "../../../Util/Middleware/checks.ts";
+import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import {
+    reasonMissing,
+    recordStaffAction
+} from "../../../Util/Function/staff/staffActions.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+import { messageListingOwner } from "../../../Util/Function/listings/ownerMessage.ts";
+
+export class ApproveBot extends AuthedPathRoute<"get"> {
+    constructor() {
+        super("get", "/:id/approve", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.mod
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        const bot = req.attached.bot!;
+
+        if (bot.status.approved === true)
+            return renderStatus(
+                req,
+                res,
+                400,
+                res.__("common.error.bot.alreadyApproved")
+            );
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    "status.approved": true,
+                    "date.approved": Date.now()
+                }
+            }
+        );
+
+        await recordStaffAction(req.user.id, "Bots", "approved");
+
+        await logListingEvent(req, "bot", "approved", bot).catch((e) => {
+            console.error(e);
+        });
+
+        await messageListingOwner(bot.owner.id, "bot", "approved", bot, {
+            note:
+                !bot.scopes || bot.scopes.bot
+                    ? "\n\nYour bot will be added to our server within the next 24 hours."
+                    : ""
+        });
+
+        const mainGuildOwner = await discord.getMember(bot.owner.id);
+        if (mainGuildOwner)
+            mainGuildOwner.roles
+                .add(settings.roles.developer, "User's bot was just approved.")
+                .catch(async (e) => {
+                    console.error(e);
+                    await discord.channels.alerts.send(
+                        `${settings.emoji.error} Failed giving <@${bot.owner.id}> \`${bot.owner.id}\` the role **Bot Developer** upon one of their bots being approved.`
+                    );
+                });
+
+        const mainGuildBot = await discord.getMember(bot._id);
+        if (mainGuildBot)
+            mainGuildBot.roles
+                .add(settings.roles.bot, "Bot was approved on the website.")
+                .catch(async (e) => {
+                    console.error(e);
+                    await discord.channels.alerts.send(
+                        `${settings.emoji.error} Failed giving <@${bot._id}> \`${bot._id}\` the role **Bot** upon being approved on the website.`
+                    );
+                });
+
+        const botStaffServer = await discord.getTestingGuildMember(bot._id);
+        if (botStaffServer)
+            botStaffServer
+                .kick("Bot was approved on the website.")
+                .catch(async (e) => {
+                    console.error(e);
+                    await discord.channels.alerts.send(
+                        `${settings.emoji.error} Failed kicking <@${bot._id}> \`${bot._id}\` from the Testing Server on approval.`
+                    );
+                });
+
+        await recordAudit({
+            type: "APPROVE_BOT",
+            executor: req.user.id,
+            target: req.params.id,
+            reason: "None specified."
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        res.redirect(`/bots/${req.params.id}`);
+    }
+}
+
+export class GivePremiumBot extends AuthedPathRoute<"get"> {
+    constructor() {
+        super("get", "/:id/give-premium", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.assistant
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        const bot = req.attached.bot!;
+
+        if (bot.status.premium === true)
+            return renderStatus(
+                req,
+                res,
+                400,
+                res.__("common.error.bot.alreadyPremium")
+            );
+
+        const botMember = await discord.getMember(bot._id);
+
+        if (botMember)
+            botMember.roles
+                .add(
+                    settings.roles.premiumBot,
+                    "Bot was given premium on the website."
+                )
+                .catch(async (e) => {
+                    console.error(e);
+                    await discord.channels.alerts.send(
+                        `${settings.emoji.error} Failed giving <@${botMember.id}> \`${botMember.id}\` the role **Premium Bot** upon being given premium on the website.`
+                    );
+                });
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    "status.premium": true
+                }
+            }
+        );
+
+        await global.db.collection("users").updateOne(
+            { _id: bot.owner.id },
+            {
+                $set: {
+                    "status.premium": true
+                }
+            }
+        );
+
+        await botCache.updateBot(req.params.id);
+
+        await recordAudit({
+            type: "PREMIUM_BOT_GIVE",
+            executor: req.user.id,
+            target: req.params.id,
+            reason: "None specified."
+        });
+
+        res.redirect(`/bots/${req.params.id}`);
+    }
+}
+
+export class TakePremiumBot extends AuthedPathRoute<"get"> {
+    constructor() {
+        super("get", "/:id/take-premium", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.assistant
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        const bot = req.attached.bot!;
+
+        if (bot.status.premium === false)
+            return renderStatus(
+                req,
+                res,
+                400,
+                res.__("common.error.noPremiumTake")
+            );
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    "status.premium": false
+                }
+            }
+        );
+
+        await botCache.updateBot(req.params.id);
+
+        await recordAudit({
+            type: "PREMIUM_BOT_TAKE",
+            executor: req.user.id,
+            target: req.params.id,
+            reason: "None specified."
+        });
+
+        res.redirect(`/bots/${req.params.id}`);
+    }
+}
+
+export class GetUnapproveBot extends AuthedPathRoute<"get"> {
+    constructor() {
+        super("get", "/:id/unapprove", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.mod
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        const bot = req.attached.bot!;
+
+        if (!bot.status.approved)
+            return renderStatus(
+                req,
+                res,
+                400,
+                res.__("common.error.bot.alreadyNotApproved")
+            );
+
+        res.locals.premidPageInfo = res.__("premid.bots.unapprove", bot.name);
+
+        res.render("templates/bots/staffActions/remove", {
+            title: res.__("page.bots.unapprove.title"),
+            icon: "minus",
+            subtitle: res.__("page.bots.unapprove.subtitle", bot.name),
+            req,
+            redirect: `/bots/${bot._id}`
+        });
+    }
+}
+
+export class PostUnapproveBot extends AuthedPathRoute<"post"> {
+    constructor() {
+        super("post", "/:id/unapprove", [
+            variables,
+            permission.auth,
+            botExists,
+            permission.mod
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        const bot = req.attached.bot!;
+
+        if (!bot.status.approved)
+            return renderStatus(
+                req,
+                res,
+                400,
+                res.__("common.error.bot.inQueue")
+            );
+
+        if (reasonMissing(req, res)) return;
+
+        const type = botType(req.body.type);
+
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    vanityUrl: "",
+                    "status.approved": false,
+                    "date.approved": null
+                }
+            }
+        );
+
+        await recordStaffAction(req.user.id, "Bots", "unapprove");
+
+        await recordAudit({
+            type: "UNAPPROVE_BOT",
+            executor: req.user.id,
+            target: req.params.id,
+            reason: req.body.reason || "None specified.",
+            reasonType: type
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        await logListingEvent(req, "bot", "unapproved", bot, {
+            reason: req.body.reason
+        });
+
+        const member = await discord.getMember(req.params.id);
+
+        if (member && !settings.website.dev) {
+            await member.kick("Bot has been unapproved.").catch((e) => {
+                console.error(e);
+            });
+        }
+
+        await messageListingOwner(bot.owner.id, "bot", "unapproved", bot, {
+            reason: req.body.reason
+        });
+
+        res.redirect(`/bots/${bot._id}`);
+    }
+}

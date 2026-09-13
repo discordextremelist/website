@@ -195,6 +195,14 @@
                                 <span><%= __("page.staff.announcer") %></span>
                             </a>
                         <% } %>
+                        <% if (req.user.db.rank.admin === true) { %>
+                            <a class="navbar-item" href="<%= linkPrefix %>/staff/purge">
+                                <span class="icon iconalign">
+                                    <i class="fad fa-shredder  has-text-red" aria-hidden="true"></i>
+                                </span>
+                                <span class="has-text-red">Purge users</span>
+                            </a>
+                        <% } %>
                     </div>
                 </div>
             <% } %>

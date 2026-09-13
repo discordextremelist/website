@@ -1,0 +1,55 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/nav.ejs") %>
+<%
+let defaultColour = "#BA2EFF";
+let foreground = "#ffffff";
+
+if (req.user) {
+    defaultColour = req.user.db.preferences.defaultColour || "#BA2EFF"
+    foreground = req.user.db.preferences.defaultForegroundColour || "#ffffff"
+}
+%>
+<%- include("../../partials/isDefaultCSS/button.ejs") %>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <% if (usersPurged < 1) { %>
+            <div class="container has-text-centered">
+                <br />
+                <h1 class="title">
+                    <span class="icon is-medium iconalign">
+                        <i aria-hidden="true" class="fad fa-archive has-text-default fa-1x"></i>
+                    </span>
+                    <br />
+                    <span>User purge</span>
+                </h1>
+                <h2 class="subtitle">To purge users inactive before January 1st, 2025. hit the green button. This needs to be run multiple times, 5k entries per run.</h2>
+                <form method="POST">
+                    <button class="button is-success">
+                        <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
+                        <span>Start purge</span>
+                    </button>
+                </form>
+            </div>
+        <% } else { %>
+                <div class="container has-text-centered">
+                    <br />
+                    <h1 class="title">
+                    <span class="icon is-medium iconalign">
+                        <i aria-hidden="true" class="fad fa-archive has-text-default fa-1x"></i>
+                    </span>
+                        <br />
+                        <span>User purge</span>
+                    </h1>
+                    <h2 class="subtitle">Success, <%= usersPurged %> users were purged from the database. Age > 30 days</h2>
+                    <form method="POST">
+                        <button class="button is-success">
+                            <span class="icon"><i aria-hidden="true" class="fas fa-check-circle"></i></span>
+                            <span>Start purge</span>
+                        </button>
+                    </form>
+                </div>
+        <% } %>
+    </div>
+</section>
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<%- include("../../partials/footer.ejs") %>

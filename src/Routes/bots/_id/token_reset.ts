@@ -1,0 +1,54 @@
+import { AuthedPathRoute } from "../../route.ts";
+import { variables } from "../../../Util/Middleware/variables.ts";
+import * as permission from "../../../Util/Middleware/permissions.ts";
+import * as checks from "../../../Util/Middleware/checks.ts";
+import e from "express";
+import crypto from "crypto";
+import * as botCache from "../../../Util/Services/cache/botCaching.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
+
+export class TokenReset extends AuthedPathRoute<"get"> {
+    constructor() {
+        super("get", "/:id/tokenreset", [
+            variables,
+            permission.auth,
+            checks.botExists,
+            permission.ownerOrAssistant(
+                "bot",
+                "common.error.bot.perms.tokenReset"
+            )
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        await global.db.collection("bots").updateOne(
+            { _id: req.params.id },
+            {
+                $set: {
+                    token:
+                        "DELAPI_" +
+                        crypto.randomBytes(16).toString("hex") +
+                        `-${req.params.id}`
+                }
+            }
+        );
+
+        await recordAudit({
+            type: "RESET_BOT_TOKEN",
+            executor: req.user.id,
+            target: req.params.id,
+            reason: "None specified."
+        });
+
+        await botCache.updateBot(req.params.id);
+
+        return res.status(200).render("status", {
+            res,
+            title: res.__("common.success"),
+            subtitle: res.__("common.success.bot.tokenReset"),
+            status: 200,
+            type: "Success",
+            req
+        });
+    }
+}

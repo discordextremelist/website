@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { Db } from "mongodb";
 import { Redis } from "ioredis";
 import strings from "del-i18n/website/en-NZ.json" with { type: "json" };
+import express from "express";
 
 declare global {
     var redis: Redis;
@@ -27,6 +28,9 @@ declare global {
     var libs: library[];
     var db: Db;
     var env_prod: boolean;
+
+    /** A request that has passed `auth` (or a rank check), so `user` is set */
+    type AuthedRequest = express.Request & { user: authUser };
 }
 
 declare module "sanitize-html" {
@@ -58,13 +62,21 @@ declare module "express-serve-static-core" {
             version: string;
             node: string;
         };
+        /** Set to `{}` by the `variables` middleware, then filled by the `*Exists` checks */
+        attached: {
+            bot?: delBot;
+            server?: delServer;
+            template?: delTemplate;
+            // The user named by :id (not the logged-in user, which is req.user).
+            user?: delUser;
+        };
     }
 
     interface Response {
         session: any;
         user: any;
         /** get i18n string
-         * 
+         *
          * https://github.com/discordextremelist/i18n/tree/master/website
          * https://translate.discordextremelist.xyz
          */

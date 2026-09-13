@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "del-website",
-  "version": "5.7.0-Alpha.1",
+  "version": "5.7.0-Alpha.2",
   "description": "Discord Extreme List, Discord's unbiased list! Official source code for the DEL v5 website!",
   "main": "src/app.ts",
   "directories": {
@@ -41,6 +41,7 @@
     "mongodb": "^4.17.2",
     "morgan": "~1.10.0",
     "node-fetch": "^2.7.0",
+    "node-vibrant": "^4.0.3",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",
     "passport-oauth2-refresh": "^2.1.0",
@@ -72,12 +73,14 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "check": "tsc --noEmit",
+    "dev": "nodemon --exec \"NODE_ENV=development pnpm start\" --ext \".ts\"",
     "start": "node --max-old-space-size=4096 --experimental-transform-types --import ./src/instrument.ts ./src/app.ts",
-    "postinstall": "mkdir -p ./data && tsc node_modules/lib-comparison/libs.ts && cp node_modules/lib-comparison/libs.js ./data/libs.js",
+    "postinstall": "mkdir -p ./data && tsc --declaration node_modules/lib-comparison/libs.ts && cp node_modules/lib-comparison/libs.js node_modules/lib-comparison/libs.d.ts ./data/",
     "css-compile": "sass --no-source-map assets/Sass/themes/black.scss:assets/Public/css/themes/black.css assets/Sass/themes/dark.scss:assets/Public/css/themes/dark.css assets/Sass/themes/light.scss:assets/Public/css/themes/light.css assets/Sass/components/listing.scss:assets/Public/css/listing.css --style=compressed",
     "snyk-protect": "snyk-protect",
     "prepare": "pnpm run snyk-protect",
-    "pretty": "npx prettier --write src/",
+    "pretty": "pnpx prettier --write src/",
     "sentry:build": "rm -rf dist/ && tsc",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org=delly --project=website --release=$npm_package_version ./dist && sentry-cli sourcemaps upload --org=delly --project=website --release=$npm_package_version ./dist",
     "i18n:reinstall": "pnpm remove del-i18n && pnpm i discordextremelist/i18n --save"

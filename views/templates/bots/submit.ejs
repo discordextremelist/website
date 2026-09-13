@@ -55,11 +55,11 @@
         <article id="errors" style="display: none;" class="message is-danger">
             <div class="message-body content has-background-primary">
                 <ul id="errorList" style="margin-top: unset;">
-                    
+
                 </ul>
             </div>
         </article>
-        
+
         <form method="POST">
             <h3 class="is-size-3 has-text-default">
                 <%= __("page.form.category.generalInfo") %>
@@ -275,6 +275,42 @@
                 <label class="label has-text-default"><%= __("common.social.twitter") %></label>
                 <p class="control has-icons-left has-icons-right">
                     <input id="form_twitter" class="input is-rounded" type="text" name="twitter" placeholder="Y" maxlength="15">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="far fa-at"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field">
+                <label class="label has-text-default"><%= __("common.social.mastodon") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input id="form_mastodon" class="input is-rounded" type="text" name="mastodon" placeholder="@del@discordextremelist.xyz" pattern="@[A-Za-z0-9\.]+@[A-Za-z0-9\.]+">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="far fa-at"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field">
+                <label class="label has-text-default"><%= __("common.social.bluesky") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input id="form_bluesky" class="input is-rounded" type="text" name="bluesky" placeholder="@discordextremelist.xyz"  pattern="@[A-Za-z0-9\.]+">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="far fa-at"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field">
+                <label class="label has-text-default"><%= __("common.social.gitlab") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input id="form_gitlab" class="input is-rounded" type="text" name="gitlab" placeholder="https://gitlab.com/example" pattern="https://[A-Za-z0-9\.]+/[A-Za-z0-9\._-]+">
+                    <span class="icon is-small is-left">
+                        <i aria-hidden="true" class="far fa-at"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field">
+                <label class="label has-text-default"><%= __("common.social.forgejo") %></label>
+                <p class="control has-icons-left has-icons-right">
+                    <input id="form_forgejo" class="input is-rounded" type="text" name="forgejo" placeholder="Y" pattern="https://[A-Za-z0-9\.]+/[A-Za-z0-9\._-]+">
                     <span class="icon is-small is-left">
                         <i aria-hidden="true" class="far fa-at"></i>
                     </span>
@@ -574,8 +610,8 @@ function doSubmit() {
     async function fetchPOST(url = '', data = {}) {
             const response = await fetch(url, {
                 method: "POST",
-                mode: "cors", 
-                cache: "no-cache", 
+                mode: "cors",
+                cache: "no-cache",
                 credentials: "same-origin",
                 headers: {
                     "Content-Type": "application/json"
@@ -609,7 +645,7 @@ function doSubmit() {
 
             ai: document.getElementById("form_aiLabelSwitch").checked,
             nsfw: document.getElementById("form_nsfwLabelSwitch").checked,
-            
+
             shortDescription: document.getElementById("form_shortDescription").value,
             longDescription: document.getElementById("longDesc").value,
 
@@ -621,9 +657,16 @@ function doSubmit() {
             repo: document.getElementById("form_repo").value,
             invite: document.getElementById("form_invite").value,
 
+            // New socials are below
+            mastodon: document.getElementById("form_mastodon").value,
+            bluesky: document.getElementById("form_bluesky").value,
+            gitlab: document.getElementById("form_gitlab").value,
+            forgejo: document.getElementById("form_forgejo").value,
+
+
             twitter: document.getElementById("form_twitter").value,
             privacyPolicy: document.getElementById("form_privacyPolicy").value,
-            
+
             useCustomColour: document.getElementById("form_customColourSwitch").checked,
             colour: document.getElementById("form_colour").value,
             banner: document.getElementById("form_banner").value,

@@ -1,0 +1,112 @@
+import { AuthedPathRoute } from "../route.ts";
+import e from "express";
+import { variables } from "../../Util/Middleware/variables.ts";
+import * as permission from "../../Util/Middleware/permissions.ts";
+import { type APIApplication, OAuth2Scopes } from "discord.js";
+import * as libraryCache from "../../Util/Services/cache/libCaching.ts";
+import * as discord from "../../Util/Services/discord/index.ts";
+
+import * as botCache from "../../Util/Services/cache/botCaching.ts";
+import { blacklistCheck } from "../../Util/Services/access/blacklist.ts";
+import { logListingEvent } from "../../Util/Function/listings/websiteLog.ts";
+import { jsonError, jsonOk } from "../../Util/Function/web/responses.ts";
+import {
+    validateBotListing,
+    withPublicApp
+} from "../../Util/Function/bots/botListing.ts";
+import {
+    submittedBot,
+    submittedBotAudit
+} from "../../Util/Function/bots/botRecords.ts";
+import { recordAudit } from "../../Util/Function/staff/recordAudit.ts";
+
+export class GetSubmit extends AuthedPathRoute<"get"> {
+    constructor() {
+        super("get", "/submit", [
+            variables,
+            permission.auth,
+            permission.scopes([OAuth2Scopes.GuildsJoin])
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        // in this specific instance it makes more sense to make a mongo query than filtering through the entire redis cache
+        const showResubmitNote = await global.db
+            .collection<delBot>("bots")
+            .countDocuments(
+                { "owner.id": req.user.id, "status.archived": true },
+                { limit: 1 }
+            );
+        // this will return 1/true if something exists/is found, 0 if not.
+
+        res.locals.premidPageInfo = res.__("premid.bots.submit");
+
+        res.render("templates/bots/submit", {
+            title: res.__("common.nav.me.submitBot"),
+            subtitle: res.__("common.nav.me.submitBot.subtitle"),
+            showResubmitNote,
+            libraries: libraryCache.getLibs(),
+            languages: libraryCache.getLanguages(),
+            req,
+            joinServerNotice: res.__("common.form.joinServer.full", {
+                a: '<a href="https://discord.gg/WeCer3J" rel="noopener" target="_blank">',
+                ea: "</a>"
+            })
+        });
+    }
+}
+
+export class PostSubmit extends AuthedPathRoute<"post"> {
+    constructor() {
+        super("post", "/submit", [
+            variables,
+            permission.auth,
+            permission.member
+        ]);
+    }
+
+    async handle(req: AuthedRequest, res: e.Response, next: e.NextFunction) {
+        res.locals.premidPageInfo = res.__("premid.bots.submit");
+
+        const botExists = await global.db
+            .collection("bots")
+            .findOne({ _id: req.body.id });
+
+        if (botExists)
+            return jsonError(res, 409, [res.__("common.error.bot.conflict")]);
+
+        const { errors, ...form } = await validateBotListing(req, res);
+        if (errors.length > 0) return jsonError(res, 400, errors);
+
+        withPublicApp(req, res, async (app: APIApplication) => {
+            if (req.body.bot && !("bot_public" in app))
+                return jsonError(res, 400, [
+                    res.__("common.error.bot.arr.noBot")
+                ]);
+
+            await global.db
+                .collection<delBot>("bots")
+                .insertOne(submittedBot(req, app, form));
+
+            await logListingEvent(req, "bot", "added", {
+                _id: req.body.id,
+                name: app.name
+            });
+
+            await recordAudit({
+                type: "SUBMIT_BOT",
+                executor: req.user.id,
+                target: req.body.id,
+                reason: "None specified.",
+                details: {
+                    new: submittedBotAudit(req, app, form)
+                }
+            });
+            await botCache.updateBot(req.body.id);
+
+            await discord.postWebMetric("bot");
+
+            return jsonOk(res);
+        });
+    }
+}

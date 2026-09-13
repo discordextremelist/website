@@ -29,6 +29,10 @@ function cleanLibName(lib: string) {
 
 async function setup() {
     console.log("Setup: Updating libraries...");
+    // Left disabled upstream. The upsert below already inserts or updates every
+    // entry in `libs`, so the drop was redundant for anything still listed; all
+    // it additionally did was prune libraries that had been removed from the
+    // list, at the cost of emptying the collection on every startup.
     //await global.db.collection("libraries").drop();
     for (const lib of libs) {
         await global.db

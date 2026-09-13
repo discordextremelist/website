@@ -31,18 +31,18 @@ import passport from "passport";
 import logger from "morgan";
 import helmet from "helmet";
 
-import * as libCache from "./Util/Services/libCaching.ts";
-import * as announcementCache from "./Util/Services/announcementCaching.ts";
-import * as legalCache from "./Util/Services/legalCaching.ts";
-import * as featuredCache from "./Util/Services/featuring.ts";
-import * as banned from "./Util/Services/banned.ts";
-import * as discord from "./Util/Services/discord.ts";
-import * as tokenManager from "./Util/Services/adminTokenManager.ts";
+import * as libCache from "./Util/Services/cache/libCaching.ts";
+import * as announcementCache from "./Util/Services/cache/announcementCaching.ts";
+import * as legalCache from "./Util/Services/cache/legalCaching.ts";
+import * as featuredCache from "./Util/Services/cache/featuring.ts";
+import * as banned from "./Util/Services/access/banned.ts";
+import * as discord from "./Util/Services/discord/index.ts";
+import * as tokenManager from "./Util/Services/access/adminTokenManager.ts";
 
 import languageHandler from "./Util/Middleware/languageHandler.ts";
 
-import { botStatsUpdate } from "./Util/Services/botStatsUpdate.ts";
-import { variables } from "./Util/Function/variables.ts";
+import { botStatsUpdate } from "./Util/Services/jobs/botStatsUpdate.ts";
+import { variables } from "./Util/Middleware/variables.ts";
 import { monacoRedirect } from "./Util/Middleware/monacoRedirect.ts";
 import { sitemapIndex, sitemapGenerator } from "./Util/Middleware/sitemap.ts";
 
@@ -58,25 +58,28 @@ import autosyncRoute from "./Routes/autosync.ts";
 import indexRoute from "./Routes/index.ts";
 import searchRoute from "./Routes/search.ts";
 import docsRoute from "./Routes/docs.ts";
-import botsRoute from "./Routes/bots.ts";
-import serversRoute from "./Routes/servers.ts";
-import usersRoute from "./Routes/users.ts";
-import templatesRoute from "./Routes/templates.ts";
-import staffRoute from "./Routes/staff.ts";
+import { initServerRoutes } from "./Routes/servers/index.ts";
+import { initUserRoutes } from "./Routes/users/index.ts";
+import { initTemplateRoutes } from "./Routes/templates/index.ts";
+import { initStaffRoutes } from "./Routes/staff/index.ts";
 import setup from "./setup.ts";
-import { uploadBots } from "./Util/Services/botCaching.ts";
-import { uploadStatuses } from "./Util/Services/discord.ts";
-import { uploadUsers } from "./Util/Services/userCaching.ts";
-import { uploadAuditLogs } from "./Util/Services/auditCaching.ts";
-import { uploadServers } from "./Util/Services/serverCaching.ts";
-import { uploadTemplates } from "./Util/Services/templateCaching.ts";
+import { uploadBots } from "./Util/Services/cache/botCaching.ts";
+import { uploadAuditLogs } from "./Util/Services/cache/auditCaching.ts";
+import { uploadServers } from "./Util/Services/cache/serverCaching.ts";
+import { uploadTemplates } from "./Util/Services/cache/templateCaching.ts";
+import { initBotRoutes } from "./Routes/bots/index.ts";
+import createHttpError from "http-errors";
+import { renderStatus } from "./Util/Function/web/responses.ts";
+import { startSchedules } from "./Util/Services/jobs/scheduler.ts";
+
+startSchedules();
 
 const app = express();
 const __dirname = path.resolve();
 
 app.use(helmet());
 
-const corsMiddleware = (req: Request, res: Response, next: () => void) => {
+const corsMiddleware = (_req: Request, res: Response, next: () => void) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
         "Access-Control-Allow-Headers",
@@ -95,7 +98,8 @@ new Promise<void>((resolve, reject) => {
     console.time("Mongo TTL");
     MongoClient.connect(settings.secrets.mongo.uri, {}, (error, mongo) => {
         if (error) return reject(error);
-        global.db = mongo.db(settings.secrets.mongo.db);
+        // mongo is always set when there's no error.
+        global.db = mongo!.db(settings.secrets.mongo.db);
         console.log(
             "Mongo: Connection established! Released deadlock as a part of startup..."
         );
@@ -180,17 +184,30 @@ new Promise<void>((resolve, reject) => {
             console.log("Discord: Also acquired the discord lock!");
             await global.redis.setex("cache_lock", 300, hostname());
             console.time("Redis");
-            console.time("Start to cache users, bots, statuses, audit logs & servers");
+            console.time(
+                "Start to cache users, bots, statuses, audit logs & servers"
+            );
             await uploadBots();
             await uploadServers();
             await uploadTemplates();
-            console.timeEnd("Start to cache users, bots, statuses, audit logs & servers");
+            console.timeEnd(
+                "Start to cache users, bots, statuses, audit logs & servers"
+            );
             await libCache.cacheLibs();
             await announcementCache.updateCache();
             await featuredCache.updateFeaturedServers();
             await featuredCache.updateFeaturedTemplates();
             await tokenManager.tokenResetAll();
             await legalCache.updateCache();
+            if (process.env.NODE_ENV === "development") {
+                // This is very time-consuming, only re-cache after the redis key expired.
+                if (!(await redis.get("dev_audit_cache_lock"))) {
+                    await redis.setex("dev_audit_cache_lock", 3600 * 24, 1);
+                    console.time("Start audit cache");
+                    await uploadAuditLogs();
+                    console.timeEnd("Start audit cache");
+                }
+            }
             console.timeEnd("Redis");
             console.time("Discord: Bot stats update");
             await botStatsUpdate();
@@ -201,7 +218,7 @@ new Promise<void>((resolve, reject) => {
         }
 
         await discord.bot.login(settings.secrets.discord.token);
-        // to replace the needed wait time for the below functions, instead of using a redundant blocking promise
+        // to replace the needed to wait time for the below functions, instead of using a redundant blocking promise
         // just... do it once it is actually ready -AJ
         discord.bot.once("ready", async () => {
             setTimeout(async () => {
@@ -233,11 +250,9 @@ new Promise<void>((resolve, reject) => {
 
         app.use(
             logger(
-                // @ts-expect-error
                 ':req[cf-connecting-ip] - [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer"',
                 {
-                    skip: (r: { url: string }) =>
-                        r.url === "/profile/game/snakes"
+                    skip: (r) => r.url === "/profile/game/snakes"
                 }
             )
         );
@@ -258,7 +273,11 @@ new Promise<void>((resolve, reject) => {
 
         app.use(
             session({
-                store: new RedisStore({ client: global.redis }),
+                store: new RedisStore({
+                    client: global.redis,
+                    ttl: 14 * 24 * 60 * 60 * 1000,
+                    disableTouch: true
+                }),
                 secret: settings.secrets.cookie,
                 resave: false,
                 saveUninitialized: false,
@@ -312,7 +331,7 @@ new Promise<void>((resolve, reject) => {
         app.use("/autosync", autosyncRoute);
 
         // Locale handler.
-        // Don't put anything below here that you don't want it's locale to be checked whatever (broken english kthx)
+        // Don't put anything below here that you don't want its locale to be checked whatever (broken english kthx)
         app.use(["/:lang", "/"], languageHandler);
 
         app.use("/:lang/sitemap.xml", sitemapGenerator);
@@ -323,19 +342,18 @@ new Promise<void>((resolve, reject) => {
 
         app.use("*", monacoRedirect);
 
-        app.use("/:lang/bots", botsRoute);
-        app.use("/:lang/servers", serversRoute);
-        app.use("/:lang/templates", templatesRoute);
-        app.use("/:lang/users", usersRoute);
-        app.use("/:lang/staff", staffRoute);
+        app.use("/:lang/bots", initBotRoutes());
+        app.use("/:lang/servers", initServerRoutes());
+        app.use("/:lang/templates", initTemplateRoutes());
+        app.use("/:lang/users", initUserRoutes());
+        app.use("/:lang/staff", initStaffRoutes());
 
         app.use(variables);
 
         if (!settings.website.dev) Sentry.setupExpressErrorHandler(app);
 
-        app.use((req: Request, res: Response, next: () => void) => {
-            // @ts-expect-error
-            next(createError(404));
+        app.use((_req, _res, next) => {
+            next(createHttpError(404));
         });
 
         app.use(
@@ -343,7 +361,7 @@ new Promise<void>((resolve, reject) => {
                 err: { message: string; status?: number },
                 req: Request,
                 res: Response,
-                next: () => void
+                next: any
             ) => {
                 res.locals.message = err.message;
                 res.locals.error = err;
@@ -353,14 +371,12 @@ new Promise<void>((resolve, reject) => {
                 }
 
                 if (err.message === "Not Found") {
-                    return res.status(404).render("status", {
-                        res,
-                        title: res.__("common.error"),
-                        subtitle: res.__("common.error.404"),
+                    return renderStatus(
                         req,
-                        status: 404,
-                        type: "Error"
-                    });
+                        res,
+                        404,
+                        res.__("common.error.404")
+                    );
                 }
 
                 console.log("ERROR! ", err);
@@ -380,5 +396,3 @@ new Promise<void>((resolve, reject) => {
         console.error("Mongo error: ", e);
         process.exit(1);
     });
-
-export default app;

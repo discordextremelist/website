@@ -285,10 +285,17 @@ export class DeleteUserAccountData extends AuthedPathRoute<"post"> {
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        if (!req.params.id) return res.status(400);
+        if (!req.params.id) return res.sendStatus(400);
         let user = await userCache.getUser(req.params.id);
         if (user && user.fullUsername !== req.body.typedUsername)
-            return res.status(400);
+            return renderStatus(
+                req,
+                res,
+                400,
+                res.__(
+                    "common.error.account.data.confirmationUsernameIncorrect"
+                )
+            );
         const userBotsData: delBot[] = await global.db
             .collection<delBot>("bots")
             .find({ "owner.id": req.params.id })

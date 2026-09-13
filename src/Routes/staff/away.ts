@@ -23,6 +23,7 @@ import * as permission from "../../Util/Middleware/permissions.ts";
 import { variables } from "../../Util/Middleware/variables.ts";
 import type { Nullable } from "../../Util/Function/common/types.ts";
 import { userExists } from "../../Util/Middleware/checks.ts";
+import { recordAudit } from "../../Util/Function/staff/recordAudit.ts";
 
 export class GetAway extends AuthedPathRoute<"get"> {
     constructor() {
@@ -77,11 +78,10 @@ export class PostAway extends AuthedPathRoute<"post"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "UPDATE_AWAY",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
                 old: {
@@ -126,11 +126,10 @@ export class ResetAway extends AuthedPathRoute<"get"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "RESET_AWAY",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
                 old: {

@@ -14,6 +14,7 @@ import {
     reasonMissing,
     recordStaffAction
 } from "../../../Util/Function/staff/staffActions.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class ApproveBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -96,11 +97,10 @@ export class ApproveBot extends AuthedPathRoute<"get"> {
                     );
                 });
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "APPROVE_BOT",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 
@@ -166,11 +166,10 @@ export class GivePremiumBot extends AuthedPathRoute<"get"> {
 
         await botCache.updateBot(req.params.id);
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "PREMIUM_BOT_GIVE",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 
@@ -210,11 +209,10 @@ export class TakePremiumBot extends AuthedPathRoute<"get"> {
 
         await botCache.updateBot(req.params.id);
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "PREMIUM_BOT_TAKE",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 
@@ -293,11 +291,10 @@ export class PostUnapproveBot extends AuthedPathRoute<"post"> {
 
         await recordStaffAction(req.user.id, "Bots", "unapprove");
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "UNAPPROVE_BOT",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             reasonType: type
         });

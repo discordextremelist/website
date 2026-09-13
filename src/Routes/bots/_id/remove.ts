@@ -14,6 +14,7 @@ import {
     reasonMissing,
     recordStaffAction
 } from "../../../Util/Function/staff/staffActions.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class GetRemoveBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -74,11 +75,10 @@ export class PostRemoveBot extends AuthedPathRoute<"post"> {
 
         const type = botType(req.body.type);
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "REMOVE_BOT",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             reasonType: type
         });

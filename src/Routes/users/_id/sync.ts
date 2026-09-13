@@ -27,6 +27,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import { discordErrorPage } from "../../../Util/Function/web/responses.ts";
 import { resolveMe, userExists } from "../../../Util/Middleware/checks.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class SyncUser extends AuthedPathRoute<"get"> {
     constructor() {
@@ -58,11 +59,10 @@ export class SyncUser extends AuthedPathRoute<"get"> {
                     }
                 );
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "SYNC_USER",
                     executor: req.user.id,
                     target: req.params.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         old: {

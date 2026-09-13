@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import type { Request } from "express";
+import { recordAudit } from "../../Function/staff/recordAudit.ts";
 
 global.announcement = {
     active: false,
@@ -56,12 +57,11 @@ export async function updateAnnouncement(
         ? (type = "UPDATE_ANNOUNCEMENT")
         : (type = "RESET_ANNOUNCEMENT");
 
-    await global.db.collection("audit").insertOne({
+    await recordAudit({
         type: type,
         // Only called from staff routes, which run permission.assistant first.
         executor: req.user!.id,
         target: "announcement",
-        date: Date.now(),
         reason: req.body.reason || "None specified.",
         details: {
             old: {

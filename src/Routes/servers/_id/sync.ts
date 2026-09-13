@@ -39,6 +39,7 @@ import {
     syncedServerAuditBefore,
     syncedServerFields
 } from "../../../Util/Function/servers/serverRecords.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class SyncServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -91,11 +92,10 @@ export class SyncServer extends AuthedPathRoute<"get"> {
                     }
                 );
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "SYNC_SERVER",
                     executor: req.user.id,
                     target: req.params.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         new: syncedServerFields(invite, invite.guild),

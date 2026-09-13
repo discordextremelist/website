@@ -6,6 +6,7 @@ import * as discord from "../../../Util/Services/discord/index.ts";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class ArchiveBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -32,11 +33,10 @@ export class ArchiveBot extends AuthedPathRoute<"get"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "ARCHIVE_BOT",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 
@@ -63,11 +63,10 @@ export class DeleteBot extends AuthedPathRoute<"get"> {
 
         await global.db.collection("bots").deleteOne({ _id: req.params.id });
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "DELETE_BOT",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 

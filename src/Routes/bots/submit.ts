@@ -23,6 +23,7 @@ import {
     submittedBot,
     submittedBotAudit
 } from "../../Util/Function/bots/botRecords.ts";
+import { recordAudit } from "../../Util/Function/staff/recordAudit.ts";
 
 export class GetSubmit extends AuthedPathRoute<"get"> {
     constructor() {
@@ -107,11 +108,10 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
                     name: app.name
                 });
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "SUBMIT_BOT",
                     executor: req.user.id,
                     target: req.body.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         new: submittedBotAudit(req, app, form)

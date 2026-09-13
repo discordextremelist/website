@@ -22,6 +22,7 @@ import type { Request, Response } from "express";
 import { variables } from "../../Util/Middleware/variables.ts";
 import * as permission from "../../Util/Middleware/permissions.ts";
 import * as userCache from "../../Util/Services/cache/userCaching.ts";
+import { recordAudit } from "../../Util/Function/staff/recordAudit.ts";
 
 export class GetSnake extends AuthedPathRoute<"get"> {
     constructor() {
@@ -103,11 +104,10 @@ export class PostProfileSnakes extends AuthedPathRoute<"post"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "GAME_HIGHSCORE_UPDATE",
             executor: req.user.id,
             target: req.user.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
                 old: {

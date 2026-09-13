@@ -27,6 +27,7 @@ import {
     botAuditBefore,
     editedBotFields
 } from "../../../Util/Function/bots/botRecords.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class GetEdit extends AuthedPathRoute<"get"> {
     constructor() {
@@ -104,11 +105,10 @@ export class PostEdit extends AuthedPathRoute<"post"> {
                     }
                 );
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "EDIT_BOT",
                     executor: req.user.id,
                     target: req.params.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         old: botAuditBefore(req, bot),

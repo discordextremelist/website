@@ -33,6 +33,7 @@ import {
     reasonMissing,
     recordStaffAction
 } from "../../../Util/Function/staff/staffActions.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class GetDeclineServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -121,11 +122,10 @@ export class PostDeclineServer extends AuthedPathRoute<"post"> {
 
         const type = serverType(req.body.type);
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "DECLINE_SERVER",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             reasonType: type
         });

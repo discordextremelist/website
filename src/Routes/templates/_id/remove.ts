@@ -29,6 +29,7 @@ import { templateType } from "../../../Util/Function/staff/audit.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import { reasonMissing } from "../../../Util/Function/staff/staffActions.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class GetRemoveTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -78,11 +79,10 @@ export class PostRemoveTemplate extends AuthedPathRoute<"post"> {
 
         const type = templateType(req.body.type);
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "REMOVE_TEMPLATE",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             reasonType: type
         });

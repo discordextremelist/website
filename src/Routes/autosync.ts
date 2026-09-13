@@ -40,6 +40,7 @@ import {
 } from "../Util/Function/bots/botListing.ts";
 import { syncedServerFields } from "../Util/Function/servers/serverRecords.ts";
 import { syncedTemplateFields } from "../Util/Function/templates/templateRecords.ts";
+import { recordAudit } from "../Util/Function/staff/recordAudit.ts";
 
 const router = express.Router();
 
@@ -178,11 +179,10 @@ router.get("/servers", async (_req, res) => {
             ) {
                 // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
                 await global.db.collection("servers").deleteOne({ _id: id });
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "REMOVE_SERVER",
                     executor: "AutoSync",
                     target: id,
-                    date: Date.now(),
                     reason: "Failed to autosync server, assuming the invite is invalid, for another server, or can expire.",
                     reasonType: 5
                 });
@@ -249,11 +249,10 @@ router.get("/templates", async (_req, res) => {
                 // may as well reduce the load on web mods - AJ
                 await global.db.collection("templates").deleteOne({ _id: id });
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "REMOVE_TEMPLATE",
                     executor: "AutoSync",
                     target: id,
-                    date: Date.now(),
                     reason: "Unknown server template (10057)",
                     reasonType: 4
                 });

@@ -44,6 +44,7 @@ import {
     submittedServer,
     submittedServerAudit
 } from "../../Util/Function/servers/serverRecords.ts";
+import { recordAudit } from "../../Util/Function/staff/recordAudit.ts";
 
 export class GetSubmitServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -138,10 +139,9 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
                     name: invite.guild.name
                 });
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "SUBMIT_SERVER",
                     executor: req.user.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         new: submittedServerAudit(

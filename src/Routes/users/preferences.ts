@@ -25,6 +25,7 @@ import { getForeground } from "../../Util/Function/common/format.ts";
 import * as userCache from "../../Util/Services/cache/userCaching.ts";
 import { themes } from "../../../@types/enums.ts";
 import entities from "html-entities";
+import { recordAudit } from "../../Util/Function/staff/recordAudit.ts";
 
 export class GetPreferences extends AuthedPathRoute<"get"> {
     constructor() {
@@ -92,11 +93,10 @@ export class PostPreferences extends AuthedPathRoute<"post"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "MODIFY_PREFERENCES",
             executor: req.user.id,
             target: req.user.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
                 old: {

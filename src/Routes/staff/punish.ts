@@ -22,6 +22,7 @@ import type { Response } from "express";
 import * as permission from "../../Util/Middleware/permissions.ts";
 import { variables } from "../../Util/Middleware/variables.ts";
 import { userExists } from "../../Util/Middleware/checks.ts";
+import { recordAudit } from "../../Util/Function/staff/recordAudit.ts";
 
 // What differs between a warning and a strike.
 const PUNISHMENTS = {
@@ -92,11 +93,10 @@ async function addPunishment(
         }
     );
 
-    await global.db.collection("audit").insertOne({
+    await recordAudit({
         type: punishment.audit,
         executor: req.user.id,
         target: req.params.id,
-        date: Date.now(),
         reason: req.body.reason || "None specified.",
         details: {
             new: {

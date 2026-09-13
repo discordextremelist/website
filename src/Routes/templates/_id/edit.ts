@@ -43,6 +43,7 @@ import {
     editedTemplateAuditBefore,
     editedTemplateFields
 } from "../../../Util/Function/templates/templateRecords.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class GetEditTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -149,11 +150,10 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
                     name: template.name
                 });
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "EDIT_TEMPLATE",
                     executor: req.user.id,
                     target: req.params.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         new: editedTemplateAuditAfter(

@@ -5,6 +5,7 @@ import * as checks from "../../../Util/Middleware/checks.ts";
 import e from "express";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class TransferOwner extends AuthedPathRoute<"post"> {
     constructor() {
@@ -41,11 +42,10 @@ export class TransferOwner extends AuthedPathRoute<"post"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "MODIFY_OWNER",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
                 old: bot.owner.id,

@@ -21,6 +21,7 @@ import * as botCache from "../../Services/cache/botCaching.ts";
 import * as serverCache from "../../Services/cache/serverCaching.ts";
 import * as templateCache from "../../Services/cache/templateCaching.ts";
 import { logListingEvent } from "../listings/websiteLog.ts";
+import { recordAudit } from "../staff/recordAudit.ts";
 
 type OwnedListings = {
     bots: delBot[];
@@ -60,11 +61,10 @@ export async function deleteListings(
     for (const bot of bots) {
         await global.db.collection("bots").deleteOne({ _id: bot._id });
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "DELETE_BOT",
             executor: req.user.id,
             target: bot._id,
-            date: Date.now(),
             reason: "Owner deleted their data and account."
         });
 
@@ -76,11 +76,10 @@ export async function deleteListings(
     for (const server of servers) {
         await global.db.collection("servers").deleteOne({ _id: server._id });
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "DELETE_SERVER",
             executor: req.user.id,
             target: server._id,
-            date: Date.now(),
             reason: "Owner deleted their data and account."
         });
 
@@ -94,11 +93,10 @@ export async function deleteListings(
             .collection("templates")
             .deleteOne({ _id: template._id });
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "DELETE_TEMPLATE",
             executor: req.user.id,
             target: template._id,
-            date: Date.now(),
             reason: "Owner deleted their data and account."
         });
 

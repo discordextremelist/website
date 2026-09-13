@@ -7,6 +7,7 @@ import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class SetVanity extends AuthedPathRoute<"post"> {
     constructor() {
@@ -76,11 +77,10 @@ export class SetVanity extends AuthedPathRoute<"post"> {
                 }
             );
 
-            await global.db.collection("audit").insertOne({
+            await recordAudit({
                 type: "MODIFY_VANITY",
                 executor: req.user.id,
                 target: req.params.id,
-                date: Date.now(),
                 reason: req.body.reason || "None specified.",
                 details: {
                     old: bot.vanityUrl,
@@ -108,11 +108,10 @@ export class SetVanity extends AuthedPathRoute<"post"> {
                 }
             );
 
-            await global.db.collection("audit").insertOne({
+            await recordAudit({
                 type: "SET_VANITY",
                 executor: req.user.id,
                 target: req.params.id,
-                date: Date.now(),
                 reason: req.body.reason || "None specified.",
                 details: {
                     old: "Not available.",

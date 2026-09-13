@@ -33,6 +33,7 @@ import {
     jsonError
 } from "../../Util/Function/web/responses.ts";
 import { submittedTemplate } from "../../Util/Function/templates/templateRecords.ts";
+import { recordAudit } from "../../Util/Function/staff/recordAudit.ts";
 
 export class GetSubmitTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -104,10 +105,9 @@ export class PostSubmitTemplate extends AuthedPathRoute<"post"> {
                     name: template.name
                 });
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "SUBMIT_TEMPLATE",
                     executor: req.user.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         new: submittedTemplate(req, template, tags)

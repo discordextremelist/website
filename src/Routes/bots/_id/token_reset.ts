@@ -5,6 +5,7 @@ import * as checks from "../../../Util/Middleware/checks.ts";
 import e from "express";
 import crypto from "crypto";
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class TokenReset extends AuthedPathRoute<"get"> {
     constructor() {
@@ -32,11 +33,10 @@ export class TokenReset extends AuthedPathRoute<"get"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "RESET_BOT_TOKEN",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 

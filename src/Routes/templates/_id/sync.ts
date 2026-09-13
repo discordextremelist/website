@@ -31,6 +31,7 @@ import {
     syncedTemplateAuditBefore,
     syncedTemplateFields
 } from "../../../Util/Function/templates/templateRecords.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class SyncTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -50,11 +51,10 @@ export class SyncTemplate extends AuthedPathRoute<"get"> {
                     }
                 );
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "SYNC_TEMPLATE",
                     executor: req.user.id,
                     target: req.params.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         new: syncedTemplateFields(template),

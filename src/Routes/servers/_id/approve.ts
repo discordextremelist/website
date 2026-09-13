@@ -29,6 +29,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import { recordStaffAction } from "../../../Util/Function/staff/staffActions.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class ApproveServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -62,11 +63,10 @@ export class ApproveServer extends AuthedPathRoute<"get"> {
 
         await recordStaffAction(req.user.id, "Servers", "approved");
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "APPROVE_SERVER",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified."
         });
 

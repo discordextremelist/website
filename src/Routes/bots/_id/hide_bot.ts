@@ -14,6 +14,7 @@ import {
     reasonMissing,
     recordStaffAction
 } from "../../../Util/Function/staff/staffActions.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class HideBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -47,11 +48,10 @@ export class HideBot extends AuthedPathRoute<"get"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "HIDE_BOT",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 
@@ -85,11 +85,10 @@ export class UnhideBot extends AuthedPathRoute<"get"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "UNHIDE_BOT",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 
@@ -166,11 +165,10 @@ export class PostModHideBot extends AuthedPathRoute<"post"> {
 
         const type = botType(req.body.type);
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "MOD_HIDE_BOT",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             reasonType: type
         });
@@ -236,11 +234,10 @@ export class GetModUnhideBot extends AuthedPathRoute<"get"> {
             )}** \`(${bot._id})\` has been unhidden on the website!`
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "MOD_UNHIDE_BOT",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 

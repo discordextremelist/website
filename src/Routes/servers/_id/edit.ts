@@ -50,6 +50,7 @@ import {
     editedServerAuditBefore,
     editedServerFields
 } from "../../../Util/Function/servers/serverRecords.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class GetEditServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -162,11 +163,10 @@ export class PostEditServer extends AuthedPathRoute<"post"> {
                     name: invite.guild.name
                 });
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "EDIT_SERVER",
                     executor: req.user.id,
                     target: req.params.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         new: editedServerFields(

@@ -25,6 +25,7 @@ import * as templateCache from "../../../Util/Services/cache/templateCaching.ts"
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { templateExists } from "../../../Util/Middleware/checks.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class DeleteTemplate extends AuthedPathRoute<"get"> {
     constructor() {
@@ -48,11 +49,10 @@ export class DeleteTemplate extends AuthedPathRoute<"get"> {
             .collection("templates")
             .deleteOne({ _id: req.params.id });
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "DELETE_TEMPLATE",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 

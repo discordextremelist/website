@@ -19,6 +19,7 @@ import {
     fetchSlashCommands,
     fetchUserFlags
 } from "../../../Util/Function/bots/botListing.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class SyncBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -68,11 +69,10 @@ export class SyncBot extends AuthedPathRoute<"get"> {
                     }
                 );
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "SYNC_BOT",
                     executor: req.user.id,
                     target: req.params.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         old: {

@@ -24,6 +24,7 @@ import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class GetUserRank extends AuthedPathRoute<"get"> {
     constructor() {
@@ -127,11 +128,10 @@ export class PostUserRank extends AuthedPathRoute<"post"> {
 
         await userCache.updateUser(targetUser._id);
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "MODIFY_RANK",
             executor: req.user.id,
             target: targetUser._id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
                 old: {

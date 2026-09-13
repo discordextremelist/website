@@ -6,6 +6,7 @@ import { blacklistUpdate } from "../../../Util/Services/access/blacklist.ts";
 import { updateBot } from "../../../Util/Services/cache/botCaching.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { renderStatus } from "../../../Util/Function/web/responses.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class BlacklistBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -21,11 +22,10 @@ export class BlacklistBot extends AuthedPathRoute<"get"> {
         }
         let old_val = bot.status.blacklist ?? false;
         let blacklisted = !(bot.status.blacklist ?? false);
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: blacklisted ? "BOT_BLACKLIST_ADD" : "BOT_BLACKLIST_REMOVE",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
                 old: old_val,

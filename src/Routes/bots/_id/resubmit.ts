@@ -26,6 +26,7 @@ import {
     botAuditBefore,
     resubmittedBotFields
 } from "../../../Util/Function/bots/botRecords.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class GetResubmitBot extends AuthedPathRoute<"get"> {
     constructor() {
@@ -115,11 +116,10 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
                     }
                 );
 
-                await global.db.collection("audit").insertOne({
+                await recordAudit({
                     type: "RESUBMIT_BOT",
                     executor: req.user.id,
                     target: req.params.id,
-                    date: Date.now(),
                     reason: "None specified.",
                     details: {
                         old: botAuditBefore(req, bot, { resubmit: true }),

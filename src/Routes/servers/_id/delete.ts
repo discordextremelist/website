@@ -25,6 +25,7 @@ import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import { serverExists } from "../../../Util/Middleware/checks.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class DeleteServer extends AuthedPathRoute<"get"> {
     constructor() {
@@ -43,11 +44,10 @@ export class DeleteServer extends AuthedPathRoute<"get"> {
 
         await global.db.collection("servers").deleteOne({ _id: req.params.id });
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "DELETE_SERVER",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: "None specified."
         });
 

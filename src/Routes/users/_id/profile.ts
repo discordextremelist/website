@@ -23,6 +23,7 @@ import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
 import { resolveMe, userExists } from "../../../Util/Middleware/checks.ts";
+import { recordAudit } from "../../../Util/Function/staff/recordAudit.ts";
 
 export class GetEditProfile extends AuthedPathRoute<"get"> {
     constructor() {
@@ -99,11 +100,10 @@ export class PostEditProfile extends AuthedPathRoute<"post"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "MODIFY_PROFILE",
             executor: req.user.id,
             target: userProfile._id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
                 old: {

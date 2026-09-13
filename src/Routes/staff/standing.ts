@@ -25,6 +25,7 @@ import { variables } from "../../Util/Middleware/variables.ts";
 import type { Nullable } from "../../Util/Function/common/types.ts";
 import { userExists } from "../../Util/Middleware/checks.ts";
 import { STANDINGS } from "../../Util/Function/staff/staff.ts";
+import { recordAudit } from "../../Util/Function/staff/recordAudit.ts";
 
 export class GetStanding extends AuthedPathRoute<"get"> {
     constructor() {
@@ -90,11 +91,10 @@ export class PostStanding extends AuthedPathRoute<"post"> {
             }
         );
 
-        await global.db.collection("audit").insertOne({
+        await recordAudit({
             type: "MODIFY_STANDING",
             executor: req.user.id,
             target: req.params.id,
-            date: Date.now(),
             reason: req.body.reason || "None specified.",
             details: {
                 old: {

@@ -156,8 +156,9 @@ export const staffHierarchy = (
 /**
  * Require the logged-in user to own the listing a *Exists check attached as
  * `kind`, be one of its editors (`editors: true`, bots only), or hold the
- * assistant rank. Otherwise answer 403 with `denied`: the error page, or a
- * JSON error for a listing form's POST (`json: true`).
+ * assistant rank (or `staffRank`: the accent colour endpoint still allows
+ * mods, ISSUES I-13). Otherwise answer 403 with `denied`: the error page, or
+ * a JSON error for a listing form's POST (`json: true`).
  */
 export const ownerOrAssistant =
     (
@@ -165,15 +166,21 @@ export const ownerOrAssistant =
         denied: Parameters<Response["__"]>[0],
         {
             editors = false,
-            json = false
-        }: { editors?: boolean; json?: boolean } = {}
+            json = false,
+            staffRank = "assistant"
+        }: {
+            editors?: boolean;
+            json?: boolean;
+            staffRank?: "assistant" | "mod";
+        } = {}
     ) =>
     (req: Request, res: Response, next: () => void) => {
         // The *Exists check attached the listing, and auth before it set
         // req.user.
         if (
             ownsOrAssistant(req as AuthedRequest, req.attached[kind]!, {
-                editors
+                editors,
+                staffRank
             })
         )
             return next();

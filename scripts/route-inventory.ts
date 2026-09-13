@@ -116,7 +116,15 @@ function splitTopLevel(raw: string): string[] {
 /** Normalise a middleware chain so formatting churn doesn't show up as a diff. */
 function chain(raw: string): string {
     const names = splitTopLevel(raw)
-        .map((s) => s.trim())
+        // Collapse whitespace, so an argument Prettier wraps over several lines
+        // still prints on one row.
+        .map((s) =>
+            s
+                .trim()
+                .replace(/\s+/g, " ")
+                .replace(/\(\s+/g, "(")
+                .replace(/\s+\)/g, ")")
+        )
         // Drop the import-namespace prefix: `permission.auth` and a bare `auth`
         // are the same middleware, and which one a file uses is not behaviour.
         .map((s) => s.replace(/^(?:permission|checks|functions|middleware)\./, ""))

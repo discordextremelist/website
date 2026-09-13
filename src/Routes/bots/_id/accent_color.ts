@@ -12,18 +12,17 @@ export class GetAccentColor extends AuthedPathRoute<"get"> {
         super("get", "/:id/accent_color", [
             variables,
             permission.auth,
-            checks.botExists
+            checks.botExists,
+            permission.ownerOrAssistant("bot", "common.error.bot.perms.edit", {
+                editors: true,
+                json: true,
+                staffRank: "mod"
+            })
         ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
         let bot = req.attached.bot!;
-        if (
-            bot.owner.id !== req.user.id &&
-            !bot.editors.includes(req.user.id) &&
-            req.user.db.rank.mod === false
-        )
-            return jsonError(res, 403, [res.__("common.error.bot.perms.edit")]);
         let bot_avatar = await fetch(
             bot.avatar?.url ? bot.avatar!.url : bot.icon!.url
         );

@@ -52,12 +52,15 @@ export function parseScopes(
 export function ownsOrAssistant(
     req: AuthedRequest,
     listing: { owner: { id: string }; editors?: string[] },
-    { editors = false }: { editors?: boolean } = {}
+    {
+        editors = false,
+        staffRank = "assistant"
+    }: { editors?: boolean; staffRank?: "assistant" | "mod" } = {}
 ): boolean {
     return (
         listing.owner.id === req.user.id ||
         // Only bot routes pass `editors: true`, and delBot.editors is required.
         (editors && listing.editors!.includes(req.user.id)) ||
-        req.user.db.rank.assistant !== false
+        req.user.db.rank[staffRank] !== false
     );
 }

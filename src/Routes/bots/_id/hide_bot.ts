@@ -225,7 +225,7 @@ export class GetModUnhideBot extends AuthedPathRoute<"get"> {
 
         await recordStaffAction(req.user.id, "Bots");
 
-        logListingEvent(req, "bot", "modUnhidden", bot).catch((e) => {
+        logListingEvent(req, "bot", "unhidden", bot).catch((e) => {
             console.error(e);
         });
 

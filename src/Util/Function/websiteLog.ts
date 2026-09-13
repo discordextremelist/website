@@ -24,33 +24,25 @@ import { escapeFormatting } from "./format.ts";
 
 type Kind = "bot" | "server" | "template";
 
-/**
- * How each event is posted: its emoji, the verb, and whether the line links
- * to the listing. `link` is set per event for now, keeping each line exactly
- * as it was.
- */
+/** How each event is posted: its emoji and the verb. */
 const EVENTS = {
-    added: { emoji: settings.emoji.add, verb: "added", link: true },
-    edited: { emoji: settings.emoji.edit, verb: "edited", link: true },
+    added: { emoji: settings.emoji.add, verb: "added" },
+    edited: { emoji: settings.emoji.edit, verb: "edited" },
     resubmitted: {
         emoji: settings.emoji.resubmit,
-        verb: "resubmitted",
-        link: true
+        verb: "resubmitted"
     },
-    approved: { emoji: settings.emoji.check, verb: "approved", link: true },
+    approved: { emoji: settings.emoji.check, verb: "approved" },
     unapproved: {
         emoji: settings.emoji.unapprove,
-        verb: "unapproved",
-        link: false
+        verb: "unapproved"
     },
-    archived: { emoji: settings.emoji.archive, verb: "archived", link: false },
-    declined: { emoji: settings.emoji.cross, verb: "declined", link: false },
-    hidden: { emoji: settings.emoji.hide, verb: "hid", link: false },
-    unhidden: { emoji: settings.emoji.unhide, verb: "unhid", link: false },
-    // A mod unhiding a bot linked to it; its owner unhiding it didn't.
-    modUnhidden: { emoji: settings.emoji.unhide, verb: "unhid", link: true },
-    removed: { emoji: settings.emoji.delete, verb: "removed", link: false },
-    deleted: { emoji: settings.emoji.delete, verb: "deleted", link: false }
+    archived: { emoji: settings.emoji.archive, verb: "archived" },
+    declined: { emoji: settings.emoji.cross, verb: "declined" },
+    hidden: { emoji: settings.emoji.hide, verb: "hid" },
+    unhidden: { emoji: settings.emoji.unhide, verb: "unhid" },
+    removed: { emoji: settings.emoji.delete, verb: "removed" },
+    deleted: { emoji: settings.emoji.delete, verb: "deleted" }
 } as const;
 
 type WebsiteEvent = keyof typeof EVENTS;
@@ -77,7 +69,8 @@ const listingURL = (kind: Kind, id: string) =>
  * system name such as "AutoSync System", shown as it is. Pass `reason` (even
  * when it's undefined) for events staff give a reason for; it goes out as a
  * "Reason" embed, linking to the listing if it still exists. `linkId` links
- * the line to another ID than the one shown (bot edit, ISSUES I-33).
+ * the line to another ID than the one shown (bot edit, ISSUES I-33). The line
+ * and the embed link to the listing whenever it still exists afterwards.
  *
  * Server approvals and declines are LGBTQ+ reviews, and say so. Returns the
  * send() promise for the caller to await or catch. Not for the moderator-only
@@ -90,7 +83,7 @@ export function logListingEvent(
     listing: { _id: string; name: string },
     options: { reason?: string; linkId?: string } = {}
 ) {
-    const { emoji, verb, link } = EVENTS[event];
+    const { emoji, verb } = EVENTS[event];
     const actor =
         typeof by === "string"
             ? `**${by}**`
@@ -100,7 +93,8 @@ export function logListingEvent(
         lgbtReview && event === "approved"
             ? " to be listed as an LGBTQ+ community."
             : "";
-    const lineLink = link
+    // Link to the listing whenever it still exists.
+    const lineLink = !gone(kind, event)
         ? `\n<${listingURL(kind, options.linkId ?? listing._id)}>`
         : "";
 

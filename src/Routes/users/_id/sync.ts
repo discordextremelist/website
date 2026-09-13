@@ -25,26 +25,21 @@ import * as discord from "../../../Util/Services/discord/index.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
-import {
-    discordErrorPage,
-    renderStatus
-} from "../../../Util/Function/web/responses.ts";
+import { discordErrorPage } from "../../../Util/Function/web/responses.ts";
+import { resolveMe, userExists } from "../../../Util/Middleware/checks.ts";
 
 export class SyncUser extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/:id/sync", [variables, permission.auth]);
+        super("get", "/:id/sync", [
+            variables,
+            permission.auth,
+            resolveMe,
+            userExists
+        ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        if (req.params.id === "@me") {
-            req.params.id = req.user.id;
-        }
-
-        const userProfile: delUser | null = await global.db
-            .collection<delUser>("users")
-            .findOne({ _id: req.params.id });
-        if (!userProfile)
-            return renderStatus(req, res, 404, res.__("common.error.user.404"));
+        const userProfile = req.attached.user!;
 
         await discord
             .restGet<APIUser>(Routes.user(req.params.id))

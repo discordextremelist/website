@@ -198,6 +198,23 @@ export const ownerOnly =
         return renderStatus(req, res, 403, res.__(denied));
     };
 
+/**
+ * Require the logged-in user to be the user record userExists attached, or
+ * hold the assistant rank. Otherwise render the 403 page with `denied`. As
+ * before, a record with no assistant field counts as an assistant.
+ */
+export const selfOrAssistant =
+    (denied: Parameters<Response["__"]>[0]) =>
+    (req: Request, res: Response, next: () => void) => {
+        // userExists attached the target, and auth set req.user.
+        if (
+            req.attached.user!._id === req.user!.id ||
+            req.user!.db.rank.assistant !== false
+        )
+            return next();
+        return renderStatus(req, res, 403, res.__(denied));
+    };
+
 /** adminToken, enforced only in production. */
 export const adminTokenInProd = (
     req: Request,

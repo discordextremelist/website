@@ -116,3 +116,13 @@ export const userExists = exists(
     "common.error.user.404",
     (req, user) => (req.attached.user = user)
 );
+
+/**
+ * Read `@me` in :id as the logged-in user's own ID, as the user pages always
+ * have. Put it after auth and before userExists.
+ */
+export const resolveMe = (req: Request, _res: Response, next: () => void) => {
+    // auth runs first, so req.user is set.
+    if (req.params.id === "@me") req.params.id = req.user!.id;
+    next();
+};

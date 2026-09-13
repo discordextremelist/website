@@ -22,34 +22,21 @@ import type { Response } from "express";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as userCache from "../../../Util/Services/cache/userCaching.ts";
-import { renderStatus } from "../../../Util/Function/web/responses.ts";
+import { resolveMe, userExists } from "../../../Util/Middleware/checks.ts";
 
 export class GetEditProfile extends AuthedPathRoute<"get"> {
     constructor() {
-        super("get", "/profile/:id/edit", [variables, permission.auth]);
+        super("get", "/profile/:id/edit", [
+            variables,
+            permission.auth,
+            resolveMe,
+            userExists,
+            permission.selfOrAssistant("common.error.user.perms.edit")
+        ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        if (req.params.id === "@me") {
-            req.params.id = req.user.id;
-        }
-
-        const userProfile: delUser | null = await global.db
-            .collection<delUser>("users")
-            .findOne({ _id: req.params.id });
-        if (!userProfile)
-            return renderStatus(req, res, 404, res.__("common.error.user.404"));
-
-        if (
-            userProfile._id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.user.perms.edit")
-            );
+        const userProfile = req.attached.user!;
 
         res.locals.premidPageInfo = res.__(
             "premid.user.edit",
@@ -70,30 +57,17 @@ export class GetEditProfile extends AuthedPathRoute<"get"> {
 
 export class PostEditProfile extends AuthedPathRoute<"post"> {
     constructor() {
-        super("post", "/profile/:id/edit", [variables, permission.auth]);
+        super("post", "/profile/:id/edit", [
+            variables,
+            permission.auth,
+            resolveMe,
+            userExists,
+            permission.selfOrAssistant("common.error.user.perms.edit")
+        ]);
     }
 
     async handle(req: AuthedRequest, res: Response) {
-        if (req.params.id === "@me") {
-            req.params.id = req.user.id;
-        }
-
-        const userProfile: delUser | null = await global.db
-            .collection<delUser>("users")
-            .findOne({ _id: req.params.id });
-        if (!userProfile)
-            return renderStatus(req, res, 404, res.__("common.error.user.404"));
-
-        if (
-            userProfile._id !== req.user.id &&
-            req.user.db.rank.assistant === false
-        )
-            return renderStatus(
-                req,
-                res,
-                403,
-                res.__("common.error.user.perms.edit")
-            );
+        const userProfile = req.attached.user!;
 
         let customCss: string = "";
         if (

@@ -24,6 +24,7 @@ import * as functions from "../../../Util/Function/viewHelpers.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import type { Nullable } from "../../../Util/Function/types.ts";
 import { userExists } from "../../../Util/Middleware/checks.ts";
+import { STANDINGS } from "../../../Util/Function/staff.ts";
 
 export class GetStanding extends AuthedPathRoute<"get"> {
     constructor() {
@@ -51,28 +52,10 @@ export class GetStanding extends AuthedPathRoute<"get"> {
             ),
             req,
             user,
-            standings: [
-                {
-                    _id: "Unmeasured",
-                    display: res.__("page.staff.manager.unmeasured.emoji")
-                },
-                {
-                    _id: "Good",
-                    display: res.__("page.staff.manager.good.emoji")
-                },
-                {
-                    _id: "Moderate",
-                    display: res.__("page.staff.manager.moderate.emoji")
-                },
-                {
-                    _id: "Moderate-Bad",
-                    display: res.__("page.staff.manager.moderateBad.emoji")
-                },
-                {
-                    _id: "Bad",
-                    display: res.__("page.staff.manager.bad.emoji")
-                }
-            ],
+            standings: Object.entries(STANDINGS).map(([_id, emoji]) => ({
+                _id,
+                display: res.__(emoji)
+            })),
             functions
         });
     }
@@ -91,13 +74,7 @@ export class PostStanding extends AuthedPathRoute<"post"> {
     async handle(req: AuthedRequest, res: Response) {
         const user: Nullable<delUser> = req.attached.user!;
 
-        let allowedStandings = [
-            "Unmeasured",
-            "Good",
-            "Moderate",
-            "Moderate-Bad",
-            "Bad"
-        ];
+        let allowedStandings = Object.keys(STANDINGS);
         let standing = req.body.standing;
 
         if (!allowedStandings.includes(standing)) {

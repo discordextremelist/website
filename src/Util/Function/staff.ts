@@ -21,18 +21,24 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import type { Nullable } from "./types.js";
 
+/**
+ * The standings a staff member can have, in the order the standing form
+ * offers them, and the message showing each one's emoji.
+ */
+export const STANDINGS = {
+    Unmeasured: "page.staff.manager.unmeasured.emoji",
+    Good: "page.staff.manager.good.emoji",
+    Moderate: "page.staff.manager.moderate.emoji",
+    "Moderate-Bad": "page.staff.manager.moderateBad.emoji",
+    Bad: "page.staff.manager.bad.emoji"
+} as const;
+
+/** The message key for a standing's emoji, or "unavailable". */
 export function standingParseEmoji(standing: string) {
-    let result = "page.staff.manager.unavailable";
-
-    if (standing === "Unmeasured")
-        result = "page.staff.manager.unmeasured.emoji";
-    if (standing === "Good") result = "page.staff.manager.good.emoji";
-    if (standing === "Moderate") result = "page.staff.manager.moderate.emoji";
-    if (standing === "Moderate-Bad")
-        result = "page.staff.manager.moderateBad.emoji";
-    if (standing === "Bad") result = "page.staff.manager.bad.emoji";
-
-    return result;
+    // An own-property check, so a standing like "toString" is unavailable.
+    return Object.prototype.hasOwnProperty.call(STANDINGS, standing)
+        ? STANDINGS[standing as keyof typeof STANDINGS]
+        : "page.staff.manager.unavailable";
 }
 
 const roleMap: Partial<Record<Role, number>> = {

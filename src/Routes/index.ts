@@ -22,17 +22,10 @@ import type { Request, Response } from "express";
 
 import settings from "../../settings.json" with { type: "json" };
 import * as featuring from "../Util/Services/cache/featuring.ts";
-import * as botCache from "../Util/Services/cache/botCaching.ts";
-import * as serverCache from "../Util/Services/cache/serverCaching.ts";
-import * as templateCache from "../Util/Services/cache/templateCaching.ts";
 import * as legalCache from "../Util/Services/cache/legalCaching.ts";
 import * as discord from "../Util/Services/discord/index.ts";
 import { variables } from "../Util/Middleware/variables.ts";
 import type { GuildMember, GuildMemberManager } from "discord.js";
-import type {
-    BotTags,
-    BotQueryTagFilterParams
-} from "../Util/Function/common/types.ts";
 
 const router = express.Router();
 
@@ -127,154 +120,6 @@ router.get("/", variables, async (req: Request, res: Response) => {
         bots,
         servers,
         templates
-    });
-});
-
-const commonFilter = ({ status, labels }: delBot, req: Request) =>
-    status.approved &&
-    !status.siteBot &&
-    !status.archived &&
-    !status.hidden &&
-    !status.modHidden &&
-    !status.blacklist &&
-    (!req.user?.db?.preferences.hideNSFW || !labels?.nsfw);
-
-const tagMap: Record<BotTags, BotQueryTagFilterParams> = {
-    slashcommands: {
-        icon: "fa-slash fa-flip-horizontal has-text-blurple",
-        title: "common.bots.title.applicationCommands",
-        subtitle: (res) =>
-            res.__("common.bots.subtitle.filter.applicationCommands", {
-                a: '<a class="has-text-info" href="https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ" target="_blank" rel="noopener">',
-                a2: '<a class="has-text-info" href="https://discord.com/developers/docs/interactions/application-commands#user-commands" target="_blank" rel="noopener">',
-                ea: "</a>"
-            }),
-        filter: (bot, req) => bot.scopes?.slashCommands ?? false
-    },
-    fun: {
-        icon: "fa-grin-squint-tears has-text-link",
-        title: "common.bots.title.fun",
-        subtitle: (res) => res.__("common.bots.subtitle.filter.fun"),
-        filter: (bot, req) => bot.tags.includes("Fun")
-    },
-    social: {
-        icon: "fa-comments-alt has-text-info",
-        title: "common.bots.title.social",
-        subtitle: (res) => res.__("common.bots.subtitle.filter.social"),
-        filter: (bot, req) => bot.tags.includes("Social")
-    },
-    economy: {
-        icon: "fa-comments-dollar has-text-success",
-        title: "common.bots.title.economy",
-        subtitle: (res) => res.__("common.bots.subtitle.filter.economy"),
-        filter: (bot, req) => bot.tags.includes("Economy")
-    },
-    utility: {
-        icon: "fa-cogs has-text-orange",
-        title: "common.bots.title.utility",
-        subtitle: (res) => res.__("common.bots.subtitle.filter.utility"),
-        filter: (bot, req) => bot.tags.includes("Utility")
-    },
-    moderation: {
-        icon: "fa-gavel has-text-danger",
-        title: "common.bots.title.moderation",
-        subtitle: (res) => res.__("common.bots.subtitle.filter.moderation"),
-        filter: (bot, req) => bot.tags.includes("Moderation")
-    },
-    multipurpose: {
-        icon: "fa-ball-pile has-text-magenta",
-        title: "common.bots.title.multipurpose",
-        subtitle: (res) => res.__("common.bots.subtitle.filter.multipurpose"),
-        filter: (bot, req) => bot.tags.includes("Multipurpose")
-    },
-    music: {
-        icon: "fa-comment-music has-text-pink",
-        title: "common.bots.title.music",
-        subtitle: (res) => res.__("common.bots.subtitle.filter.music"),
-        filter: (bot, req) => bot.tags.includes("Music")
-    }
-};
-
-router.get("/bots", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.bots");
-    if (!req.query.page) req.query.page = "1";
-    let icon = "fa-robot has-text-default";
-    let title = res.__("common.bots.discord");
-    let subtitle = res.__("common.bots.subtitle");
-    let pageParam = "?page=";
-    let bots = (await botCache.getAllBots()).filter((bot) =>
-        commonFilter(bot, req)
-    );
-    if (req.query.tag) {
-        pageParam = `?tag=${req.query.tag}&page=`;
-        let tag = (req.query.tag as string).toLowerCase() as BotTags;
-        let props = tagMap[tag];
-        if (!props) {
-            bots = bots.filter((bot) => commonFilter(bot, req));
-        } else {
-            icon = props.icon;
-            title = res.__(props.title);
-            subtitle = props.subtitle(res);
-            bots = bots.filter((bot) => props.filter(bot, req));
-        }
-    }
-    res.render("templates/bots/index", {
-        title,
-        subtitle,
-        req,
-        bots,
-        icon: icon,
-        pageParam,
-        botsPgArr: bots.slice(
-            15 * Number(req.query.page) - 15,
-            15 * Number(req.query.page)
-        ),
-        page: req.query.page,
-        pages: Math.ceil(bots.length / 15)
-    });
-});
-
-router.get("/servers", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.servers");
-
-    if (!req.query.page) req.query.page = "1";
-    // Can't calculate total pages with sliced value - AJ
-    const allServers = await serverCache.getAllServers();
-    const servers = [...allServers]
-        .slice(15 * Number(req.query.page) - 15, 15 * Number(req.query.page))
-        .filter(({ status }) => status && !status.reviewRequired);
-
-    res.render("templates/servers/index", {
-        title: res.__("common.servers.discord"),
-        subtitle: res.__("common.servers.subtitle"),
-        req,
-        servers,
-        serversPgArr: servers,
-        page: req.query.page,
-        pages: Math.ceil(allServers.length / 15),
-        pageParam: "?page="
-    });
-});
-
-router.get("/templates", variables, async (req: Request, res: Response) => {
-    res.locals.premidPageInfo = res.__("premid.templates");
-
-    if (!req.query.page) req.query.page = "1";
-
-    const templates = await templateCache.getAllTemplates();
-
-    res.render("templates/serverTemplates/index", {
-        title: res.__("common.templates.discord"),
-        subtitle: res.__("common.templates.subtitle"),
-        req,
-        templates,
-        templatesPgArr: templates.slice(
-            15 * Number(req.query.page) - 15,
-            15 * Number(req.query.page)
-        ),
-        page: req.query.page,
-        pages: Math.ceil(templates.length / 15),
-        pageParam: "?page="
     });
 });
 

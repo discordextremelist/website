@@ -31,6 +31,7 @@ import { ApproveServer } from "./_id/approve.ts";
 import { DeleteServer } from "./_id/delete.ts";
 import { GetRemoveServer, PostRemoveServer } from "./_id/remove.ts";
 import { SyncServer } from "./_id/sync.ts";
+import { GetServers } from "./list.ts";
 import { communityTags } from "../../Util/Function/servers/serverListing.ts";
 
 export let reviewRequired = false; // Needs to be outside the functions, or it cannot be referenced outside x function - AJ
@@ -65,6 +66,7 @@ export function tagHandler(
 
 export const initServerRoutes = (): Router => {
     const router = express.Router();
+    new GetServers().register(router);
     new GetSubmitServer().register(router);
     new PostSubmitServer().register(router);
     new GetServer().register(router);

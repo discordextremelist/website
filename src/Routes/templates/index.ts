@@ -26,6 +26,7 @@ import { GetEditTemplate, PostEditTemplate } from "./_id/edit.ts";
 import { DeleteTemplate } from "./_id/delete.ts";
 import { GetRemoveTemplate, PostRemoveTemplate } from "./_id/remove.ts";
 import { SyncTemplate } from "./_id/sync.ts";
+import { GetTemplates } from "./list.ts";
 import { reasonType } from "../../Util/Function/staff/audit.ts";
 
 export function templateType(bodyType: string): number {
@@ -34,6 +35,7 @@ export function templateType(bodyType: string): number {
 
 export const initTemplateRoutes = (): Router => {
     const router = express.Router();
+    new GetTemplates().register(router);
     new GetSubmitTemplate().register(router);
     new PostSubmitTemplate().register(router);
     new GetTemplate().register(router);

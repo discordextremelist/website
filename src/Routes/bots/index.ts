@@ -29,6 +29,7 @@ import { GetDownvote, GetUpvote } from "./_id/upvote.ts";
 import { GetRemoveBot, PostRemoveBot } from "./_id/remove.ts";
 import { SyncBot } from "./_id/sync.ts";
 import { GetAccentColor } from "./_id/accent_color.ts";
+import { GetBots } from "./list.ts";
 import { reasonType } from "../../Util/Function/staff/audit.ts";
 
 export function botType(bodyType: string): number {
@@ -38,6 +39,7 @@ export function botType(bodyType: string): number {
 // Some basic routes do not need their own class.
 export const initBotRoutes = (): Router => {
     const router = express.Router();
+    new GetBots().register(router);
     router.get("/search", (_req: Request, res: Response) => {
         res.redirect("/search");
     });

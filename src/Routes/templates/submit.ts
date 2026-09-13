@@ -30,7 +30,8 @@ import { logListingEvent } from "../../Util/Function/listings/websiteLog.ts";
 import { communityTags } from "../../Util/Function/servers/serverListing.ts";
 import {
     discordErrorJson,
-    jsonError
+    jsonError,
+    jsonOk
 } from "../../Util/Function/web/responses.ts";
 import { submittedTemplate } from "../../Util/Function/templates/templateRecords.ts";
 import { recordAudit } from "../../Util/Function/staff/recordAudit.ts";
@@ -118,12 +119,7 @@ export class PostSubmitTemplate extends AuthedPathRoute<"post"> {
 
                 await discord.postWebMetric("template");
 
-                return res.status(200).json({
-                    error: false,
-                    status: 200,
-                    errors: [],
-                    id: template.code
-                });
+                return jsonOk(res, { id: template.code });
             })
             .catch((error: DiscordAPIError) =>
                 discordErrorJson(

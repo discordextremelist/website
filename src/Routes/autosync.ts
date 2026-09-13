@@ -24,13 +24,11 @@ import * as serverCache from "../Util/Services/cache/serverCaching.ts";
 import * as templateCache from "../Util/Services/cache/templateCaching.ts";
 import * as userCache from "../Util/Services/cache/userCaching.ts";
 import { escapeFormatting } from "../Util/Function/common/format.ts";
-import { makeURLSearchParams, OAuth2Scopes, Routes } from "discord.js";
+import { OAuth2Scopes, Routes } from "discord.js";
 import type {
     APITemplate,
-    RESTGetAPIInviteQuery,
     APIApplicationCommand,
-    APIApplication,
-    RESTGetAPIInviteResult
+    APIApplication
 } from "discord.js";
 import settings from "../../settings.json" with { type: "json" };
 import { logListingEvent } from "../Util/Function/listings/websiteLog.ts";
@@ -145,17 +143,7 @@ router.get("/servers", async (_req, res) => {
 
     if (server)
         try {
-            const invite = (await discord.bot.rest.get(
-                Routes.invite(server.inviteCode),
-                {
-                    query: makeURLSearchParams({
-                        // Makes approximate_presence_count and
-                        // approximate_member_count always present on the invite.
-                        with_counts: true,
-                        with_expiration: true
-                    } satisfies RESTGetAPIInviteQuery)
-                }
-            )) as RESTGetAPIInviteResult;
+            const invite = await discord.fetchInvite(server.inviteCode);
             // A group-DM invite has no guild. Throwing takes the same path as
             // the TypeError reading invite.guild.id used to: the server is
             // removed as having an invalid invite.

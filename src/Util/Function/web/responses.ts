@@ -59,6 +59,16 @@ export function jsonError(res: Response, status: number, errors: unknown[]) {
 }
 
 /**
+ * Answer a listing form that saved: a 200 JSON reply with no errors, plus
+ * `extra` (servers and templates send the listing's id).
+ */
+export function jsonOk(res: Response, extra: Record<string, unknown> = {}) {
+    return res
+        .status(200)
+        .json({ error: false, status: 200, errors: [], ...extra });
+}
+
+/**
  * Answer a listing form whose Discord lookup failed with a 400 JSON error:
  * just `known` when Discord answered `knownCode` (an unknown application,
  * invite or template), otherwise the error's details, after `prefix` if given.

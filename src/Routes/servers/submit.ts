@@ -19,12 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../route.ts";
 import type { Response } from "express";
-import type {
-    APIInvite,
-    DiscordAPIError,
-    RESTGetAPIInviteQuery
-} from "discord.js";
-import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
+import type { APIInvite, DiscordAPIError } from "discord.js";
+import { RESTJSONErrorCodes } from "discord.js";
 import * as discord from "../../Util/Services/discord/index.ts";
 import * as permission from "../../Util/Middleware/permissions.ts";
 import { listingCodeError } from "../../Util/Function/listings/listingCode.ts";
@@ -38,7 +34,8 @@ import {
 } from "../../Util/Function/servers/serverListing.ts";
 import {
     discordErrorJson,
-    jsonError
+    jsonError,
+    jsonOk
 } from "../../Util/Function/web/responses.ts";
 import {
     submittedServer,
@@ -94,14 +91,7 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
         if (error === true) return jsonError(res, 400, errors);
 
         discord
-            .restGet<APIInvite>(Routes.invite(req.body.invite), {
-                query: makeURLSearchParams({
-                    // Makes approximate_presence_count and
-                    // approximate_member_count always present on the invite.
-                    with_counts: true,
-                    with_expiration: true
-                } satisfies RESTGetAPIInviteQuery)
-            })
+            .fetchInvite(req.body.invite)
             .then(async (invite: APIInvite) => {
                 // A group-DM invite has no guild, so there's no server to list.
                 if (!invite.guild)
@@ -158,12 +148,7 @@ export class PostSubmitServer extends AuthedPathRoute<"post"> {
 
                 await discord.postWebMetric("server");
 
-                return res.status(200).json({
-                    error: false,
-                    status: 200,
-                    errors: [],
-                    id: invite.guild.id
-                });
+                return jsonOk(res, { id: invite.guild.id });
             })
             .catch((error: DiscordAPIError) =>
                 discordErrorJson(

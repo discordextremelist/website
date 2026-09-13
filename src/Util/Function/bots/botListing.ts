@@ -22,12 +22,13 @@ import { patterns } from "./patterns.ts";
 import { isDiscordAPIError } from "../common/discordErrors.ts";
 import type { Response } from "express";
 import type {
+    APIApplication,
     APIApplicationCommand,
     RESTPostOAuth2AccessTokenResult,
     APIUser,
     DiscordAPIError
 } from "discord.js";
-import { OAuth2Scopes, Routes } from "discord.js";
+import { OAuth2Scopes, RESTJSONErrorCodes, Routes } from "discord.js";
 import { URL } from "url";
 import fetch, { type Response as fetchRes } from "node-fetch";
 import refresh from "passport-oauth2-refresh";
@@ -35,6 +36,7 @@ import * as discord from "../../Services/discord/index.ts";
 import { DAPI } from "../../Services/discord/index.ts";
 import * as userCache from "../../Services/cache/userCaching.ts";
 import * as libraryCache from "../../Services/cache/libCaching.ts";
+import { discordErrorJson, jsonError } from "../web/responses.ts";
 
 // Helpers shared by the bot submit, edit and resubmit handlers, which all read
 // the same listing form, and by bot sync and AutoSync.
@@ -570,4 +572,39 @@ export async function validateBotListing(
         commands,
         userFlags
     };
+}
+
+/**
+ * Look up the application a bot listing form names, answer 400 if it isn't
+ * public, and otherwise run `handle` with it. A failed lookup, or an error
+ * `handle` throws, gets discordErrorJson's answer, as the submit, edit and
+ * resubmit handlers always gave.
+ */
+export function withPublicApp(
+    req: AuthedRequest,
+    res: Response,
+    handle: (app: APIApplication) => Promise<unknown>
+) {
+    return discord
+        .restGet<APIApplication>(
+            `/applications/${req.body.clientID || req.body.id}/rpc`
+        )
+        .then(async (app: APIApplication) => {
+            if (app.bot_public === false)
+                // not !app.bot_public; should not trigger when undefined
+                return jsonError(res, 400, [
+                    res.__("common.error.bot.arr.notPublic")
+                ]);
+
+            return handle(app);
+        })
+        .catch((error: DiscordAPIError) =>
+            discordErrorJson(
+                res,
+                error,
+                RESTJSONErrorCodes.UnknownApplication,
+                res.__("common.error.bot.arr.notFound"),
+                res.__("common.error.bot.arr.fetchError")
+            )
+        );
 }

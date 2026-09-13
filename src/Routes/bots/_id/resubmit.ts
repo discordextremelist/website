@@ -2,25 +2,22 @@ import { AuthedPathRoute } from "../../route.ts";
 import { variables } from "../../../Util/Middleware/variables.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import e from "express";
-import {
-    type APIApplication,
-    type DiscordAPIError,
-    OAuth2Scopes,
-    RESTJSONErrorCodes
-} from "discord.js";
+import { type APIApplication, OAuth2Scopes } from "discord.js";
 import * as checks from "../../../Util/Middleware/checks.ts";
 import * as libraryCache from "../../../Util/Services/cache/libCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
-import * as discord from "../../../Util/Services/discord/index.ts";
 import {
-    discordErrorJson,
     jsonError,
-    renderStatus
+    renderStatus,
+    jsonOk
 } from "../../../Util/Function/web/responses.ts";
 
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
-import { validateBotListing } from "../../../Util/Function/bots/botListing.ts";
+import {
+    validateBotListing,
+    withPublicApp
+} from "../../../Util/Function/bots/botListing.ts";
 import {
     botAuditAfter,
     botAuditBefore,
@@ -98,58 +95,35 @@ export class PostResubmitBot extends AuthedPathRoute<"post"> {
         const { errors, ...form } = await validateBotListing(req, res, { bot });
         if (errors.length > 0) return jsonError(res, 400, errors);
 
-        discord
-            .restGet<APIApplication>(
-                `/applications/${req.body.clientID || req.body.id}/rpc`
-            )
-            .then(async (app: APIApplication) => {
-                if (app.bot_public === false)
-                    // not !app.bot_public; should not trigger when undefined
-                    return jsonError(res, 400, [
-                        res.__("common.error.bot.arr.notPublic")
-                    ]);
-
-                await global.db.collection("bots").updateOne(
-                    { _id: req.params.id },
-                    {
-                        $set: resubmittedBotFields(req, app, form)
-                    }
-                );
-
-                await recordAudit({
-                    type: "RESUBMIT_BOT",
-                    executor: req.user.id,
-                    target: req.params.id,
-                    reason: "None specified.",
-                    details: {
-                        old: botAuditBefore(req, bot, { resubmit: true }),
-                        new: botAuditAfter(req, app, form, { resubmit: true })
-                    }
-                });
-
-                await botCache.updateBot(req.params.id);
-
-                await logListingEvent(req, "bot", "resubmitted", {
-                    _id: app.id,
-                    name: app.name
-                }).catch((e) => {
-                    console.error(e);
-                });
-
-                return res.status(200).json({
-                    error: false,
-                    status: 200,
-                    errors: []
-                });
-            })
-            .catch((error: DiscordAPIError) =>
-                discordErrorJson(
-                    res,
-                    error,
-                    RESTJSONErrorCodes.UnknownApplication,
-                    res.__("common.error.bot.arr.notFound"),
-                    res.__("common.error.bot.arr.fetchError")
-                )
+        withPublicApp(req, res, async (app: APIApplication) => {
+            await global.db.collection("bots").updateOne(
+                { _id: req.params.id },
+                {
+                    $set: resubmittedBotFields(req, app, form)
+                }
             );
+
+            await recordAudit({
+                type: "RESUBMIT_BOT",
+                executor: req.user.id,
+                target: req.params.id,
+                reason: "None specified.",
+                details: {
+                    old: botAuditBefore(req, bot, { resubmit: true }),
+                    new: botAuditAfter(req, app, form, { resubmit: true })
+                }
+            });
+
+            await botCache.updateBot(req.params.id);
+
+            await logListingEvent(req, "bot", "resubmitted", {
+                _id: app.id,
+                name: app.name
+            }).catch((e) => {
+                console.error(e);
+            });
+
+            return jsonOk(res);
+        });
     }
 }

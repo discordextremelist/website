@@ -20,7 +20,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // The website's Discord client and its REST helper.
 
 import * as Discord from "discord.js";
-import { GatewayIntentBits, Options, Partials } from "discord.js";
+import type { APIInvite, RESTGetAPIInviteQuery } from "discord.js";
+import {
+    GatewayIntentBits,
+    Options,
+    Partials,
+    Routes,
+    makeURLSearchParams
+} from "discord.js";
 
 export const DAPI = "https://discord.com/api/v10";
 
@@ -46,4 +53,19 @@ export function restGet<T>(
     ...args: Parameters<typeof bot.rest.get>
 ): Promise<T> {
     return bot.rest.get(...args) as Promise<T>;
+}
+
+/**
+ * Look up an invite with its approximate member and presence counts and its
+ * expiry, as the server listing handlers and AutoSync always have.
+ */
+export function fetchInvite(code: string) {
+    return restGet<APIInvite>(Routes.invite(code), {
+        query: makeURLSearchParams({
+            // Makes approximate_presence_count and
+            // approximate_member_count always present on the invite.
+            with_counts: true,
+            with_expiration: true
+        } satisfies RESTGetAPIInviteQuery)
+    });
 }

@@ -5,23 +5,18 @@ import e from "express";
 
 import * as libraryCache from "../../../Util/Services/cache/libCaching.ts";
 import settings from "../../../../settings.json" with { type: "json" };
-import * as discord from "../../../Util/Services/discord/index.ts";
-import {
-    type APIApplication,
-    type DiscordAPIError,
-    RESTJSONErrorCodes
-} from "discord.js";
+import { type APIApplication } from "discord.js";
 
 import * as botCache from "../../../Util/Services/cache/botCaching.ts";
 import { blacklistCheck } from "../../../Util/Services/access/blacklist.ts";
 import { botExists } from "../../../Util/Middleware/checks.ts";
 import { sanitizeBotHtml } from "../../../Util/Function/web/sanitize.ts";
 import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
+import { jsonError, jsonOk } from "../../../Util/Function/web/responses.ts";
 import {
-    discordErrorJson,
-    jsonError
-} from "../../../Util/Function/web/responses.ts";
-import { validateBotListing } from "../../../Util/Function/bots/botListing.ts";
+    validateBotListing,
+    withPublicApp
+} from "../../../Util/Function/bots/botListing.ts";
 import {
     botAuditAfter,
     botAuditBefore,
@@ -87,60 +82,37 @@ export class PostEdit extends AuthedPathRoute<"post"> {
         });
         if (errors.length > 0) return jsonError(res, 400, errors);
 
-        discord
-            .restGet<APIApplication>(
-                `/applications/${req.body.clientID || req.body.id}/rpc`
-            )
-            .then(async (app: APIApplication) => {
-                if (app.bot_public === false)
-                    // not !app.bot_public; should not trigger when undefined
-                    return jsonError(res, 400, [
-                        res.__("common.error.bot.arr.notPublic")
-                    ]);
-
-                await global.db.collection("bots").updateOne(
-                    { _id: req.params.id },
-                    {
-                        $set: editedBotFields(req, app, form)
-                    }
-                );
-
-                await recordAudit({
-                    type: "EDIT_BOT",
-                    executor: req.user.id,
-                    target: req.params.id,
-                    reason: "None specified.",
-                    details: {
-                        old: botAuditBefore(req, bot),
-                        new: botAuditAfter(req, app, form)
-                    }
-                });
-                await botCache.updateBot(req.params.id);
-
-                logListingEvent(
-                    req,
-                    "bot",
-                    "edited",
-                    { _id: app.id, name: app.name },
-                    { linkId: req.params.id }
-                ).catch((e) => {
-                    console.error(e);
-                });
-
-                return res.status(200).json({
-                    error: false,
-                    status: 200,
-                    errors: []
-                });
-            })
-            .catch((error: DiscordAPIError) =>
-                discordErrorJson(
-                    res,
-                    error,
-                    RESTJSONErrorCodes.UnknownApplication,
-                    res.__("common.error.bot.arr.notFound"),
-                    res.__("common.error.bot.arr.fetchError")
-                )
+        withPublicApp(req, res, async (app: APIApplication) => {
+            await global.db.collection("bots").updateOne(
+                { _id: req.params.id },
+                {
+                    $set: editedBotFields(req, app, form)
+                }
             );
+
+            await recordAudit({
+                type: "EDIT_BOT",
+                executor: req.user.id,
+                target: req.params.id,
+                reason: "None specified.",
+                details: {
+                    old: botAuditBefore(req, bot),
+                    new: botAuditAfter(req, app, form)
+                }
+            });
+            await botCache.updateBot(req.params.id);
+
+            logListingEvent(
+                req,
+                "bot",
+                "edited",
+                { _id: app.id, name: app.name },
+                { linkId: req.params.id }
+            ).catch((e) => {
+                console.error(e);
+            });
+
+            return jsonOk(res);
+        });
     }
 }

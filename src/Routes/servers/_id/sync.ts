@@ -19,12 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AuthedPathRoute } from "../../route.ts";
 import type { Response } from "express";
-import type {
-    APIInvite,
-    DiscordAPIError,
-    RESTGetAPIInviteQuery
-} from "discord.js";
-import { RESTJSONErrorCodes, Routes, makeURLSearchParams } from "discord.js";
+import type { APIInvite, DiscordAPIError } from "discord.js";
+import { RESTJSONErrorCodes } from "discord.js";
 import * as discord from "../../../Util/Services/discord/index.ts";
 import * as permission from "../../../Util/Middleware/permissions.ts";
 import * as serverCache from "../../../Util/Services/cache/serverCaching.ts";
@@ -50,14 +46,7 @@ export class SyncServer extends AuthedPathRoute<"get"> {
         const server: delServer | undefined = req.attached.server!;
 
         discord
-            .restGet<APIInvite>(Routes.invite(server.inviteCode), {
-                query: makeURLSearchParams({
-                    // Makes approximate_presence_count and
-                    // approximate_member_count always present on the invite.
-                    with_counts: true,
-                    with_expiration: true
-                } satisfies RESTGetAPIInviteQuery)
-            })
+            .fetchInvite(server.inviteCode)
             .then(async (invite: APIInvite) => {
                 // A group-DM invite has no guild, so there's no server to sync.
                 if (!invite.guild)

@@ -36,7 +36,8 @@ import { logListingEvent } from "../../../Util/Function/listings/websiteLog.ts";
 import { communityTags } from "../../../Util/Function/servers/serverListing.ts";
 import {
     discordErrorJson,
-    jsonError
+    jsonError,
+    jsonOk
 } from "../../../Util/Function/web/responses.ts";
 import {
     editedTemplateAuditAfter,
@@ -173,12 +174,7 @@ export class PostEditTemplate extends AuthedPathRoute<"post"> {
 
                 await templateCache.updateTemplate(req.params.id);
 
-                return res.status(200).json({
-                    error: false,
-                    status: 200,
-                    errors: [],
-                    id: template.code
-                });
+                return jsonOk(res, { id: template.code });
             })
             .catch((error: DiscordAPIError) =>
                 discordErrorJson(

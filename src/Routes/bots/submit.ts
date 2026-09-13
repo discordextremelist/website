@@ -2,23 +2,18 @@ import { AuthedPathRoute } from "../route.ts";
 import e from "express";
 import { variables } from "../../Util/Middleware/variables.ts";
 import * as permission from "../../Util/Middleware/permissions.ts";
-import {
-    type APIApplication,
-    type DiscordAPIError,
-    OAuth2Scopes,
-    RESTJSONErrorCodes
-} from "discord.js";
+import { type APIApplication, OAuth2Scopes } from "discord.js";
 import * as libraryCache from "../../Util/Services/cache/libCaching.ts";
 import * as discord from "../../Util/Services/discord/index.ts";
 
 import * as botCache from "../../Util/Services/cache/botCaching.ts";
 import { blacklistCheck } from "../../Util/Services/access/blacklist.ts";
 import { logListingEvent } from "../../Util/Function/listings/websiteLog.ts";
+import { jsonError, jsonOk } from "../../Util/Function/web/responses.ts";
 import {
-    discordErrorJson,
-    jsonError
-} from "../../Util/Function/web/responses.ts";
-import { validateBotListing } from "../../Util/Function/bots/botListing.ts";
+    validateBotListing,
+    withPublicApp
+} from "../../Util/Function/bots/botListing.ts";
 import {
     submittedBot,
     submittedBotAudit
@@ -83,58 +78,35 @@ export class PostSubmit extends AuthedPathRoute<"post"> {
         const { errors, ...form } = await validateBotListing(req, res);
         if (errors.length > 0) return jsonError(res, 400, errors);
 
-        discord
-            .restGet<APIApplication>(
-                `/applications/${req.body.clientID || req.body.id}/rpc`
-            )
-            .then(async (app: APIApplication) => {
-                if (app.bot_public === false)
-                    // not !app.bot_public; should not trigger when undefined
-                    return jsonError(res, 400, [
-                        res.__("common.error.bot.arr.notPublic")
-                    ]);
+        withPublicApp(req, res, async (app: APIApplication) => {
+            if (req.body.bot && !("bot_public" in app))
+                return jsonError(res, 400, [
+                    res.__("common.error.bot.arr.noBot")
+                ]);
 
-                if (req.body.bot && !("bot_public" in app))
-                    return jsonError(res, 400, [
-                        res.__("common.error.bot.arr.noBot")
-                    ]);
+            await global.db
+                .collection<delBot>("bots")
+                .insertOne(submittedBot(req, app, form));
 
-                await global.db
-                    .collection<delBot>("bots")
-                    .insertOne(submittedBot(req, app, form));
+            await logListingEvent(req, "bot", "added", {
+                _id: req.body.id,
+                name: app.name
+            });
 
-                await logListingEvent(req, "bot", "added", {
-                    _id: req.body.id,
-                    name: app.name
-                });
+            await recordAudit({
+                type: "SUBMIT_BOT",
+                executor: req.user.id,
+                target: req.body.id,
+                reason: "None specified.",
+                details: {
+                    new: submittedBotAudit(req, app, form)
+                }
+            });
+            await botCache.updateBot(req.body.id);
 
-                await recordAudit({
-                    type: "SUBMIT_BOT",
-                    executor: req.user.id,
-                    target: req.body.id,
-                    reason: "None specified.",
-                    details: {
-                        new: submittedBotAudit(req, app, form)
-                    }
-                });
-                await botCache.updateBot(req.body.id);
+            await discord.postWebMetric("bot");
 
-                await discord.postWebMetric("bot");
-
-                return res.status(200).json({
-                    error: false,
-                    status: 200,
-                    errors: []
-                });
-            })
-            .catch((error: DiscordAPIError) =>
-                discordErrorJson(
-                    res,
-                    error,
-                    RESTJSONErrorCodes.UnknownApplication,
-                    res.__("common.error.bot.arr.notFound"),
-                    res.__("common.error.bot.arr.fetchError")
-                )
-            );
+            return jsonOk(res);
+        });
     }
 }
